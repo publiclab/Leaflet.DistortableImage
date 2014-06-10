@@ -9,7 +9,7 @@ require(['./ImageDistort'], function(ImageOverlay) {
                             map, image, 'theCanvas'
                         );
                     };
-                    image.src = "./aerialimage.png";                    
+                    image.src = "./aerialimage.jpg";                    
                     return;
                 });
             });
