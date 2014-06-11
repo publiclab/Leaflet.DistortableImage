@@ -69,12 +69,10 @@ define(function(require) {
             var nw = new L.Point(west, north);
             var ne = new L.Point(east, north);
             var se = new L.Point(east, south);
-            var sw = new L.Point(west, south);
 
             affineMarkers.push(createMarkerAtContainerPoint(nw));
             affineMarkers.push(createMarkerAtContainerPoint(ne));
             affineMarkers.push(createMarkerAtContainerPoint(se));
-            affineMarkers.push(createMarkerAtContainerPoint(sw));
 
             affineMarkerLayer = new L.LayerGroup();
             for (i in affineMarkers) {
@@ -86,7 +84,6 @@ define(function(require) {
             imageLocations.push([0,0]);
             imageLocations.push([image.width, 0]);
             imageLocations.push([image.width, image.height]);
-            imageLocations.push([0, image.height]);
         }
 
         // Returns a marker object at the given container location
@@ -117,7 +114,6 @@ define(function(require) {
             var marker0 = map.latLngToContainerPoint(affineMarkers[0].getLatLng());
             var marker1 = map.latLngToContainerPoint(affineMarkers[1].getLatLng());
             var marker2 = map.latLngToContainerPoint(affineMarkers[2].getLatLng());
-            var marker3 = map.latLngToContainerPoint(affineMarkers[3].getLatLng());
 
             var m11 = (marker1.x - marker0.x) / image.width;
             var m12 = (marker1.y - marker0.y) / image.width;
