@@ -145,7 +145,7 @@ window.addEventListener('load', function() {
 });
 
 window.addEventListener('mousedown', function(evnt) {
-  var x = evnt.pageX, y = evnt.pageY, dx, dy;
+  var x = evnt.pageX, y = evnt.pageY, dx, dy; //finds the position of mouse from the left and top side of window
   var best = 400; // 20px grab radius
   currentcorner = -1;
   for (var i = 0; i != 8; i += 2) {
@@ -165,17 +165,6 @@ window.addEventListener('mouseup', function(evnt) {
 
 window.addEventListener('mousemove', move);
 
-var start = null;
-var step = function(timestamp) {
-    if (start === null) start = timestamp;
-    var progress = timestamp - start;
-    var yoffs = Math.sin(progress/100);
-    var d = document.getElementById("marker2");
-    d.style.top = (corners[3] + yoffs) + 'px';
-    window.requestAnimationFrame(step);
-}
-
-window.requestAnimationFrame(step);
 
     </script>
     </body>
