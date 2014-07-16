@@ -119,12 +119,12 @@ corners = [100, 100, 300, 100, 100, 300, 300, 300];
 
 function update() {
   var box = document.getElementById("box");
-  transform2d(box, corners[0], corners[1], corners[2], corners[3],
-                   corners[4], corners[5], corners[6], corners[7]);
+  transform2d(box, corners[0], corners[1], corners[2], corners[3], corners[4], corners[5], corners[6], corners[7]);
   for (var i = 0; i != 8; i += 2) {
     var elt = document.getElementById("marker" + i);
     elt.style.left = corners[i] + "px";
     elt.style.top = corners[i + 1] + "px";
+    console.log(elt.style.left);
   }
 }
 
