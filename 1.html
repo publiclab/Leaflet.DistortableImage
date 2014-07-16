@@ -11,10 +11,10 @@
 <body>
 	<div id="map" style="width: 600px; height: 400px"></div>
 
-	<script src="leaflet/leaflet.js"></script>
+	<script src="leaflet/leaflet-src.js"></script>
 	<script>
 
-		var map = L.map('map').setView([51.505, -0.09], 13);
+		var map = new L.map('map').setView([51.505, -0.09], 13);
 
 		L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.png', {
 			maxZoom: 18,
@@ -24,28 +24,18 @@
 			id: 'examples.map-i86knfo3'
 		}).addTo(map);
 
-		L.marker([51.5, -0.09]).addTo(map)
-			.bindPopup("<b>Hello world!</b><br />I am a popup.").openPopup();
 
-		L.circle([51.508, -0.11], 500, {
-			color: 'red',
-			fillColor: '#f03',
-			fillOpacity: 0.5
-		}).addTo(map).bindPopup("I am a circle.");
-
-		L.polygon([
-			[51.509, -0.08],
-			[51.503, -0.06],
-			[51.51, -0.047]
-		]).addTo(map).bindPopup("I am a polygon.");
 
 		var imageUrl = 'aerialimage.jpg',
-	     imageBounds = [[51.50116, -0.09665], [51.505, -0.07565], [51.49515, -0.09655], [51.50115, -0.09663] ];
+		imageBounds = [[51.505, -0.09], [51.509, -0.079]];
 
 		var newimg= L.imageOverlay(imageUrl, imageBounds);
-		console.log(newimg);
-	     L.DomUtil.addClass(newimg, "img1");
-	     (newimg.bringToFront()).addTo(map);
+		 console.log(newimg._url);
+		 
+		 (newimg.bringToFront()).addTo(map);
+
+
+
 
 		var popup = L.popup();
 

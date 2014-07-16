@@ -6,7 +6,7 @@
 (function (window, document, undefined) {
 var oldL = window.L,
     L = {};
-
+var counter=1;
 L.version = '0.7.2';
 
 // define Leaflet for Node module pattern loaders, including Browserify
@@ -3254,7 +3254,11 @@ L.ImageOverlay = L.Class.extend({
 	},
 
 	_initImage: function () {
-		this._image = L.DomUtil.create('img', 'leaflet-image-layer');
+		
+		var imgcounter='img'+counter;
+		counter++;
+		this._image = L.DomUtil.create('img', 'leaflet-image-layer '+imgcounter);
+
 
 		if (this._map.options.zoomAnimation && L.Browser.any3d) {
 			L.DomUtil.addClass(this._image, 'leaflet-zoom-animated');
