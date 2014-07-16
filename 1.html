@@ -24,25 +24,6 @@
 			id: 'examples.map-i86knfo3'
 		}).addTo(map);
 
-		var canvasTiles = L.tileLayer.canvas();
-
-		canvasTiles.drawTile = function(canvas, tilePoint, zoom) {
-		var ctx = canvas.getContext('2d');
-	    make_base();
-
-		function make_base()
-		{
-		  base_image = new Image();
-		  base_image.src = 'aerialimage.jpg';
-		  base_image.onload = function(){
-		    context.drawImage(base_image, 100, 100);
-		  }
-		}
-		
-		}
-		
-
-
 		L.marker([51.5, -0.09]).addTo(map)
 			.bindPopup("<b>Hello world!</b><br />I am a popup.").openPopup();
 
@@ -59,9 +40,12 @@
 		]).addTo(map).bindPopup("I am a polygon.");
 
 		var imageUrl = 'aerialimage.jpg',
-	    imageBounds = [[40.712216, -74.22655], [40.773941, -74.12544]];
+	     imageBounds = [[51.50116, -0.09665], [51.505, -0.07565], [51.49515, -0.09655], [51.50115, -0.09663] ];
 
-		L.imageOverlay(imageUrl, imageBounds).addTo(map);
+		var newimg= L.imageOverlay(imageUrl, imageBounds);
+		console.log(newimg);
+	     L.DomUtil.addClass(newimg, "img1");
+	     (newimg.bringToFront()).addTo(map);
 
 		var popup = L.popup();
 
