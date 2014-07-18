@@ -30,9 +30,12 @@
 		imageBounds = [[51.505, -0.09], [51.509, -0.079]];
 
 		var newimg= L.imageOverlay(imageUrl, imageBounds);
-		 console.log(newimg._url);
+		console.log(newimg);
+		
 		 
 		 (newimg.bringToFront()).addTo(map);
+		 var a=newimg._image;
+		 console.log(a);
 
 
 
@@ -45,7 +48,7 @@
 				.setContent("You clicked the map at " + e.latlng.toString())
 				.openOn(map);
 		}
-
+		
 		map.on('click', onMapClick);
 
 	</script>
