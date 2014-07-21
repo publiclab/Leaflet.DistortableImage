@@ -17,7 +17,7 @@
               overflow: clip;
             }
 
-            #box {
+            #img1 {
               position: absolute;
               top: 0px;
               left: 0px;
@@ -181,7 +181,8 @@
 			corners = [100, 100, 300, 100, 100, 300, 300, 300];
 
 			function update() {
-			  var box = document.getElementById("box");
+			  var box = document.getElementById("img1");
+			  console.log(box);
 			  transform2d(box, corners[0], corners[1], corners[2], corners[3], corners[4], corners[5], corners[6], corners[7]);
 			  for (var i = 0; i != 8; i += 2) {
 			    var elt = document.getElementById("marker" + i);
@@ -193,11 +194,8 @@
 
 			function move(e) {
 			  if (currentcorner < 0) return;
-			  var p = map.latLngToLayerPoint(e.latlng);
-			  console.log(p);
-			  corners[currentcorner] = p.x;
-			  console.log(corners[currentcorner]);
-			  corners[currentcorner + 1] = p.y;
+			  corners[currentcorner] = e.clientX;
+			  corners[currentcorner + 1] = e.clientY;
 			  update();
 			}
 			currentcorner = -1;
