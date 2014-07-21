@@ -77,10 +77,24 @@
 		var popup = L.popup();
 
 		function onMapClick(e) {
-			popup
-				.setLatLng(e.latlng)
-				.setContent("You clicked the map at " + e.latlng.toString())
-				.openOn(map);
+		
+			var p = map.latLngToLayerPoint(e.latlng);
+			console.log(p);
+			var x = p.x, y = p.y, dx, dy; //finds the position of mouse from the left and top side of window
+			  console.log(x,y);
+			  var best = 400; // 20px grab radius
+			  currentcorner = -1;
+			  for (var i = 0; i != 8; i += 2) {
+			    dx = x - corners[i];
+			    dy = y - corners[i + 1];
+			    if (best > dx*dx + dy*dy) {
+				 best = dx*dx + dy*dy;
+				 console.log(best);
+				 currentcorner = i;
+				 console.log(currentcorner);
+			    }
+			  }
+			  move(e);
 		}
 		
 		map.on('click', onMapClick);
@@ -177,10 +191,13 @@
 			  }
 			}
 
-			function move(evnt) {
+			function move(e) {
 			  if (currentcorner < 0) return;
-			  corners[currentcorner] = evnt.pageX;
-			  corners[currentcorner + 1] = evnt.pageY;
+			  var p = map.latLngToLayerPoint(e.latlng);
+			  console.log(p);
+			  corners[currentcorner] = p.x;
+			  console.log(corners[currentcorner]);
+			  corners[currentcorner + 1] = p.y;
 			  update();
 			}
 			currentcorner = -1;
@@ -194,7 +211,9 @@
 			});
 
 			window.addEventListener('mousedown', function(evnt) {
-			  var x = evnt.pageX, y = evnt.pageY, dx, dy; //finds the position of mouse from the left and top side of window
+			var parentOffset = $('#map').offset(); 
+			console.log(parentOffset);
+			var x = evnt.pageX-parentOffset.left, y = evnt.pageY-parentOffset.top, dx, dy; //finds the position of mouse from the left and top side of window
 			  console.log(x,y);
 			  var best = 400; // 20px grab radius
 			  currentcorner = -1;
