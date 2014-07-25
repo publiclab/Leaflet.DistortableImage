@@ -8,6 +8,7 @@
 
 	<link rel="stylesheet" href="leaflet/leaflet.css" />
 	<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+
 	<style type="text/css">
             
             #imgcontainer {
@@ -39,6 +40,7 @@
 	<div id="map" style="width: 600px; height: 400px"></div>
 
 	<script src="leaflet/leaflet-src.js"></script>
+	<script src="imagedistort/imagemarker.js"></script>
 	<script>
 
 		var map = new L.map('map').setView([51.505, -0.09], 13);
@@ -51,7 +53,9 @@
 			id: 'examples.map-i86knfo3'
 		}).addTo(map);
 
+		
 
+		var marker = new L.ImageMarker([51.505, -0.09]).addTo(map);
 
 		var imageUrl = 'aerialimage.jpg',
 		imageBounds = [[51.505, -0.09], [51.509, -0.079]];
