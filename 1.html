@@ -41,7 +41,8 @@
 
 	<script src="leaflet/leaflet-src.js"></script>
 	<script src="imagedistort/imagemarker.js"></script>
-	<script src="imagedistort/imagedistort.js"></script>
+	<script src="imagedistort/distortableimage.js"></script>
+	<script src="imagedistort/addcontrolpoints.js"></script>
 
 	<script>
 
@@ -58,7 +59,7 @@
 		
 
 		var marker = new L.ImageMarker([51.505, -0.09]).addTo(map);
-
+		console.log(marker._icon);
 		var imageUrl = 'aerialimage.jpg',
 		imageBounds = [[51.505, -0.09], [51.509, -0.079]];
 
@@ -70,12 +71,7 @@
 		 var a=newimg._image;
 		 console.log(a);
 
-		 $( "#img1" ).after( "<div id='marker0' class='corner'>TL</div>");
-           $( "#marker0" ).after('<div id="marker2" class="corner">TR</div>');
-           $( "#marker2" ).after('<div id="marker4" class="corner">BL</div>');
-           $( "#marker4" ).after('<div id="marker6" class="corner">BR</div>');
-           $('#img1').wrapAll('<div id="box">');
-		 $('#box, .corner').wrapAll('<div id="imgcontainer">');
+		 xyz();
 		
 
 
