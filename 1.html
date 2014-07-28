@@ -89,6 +89,7 @@
 		
 		map.on('click', onMapClick);
 		
+		
 				   function adj(m) { // Compute the adjugate of m
 			  return [
 			    m[4]*m[8]-m[5]*m[7], m[2]*m[7]-m[1]*m[8], m[1]*m[5]-m[2]*m[4],
@@ -169,11 +170,13 @@
 			}
 
 			var imageBounds=[];
+			var markers=[];
 			corners = [100, 100, 300, 100, 100, 300, 300, 300];
 			for(var i=0; i<8; i=i+2)
 			{
 				var a=map.layerPointToLatLng([corners[i],corners[i+1]]);
 				var marker = new L.ImageMarker([a.lat, a.lng]).addTo(map);
+				markers.push(marker);
 				imageBounds.push([a.lat,a.lng]);
 				var addidclass=marker._icon;
 				addidclass.id= "marker"+i;
@@ -183,14 +186,27 @@
 			var newimg= new L.DistortableImage(imageUrl, imageBounds);
 			(newimg.bringToFront()).addTo(map);
 
+			for (i in markers) {
+                markers[i].on('drag', update);
+            }
+
+
 			function update() {
 			  var box = document.getElementById("img1");
 			  console.log(box);
+
+			  for(var i=0;i<4;i=i+1)
+			  {
+			  	var conv=map.latLngToContainerPoint(markers[i]._latlng);
+			  	corners[i*2]=conv.x;
+			  	corners[i*2+1]=conv.y;
+			  }
+
 			  transform2d(box, corners[0], corners[1], corners[2], corners[3], corners[4], corners[5], corners[6], corners[7]);
 			  for (var i = 0; i != 8; i += 2) {
 			    var elt = document.getElementById("marker" + i);
-			    elt.style.left = corners[i] + "px";
-			    elt.style.top = corners[i + 1] + "px";
+			    /*elt.style.left = corners[i] + "px";
+			    elt.style.top = corners[i + 1] + "px";*/
 			  }
 			}
 
@@ -210,7 +226,7 @@
 			  update();
 			});*/
 
-			window.addEventListener('mousedown', function(evnt) {
+			/*window.addEventListener('mousedown', function(evnt) {
 			var parentOffset = $('#map').offset(); 
 			console.log(parentOffset);
 			var x = evnt.pageX-parentOffset.left, y = evnt.pageY-parentOffset.top, dx, dy; //finds the position of mouse from the left and top side of window
@@ -226,7 +242,7 @@
 			    }
 			  }
 			  move(evnt);
-			});
+			});*/
 
 			/*window.addEventListener('mouseup', function(evnt) {
 			  currentcorner = -1;
