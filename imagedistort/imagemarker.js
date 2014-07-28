@@ -12,4 +12,5 @@ L.ImageMarker = L.Marker.extend({
 			riseOnHover: true,
 			riseOffset: 250
 			}
+
 		});

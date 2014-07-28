@@ -31,7 +31,6 @@
             .corner {
               position: absolute;
               top: 0px; left: 0px;
-              border: 1px solid blue;
             }
 
         </style>
@@ -57,29 +56,18 @@
 		}).addTo(map);
 
 		
+		var imageUrl = 'aerialimage.jpg';
 
-		var marker = new L.ImageMarker([51.505, -0.09]).addTo(map);
-		console.log(marker._icon);
-		var imageUrl = 'aerialimage.jpg',
-		imageBounds = [[51.505, -0.09], [51.509, -0.079]];
-
-		var newimg= new L.DistortableImage(imageUrl, imageBounds);
-		console.log(newimg);
 		
-		 
-		 (newimg.bringToFront()).addTo(map);
-		 var a=newimg._image;
-		 console.log(a);
-
-		 xyz();
 		
-
-
 
 		var popup = L.popup();
 
 		function onMapClick(e) {
-		
+			popup
+        .setLatLng(e.latlng)
+        .setContent("You clicked the map at " + e.latlng.toString())
+        .openOn(map);
 			var p = map.latLngToLayerPoint(e.latlng);
 			console.log(p);
 			var x = p.x, y = p.y, dx, dy; //finds the position of mouse from the left and top side of window
@@ -180,7 +168,20 @@
 			  elt.style.transform = t;
 			}
 
+			var imageBounds=[];
 			corners = [100, 100, 300, 100, 100, 300, 300, 300];
+			for(var i=0; i<8; i=i+2)
+			{
+				var a=map.layerPointToLatLng([corners[i],corners[i+1]]);
+				var marker = new L.ImageMarker([a.lat, a.lng]).addTo(map);
+				imageBounds.push([a.lat,a.lng]);
+				var addidclass=marker._icon;
+				addidclass.id= "marker"+i;
+				addidclass.className = addidclass.className + " corner";
+			}
+
+			var newimg= new L.DistortableImage(imageUrl, imageBounds);
+			(newimg.bringToFront()).addTo(map);
 
 			function update() {
 			  var box = document.getElementById("img1");
@@ -190,7 +191,6 @@
 			    var elt = document.getElementById("marker" + i);
 			    elt.style.left = corners[i] + "px";
 			    elt.style.top = corners[i + 1] + "px";
-			    console.log(elt.style.left);
 			  }
 			}
 
@@ -202,13 +202,13 @@
 			}
 			currentcorner = -1;
 
-			window.addEventListener('load', function() {
+			/*window.addEventListener('load', function() {
 			  document.documentElement.style.margin="0px";
 			  document.documentElement.style.padding="0px";
 			  document.body.style.margin="0px";
 			  document.body.style.padding="0px";
 			  update();
-			});
+			});*/
 
 			window.addEventListener('mousedown', function(evnt) {
 			var parentOffset = $('#map').offset(); 
@@ -228,11 +228,12 @@
 			  move(evnt);
 			});
 
-			window.addEventListener('mouseup', function(evnt) {
+			/*window.addEventListener('mouseup', function(evnt) {
 			  currentcorner = -1;
-			})
+			})*/
 
-			window.addEventListener('mousemove', move);
+			//window.addEventListener('mousemove', move);
+			
 
 	</script>
 			

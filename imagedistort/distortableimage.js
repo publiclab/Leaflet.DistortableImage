@@ -3,8 +3,7 @@ L.DistortableImage= L.ImageOverlay.extend({
 		_initImage: function () {
 		var imageid="img" + c;
 		var img = this._image = L.DomUtil.create('img',
-		'leaflet-image-layer ' + (this._zoomAnimated ? 'leaflet-zoom-animated' : ''));
-		
+		'leaflet-image-layer ' +  'leaflet-zoom-animated');
 		img.onselectstart = L.Util.falseFn;
 		img.onmousemove = L.Util.falseFn;
 
@@ -14,6 +13,5 @@ L.DistortableImage= L.ImageOverlay.extend({
 		img.id="img"+ c;
 		c++;
 		},
-
 
 })
