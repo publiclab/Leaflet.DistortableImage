@@ -183,8 +183,12 @@
 				addidclass.className = addidclass.className + " corner";
 			}
 
+
 			var newimg= new L.DistortableImage(imageUrl, imageBounds);
+			console.log(newimg);
 			(newimg.bringToFront()).addTo(map);
+
+			newimg.setOpacity(0.2);
 
 			for (i in markers) {
                 markers[i].on('drag', update);
