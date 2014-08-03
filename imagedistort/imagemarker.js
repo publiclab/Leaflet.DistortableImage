@@ -1,7 +1,7 @@
 L.ImageMarker = L.Marker.extend({
 				options: {
 			pane: 'markerPane',
-			icon: new L.Icon({iconUrl:'ImageDistort/images/imarker.png'}),
+			icon: new L.Icon({iconUrl:'imagedistort/images/imarker.png'}),
 			// title: '',
 			// alt: '',
 			clickable: true,
