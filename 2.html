@@ -44,7 +44,6 @@
 	<script src="imagedistort/addcontrolpoints.js"></script>
 	<script src="imagedistort/opacity.js"></script>
 	<script src="imagedistort/imagedistort.js"></script>
-	<button type="button" id='#button' onclick="changeopacity()">Change opacity</button>
 
 	<script>
 
@@ -61,17 +60,23 @@
 		
 			var imageUrl = 'aerialimage.jpg';
 			var imageBounds=[];
-			
+			var markers=[];
 			corners = [100, 100, 300, 100, 100, 300, 300, 300];
 			for(var i=0; i<8; i=i+2)
 			{
 				var a=map.layerPointToLatLng([corners[i],corners[i+1]]);
+				var marker = new L.ImageMarker([a.lat, a.lng]).addTo(map);
+				markers.push(marker);
 				imageBounds.push([a.lat,a.lng]);
+				var addidclass=marker._icon;
+				addidclass.id= "marker"+i;
+				addidclass.className = addidclass.className + " corner";
 			}
-			
+
+
 			var newimg= new L.DistortableImage(imageUrl, imageBounds);
+			console.log(((newimg._bounds).__proto__).getSouthWest);
 			(newimg.bringToFront()).addTo(map);
-			
 			
 			
 			
@@ -79,7 +84,14 @@
 			console.log(draggable);
 			draggable.enable();
 			
+			draggable.on('drag', update);
 			
+			
+			for (i in markers) {
+                markers[i].on('drag', update);
+            	}
+
+
 	</script>
 			
 </html>
