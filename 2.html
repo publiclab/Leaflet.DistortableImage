@@ -78,7 +78,7 @@
 			console.log(((newimg._bounds).__proto__).getSouthWest);
 			(newimg.bringToFront()).addTo(map);
 			
-			
+			(newimg._image).style.border="solid #000";
 			
 			var draggable = new L.Draggable(newimg._image);
 			console.log(draggable);

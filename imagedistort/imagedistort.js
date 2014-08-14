@@ -1,7 +1,7 @@
 function update() {
 			  var box = document.getElementById("img1");
-			  console.log(box);
-
+			  
+		
 			  for(var i=0;i<4;i=i+1)
 			  {
 			  	var conv=map.latLngToContainerPoint(markers[i]._latlng);
@@ -10,52 +10,10 @@ function update() {
 			  }
 
 			  transform2d(box, corners[0], corners[1], corners[2], corners[3], corners[4], corners[5], corners[6], corners[7]);
-			  for (var i = 0; i != 8; i += 2) {
-			    var elt = document.getElementById("marker" + i);
-			    /*elt.style.left = corners[i] + "px";
-			    elt.style.top = corners[i + 1] + "px";*/
-			  }
+			  
 			}
 
-			/*function move(e) {
-			  if (currentcorner < 0) return;
-			  corners[currentcorner] = e.clientX;
-			  corners[currentcorner + 1] = e.clientY;
-			  update();
-			}
-			currentcorner = -1;*/
-
-			/*window.addEventListener('load', function() {
-			  document.documentElement.style.margin="0px";
-			  document.documentElement.style.padding="0px";
-			  document.body.style.margin="0px";
-			  document.body.style.padding="0px";
-			  update();
-			});*/
-
-			/*window.addEventListener('mousedown', function(evnt) {
-			var parentOffset = $('#map').offset(); 
-			console.log(parentOffset);
-			var x = evnt.pageX-parentOffset.left, y = evnt.pageY-parentOffset.top, dx, dy; //finds the position of mouse from the left and top side of window
-			  console.log(x,y);
-			  var best = 400; // 20px grab radius
-			  currentcorner = -1;
-			  for (var i = 0; i != 8; i += 2) {
-			    dx = x - corners[i];
-			    dy = y - corners[i + 1];
-			    if (best > dx*dx + dy*dy) {
-				 best = dx*dx + dy*dy;
-				 currentcorner = i;
-			    }
-			  }
-			  move(evnt);
-			});*/
-
-			/*window.addEventListener('mouseup', function(evnt) {
-			  currentcorner = -1;
-			})*/
-
-			//window.addEventListener('mousemove', move);
+			
 			
 			function adj(m) { // Compute the adjugate of m
 			  return [
@@ -64,6 +22,7 @@ function update() {
 			    m[3]*m[7]-m[4]*m[6], m[1]*m[6]-m[0]*m[7], m[0]*m[4]-m[1]*m[3]
 			  ];
 			}
+			
 			function multmm(a, b) { // multiply two matrices
 			  var c = Array(9);
 			  for (var i = 0; i != 3; ++i) {
@@ -77,6 +36,7 @@ function update() {
 			  }
 			  return c;
 			}
+			
 			function multmv(m, v) { // multiply matrix and vector
 			  return [
 			    m[0]*v[0] + m[1]*v[1] + m[2]*v[2],
@@ -84,10 +44,12 @@ function update() {
 			    m[6]*v[0] + m[7]*v[1] + m[8]*v[2]
 			  ];
 			}
+			
 			function pdbg(m, v) {
 			  var r = multmv(m, v);
 			  return r + " (" + r[0]/r[2] + ", " + r[1]/r[2] + ")";
 			}
+			
 			function basisToPoints(x1, y1, x2, y2, x3, y3, x4, y4) {
 			  var m = [
 			    x1, x2, x3,
@@ -101,6 +63,7 @@ function update() {
 			    0, 0, v[2]
 			  ]);
 			}
+			
 			function general2DProjection(
 			  x1s, y1s, x1d, y1d,
 			  x2s, y2s, x2d, y2d,
@@ -119,9 +82,7 @@ function update() {
 
 			function transform2d(elt, x1, y1, x2, y2, x3, y3, x4, y4) {
 			  var w = elt.offsetWidth, h = elt.offsetHeight;
-			  
-			  console.log(w,h);
-			  
+			  		  
 			  var t = general2DProjection
 			    (0, 0, x1, y1, w, 0, x2, y2, 0, h, x3, y3, w, h, x4, y4);
 			  for(i = 0; i != 9; ++i) t[i] = t[i]/t[8];
@@ -135,27 +96,4 @@ function update() {
 			  elt.style["-o-transform"] = t;
 			  elt.style.transform = t;
 			}
-			
-			/*function onMapClick(e) {
-			
-			var p = map.latLngToLayerPoint(e.latlng);
-			console.log(p);
-			var x = p.x, y = p.y, dx, dy; //finds the position of mouse from the left and top side of window
-			  console.log(x,y);
-			  var best = 400; // 20px grab radius
-			  currentcorner = -1;
-			  for (var i = 0; i != 8; i += 2) {
-			    dx = x - corners[i];
-			    dy = y - corners[i + 1];
-			    if (best > dx*dx + dy*dy) {
-				 best = dx*dx + dy*dy;
-				 console.log(best);
-				 currentcorner = i;
-				 console.log(currentcorner);
-			    }
-			  }
-			  move(e);
-		}
 		
-		map.on('click', onMapClick);
-		*/

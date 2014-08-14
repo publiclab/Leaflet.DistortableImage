@@ -72,6 +72,8 @@
 			var newimg= new L.DistortableImage(imageUrl, imageBounds);
 			(newimg.bringToFront()).addTo(map);
 			
+			console.log(newimg._image);
+			(newimg._image).style.border="solid #000";
 			
 			
 			
