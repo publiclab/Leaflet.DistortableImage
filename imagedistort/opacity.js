@@ -3,7 +3,7 @@
 			    clicked = !clicked;
 			    if(clicked)
 			    {
-				   newimg.setOpacity(0.5);
+				   newimg.setOpacity(0.7);
 			    }
 			    else
 			    {

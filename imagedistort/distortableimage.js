@@ -6,12 +6,10 @@ L.DistortableImage= L.ImageOverlay.extend({
 		'leaflet-image-layer ' +  'leaflet-zoom-animated');
 		img.onselectstart = L.Util.falseFn;
 		img.onmousemove = L.Util.falseFn;
-
 		img.onload = L.bind(this.fire, this, 'load');
 		img.src = this._url;
 		img.alt = this.options.alt;
-		img.id="img"+ c;
-		c++;
+		img.id="img"+c;
 		},
 
 })

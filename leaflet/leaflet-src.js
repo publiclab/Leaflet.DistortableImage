@@ -1038,122 +1038,38 @@ L.DomUtil = {
 		return false;
 	},
 
-	/* Removed for testing purposes.
 	getTranslateString: function (point) {
 		// on WebKit browsers (Chrome/Safari/iOS Safari/Android) using translate3d instead of translate
 		// makes animation smoother as it ensures HW accel is used. Firefox 13 doesn't care
 		// (same speed either way), Opera 12 doesn't support translate3d
-		
-		
+
 		var is3d = L.Browser.webkit3d,
 		    open = 'translate' + (is3d ? '3d' : '') + '(',
 		    close = (is3d ? ',0' : '') + ')';
 
-		return open + point.x + 'px,' + point.y + 'px' + close;
-	},*/
-
-	getTranslateString: function (point) {
-		// on WebKit browsers (Chrome/Safari/iOS Safari/Android) using translate3d instead of translate
-		// makes animation smoother as it ensures HW accel is used. Firefox 13 doesn't care
-		// (same speed either way), Opera 12 doesn't support translate3d
-		
-		
-		var is3d = L.Browser.webkit3d,
-		    open = 'translate' + (is3d ? '3d' : '') + '(',
-		    close = (is3d ? ',0' : '') + ')';
-		
 		return open + point.x + 'px,' + point.y + 'px' + close;
 	},
-	
+
 	getScaleString: function (scale, origin) {
 
 		var preTranslateStr = L.DomUtil.getTranslateString(origin.add(origin.multiplyBy(-1 * scale))),
 		    scaleStr = ' scale(' + scale + ') ';
-		console.log(preTranslateStr+scaleStr);
+
 		return preTranslateStr + scaleStr;
 	},
 
-	/*Removed for testing
-	
 	setPosition: function (el, point, disable3D) { // (HTMLElement, Point[, Boolean])
 
 		// jshint camelcase: false
 		el._leaflet_pos = point;
+
 		if (!disable3D && L.Browser.any3d) {
 			el.style[L.DomUtil.TRANSFORM] =  L.DomUtil.getTranslateString(point);
 		} else {
 			el.style.left = point.x + 'px';
 			el.style.top = point.y + 'px';
 		}
-	},*/
-	
-	setPosition: function (el, point, disable3D) { // (HTMLElement, Point[, Boolean])
-
-		// jshint camelcase: false
-		el._leaflet_pos = point;
-		if (!disable3D && L.Browser.any3d) {
-			var t;
-			var open = 'matrix3d(';
-			var close = ')';
-			//console.log(el.style[L.DomUtil.TRANSFORM]);
-			var temp=el.style[L.DomUtil.TRANSFORM];
-			
-			if (temp=="")
-			{
-				var res2=new Array();
-				for(var i=0;i<16;i++)
-				{
-					if(i%5==0){
-					res2[i]=1;}
-					else{
-					res2[i]=0;}
-				}
-				t=open;
-				for(var i=0;i<res2.length-1;i++)
-				{
-					t=t+res2[i]+',';
-				}
-				t=t+res2[15]+close;
-				el.style[L.DomUtil.TRANSFORM]=t;
-				el.style["-webkit-transform"] = t;
-				el.style["-moz-transform"] = t;
-				el.style["-o-transform"] = t;
-				el.style.transform = t;
-			}
-			var a=(el.style[L.DomUtil.TRANSFORM]);
-			var alength=a.length;
-			var b=a.substring(9,alength-1);
-			//console.log(b);
-			var res = b.split(",");
-			    for(i in res){
-			    res[i]= parseFloat(res[i]);
-			    }
-			res[12]=point.x;
-			res[13]=point.y;
-			res[0]=res[0]*1;
-			res[5]=res[5]*1;
-			res[10]=res[10]*1;
-			
-			t=open;
-			for(var i=0;i<res.length-1;i++)
-			{
-				t=t+res[i]+',';
-			}
-			t=t+res[15]+close;
-			//console.log(t);
-		
-			el.style[L.DomUtil.TRANSFORM]=t;
-			el.style["-webkit-transform"] = t;
-			el.style["-moz-transform"] = t;
-			el.style["-o-transform"] = t;
-			el.style.transform = t;
-			//el.style[L.DomUtil.TRANSFORM] =  L.DomUtil.getTranslateString(point);
-		} else {
-			el.style.left = point.x + 'px';
-			el.style.top = point.y + 'px';
-		}
 	},
-
 
 	getPosition: function (el) {
 		// this method is only used for elements previously positioned using setPosition,
@@ -3340,11 +3256,11 @@ L.ImageOverlay = L.Class.extend({
 	_initImage: function () {
 		this._image = L.DomUtil.create('img', 'leaflet-image-layer');
 
-		/*if (this._map.options.zoomAnimation && L.Browser.any3d) {
+		if (this._map.options.zoomAnimation && L.Browser.any3d) {
 			L.DomUtil.addClass(this._image, 'leaflet-zoom-animated');
 		} else {
 			L.DomUtil.addClass(this._image, 'leaflet-zoom-hide');
-		}*/
+		}
 
 		this._updateOpacity();
 
@@ -3358,7 +3274,6 @@ L.ImageOverlay = L.Class.extend({
 		});
 	},
 
-	/* Removed for testing purposes
 	_animateZoom: function (e) {
 		var map = this._map,
 		    image = this._image,
@@ -3369,53 +3284,9 @@ L.ImageOverlay = L.Class.extend({
 		    topLeft = map._latLngToNewLayerPoint(nw, e.zoom, e.center),
 		    size = map._latLngToNewLayerPoint(se, e.zoom, e.center)._subtract(topLeft),
 		    origin = topLeft._add(size._multiplyBy((1 / 2) * (1 - 1 / scale)));
-		console.log(image.style[L.DomUtil.TRANSFORM]);
+
 		image.style[L.DomUtil.TRANSFORM] =
 		        L.DomUtil.getTranslateString(origin) + ' scale(' + scale + ') ';
-	},
-	*/
-	
-	_animateZoom: function (e) {
-		var map = this._map,
-		    image = this._image,
-		    scale = map.getZoomScale(e.zoom),
-		    nw = this._bounds.getNorthWest(),
-		    se = this._bounds.getSouthEast(),
-
-		    topLeft = map._latLngToNewLayerPoint(nw, e.zoom, e.center),
-		    size = map._latLngToNewLayerPoint(se, e.zoom, e.center)._subtract(topLeft),
-		    origin = topLeft._add(size._multiplyBy((1 / 2) * (1 - 1 / scale)));
-		console.log(image.style[L.DomUtil.TRANSFORM]);
-		var a=(image.style[L.DomUtil.TRANSFORM]);
-		var alength=a.length;
-		var b=a.substring(9,alength-1);
-		console.log(b);
-		var res = b.split(",");
-		    for(i in res){
-		    res[i]= parseFloat(res[i]);
-		    }
-		//res[12]=origin.x;
-		//res[13]=origin.y;
-		//res[0]=res[0]*scale;
-		//res[5]=res[5]*scale;
-		//res[10]=res[10]*scale;
-		open = 'matrix3d(',
-		close = ')';
-		t=open;
-		for(var i=0;i<res.length-1;i++)
-		{
-			t=t+res[i]+','
-		}
-		t=t+res[15]+close;
-		console.log(t);
-		
-		image.style[L.DomUtil.TRANSFORM]=t;
-		image.style["-webkit-transform"] = t;
-		image.style["-moz-transform"] = t;
-		image.style["-o-transform"] = t;
-		image.style.transform = t;
-		console.log(L.DomUtil.getTranslateString(origin) + ' scale(' + scale + ') ');
-		//image.style[L.DomUtil.TRANSFORM] = L.DomUtil.getTranslateString(origin) + ' scale(' + scale + ') ';
 	},
 
 	_reset: function () {
@@ -4914,85 +4785,16 @@ L.Map.include({
 		}
 	},
 
-	/*Removed for testing
 	_animatePathZoom: function (e) {
 		var scale = this.getZoomScale(e.zoom),
 		    offset = this._getCenterOffset(e.center)._multiplyBy(-scale)._add(this._pathViewport.min);
 
-		console.log(L.DomUtil.getTranslateString(offset) + ' scale(' + scale + ') ');
-		
-		this._pathRoot.style[L.DomUtil.TRANSFORM] = L.DomUtil.getTranslateString(offset) + ' scale(' + scale + ') ';
-
-		this._pathZooming = true;
-	},*/
-
-	_animatePathZoom: function (e) {
-		var scale = this.getZoomScale(e.zoom),
-		    offset = this._getCenterOffset(e.center)._multiplyBy(-scale)._add(this._pathViewport.min);
-
-		console.log(L.DomUtil.getTranslateString(offset) + ' scale(' + scale + ') ');
-		var t;
-			var open = 'matrix3d(';
-			var close = ')';
-			console.log(el.style[L.DomUtil.TRANSFORM]);
-			var temp=this._pathRoot.style[L.DomUtil.TRANSFORM];
-			
-			if (temp=="")
-			{
-				var res2=new Array();
-				for(var i=0;i<16;i++)
-				{
-					if(i%5==0){
-					res2[i]=1;}
-					else{
-					res2[i]=0;}
-				}
-				t=open;
-				for(var i=0;i<res2.length-1;i++)
-				{
-					t=t+res2[i]+',';
-				}
-				t=t+res2[15]+close;
-				el.style[L.DomUtil.TRANSFORM]=t;
-				el.style["-webkit-transform"] = t;
-			  	el.style["-moz-transform"] = t;
-			  	el.style["-o-transform"] = t;
-			  	el.style.transform = t;
-			}
-			var a=(el.style[L.DomUtil.TRANSFORM]);
-			var alength=a.length;
-			var b=a.substring(9,alength-1);
-			console.log(b);
-			var res = b.split(",");
-			    for(i in res){
-			    res[i]= parseFloat(res[i]);
-			    }
-			res[12]=offset.x;
-			res[13]=offset.y;
-			//res[0]=res[0]*scale;
-			//res[5]=res[5]*scale;
-			//res[10]=res[10]*scale;
-			
-			t=open;
-			for(var i=0;i<res.length-1;i++)
-			{
-				t=t+res[i]+',';
-			}
-			t=t+res[15]+close;
-			console.log(t);
-			
-			console.log(L.DomUtil.getTranslateString(offset) + ' scale(' + scale + ') ');
-			this._pathRoot.style[L.DomUtil.TRANSFORM]=t;
-			this._pathRoot.style["-webkit-transform"] = t;
-			this._pathRoot.style["-moz-transform"] = t;
-			this._pathRoot.style["-o-transform"] = t;
-			this._pathRoot.style.transform = t;
-		//this._pathRoot.style[L.DomUtil.TRANSFORM] = L.DomUtil.getTranslateString(offset) + ' scale(' + scale + ') ';
-
+		this._pathRoot.style[L.DomUtil.TRANSFORM] =
+		        L.DomUtil.getTranslateString(offset) + ' scale(' + scale + ') ';
 
 		this._pathZooming = true;
 	},
-	
+
 	_endPathZoom: function () {
 		this._pathZooming = false;
 	},
@@ -9173,101 +8975,20 @@ L.Map.include(!L.DomUtil.TRANSITION ? {} : {
 */
 
 L.TileLayer.include({
-	
-	/* Removed for testing purposes
 	_animateZoom: function (e) {
 		if (!this._animating) {
 			this._animating = true;
 			this._prepareBgBuffer();
 		}
-		
-		console.log(L.DomUtil.TRANSFORM);
-		var bg = this._bgBuffer,		    
+
+		var bg = this._bgBuffer,
 		    transform = L.DomUtil.TRANSFORM,
 		    initialTransform = e.delta ? L.DomUtil.getTranslateString(e.delta) : bg.style[transform],
 		    scaleStr = L.DomUtil.getScaleString(e.scale, e.origin);
-		console.log(bg);
-		console.log(e.backwards ?
-				scaleStr + ' ' + initialTransform :
-				initialTransform + ' ' + scaleStr);
+
 		bg.style[transform] = e.backwards ?
 				scaleStr + ' ' + initialTransform :
 				initialTransform + ' ' + scaleStr;
-	},*/
-	
-	_animateZoom: function (e) {
-		if (!this._animating) {
-			this._animating = true;
-			this._prepareBgBuffer();
-		}
-		
-		console.log(L.DomUtil.TRANSFORM);
-		var bg = this._bgBuffer,		    
-		    transform = L.DomUtil.TRANSFORM,
-		    initialTransform = e.delta ? L.DomUtil.getTranslateString(e.delta) : bg.style[transform],
-		    scaleStr = L.DomUtil.getScaleString(e.scale, e.origin);
-		    console.log(e.origin);
-		    console.log(scaleStr);
-		    console.log(initialTransform);
-		    console.log(e.delta);
-		origin=e.origin;
-		scale=e.scale;
-		console.log(bg);
-		var t;
-			var open = 'matrix3d(';
-			var close = ')';
-			console.log(bg.style[L.DomUtil.TRANSFORM]);
-			var temp=bg.style[L.DomUtil.TRANSFORM];
-			
-			if (temp=="")
-			{
-				var res2=new Array();
-				for(var i=0;i<16;i++)
-				{
-					if(i%5==0){
-					res2[i]=1;}
-					else{
-					res2[i]=0;}
-				}
-				t=open;
-				for(var i=0;i<res2.length-1;i++)
-				{
-					t=t+res2[i]+',';
-				}
-				t=t+res2[15]+close;
-				bg.style[L.DomUtil.TRANSFORM]=t;
-				bg.style[transform] = t;
-				bg.style["-webkit-transform"] = t;
-				bg.style["-moz-transform"] = t;
-				bg.style["-o-transform"] = t;
-			
-			}
-			var a=(bg.style[L.DomUtil.TRANSFORM]);
-			var alength=a.length;
-			var b=a.substring(9,alength-1);
-			console.log(b);
-			var res = b.split(",");
-			    for(i in res){
-			    res[i]= parseFloat(res[i]);
-			    }
-			res[12]=((origin).add(origin.multiplyBy(-1 * scale))).x;
-			res[13]=((origin).add(origin.multiplyBy(-1 * scale))).y;
-			//res[0]=res[0]*e.scale;
-			//res[5]=res[5]*e.scale;
-			//res[10]=res[10]*e.scale;
-			
-			t=open;
-			for(var i=0;i<res.length-1;i++)
-			{
-				t=t+res[i]+',';
-			}
-			t=t+res[15]+close;
-		
-			bg.style[transform] = t;
-			bg.style["-webkit-transform"] = t;
-			bg.style["-moz-transform"] = t;
-			bg.style["-o-transform"] = t;
-			
 	},
 
 	_endZoomAnim: function () {

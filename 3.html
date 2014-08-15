@@ -15,6 +15,8 @@
 	<script src="imagedistort/addcontrolpoints.js"></script>
 	<script src="imagedistort/opacity.js"></script>
 	<script src="imagedistort/outline.js"></script>
+	<script src="imagedistort/rotate.js"></script>
+	<script src="imagedistort/scale.js"></script>
 	<script src="imagedistort/imagedistort.js"></script>
 	<script src="easybutton.js" type="text/javascript" charset="utf-8"></script>
 
@@ -31,10 +33,11 @@
               position: absolute;
               top: 0px;
               left: 0px;
-              transform-origin: 0 0;
-              -webkit-transform-origin: 0 0;
-              -moz-transform-origin: 0 0;
-              -o-transform-origin: 0 0;
+              transform-origin: center;
+              -webkit-transform-origin: center;
+              -moz-transform-origin: center;
+              -o-transform-origin: center;
+              
             }
             
             .corner {
@@ -52,7 +55,51 @@
 		position:absolute; 
 		top:-100px;
 		}
-
+		
+		.input-wrap {
+		  background-color:white;
+		  border-radius:5px;
+		  position:absolute;
+		  min-width:255px;
+		  
+		  left: 60px;
+		  color:#484848;
+		  height:27px;
+		}
+		
+		.input-wrap2 {
+		  background-color:white;
+		  border-radius:5px;
+		  position:absolute;
+		  min-width:255px;
+		  
+		  left: 60px;
+		  color:#484848;
+		  height:27px;
+		}
+		
+		#ip1{
+		top: 147px;
+		}
+		
+		#ip2{
+		top: 182px;
+		}
+		
+		#sliderZ1{
+		float:left;
+		}
+		
+		#sliderZ2{
+		float:left;
+		}
+		
+		
+		.opt {
+		float:left;
+		margin:5px;
+		}
+		
         </style>
 </head>
 <body>
@@ -62,8 +109,16 @@
 	</form>
 	<div id="map" style="width:100%; height:100%; position:absolute; top:0;"></div>
 	
-
-
+	<div class="input-wrap" id='ip1' style="display:none">
+     <input type="range" id="sliderZ1" min="-180" max="180" value="0" onchange="rangevalueZ1.value=value"/>
+     <span class='opt'><output id="rangevalueZ1">0deg</output></span>
+  	</div>
+	
+	<div class="input-wrap2" id='ip2' style="display:none">
+     <input type="range" id="sliderZ2" min="10" max="200" value="10"/>
+     <span class='opt'><output id="rangevalueZ2">1</output></span>
+  	</div>
+	
 	<script>
 
 		var map = new L.map('map').setView([51.505, -0.09], 13);
@@ -80,7 +135,9 @@
 			id: 'examples.map-i86knfo3'
 		}).addTo(map);
 
-
+		map.touchZoom.disable();
+		map.doubleClickZoom.disable();
+		map.scrollWheelZoom.disable();
 			
           L.easyButton('fa-file-image-o', 
               function (){
@@ -95,12 +152,35 @@
                 },
              'Toggle Image Transparency'
             );
-          
-          L.easyButton('fa-circle-o', 
-             function (){
-                outline();
-                },
-             'Outline'
+            
+          L.easyButton('fa-refresh', 
+             function(){
+		    if (state){
+		    $('.input-wrap').show();
+			   state=false;
+			   }
+			   else{
+		    $('.input-wrap').hide();
+			    state=true;
+        			}
+        		rotate('img1');
+        		},
+             'Rotate Image'
+            );
+            
+          L.easyButton('fa-arrows-alt', 
+             function(){
+		    if (state2){
+		    $('.input-wrap2').show();
+			   state2=false;
+			   }
+			   else{
+		    $('.input-wrap2').hide();
+			   state2=true;
+        			}
+        		scale('img1');
+        		},
+             'Scale Image'
             );
           
           L.easyButton('fa-bitbucket', 
@@ -111,8 +191,6 @@
                 },
              'Delete Image'
             );
-            
-          
             
           $(":file").change(function () {
         	if (this.files && this.files[0]) {
@@ -129,37 +207,13 @@
 			for(var i=0; i<8; i=i+2)
 			{
 				var a=map.layerPointToLatLng([corners[i],corners[i+1]]);
-				var marker = new L.ImageMarker([a.lat, a.lng]).addTo(map);
-				markers.push(marker);
 				imageBounds.push([a.lat,a.lng]);
-				var addidclass=marker._icon;
-				addidclass.id= "marker"+i;
-				addidclass.className = addidclass.className + " corner";
+				
 			}
 			
 			newimg= new L.DistortableImage(e.target.result, imageBounds);
 			(newimg.bringToFront()).addTo(map);
 			
-			draggable = new L.Draggable(newimg._image);
-			draggable.enable();
-			
-			draggable.on('dragend', function(e){
-				var target=e.target;
-			  	for(var i=0;i<4;i=i+1)
-				  {
-				  	var htmlpos= map.latLngToContainerPoint(markers[i]._latlng);
-				  	htmlpos.x=htmlpos.x - (target._startPos).x + (target._newPos).x;
-				  	htmlpos.y=htmlpos.y - (target._startPos).y + (target._newPos).y;
-				  	var mappos= map.containerPointToLatLng(htmlpos);
-				  	markers[i].setLatLng(mappos);
-				  }
-				}
-			);
-			
-			
-			for (i in markers) {
-                markers[i].on('drag', update);
-            	}
 		    
 		};
 			
