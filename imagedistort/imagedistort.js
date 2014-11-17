@@ -1,17 +1,107 @@
+/*
 
-// update the css transform of the image
-function update() {
-  var box = document.getElementById("imgdistort");
-  
-  for(var i=0;i<4;i=i+1)
-  {
-    var conv = map.latLngToContainerPoint(markers[i]._latlng);
-    corners[i*2] = conv.x;
-    corners[i*2+1] = conv.y;
+Needs methods and variables ported into the $L namespace
+
+*/
+
+var imageBounds=[];
+var markers=[];
+var draggable={};
+var newimg;
+
+$L = {
+
+  initialize: function() {
+    // disable default Leaflet click interactions
+    map.touchZoom.disable();
+    map.doubleClickZoom.disable();
+    map.scrollWheelZoom.disable();
+
+    // upload button
+    L.easyButton('fa-file-image-o', 
+      function (){
+        $("#inputimage").click();
+      },
+      'Upload image'
+    );
+      
+    // transparency button
+    L.easyButton('fa-adjust', 
+       function (){
+         changeopacity();
+       },
+      'Toggle Image Transparency'
+    );
+    
+    // outline button
+    L.easyButton('fa-square-o', 
+      function (){
+        outline();
+      },
+      'Outline'
+    );
+          
+    // delete button
+    L.easyButton('fa-bitbucket', 
+      function (){
+        map.removeLayer(newimg);
+        for(var i=0; i<4; i++)
+        map.removeLayer(markers[i]);
+      },
+     'Delete Image'
+    );
+
+    // file observer
+    $(":file").change(function () {
+      if (this.files && this.files[0]) {
+        var reader = new FileReader();
+        reader.onload = imageIsLoaded;
+        reader.readAsDataURL(this.files[0]);
+      }
+    });
+    
+    // set up basic behaviors once the image is loaded
+    function imageIsLoaded(e) {
+      $('#myImg').attr('src', e.target.result);
+      corners = [300, 200, 500, 200, 300, 400, 500, 400];
+      for(var i = 0; i < 8; i = i+2) {
+        var a = map.layerPointToLatLng([corners[i],corners[i+1]]);
+        var marker = new L.ImageMarker([a.lat, a.lng]).addTo(map);
+        markers.push(marker);
+        imageBounds.push([a.lat,a.lng]);
+        var addidclass = marker._icon;
+        addidclass.id= "marker"+i;
+        addidclass.className = addidclass.className + " corner";
+      }
+      
+      newimg= new L.DistortableImage(e.target.result, imageBounds);
+      newimg.bringToFront().addTo(map);
+
+      // enable dragging
+      draggable = new L.Draggable(newimg._image);
+      draggable.enable();
+      // need to update points after drag
+      // perhaps define points relative to image location, or measure relative offset of drag, and apply to points    
+ 
+      for (i in markers) {
+        markers[i].on('drag', $L.update);
+      }
+        
+    }
+  },
+
+  // update the css transform of the image
+  update: function() {
+    var box = document.getElementById("imgdistort");
+    
+    for (var i=0;i<4;i=i+1) {
+      var conv = map.latLngToContainerPoint(markers[i]._latlng);
+      corners[i*2] = conv.x;
+      corners[i*2+1] = conv.y;
+    }
+ 
+    transform2d(box, corners[0], corners[1], corners[2], corners[3], corners[4], corners[5], corners[6], corners[7]);
   }
-
-  transform2d(box, corners[0], corners[1], corners[2], corners[3], corners[4], corners[5], corners[6], corners[7]);
-  
 }
 
 // Compute the adjugate of m
@@ -98,4 +188,67 @@ function transform2d(elt, x1, y1, x2, y2, x3, y3, x4, y4) {
   elt.style["-o-transform"] = t;
   elt.style.transform = t;
 }
+
+var outlined = false;
+function outline(){
+  outlined = !outlined;
+  if (outlined) {
+    newimg.setOpacity(0.2);
+    $('#imgdistort').css('border','2px solid black');
+  } else {
+    newimg.setOpacity(1);;
+    $('#imgdistort').css('border', '');
+  }
+};
+
+var opaque = false;
+function changeopacity(){
+  opaque = !opaque;
+  if (opaque) {
+    newimg.setOpacity(0.7);
+  } else {
+    newimg.setOpacity(1);
+  }
+};
+
+// add corner control points
+// needs refactoring for multiple images
+function xyz(){       
+  $( "#imgdistort" ).after( "<div id='marker0' class='corner'>TL</div>");
+  $( "#marker0" ).after('<div id="marker2" class="corner">TR</div>');
+  $( "#marker2" ).after('<div id="marker4" class="corner">BL</div>');
+  $( "#marker4" ).after('<div id="marker6" class="corner">BR</div>');
+  $('#imgdistort').wrapAll('<div id="box">');
+  $('#box, .corner').wrapAll('<div id="imgcontainer">');
+};
+
+L.DistortableImage= L.ImageOverlay.extend({
+  _initImage: function () {
+    var imageid = "imgdistort";
+    var img = this._image = L.DomUtil.create('img',
+    'leaflet-image-layer ' +  'leaflet-zoom-animated');
+    img.onselectstart = L.Util.falseFn;
+    img.onmousemove = L.Util.falseFn;
+    img.onload = L.bind(this.fire, this, 'load');
+    img.src = this._url;
+    img.alt = this.options.alt;
+    img.id = "imgdistort";
+  },
+})
+
+L.ImageMarker = L.Marker.extend({
+  options: {
+    pane: 'markerPane',
+    icon: new L.Icon({iconUrl:'imagedistort/images/imarker.png'}),
+    // title: '',
+    // alt: '',
+    clickable: true,
+    draggable: true,
+    keyboard: true,
+    zIndexOffset: 0,
+    opacity: 1,
+    riseOnHover: true,
+    riseOffset: 250
+  }
+});
 

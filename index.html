@@ -11,22 +11,12 @@
   <link rel="stylesheet" href="leaflet/leaflet.css" type="text/css" media="screen" title="no title" charset="utf-8">
 
   <link rel="stylesheet" href="imagedistort.css" type="text/css" media="screen" title="no title" charset="utf-8">
-
   <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
-  <script src="imagedistort/imagemarker.js"></script>
-  <script src="imagedistort/distortableimage.js"></script>
-  <script src="imagedistort/addcontrolpoints.js"></script>
-  <script src="imagedistort/opacity.js"></script>
-  <script src="imagedistort/outline.js"></script>
-  <script src="imagedistort/imagedistort.js"></script>
   <script src="easybutton.js" type="text/javascript" charset="utf-8"></script>
-
-  <style type="text/css">
-    body { margin:0; }
-  </style>
+  <script src="imagedistort/imagedistort.js"></script>
 
 </head>
-<body>
+<body style="margin:0;">
 
   <form id="test_form" >
     <input type="file" id="inputimage" accept="image/*">
@@ -37,77 +27,26 @@
 
   <script>
 
-    var map = new L.map('map').setView([51.505, -0.09], 13);
-    var imageBounds=[];
-    var markers=[];
-    var draggable={};
-    var newimg;
+    var map
 
-    L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.png', {
-      maxZoom: 18,
-      attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-        '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-        'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-      id: 'examples.map-i86knfo3'
-    }).addTo(map);
-    
-    map.touchZoom.disable();
-    map.doubleClickZoom.disable();
-    map.scrollWheelZoom.disable();
+    (function(){
 
-    L.easyButton('fa-file-image-o', 
-      function (){
-        $("#inputimage").click();
-      },
-      'Upload image'
-    );
-      
-    L.easyButton('fa-adjust', 
-       function (){
-         changeopacity();
-       },
-      'Toggle Image Transparency'
-    );
-    
-    
-    L.easyButton('fa-bitbucket', 
-      function (){
-        map.removeLayer(newimg);
-        for(var i=0; i<4; i++)
-        map.removeLayer(markers[i]);
-      },
-     'Delete Image'
-    );
+      // basic Leaflet map setup
+      map = new L.map('map').setView([51.505, -0.09], 13);
+      L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+          '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+          'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+        id: 'examples.map-i86knfo3'
+      }).addTo(map);
 
-    $(":file").change(function () {
-      if (this.files && this.files[0]) {
-        var reader = new FileReader();
-        reader.onload = imageIsLoaded;
-        reader.readAsDataURL(this.files[0]);
-      }
-    });
-    
-    function imageIsLoaded(e) {
-      $('#myImg').attr('src', e.target.result);
-      corners = [300, 200, 500, 200, 300, 400, 500, 400];
-      for(var i = 0; i < 8; i = i+2) {
-        var a=map.layerPointToLatLng([corners[i],corners[i+1]]);
-        var marker = new L.ImageMarker([a.lat, a.lng]).addTo(map);
-        markers.push(marker);
-        imageBounds.push([a.lat,a.lng]);
-        var addidclass=marker._icon;
-        addidclass.id= "marker"+i;
-        addidclass.className = addidclass.className + " corner";
-      }
+      $L.initialize() // startup the imagedistort plugin
+
+      // not sure if this is important?
+      // $("#imgdistort" ).wrap( "<div id='bordered'></div>" ); 
       
-      newimg= new L.DistortableImage(e.target.result, imageBounds);
-      (newimg.bringToFront()).addTo(map);
-      
-      for (i in markers) {
-        markers[i].on('drag', update);
-      }
-        
-    };
+    })()
       
   </script>
       
