@@ -1,4 +1,4 @@
-var clicked=false;
+var clicked = false;
 function changeopacity(){
   clicked = !clicked;
   if (clicked) {

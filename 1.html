@@ -1,149 +1,142 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Leaflet Quick Start Guide Example</title>
-	<meta charset="utf-8" />
+  <title>Leaflet Quick Start Guide Example</title>
+  <meta charset="utf-8" />
 
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<script src="leaflet/leaflet-src.js" type="text/javascript" charset="utf-8"></script>
-	<link href="http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css" rel="stylesheet">
-	<link rel="stylesheet" href="leaflet/leaflet.css" type="text/css" media="screen" title="no title" charset="utf-8">
-	<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
-	<script src="imagedistort/imagemarker.js"></script>
-	<script src="imagedistort/distortableimage.js"></script>
-	<script src="imagedistort/addcontrolpoints.js"></script>
-	<script src="imagedistort/opacity.js"></script>
-	<script src="imagedistort/outline.js"></script>
-	<script src="imagedistort/imagedistort.js"></script>
-	<script src="easybutton.js" type="text/javascript" charset="utf-8"></script>
+  <script src="leaflet/leaflet-src.js" type="text/javascript" charset="utf-8"></script>
+  <link href="http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css" rel="stylesheet">
+  <link rel="stylesheet" href="leaflet/leaflet.css" type="text/css" media="screen" title="no title" charset="utf-8">
+  <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+  <script src="imagedistort/imagemarker.js"></script>
+  <script src="imagedistort/distortableimage.js"></script>
+  <script src="imagedistort/addcontrolpoints.js"></script>
+  <script src="imagedistort/opacity.js"></script>
+  <script src="imagedistort/outline.js"></script>
+  <script src="imagedistort/imagedistort.js"></script>
+  <script src="easybutton.js" type="text/javascript" charset="utf-8"></script>
 
-	<style type="text/css">
+  <style type="text/css">
             
-            #imgcontainer {
-              position:relative;
-              width: 100%;
-              height: 100%;
-              overflow: clip;
-            }
+    #imgcontainer {
+      position:relative;
+      width: 100%;
+      height: 100%;
+      overflow: clip;
+    }
 
-            #img1 {
-              position: absolute;
-              top: 0px;
-              left: 0px;
-              transform-origin: 0 0;
-              -webkit-transform-origin: 0 0;
-              -moz-transform-origin: 0 0;
-              -o-transform-origin: 0 0;
-            }
-            
-            .corner {
-              position: absolute;
-              top: 0px; left: 0px;
-            }
-            
-            #map{
-            	border: 2px solid;
-            }
-            
-            	
-		#inputimage
-		{
-		position:absolute; 
-		top:-100px;
-		}
+    #imgdistort {
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      transform-origin: 0 0;
+      -webkit-transform-origin: 0 0;
+      -moz-transform-origin: 0 0;
+      -o-transform-origin: 0 0;
+    }
+    
+    .corner {
+      position: absolute;
+      top: -10px; left: -10px;
+    }
+    
+    #map {
+      border: 2px solid;
+    }
+    
+    #inputimage {
+      position:absolute; 
+      top:-100px;
+    }
 
-        </style>
+  </style>
+
 </head>
 <body>
-	<form id="test_form" >
-	  <input type="file" id="inputimage" accept="image/*">
-	  <img id="myImg" src="#" alt="your image" />
-	</form>
-	<div id="map" style="width:100%; height:100%; position:absolute; top:0;"></div>
-	
 
+  <form id="test_form" >
+    <input type="file" id="inputimage" accept="image/*">
+    <img id="myImg" src="#" alt="your image" />
+  </form>
 
-	<script>
+  <div id="map" style="width:100%; height:100%; position:absolute; top:0;"></div>
 
-		var map = new L.map('map').setView([51.505, -0.09], 13);
-		var imageBounds=[];
-		var markers=[];
-		var draggable={};
-		var newimg;
+  <script>
 
-		L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.png', {
-			maxZoom: 18,
-			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-				'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-				'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-			id: 'examples.map-i86knfo3'
-		}).addTo(map);
-		
-		map.touchZoom.disable();
-		map.doubleClickZoom.disable();
-		map.scrollWheelZoom.disable();
+    var map = new L.map('map').setView([51.505, -0.09], 13);
+    var imageBounds=[];
+    var markers=[];
+    var draggable={};
+    var newimg;
 
-          L.easyButton('fa-file-image-o', 
-              function (){
-                $("#inputimage").click();
-                },
-             'Upload image'
-            );
-            
-         	L.easyButton('fa-adjust', 
-              function (){
-                changeopacity();
-                },
-             'Toggle Image Transparency'
-            );
-       
-          
-          L.easyButton('fa-bitbucket', 
-              function (){
-                map.removeLayer(newimg);
-                for(var i=0; i<4; i++)
-                map.removeLayer(markers[i]);
-                },
-             'Delete Image'
-            );
-            
-          
-            
-          $(":file").change(function () {
-        	if (this.files && this.files[0]) {
-            var reader = new FileReader();
-            reader.onload = imageIsLoaded;
-            reader.readAsDataURL(this.files[0]);
-        		}
-		});
-		
-		
-		function imageIsLoaded(e) {
-		    $('#myImg').attr('src', e.target.result);
-			corners = [300, 200, 500, 200, 300, 400, 500, 400];
-			for(var i=0; i<8; i=i+2)
-			{
-				var a=map.layerPointToLatLng([corners[i],corners[i+1]]);
-				var marker = new L.ImageMarker([a.lat, a.lng]).addTo(map);
-				markers.push(marker);
-				imageBounds.push([a.lat,a.lng]);
-				var addidclass=marker._icon;
-				addidclass.id= "marker"+i;
-				addidclass.className = addidclass.className + " corner";
-			}
-			
-			newimg= new L.DistortableImage(e.target.result, imageBounds);
-			(newimg.bringToFront()).addTo(map);
-			
-			
-			
-			for (i in markers) {
-                markers[i].on('drag', update);
-            	}
-		    
-		};
-			
-	</script>
-			
+    L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+        '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+        'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+      id: 'examples.map-i86knfo3'
+    }).addTo(map);
+    
+    map.touchZoom.disable();
+    map.doubleClickZoom.disable();
+    map.scrollWheelZoom.disable();
+
+    L.easyButton('fa-file-image-o', 
+      function (){
+        $("#inputimage").click();
+      },
+      'Upload image'
+    );
+      
+    L.easyButton('fa-adjust', 
+       function (){
+         changeopacity();
+       },
+      'Toggle Image Transparency'
+    );
+    
+    
+    L.easyButton('fa-bitbucket', 
+      function (){
+        map.removeLayer(newimg);
+        for(var i=0; i<4; i++)
+        map.removeLayer(markers[i]);
+      },
+     'Delete Image'
+    );
+
+    $(":file").change(function () {
+      if (this.files && this.files[0]) {
+        var reader = new FileReader();
+        reader.onload = imageIsLoaded;
+        reader.readAsDataURL(this.files[0]);
+      }
+    });
+    
+    function imageIsLoaded(e) {
+      $('#myImg').attr('src', e.target.result);
+      corners = [300, 200, 500, 200, 300, 400, 500, 400];
+      for(var i = 0; i < 8; i = i+2) {
+        var a=map.layerPointToLatLng([corners[i],corners[i+1]]);
+        var marker = new L.ImageMarker([a.lat, a.lng]).addTo(map);
+        markers.push(marker);
+        imageBounds.push([a.lat,a.lng]);
+        var addidclass=marker._icon;
+        addidclass.id= "marker"+i;
+        addidclass.className = addidclass.className + " corner";
+      }
+      
+      newimg= new L.DistortableImage(e.target.result, imageBounds);
+      (newimg.bringToFront()).addTo(map);
+      
+      for (i in markers) {
+        markers[i].on('drag', update);
+      }
+        
+    };
+      
+  </script>
+      
 </html>
