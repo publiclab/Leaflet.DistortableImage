@@ -181,12 +181,18 @@ L.DistortableImage = L.ImageOverlay.extend({
 
     // we should switch this to accept lat/lngs
     this.corners = corners;
+    this.defaultZoom = map._zoom; // the zoom level at the time the image was created
     this.opaque = false;
     this.outlined = false;
     this._url = url;
     this._bounds = L.latLngBounds(bounds);// (LatLngBounds, Object)
     this.initialPos = map.latLngToContainerPoint(this._bounds._northEast)
-    this.updatePoints = this.updatePoints // weird, but this lets instances of DistorableImage retain the update() method. 
+
+    // weird, but this lets instances of DistorableImage 
+    // retain the updatePoints() and other methods:
+    this.updatePoints = this.updatePoints 
+    this.updateCorners = this.updateCorners
+    this.updateBounds = this.updateBounds
 
     for (i in $L.markers) {
       $L.markers[i].on('drag', this.distort);
@@ -214,10 +220,43 @@ L.DistortableImage = L.ImageOverlay.extend({
     // offsets from translating image around
     var orix = this.parentImage.initialPos.x-map.latLngToContainerPoint(this.parentImage._bounds._northEast).x
     var oriy = this.parentImage.initialPos.y-map.latLngToContainerPoint(this.parentImage._bounds._northEast).y
+
+    // adjust for scale, partially working
+    orix /= Math.pow(map._zoom-this.parentImage.defaultZoom-1,2)
+    oriy /= Math.pow(map._zoom-this.parentImage.defaultZoom-1,2)
+
     var conv = map.latLngToContainerPoint(this._latlng);
+    //this.parentImage.updateCorners.apply(this.parentImage)
+    // corners are x,y
     this.parentImage.corners[this.orderId] = conv.x+orix;
     this.parentImage.corners[this.orderId+1] = conv.y+oriy;
+    // bounds are latLng
+    //this.parentImage.updateBounds.apply(this.parentImage)
     this.parentImage.updatePoints.apply(this.parentImage)
+  },
+
+  // recalc bounds (lat,lng) from corners (x,y)
+  // problem: bounds is a rect, corners is a poly
+  // gotta work directly from markers
+  updateBounds: function() {
+    this._bounds._southWest = map.containerPointToLatLng(L.point(this.corners[4],this.corners[5]))
+    this._bounds._northEast = map.containerPointToLatLng(L.point(this.corners[2],this.corners[3]))
+  },
+
+  // recalc corners (x,y) from bounds (lat,lng)
+  // problem: bounds is a rect, corners is a poly
+  // gotta work directly from markers
+  updateCorners: function() {
+    this.corners = [
+      map.latLngToContainerPoint(this._bounds._southWest).x,
+      map.latLngToContainerPoint(this._bounds._northEast).y,
+      map.latLngToContainerPoint(this._bounds._northEast).x,
+      map.latLngToContainerPoint(this._bounds._northEast).y,
+      map.latLngToContainerPoint(this._bounds._southWest).x,
+      map.latLngToContainerPoint(this._bounds._southWest).y,
+      map.latLngToContainerPoint(this._bounds._northEast).x,
+      map.latLngToContainerPoint(this._bounds._southWest).y
+    ]
   },
 
   updatePoints: function() {
