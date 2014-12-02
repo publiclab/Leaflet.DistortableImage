@@ -1,16 +1,14 @@
 /*
 
 Needs methods and variables ported into the $L namespace
+or put into the DistortableImage class methods (at bottom)
 
 */
 
-var imageBounds=[];
-var markers=[];
-var draggable={};
-var newimg;
-
 $L = {
 
+  markers: [],
+  images: [],
   initialize: function() {
     // disable default Leaflet click interactions
     map.touchZoom.disable();
@@ -24,83 +22,26 @@ $L = {
       },
       'Upload image'
     );
-      
-    // transparency button
-    L.easyButton('fa-adjust', 
-       function (){
-         changeopacity();
-       },
-      'Toggle Image Transparency'
-    );
-    
-    // outline button
-    L.easyButton('fa-square-o', 
-      function (){
-        outline();
-      },
-      'Outline'
-    );
-          
-    // delete button
-    L.easyButton('fa-bitbucket', 
-      function (){
-        map.removeLayer(newimg);
-        for(var i=0; i<4; i++)
-        map.removeLayer(markers[i]);
-      },
-     'Delete Image'
-    );
 
     // file observer
     $(":file").change(function () {
       if (this.files && this.files[0]) {
         var reader = new FileReader();
-        reader.onload = imageIsLoaded;
+        reader.onload = $L.imageIsLoaded;
         reader.readAsDataURL(this.files[0]);
       }
     });
     
-    // set up basic behaviors once the image is loaded
-    function imageIsLoaded(e) {
-      $('#myImg').attr('src', e.target.result);
-      corners = [300, 200, 500, 200, 300, 400, 500, 400];
-      for(var i = 0; i < 8; i = i+2) {
-        var a = map.layerPointToLatLng([corners[i],corners[i+1]]);
-        var marker = new L.ImageMarker([a.lat, a.lng]).addTo(map);
-        markers.push(marker);
-        imageBounds.push([a.lat,a.lng]);
-        var addidclass = marker._icon;
-        addidclass.id= "marker"+i;
-        addidclass.className = addidclass.className + " corner";
-      }
-      
-      newimg= new L.DistortableImage(e.target.result, imageBounds);
-      newimg.bringToFront().addTo(map);
-
-      // enable dragging
-      draggable = new L.Draggable(newimg._image);
-      draggable.enable();
-      // need to update points after drag
-      // perhaps define points relative to image location, or measure relative offset of drag, and apply to points    
- 
-      for (i in markers) {
-        markers[i].on('drag', $L.update);
-      }
-        
-    }
   },
 
-  // update the css transform of the image
-  update: function() {
-    var box = document.getElementById("imgdistort");
-    
-    for (var i=0;i<4;i=i+1) {
-      var conv = map.latLngToContainerPoint(markers[i]._latlng);
-      corners[i*2] = conv.x;
-      corners[i*2+1] = conv.y;
-    }
+  // set up basic behaviors once the image is loaded
+  imageIsLoaded: function(e) {
+    // default corners
+    corners = [300, 200, 500, 200, 300, 400, 500, 400];
  
-    transform2d(box, corners[0], corners[1], corners[2], corners[3], corners[4], corners[5], corners[6], corners[7]);
+    img = new L.DistortableImage(e.target.result, corners);
+    img.bringToFront().addTo(map);
+      
   }
 }
 
@@ -175,8 +116,13 @@ function project(m, x, y) {
 // use CSS to transform the image
 function transform2d(elt, x1, y1, x2, y2, x3, y3, x4, y4) {
   var w = elt.offsetWidth, h = elt.offsetHeight;
-        
-  var t = general2DProjection(0, 0, x1, y1, w, 0, x2, y2, 0, h, x3, y3, w, h, x4, y4);
+
+  var t = general2DProjection(0,  0, x1, y1, 
+                              w,  0, x2, y2, 
+                              0,  h, x3, y3, 
+                              w,  h, x4, y4
+  );
+
   for(i = 0; i != 9; ++i) t[i] = t[i]/t[8];
   t = [t[0], t[3], 0, t[6],
        t[1], t[4], 0, t[7],
@@ -186,54 +132,161 @@ function transform2d(elt, x1, y1, x2, y2, x3, y3, x4, y4) {
   elt.style["-webkit-transform"] = t;
   elt.style["-moz-transform"] = t;
   elt.style["-o-transform"] = t;
+
+  var orix = 0, oriy = 0;
+  elt.style["-webkit-transform-origin"] = orix+"px "+oriy+"px";
+  elt.style["transform-origin"] = orix+"px "+oriy+"px";
   elt.style.transform = t;
 }
 
-var outlined = false;
-function outline(){
-  outlined = !outlined;
-  if (outlined) {
-    newimg.setOpacity(0.2);
-    $('#imgdistort').css('border','2px solid black');
-  } else {
-    newimg.setOpacity(1);;
-    $('#imgdistort').css('border', '');
-  }
-};
-
-var opaque = false;
-function changeopacity(){
-  opaque = !opaque;
-  if (opaque) {
-    newimg.setOpacity(0.7);
-  } else {
-    newimg.setOpacity(1);
-  }
-};
-
-// add corner control points
-// needs refactoring for multiple images
-function xyz(){       
-  $( "#imgdistort" ).after( "<div id='marker0' class='corner'>TL</div>");
-  $( "#marker0" ).after('<div id="marker2" class="corner">TR</div>');
-  $( "#marker2" ).after('<div id="marker4" class="corner">BL</div>');
-  $( "#marker4" ).after('<div id="marker6" class="corner">BR</div>');
-  $('#imgdistort').wrapAll('<div id="box">');
-  $('#box, .corner').wrapAll('<div id="imgcontainer">');
-};
-
-L.DistortableImage= L.ImageOverlay.extend({
+L.DistortableImage = L.ImageOverlay.extend({
   _initImage: function () {
-    var imageid = "imgdistort";
-    var img = this._image = L.DomUtil.create('img',
+    this.img = this._image = L.DomUtil.create('img',
     'leaflet-image-layer ' +  'leaflet-zoom-animated');
-    img.onselectstart = L.Util.falseFn;
-    img.onmousemove = L.Util.falseFn;
-    img.onload = L.bind(this.fire, this, 'load');
-    img.src = this._url;
-    img.alt = this.options.alt;
-    img.id = "imgdistort";
+    this.img.onclick = this.onclick;
+    this.img.onselectstart = L.Util.falseFn;
+    this.img.onmousemove = L.Util.falseFn;
+    this.img.onload = L.bind(this.fire, this, 'load');
+    this.img.src = this._url;
+    this.img.alt = this.options.alt;
+    this.img.id = this.id;
+
+    // this next section seems unneccessary
+    // enable dragging
+    //draggable = new L.Draggable(this._image);
+    //draggable.enable();
+
+    // need to update points after drag
+    // perhaps define points relative to image location, or measure relative offset of drag, and apply to points    
   },
+
+  initialize: function (url, corners, options) { 
+    this.id = 'image-distort-'+$('.image-distort').length
+
+    var bounds = [];
+    // go through four corners
+    for(var i = 0; i < 8; i = i+2) {
+      // convert to lat/lng
+      var a = map.layerPointToLatLng([corners[i],corners[i+1]]);
+      var marker = new L.ImageMarker([a.lat, a.lng]).addTo(map);
+      marker.parentImage = this
+      marker.orderId = i 
+      // global marker storage shouldn't be necessary
+      $L.markers.push(marker);
+      bounds.push([a.lat,a.lng]);
+      var addidclass = marker._icon;
+      addidclass.id= "marker"+i+$('.image-distort').length;
+      addidclass.className = addidclass.className + " corner";
+    }
+
+    // we should switch this to accept lat/lngs
+    this.corners = corners;
+    this.opaque = false;
+    this.outlined = false;
+    this._url = url;
+    this._bounds = L.latLngBounds(bounds);// (LatLngBounds, Object)
+    this.initialPos = map.latLngToContainerPoint(this._bounds._northEast)
+    this.updatePoints = this.updatePoints // weird, but this lets instances of DistorableImage retain the update() method. 
+
+    for (i in $L.markers) {
+      $L.markers[i].on('drag', this.distort);
+    }
+
+    this.on('drag', this.drag);
+
+    L.setOptions(this, options);
+  },
+
+  // update the css transform of the image
+  drag: function() {
+    // update all four when dragging whole image
+    for (var i=0;i<4;i=i+1) {
+      var conv = map.latLngToContainerPoint(this._latlng);
+      this.corners[this.orderId] = conv.x;
+      this.corners[this.orderId+1] = conv.y;
+    }
+    this.updatePoints()
+  },
+
+  // update the css transform of the image
+  // remember 'this' gets context of marker, not image
+  distort: function() {
+    // offsets from translating image around
+    var orix = this.parentImage.initialPos.x-map.latLngToContainerPoint(this.parentImage._bounds._northEast).x
+    var oriy = this.parentImage.initialPos.y-map.latLngToContainerPoint(this.parentImage._bounds._northEast).y
+    var conv = map.latLngToContainerPoint(this._latlng);
+    this.parentImage.corners[this.orderId] = conv.x+orix;
+    this.parentImage.corners[this.orderId+1] = conv.y+oriy;
+    this.parentImage.updatePoints.apply(this.parentImage)
+  },
+
+  updatePoints: function() {
+    transform2d(this.img, 
+      this.corners[0], 
+      this.corners[1], 
+      this.corners[2], 
+      this.corners[3], 
+      this.corners[4], 
+      this.corners[5], 
+      this.corners[6], 
+      this.corners[7]
+    );
+  },
+
+  toggleOutline: function() {
+    this.outlined = !this.outlined;
+    if (this.outlined) {
+      this.img.setOpacity(0.2);
+      this.img.css('border','2px solid black');
+    } else {
+      this.img.setOpacity(1);
+      this.img.css('border', '');
+    }
+  },
+
+  onclick: function(e) {
+    // first, delete existing buttons
+    $('#image-distort-transparency').parent().remove();
+    $('#image-distort-outline').parent().remove();
+    $('#image-distort-delete').parent().remove();
+
+    this.transparencyBtn = L.easyButton('fa-adjust', 
+       function () {
+         var e = $('#'+$('#image-distort-outline')[0].getAttribute('parentImgId'))[0]
+         if (e.opacity == 1) {
+           L.setOpacity(e,0.7);
+           e.setAttribute('opacity',0.7);
+         } else {
+           L.setOpacity(e,1);
+           e.setAttribute('opacity',1);
+         }
+       },
+      'Toggle Image Transparency'
+    ).getContainer()//.children[0]
+    this.transparencyBtn.id = 'image-distort-outline';
+    this.transparencyBtn.setAttribute('parentImgId',this.id)
+    
+    this.outlineBtn = L.easyButton('fa-square-o', 
+      function () {
+        outline();
+      },
+      'Outline'
+    ).getContainer().children[0]
+    this.outlineBtn.id = 'image-distort-outline';
+    this.outlineBtn.setAttribute('parentImgId',this.id)
+          
+    this.deleteBtn = L.easyButton('fa-bitbucket', 
+      function () {
+        map.removeLayer($(this.parentImgId));
+        for(var i=0; i<4; i++)
+        map.removeLayer($L.markers[i]);
+      },
+     'Delete Image'
+    ).getContainer().children[0]
+    this.deleteBtn.id = 'image-distort-delete';
+    this.deleteBtn.setAttribute('parentImgId',this.id)
+  }
+
 })
 
 L.ImageMarker = L.Marker.extend({

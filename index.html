@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Leaflet Quick Start Guide Example</title>
+  <title>ImageDistortLeaflet Example</title>
   <meta charset="utf-8" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <script src="leaflet/leaflet-src.js" type="text/javascript" charset="utf-8"></script>
-  <link href="http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css" rel="stylesheet">
-  <link rel="stylesheet" href="leaflet/leaflet.css" type="text/css" media="screen" title="no title" charset="utf-8">
+  <script src="lib/leaflet/leaflet-src.js" type="text/javascript" charset="utf-8"></script>
+  <link href="lib/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="lib/leaflet/leaflet.css" type="text/css" media="screen" title="no title" charset="utf-8">
+  <script src="lib/jquery.min.js"></script>
+  <script src="lib/easybutton.js" type="text/javascript" charset="utf-8"></script>
 
   <link rel="stylesheet" href="imagedistort.css" type="text/css" media="screen" title="no title" charset="utf-8">
-  <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
-  <script src="easybutton.js" type="text/javascript" charset="utf-8"></script>
   <script src="imagedistort/imagedistort.js"></script>
 
 </head>
@@ -20,7 +20,6 @@
 
   <form id="test_form" >
     <input type="file" id="inputimage" accept="image/*">
-    <img id="myImg" src="#" alt="your image" />
   </form>
 
   <div id="map" style="width:100%; height:100%; position:absolute; top:0;"></div>
@@ -43,9 +42,15 @@
 
       $L.initialize() // startup the imagedistort plugin
 
-      // not sure if this is important?
-      // $("#imgdistort" ).wrap( "<div id='bordered'></div>" ); 
-      
+      // simplify this
+      // default corners
+      corners = [300, 200, 500, 200, 300, 400, 500, 400];
+      img = new L.DistortableImage('example.jpg', corners);
+      img.bringToFront().addTo(map);
+      for (i in $L.markers) {
+        $L.markers[i].on('drag', img.update);
+      }
+
     })()
       
   </script>
