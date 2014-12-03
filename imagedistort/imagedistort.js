@@ -1,13 +1,30 @@
 /*
 
-Needs methods and variables ported into the $L namespace
-or put into the DistortableImage class methods (at bottom)
+* distort is messed up if you pan the map THEN change zooms -- but otherwise works!
+
+* set up/fix drag listener for image
+* rejigger DistortableImage constructor for lat/lon instead of x,y
+* set initial position and dimensions from image
+* observe window resize and make adjustments
+* restructure for multiple images
+  * dragging/distorting seem to be affecting all images
+    * image-distort-# incrementing DOM id assignment is not working
+* rotate/scale -- copy in code from old MapKnitter
+* figure out what _bounds is for and if we really need to update it
+* make outline() and opacity() of L.DistortableImage, so img.outline() 
+* need to make easybuttons for image manip appear only when you've selected one
+* map.on('click') should deselect all images
+
+=================
+
+make shift-drag drag the nearest marker, not the image?
+Needs remaining global methods and variables ported into the $L namespace or put into the DistortableImage class methods (at bottom)
+
 
 */
 
 $L = {
 
-  markers: [],
   images: [],
   initialize: function() {
     // disable default Leaflet click interactions
@@ -151,19 +168,23 @@ L.DistortableImage = L.ImageOverlay.extend({
     this.img.alt = this.options.alt;
     this.img.id = this.id;
 
-    // this next section seems unneccessary
-    // enable dragging
-    //draggable = new L.Draggable(this._image);
-    //draggable.enable();
+    // enable dragging -- need to debug drag listener
+    draggable = new L.Draggable(this._image);
+    draggable.enable();
 
     // need to update points after drag
     // perhaps define points relative to image location, or measure relative offset of drag, and apply to points    
+
+    // not triggering
+    this.on('drag', function() {console.log('drag',this);this.drag()});
+
   },
 
   initialize: function (url, corners, options) { 
     this.id = 'image-distort-'+$('.image-distort').length
 
     var bounds = [];
+    this.markers  = []
     // go through four corners
     for(var i = 0; i < 8; i = i+2) {
       // convert to lat/lng
@@ -171,8 +192,7 @@ L.DistortableImage = L.ImageOverlay.extend({
       var marker = new L.ImageMarker([a.lat, a.lng]).addTo(map);
       marker.parentImage = this
       marker.orderId = i 
-      // global marker storage shouldn't be necessary
-      $L.markers.push(marker);
+      this.markers.push(marker);
       bounds.push([a.lat,a.lng]);
       var addidclass = marker._icon;
       addidclass.id= "marker"+i+$('.image-distort').length;
@@ -189,77 +209,73 @@ L.DistortableImage = L.ImageOverlay.extend({
     this.initialPos = map.latLngToContainerPoint(this._bounds._northEast)
 
     // weird, but this lets instances of DistorableImage 
-    // retain the updatePoints() and other methods:
-    this.updatePoints = this.updatePoints 
+    // retain the updateTransform() and other methods:
+    this.updateTransform = this.updateTransform 
     this.updateCorners = this.updateCorners
-    this.updateBounds = this.updateBounds
 
-    for (i in $L.markers) {
-      $L.markers[i].on('drag', this.distort);
+    for (i in this.markers) {
+      this.markers[i].on('drag',this.distort);
+      //this.markers[i].on('dragstart',this.resetInitialPos,this);
     }
 
-    this.on('drag', this.drag);
+    // resize handler isn't passing scope "this"
+    //$(window).resize(this.resetInitialPos,this);
+    map.on('zoomend',this.resetInitialPos,this)
+    // maintain initialPos when map is panned
+    //map.on('drag',this.resetInitialPos,this)
+    map.on('drag',this.updateCorners,this)
 
     L.setOptions(this, options);
   },
 
+  // updates this.initialPos
+  resetInitialPos: function() {
+    this.initialPos = map.latLngToContainerPoint(this._bounds._northEast)
+    this.debug()
+  },
+
   // update the css transform of the image
+  // this is all screwed up; it's not even called 
   drag: function() {
+console.log('drag begin')
     // update all four when dragging whole image
-    for (var i=0;i<4;i=i+1) {
+    //  this is nonsense:
+    for (var i=0;i<8;i=i+2) {
       var conv = map.latLngToContainerPoint(this._latlng);
       this.corners[this.orderId] = conv.x;
       this.corners[this.orderId+1] = conv.y;
     }
-    this.updatePoints()
+    this.updateCorners()
+    this.updateTransform()
+console.log('drag')
   },
 
-  // update the css transform of the image
   // remember 'this' gets context of marker, not image
   distort: function() {
-    // offsets from translating image around
-    var orix = this.parentImage.initialPos.x-map.latLngToContainerPoint(this.parentImage._bounds._northEast).x
-    var oriy = this.parentImage.initialPos.y-map.latLngToContainerPoint(this.parentImage._bounds._northEast).y
-
-    // adjust for scale, partially working
-    orix /= Math.pow(map._zoom-this.parentImage.defaultZoom-1,2)
-    oriy /= Math.pow(map._zoom-this.parentImage.defaultZoom-1,2)
-
-    var conv = map.latLngToContainerPoint(this._latlng);
-    //this.parentImage.updateCorners.apply(this.parentImage)
-    // corners are x,y
-    this.parentImage.corners[this.orderId] = conv.x+orix;
-    this.parentImage.corners[this.orderId+1] = conv.y+oriy;
-    // bounds are latLng
-    //this.parentImage.updateBounds.apply(this.parentImage)
-    this.parentImage.updatePoints.apply(this.parentImage)
+    this.parentImage.updateCorners.apply(this.parentImage)
+    this.parentImage.updateTransform.apply(this.parentImage)
   },
 
-  // recalc bounds (lat,lng) from corners (x,y)
-  // problem: bounds is a rect, corners is a poly
-  // gotta work directly from markers
-  updateBounds: function() {
-    this._bounds._southWest = map.containerPointToLatLng(L.point(this.corners[4],this.corners[5]))
-    this._bounds._northEast = map.containerPointToLatLng(L.point(this.corners[2],this.corners[3]))
-  },
-
-  // recalc corners (x,y) from bounds (lat,lng)
-  // problem: bounds is a rect, corners is a poly
-  // gotta work directly from markers
+  // recalc corners (x,y) from markers (lat,lng)
   updateCorners: function() {
-    this.corners = [
-      map.latLngToContainerPoint(this._bounds._southWest).x,
-      map.latLngToContainerPoint(this._bounds._northEast).y,
-      map.latLngToContainerPoint(this._bounds._northEast).x,
-      map.latLngToContainerPoint(this._bounds._northEast).y,
-      map.latLngToContainerPoint(this._bounds._southWest).x,
-      map.latLngToContainerPoint(this._bounds._southWest).y,
-      map.latLngToContainerPoint(this._bounds._northEast).x,
-      map.latLngToContainerPoint(this._bounds._southWest).y
-    ]
+
+    // diff in element position vs. when first initialized;
+    // this fixes the transform if you've panned the map
+    var dx = this.initialPos.x-map.latLngToContainerPoint(this._bounds._northEast).x
+    var dy = this.initialPos.y-map.latLngToContainerPoint(this._bounds._northEast).y
+
+    // kill the above:
+    //var dx = 0, dy = 0
+
+    this.corners = []
+    for(i=0;i<this.markers.length;i++) {
+      var pt = map.latLngToContainerPoint(this.markers[i]._latlng)
+      this.corners.push(pt.x+dx,pt.y+dy)
+    }
+    this.debug()
   },
 
-  updatePoints: function() {
+  updateTransform: function() {
     transform2d(this.img, 
       this.corners[0], 
       this.corners[1], 
@@ -270,6 +286,21 @@ L.DistortableImage = L.ImageOverlay.extend({
       this.corners[6], 
       this.corners[7]
     );
+    this.debug()
+  },
+
+  debug: function() {
+    $('#debugmarkers').show()
+    $('#debugb').css('left',map.latLngToContainerPoint(this._bounds._southWest).x)
+    $('#debugb').css('top',map.latLngToContainerPoint(this._bounds._northEast).y)
+    $('#debugb').css('width',map.latLngToContainerPoint(this._bounds._northEast).x-map.latLngToContainerPoint(this._bounds._southWest).x)
+    $('#debugb').css('height',map.latLngToContainerPoint(this._bounds._southWest).y-map.latLngToContainerPoint(this._bounds._northEast).y)
+    $('#debug').css('left',this.initialPos.x)
+    $('#debug').css('top',this.initialPos.y)
+    for (i=0;i<4;i++) {
+      $('#debug'+i).css('left',this.corners[2*i])
+      $('#debug'+i).css('top',this.corners[2*i+1])
+    }
   },
 
   toggleOutline: function() {
@@ -318,7 +349,7 @@ L.DistortableImage = L.ImageOverlay.extend({
       function () {
         map.removeLayer($(this.parentImgId));
         for(var i=0; i<4; i++)
-        map.removeLayer($L.markers[i]);
+        map.removeLayer(this.markers[i]);
       },
      'Delete Image'
     ).getContainer().children[0]
@@ -335,7 +366,7 @@ L.ImageMarker = L.Marker.extend({
     // title: '',
     // alt: '',
     clickable: true,
-    draggable: true,
+    draggable: true, // this causes an error. Why?
     keyboard: true,
     zIndexOffset: 0,
     opacity: 1,
