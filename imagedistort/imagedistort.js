@@ -189,6 +189,9 @@ L.DistortableImage = L.ImageOverlay.extend({
     this._url = url;
     this._bounds = L.latLngBounds(bounds);// (LatLngBounds, Object)
     this.initialPos = map.latLngToContainerPoint(this._bounds._northEast)
+    // tracking pans
+    this.offsetX = 0
+    this.offsetY = 0
 
     // weird, but this lets instances of DistorableImage 
     // retain the updateTransform() and other methods:
@@ -205,7 +208,14 @@ L.DistortableImage = L.ImageOverlay.extend({
     map.on('zoomend',this.resetInitialPos,this)
     // maintain initialPos when map is panned
     //map.on('drag',this.resetInitialPos,this)
-  
+ 
+    // this works the first time you zoom. But it's like we have to track offsets separately for each zoom level... ? 
+    map.on('zoomstart',function() {
+      this.offsetX = (map.latLngToContainerPoint(map.getCenter()).x - map.latLngToContainerPoint($L.initialPos).x)
+      this.offsetY = (map.latLngToContainerPoint(map.getCenter()).y - map.latLngToContainerPoint($L.initialPos).y)
+console.log(this.offsetX,this.offsetY)
+    },this)
+
     map.on('drag',function() {
       this.updateCorners()
 //this.resetInitialPos()
@@ -251,6 +261,10 @@ console.log('drag')
     // this section makes it work for zooming after distorting, but if you zoom after panning, distortion no longer works. Go figure. : 
 //    dx += map.latLngToContainerPoint(map.getCenter()).x - map.latLngToContainerPoint($L.initialPos).x
 //    dy += map.latLngToContainerPoint(map.getCenter()).y - map.latLngToContainerPoint($L.initialPos).y
+
+    // The offset is fixed -- we just need to add to the offset upon map.dragEnd, and integrate it here:
+    dx += this.offsetX 
+    dy += this.offsetY
 
     // make zoom-invariant
 //    dx /= Math.pow(2,this.defaultZoom-map._zoom)
