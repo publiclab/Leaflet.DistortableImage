@@ -249,15 +249,12 @@ console.log('drag')
     // OK - when removing the transform, the image itself has panned. we have to correct for that. 
 
     // this section makes it work for zooming after distorting, but if you zoom after panning, distortion no longer works. Go figure. : 
-    dx += map.latLngToContainerPoint(map.getCenter()).x - map.latLngToContainerPoint($L.initialPos).x
-    dy += map.latLngToContainerPoint(map.getCenter()).y - map.latLngToContainerPoint($L.initialPos).y
+//    dx += map.latLngToContainerPoint(map.getCenter()).x - map.latLngToContainerPoint($L.initialPos).x
+//    dy += map.latLngToContainerPoint(map.getCenter()).y - map.latLngToContainerPoint($L.initialPos).y
 
     // make zoom-invariant
 //    dx /= Math.pow(2,this.defaultZoom-map._zoom)
 //    dy /= Math.pow(2,this.defaultZoom-map._zoom)
-
-    // kill the above:
-    //var dx = 0, dy = 0
 
     this.corners = []
     for(i=0;i<this.markers.length;i++) {

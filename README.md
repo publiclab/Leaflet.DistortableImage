@@ -1,7 +1,7 @@
 ImageDistortLeaflet
 ===================
 
-A Leaflet extension to distort images -- "rubbersheeting" -- mainly for the MapKnitter.org image georectification service by Public Lab (http://publiclab.org).
+A Leaflet extension to distort images -- "rubbersheeting" -- mainly for the [MapKnitter.org](http://mapknitter.org) ([src](https://github.com/publiclab/mapknitter)) image georectification service by [Public Lab](http://publiclab.org).
 
 Download as zip or clone to get a copy of the Repo.
 
