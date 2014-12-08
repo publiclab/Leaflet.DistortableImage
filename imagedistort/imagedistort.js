@@ -1,36 +1,17 @@
 /*
 
-* distort is messed up if you pan the map THEN change zooms -- but otherwise works!
-
-* set up/fix drag listener for image
-* rejigger DistortableImage constructor for lat/lon instead of x,y
-* set initial position and dimensions from image
-* observe window resize and make adjustments
-* restructure for multiple images
-  * dragging/distorting seem to be affecting all images
-    * image-distort-# incrementing DOM id assignment is not working
-* rotate/scale -- copy in code from old MapKnitter
-* figure out what _bounds is for and if we really need to update it
-* make outline() and opacity() of L.DistortableImage, so img.outline() 
-* need to make easybuttons for image manip appear only when you've selected one
-* map.on('click') should deselect all images
-
-=================
-
-make shift-drag drag the nearest marker, not the image?
-Needs remaining global methods and variables ported into the $L namespace or put into the DistortableImage class methods (at bottom)
-
-
 */
 
 $L = {
-
+  debug: true,
   images: [],
   initialize: function() {
     // disable default Leaflet click interactions
     map.touchZoom.disable();
     map.doubleClickZoom.disable();
     map.scrollWheelZoom.disable();
+
+    this.initialPos = map.getCenter()
 
     // upload button
     L.easyButton('fa-file-image-o', 
@@ -181,6 +162,7 @@ L.DistortableImage = L.ImageOverlay.extend({
   },
 
   initialize: function (url, corners, options) { 
+    // but the element hasn't yet been made
     this.id = 'image-distort-'+$('.image-distort').length
 
     var bounds = [];
@@ -214,7 +196,7 @@ L.DistortableImage = L.ImageOverlay.extend({
     this.updateCorners = this.updateCorners
 
     for (i in this.markers) {
-      this.markers[i].on('drag',this.distort);
+      this.markers[i].on('drag',this.distort,this);
       //this.markers[i].on('dragstart',this.resetInitialPos,this);
     }
 
@@ -223,7 +205,11 @@ L.DistortableImage = L.ImageOverlay.extend({
     map.on('zoomend',this.resetInitialPos,this)
     // maintain initialPos when map is panned
     //map.on('drag',this.resetInitialPos,this)
-    map.on('drag',this.updateCorners,this)
+  
+    map.on('drag',function() {
+      this.updateCorners()
+//this.resetInitialPos()
+    },this)
 
     L.setOptions(this, options);
   },
@@ -239,12 +225,7 @@ L.DistortableImage = L.ImageOverlay.extend({
   drag: function() {
 console.log('drag begin')
     // update all four when dragging whole image
-    //  this is nonsense:
-    for (var i=0;i<8;i=i+2) {
-      var conv = map.latLngToContainerPoint(this._latlng);
-      this.corners[this.orderId] = conv.x;
-      this.corners[this.orderId+1] = conv.y;
-    }
+    // then update
     this.updateCorners()
     this.updateTransform()
 console.log('drag')
@@ -252,17 +233,28 @@ console.log('drag')
 
   // remember 'this' gets context of marker, not image
   distort: function() {
-    this.parentImage.updateCorners.apply(this.parentImage)
-    this.parentImage.updateTransform.apply(this.parentImage)
+    this.updateCorners()
+    this.updateTransform()
   },
 
   // recalc corners (x,y) from markers (lat,lng)
   updateCorners: function() {
-
     // diff in element position vs. when first initialized;
     // this fixes the transform if you've panned the map
+// THIS ISNT RIGHT - IT BREAKS THINGS if you zoom after panning
+// but ODDLY it is essential for keeping the distortion in the same place relative to map panning -- even when its broken, the offset is constant.
     var dx = this.initialPos.x-map.latLngToContainerPoint(this._bounds._northEast).x
     var dy = this.initialPos.y-map.latLngToContainerPoint(this._bounds._northEast).y
+
+    // OK - when removing the transform, the image itself has panned. we have to correct for that. 
+
+    // this section makes it work for zooming after distorting, but if you zoom after panning, distortion no longer works. Go figure. : 
+    dx += map.latLngToContainerPoint(map.getCenter()).x - map.latLngToContainerPoint($L.initialPos).x
+    dy += map.latLngToContainerPoint(map.getCenter()).y - map.latLngToContainerPoint($L.initialPos).y
+
+    // make zoom-invariant
+//    dx /= Math.pow(2,this.defaultZoom-map._zoom)
+//    dy /= Math.pow(2,this.defaultZoom-map._zoom)
 
     // kill the above:
     //var dx = 0, dy = 0
@@ -290,16 +282,25 @@ console.log('drag')
   },
 
   debug: function() {
-    $('#debugmarkers').show()
-    $('#debugb').css('left',map.latLngToContainerPoint(this._bounds._southWest).x)
-    $('#debugb').css('top',map.latLngToContainerPoint(this._bounds._northEast).y)
-    $('#debugb').css('width',map.latLngToContainerPoint(this._bounds._northEast).x-map.latLngToContainerPoint(this._bounds._southWest).x)
-    $('#debugb').css('height',map.latLngToContainerPoint(this._bounds._southWest).y-map.latLngToContainerPoint(this._bounds._northEast).y)
-    $('#debug').css('left',this.initialPos.x)
-    $('#debug').css('top',this.initialPos.y)
-    for (i=0;i<4;i++) {
-      $('#debug'+i).css('left',this.corners[2*i])
-      $('#debug'+i).css('top',this.corners[2*i+1])
+    if ($L.debug) {
+      $('#debugmarkers').show()
+      $('#debug-green').css('left',map.latLngToContainerPoint(map.getCenter()).x)
+      $('#debug-green').css('width',map.latLngToContainerPoint(map.getCenter()).x-map.latLngToContainerPoint($L.initialPos).x)
+      $('#debug-green').css('top',map.latLngToContainerPoint(map.getCenter()).y)
+      $('#debug-green').css('height',map.latLngToContainerPoint(map.getCenter()).y-map.latLngToContainerPoint($L.initialPos).y)
+console.log()
+
+      $('#debug-green').css('right',map.latLngToContainerPoint(this._bounds._southWest).y)
+      $('#debugb').css('left',map.latLngToContainerPoint(this._bounds._southWest).x)
+      $('#debugb').css('top',map.latLngToContainerPoint(this._bounds._northEast).y)
+      $('#debugb').css('width',map.latLngToContainerPoint(this._bounds._northEast).x-map.latLngToContainerPoint(this._bounds._southWest).x)
+      $('#debugb').css('height',map.latLngToContainerPoint(this._bounds._southWest).y-map.latLngToContainerPoint(this._bounds._northEast).y)
+      $('#debug').css('left',this.initialPos.x)
+      $('#debug').css('top',this.initialPos.y)
+      for (i=0;i<4;i++) {
+        $('#debug'+i).css('left',this.corners[2*i])
+        $('#debug'+i).css('top',this.corners[2*i+1])
+      }
     }
   },
 
