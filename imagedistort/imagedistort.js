@@ -200,38 +200,32 @@ L.DistortableImage = L.ImageOverlay.extend({
 
     for (i in this.markers) {
       this.markers[i].on('drag',this.distort,this);
-      //this.markers[i].on('dragstart',this.resetInitialPos,this);
     }
 
+    // fix distortion post window resize:
     // resize handler isn't passing scope "this"
     //$(window).resize(this.resetInitialPos,this);
-    map.on('zoomend',this.resetInitialPos,this)
-    // maintain initialPos when map is panned
-    //map.on('drag',this.resetInitialPos,this)
+
+    map.on('zoomend', function() {
+      this.initialPos = map.latLngToLayerPoint(map.getCenter())
+      this.updateCorners()
+      this.updateTransform()
+    },this)
  
-    // this works the first time you zoom. But it's like we have to track offsets separately for each zoom level... ? 
-    map.on('zoomstart',function() {
+    map.on('zoomstart', function() {
       this.offsetX =  Math.pow(2,this.defaultZoom-map._zoom) *
                      (map.latLngToLayerPoint( map.getCenter()).x
                     - map.latLngToLayerPoint( $L.initialPos).x)
       this.offsetY =  Math.pow(2,this.defaultZoom-map._zoom) *
                      (map.latLngToLayerPoint( map.getCenter()).y 
                     - map.latLngToLayerPoint( $L.initialPos).y)
-console.log('offsets',this.offsetX,this.offsetY)
     },this)
 
     map.on('drag',function() {
       this.updateCorners()
-//this.resetInitialPos()
     },this)
 
     L.setOptions(this, options);
-  },
-
-  // updates this.initialPos
-  resetInitialPos: function() {
-    this.initialPos = map.latLngToLayerPoint(map.getCenter())
-    this.debug()
   },
 
   // update the css transform of the image
@@ -255,24 +249,12 @@ console.log('drag')
   updateCorners: function() {
     // diff in element position vs. when first initialized;
     // this fixes the transform if you've panned the map
-// THIS ISNT RIGHT - IT BREAKS THINGS if you zoom after panning
-// but ODDLY it is essential for keeping the distortion in the same place relative to map panning -- even when its broken, the offset is constant.
     var dx = this.initialPos.x-map.latLngToContainerPoint(map.getCenter()).x
     var dy = this.initialPos.y-map.latLngToContainerPoint(map.getCenter()).y
 
-    // OK - when removing the transform, the image itself has panned. we have to correct for that. 
-
-    // this section makes it work for zooming after distorting, but if you zoom after panning, distortion no longer works. Go figure. : 
-//    dx += map.latLngToContainerPoint(map.getCenter()).x - map.latLngToContainerPoint($L.initialPos).x
-//    dy += map.latLngToContainerPoint(map.getCenter()).y - map.latLngToContainerPoint($L.initialPos).y
-
-    // The offset is fixed -- we just need to add to the offset upon map.dragEnd, and integrate it here:
+    // this accounts for offsets due to panning then zooming:
     dx -= this.offsetX 
     dy -= this.offsetY
-
-    // make zoom-invariant
-//    dx /= Math.pow(2,this.defaultZoom-map._zoom)
-//    dy /= Math.pow(2,this.defaultZoom-map._zoom)
 
     this.corners = []
     for(i=0;i<this.markers.length;i++) {
@@ -303,7 +285,6 @@ console.log('drag')
       $('#debug-green').css('width',map.latLngToContainerPoint(map.getCenter()).x-map.latLngToContainerPoint($L.initialPos).x)
       $('#debug-green').css('top',map.latLngToContainerPoint(map.getCenter()).y)
       $('#debug-green').css('height',map.latLngToContainerPoint(map.getCenter()).y-map.latLngToContainerPoint($L.initialPos).y)
-console.log()
 
       $('#debug-green').css('right',map.latLngToContainerPoint(this._bounds._southWest).y)
       $('#debugb').css('left',map.latLngToContainerPoint(this._bounds._southWest).x)
