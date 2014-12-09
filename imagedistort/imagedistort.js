@@ -12,8 +12,6 @@ $L = {
     map.doubleClickZoom.disable();
     map.scrollWheelZoom.disable();
 
-    this.initialPos = map.getCenter()
-
     // upload button
     L.easyButton('fa-file-image-o', 
       function (){
@@ -185,12 +183,11 @@ L.DistortableImage = L.ImageOverlay.extend({
     // we should switch this to accept lat/lngs
     this.corners = corners;
     this.defaultZoom = map._zoom; // the zoom level at the time the image was created
-    this.lastZoom = map._zoom;
     this.opaque = false;
     this.outlined = false;
     this._url = url;
     this._bounds = L.latLngBounds(bounds);// (LatLngBounds, Object)
-    this.initialPos = map.latLngToLayerPoint(map.getCenter())
+    this.initialPos = this.getPosition()
     // tracking pans
     this.offsetX = 0
     this.offsetY = 0
@@ -204,23 +201,23 @@ L.DistortableImage = L.ImageOverlay.extend({
       this.markers[i].on('drag',this.distort,this);
     }
 
-    // fix distortion post window resize:
-    // resize handler isn't passing scope "this"
-    //$(window).resize(this.resetInitialPos,this);
+    map.on('resize',function() {
+      this.updateCorners(true) // use "resize" param
+      this.updateTransform()
+    },this);
 
     map.on('zoomend', function() {
-      this.initialPos = map.latLngToLayerPoint(map.getCenter())
+      this.initialPos = this.getPosition()
       this.updateCorners()
       this.updateTransform()
     },this)
  
     map.on('zoomstart', function() {
-      // add a new offset, accounting for zoom multiplier:
-      this.offsetX += (map.latLngToLayerPoint( map.getCenter()).x
-                    - this.initialPos.x)
-      this.offsetY += (map.latLngToLayerPoint( map.getCenter()).y 
-                    - this.initialPos.y)
-      this.lastZoom = map._zoom
+      // add a new offset:
+      this.offsetX += this.getPosition().x
+                    - this.initialPos.x
+      this.offsetY += this.getPosition().y 
+                    - this.initialPos.y
     },this)
 
     map.on('drag',function() {
@@ -248,13 +245,17 @@ console.log('drag')
     this.updateTransform()
   },
 
+  getPosition: function() {
+    return map.latLngToLayerPoint(new L.latLng(map.getBounds()._northEast.lat,map.getBounds()._southWest.lng))
+  },
+
   // recalc corners (x,y) from markers (lat,lng)
-  updateCorners: function() {
+  updateCorners: function(resize) {
     // diff in element position vs. when first initialized;
     // this fixes the transform if you've panned the map, 
     // since the element itself moves when panning
-    var dx = -(this.initialPos.x-map.latLngToLayerPoint(map.getCenter()).x)
-    var dy = -(this.initialPos.y-map.latLngToLayerPoint(map.getCenter()).y)
+    var dx = -(this.initialPos.x-this.getPosition().x)
+    var dy = -(this.initialPos.y-this.getPosition().y)
 
     // this accounts for offsets due to panning then zooming:
     dx += this.offsetX 
@@ -285,16 +286,14 @@ console.log('drag')
   debug: function() {
     if ($L.debug) {
       $('#debugmarkers').show()
-      $('#debug-green').css('left',map.latLngToContainerPoint(map.getCenter()).x)
-      $('#debug-green').css('width',map.latLngToContainerPoint(map.getCenter()).x-map.latLngToContainerPoint($L.initialPos).x)
-      $('#debug-green').css('top',map.latLngToContainerPoint(map.getCenter()).y)
-      $('#debug-green').css('height',map.latLngToContainerPoint(map.getCenter()).y-map.latLngToContainerPoint($L.initialPos).y)
+      $('#debug-green').css('left',this.getPosition().x)
+      $('#debug-green').css('top',this.getPosition().y)
 
-      $('#debug-green').css('right',map.latLngToContainerPoint(this._bounds._southWest).y)
-      $('#debugb').css('left',map.latLngToContainerPoint(this._bounds._southWest).x)
-      $('#debugb').css('top',map.latLngToContainerPoint(this._bounds._northEast).y)
-      $('#debugb').css('width',map.latLngToContainerPoint(this._bounds._northEast).x-map.latLngToContainerPoint(this._bounds._southWest).x)
-      $('#debugb').css('height',map.latLngToContainerPoint(this._bounds._southWest).y-map.latLngToContainerPoint(this._bounds._northEast).y)
+      $('#debug-green').css('right',this.getPosition().y)
+      $('#debugb').css('left',this.getPosition().x)
+      $('#debugb').css('top',this.getPosition().y)
+      $('#debugb').css('width',this.getPosition().x)
+      $('#debugb').css('height',this.getPosition().y)
       $('#debug').css('left',this.initialPos.x)
       $('#debug').css('top',this.initialPos.y)
       for (i=0;i<4;i++) {

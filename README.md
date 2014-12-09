@@ -13,14 +13,12 @@ This plugin is not yet complete!
 
 ##To do:
 
-* distort is messed up if you pan the map THEN change zooms -- but otherwise works!
-  * draw a box representing the map panning
+* observe window resize and make adjustments
 * fix transform in Firefox css3
-
 * set up/fix drag listener for image
 * rejigger DistortableImage constructor for lat/lon instead of x,y
-* set initial position and dimensions from image
-* observe window resize and make adjustments
+  * with default to "middle of the screen" ?
+* set initial dimensions from image
 * restructure for multiple images
   * dragging/distorting seem to be affecting all images
     * image-distort-# incrementing DOM id assignment is not working
