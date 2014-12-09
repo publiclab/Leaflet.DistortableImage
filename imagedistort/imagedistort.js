@@ -131,8 +131,8 @@ function transform2d(elt, x1, y1, x2, y2, x3, y3, x4, y4) {
   elt.style["-o-transform"] = t;
 
   var orix = 0, oriy = 0;
-  elt.style["-webkit-transform-origin"] = orix+"px "+oriy+"px";
   elt.style["transform-origin"] = orix+"px "+oriy+"px";
+  elt.style["-webkit-transform-origin"] = orix+"px "+oriy+"px";
   elt.style.transform = t;
 }
 
@@ -220,23 +220,20 @@ L.DistortableImage = L.ImageOverlay.extend({
                     - this.initialPos.y
     },this)
 
+    map.on('dragstart',function() {
+      this.dragStartPos = this._bounds.northEast// get position so we can track offset
+    },this)
+
+    // update the points too
     map.on('drag',function() {
+console.log('drag begin')
+      this.dragStartPos 
+      
       this.updateCorners()
       this.updateTransform()
     },this)
 
     L.setOptions(this, options);
-  },
-
-  // update the css transform of the image
-  // this is all screwed up; it's not even called 
-  drag: function() {
-console.log('drag begin')
-    // update all four when dragging whole image
-    // then update
-    this.updateCorners()
-    this.updateTransform()
-console.log('drag')
   },
 
   // remember 'this' gets context of marker, not image
