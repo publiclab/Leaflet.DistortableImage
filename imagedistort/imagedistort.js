@@ -150,14 +150,31 @@ L.DistortableImage = L.ImageOverlay.extend({
     this.img.id = this.id;
 
     // enable dragging -- need to debug drag listener
-    draggable = new L.Draggable(this._image);
-    draggable.enable();
+    this.draggable = new L.Draggable(this._image);
+    this.draggable.enable();
 
-    // need to update points after drag
-    // perhaps define points relative to image location, or measure relative offset of drag, and apply to points    
+    this.draggable.on('dragstart',function() {
+      this.dragStartPos = map.latLngToLayerPoint(this._bounds._northEast) // get position so we can track offset
+      for (i in this.markers) {
+        this.markers[i].startPos = this.markers[i].getLatLng()
+      }
+    },this)
 
-    // not triggering
-    this.on('drag', function() {console.log('drag',this);this.drag()});
+    // update the points too
+    this.draggable.on('drag',function() {
+      dx = this.draggable._newPos.x-this.draggable._startPos.x
+      dy = this.draggable._newPos.y-this.draggable._startPos.y
+
+      for (i in this.markers) {
+        var pos = map.latLngToLayerPoint(this.markers[i].startPos)
+        pos.x += dx
+        pos.y += dy
+        // is this working?
+        this.markers[i].setLatLng(map.layerPointToLatLng(new L.Point(pos.x,pos.y)))
+      }
+      this.updateCorners()
+      this.updateTransform()
+    },this)
 
   },
 
@@ -219,19 +236,6 @@ L.DistortableImage = L.ImageOverlay.extend({
                     - this.initialPos.x
       this.offsetY += this.getPosition().y 
                     - this.initialPos.y
-    },this)
-
-    map.on('dragstart',function() {
-      this.dragStartPos = this._bounds.northEast// get position so we can track offset
-    },this)
-
-    // update the points too
-    map.on('drag',function() {
-console.log('drag begin')
-      this.dragStartPos 
-      
-      this.updateCorners()
-      this.updateTransform()
     },this)
 
     L.setOptions(this, options);

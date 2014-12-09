@@ -57,6 +57,8 @@
       corners = [300, 200, 500, 200, 300, 400, 500, 400];
       img = new L.DistortableImage('example.jpg', corners);
       img.bringToFront().addTo(map);
+
+
       for (i in $L.markers) {
         $L.markers[i].on('drag', img.update);
       }
