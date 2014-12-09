@@ -3,7 +3,7 @@
 */
 
 $L = {
-  debug: true,
+  debug: false,
   images: [],
   initialize: function() {
     // disable default Leaflet click interactions
@@ -188,7 +188,7 @@ L.DistortableImage = L.ImageOverlay.extend({
     this.outlined = false;
     this._url = url;
     this._bounds = L.latLngBounds(bounds);// (LatLngBounds, Object)
-    this.initialPos = map.latLngToContainerPoint(this._bounds._northEast)
+    this.initialPos = map.latLngToLayerPoint(map.getCenter())
     // tracking pans
     this.offsetX = 0
     this.offsetY = 0
@@ -211,9 +211,13 @@ L.DistortableImage = L.ImageOverlay.extend({
  
     // this works the first time you zoom. But it's like we have to track offsets separately for each zoom level... ? 
     map.on('zoomstart',function() {
-      this.offsetX = (map.latLngToContainerPoint(map.getCenter()).x - map.latLngToContainerPoint($L.initialPos).x)
-      this.offsetY = (map.latLngToContainerPoint(map.getCenter()).y - map.latLngToContainerPoint($L.initialPos).y)
-console.log(this.offsetX,this.offsetY)
+      this.offsetX =  Math.pow(2,this.defaultZoom-map._zoom) *
+                     (map.latLngToLayerPoint( map.getCenter()).x
+                    - map.latLngToLayerPoint( $L.initialPos).x)
+      this.offsetY =  Math.pow(2,this.defaultZoom-map._zoom) *
+                     (map.latLngToLayerPoint( map.getCenter()).y 
+                    - map.latLngToLayerPoint( $L.initialPos).y)
+console.log('offsets',this.offsetX,this.offsetY)
     },this)
 
     map.on('drag',function() {
@@ -226,7 +230,7 @@ console.log(this.offsetX,this.offsetY)
 
   // updates this.initialPos
   resetInitialPos: function() {
-    this.initialPos = map.latLngToContainerPoint(this._bounds._northEast)
+    this.initialPos = map.latLngToLayerPoint(map.getCenter())
     this.debug()
   },
 
@@ -253,8 +257,8 @@ console.log('drag')
     // this fixes the transform if you've panned the map
 // THIS ISNT RIGHT - IT BREAKS THINGS if you zoom after panning
 // but ODDLY it is essential for keeping the distortion in the same place relative to map panning -- even when its broken, the offset is constant.
-    var dx = this.initialPos.x-map.latLngToContainerPoint(this._bounds._northEast).x
-    var dy = this.initialPos.y-map.latLngToContainerPoint(this._bounds._northEast).y
+    var dx = this.initialPos.x-map.latLngToContainerPoint(map.getCenter()).x
+    var dy = this.initialPos.y-map.latLngToContainerPoint(map.getCenter()).y
 
     // OK - when removing the transform, the image itself has panned. we have to correct for that. 
 
@@ -263,8 +267,8 @@ console.log('drag')
 //    dy += map.latLngToContainerPoint(map.getCenter()).y - map.latLngToContainerPoint($L.initialPos).y
 
     // The offset is fixed -- we just need to add to the offset upon map.dragEnd, and integrate it here:
-    dx += this.offsetX 
-    dy += this.offsetY
+    dx -= this.offsetX 
+    dy -= this.offsetY
 
     // make zoom-invariant
 //    dx /= Math.pow(2,this.defaultZoom-map._zoom)
@@ -272,7 +276,7 @@ console.log('drag')
 
     this.corners = []
     for(i=0;i<this.markers.length;i++) {
-      var pt = map.latLngToContainerPoint(this.markers[i]._latlng)
+      var pt = map.latLngToLayerPoint(this.markers[i]._latlng)
       this.corners.push(pt.x+dx,pt.y+dy)
     }
     this.debug()
