@@ -131,7 +131,7 @@ function transform2d(elt, x1, y1, x2, y2, x3, y3, x4, y4) {
   elt.style["-o-transform"] = t;
 
   var orix = 0, oriy = 0;
-  elt.css('transform-origin','0px 0px') // this worked better in Firefox; little bit redundant
+  $('#'+elt.id).css('transform-origin','0px 0px 0px') // this worked better in Firefox; little bit redundant
   elt.style["transform-origin"] = orix+"px "+oriy+"px";
   elt.style["-webkit-transform-origin"] = orix+"px "+oriy+"px";
   elt.style.transform = t;

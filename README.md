@@ -14,7 +14,6 @@ This plugin is not yet complete!
 ##To do:
 
 * set up/fix drag listener for image
-* fix transform in Firefox css3
 * rejigger DistortableImage constructor for lat/lon instead of x,y
   * with default to "middle of the screen" ?
 * set initial dimensions from image
