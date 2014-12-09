@@ -210,20 +210,16 @@ L.DistortableImage = L.ImageOverlay.extend({
 
     map.on('zoomend', function() {
       this.initialPos = map.latLngToLayerPoint(map.getCenter())
-console.log('new iPos',this.initialPos)
       this.updateCorners()
       this.updateTransform()
     },this)
  
     map.on('zoomstart', function() {
-      // record a new offset, accounting for zoom multiplier:
-      this.offsetX +=  Math.pow(2,this.lastZoom-map._zoom) *
-                     (map.latLngToLayerPoint( map.getCenter()).x
-                    - map.latLngToLayerPoint( $L.initialPos).x)
-      this.offsetY +=  Math.pow(2,this.lastZoom-map._zoom) *
-                     (map.latLngToLayerPoint( map.getCenter()).y 
-                    - map.latLngToLayerPoint( $L.initialPos).y)
-console.log('new os',this.offsetX,this.offsetY,this.lastZoom-map._zoom,Math.pow(2,this.lastZoom-map._zoom))
+      // add a new offset, accounting for zoom multiplier:
+      this.offsetX += (map.latLngToLayerPoint( map.getCenter()).x
+                    - this.initialPos.x)
+      this.offsetY += (map.latLngToLayerPoint( map.getCenter()).y 
+                    - this.initialPos.y)
       this.lastZoom = map._zoom
     },this)
 
