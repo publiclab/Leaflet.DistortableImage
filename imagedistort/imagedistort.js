@@ -6,6 +6,7 @@ $L = {
   debug: false,
   images: [],
   initialize: function() {
+
     // disable default Leaflet click interactions
     map.touchZoom.disable();
     map.doubleClickZoom.disable();
@@ -184,6 +185,7 @@ L.DistortableImage = L.ImageOverlay.extend({
     // we should switch this to accept lat/lngs
     this.corners = corners;
     this.defaultZoom = map._zoom; // the zoom level at the time the image was created
+    this.lastZoom = map._zoom;
     this.opaque = false;
     this.outlined = false;
     this._url = url;
@@ -208,21 +210,26 @@ L.DistortableImage = L.ImageOverlay.extend({
 
     map.on('zoomend', function() {
       this.initialPos = map.latLngToLayerPoint(map.getCenter())
+console.log('new iPos',this.initialPos)
       this.updateCorners()
       this.updateTransform()
     },this)
  
     map.on('zoomstart', function() {
-      this.offsetX =  Math.pow(2,this.defaultZoom-map._zoom) *
+      // record a new offset, accounting for zoom multiplier:
+      this.offsetX +=  Math.pow(2,this.lastZoom-map._zoom) *
                      (map.latLngToLayerPoint( map.getCenter()).x
                     - map.latLngToLayerPoint( $L.initialPos).x)
-      this.offsetY =  Math.pow(2,this.defaultZoom-map._zoom) *
+      this.offsetY +=  Math.pow(2,this.lastZoom-map._zoom) *
                      (map.latLngToLayerPoint( map.getCenter()).y 
                     - map.latLngToLayerPoint( $L.initialPos).y)
+console.log('new os',this.offsetX,this.offsetY,this.lastZoom-map._zoom,Math.pow(2,this.lastZoom-map._zoom))
+      this.lastZoom = map._zoom
     },this)
 
     map.on('drag',function() {
       this.updateCorners()
+      this.updateTransform()
     },this)
 
     L.setOptions(this, options);
@@ -248,17 +255,18 @@ console.log('drag')
   // recalc corners (x,y) from markers (lat,lng)
   updateCorners: function() {
     // diff in element position vs. when first initialized;
-    // this fixes the transform if you've panned the map
-    var dx = this.initialPos.x-map.latLngToContainerPoint(map.getCenter()).x
-    var dy = this.initialPos.y-map.latLngToContainerPoint(map.getCenter()).y
+    // this fixes the transform if you've panned the map, 
+    // since the element itself moves when panning
+    var dx = -(this.initialPos.x-map.latLngToLayerPoint(map.getCenter()).x)
+    var dy = -(this.initialPos.y-map.latLngToLayerPoint(map.getCenter()).y)
 
     // this accounts for offsets due to panning then zooming:
-    dx -= this.offsetX 
-    dy -= this.offsetY
+    dx += this.offsetX 
+    dy += this.offsetY
 
     this.corners = []
     for(i=0;i<this.markers.length;i++) {
-      var pt = map.latLngToLayerPoint(this.markers[i]._latlng)
+      var pt = map.latLngToContainerPoint(this.markers[i]._latlng)
       this.corners.push(pt.x+dx,pt.y+dy)
     }
     this.debug()

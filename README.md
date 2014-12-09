@@ -15,6 +15,7 @@ This plugin is not yet complete!
 
 * distort is messed up if you pan the map THEN change zooms -- but otherwise works!
   * draw a box representing the map panning
+* fix transform in Firefox css3
 
 * set up/fix drag listener for image
 * rejigger DistortableImage constructor for lat/lon instead of x,y
