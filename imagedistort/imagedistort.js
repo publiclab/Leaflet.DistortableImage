@@ -5,136 +5,129 @@
 $L = {
   debug: false,
   images: [],
-  initialize: function() {
+  initialize: function(options) {
 
-    // disable default Leaflet click interactions
+    this.options = options || {}
+
+    // disable some default Leaflet interactions
+    // not really sure why this is necessary
     map.touchZoom.disable();
     map.doubleClickZoom.disable();
-    map.scrollWheelZoom.disable();
 
-    // upload button
-    L.easyButton('fa-file-image-o', 
-      function (){
-        $("#inputimage").click();
-      },
-      'Upload image'
-    );
-
-    // file observer
-    $(":file").change(function () {
-      if (this.files && this.files[0]) {
-        var reader = new FileReader();
-        reader.onload = $L.imageIsLoaded;
-        reader.readAsDataURL(this.files[0]);
-      }
-    });
-    
+    if (this.options['uploadBtn']) {
+      // create upload button
+      L.easyButton('fa-file-image-o', 
+        function (){ $("#inputimage").click(); },
+        'Upload image'
+      );
+      // file observer
+      $(":file").change(function () {
+        if (this.files && this.files[0]) {
+          var reader = new FileReader();
+          reader.onload = function(e) {
+            img = new L.DistortableImage(e.target.result);
+            img.bringToFront().addTo(map);
+          }
+          reader.readAsDataURL(this.files[0]);
+        }
+      });
+    }
   },
 
-  // set up basic behaviors once the image is loaded
-  imageIsLoaded: function(e) {
-    // default corners
-    corners = [300, 200, 500, 200, 300, 400, 500, 400];
- 
-    img = new L.DistortableImage(e.target.result, corners);
-    img.bringToFront().addTo(map);
-      
-  }
-}
+  // Compute the adjugate of m
+  adj: function(m) { 
+    return [
+      m[4]*m[8]-m[5]*m[7], m[2]*m[7]-m[1]*m[8], m[1]*m[5]-m[2]*m[4],
+      m[5]*m[6]-m[3]*m[8], m[0]*m[8]-m[2]*m[6], m[2]*m[3]-m[0]*m[5],
+      m[3]*m[7]-m[4]*m[6], m[1]*m[6]-m[0]*m[7], m[0]*m[4]-m[1]*m[3]
+    ];
+  },
 
-// Compute the adjugate of m
-function adj(m) { 
-  return [
-    m[4]*m[8]-m[5]*m[7], m[2]*m[7]-m[1]*m[8], m[1]*m[5]-m[2]*m[4],
-    m[5]*m[6]-m[3]*m[8], m[0]*m[8]-m[2]*m[6], m[2]*m[3]-m[0]*m[5],
-    m[3]*m[7]-m[4]*m[6], m[1]*m[6]-m[0]*m[7], m[0]*m[4]-m[1]*m[3]
-  ];
-}
-
-// multiply two matrices
-function multmm(a, b) { 
-  var c = Array(9);
-  for (var i = 0; i != 3; ++i) {
-    for (var j = 0; j != 3; ++j) {
-      var cij = 0;
-      for (var k = 0; k != 3; ++k) {
-        cij += a[3*i + k]*b[3*k + j];
+  // multiply two matrices
+  multmm: function(a, b) { 
+    var c = Array(9);
+    for (var i = 0; i != 3; ++i) {
+      for (var j = 0; j != 3; ++j) {
+        var cij = 0;
+        for (var k = 0; k != 3; ++k) {
+          cij += a[3*i + k]*b[3*k + j];
+        }
+        c[3*i + j] = cij;
       }
-      c[3*i + j] = cij;
     }
+    return c;
+  },
+
+  // multiply matrix and vector
+  multmv: function(m, v) { 
+    return [
+      m[0]*v[0] + m[1]*v[1] + m[2]*v[2],
+      m[3]*v[0] + m[4]*v[1] + m[5]*v[2],
+      m[6]*v[0] + m[7]*v[1] + m[8]*v[2]
+    ];
+  },
+
+  pdbg: function(m, v) {
+    var r = $L.multmv(m, v);
+    return r + " (" + r[0]/r[2] + ", " + r[1]/r[2] + ")";
+  },
+
+  basisToPoints: function(x1, y1, x2, y2, x3, y3, x4, y4) {
+    var m = [
+      x1, x2, x3,
+      y1, y2, y3,
+      1,  1,  1
+    ];
+    var v = $L.multmv($L.adj(m), [x4, y4, 1]);
+    return $L.multmm(m, [
+      v[0], 0, 0,
+      0, v[1], 0,
+      0, 0, v[2]
+    ]);
+  },
+
+  general2DProjection: function(
+    x1s, y1s, x1d, y1d,
+    x2s, y2s, x2d, y2d,
+    x3s, y3s, x3d, y3d,
+    x4s, y4s, x4d, y4d
+  ) {
+    var s = $L.basisToPoints(x1s, y1s, x2s, y2s, x3s, y3s, x4s, y4s);
+    var d = $L.basisToPoints(x1d, y1d, x2d, y2d, x3d, y3d, x4d, y4d);
+    return $L.multmm(d, $L.adj(s));
+  },
+
+  project: function(m, x, y) {
+    var v = $L.multmv(m, [x, y, 1]);
+    return [v[0]/v[2], v[1]/v[2]];
+  },
+
+  // use CSS to transform the image
+  transform2d: function(elt, x1, y1, x2, y2, x3, y3, x4, y4) {
+    var w = elt.offsetWidth, h = elt.offsetHeight;
+ 
+    var t = $L.general2DProjection(0,  0, x1, y1, 
+                                   w,  0, x2, y2, 
+                                   0,  h, x3, y3, 
+                                   w,  h, x4, y4
+    );
+ 
+    for(i = 0; i != 9; ++i) t[i] = t[i]/t[8];
+    t = [t[0], t[3], 0, t[6],
+         t[1], t[4], 0, t[7],
+         0   , 0   , 1, 0   ,
+         t[2], t[5], 0, t[8]];
+    t = "matrix3d(" + t.join(", ") + ")";
+    elt.style["-webkit-transform"] = t;
+    elt.style["-moz-transform"] = t;
+    elt.style["-o-transform"] = t;
+ 
+    var orix = 0, oriy = 0;
+    $('#'+elt.id).css('transform-origin','0px 0px 0px') // this worked better in Firefox; little bit redundant
+    elt.style["transform-origin"] = orix+"px "+oriy+"px";
+    elt.style["-webkit-transform-origin"] = orix+"px "+oriy+"px";
+    elt.style.transform = t;
   }
-  return c;
-}
-
-// multiply matrix and vector
-function multmv(m, v) { 
-  return [
-    m[0]*v[0] + m[1]*v[1] + m[2]*v[2],
-    m[3]*v[0] + m[4]*v[1] + m[5]*v[2],
-    m[6]*v[0] + m[7]*v[1] + m[8]*v[2]
-  ];
-}
-
-function pdbg(m, v) {
-  var r = multmv(m, v);
-  return r + " (" + r[0]/r[2] + ", " + r[1]/r[2] + ")";
-}
-
-function basisToPoints(x1, y1, x2, y2, x3, y3, x4, y4) {
-  var m = [
-    x1, x2, x3,
-    y1, y2, y3,
-    1,  1,  1
-  ];
-  var v = multmv(adj(m), [x4, y4, 1]);
-  return multmm(m, [
-    v[0], 0, 0,
-    0, v[1], 0,
-    0, 0, v[2]
-  ]);
-}
-
-function general2DProjection(
-  x1s, y1s, x1d, y1d,
-  x2s, y2s, x2d, y2d,
-  x3s, y3s, x3d, y3d,
-  x4s, y4s, x4d, y4d
-) {
-  var s = basisToPoints(x1s, y1s, x2s, y2s, x3s, y3s, x4s, y4s);
-  var d = basisToPoints(x1d, y1d, x2d, y2d, x3d, y3d, x4d, y4d);
-  return multmm(d, adj(s));
-}
-
-function project(m, x, y) {
-  var v = multmv(m, [x, y, 1]);
-  return [v[0]/v[2], v[1]/v[2]];
-}
-
-// use CSS to transform the image
-function transform2d(elt, x1, y1, x2, y2, x3, y3, x4, y4) {
-  var w = elt.offsetWidth, h = elt.offsetHeight;
-
-  var t = general2DProjection(0,  0, x1, y1, 
-                              w,  0, x2, y2, 
-                              0,  h, x3, y3, 
-                              w,  h, x4, y4
-  );
-
-  for(i = 0; i != 9; ++i) t[i] = t[i]/t[8];
-  t = [t[0], t[3], 0, t[6],
-       t[1], t[4], 0, t[7],
-       0   , 0   , 1, 0   ,
-       t[2], t[5], 0, t[8]];
-  t = "matrix3d(" + t.join(", ") + ")";
-  elt.style["-webkit-transform"] = t;
-  elt.style["-moz-transform"] = t;
-  elt.style["-o-transform"] = t;
-
-  var orix = 0, oriy = 0;
-  $('#'+elt.id).css('transform-origin','0px 0px 0px') // this worked better in Firefox; little bit redundant
-  elt.style["transform-origin"] = orix+"px "+oriy+"px";
-  elt.style["-webkit-transform-origin"] = orix+"px "+oriy+"px";
-  elt.style.transform = t;
 }
 
 L.DistortableImage = L.ImageOverlay.extend({
@@ -144,12 +137,16 @@ L.DistortableImage = L.ImageOverlay.extend({
     this.img.onclick = this.onclick;
     this.img.onselectstart = L.Util.falseFn;
     this.img.onmousemove = L.Util.falseFn;
-    this.img.onload = L.bind(this.fire, this, 'load');
+    this.img.onload = L.bind(function(i) {
+      // try to get native image width
+      console.log(this.img.width,this.img.height)
+      // that just returns 200,200; bs
+    },this, 'load');
     this.img.src = this._url;
     this.img.alt = this.options.alt;
+    this.id = 'image-distort-'+$('.image-distort').length
     this.img.id = this.id;
 
-    // enable dragging -- need to debug drag listener
     this.draggable = new L.Draggable(this._image);
     this.draggable.enable();
 
@@ -169,7 +166,6 @@ L.DistortableImage = L.ImageOverlay.extend({
         var pos = map.latLngToLayerPoint(this.markers[i].startPos)
         pos.x += dx
         pos.y += dy
-        // is this working?
         this.markers[i].setLatLng(map.layerPointToLatLng(new L.Point(pos.x,pos.y)))
       }
       this.updateCorners()
@@ -178,16 +174,31 @@ L.DistortableImage = L.ImageOverlay.extend({
 
   },
 
-  initialize: function (url, corners, options) { 
-    // but the element hasn't yet been made
-    this.id = 'image-distort-'+$('.image-distort').length
+  initialize: function (url, latlng, options) { 
+    // we should switch this to determine original size
+    // ...detecting in imgLoad method?
+    var imgh = 200,imgw = 200
+    if (latlng) {
+      var x = map.latLngToContainerPoint(latlng).x
+      var y = map.latLngToContainerPoint(latlng).y
+    } else {
+      // place in middle
+      var x = $(window).width()/2-imgw/2
+      var y = $(window).height()/2-imgh/2
+    }
+    this.corners = [
+      x,       y,
+      x+imgw,  y,
+      x,       y+imgh,
+      x+imgw,  y+imgh
+    ]
 
     var bounds = [];
     this.markers  = []
     // go through four corners
     for(var i = 0; i < 8; i = i+2) {
       // convert to lat/lng
-      var a = map.layerPointToLatLng([corners[i],corners[i+1]]);
+      var a = map.layerPointToLatLng([this.corners[i],this.corners[i+1]]);
       var marker = new L.ImageMarker([a.lat, a.lng]).addTo(map);
       marker.parentImage = this
       marker.orderId = i 
@@ -198,9 +209,8 @@ L.DistortableImage = L.ImageOverlay.extend({
       addidclass.className = addidclass.className + " corner";
     }
 
-    // we should switch this to accept lat/lngs
-    this.corners = corners;
-    this.defaultZoom = map._zoom; // the zoom level at the time the image was created
+    // the zoom level at the time the image was created:
+    this.defaultZoom = map._zoom; 
     this.opaque = false;
     this.outlined = false;
     this._url = url;
@@ -272,7 +282,7 @@ L.DistortableImage = L.ImageOverlay.extend({
   },
 
   updateTransform: function() {
-    transform2d(this.img, 
+    $L.transform2d(this.img, 
       this.corners[0], 
       this.corners[1], 
       this.corners[2], 

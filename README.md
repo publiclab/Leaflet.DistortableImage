@@ -13,12 +13,10 @@ This plugin is not yet complete!
 
 ##To do:
 
-* rejigger DistortableImage constructor for lat/lon instead of x,y
-  * with default to "middle of the screen" ?
 * set initial dimensions from image
-* restructure for multiple images
-  * dragging/distorting seem to be affecting all images
-    * image-distort-# incrementing DOM id assignment is not working
+* hide handles when not active
+* solve tool disappearance
+* restructure for multiple images - image selection and cueing btns
 * rotate/scale -- copy in code from old MapKnitter
 * figure out what `_bounds` is for and if we really need to update it
 * make outline() and opacity() of L.DistortableImage, so img.outline() 

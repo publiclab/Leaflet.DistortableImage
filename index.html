@@ -50,18 +50,19 @@
         id: 'examples.map-i86knfo3'
       }).addTo(map);
 
-      $L.initialize() // startup the imagedistort plugin
-
-      // simplify this
-      // default corners
-      corners = [300, 200, 500, 200, 300, 400, 500, 400];
-      img = new L.DistortableImage('example.jpg', corners);
+      // startup the ImageDistort plugin
+      $L.initialize( {
+        uploadBtn: true
+      })
+      // create an image
+      img = new L.DistortableImage(
+        'example.jpg'//,
+//        new L.latLng(
+//          51.51,
+//          -0.11
+//      ));
+)
       img.bringToFront().addTo(map);
-
-
-      for (i in $L.markers) {
-        $L.markers[i].on('drag', img.update);
-      }
 
     })()
       
