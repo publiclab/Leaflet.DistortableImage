@@ -137,12 +137,6 @@ L.DistortableImage = L.ImageOverlay.extend({
     this.img.onclick = this.onclick;
     this.img.onselectstart = L.Util.falseFn;
     this.img.onmousemove = L.Util.falseFn;
-      console.log(this.img.width,this.img.height)
-    this.img.onload = L.bind(function(i) {
-      // try to get native image width
-      console.log(this.img.width,this.img.height)
-      // that just returns 200,200; bs
-    },this, 'load');
     this.img.src = this._url;
     this.img.alt = this.options.alt;
     this.id = 'image-distort-'+$('.image-distort').length
@@ -172,83 +166,97 @@ L.DistortableImage = L.ImageOverlay.extend({
       this.updateCorners()
       this.updateTransform()
     },this)
-
   },
 
-  initialize: function (url, latlng, options) { 
-    // we should switch this to determine original size
-    // ...detecting in imgLoad method?
-    var imgh = 200,imgw = 200
-    if (latlng) {
-      var x = map.latLngToContainerPoint(latlng).x
-      var y = map.latLngToContainerPoint(latlng).y
-    } else {
-      // place in middle
-      var x = $(window).width()/2-imgw/2
-      var y = $(window).height()/2-imgh/2
-    }
-    this.corners = [
-      x,       y,
-      x+imgw,  y,
-      x,       y+imgh,
-      x+imgw,  y+imgh
-    ]
+  initialize: function (url, options) { 
+    this.options = options || {}
+    // adjust it to full image size
+    // ... do we have to do it with this virtual "nativeImg"
+    // or could we have done it on this.img.onLoad?
+    this.nativeImg = new Image()
+    this.nativeImg.onload = L.bind(function(i) {
 
-    var bounds = [];
-    this.markers  = []
-    // go through four corners
-    for(var i = 0; i < 8; i = i+2) {
-      // convert to lat/lng
-      var a = map.layerPointToLatLng([this.corners[i],this.corners[i+1]]);
-      var marker = new L.ImageMarker([a.lat, a.lng]).addTo(map);
-      marker.parentImage = this
-      marker.orderId = i 
-      this.markers.push(marker);
-      bounds.push([a.lat,a.lng]);
-      var addidclass = marker._icon;
-      addidclass.id= "marker"+i+$('.image-distort').length;
-      addidclass.className = addidclass.className + " corner";
-    }
-
-    // the zoom level at the time the image was created:
-    this.defaultZoom = map._zoom; 
-    this.opaque = false;
-    this.outlined = false;
-    this._url = url;
-    this._bounds = L.latLngBounds(bounds);// (LatLngBounds, Object)
-    this.initialPos = this.getPosition()
-    // tracking pans
-    this.offsetX = 0
-    this.offsetY = 0
-
-    // weird, but this lets instances of DistorableImage 
-    // retain the updateTransform() and other methods:
-    this.updateTransform = this.updateTransform 
-    this.updateCorners = this.updateCorners
-
-    for (i in this.markers) {
-      this.markers[i].on('drag',this.distort,this);
-    }
-
-    map.on('resize',function() {
-      this.updateCorners(true) // use "resize" param
-      this.updateTransform()
-    },this);
-
-    map.on('zoomend', function() {
+      var imgh = this.nativeImg.height, imgw = this.nativeImg.width
+      // check if it came with four latlngs, not just one
+      if (this.options['latlng']) {
+        var x = map.latLngToContainerPoint(latlng).x
+        var y = map.latLngToContainerPoint(latlng).y
+      } else {
+        // place in middle
+        var x = $(window).width()/2-imgw/2
+        var y = $(window).height()/2-imgh/2
+      }
+      this.corners = [
+        x,       y,
+        x+imgw,  y,
+        x,       y+imgh,
+        x+imgw,  y+imgh
+      ]
+     
+      var bounds = [];
+      this.markers  = []
+      // go through four corners
+      for(var i = 0; i < 8; i = i+2) {
+        // convert to lat/lng
+        var a = map.layerPointToLatLng([this.corners[i],this.corners[i+1]]);
+        var marker = new L.ImageMarker([a.lat, a.lng]).addTo(map);
+        marker.parentImage = this
+        marker.orderId = i 
+        this.markers.push(marker);
+        bounds.push([a.lat,a.lng]);
+        var addidclass = marker._icon;
+        addidclass.id= "marker"+i+$('.image-distort').length;
+        addidclass.className = addidclass.className + " corner";
+      }
+     
+      // the zoom level at the time the image was created:
+      this.defaultZoom = map._zoom; 
+      this.opaque = false;
+      this.outlined = false;
+      this._url = url;
+      this._bounds = L.latLngBounds(bounds);// (LatLngBounds, Object)
       this.initialPos = this.getPosition()
-      this.updateCorners()
-      this.updateTransform()
-    },this)
- 
-    map.on('zoomstart', function() {
-      // add a new offset:
-      this.offsetX += this.getPosition().x
-                    - this.initialPos.x
-      this.offsetY += this.getPosition().y 
-                    - this.initialPos.y
-    },this)
+      // tracking pans
+      this.offsetX = 0
+      this.offsetY = 0
+     
+      // weird, but this lets instances of DistorableImage 
+      // retain the updateTransform() and other methods:
+      this.updateTransform = this.updateTransform 
+      this.updateCorners = this.updateCorners
+     
+      for (i in this.markers) {
+        this.markers[i].on('drag',this.distort,this);
+      }
+     
+      map.on('resize',function() {
+        this.updateCorners(true) // use "resize" param
+        this.updateTransform()
+      },this);
+     
+      map.on('zoomend', function() {
+        this.initialPos = this.getPosition()
+        this.updateCorners()
+        this.updateTransform()
+      },this)
+     
+      map.on('zoomstart', function() {
+        // add a new offset:
+        this.offsetX += this.getPosition().x
+                      - this.initialPos.x
+        this.offsetY += this.getPosition().y 
+                      - this.initialPos.y
+      },this)
 
+      // this actually displays it on the map:
+      this.bringToFront().addTo(map);
+
+    },this, 'load');
+
+    // fire!!
+    this.nativeImg.src = url
+
+    // we ought to separate Leaflet options from native options
     L.setOptions(this, options);
   },
 
