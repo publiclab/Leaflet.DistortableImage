@@ -1,0 +1,29 @@
+{
+  "name": "Leaflet.DistortableImageLayer",
+  "version": "0.1.0",
+  "description": "Leaflet plugin enabling image overlays to be distorted, stretched, and warped (built for Public Lab's MapKnitter: http://publiclab.org).",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/publiclab/ImageDistortLeaflet.git"
+  },
+  "keywords": [
+    "leaflet",
+    "mapknitter",
+    "rubbersheeting",
+    "maps"
+  ],
+  "author": "Anish Shah, Jeff Warren, Justin Manley",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/publiclab/ImageDistortLeaflet/issues"
+  },
+  "homepage": "https://github.com/publiclab/ImageDistortLeaflet",
+  "devDependencies": {
+    "font-awesome": "^4.2.0",
+    "jquery": "^2.1.1",
+    "leaflet": "^0.7.3"
+  }
+}
