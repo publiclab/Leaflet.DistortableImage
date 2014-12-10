@@ -13,7 +13,6 @@ This plugin is not yet complete!
 
 ##To do:
 
-* set initial four corners from four latlngs
 * hide handles when not active
 * solve tool disappearance
 * restructure for multiple images - image selection and cueing btns

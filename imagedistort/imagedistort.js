@@ -170,28 +170,34 @@ L.DistortableImage = L.ImageOverlay.extend({
 
   initialize: function (url, options) { 
     this.options = options || {}
-    // adjust it to full image size
-    // ... do we have to do it with this virtual "nativeImg"
+    // do we have to get native size with this virtual "nativeImg"
     // or could we have done it on this.img.onLoad?
     this.nativeImg = new Image()
     this.nativeImg.onload = L.bind(function(i) {
 
-      var imgh = this.nativeImg.height, imgw = this.nativeImg.width
+      // let's make it not native size, but proportional:
+      var ratio = this.nativeImg.width/this.nativeImg.height
+      var imgh = 200, imgw = 200*ratio
+
       // check if it came with four latlngs, not just one
       if (this.options['latlng']) {
-        var x = map.latLngToContainerPoint(latlng).x
-        var y = map.latLngToContainerPoint(latlng).y
+        this.corners = []
+        var latlng = this.options['latlng']
+        for (i in latlng) {
+          this.corners.push(map.latLngToContainerPoint(latlng[i]).x)
+          this.corners.push(map.latLngToContainerPoint(latlng[i]).y)
+        }
       } else {
         // place in middle
         var x = $(window).width()/2-imgw/2
         var y = $(window).height()/2-imgh/2
+        this.corners = [
+          x,       y,
+          x+imgw,  y,
+          x,       y+imgh,
+          x+imgw,  y+imgh
+        ]
       }
-      this.corners = [
-        x,       y,
-        x+imgw,  y,
-        x,       y+imgh,
-        x+imgw,  y+imgh
-      ]
      
       var bounds = [];
       this.markers  = []
