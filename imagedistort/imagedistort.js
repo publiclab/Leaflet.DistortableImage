@@ -137,6 +137,7 @@ L.DistortableImage = L.ImageOverlay.extend({
     this.img.onclick = this.onclick;
     this.img.onselectstart = L.Util.falseFn;
     this.img.onmousemove = L.Util.falseFn;
+      console.log(this.img.width,this.img.height)
     this.img.onload = L.bind(function(i) {
       // try to get native image width
       console.log(this.img.width,this.img.height)

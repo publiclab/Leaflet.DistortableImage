@@ -52,16 +52,21 @@
 
       // startup the ImageDistort plugin
       $L.initialize( {
-        uploadBtn: true
+        uploadBtn: true // prompt and handle new images
       })
       // create an image
       img = new L.DistortableImage(
-        'example.jpg'//,
-//        new L.latLng(
-//          51.51,
-//          -0.11
-//      ));
-)
+        'example.jpg'
+      );
+
+      // or create one with a known location:
+      //img = new L.DistortableImage(
+      //  'example.jpg',
+      //  new L.latLng(
+      //    51.51,
+      //    -0.11
+      //));
+
       img.bringToFront().addTo(map);
 
     })()

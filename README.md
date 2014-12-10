@@ -26,6 +26,5 @@ This plugin is not yet complete!
 =================
 
 * make shift-drag drag the nearest marker, not the image?
-* needs remaining global methods and variables ported into the $L namespace or put into the DistortableImage class methods (at bottom)
 
 
