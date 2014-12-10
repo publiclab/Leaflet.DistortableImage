@@ -26,7 +26,6 @@ $L = {
           var reader = new FileReader();
           reader.onload = function(e) {
             img = new L.DistortableImage(e.target.result);
-            img.bringToFront().addTo(map);
           }
           reader.readAsDataURL(this.files[0]);
         }

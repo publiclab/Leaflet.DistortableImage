@@ -13,9 +13,10 @@ This plugin is not yet complete!
 
 ##To do:
 
-* hide handles when not active
-* solve tool disappearance
-* restructure for multiple images - image selection and cueing btns
+* solve tool disappearance - watch the DOM
+* restructure for multiple images 
+  * hide handles when not active
+  * image selection and cueing btns
 * rotate/scale -- copy in code from old MapKnitter
 * figure out what `_bounds` is for and if we really need to update it
 * make outline() and opacity() of L.DistortableImage, so img.outline() 
