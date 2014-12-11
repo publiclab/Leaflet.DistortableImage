@@ -130,24 +130,39 @@ $L = {
   }
 }
 
-L.DistortableImage = L.ImageOverlay.extend({
+L.ImageMarker = L.Marker.extend({
+  options: {
+    pane: 'markerPane',
+    icon: new L.Icon({iconUrl:'../src/images/imarker.png'}),
+    // title: '',
+    // alt: '',
+    clickable: true,
+    draggable: true, // this causes an error. Why?
+    keyboard: true,
+    zIndexOffset: 0,
+    opacity: 1,
+    riseOnHover: true,
+    riseOffset: 250
+  }
+});
+L.DistortableImageOverlay = L.ImageOverlay.extend({
   _initImage: function () {
-    this.img = this._image = L.DomUtil.create('img',
+    this._image = L.DomUtil.create('img',
     'leaflet-image-layer ' +  'leaflet-zoom-animated');
     // closure
-    this.img.onclick = (function(s){ return function() {s.onclick()} })(this);
-    this.img.onselectstart = L.Util.falseFn;
-    this.img.onmousemove = L.Util.falseFn;
-    this.img.src = this._url;
-    this.img.alt = this.options.alt;
+    this._image.onclick = (function(s){ return function() {s.onclick()} })(this);
+    this._image.onselectstart = L.Util.falseFn;
+    this._image.onmousemove = L.Util.falseFn;
+    this._image.src = this._url;
+    this._image.alt = this.options.alt;
     this.id = 'image-distort-'+$('.image-distort').length
-    this.img.id = this.id;
+    this._image.id = this.id;
 
     this.mode = 'distort'
 
     // this doesn't work: 
     // clicking to change mode is a bad interaction anyways
-    this.img.click(function(e) {
+    this._image.click(function(e) {
       if (this.mode == 'rotate') this.mode = 'distort'
       else this.mode = 'rotate'
       console.log('switch mode',this.mode)
@@ -183,7 +198,7 @@ L.DistortableImage = L.ImageOverlay.extend({
   initialize: function (url, options) { 
     this.options = options || {}
     // do we have to get native size with this virtual "nativeImg"
-    // or could we have done it on this.img.onLoad?
+    // or could we have done it on this._image.onLoad?
     this.nativeImg = new Image()
     this.nativeImg.onload = L.bind(function(i) {
 
@@ -317,7 +332,7 @@ L.DistortableImage = L.ImageOverlay.extend({
   },
 
   updateTransform: function() {
-    $L.transform2d(this.img, 
+    $L.transform2d(this._image, 
       this.corners[0], 
       this.corners[1], 
       this.corners[2], 
@@ -354,10 +369,10 @@ L.DistortableImage = L.ImageOverlay.extend({
     this.outlined = !this.outlined;
     if (this.outlined) {
       this.setOpacity(0.4);
-      $('#'+this.img.id).css('border','1px solid red');
+      $('#'+this._image.id).css('border','1px solid red');
     } else {
       this.setOpacity(1);
-      $('#'+this.img.id).css('border', 'none');
+      $('#'+this._image.id).css('border', 'none');
     }
   },
 
@@ -456,21 +471,4 @@ L.DistortableImage = L.ImageOverlay.extend({
     return [x,y]
   }
 
-})
-
-L.ImageMarker = L.Marker.extend({
-  options: {
-    pane: 'markerPane',
-    icon: new L.Icon({iconUrl:'imagedistort/images/imarker.png'}),
-    // title: '',
-    // alt: '',
-    clickable: true,
-    draggable: true, 
-    keyboard: true,
-    zIndexOffset: 0,
-    opacity: 1,
-    riseOnHover: true,
-    riseOffset: 250
-  }
 });
-

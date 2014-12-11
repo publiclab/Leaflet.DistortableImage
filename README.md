@@ -1,4 +1,4 @@
-Leaflet ImageDistort / DistortableImage
+Leaflet.DistortableImageOverlay
 ===================
 
 A Leaflet extension to distort images -- "rubbersheeting" -- mainly for the [MapKnitter.org](http://mapknitter.org) ([src](https://github.com/publiclab/mapknitter)) image georectification service by [Public Lab](http://publiclab.org).
