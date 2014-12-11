@@ -182,6 +182,12 @@ L.DistortableImage = L.ImageOverlay.extend({
       this.updateCorners()
       this.updateTransform()
     },this)
+
+    this.draggable.on('dragend',function() {
+      if (this.mode == 'rotate') this.mode = 'distort'
+      else this.mode = 'rotate'
+      this.changeMode()
+    },this)
   },
 
   initialize: function (url, options) { 
@@ -221,7 +227,9 @@ L.DistortableImage = L.ImageOverlay.extend({
       for(var i = 0; i < 8; i = i+2) {
         // convert to lat/lng
         var a = map.layerPointToLatLng([this.corners[i],this.corners[i+1]]);
-        var marker = new L.ImageMarker([a.lat, a.lng]).addTo(map);
+        var marker = new L.ImageMarker([a.lat, a.lng])
+        marker.options.icon = new L.Icon({iconUrl:marker.icons.grey,iconSize:[16,16],iconAnchor:[8,8]})
+        marker.addTo(map);
         marker.parentImage = this
         marker.orderId = i 
         this.markers.push(marker);
@@ -286,9 +294,15 @@ L.DistortableImage = L.ImageOverlay.extend({
         this.markers[i].off('drag');
         this.markers[i].on('dragstart',this.rotateStart,this);
         this.markers[i].on('drag',this.rotate,this);
+        $.each(this.markers,function(i,m) {
+          m.setIcon(new L.Icon({iconUrl:m.icons.red,iconSize:[16,16],iconAnchor:[8,8]}))
+        })
       } else {
         this.markers[i].off('drag');
         this.markers[i].on('drag',this.distort,this);
+        $.each(this.markers,function(i,m) {
+          m.setIcon(new L.Icon({iconUrl:m.icons.grey,iconSize:[16,16],iconAnchor:[8,8]}))
+        })
       }
     }
   },
@@ -464,9 +478,13 @@ L.DistortableImage = L.ImageOverlay.extend({
 })
 
 L.ImageMarker = L.Marker.extend({
+  // icons generated from FontAwesome at: http://fa2png.io/
+  icons: { grey: 'imagedistort/images/circle-o_444444_16.png',
+            red: 'imagedistort/images/circle-o_cc4444_16.png'
+  },
   options: {
     pane: 'markerPane',
-    icon: new L.Icon({iconUrl:'imagedistort/images/imarker.png'}),
+    icon: false,
     // title: '',
     // alt: '',
     clickable: true,
@@ -477,5 +495,6 @@ L.ImageMarker = L.Marker.extend({
     riseOnHover: true,
     riseOffset: 250
   }
+  
 });
 
