@@ -1,10 +1,7 @@
-/*
-
-*/
-
 $L = {
   debug: false,
   images: [],
+  pointer: {x:0,y:0},
   initialize: function(options) {
 
     this.options = options || {}
@@ -13,6 +10,10 @@ $L = {
     // not really sure why this is necessary
     map.touchZoom.disable();
     map.doubleClickZoom.disable();
+
+    map.on('mousemove',function(e) {
+      this.pointer = map.latLngToLayerPoint(e.latlng)
+    },this)
 
     if (this.options['uploadBtn']) {
       // create upload button
@@ -133,13 +134,25 @@ L.DistortableImage = L.ImageOverlay.extend({
   _initImage: function () {
     this.img = this._image = L.DomUtil.create('img',
     'leaflet-image-layer ' +  'leaflet-zoom-animated');
-    this.img.onclick = this.onclick;
+    // closure
+    this.img.onclick = (function(s){ return function() {s.onclick()} })(this);
     this.img.onselectstart = L.Util.falseFn;
     this.img.onmousemove = L.Util.falseFn;
     this.img.src = this._url;
     this.img.alt = this.options.alt;
     this.id = 'image-distort-'+$('.image-distort').length
     this.img.id = this.id;
+
+    this.mode = 'distort'
+
+    // this doesn't work: 
+    // clicking to change mode is a bad interaction anyways
+    this.img.click(function(e) {
+      if (this.mode == 'rotate') this.mode = 'distort'
+      else this.mode = 'rotate'
+      console.log('switch mode',this.mode)
+    },this)
+    this.changeMode()
 
     this.draggable = new L.Draggable(this._image);
     this.draggable.enable();
@@ -230,10 +243,6 @@ L.DistortableImage = L.ImageOverlay.extend({
       this.updateTransform = this.updateTransform 
       this.updateCorners = this.updateCorners
      
-      for (i in this.markers) {
-        this.markers[i].on('drag',this.distort,this);
-      }
-     
       map.on('resize',function() {
         this.updateCorners(true) // use "resize" param
         this.updateTransform()
@@ -263,6 +272,18 @@ L.DistortableImage = L.ImageOverlay.extend({
 
     // we ought to separate Leaflet options from native options
     L.setOptions(this, options);
+  },
+
+  // change between 'distort' and 'rotate'
+  changeMode: function() {
+    for (var i in this.markers) {
+      if (this.mode == 'rotate') {
+        this.markers[i].on('dragstart',this.rotateStart,this);
+        this.markers[i].on('drag',this.rotate,this);
+      } else {
+        this.markers[i].on('drag',this.distort,this);
+      }
+    }
   },
 
   // remember 'this' gets context of marker, not image
@@ -332,11 +353,11 @@ L.DistortableImage = L.ImageOverlay.extend({
   toggleOutline: function() {
     this.outlined = !this.outlined;
     if (this.outlined) {
-      this.img.setOpacity(0.2);
-      this.img.css('border','2px solid black');
+      this.setOpacity(0.4);
+      $('#'+this.img.id).css('border','1px solid red');
     } else {
-      this.img.setOpacity(1);
-      this.img.css('border', '');
+      this.setOpacity(1);
+      $('#'+this.img.id).css('border', 'none');
     }
   },
 
@@ -359,18 +380,16 @@ L.DistortableImage = L.ImageOverlay.extend({
        },
       'Toggle Image Transparency'
     ).getContainer()//.children[0]
-    this.transparencyBtn.id = 'image-distort-outline';
-    this.transparencyBtn.setAttribute('parentImgId',this.id)
     
     this.outlineBtn = L.easyButton('fa-square-o', 
-      function () {
-        outline();
-      },
-      'Outline'
-    ).getContainer().children[0]
-    this.outlineBtn.id = 'image-distort-outline';
-    this.outlineBtn.setAttribute('parentImgId',this.id)
-          
+                                   function () {
+                                     this.scope.toggleOutline();
+                                   },
+                                   'Outline',
+                                   map,
+                                   this
+    )
+ 
     this.deleteBtn = L.easyButton('fa-bitbucket', 
       function () {
         map.removeLayer($(this.parentImgId));
@@ -378,9 +397,63 @@ L.DistortableImage = L.ImageOverlay.extend({
         map.removeLayer(this.markers[i]);
       },
      'Delete Image'
-    ).getContainer().children[0]
-    this.deleteBtn.id = 'image-distort-delete';
-    this.deleteBtn.setAttribute('parentImgId',this.id)
+    )
+  },
+
+  // needs refactoring from Warper code
+  rotateStart: function(e) {
+    var center = this.getCenter()
+    this.pointer_distance = Math.sqrt(Math.pow(center[1]-$L.pointer.y,2)+Math.pow(center[0]-$L.pointer.x,2))
+    this.pointer_angle = Math.atan2(center[1]-$L.pointer.y,center[0]-$L.pointer.x)
+    for (var i in this.markers) {
+      var marker = this.markers[i]
+      var mx = map.latLngToLayerPoint(marker._latlng).x
+      var my = map.latLngToLayerPoint(marker._latlng).y
+      marker.angle = Math.atan2(my-center[1],mx-center[0])
+      marker.distance = (mx-center[0])/Math.cos(marker.angle)
+    }
+  },
+
+  // needs refactoring from Warper code
+  // doesn't have "this" scope
+  rotate: function(e) {
+    var center = this.getCenter()
+    // use center to rotate around a point
+    var distance = Math.sqrt(Math.pow(center[1]-$L.pointer.y,2)+Math.pow(center[0]-$L.pointer.x,2))
+    var distance_change = distance - this.pointer_distance
+    var angle = Math.atan2(center[1]-$L.pointer.y,center[0]-$L.pointer.x)
+    var angle_change = angle-this.pointer_angle
+
+    // keyboard keypress event is not hooked up:
+    if (false) angle_change = 0 
+
+    // use angle to recalculate each of the points in this.parent_shape.points
+    for (var i in this.markers) {
+      var marker = this.markers[parseInt(i)]
+      this.markers[parseInt(i)]._latlng = map.layerPointToLatLng(new L.point(
+        [   center[0]
+          + Math.cos(marker.angle+angle_change)
+          * (marker.distance+distance_change),
+            center[1]
+          + Math.sin(marker.angle+angle_change)
+          * (marker.distance+distance_change)
+        ]))
+      marker.update()
+    }
+    this.updateCorners()
+    this.updateTransform()
+  },
+
+  getCenter: function() {
+    var x = 0, y = 0
+    for (var i in this.markers) { // NW,NE,SW,SE, ugh
+      var pos = map.latLngToLayerPoint(this.markers[i]._latlng)
+      x += pos.x
+      y += pos.y
+    }
+    x /= 4
+    y /= 4
+    return [x,y]
   }
 
 })
@@ -392,7 +465,7 @@ L.ImageMarker = L.Marker.extend({
     // title: '',
     // alt: '',
     clickable: true,
-    draggable: true, // this causes an error. Why?
+    draggable: true, 
     keyboard: true,
     zIndexOffset: 0,
     opacity: 1,
