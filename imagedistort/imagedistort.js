@@ -295,13 +295,13 @@ L.DistortableImage = L.ImageOverlay.extend({
         this.markers[i].on('dragstart',this.rotateStart,this);
         this.markers[i].on('drag',this.rotate,this);
         $.each(this.markers,function(i,m) {
-          m.setIcon(new L.Icon({iconUrl:m.icons.red,iconSize:[16,16],iconAnchor:[8,8]}))
+          m.setFromIcons('red')
         })
       } else {
         this.markers[i].off('drag');
         this.markers[i].on('drag',this.distort,this);
         $.each(this.markers,function(i,m) {
-          m.setIcon(new L.Icon({iconUrl:m.icons.grey,iconSize:[16,16],iconAnchor:[8,8]}))
+          m.setFromIcons('grey')
         })
       }
     }
@@ -473,6 +473,21 @@ L.DistortableImage = L.ImageOverlay.extend({
     x /= 4
     y /= 4
     return [x,y]
+  },
+
+  lock: function() {
+    this.locked = true
+    $.each(this.markers,function(i,m) {
+      m.setFromIcons('locked')
+    })
+  },
+
+  unlock: function() {
+    this.locked = false
+    this.mode = 'distort'
+    $.each(this.markers,function(i,m) {
+      m.setFromIcons('grey')
+    })
   }
 
 })
@@ -480,7 +495,8 @@ L.DistortableImage = L.ImageOverlay.extend({
 L.ImageMarker = L.Marker.extend({
   // icons generated from FontAwesome at: http://fa2png.io/
   icons: { grey: 'imagedistort/images/circle-o_444444_16.png',
-            red: 'imagedistort/images/circle-o_cc4444_16.png'
+            red: 'imagedistort/images/circle-o_cc4444_16.png',
+         locked: 'imagedistort/images/close_444444_16.png'
   },
   options: {
     pane: 'markerPane',
@@ -494,6 +510,9 @@ L.ImageMarker = L.Marker.extend({
     opacity: 1,
     riseOnHover: true,
     riseOffset: 250
+  },
+  setFromIcons: function(name) {
+    this.setIcon(new L.Icon({iconUrl:this.icons[name],iconSize:[16,16],iconAnchor:[8,8]}))
   }
   
 });
