@@ -13,8 +13,6 @@ This plugin is not yet complete!
 
 ##To do:
 
-* rotate/scale -- copy in code from old MapKnitter
-  * need better way to measure mouse position. Maybe just track mousemove? or figure out how to get event from image.on('dragstart')
 * solve tool disappearance - watch the DOM
 * restructure for multiple images 
   * hide handles when not active
@@ -28,6 +26,9 @@ This plugin is not yet complete!
 
 =================
 
+##Leftovers, persnickity stuff:
+
 * make shift-drag drag the nearest marker, not the image?
+* scale is not true scaling -- it moves points equally from the "center" which causes distortion in some edge cases
 
 
