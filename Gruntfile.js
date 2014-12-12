@@ -25,6 +25,7 @@ module.exports = function(grunt) {
                 smarttabs: true,
                 globals: {
                     L: false,
+                    $: false,
 
                     // Mocha
 
@@ -40,7 +41,7 @@ module.exports = function(grunt) {
                 }
             },
             source: {
-                src: [ 'src/*.js', 'package.json' ]
+                src: [ 'src/**/*.js', 'package.json' ]
             },
             grunt: {
                 src: [ 'Gruntfile.js' ]
@@ -51,6 +52,11 @@ module.exports = function(grunt) {
             development: {
                 configFile: 'test/karma.conf.js',
                 background: true
+            },
+            test: {
+                configFile: 'test/karma.conf.js',
+                background: false,
+                singleRun: true
             }
         },
 
@@ -60,7 +66,8 @@ module.exports = function(grunt) {
             },
             source: {
                 files: [
-                    'src/*.js',
+                    'src/**/*.js',
+                    'test/src/**/*.js',
                     'Gruntfile.js'
                 ],
                 tasks: [ 'build:js' ]
@@ -70,9 +77,10 @@ module.exports = function(grunt) {
         concat: {
             dist: {
                 src: [
-                    'src/config.js',
-                    'src/ImageMarker.js',                    
-                    'src/DistortableImageOverlay.js'
+                    'src/util/Util.Matrix.js',
+                    'src/ImageMarker.js',
+                    'src/DistortableImageOverlay.js',
+                    'src/DistortableImage.Edit.js'
                 ],
                 dest: 'DistortableImageOverlay.js',
             }
@@ -86,8 +94,8 @@ module.exports = function(grunt) {
     grunt.registerTask('default', ['karma:development:start', 'watch']);
 
     grunt.registerTask('build', [
-        // 'jshint',
-        // 'karma:development:run',
+        'jshint',
+        'karma:development:run',
         'concat:dist'
     ]);
 
