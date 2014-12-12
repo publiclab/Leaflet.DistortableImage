@@ -168,15 +168,17 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this.id = 'image-distort-'+$('.image-distort').length
     this._image.id = this.id;
 
+    this._image.onload = (function(s) {
+      return function() {
+        s._image.onclick = function() {
+          if (s.mode == 'rotate') s.mode = 'distort'
+          else s.mode = 'rotate'
+          s.changeMode.apply(s)
+        }
+      }
+    })(this)
+ 
     this.mode = 'distort'
-
-    // this doesn't work: 
-    // clicking to change mode is a bad interaction anyways
-    this._image.click(function(e) {
-      if (this.mode == 'rotate') this.mode = 'distort'
-      else this.mode = 'rotate'
-      console.log('switch mode',this.mode)
-    },this)
     this.changeMode()
 
     this.draggable = new L.Draggable(this._image);
@@ -308,7 +310,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     L.setOptions(this, options);
   },
 
-  // change between 'distort' and 'rotate'
+  // change between 'distort' and 'rotate' mode
   changeMode: function() {
     for (var i in this.markers) {
       if (this.mode == 'rotate') {
