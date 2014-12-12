@@ -26,7 +26,7 @@ $L = {
         if (this.files && this.files[0]) {
           var reader = new FileReader();
           reader.onload = function(e) {
-            img = new L.DistortableImage(e.target.result);
+            img = new L.DistortableImageOverlay(e.target.result);
           }
           reader.readAsDataURL(this.files[0]);
         }
@@ -501,6 +501,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   lock: function() {
     this.locked = true
+    this.off('dragstart');
+    this.off('drag');
+    this.draggable = false
     $.each(this.markers,function(i,m) {
       m.setFromIcons('locked')
     })
@@ -508,7 +511,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   unlock: function() {
     this.locked = false
+    this.draggable = true
     this.mode = 'distort'
+    this.changeMode() // reattaches listeners
     $.each(this.markers,function(i,m) {
       m.setFromIcons('grey')
     })

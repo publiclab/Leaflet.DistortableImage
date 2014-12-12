@@ -344,6 +344,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   lock: function() {
     this.locked = true
+    this.off('dragstart');
+    this.off('drag');
+    this.draggable = false
     $.each(this.markers,function(i,m) {
       m.setFromIcons('locked')
     })
@@ -351,7 +354,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   unlock: function() {
     this.locked = false
+    this.draggable = true
     this.mode = 'distort'
+    this.changeMode() // reattaches listeners
     $.each(this.markers,function(i,m) {
       m.setFromIcons('grey')
     })

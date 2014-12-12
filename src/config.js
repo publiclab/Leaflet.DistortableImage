@@ -26,7 +26,7 @@ $L = {
         if (this.files && this.files[0]) {
           var reader = new FileReader();
           reader.onload = function(e) {
-            img = new L.DistortableImage(e.target.result);
+            img = new L.DistortableImageOverlay(e.target.result);
           }
           reader.readAsDataURL(this.files[0]);
         }
