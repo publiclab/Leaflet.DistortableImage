@@ -6,15 +6,14 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <script src="lib/leaflet/leaflet.js" type="text/javascript" charset="utf-8"></script>
-  <link href="lib/font-awesome.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="lib/leaflet/leaflet.css" type="text/css" media="screen" title="no title" charset="utf-8">
-  <script src="lib/jquery.min.js"></script>
-  <script src="lib/easybutton.js" type="text/javascript" charset="utf-8"></script>
+  <script src="../node_modules/leaflet/dist/leaflet.js" type="text/javascript" charset="utf-8"></script>
+  <link href="../node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../node_modules/leaflet/dist/leaflet.css" type="text/css" media="screen" title="no title" charset="utf-8">
+  <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+  <script src="../lib/easybutton.js" type="text/javascript" charset="utf-8"></script>
 
-  <link rel="stylesheet" href="imagedistort.css" type="text/css" media="screen" title="no title" charset="utf-8">
-  <script src="imagedistort/imagedistort.js"></script>
-
+  <link rel="stylesheet" href="../DistortableImageOverlay.css" type="text/css" media="screen" title="no title" charset="utf-8">
+  <script src="../DistortableImageOverlay.js"></script>
 </head>
 <body style="margin:0;">
 
@@ -55,7 +54,7 @@
         uploadBtn: true // prompt and handle new images
       })
       // create an image
-      img = new L.DistortableImage(
+      img = new L.DistortableImageOverlay(
         'example.jpg'
       );
 
