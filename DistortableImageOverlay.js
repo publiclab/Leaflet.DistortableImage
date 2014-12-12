@@ -132,9 +132,9 @@ $L = {
 
 L.ImageMarker = L.Marker.extend({
   // icons generated from FontAwesome at: http://fa2png.io/
-  icons: { grey: 'imagedistort/images/circle-o_444444_16.png',
-            red: 'imagedistort/images/circle-o_cc4444_16.png',
-         locked: 'imagedistort/images/close_444444_16.png'
+  icons: { grey: '../src/images/circle-o_444444_16.png',
+            red: '../src/images/circle-o_cc4444_16.png',
+         locked: '../src/images/close_444444_16.png'
   },
   options: {
     pane: 'markerPane',
@@ -160,10 +160,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   _initImage: function () {
     this._image = L.DomUtil.create('img',
     'leaflet-image-layer ' +  'leaflet-zoom-animated');
-    this.id = 'image-distort-'+$('.image-distort').length
-    this.img.id = this.id;
-
-    // closure
     this._image.onclick = (function(s){ return function() {s.onclick()} })(this);
     this._image.onselectstart = L.Util.falseFn;
     this._image.onmousemove = L.Util.falseFn;
@@ -213,6 +209,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       else this.mode = 'rotate'
       this.changeMode()
     },this)
+ 
   },
 
   initialize: function (url, options) { 
@@ -253,7 +250,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
         // convert to lat/lng
         var a = map.layerPointToLatLng([this.corners[i],this.corners[i+1]]);
         var marker = new L.ImageMarker([a.lat, a.lng])
-        marker.options.icon = new L.Icon({iconUrl:marker.icons.grey,iconSize:[16,16],iconAnchor:[8,8]})
+        marker.setFromIcons('grey')
         marker.addTo(map);
         marker.parentImage = this
         marker.orderId = i 
@@ -515,5 +512,4 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     })
   }
 
-})
-
+});

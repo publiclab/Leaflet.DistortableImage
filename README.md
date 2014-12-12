@@ -15,20 +15,27 @@ This plugin is not yet complete!
 
 ##Setup
 
-From the root directory, run `npm install` or `sudo npm install`
+1. From the root directory, run `npm install` or `sudo npm install`
+2. Open examples/index.html in a browser
+
+##Contributing
+
+1. This project uses `grunt` to do a lot of things, including concatenate source files from /src/ to /DistortableImageOverlay.js. But you may need to install grunt-cli: `npm install -g grunt-cli` first.
+2. Run `grunt` in the root directory, and it will watch for changes and concatenate them on the fly.
 
 ****
 
 ##To do:
 
+* locking of images
+* remove addTo(map) from initialize
+* add bringToFront() to onclick
 * solve tool disappearance - watch the DOM
-* restructure for multiple images 
-  * hide handles when not active
-  * image selection and cueing btns
+* hide handles when not active
+* image selection and cueing btns
 * figure out what `_bounds` is for and if we really need to update it
 * need to make easybuttons for image manip appear only when you've selected one
 * map.on('click') should deselect all images
-* locking of images
 * ensure it's easy to attach event callback to 'deselect' for saving
   * and/or mouseup?
 * improve image selection interface

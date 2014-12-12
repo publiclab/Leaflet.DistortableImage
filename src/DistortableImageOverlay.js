@@ -1,8 +1,8 @@
 L.DistortableImageOverlay = L.ImageOverlay.extend({
+  // runs after initialize()
   _initImage: function () {
     this._image = L.DomUtil.create('img',
     'leaflet-image-layer ' +  'leaflet-zoom-animated');
-    // closure
     this._image.onclick = (function(s){ return function() {s.onclick()} })(this);
     this._image.onselectstart = L.Util.falseFn;
     this._image.onmousemove = L.Util.falseFn;
@@ -46,6 +46,13 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       this.updateCorners()
       this.updateTransform()
     },this)
+
+    this.draggable.on('dragend',function() {
+      if (this.mode == 'rotate') this.mode = 'distort'
+      else this.mode = 'rotate'
+      this.changeMode()
+    },this)
+ 
   },
 
   initialize: function (url, options) { 
@@ -85,7 +92,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       for(var i = 0; i < 8; i = i+2) {
         // convert to lat/lng
         var a = map.layerPointToLatLng([this.corners[i],this.corners[i+1]]);
-        var marker = new L.ImageMarker([a.lat, a.lng]).addTo(map);
+        var marker = new L.ImageMarker([a.lat, a.lng])
+        marker.setFromIcons('grey')
+        marker.addTo(map);
         marker.parentImage = this
         marker.orderId = i 
         this.markers.push(marker);
@@ -146,10 +155,19 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   changeMode: function() {
     for (var i in this.markers) {
       if (this.mode == 'rotate') {
+        this.markers[i].off('dragstart');
+        this.markers[i].off('drag');
         this.markers[i].on('dragstart',this.rotateStart,this);
         this.markers[i].on('drag',this.rotate,this);
+        $.each(this.markers,function(i,m) {
+          m.setFromIcons('red')
+        })
       } else {
+        this.markers[i].off('drag');
         this.markers[i].on('drag',this.distort,this);
+        $.each(this.markers,function(i,m) {
+          m.setFromIcons('grey')
+        })
       }
     }
   },
@@ -268,28 +286,25 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     )
   },
 
-  // needs refactoring from Warper code
   rotateStart: function(e) {
-    var center = this.getCenter()
-    this.pointer_distance = Math.sqrt(Math.pow(center[1]-$L.pointer.y,2)+Math.pow(center[0]-$L.pointer.x,2))
-    this.pointer_angle = Math.atan2(center[1]-$L.pointer.y,center[0]-$L.pointer.x)
+    this.center = this.getCenter()
+    this.pointer_distance = Math.sqrt(Math.pow(this.center[1]-$L.pointer.y,2)+Math.pow(this.center[0]-$L.pointer.x,2))
+    this.pointer_angle = Math.atan2(this.center[1]-$L.pointer.y,this.center[0]-$L.pointer.x)
     for (var i in this.markers) {
       var marker = this.markers[i]
       var mx = map.latLngToLayerPoint(marker._latlng).x
       var my = map.latLngToLayerPoint(marker._latlng).y
-      marker.angle = Math.atan2(my-center[1],mx-center[0])
-      marker.distance = (mx-center[0])/Math.cos(marker.angle)
+      marker.angle = Math.atan2(my-this.center[1],mx-this.center[0])
+      marker.distance = (mx-this.center[0])/Math.cos(marker.angle)
     }
   },
 
-  // needs refactoring from Warper code
-  // doesn't have "this" scope
+  // rotate and scale; scaling isn't real -- it just tracks distance from "center", and can distort the image in some cases
   rotate: function(e) {
-    var center = this.getCenter()
     // use center to rotate around a point
-    var distance = Math.sqrt(Math.pow(center[1]-$L.pointer.y,2)+Math.pow(center[0]-$L.pointer.x,2))
+    var distance = Math.sqrt(Math.pow(this.center[1]-$L.pointer.y,2)+Math.pow(this.center[0]-$L.pointer.x,2))
     var distance_change = distance - this.pointer_distance
-    var angle = Math.atan2(center[1]-$L.pointer.y,center[0]-$L.pointer.x)
+    var angle = Math.atan2(this.center[1]-$L.pointer.y,this.center[0]-$L.pointer.x)
     var angle_change = angle-this.pointer_angle
 
     // keyboard keypress event is not hooked up:
@@ -299,10 +314,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     for (var i in this.markers) {
       var marker = this.markers[parseInt(i)]
       this.markers[parseInt(i)]._latlng = map.layerPointToLatLng(new L.point(
-        [   center[0]
+        [   this.center[0]
           + Math.cos(marker.angle+angle_change)
           * (marker.distance+distance_change),
-            center[1]
+            this.center[1]
           + Math.sin(marker.angle+angle_change)
           * (marker.distance+distance_change)
         ]))
@@ -312,6 +327,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this.updateTransform()
   },
 
+  // cheaply get center by averaging the corners
   getCenter: function() {
     var x = 0, y = 0
     for (var i in this.markers) { // NW,NE,SW,SE, ugh
@@ -322,6 +338,21 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     x /= 4
     y /= 4
     return [x,y]
+  },
+
+  lock: function() {
+    this.locked = true
+    $.each(this.markers,function(i,m) {
+      m.setFromIcons('locked')
+    })
+  },
+
+  unlock: function() {
+    this.locked = false
+    this.mode = 'distort'
+    $.each(this.markers,function(i,m) {
+      m.setFromIcons('grey')
+    })
   }
 
 });
