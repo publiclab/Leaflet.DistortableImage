@@ -14,9 +14,14 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this._image.onload = (function(s) {
       return function() {
         s._image.onclick = function() {
-          if (s.mode == 'rotate') s.mode = 'distort'
-          else s.mode = 'rotate'
-          s.changeMode.apply(s)
+          if (s.draggable._enabled) {
+            s.bringToFront()
+//this isn't called... weird.
+console.log('btf')
+            if (s.mode == 'rotate') s.mode = 'distort'
+            else s.mode = 'rotate'
+            s.changeMode.apply(s)
+          }
         }
       }
     })(this)
@@ -249,7 +254,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     }
   },
 
+  // currently not running
   onclick: function(e) {
+console.log('btf')
     // first, delete existing buttons
     $('#image-distort-transparency').parent().remove();
     $('#image-distort-outline').parent().remove();
@@ -346,7 +353,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this.locked = true
     this.off('dragstart');
     this.off('drag');
-    this.draggable = false
+    this.draggable.disable()
     $.each(this.markers,function(i,m) {
       m.setFromIcons('locked')
     })
@@ -354,7 +361,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   unlock: function() {
     this.locked = false
-    this.draggable = true
+    this.draggable.enable()
     this.mode = 'distort'
     this.changeMode() // reattaches listeners
     $.each(this.markers,function(i,m) {
