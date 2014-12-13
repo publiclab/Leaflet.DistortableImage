@@ -1,4 +1,4 @@
-L.Util.Matrix = {
+L.MatrixUtil = {
 
 	// Compute the adjugate of m
 	adj: function(m) { 
@@ -9,15 +9,15 @@ L.Util.Matrix = {
 		];
 	},
 
-	// multiply two matrices
+	// multiply two 3*3 matrices
 	multmm: function(a, b) { 
 		var c = [],
 			i;
 
-		for (i = 0; i < 4; i++) {
-			for (var j = 0; j < 4; j++) {
+		for (i = 0; i < 3; i++) {
+			for (var j = 0; j < 3; j++) {
 				var cij = 0;
-				for (var k = 0; k < 4; k++) {
+				for (var k = 0; k < 3; k++) {
 					cij += a[3*i + k]*b[3*k + j];
 				}
 				c[3*i + j] = cij;
@@ -26,7 +26,7 @@ L.Util.Matrix = {
 		return c;
 	},
 
-	// multiply matrix and vector
+	// multiply a 3*3 matrix and a 3-vector
 	multmv: function(m, v) { 
 		return [
 			m[0]*v[0] + m[1]*v[1] + m[2]*v[2],
@@ -37,12 +37,13 @@ L.Util.Matrix = {
 
 	basisToPoints: function(x1, y1, x2, y2, x3, y3, x4, y4) {
 		var m = [
-			x1, x2, x3,
-			y1, y2, y3,
-			1,  1,  1
-		];
-		var v = L.Util.Matrix.multmv(L.Util.Matrix.adj(m), [x4, y4, 1]);
-		return L.Util.Matrix.multmm(m, [
+				x1, x2, x3,
+				y1, y2, y3,
+				1,  1,  1
+			],
+			v = L.MatrixUtil.multmv(L.MatrixUtil.adj(m), [x4, y4, 1]);
+
+		return L.MatrixUtil.multmm(m, [
 			v[0], 0, 0,
 			0, v[1], 0,
 			0, 0, v[2]
@@ -51,7 +52,7 @@ L.Util.Matrix = {
 
 
 	project: function(m, x, y) {
-		var v = L.Util.Matrix.multmv(m, [x, y, 1]);
+		var v = L.MatrixUtil.multmv(m, [x, y, 1]);
 		return [v[0]/v[2], v[1]/v[2]];
 	},
 
@@ -61,8 +62,9 @@ L.Util.Matrix = {
 	x3s, y3s, x3d, y3d,
 	x4s, y4s, x4d, y4d
 	) {
-		var s = L.Util.Matrix.basisToPoints(x1s, y1s, x2s, y2s, x3s, y3s, x4s, y4s);
-		var d = L.Util.Matrix.basisToPoints(x1d, y1d, x2d, y2d, x3d, y3d, x4d, y4d);
-		return L.Util.Matrix.multmm(d, L.Util.Matrix.adj(s));
+		var s = L.MatrixUtil.basisToPoints(x1s, y1s, x2s, y2s, x3s, y3s, x4s, y4s),
+			d = L.MatrixUtil.basisToPoints(x1d, y1d, x2d, y2d, x3d, y3d, x4d, y4d);
+
+		return L.MatrixUtil.multmm(d, L.MatrixUtil.adj(s));
 	}
 };
