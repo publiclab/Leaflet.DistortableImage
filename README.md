@@ -27,31 +27,17 @@ This plugin is not yet complete!
 
 ##To do:
 
-* locking of images
-* remove addTo(map) from initialize
-* add bringToFront() to onclick
-* solve tool disappearance - watch the DOM
-* hide handles when not active
-* image selection and cueing btns
+* map.on('click') should deselect all images, but is unfort. triggered even when you click directly on an image
+* fix image ordering -- bringToFront() kinda janky? check event sequence
 * figure out what `_bounds` is for and if we really need to update it
-* need to make easybuttons for image manip appear only when you've selected one
-* map.on('click') should deselect all images
 * ensure it's easy to attach event callback to 'deselect' for saving
   * and/or mouseup?
-* improve image selection interface
-* finishing transparency and outlining
-  * make outline() and opacity() of L.DistortableImage, so img.outline() 
-
-* image ordering (will do later, perhaps, as MapKnitter doesn't have a way to store it yet) 
+* fix/separate transparency and outlining
+* create/document easy properties so we can send a concise description of an image to MapKnitter in JSON: locked, four corners in lat/lng, last touched/edited, uniq id or name of editor? (this belongs in mapknitter, not here), layer order
 * there are some Chrome/Firefox bugs on Android
 * hotkey defaults that can be turned off?
-
-o: outline
-t: transparency
-d: distort
-r: rotate
-l: lock
-shift-drag: scale, no rotate
+  * t: transparency
+  * shift-drag: scale, no rotate
 
 =================
 

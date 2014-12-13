@@ -12,7 +12,6 @@ $L = {
     map.doubleClickZoom.disable();
 
     $(window).keydown(function(e){
-      console.log(e.which)
       switch (e.which) {
         case 68: // d
           $L.selected.mode = 'distort'
@@ -22,6 +21,9 @@ $L = {
           $L.selected.mode = 'rotate'
           $L.selected.changeMode.apply($L.selected)
           break;
+        case 84: // t
+          // transparency
+          break;
         case 79: // o
           $L.selected.toggleOutline()
           break;
@@ -30,6 +32,15 @@ $L = {
           else $L.selected.lock()
           break;
       }
+    })
+
+    // this runs *as well as* image.click events, 
+    // when you click an image
+    map.on('click', function(e) {
+//      $L.clearImageButtons()
+//      $.each($L.images,function(i,d) {
+//        d.deselect.apply(d)
+//      })
     })
 
     map.on('mousemove',function(e) {
@@ -48,6 +59,7 @@ $L = {
           var reader = new FileReader();
           reader.onload = function(e) {
             img = new L.DistortableImageOverlay(e.target.result);
+            img.select()
           }
           reader.readAsDataURL(this.files[0]);
         }
@@ -181,25 +193,25 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   _initImage: function () {
     this._image = L.DomUtil.create('img',
     'leaflet-image-layer ' +  'leaflet-zoom-animated');
-    this._image.onclick = (function(s){ return function() {s.onclick()} })(this);
+    // i don't even think these two fire:
     this._image.onselectstart = L.Util.falseFn;
     this._image.onmousemove = L.Util.falseFn;
+
     this._image.src = this._url;
     this._image.alt = this.options.alt;
-    this.id = 'image-distort-'+$('.image-distort').length
+    this.id = 'image-distort-'+$L.images.length
     this._image.id = this.id;
+    this._image.parentObj = this
 
+    // file it for *centralized control* -- gasp
+    // no really, for deselection
+    $L.images.push(this)
+
+    // save me from madness if this doesn't make sense to you;
+    // we can only attach events once the image element is loaded:
     this._image.onload = (function(s) {
       return function() {
-        s._image.onclick = function() {
-          $L.selected = s
-          if (s.draggable._enabled) {
-            s.bringToFront()
-            if (s.mode == 'rotate') s.mode = 'distort'
-            else s.mode = 'rotate'
-            s.changeMode.apply(s)
-          }
-        }
+        s._image.onclick = s.onclick
       }
     })(this)
  
@@ -431,14 +443,32 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     }
   },
 
-  // currently not running
-  onclick: function(e) {
-console.log('btf')
-    // first, delete existing buttons
-    $('#image-distort-transparency').parent().remove();
-    $('#image-distort-outline').parent().remove();
-    $('#image-distort-delete').parent().remove();
+  deselect: function() {
+    for (i in this.markers) {
+      // this isn't a good way to hide markers:
+      map.removeLayer(this.markers[i])
+    }
+    if (this.outlineBtn) {
+      // delete existing buttons
+      this.outlineBtn._container.remove()
+      this.transparencyBtn._container.remove()
+      this.deleteBtn._container.remove()
+    }
+  },
 
+  select: function() {
+    $L.selected = this
+    // deselect other images
+    $.each($L.images,function(i,d) {
+      d.deselect.apply(d)
+    })
+    // show corner markers
+    for (i in this.markers) {
+      this.markers[i].addTo(map)
+    }
+    // create buttons
+
+    // this doesn't work
     this.transparencyBtn = L.easyButton('fa-adjust', 
        function () {
          var e = $('#'+$('#image-distort-outline')[0].getAttribute('parentImgId'))[0]
@@ -451,25 +481,41 @@ console.log('btf')
          }
        },
       'Toggle Image Transparency'
-    ).getContainer()//.children[0]
+    )
     
     this.outlineBtn = L.easyButton('fa-square-o', 
-                                   function () {
-                                     this.scope.toggleOutline();
-                                   },
-                                   'Outline',
-                                   map,
-                                   this
+      (function (s) {
+        return function() {
+          s.toggleOutline();
+        }
+      })(this),
+      'Outline',
+      map,
+      this
     )
- 
+  
     this.deleteBtn = L.easyButton('fa-bitbucket', 
       function () {
         map.removeLayer($(this.parentImgId));
         for(var i=0; i<4; i++)
         map.removeLayer(this.markers[i]);
       },
-     'Delete Image'
-    )
+     'Delete Image')
+  },
+
+  // has scope of img element; use this.parentObj
+  onclick: function(e) {
+    if ($L.selected == this.parentObj) {
+      // switch modes
+      if (this.parentObj.draggable._enabled) {
+        this.parentObj.bringToFront()
+        if (this.parentObj.mode == 'rotate') this.parentObj.mode = 'distort'
+        else this.parentObj.mode = 'rotate'
+        this.parentObj.changeMode.apply(this.parentObj)
+      }
+    } else {
+      this.parentObj.select.apply(this.parentObj)
+    }
   },
 
   rotateStart: function(e) {

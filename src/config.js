@@ -12,7 +12,6 @@ $L = {
     map.doubleClickZoom.disable();
 
     $(window).keydown(function(e){
-      console.log(e.which)
       switch (e.which) {
         case 68: // d
           $L.selected.mode = 'distort'
@@ -22,6 +21,9 @@ $L = {
           $L.selected.mode = 'rotate'
           $L.selected.changeMode.apply($L.selected)
           break;
+        case 84: // t
+          // transparency
+          break;
         case 79: // o
           $L.selected.toggleOutline()
           break;
@@ -30,6 +32,15 @@ $L = {
           else $L.selected.lock()
           break;
       }
+    })
+
+    // this runs *as well as* image.click events, 
+    // when you click an image
+    map.on('click', function(e) {
+//      $L.clearImageButtons()
+//      $.each($L.images,function(i,d) {
+//        d.deselect.apply(d)
+//      })
     })
 
     map.on('mousemove',function(e) {
@@ -48,6 +59,7 @@ $L = {
           var reader = new FileReader();
           reader.onload = function(e) {
             img = new L.DistortableImageOverlay(e.target.result);
+            img.select()
           }
           reader.readAsDataURL(this.files[0]);
         }
