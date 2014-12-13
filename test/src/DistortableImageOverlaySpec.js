@@ -31,4 +31,17 @@ describe("L.DistortableImageOverlay", function() {
 	describe("#getCenter", function() {
 
 	});
+
+	describe("#_calculateProjectiveTransform", function() {
+		it.skip("Should", function() {
+			var matrix;
+
+			/* _map is set when #onAdd is called. */
+			distortable._map = map;
+			distortable._initImage();
+
+			matrix = distortable._calculateProjectiveTransform();
+			expect(matrix).to.equal([]);
+		});
+	});
 });
