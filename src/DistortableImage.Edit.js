@@ -47,59 +47,48 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 	},
 
-  rotateStart: function() {
-	this.center = this.getCenter();
-	this.pointer_distance = Math.sqrt(Math.pow(this.center[1]-$L.pointer.y,2)+Math.pow(this.center[0]-$L.pointer.x,2));
-	this.pointer_angle = Math.atan2(this.center[1]-$L.pointer.y,this.center[0]-$L.pointer.x);
-	for (var i in this.markers) {
-		var marker = this.markers[i];
-		var mx = this._overlay._map.latLngToLayerPoint(marker._latlng).x;
-		var my = this._overlay._map.latLngToLayerPoint(marker._latlng).y;
-		marker.angle = Math.atan2(my-this.center[1],mx-this.center[0]);
-		marker.distance = (mx-this.center[0])/Math.cos(marker.angle);
-	}
-  },
+	rotateStart: function() {
+		var map = this._map;
 
-  // rotate and scale; scaling isn't real -- it just tracks distance from "center", and can distort the image in some cases
-  rotate: function() {
-	// use center to rotate around a point
-	var distance = Math.sqrt(Math.pow(this.center[1]-$L.pointer.y,2)+Math.pow(this.center[0]-$L.pointer.x,2));
-	var distance_change = distance - this.pointer_distance;
-	var angle = Math.atan2(this.center[1]-$L.pointer.y,this.center[0]-$L.pointer.x);
-	var angle_change = angle-this.pointer_angle;
-
-	// keyboard keypress event is not hooked up:
-	if ($L.shifted) { angle_change = 0; }
-
-	// use angle to recalculate each of the points in this.parent_shape.points
-	for (var i in this.markers) {
-	  var marker = this.markers[parseInt(i)];
-	  this.markers[parseInt(i)]._latlng = this._overlay._map.layerPointToLatLng(new L.point(
-		[   this.center[0] + 
-				Math.cos(marker.angle+angle_change) *
-			   (marker.distance + distance_change),
-			this.center[1] + 
-				Math.sin(marker.angle+angle_change) * 
-				(marker.distance + distance_change)
-		]));
-	  marker.update();
-	}
-	this.updateCorners();
-	this.updateTransform();
-  },
-
-  // has scope of img element; use this.parentObj
-  onclick: function(e) {
-	if ($L.selected === this.parentObj) {
-		if (this.parentObj.locked !== true) {
-			this.parentObj.toggleMode.apply(this.parentObj);
+		this.center = this.getCenter();
+		this.pointer_distance = Math.sqrt(Math.pow(this.center[1]-L.MatrixUtil.pointer.y,2)+Math.pow(this.center[0]-L.MatrixUtil.pointer.x, 2));
+		this.pointer_angle = Math.atan2(this.center[1]-L.MatrixUtil.pointer.y,this.center[0]-L.MatrixUtil.pointer.x);
+		for (var i in this.markers) {
+			var marker = this.markers[i];
+			var mx = map.latLngToLayerPoint(marker._latlng).x;
+			var my = map.latLngToLayerPoint(marker._latlng).y;
+			marker.angle = Math.atan2(my-this.center[1],mx-this.center[0]);
+			marker.distance = (mx-this.center[0])/Math.cos(marker.angle);
 		}
-	} else {
-		this.parentObj.select.apply(this.parentObj);
-	}
-	// this prevents the event from propagating to the this._overlay._map object:
-	L.DomEvent.stopPropagation(e);
-  },
+	},
+
+	// rotate and scale; scaling isn't real -- it just tracks distance from "center", and can distort the image in some cases
+	rotate: function() {
+		// use center to rotate around a point
+		var distance = Math.sqrt(Math.pow(this.center[1]-$L.pointer.y,2)+Math.pow(this.center[0]-$L.pointer.x,2));
+		var distance_change = distance - this.pointer_distance;
+		var angle = Math.atan2(this.center[1]-$L.pointer.y,this.center[0]-$L.pointer.x);
+		var angle_change = angle-this.pointer_angle;
+
+		// keyboard keypress event is not hooked up:
+		if ($L.shifted) { angle_change = 0; }
+
+		// use angle to recalculate each of the points in this.parent_shape.points
+		for (var i in this.markers) {
+		  var marker = this.markers[parseInt(i)];
+		  this.markers[parseInt(i)]._latlng = this._overlay._map.layerPointToLatLng(new L.point(
+			[   this.center[0] + 
+					Math.cos(marker.angle+angle_change) *
+				   (marker.distance + distance_change),
+				this.center[1] + 
+					Math.sin(marker.angle+angle_change) * 
+					(marker.distance + distance_change)
+			]));
+		  marker.update();
+		}
+		this.updateCorners();
+		this.updateTransform();
+	},
 
 	// change between 'distort' and 'rotate' mode
 	toggleMode: function() {
@@ -186,63 +175,73 @@ L.DistortableImage.Edit = L.Handler.extend({
 		this.changeMode('distort');
 	},
 
-  deselect: function() {
-	$L.selected = false;
-	for (var i in this.markers) {
-		// this isn't a good way to hide markers:
-		this._overlay._map.removeLayer(this.markers[i]);
+	deselect: function() {
+		$L.selected = false;
+		for (var i in this.markers) {
+			// this isn't a good way to hide markers:
+			this._overlay._map.removeLayer(this.markers[i]);
+		}
+		if (this.outlineBtn) {
+			// delete existing buttons
+			this.outlineBtn._container.remove();
+			this.transparencyBtn._container.remove();
+			this.deleteBtn._container.remove();
+		}
+		this.onDeselect();
+	},
+
+	select: function() {
+		// deselect other images
+		$.each($L.images,function(i,d) {
+			d.deselect.apply(d);
+		});
+
+		// re-establish order
+		$L.impose_order();
+		$L.selected = this;
+		// show corner markers
+		for (var i in this.markers) {
+			this.markers[i].addTo(this._overlay._map);
+		}
+
+		// create buttons
+		this.transparencyBtn = L.easyButton('fa-adjust', 
+			L.bind(function() { this.toggleTransparency(); }, this),
+			'Toggle Image Transparency',
+			this._overlay._map,
+			this
+		);
+
+		this.outlineBtn = L.easyButton('fa-square-o',
+			L.bind(function() { this.toggleOutline(); }, this),
+			'Outline',
+			this._overlay._map,
+			this
+		);
+
+		this.deleteBtn = L.easyButton('fa-bitbucket',
+			L.bind(function () {
+				this._overlay._map.removeLayer($(this.parentImgId));
+				for (var i = 0; i < 4; i++) { 
+					this._overlay._map.removeLayer(this.markers[i]); 
+				}
+			}, this),
+		'Delete Image');
+
+		this.bringToFront();
+		this.onSelect();
+	},
+
+	toggleOutline: function() {
+		this.outlined = !this.outlined;
+		if (this.outlined) {
+			this.setOpacity(0.4);
+			$(this._image).css('border','1px solid red');
+		} else {
+			this.setOpacity(1);
+			$(this._image).css('border', 'none');
+		}
 	}
-	if (this.outlineBtn) {
-		// delete existing buttons
-		this.outlineBtn._container.remove();
-		this.transparencyBtn._container.remove();
-		this.deleteBtn._container.remove();
-	}
-	this.onDeselect();
-  },
-
-  select: function() {
-	// deselect other images
-	$.each($L.images,function(i,d) {
-		d.deselect.apply(d);
-	});
-
-	// re-establish order
-	$L.impose_order();
-	$L.selected = this;
-	// show corner markers
-	for (var i in this.markers) {
-		this.markers[i].addTo(this._overlay._map);
-	}
-
-	// create buttons
-	this.transparencyBtn = L.easyButton('fa-adjust', 
-		L.bind(function() { this.toggleTransparency(); }, this),
-		'Toggle Image Transparency',
-		this._overlay._map,
-		this
-	);
-	
-	this.outlineBtn = L.easyButton('fa-square-o',
-		L.bind(function() { this.toggleOutline(); }, this),
-		'Outline',
-		this._overlay._map,
-		this
-	);
-  
-	this.deleteBtn = L.easyButton('fa-bitbucket',
-		L.bind(function () {
-			this._overlay._map.removeLayer($(this.parentImgId));
-			for (var i = 0; i < 4; i++) { 
-				this._overlay._map.removeLayer(this.markers[i]); 
-			}
-		}, this),
-	'Delete Image');
-
-	this.bringToFront();
-	this.onSelect();
-  },	
-
 });
 
 // L.DistortableImageOverlay.addInitHook(function() {
