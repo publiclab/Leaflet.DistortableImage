@@ -214,18 +214,19 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		var map = this._map,
 			image = this._image,
 			topLeft = map.latLngToLayerPoint(this._corners[0]),
-			warp, translation,
+			rotation, translation, warp,
 			transformMatrix;
 
 		transformMatrix = this._calculateProjectiveTransform();
-		// transformMatrix = [1, 0, 0, 0, 1, 0, 0, 0, 1];
 
+		rotation = L.DomUtil.getRotateString(this._rotation, 'rad');
 		warp = L.DomUtil.getMatrixString(transformMatrix);
-		// rotation = L.DomUtil.getRotateString(this._rotation, 'rad');
 		translation = L.DomUtil.getTranslateString(topLeft);
-		// scaling = ''; // TODO 
 
-		image.style[L.DomUtil.TRANSFORM] = [warp, translation].join(' ');
+		image.style[L.DomUtil.TRANSFORM] = [translation, warp].join(' ');
+
+		image.style['transform-origin'] = "0 0 0";
+		image.style["-webkit-transform-origin"] = "0 0 0";
 	},
 
 	_calculateProjectiveTransform: function() {
@@ -242,9 +243,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
 		return L.MatrixUtil.general2DProjection(
 			0, 0, c[0].x, c[0].y,
-			-w, 0, c[1].x, c[1].y,
+			w, 0, c[1].x, c[1].y,
 			0, h, c[2].x, c[2].y,
-			-w, h, c[3].x, c[3].y
+			w, h, c[3].x, c[3].y
 		);
 	},
 
