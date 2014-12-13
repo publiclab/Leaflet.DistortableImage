@@ -83,8 +83,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 			warp, translation,
 			transformMatrix;
 
-		// transformMatrix = this._calculateProjectiveTransform();
-		transformMatrix = [1, 0, 0, 0, 1, 0, 0, 0, 1];
+		transformMatrix = this._calculateProjectiveTransform();
+		// transformMatrix = [1, 0, 0, 0, 1, 0, 0, 0, 1];
 
 		warp = L.DomUtil.getMatrixString(transformMatrix);
 		// rotation = L.DomUtil.getRotateString(this._rotation, 'rad');
@@ -108,10 +108,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
 		return L.MatrixUtil.general2DProjection(
 			0, 0, c[0].x, c[0].y,
-			w, 0, c[1].x, c[1].y,
+			-w, 0, c[1].x, c[1].y,
 			0, h, c[2].x, c[2].y,
-			w, h, c[3].x, c[3].y
-		);		
+			-w, h, c[3].x, c[3].y
+		);
 	},
 
 	// TODO

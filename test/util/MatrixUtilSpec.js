@@ -25,9 +25,19 @@ describe("L.MatrixUtil", function() {
 		});
 	});
 
+	describe(".multsm", function() {
+		it("Should scale the identity matrix.", function() {
+			expect(L.MatrixUtil.multsm(3, identity)).to.deep.equal([
+				3, 0, 0,
+				0, 3, 0,
+				0, 0, 3
+			]);
+		});
+	});
+
 	describe(".general2DProjection", function() {
 		/* AssertionError: expected [ -1, 0, 0, 0, -1, 0, 0, 0, -1 ] to equal [ 1, 0, 0, 0, 1, 0, 0, 0, 1 ] */
-		it.skip("Should return the 3*3 identity matrix when each corner is mapped back to itself.", function() {
+		it("Should return the 3*3 identity matrix when each corner is mapped back to itself.", function() {
 			var identityMap = [
 					0, 0, 0, 0,
 					1, 0, 1, 0,
@@ -36,11 +46,11 @@ describe("L.MatrixUtil", function() {
 				],
 				projected = L.MatrixUtil.general2DProjection.apply(undefined, identityMap);
 
-			expect(projected).to.equal(identity);
+			expect(projected).to.deep.equal([1, -0, -0, -0, 1, -0, -0, -0, 1]);
 		});
 
 		/* AssertionError: expected [ -27, 0, 0, 0, -27, 0, 0, 0, -9 ] to deeply equal [ 3, 0, 0, 0, 3, 0, 0, 0, 3 ] */
-		it.skip("Should return a scalar multiple of the 3*3 identity matrix when the image is scaled.", function() {
+		it("Should return a scalar multiple of the 3*3 identity matrix when the image is scaled.", function() {
 			var dilationMap = [
 					0, 0, 0, 0,
 					1, 0, 3, 0,
@@ -49,7 +59,7 @@ describe("L.MatrixUtil", function() {
 				],
 				projected = L.MatrixUtil.general2DProjection.apply(undefined, dilationMap);
 
-			expect(projected).to.deep.equal([3, 0, 0, 0, 3, 0, 0, 0, 3]);
+			expect(projected).to.deep.equal([3, -0, -0, -0, 3, -0, -0, -0, 1]);
 		});
 	});
 });

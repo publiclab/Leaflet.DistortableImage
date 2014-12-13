@@ -35,6 +35,16 @@ L.MatrixUtil = {
 		];
 	},
 
+	multsm: function(s, m) {
+		var matrix = [];
+
+		for (var i = 0, l = m.length; i < l; i++) {
+			matrix.push(s*m[i]);
+		}
+
+		return matrix;
+	},
+
 	basisToPoints: function(x1, y1, x2, y2, x3, y3, x4, y4) {
 		var m = [
 				x1, x2, x3,
@@ -63,8 +73,13 @@ L.MatrixUtil = {
 	x4s, y4s, x4d, y4d
 	) {
 		var s = L.MatrixUtil.basisToPoints(x1s, y1s, x2s, y2s, x3s, y3s, x4s, y4s),
-			d = L.MatrixUtil.basisToPoints(x1d, y1d, x2d, y2d, x3d, y3d, x4d, y4d);
+			d = L.MatrixUtil.basisToPoints(x1d, y1d, x2d, y2d, x3d, y3d, x4d, y4d),
+			m = L.MatrixUtil.multmm(d, L.MatrixUtil.adj(s));
 
-		return L.MatrixUtil.multmm(d, L.MatrixUtil.adj(s));
+		/* 
+		 *	Normalize to the unique matrix with m[8] == 1. 
+		 * 	See: http://franklinta.com/2014/09/08/computing-css-matrix3d-transforms/
+		 */
+		return L.MatrixUtil.multsm(1/m[8], m);
 	}
 };
