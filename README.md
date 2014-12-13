@@ -7,7 +7,7 @@ Download as zip or clone to get a copy of the Repo.
 
 To test the code, open index.html in your browser and click and drag the markers on the edges of the image. The image will show perspectival distortions.
 
-A copy is also running at https://publiclab.github.io/ImageDistortLeaflet
+A copy is also running at https://publiclab.github.io/ImageDistortLeaflet/examples/
 
 This plugin is not yet complete!
 
