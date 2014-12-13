@@ -14,10 +14,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this._image.onload = (function(s) {
       return function() {
         s._image.onclick = function() {
+          $L.selected = s
           if (s.draggable._enabled) {
             s.bringToFront()
-//this isn't called... weird.
-console.log('btf')
             if (s.mode == 'rotate') s.mode = 'distort'
             else s.mode = 'rotate'
             s.changeMode.apply(s)

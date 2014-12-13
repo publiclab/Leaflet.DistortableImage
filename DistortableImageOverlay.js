@@ -11,6 +11,27 @@ $L = {
     map.touchZoom.disable();
     map.doubleClickZoom.disable();
 
+    $(window).keydown(function(e){
+      console.log(e.which)
+      switch (e.which) {
+        case 68: // d
+          $L.selected.mode = 'distort'
+          $L.selected.changeMode.apply($L.selected)
+          break;
+        case 82: // r
+          $L.selected.mode = 'rotate'
+          $L.selected.changeMode.apply($L.selected)
+          break;
+        case 79: // o
+          $L.selected.toggleOutline()
+          break;
+        case 76: // l
+          if ($L.selected.locked) $L.selected.unlock()
+          else $L.selected.lock()
+          break;
+      }
+    })
+
     map.on('mousemove',function(e) {
       this.pointer = map.latLngToLayerPoint(e.latlng)
     },this)
@@ -171,10 +192,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this._image.onload = (function(s) {
       return function() {
         s._image.onclick = function() {
+          $L.selected = s
           if (s.draggable._enabled) {
             s.bringToFront()
-//this isn't called... weird.
-console.log('btf')
             if (s.mode == 'rotate') s.mode = 'distort'
             else s.mode = 'rotate'
             s.changeMode.apply(s)
