@@ -79,6 +79,7 @@ module.exports = function(grunt) {
                 src: [
                     'src/util/MatrixUtil.js',
                     'src/util/DomUtil.js',
+                    'src/util/Map._newLayerPointToLatLng.js',
                     'src/ImageMarker.js',
                     'src/DistortableImageOverlay.js',
                     'src/DistortableImage.Edit.js'

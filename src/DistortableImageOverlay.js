@@ -10,6 +10,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		this._rotation = this.options.rotation;
 
 		L.setOptions(this, options);
+		this._rotation = this.options.rotation;
 	},
 
 	onAdd: function(map) {
@@ -59,7 +60,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 			center = map.latLngToContainerPoint(map.getCenter()),
 			offset = new L.Point(mapWidth - imageWidth, mapHeight - imageHeight).divideBy(2);
 
-		if (!this.options.corners) { this._corners = this.options.corners; }
+		if (this.options.corners) { this._corners = this.options.corners; }
 		else {
 			this._corners = [
 				map.containerPointToLatLng(center.subtract(offset)),
@@ -83,20 +84,41 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 			rotation, translation, warp,
 			transformMatrix;
 
-		transformMatrix = this._calculateProjectiveTransform();
+		transformMatrix = this._calculateProjectiveTransform(L.bind(map.latLngToContainerPoint, map));
 
-		rotation = L.DomUtil.getRotateString(this._rotation, 'rad');
+		rotation = this._getRotateString();
 		warp = L.DomUtil.getMatrixString(transformMatrix);
 		translation = L.DomUtil.getTranslateString(topLeft);
 
-		image.style[L.DomUtil.TRANSFORM] = [translation, warp].join(' ');
+		image.style[L.DomUtil.TRANSFORM] = [translation, rotation, warp].join(' ');
 
 		image.style['transform-origin'] = "0 0 0";
 		image.style["-webkit-transform-origin"] = "0 0 0";
 	},
 
-	_calculateProjectiveTransform: function() {
-		var offset = this._map.latLngToContainerPoint(this._corners[0]),
+	_animateZoom: function(event) {
+		var map = this._map,
+			image = this._image,
+			nw = this._corners[0],
+			latLngToNewLayerPoint = function(latlng) {
+				return map._latLngToNewLayerPoint(latlng, event.zoom, event.center);
+			},
+			newLayerPointToLatLng = function(newLayerPoint) {
+				return map._newLayerPointToLatLng(newLayerPoint, event.zoom, event.center);
+			},
+
+			topLeft = latLngToNewLayerPoint(nw),
+			transformMatrix = this._calculateProjectiveTransform(latLngToNewLayerPoint),
+
+			rotation = this._getRotateString(latLngToNewLayerPoint, newLayerPointToLatLng),
+			warp = L.DomUtil.getMatrixString(transformMatrix),
+			translation = L.DomUtil.getTranslateString(topLeft);
+
+			image.style[L.DomUtil.TRANSFORM] = [translation, rotation, warp].join(' ');
+	},
+
+	_calculateProjectiveTransform: function(latLngToCartesian) {
+		var offset = latLngToCartesian(this._corners[0]),
 			w = this._image.offsetWidth, 
 			h = this._image.offsetHeight,
 			c = [],
@@ -104,7 +126,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
 		/* Convert corners to container points (i.e. cartesian coordinates). */
 		for (j = 0; j < this._corners.length; j++) {
-			c.push(this._map.latLngToContainerPoint(this._corners[j])._subtract(offset));
+			c.push(latLngToCartesian(this._corners[j])._subtract(offset));
 		}
 
 		return L.MatrixUtil.general2DProjection(
@@ -115,25 +137,37 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		);
 	},
 
-	// TODO
-	_animateZoom: function() {
+	/*
+	 * TODO: Replace by simple centroid calculation.
+	 *     See http://stackoverflow.com/questions/6149175/logical-question-given-corners-find-center-of-quadrilateral
+	 */
+	getCenter: function(ll2c, c2ll) {
+		var map = this._map,
+			latLngToCartesian = ll2c ? ll2c : map.latLngToLayerPoint,
+			cartesianToLatLng = c2ll ? c2ll: map.layerPointToLatLng,
+			nw = latLngToCartesian.call(map, this._corners[0]),
+			ne = latLngToCartesian.call(map, this._corners[1]),
+			se = latLngToCartesian.call(map, this._corners[2]),
+			sw = latLngToCartesian.call(map, this._corners[3]),
 
+			nmid = nw.add(ne.subtract(nw).divideBy(2)),
+			smid = sw.add(se.subtract(sw).divideBy(2));
+
+		return cartesianToLatLng.call(map, nmid.add(smid.subtract(nmid).divideBy(2)));
 	},
 
-	// cheaply get center by averaging the corners
-	// TODO: Replace by simple centroid calculation.
-	//     * See http://stackoverflow.com/questions/6149175/logical-question-given-corners-find-center-of-quadrilateral
-	// getCenter: function() {
-	//  var x = 0, y = 0,
-	//    i, l;
+	_getRotateString: function(ll2c, c2ll) {
+		var map = this._map,
+			latLngToCartesian = ll2c ? ll2c : map.latLngToLayerPoint,
+			center = latLngToCartesian.call(map, this.getCenter(ll2c, c2ll)),
+			nw = latLngToCartesian.call(map, this._corners[0]),
+			delta = center.subtract(nw);
 
-	//  for (i = 0; l = this._corners.length; i < l; i++) {
-	//    var pos = map.latLngToLayerPoint(this._corners[i]);
-	//    x += pos.x;
-	//    y += pos.y;
-	//  }
-	//  x /= 4;
-	//  y /= 4;
-	//  return [x,y];
-	// },
+		/* Translate from the origin to the upper-left corner, apply rotation, then translate back. */
+		return [
+			L.DomUtil.getTranslateString(delta),
+			L.DomUtil.getRotateString(this._rotation, 'rad'),
+			L.DomUtil.getTranslateString(delta.multiplyBy(-1))
+		].join(' ');
+	}
 });

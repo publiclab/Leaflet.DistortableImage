@@ -5,7 +5,7 @@ module.exports = function(config) {
   config.set({
 
     // base path that will be used to resolve all patterns (eg. files, exclude)
-    basePath: '',
+    basePath: '../',
 
 
     // frameworks to use
@@ -15,18 +15,25 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      '../node_modules/leaflet/dist/leaflet-src.js',
-      '../node_modules/leaflet/dist/leaflet.css',
-      '../node_modules/chai/chai.js',
-      '../src/util/MatrixUtil.js',
-      '../src/util/DomUtil.js',
-      '../src/ImageMarker.js',
-      '../src/DistortableImageOverlay.js',
-      '../src/DistortableImage.Edit.js',
-      'SpecHelper.js',
-      '*/*Spec.js'
+      { pattern: 'examples/*.jpg', included: false, served: true },
+      'node_modules/leaflet/dist/leaflet-src.js',
+      'node_modules/leaflet/dist/leaflet.css',
+      'node_modules/chai/chai.js',
+      'src/util/MatrixUtil.js',
+      'src/util/DomUtil.js',
+      'src/util/Map._newLayerPointToLatLng.js',      
+      'src/ImageMarker.js',
+      'src/DistortableImageOverlay.js',
+      'src/DistortableImage.Edit.js',
+      'test/SpecHelper.js',
+      'test/*/*Spec.js'
     ],
 
+
+    // so that karma can serve examples/example.jpg
+    proxies: {
+      '/examples/': '/base/examples/'
+    },
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
@@ -47,18 +54,17 @@ module.exports = function(config) {
     logLevel: config.LOG_INFO,
 
 
-    // enable / disable watching file and executing tests whenever any file changes
-    autoWatch: true,
-
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
     browsers: [ 'PhantomJS' ],
+
 
     plugins: [
       'karma-mocha',
       'karma-phantomjs-launcher',
       'karma-mocha-reporter'
     ],
+
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits

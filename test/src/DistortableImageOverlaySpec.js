@@ -14,22 +14,14 @@ describe("L.DistortableImageOverlay", function() {
 			fullSize[i].style.height = '100%';
 		}
 
-		distortable = new L.DistortableImageOverlay('../examples/example.jpg', [
-			new L.LatLng(41.7934, -87.6052),
-			new L.LatLng(41.7934, -87.5852),
-			new L.LatLng(41.7834, -87.5852),
-			new L.LatLng(41.7834, -87.6052)
-		]);
-	});
-
-	describe("#onAdd", function() {
-		it("", function() {
-			distortable.onAdd(map);
+		distortable = new L.DistortableImageOverlay('/examples/example.jpg', {
+			corners: [
+				new L.LatLng(41.7934, -87.6052),
+				new L.LatLng(41.7934, -87.5852),
+				new L.LatLng(41.7834, -87.5852),
+				new L.LatLng(41.7834, -87.6052)
+			]
 		});
-	});
-
-	describe("#getCenter", function() {
-
 	});
 
 	describe("#_calculateProjectiveTransform", function() {
@@ -42,6 +34,20 @@ describe("L.DistortableImageOverlay", function() {
 
 			matrix = distortable._calculateProjectiveTransform();
 			expect(matrix).to.equal([]);
+		});
+	});
+
+	describe("getCenter", function() {
+		it("Should return the center when the outline of the image is a rectangle.", function(done) {
+			distortable.addTo(map);
+			
+			L.DomEvent.on(distortable._image, 'load', function() {
+				var center = distortable.getCenter();
+
+				expect(center).to.be.closeToLatLng(new L.LatLng(41.7884, -87.5952));
+				done();
+			});
+
 		});
 	});
 });
