@@ -28,6 +28,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		if (map.options.zoomAnimation && L.Browser.any3d) {
 			map.on('zoomanim', this._animateZoom, this);
 		}
+		/* End copied from L.ImageOverlay */
 
 		/* Have to wait for the image to load because we need to access its width and height. */
 		L.DomEvent.on(this._image, 'load', function() {
@@ -76,7 +77,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		this.distort();
 	},
 
-	// use CSS to transform the image
 	_reset: function() {
 		var map = this._map,
 			image = this._image,
@@ -92,6 +92,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
 		image.style[L.DomUtil.TRANSFORM] = [translation, rotation, warp].join(' ');
 
+		/* Set origin to the upper-left corner rather than the center of the image, which is the default. */
 		image.style['transform-origin'] = "0 0 0";
 		image.style["-webkit-transform-origin"] = "0 0 0";
 	},
@@ -129,6 +130,14 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 			c.push(latLngToCartesian(this._corners[j])._subtract(offset));
 		}
 
+		/*
+		 * This matrix describes the action of the CSS transform on each corner of the image.
+		 * It maps from the coordinate system centered at the upper left corner of the image
+		 *     to the region bounded by the latlngs in this._corners.
+		 * For example:
+		 *     0, 0, c[0].x, c[0].y
+		 *     says that the upper-left corner of the image maps to the first latlng in this._corners.
+		 */
 		return L.MatrixUtil.general2DProjection(
 			0, 0, c[0].x, c[0].y,
 			w, 0, c[1].x, c[1].y,
@@ -138,7 +147,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 	},
 
 	/*
-	 * TODO: Replace by simple centroid calculation.
+	 * Calculates the centroid of the image.
 	 *     See http://stackoverflow.com/questions/6149175/logical-question-given-corners-find-center-of-quadrilateral
 	 */
 	getCenter: function(ll2c, c2ll) {
@@ -156,6 +165,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		return cartesianToLatLng.call(map, nmid.add(smid.subtract(nmid).divideBy(2)));
 	},
 
+	/* Translate from the centroid to the upper-left corner, apply rotation, then translate back. */
 	_getRotateString: function(ll2c, c2ll) {
 		var map = this._map,
 			latLngToCartesian = ll2c ? ll2c : map.latLngToLayerPoint,
@@ -163,7 +173,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 			nw = latLngToCartesian.call(map, this._corners[0]),
 			delta = center.subtract(nw);
 
-		/* Translate from the origin to the upper-left corner, apply rotation, then translate back. */
 		return [
 			L.DomUtil.getTranslateString(delta),
 			L.DomUtil.getRotateString(this._rotation, 'rad'),
