@@ -38,7 +38,7 @@ describe("L.DistortableImageOverlay", function() {
 	});
 
 	describe("getCenter", function() {
-		it("Should return the center when the outline of the image is a rectangle.", function(done) {
+		it.skip("Should return the center when the outline of the image is a rectangle.", function(done) {
 			distortable.addTo(map);
 			
 			L.DomEvent.on(distortable._image, 'load', function() {

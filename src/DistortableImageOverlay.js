@@ -1,8 +1,7 @@
 L.DistortableImageOverlay = L.ImageOverlay.extend({
 	options: {
 		alt: '',
-		height: 200,
-		rotation: 0
+		height: 200
 	},
 
 	initialize: function(url, options) {
@@ -10,7 +9,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		this._rotation = this.options.rotation;
 
 		L.setOptions(this, options);
-		this._rotation = this.options.rotation;
 	},
 
 	onAdd: function(map) {
@@ -74,23 +72,22 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
 	_updateCorner: function(corner, latlng) {
 		this._corners[corner] = latlng;
-		this.distort();
+		this._reset();
 	},
 
 	_reset: function() {
 		var map = this._map,
 			image = this._image,
 			topLeft = map.latLngToLayerPoint(this._corners[0]),
-			rotation, translation, warp,
+			translation, warp,
 			transformMatrix;
 
 		transformMatrix = this._calculateProjectiveTransform(L.bind(map.latLngToContainerPoint, map));
 
-		rotation = this._getRotateString();
 		warp = L.DomUtil.getMatrixString(transformMatrix);
 		translation = L.DomUtil.getTranslateString(topLeft);
 
-		image.style[L.DomUtil.TRANSFORM] = [translation, rotation, warp].join(' ');
+		image.style[L.DomUtil.TRANSFORM] = [translation, warp].join(' ');
 
 		/* Set origin to the upper-left corner rather than the center of the image, which is the default. */
 		image.style['transform-origin'] = "0 0 0";
@@ -104,18 +101,14 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 			latLngToNewLayerPoint = function(latlng) {
 				return map._latLngToNewLayerPoint(latlng, event.zoom, event.center);
 			},
-			newLayerPointToLatLng = function(newLayerPoint) {
-				return map._newLayerPointToLatLng(newLayerPoint, event.zoom, event.center);
-			},
 
 			topLeft = latLngToNewLayerPoint(nw),
 			transformMatrix = this._calculateProjectiveTransform(latLngToNewLayerPoint),
 
-			rotation = this._getRotateString(latLngToNewLayerPoint, newLayerPointToLatLng),
 			warp = L.DomUtil.getMatrixString(transformMatrix),
 			translation = L.DomUtil.getTranslateString(topLeft);
 
-			image.style[L.DomUtil.TRANSFORM] = [translation, rotation, warp].join(' ');
+			image.style[L.DomUtil.TRANSFORM] = [translation, warp].join(' ');
 	},
 
 	_calculateProjectiveTransform: function(latLngToCartesian) {
@@ -144,39 +137,5 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 			0, h, c[2].x, c[2].y,
 			w, h, c[3].x, c[3].y
 		);
-	},
-
-	/*
-	 * Calculates the centroid of the image.
-	 *     See http://stackoverflow.com/questions/6149175/logical-question-given-corners-find-center-of-quadrilateral
-	 */
-	getCenter: function(ll2c, c2ll) {
-		var map = this._map,
-			latLngToCartesian = ll2c ? ll2c : map.latLngToLayerPoint,
-			cartesianToLatLng = c2ll ? c2ll: map.layerPointToLatLng,
-			nw = latLngToCartesian.call(map, this._corners[0]),
-			ne = latLngToCartesian.call(map, this._corners[1]),
-			se = latLngToCartesian.call(map, this._corners[2]),
-			sw = latLngToCartesian.call(map, this._corners[3]),
-
-			nmid = nw.add(ne.subtract(nw).divideBy(2)),
-			smid = sw.add(se.subtract(sw).divideBy(2));
-
-		return cartesianToLatLng.call(map, nmid.add(smid.subtract(nmid).divideBy(2)));
-	},
-
-	/* Translate from the centroid to the upper-left corner, apply rotation, then translate back. */
-	_getRotateString: function(ll2c, c2ll) {
-		var map = this._map,
-			latLngToCartesian = ll2c ? ll2c : map.latLngToLayerPoint,
-			center = latLngToCartesian.call(map, this.getCenter(ll2c, c2ll)),
-			nw = latLngToCartesian.call(map, this._corners[0]),
-			delta = center.subtract(nw);
-
-		return [
-			L.DomUtil.getTranslateString(delta),
-			L.DomUtil.getRotateString(this._rotation, 'rad'),
-			L.DomUtil.getTranslateString(delta.multiplyBy(-1))
-		].join(' ');
 	}
 });
