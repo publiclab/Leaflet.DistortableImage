@@ -3,6 +3,12 @@ beforeEach(function() {
 	window.expect = chai.expect;
 });
 
+/* 
+ * Asserts that two latlngs are close. 
+ * For example: 
+ *     > expect(new L.LatLng(0, 0.00005)).to.be.closeToLatLng(new L.LatLng(0, 0))
+ *     > true
+ */
 chai.use(function(chai, utils) {
 	var Assertion = chai.Assertion;
 	Assertion.addMethod('closeToLatLng', function(actual, delta, message) {

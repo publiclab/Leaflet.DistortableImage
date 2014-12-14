@@ -67,7 +67,7 @@ module.exports = function(grunt) {
             source: {
                 files: [
                     'src/**/*.js',
-                    'test/*/*.js',
+                    'test/**/*.js',
                     'Gruntfile.js'
                 ],
                 tasks: [ 'build:js' ]
@@ -77,12 +77,11 @@ module.exports = function(grunt) {
         concat: {
             dist: {
                 src: [
-                    'src/util/MatrixUtil.js',
-                    'src/util/DomUtil.js',
-                    'src/util/Map._newLayerPointToLatLng.js',
+                    'src/util/*.js',
+                    'src/edit/*Handle.js',
                     'src/ImageMarker.js',
                     'src/DistortableImageOverlay.js',
-                    'src/DistortableImage.Edit.js'
+                    'src/edit/DistortableImage.Edit.js',
                 ],
                 dest: 'DistortableImageOverlay.js',
             }

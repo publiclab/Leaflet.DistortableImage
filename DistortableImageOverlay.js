@@ -1,3 +1,34 @@
+L.DomUtil = L.extend(L.DomUtil, {
+	getMatrixString: function(m) {
+		var is3d = L.Browser.webkit3d,
+			/* Since matrix3d takes a 4*4 matrix, we add in an empty row and column, which act as the identity on the z-axis. */
+			matrix = [
+				m[0], m[3], 0, m[6],
+				m[1], m[4], 0, m[7],
+				   0,    0, 1,    0,
+				m[2], m[5], 0, m[8]
+			];
+
+		if (!is3d) { throw 'Your browser must support 3D CSS transforms in order to use DistortableImageOverlay.'; }
+
+		return 'matrix3d(' + matrix.join(',') + ')';
+	},
+
+	getRotateString: function(angle, units) {
+		var is3d = L.Browser.webkit3d,
+			open = 'rotate' + (is3d ? '3d' : '') + '(',
+			rotateString = (is3d ? '0, 0, 1, ' : '') + angle + units;
+			
+		return open + rotateString + ')';
+	}
+});
+L.Map.include({
+	_newLayerPointToLatLng: function(point, newZoom, newCenter) {
+		var topLeft = L.Map.prototype._getNewTopLeftPoint.call(this, newCenter, newZoom)
+				.add(L.Map.prototype._getMapPanePos.call(this));
+		return this.unproject(point.add(topLeft), newZoom);
+	}
+});
 L.MatrixUtil = {
 
 	// Compute the adjugate of m
@@ -83,35 +114,150 @@ L.MatrixUtil = {
 		return L.MatrixUtil.multsm(1/m[8], m);
 	}
 };
-L.DomUtil = L.extend(L.DomUtil, {
-	getMatrixString: function(m) {
-		var is3d = L.Browser.webkit3d,
-			/* Since matrix3d takes a 4*4 matrix, we add in an empty row and column, which act as the identity on the z-axis. */
-			matrix = [
-				m[0], m[3], 0, m[6],
-				m[1], m[4], 0, m[7],
-				   0,    0, 1,    0,
-				m[2], m[5], 0, m[8]
-			];
+L.RotatableMarker = L.Marker.extend({
 
-		if (!is3d) { throw 'Your browser must support 3D CSS transforms in order to use DistortableImageOverlay.'; }
-
-		return 'matrix3d(' + matrix.join(',') + ')';
+	options: {
+		rotation: 0
 	},
 
-	getRotateString: function(angle, units) {
-		var is3d = L.Browser.webkit3d,
-			open = 'rotate' + (is3d ? '3d' : '') + '(',
-			rotateString = (is3d ? '0, 0, 1, ' : '') + angle + units;
-			
-		return open + rotateString + ')';
+	initialize: function(latlng, options) {
+		L.Marker.prototype.initialize.call(this, latlng, options);
+		this.setRotation(this.options.rotation);
+	},
+
+	setRotation: function(theta) {
+		this._rotation = theta;
+		
+		this.update();
+		this.fire('rotate', { rotation: this._rotation });
+
+		return this;
+	},
+
+	getRotation: function() {
+		return this._rotation;
+	},
+
+	_setPos: function(pos) {
+		var rotation = this.getRotation(),
+			transformString = [L.DomUtil.getTranslateString(pos), L.DomUtil.getRotateString(rotation, 'rad')].join(' ');
+
+		this._icon._leaflet_pos = pos;
+		this._icon.style[L.DomUtil.TRANSFORM] = transformString;
+
+		if (this._shadow) {
+			this._shadow._leaflet_pos = pos;
+			this._shadow.style[L.DomUtil.TRANSFORM] = transformString;
+		}
+
+		this._zIndex = pos.y + this.options.zIndexOffset;
+
+		this._resetZIndex();
 	}
 });
-L.Map.include({
-	_newLayerPointToLatLng: function(point, newZoom, newCenter) {
-		var topLeft = L.Map.prototype._getNewTopLeftPoint.call(this, newCenter, newZoom)
-				.add(L.Map.prototype._getMapPanePos.call(this));
-		return this.unproject(point.add(topLeft), newZoom);
+
+L.rotatableMarker = function(latlng, options) {
+	return new L.RotatableMarker(latlng, options);
+};
+L.EditHandle = L.RotatableMarker.extend({
+	options: {
+		moveIcon: new L.DivIcon({
+			iconSize: new L.Point(8, 8),
+			className: 'leaflet-div-icon leaflet-editing-icon leaflet-edit-move'
+		}),
+		resizeIcon: new L.DivIcon({
+			iconSize: new L.Point(8, 8),
+			className: 'leaflet-div-icon leaflet-editing-icon leaflet-edit-resize'
+		})
+	},
+
+	initialize: function(overlay, corner, options) {
+		var markerOptions,
+			latlng = overlay._corners[corner];
+
+		L.setOptions(this, options);
+
+		this._handled = overlay;
+		this._corner = corner;
+
+		markerOptions = {
+			draggable: true,
+			icon: this.options.resizeIcon,
+			zIndexOffset: 10
+		};
+
+		if (this._handled.getRotation) {
+			markerOptions.rotation = this._handled.getRotation();
+		}
+
+		L.RotatableMarker.prototype.initialize.call(this, latlng, markerOptions);
+	},
+
+	onAdd: function(map) {
+		L.RotatableMarker.prototype.onAdd.call(this, map);
+		this._bindListeners();
+	},
+
+	onRemove: function(map) {
+		this._unbindListeners();
+		L.RotatableMarker.prototype.onRemove.call(this, map);
+	},
+
+	_onHandleDragStart: function() {
+		this._handled.fire('editstart');
+	},
+
+	_onHandleDragEnd: function() {
+		this._fireEdit();
+	},
+
+	_fireEdit: function() {
+		this._handled.edited = true;
+		this._handled.fire('edit');
+	},
+
+	_bindListeners: function() {
+		this.on({
+			'dragstart': this._onHandleDragStart,
+			'drag': this._onHandleDrag,
+			'dragend': this._onHandleDragEnd
+		}, this);
+
+		this._handled._map.on('zoomend', this.updateHandle, this);
+
+		this._handled.on('rotate', this.updateHandle, this);
+		this._handled.on('resize', this.updateHandle, this);
+		this._handled.on('move', this.updateHandle, this);
+	},
+
+	_unbindListeners: function() {
+		this.off({
+			'dragstart': this._onHandleDragStart,
+			'drag': this._onHandleDrag,
+			'dragend': this._onHandleDragEnd
+		}, this);
+
+		this._handled._map.off('zoomend', this.updateHandle, this);
+		this._handled.off('update', this.updateHandle, this);
+	},
+
+	_calculateRotation: function(point, theta) {
+		return new L.Point(
+			point.x*Math.cos(theta) - point.y*Math.sin(theta),
+			point.y*Math.cos(theta) + point.x*Math.sin(theta)
+		).round();
+	}	
+});
+L.RotateHandle = L.EditHandle.extend({
+	
+});
+L.WarpHandle = L.EditHandle.extend({
+	options: {
+		TYPE: 'warp'
+	},
+
+	_onHandleDrag: function() {
+		this._handled._updateCorner(this._corner, this.getLatLng());
 	}
 });
 L.ImageMarker = L.Marker.extend({
@@ -287,250 +433,196 @@ L.DistortableImage.Edit = L.Handler.extend({
 	initialize: function(overlay) {
 		this._overlay = overlay;
 
-			this.dragging = new L.Draggable(overlay._image);
-			this.dragging.enable();
-			if (this.options.locked) { this.lock(); }
+		this._cornerMarkers = new L.LayerGroup();
 
-			this.changeMode('distort');
+		// this.dragging.on('dragstart',function() {
+		// 	this.dragStartPos = map.latLngToLayerPoint(this._bounds._northEast) // get position so we can track offset
+		// 	for (i in this.markers) {
+		// 		this.markers[i].startPos = this.markers[i].getLatLng()
+		// 	}
+		// }, this)
 
-			// this.dragging.on('dragstart',function() {
-			//   this.dragStartPos = this._overlay._map.latLngToLayerPoint(this._bounds._northEast) // get position so we can track offset
-			//   for (i in this.markers) {
-			//     this.markers[i].startPos = this.markers[i].getLatLng()
-			//   }
-			// },this)
+		// // update the points too
+		// this.dragging.on('drag',function() {
+		// 	dx = this.dragging._newPos.x-this.dragging._startPos.x
+		// 	dy = this.dragging._newPos.y-this.dragging._startPos.y
 
-			// // update the points too
-			// this.dragging.on('drag',function() {
-			//   dx = this.dragging._newPos.x-this.dragging._startPos.x
-			//   dy = this.dragging._newPos.y-this.dragging._startPos.y
+		// 	for (i in this.markers) {
+		// 		var pos = map.latLngToLayerPoint(this.markers[i].startPos)
+		// 		pos.x += dx
+		// 		pos.y += dy
+		// 		this.markers[i].setLatLng(map.layerPointToLatLng(new L.Point(pos.x,pos.y)))
+		// 	}
+		// 	this.updateCorners()
+		// 	this.updateTransform()
+		// }, this);
 
-			//   for (i in this.markers) {
-			//     var pos = this._overlay._map.latLngToLayerPoint(this.markers[i].startPos)
-			//     pos.x += dx
-			//     pos.y += dy
-			//     this.markers[i].setLatLng(this._overlay._map.layerPointToLatLng(new L.Point(pos.x,pos.y)))
-			//   }
-			//   this.updateCorners()
-			//   this.updateTransform()
-			// }, this);
-
-			// this.dragging.on('dragend',function() {
-			//   // undo the toggling of mode from the initial click
-			//   this.toggleMode()
-			// }, this);
-		
+		// this.dragging.on('dragend',function() {
+		// 	if (this.mode == 'rotate') this.mode = 'distort'
+		// 	else this.mode = 'rotate'
+		// 	this.changeMode()
+		// }, this);		
 	},
 
 	addHooks: function() {
+		var overlay = this._overlay,
+			map = overlay._map;
 
+		for (var i = 0, l = overlay._corners.length; i < l; i++) {
+			this._cornerMarkers.addLayer(new L.WarpHandle(overlay, i));
+		}
+
+		// this.dragging = new L.Draggable(this._overlay._image);
+		// this.dragging.enable();
+
+		map.addLayer(this._cornerMarkers);
 	},
 
 	removeHooks: function() {
 
 	},
 
-	rotateStart: function() {
-		var map = this._map;
+	// rotateStart: function() {
+	// 	var map = this._map;
 
-		this.center = this.getCenter();
-		this.pointer_distance = Math.sqrt(Math.pow(this.center[1]-L.MatrixUtil.pointer.y,2)+Math.pow(this.center[0]-L.MatrixUtil.pointer.x, 2));
-		this.pointer_angle = Math.atan2(this.center[1]-L.MatrixUtil.pointer.y,this.center[0]-L.MatrixUtil.pointer.x);
-		for (var i in this.markers) {
-			var marker = this.markers[i];
-			var mx = map.latLngToLayerPoint(marker._latlng).x;
-			var my = map.latLngToLayerPoint(marker._latlng).y;
-			marker.angle = Math.atan2(my-this.center[1],mx-this.center[0]);
-			marker.distance = (mx-this.center[0])/Math.cos(marker.angle);
-		}
-	},
+	// 	this.center = this.getCenter();
+	// 	this.pointer_distance = Math.sqrt(Math.pow(this.center[1]-L.MatrixUtil.pointer.y,2)+Math.pow(this.center[0]-L.MatrixUtil.pointer.x, 2));
+	// 	this.pointer_angle = Math.atan2(this.center[1]-L.MatrixUtil.pointer.y,this.center[0]-L.MatrixUtil.pointer.x);
+	// 	for (var i in this.markers) {
+	// 		var marker = this.markers[i];
+	// 		var mx = map.latLngToLayerPoint(marker._latlng).x;
+	// 		var my = map.latLngToLayerPoint(marker._latlng).y;
+	// 		marker.angle = Math.atan2(my-this.center[1],mx-this.center[0]);
+	// 		marker.distance = (mx-this.center[0])/Math.cos(marker.angle);
+	// 	}
+	// },
 
 	// rotate and scale; scaling isn't real -- it just tracks distance from "center", and can distort the image in some cases
-	rotate: function() {
-		// use center to rotate around a point
-		var distance = Math.sqrt(Math.pow(this.center[1]-$L.pointer.y,2)+Math.pow(this.center[0]-$L.pointer.x,2));
-		var distance_change = distance - this.pointer_distance;
-		var angle = Math.atan2(this.center[1]-$L.pointer.y,this.center[0]-$L.pointer.x);
-		var angle_change = angle-this.pointer_angle;
+	// rotate: function() {
+	// 	var map = this._map;
 
-		// keyboard keypress event is not hooked up:
-		if ($L.shifted) { angle_change = 0; }
+	// 	// use center to rotate around a point
+	// 	var distance = Math.sqrt(Math.pow(this.center[1]-L.MatrixUtil.pointer.y,2)+Math.pow(this.center[0]-L.MatrixUtil.pointer.x,2));
+	// 	var distance_change = distance - this.pointer_distance;
+	// 	var angle = Math.atan2(this.center[1]-L.MatrixUtil.pointer.y,this.center[0]-L.MatrixUtil.pointer.x);
+	// 	var angle_change = angle-this.pointer_angle;
 
-		// use angle to recalculate each of the points in this.parent_shape.points
-		for (var i in this.markers) {
-		  var marker = this.markers[parseInt(i)];
-		  this.markers[parseInt(i)]._latlng = this._overlay._map.layerPointToLatLng(new L.point(
-			[   this.center[0] + 
-					Math.cos(marker.angle+angle_change) *
-				   (marker.distance + distance_change),
-				this.center[1] + 
-					Math.sin(marker.angle+angle_change) * 
-					(marker.distance + distance_change)
-			]));
-		  marker.update();
-		}
-		this.updateCorners();
-		this.updateTransform();
-	},
+	// 	// keyboard keypress event is not hooked up:
+	// 	if (false) {
+	// 		angle_change = 0;
+	// 	}
+
+	// 	// use angle to recalculate each of the points in this.parent_shape.points
+	// 	for (var i in this.markers) {
+	// 		var marker = this.markers[parseInt(i)];
+	// 		this.markers[parseInt(i)]._latlng = map.layerPointToLatLng(new L.point(
+	// 			[   this.center[0] +
+	// 					Math.cos(marker.angle+angle_change) *
+	// 					(marker.distance+distance_change),
+	// 				this.center[1] +
+	// 					Math.sin(marker.angle+angle_change) *
+	// 					(marker.distance+distance_change)
+	// 			]));
+	// 		marker.update();
+	// 	}
+	// 	this.updateCorners();
+	// 	this.updateTransform();
+	// },	
 
 	// change between 'distort' and 'rotate' mode
-	toggleMode: function() {
-		if (this.mode === 'rotate') {
-			this.changeMode('distort');
-		} else {
-			this.changeMode('rotate');
-		}
-	},
+	// _toggleMode: function() {
+	// 	var setRed = function(i,m) { m.setFromIcons('red'); },
+	// 		setGrey = function(i,m) { m.setFromIcons('grey'); };
 
-	changeMode: function(mode) {
-		this.mode = mode;
-		$.each(this.markers,function(i,m) {
-			if (mode === 'rotate') {
-				m.off('dragstart');
-				m.off('drag');
-				m.on('dragstart',this.parentImage.rotateStart,this.parentImage);
-				m.on('drag',this.parentImage.rotate,this.parentImage);
-				m.setFromIcons('red');
-			} else if (mode === 'locked') {
-				m.off('dragstart');
-				m.off('drag');
-				// setIcon and draggable.disable() conflict;
-				// described here but not yet fixed: 
-				// https://github.com/Leaflet/Leaflet/issues/2578
-				//m.draggable.disable()
-				m.setFromIcons('locked');
-			} else { // default
-				m.off('drag');
-				m.on('drag',this.parentImage.distort,this.parentImage);
-				m.setFromIcons('grey');
-			}
-		});
-	},
+	// 	for (var i in this.markers) {
+	// 		if (this.mode === 'rotate') {
+	// 			this.markers[i].off('dragstart');
+	// 			this.markers[i].off('drag');
+	// 			this.markers[i].on('dragstart',this.rotateStart,this);
+	// 			this.markers[i].on('drag',this.rotate,this);
+	// 			$.each(this.markers, setRed);
+	// 		} else {
+	// 			this.markers[i].off('drag');
+	// 			this.markers[i].on('drag',this.distort,this);
+	// 			$.each(this.markers, setGrey);
+	// 		}
+	// 	}
+	// },
 
-	toggleTransparency: function() {
-		this.transparent = !this.transparent;
-		if (this.transparent) {
-			this.setOpacity(0.4);
-		} else {
-			this.setOpacity(1);
-		}
-	},
+	// onclick: function() {
+	// 	var map = this._map;
 
-	toggleIsolate: function() {
-		this.isolated = !this.isolated;
-		if (this.isolated) {
-			$.each($L.images,function(i,img) {
-				img.hidden = false;
-				img.setOpacity(1);
-			});
-		} else {
-			$.each($L.images,function(i,img) {
-				img.hidden = true;
-				img.setOpacity(0);
-			});
-		}
-		this.hidden = false;
-		this.setOpacity(1);
-	},
+	// 	// first, delete existing buttons
+	// 	$('#image-distort-transparency').parent().remove();
+	// 	$('#image-distort-outline').parent().remove();
+	// 	$('#image-distort-delete').parent().remove();
 
-	toggleVisibility: function() {
-		this.hidden = !this.hidden;
-		if (this.hidden) {
-			this.setOpacity(1);
-		} else {
-			this.setOpacity(0);
-		}
-	},	
+	// 	this.transparencyBtn = L.easyButton('fa-adjust', 
+	// 		 function () {
+	// 			 var e = $('#'+$('#image-distort-outline')[0].getAttribute('parentImgId'))[0];
+	// 			 if (e.opacity === 1) {
+	// 				 L.setOpacity(e,0.7);
+	// 				 e.setAttribute('opacity',0.7);
+	// 			 } else {
+	// 				 L.setOpacity(e,1);
+	// 				 e.setAttribute('opacity',1);
+	// 			 }
+	// 		 },
+	// 		'Toggle Image Transparency'
+	// 	).getContainer(); //.children[0]
+		
+	// 	this.outlineBtn = L.easyButton('fa-square-o', 
+	// 																 function () {
+	// 																	 this.scope.toggleOutline();
+	// 																 },
+	// 																 'Outline',
+	// 																 map,
+	// 																 this
+	// 	);
+ 
+	// 	this.deleteBtn = L.easyButton('fa-bitbucket', 
+	// 		function () {
+	// 			map.removeLayer($(this.parentImgId));
+	// 			for(var i=0; i < 4; i++) {
+	// 				map.removeLayer(this.markers[i]);
+	// 			}
+	// 		},
+	// 	 'Delete Image'
+	// 	);
+	// },
 
-	// This overlaps somewhat with the changeMode() method. 
-	// Could consolidate.
-	lock: function() {
-		this.locked = true;
-		this.off('dragstart');
-		this.off('drag');
-		this.draggable.disable();
-		this.changeMode('locked');
-	},
+	// lock: function() {
+	// 	this.locked = true;
+	// 	$.each(this.markers,function(i,m) {
+	// 		m.setFromIcons('locked');
+	// 	});
+	// },
 
-	unlock: function() {
-		this.locked = false;
-		this.draggable.enable();
-		this.changeMode('distort');
-	},
+	// unlock: function() {
+	// 	this.locked = false;
+	// 	this.mode = 'distort';
+	// 	$.each(this.markers,function(i,m) {
+	// 		m.setFromIcons('grey');
+	// 	});
+	// },
 
-	deselect: function() {
-		$L.selected = false;
-		for (var i in this.markers) {
-			// this isn't a good way to hide markers:
-			this._overlay._map.removeLayer(this.markers[i]);
-		}
-		if (this.outlineBtn) {
-			// delete existing buttons
-			this.outlineBtn._container.remove();
-			this.transparencyBtn._container.remove();
-			this.deleteBtn._container.remove();
-		}
-		this.onDeselect();
-	},
+	// toggleOutline: function() {
+	// 	this.outlined = !this.outlined;
+	// 	if (this.outlined) {
+	// 		this.setOpacity(0.4);
+	// 		$(this._image).css('border','1px solid red');
+	// 	} else {
+	// 		this.setOpacity(1);
+	// 		$(this._image).css('border', 'none');
+	// 	}
+	// }	
 
-	select: function() {
-		// deselect other images
-		$.each($L.images,function(i,d) {
-			d.deselect.apply(d);
-		});
-
-		// re-establish order
-		$L.impose_order();
-		$L.selected = this;
-		// show corner markers
-		for (var i in this.markers) {
-			this.markers[i].addTo(this._overlay._map);
-		}
-
-		// create buttons
-		this.transparencyBtn = L.easyButton('fa-adjust', 
-			L.bind(function() { this.toggleTransparency(); }, this),
-			'Toggle Image Transparency',
-			this._overlay._map,
-			this
-		);
-
-		this.outlineBtn = L.easyButton('fa-square-o',
-			L.bind(function() { this.toggleOutline(); }, this),
-			'Outline',
-			this._overlay._map,
-			this
-		);
-
-		this.deleteBtn = L.easyButton('fa-bitbucket',
-			L.bind(function () {
-				this._overlay._map.removeLayer($(this.parentImgId));
-				for (var i = 0; i < 4; i++) { 
-					this._overlay._map.removeLayer(this.markers[i]); 
-				}
-			}, this),
-		'Delete Image');
-
-		this.bringToFront();
-		this.onSelect();
-	},
-
-	toggleOutline: function() {
-		this.outlined = !this.outlined;
-		if (this.outlined) {
-			this.setOpacity(0.4);
-			$(this._image).css('border','1px solid red');
-		} else {
-			this.setOpacity(1);
-			$(this._image).css('border', 'none');
-		}
-	}
 });
 
-// L.DistortableImageOverlay.addInitHook(function() {
-// 	this.editing = new L.DistortableImage.Edit(this);
+L.DistortableImageOverlay.addInitHook(function() {
+	this.editing = new L.DistortableImage.Edit(this);
 
-// 	if (this.options.editable) {
-// 		this.editing.enable();
-// 	}
-// });
+	if (this.options.editable) {
+		L.DomEvent.on(this._image, 'load', this.editing.enable, this);
+	}
+});

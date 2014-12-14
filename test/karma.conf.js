@@ -19,14 +19,13 @@ module.exports = function(config) {
       'node_modules/leaflet/dist/leaflet-src.js',
       'node_modules/leaflet/dist/leaflet.css',
       'node_modules/chai/chai.js',
-      'src/util/MatrixUtil.js',
-      'src/util/DomUtil.js',
-      'src/util/Map._newLayerPointToLatLng.js',      
+      'src/util/*.js',
+      'src/edit/*Handle.js',
       'src/ImageMarker.js',
       'src/DistortableImageOverlay.js',
-      'src/DistortableImage.Edit.js',
+      'src/edit/DistortableImage.Edit.js',
       'test/SpecHelper.js',
-      'test/*/*Spec.js'
+      'test/src/**/*Spec.js'
     ],
 
 
