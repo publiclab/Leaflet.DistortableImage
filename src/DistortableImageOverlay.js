@@ -90,8 +90,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		image.style[L.DomUtil.TRANSFORM] = [translation, warp].join(' ');
 
 		/* Set origin to the upper-left corner rather than the center of the image, which is the default. */
-		image.style['transform-origin'] = "0 0 0";
-		image.style["-webkit-transform-origin"] = "0 0 0";
+		image.style[L.DomUtil.TRANSFORM + '-origin'] = "0 0 0";
 	},
 
 	_animateZoom: function(event) {
