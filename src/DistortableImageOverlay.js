@@ -110,6 +110,25 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 			image.style[L.DomUtil.TRANSFORM] = [translation, warp].join(' ');
 	},
 
+	/*
+	 * Calculates the centroid of the image.
+	 *     See http://stackoverflow.com/questions/6149175/logical-question-given-corners-find-center-of-quadrilateral
+	 */
+	getCenter: function(ll2c, c2ll) {
+		var map = this._map,
+			latLngToCartesian = ll2c ? ll2c : map.latLngToLayerPoint,
+			cartesianToLatLng = c2ll ? c2ll: map.layerPointToLatLng,
+			nw = latLngToCartesian.call(map, this._corners[0]),
+			ne = latLngToCartesian.call(map, this._corners[1]),
+			se = latLngToCartesian.call(map, this._corners[2]),
+			sw = latLngToCartesian.call(map, this._corners[3]),
+
+			nmid = nw.add(ne.subtract(nw).divideBy(2)),
+			smid = sw.add(se.subtract(sw).divideBy(2));
+
+		return cartesianToLatLng.call(map, nmid.add(smid.subtract(nmid).divideBy(2)));
+	},
+
 	_calculateProjectiveTransform: function(latLngToCartesian) {
 		var offset = latLngToCartesian(this._corners[0]),
 			w = this._image.offsetWidth, 
