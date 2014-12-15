@@ -38,11 +38,13 @@ This plugin is not yet complete!
 * hotkey defaults that can be turned off?
   * t: transparency
   * shift-drag: scale, no rotate
+* image deletion (disable listeners, delete references)
 
 =================
 
 ##Leftovers, persnickity stuff:
 
+* pinch/rotate gesture support for multitouch devices
 * make shift-drag drag the nearest marker, not the image?
 * long-click or double-click to lock an image? Can't get more advanced event handling working, only .onclick = function, which doesn't support dblclick event
 * scale is not true scaling -- it moves points equally from the "center" which causes distortion in some edge cases
