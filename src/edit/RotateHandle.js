@@ -1,5 +1,6 @@
 L.RotateHandle = L.EditHandle.extend({
 	options: {
+		TYPE: 'rotate',
 		icon: new L.Icon({ 
 			iconUrl: '../src/images/circle-o_cc4444_16.png',
 			iconSize: [16, 16],
@@ -22,6 +23,7 @@ L.RotateHandle = L.EditHandle.extend({
 	},
 
 	updateHandle: function() {
+		console.log('updating ' + this.options.TYPE + ' handle');		
 		this.setLatLng(this._handled._corners[this._corner]);
 	},
 
