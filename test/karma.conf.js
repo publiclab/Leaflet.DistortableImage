@@ -19,6 +19,7 @@ module.exports = function(config) {
       'node_modules/leaflet/dist/leaflet-src.js',
       'node_modules/leaflet/dist/leaflet.css',
       'node_modules/chai/chai.js',
+      'node_modules/sinon/pkg/sinon.js',
       'src/util/*.js',
       'src/edit/*Handle.js',
       'src/ImageMarker.js',
