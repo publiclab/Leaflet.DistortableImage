@@ -51,7 +51,8 @@
 
       // startup the ImageDistort plugin
       $L.initialize( {
-        uploadBtn: true // prompt and handle new images
+        uploadBtn: true, // prompt and handle new images
+        img_dir: '../src/images/' 
       })
       // create an image
       img = new L.DistortableImageOverlay(

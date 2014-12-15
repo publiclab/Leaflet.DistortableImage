@@ -1,8 +1,8 @@
 L.ImageMarker = L.Marker.extend({
   // icons generated from FontAwesome at: http://fa2png.io/
-  icons: { grey: '../src/images/circle-o_444444_16.png',
-            red: '../src/images/circle-o_cc4444_16.png',
-         locked: '../src/images/close_444444_16.png'
+  icons: { grey: 'circle-o_444444_16.png',
+            red: 'circle-o_cc4444_16.png',
+         locked: 'close_444444_16.png'
   },
   options: {
     pane: 'markerPane',
@@ -18,7 +18,7 @@ L.ImageMarker = L.Marker.extend({
     riseOffset: 250
   },
   setFromIcons: function(name) {
-    this.setIcon(new L.Icon({iconUrl:this.icons[name],iconSize:[16,16],iconAnchor:[8,8]}))
+    this.setIcon(new L.Icon({iconUrl:$L.options.img_dir+this.icons[name],iconSize:[16,16],iconAnchor:[8,8]}))
   }
   
 });
