@@ -55,29 +55,17 @@
       // })
       // create an image
       img = new L.DistortableImageOverlay(
-<<<<<<< HEAD
         'example.jpg', {
           corners: [
             new L.latLng(51.52,-0.10),
             new L.latLng(51.52,-0.14),
             new L.latLng(51.50,-0.10),
             new L.latLng(51.50,-0.14)
-          ],
-          rotation: Math.PI
+          ]
         }
-      ).addTo(map);  
-=======
-        'example.jpg',
-        [
-          new L.LatLng(51.52,-0.10),
-          new L.LatLng(51.52,-0.14),
-          new L.LatLng(51.48,-0.10),
-          new L.LatLng(51.50,-0.14)
-        ]
       ).addTo(map);
 
-      img.editing.enable();
->>>>>>> Begin enabling user interactions and integrating editing handles.
+      L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
     })();
   </script>
       

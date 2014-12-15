@@ -3,122 +3,123 @@ L.DistortableImage = L.DistortableImage || {};
 L.DistortableImage.Edit = L.Handler.extend({
 	initialize: function(overlay) {
 		this._overlay = overlay;
-
-		this._cornerMarkers = new L.LayerGroup();
-
-		// this.dragging.on('dragstart',function() {
-		// 	this.dragStartPos = map.latLngToLayerPoint(this._bounds._northEast) // get position so we can track offset
-		// 	for (i in this.markers) {
-		// 		this.markers[i].startPos = this.markers[i].getLatLng()
-		// 	}
-		// }, this)
-
-		// // update the points too
-		// this.dragging.on('drag',function() {
-		// 	dx = this.dragging._newPos.x-this.dragging._startPos.x
-		// 	dy = this.dragging._newPos.y-this.dragging._startPos.y
-
-		// 	for (i in this.markers) {
-		// 		var pos = map.latLngToLayerPoint(this.markers[i].startPos)
-		// 		pos.x += dx
-		// 		pos.y += dy
-		// 		this.markers[i].setLatLng(map.layerPointToLatLng(new L.Point(pos.x,pos.y)))
-		// 	}
-		// 	this.updateCorners()
-		// 	this.updateTransform()
-		// }, this);
-
-		// this.dragging.on('dragend',function() {
-		// 	if (this.mode == 'rotate') this.mode = 'distort'
-		// 	else this.mode = 'rotate'
-		// 	this.changeMode()
-		// }, this);		
+		this._mode = 0; // warp
 	},
 
 	addHooks: function() {
 		var overlay = this._overlay,
-			map = overlay._map;
+			map = overlay._map,
+			i;
 
-		for (var i = 0, l = overlay._corners.length; i < l; i++) {
-			this._cornerMarkers.addLayer(new L.WarpHandle(overlay, i));
+		this._warpHandles = new L.LayerGroup();
+		for (i = 0; i < 4; i++) {
+			this._warpHandles.addLayer(new L.WarpHandle(overlay, i));
 		}
 
-		// this.dragging = new L.Draggable(this._overlay._image);
-		// this.dragging.enable();
+		this._rotateHandles = new L.LayerGroup();
+		for (i = 0; i < 4; i++) {
+			this._rotateHandles.addLayer(new L.RotateHandle(overlay, i));
+		}
 
-		map.addLayer(this._cornerMarkers);
+		this._handles = [this._warpHandles, this._rotateHandles];
+
+
+		/* TODO: Tell L>Draggable how to find the position of the image. */
+		this._enableDragging();
+
+		map.addLayer(this._warpHandles);
+
+		/* TODO: Why doesn't this._overlay.on('click') work? */
+		L.DomEvent.on(this._overlay._image, 'click', this._changeMode, this);
+		L.DomEvent.on(this._overlay._image, 'click', this._showToolbar, this);
+	},
+
+	_changeMode: function() {
+		var map = this._overlay._map;
+
+		map.removeLayer(this._handles[this._mode]);
+
+		/* Switch mode. */
+		this._mode = (this._mode + 1) % 2;
+
+		map.addLayer(this._handles[this._mode]);
 	},
 
 	removeHooks: function() {
+		var map = this._overlay._map;
 
+		map.removeLayer(this._handles[this._mode]);
 	},
 
-	// rotateStart: function() {
-	// 	var map = this._map;
+	_rotateBy: function(angle) {
+		var overlay = this._overlay,
+			map = overlay._map,
+			center = map.latLngToLayerPoint(overlay.getCenter()),
+			i, p, q;
 
-	// 	this.center = this.getCenter();
-	// 	this.pointer_distance = Math.sqrt(Math.pow(this.center[1]-L.MatrixUtil.pointer.y,2)+Math.pow(this.center[0]-L.MatrixUtil.pointer.x, 2));
-	// 	this.pointer_angle = Math.atan2(this.center[1]-L.MatrixUtil.pointer.y,this.center[0]-L.MatrixUtil.pointer.x);
-	// 	for (var i in this.markers) {
-	// 		var marker = this.markers[i];
-	// 		var mx = map.latLngToLayerPoint(marker._latlng).x;
-	// 		var my = map.latLngToLayerPoint(marker._latlng).y;
-	// 		marker.angle = Math.atan2(my-this.center[1],mx-this.center[0]);
-	// 		marker.distance = (mx-this.center[0])/Math.cos(marker.angle);
-	// 	}
-	// },
+		for (i = 0; i < 4; i++) {
+			p = map.latLngToLayerPoint(overlay._corners[i]).subtract(center);
+			q = new L.Point(
+				Math.cos(angle)*p.x - Math.sin(angle)*p.y,
+				Math.sin(angle)*p.x + Math.cos(angle)*p.y
+			);
+			overlay._corners[i] = map.layerPointToLatLng(q.add(center));
+		}
 
-	// rotate and scale; scaling isn't real -- it just tracks distance from "center", and can distort the image in some cases
-	// rotate: function() {
-	// 	var map = this._map;
+		overlay._reset();
+	},
 
-	// 	// use center to rotate around a point
-	// 	var distance = Math.sqrt(Math.pow(this.center[1]-L.MatrixUtil.pointer.y,2)+Math.pow(this.center[0]-L.MatrixUtil.pointer.x,2));
-	// 	var distance_change = distance - this.pointer_distance;
-	// 	var angle = Math.atan2(this.center[1]-L.MatrixUtil.pointer.y,this.center[0]-L.MatrixUtil.pointer.x);
-	// 	var angle_change = angle-this.pointer_angle;
+	_scaleBy: function(scale) {
+		var overlay = this._overlay,
+			map = overlay._map,
+			center = map.latLngToLayerPoint(overlay.getCenter()),
+			i, p;
 
-	// 	// keyboard keypress event is not hooked up:
-	// 	if (false) {
-	// 		angle_change = 0;
-	// 	}
+		for (i = 0; i < 4; i++) {
+			p = map.latLngToLayerPoint(overlay._corners[i])
+				.subtract(center)
+				.multiplyBy(scale)
+				.add(center);
+			overlay._corners[i] = map.layerPointToLatLng(p);
+		}
 
-	// 	// use angle to recalculate each of the points in this.parent_shape.points
-	// 	for (var i in this.markers) {
-	// 		var marker = this.markers[parseInt(i)];
-	// 		this.markers[parseInt(i)]._latlng = map.layerPointToLatLng(new L.point(
-	// 			[   this.center[0] +
-	// 					Math.cos(marker.angle+angle_change) *
-	// 					(marker.distance+distance_change),
-	// 				this.center[1] +
-	// 					Math.sin(marker.angle+angle_change) *
-	// 					(marker.distance+distance_change)
-	// 			]));
-	// 		marker.update();
-	// 	}
-	// 	this.updateCorners();
-	// 	this.updateTransform();
-	// },	
+		overlay._reset();
+	},
 
-	// change between 'distort' and 'rotate' mode
-	// _toggleMode: function() {
-	// 	var setRed = function(i,m) { m.setFromIcons('red'); },
-	// 		setGrey = function(i,m) { m.setFromIcons('grey'); };
+	_enableDragging: function() {
+		var overlay = this._overlay,
+			map = overlay._map;
 
-	// 	for (var i in this.markers) {
-	// 		if (this.mode === 'rotate') {
-	// 			this.markers[i].off('dragstart');
-	// 			this.markers[i].off('drag');
-	// 			this.markers[i].on('dragstart',this.rotateStart,this);
-	// 			this.markers[i].on('drag',this.rotate,this);
-	// 			$.each(this.markers, setRed);
-	// 		} else {
-	// 			this.markers[i].off('drag');
-	// 			this.markers[i].on('drag',this.distort,this);
-	// 			$.each(this.markers, setGrey);
-	// 		}
-	// 	}
-	// },
+		this.dragging = new L.Draggable(overlay._image);
+		this.dragging.enable();
+
+		/* 
+		 * Adjust default behavior of L.Draggable.
+	     * By default, L.Draggable overwrites the CSS3 warp transform 
+	     *     that we want when it calls L.DomUtil.setPosition.
+		 */
+		this.dragging._updatePosition = function() {
+			var delta = this._newPos.subtract(map.latLngToContainerPoint(overlay._corners[0])),
+				currentPoint, i;
+
+			this.fire('predrag');
+
+			for (i = 0; i < 4; i++) {
+				currentPoint = map.latLngToContainerPoint(overlay._corners[i]);
+				overlay._corners[i] = map.containerPointToLatLng(currentPoint.add(delta));
+			}
+			overlay._reset();
+			overlay.fire('update');
+
+			this.fire('drag');
+		};
+
+		this.dragging.on('dragend', this._changeMode, this);
+	},
+
+	_showToolbar: function() {
+
+	},
 
 	// onclick: function() {
 	// 	var map = this._map;
@@ -160,33 +161,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 	// 		},
 	// 	 'Delete Image'
 	// 	);
-	// },
-
-	// lock: function() {
-	// 	this.locked = true;
-	// 	$.each(this.markers,function(i,m) {
-	// 		m.setFromIcons('locked');
-	// 	});
-	// },
-
-	// unlock: function() {
-	// 	this.locked = false;
-	// 	this.mode = 'distort';
-	// 	$.each(this.markers,function(i,m) {
-	// 		m.setFromIcons('grey');
-	// 	});
-	// },
-
-	// toggleOutline: function() {
-	// 	this.outlined = !this.outlined;
-	// 	if (this.outlined) {
-	// 		this.setOpacity(0.4);
-	// 		$(this._image).css('border','1px solid red');
-	// 	} else {
-	// 		this.setOpacity(1);
-	// 		$(this._image).css('border', 'none');
-	// 	}
-	// }	
+	// },	
 
 });
 
@@ -194,6 +169,6 @@ L.DistortableImageOverlay.addInitHook(function() {
 	this.editing = new L.DistortableImage.Edit(this);
 
 	if (this.options.editable) {
-		L.DomEvent.on(this._image, 'load', this.editing.enable, this);
+		L.DomEvent.on(this._image, 'load', this.editing.enable, this.editing);
 	}
 });
