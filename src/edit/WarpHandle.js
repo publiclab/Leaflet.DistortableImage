@@ -1,9 +1,21 @@
 L.WarpHandle = L.EditHandle.extend({
 	options: {
-		TYPE: 'warp'
+		TYPE: 'warp',
+		icon: new L.Icon({ 
+			iconUrl: '../src/images/circle-o_444444_16.png',
+			iconSize: [16, 16],
+			iconAnchor: [8, 8]}
+		)
+	},
+
+	updateHandle: function() {
+		console.log('updating ' + this.options.TYPE + ' handle');
+		this.setLatLng(this._handled._corners[this._corner]);
 	},
 
 	_onHandleDrag: function() {
 		this._handled._updateCorner(this._corner, this.getLatLng());
+
+		this._handled.fire('update');
 	}
 });
