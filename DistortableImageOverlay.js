@@ -337,6 +337,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
       // this actually displays it on the map:
       this.bringToFront().addTo(map);
+      this.updateTransform()
 
     },this, 'load');
 
