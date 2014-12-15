@@ -23,6 +23,8 @@ L.EditHandle = L.RotatableMarker.extend({
 	onAdd: function(map) {
 		L.RotatableMarker.prototype.onAdd.call(this, map);
 		this._bindListeners();
+
+		this.updateHandle();
 	},
 
 	onRemove: function(map) {

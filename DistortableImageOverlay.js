@@ -185,6 +185,8 @@ L.EditHandle = L.RotatableMarker.extend({
 	onAdd: function(map) {
 		L.RotatableMarker.prototype.onAdd.call(this, map);
 		this._bindListeners();
+
+		this.updateHandle();
 	},
 
 	onRemove: function(map) {
@@ -253,7 +255,6 @@ L.RotateHandle = L.EditHandle.extend({
 	},
 
 	updateHandle: function() {
-		console.log('updating ' + this.options.TYPE + ' handle');		
 		this.setLatLng(this._handled._corners[this._corner]);
 	},
 
@@ -304,7 +305,6 @@ L.WarpHandle = L.EditHandle.extend({
 	},
 
 	updateHandle: function() {
-		console.log('updating ' + this.options.TYPE + ' handle');
 		this.setLatLng(this._handled._corners[this._corner]);
 	},
 
@@ -451,7 +451,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 			warp = L.DomUtil.getMatrixString(transformMatrix),
 			translation = L.DomUtil.getTranslateString(topLeft);
 
-			image.style[L.DomUtil.TRANSFORM] = [translation, warp].join(' ');
+		/* See L.DomUtil.setPosition. Mainly for the purposes of L.Draggable. */
+		image._leaflet_pos = topLeft;
+
+		image.style[L.DomUtil.TRANSFORM] = [translation, warp].join(' ');
 	},
 
 	getCorners: function() {

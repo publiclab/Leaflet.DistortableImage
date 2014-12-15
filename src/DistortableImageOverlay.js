@@ -110,7 +110,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 			warp = L.DomUtil.getMatrixString(transformMatrix),
 			translation = L.DomUtil.getTranslateString(topLeft);
 
-			image.style[L.DomUtil.TRANSFORM] = [translation, warp].join(' ');
+		/* See L.DomUtil.setPosition. Mainly for the purposes of L.Draggable. */
+		image._leaflet_pos = topLeft;
+
+		image.style[L.DomUtil.TRANSFORM] = [translation, warp].join(' ');
 	},
 
 	getCorners: function() {

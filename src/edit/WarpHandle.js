@@ -9,7 +9,6 @@ L.WarpHandle = L.EditHandle.extend({
 	},
 
 	updateHandle: function() {
-		console.log('updating ' + this.options.TYPE + ' handle');
 		this.setLatLng(this._handled._corners[this._corner]);
 	},
 
