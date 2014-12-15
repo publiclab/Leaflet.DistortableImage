@@ -66,6 +66,7 @@ L.MatrixUtil = {
 		];
 	},
 
+	// multiply a scalar and a 3*3 matrix
 	multsm: function(s, m) {
 		var matrix = [];
 
@@ -160,17 +161,6 @@ L.rotatableMarker = function(latlng, options) {
 	return new L.RotatableMarker(latlng, options);
 };
 L.EditHandle = L.RotatableMarker.extend({
-	options: {
-		moveIcon: new L.DivIcon({
-			iconSize: new L.Point(8, 8),
-			className: 'leaflet-div-icon leaflet-editing-icon leaflet-edit-move'
-		}),
-		resizeIcon: new L.DivIcon({
-			iconSize: new L.Point(8, 8),
-			className: 'leaflet-div-icon leaflet-editing-icon leaflet-edit-resize'
-		})
-	},
-
 	initialize: function(overlay, corner, options) {
 		var markerOptions,
 			latlng = overlay._corners[corner];
@@ -182,7 +172,6 @@ L.EditHandle = L.RotatableMarker.extend({
 
 		markerOptions = {
 			draggable: true,
-			icon: this.options.resizeIcon,
 			zIndexOffset: 10
 		};
 
@@ -225,9 +214,7 @@ L.EditHandle = L.RotatableMarker.extend({
 
 		this._handled._map.on('zoomend', this.updateHandle, this);
 
-		this._handled.on('rotate', this.updateHandle, this);
-		this._handled.on('resize', this.updateHandle, this);
-		this._handled.on('move', this.updateHandle, this);
+		this._handled.on('update', this.updateHandle, this);
 	},
 
 	_unbindListeners: function() {
@@ -239,17 +226,11 @@ L.EditHandle = L.RotatableMarker.extend({
 
 		this._handled._map.off('zoomend', this.updateHandle, this);
 		this._handled.off('update', this.updateHandle, this);
-	},
-
-	_calculateRotation: function(point, theta) {
-		return new L.Point(
-			point.x*Math.cos(theta) - point.y*Math.sin(theta),
-			point.y*Math.cos(theta) + point.x*Math.sin(theta)
-		).round();
-	}	
+	}
 });
 L.RotateHandle = L.EditHandle.extend({
 	options: {
+		TYPE: 'rotate',
 		icon: new L.Icon({ 
 			iconUrl: '../src/images/circle-o_cc4444_16.png',
 			iconSize: [16, 16],
@@ -272,6 +253,7 @@ L.RotateHandle = L.EditHandle.extend({
 	},
 
 	updateHandle: function() {
+		console.log('updating ' + this.options.TYPE + ' handle');		
 		this.setLatLng(this._handled._corners[this._corner]);
 	},
 
@@ -446,6 +428,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		warp = L.DomUtil.getMatrixString(transformMatrix);
 		translation = L.DomUtil.getTranslateString(topLeft);
 
+		/* See L.DomUtil.setPosition. Mainly for the purposes of L.Draggable. */
+		image._leaflet_pos = topLeft;
+
 		image.style[L.DomUtil.TRANSFORM] = [translation, warp].join(' ');
 
 		/* Set origin to the upper-left corner rather than the center of the image, which is the default. */
@@ -467,6 +452,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 			translation = L.DomUtil.getTranslateString(topLeft);
 
 			image.style[L.DomUtil.TRANSFORM] = [translation, warp].join(' ');
+	},
+
+	getCorners: function() {
+		return this._corners;
 	},
 
 	/*
@@ -688,6 +677,6 @@ L.DistortableImageOverlay.addInitHook(function() {
 	this.editing = new L.DistortableImage.Edit(this);
 
 	if (this.options.editable) {
-		L.DomEvent.on(this._image, 'load', this.editing.enable, this);
+		L.DomEvent.on(this._image, 'load', this.editing.enable, this.editing);
 	}
 });

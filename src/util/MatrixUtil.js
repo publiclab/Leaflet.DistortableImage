@@ -35,6 +35,7 @@ L.MatrixUtil = {
 		];
 	},
 
+	// multiply a scalar and a 3*3 matrix
 	multsm: function(s, m) {
 		var matrix = [];
 
