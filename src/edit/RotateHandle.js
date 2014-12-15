@@ -33,16 +33,10 @@ L.RotateHandle = L.EditHandle.extend({
 			formerPoint = map.latLngToLayerPoint(latlngA),
 			newPoint = map.latLngToLayerPoint(latlngB),
 
-			formerRadiusSquared = this._d2(centerPoint, formerPoint),
-			newRadiusSquared = this._d2(centerPoint, newPoint);
+			initialAngle = Math.atan2(centerPoint.y - formerPoint.y, centerPoint.x - formerPoint.x),
+			newAngle = Math.atan2(centerPoint.y - newPoint.y, centerPoint.x - newPoint.x);
 
-		/* Calculate the angle between the two points using the Law of Cosines. */
-		return Math.acos(
-			(newRadiusSquared + 
-				formerRadiusSquared - 
-				this._d2(newPoint, formerPoint)) /
-			(2*Math.sqrt(formerRadiusSquared)*Math.sqrt(newRadiusSquared))
-		);
+		return newAngle - initialAngle;
 	},
 
 	/* Takes two latlngs and calculates the scaling difference. */
