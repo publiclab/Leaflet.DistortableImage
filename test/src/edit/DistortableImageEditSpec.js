@@ -19,20 +19,25 @@ describe("L.DistortableImage.Edit", function() {
 		expect(overlay.editing).to.be.an.instanceOf(L.DistortableImage.Edit);
 	});
 
-	it.skip("Should cause all handles to fire when the image overlay is updated.", function() {
-		var _updateRotateHandle = sinon.spy(L.RotateHandle.prototype.updateHandle),
-			_updateWarpHandle = sinon.spy(L.WarpHandle.prototype.updateHandle);
+	it("Should keep handles on the map in sync with the corners of the image.", function() {
+		var corners = overlay._corners;
 
-		overlay = new L.DistortableImageOverlay('../../examples/example.jpg', [
-			new L.LatLng(41.7934, -87.6052),
-			new L.LatLng(41.7934, -87.5852),
-			new L.LatLng(41.7834, -87.5852),
-			new L.LatLng(41.7834, -87.6052)
-		]);
+		overlay.addTo(map);
+		overlay.editing.enable();
 
+		overlay._updateCorner(0, new L.LatLng(41.7934, -87.6252));
 		overlay.fire('update');
 		
-		expect(_updateWarpHandle.called).to.equal(true);
-		expect(_updateRotateHandle.called).to.equal(true);	
+		/* Warp handles are currently on the map; they should have been updated. */
+		overlay.editing._warpHandles.eachLayer(function(handle) {
+			expect(handle.getLatLng()).to.be.closeToLatLng(corners[handle._corner]);
+		});
+
+		overlay.editing._toggleMode();
+
+		/* After we toggle modes, the rotateHandles are on the map and should be synced. */
+		overlay.editing._rotateHandles.eachLayer(function(handle) {
+			expect(handle.getLatLng()).to.be.closeToLatLng(corners[handle._corner]);
+		});
 	});
 });
