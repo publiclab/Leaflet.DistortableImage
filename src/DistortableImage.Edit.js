@@ -283,10 +283,10 @@ L.DistortableImage.Edit = L.Handler.extend({
 	}
 });
 
-L.DistortableImageOverlay.addInitHook(function() {
-	this.editing = new L.DistortableImage.Edit(this);
+// L.DistortableImageOverlay.addInitHook(function() {
+// 	this.editing = new L.DistortableImage.Edit(this);
 
-	if (this.options.editable) {
-		L.DomEvent.on(this._image, 'load', this.editing.enable, this.editing);
-	}
-});
+// 	if (this.options.editable) {
+// 		this.editing.enable();
+// 	}
+// });

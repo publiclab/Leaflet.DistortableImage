@@ -2,7 +2,7 @@ describe("L.DistortableImage.Edit", function() {
 	var map,
 		overlay;
 
-	beforeEach(function() {
+	beforeEach(function(done) {
 		map = new L.Map(L.DomUtil.create('div', '', document.body)).setView([41.7896,-87.5996], 15);
 
 		overlay = new L.DistortableImageOverlay('/examples/example.jpg', {
@@ -12,7 +12,10 @@ describe("L.DistortableImage.Edit", function() {
 				new L.LatLng(41.7834, -87.5852),
 				new L.LatLng(41.7834, -87.6052)
 			]
-		});
+		}).addTo(map);
+
+		/* Forces the image to load before any tests are run. */
+		L.DomEvent.on(overlay._image, 'load', function() { done (); });
 	});
 
 	it("Should be initialized along with each instance of L.DistortableImageOverlay.", function() {
@@ -22,7 +25,6 @@ describe("L.DistortableImage.Edit", function() {
 	it("Should keep handles on the map in sync with the corners of the image.", function() {
 		var corners = overlay._corners;
 
-		overlay.addTo(map);
 		overlay.editing.enable();
 
 		overlay._updateCorner(0, new L.LatLng(41.7934, -87.6252));
@@ -33,7 +35,7 @@ describe("L.DistortableImage.Edit", function() {
 			expect(handle.getLatLng()).to.be.closeToLatLng(corners[handle._corner]);
 		});
 
-		overlay.editing._toggleMode();
+		overlay.editing._changeMode();
 
 		/* After we toggle modes, the rotateHandles are on the map and should be synced. */
 		overlay.editing._rotateHandles.eachLayer(function(handle) {

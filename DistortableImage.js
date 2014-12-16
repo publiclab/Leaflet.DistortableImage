@@ -314,6 +314,7 @@ L.WarpHandle = L.EditHandle.extend({
 		this._handled.fire('update');
 	}
 });
+<<<<<<< HEAD:DistortableImageOverlay.js
 L.ImageMarker = L.Marker.extend({
   // icons generated from FontAwesome at: http://fa2png.io/
   icons: { grey: 'circle-o_444444_16.png',
@@ -339,6 +340,8 @@ L.ImageMarker = L.Marker.extend({
   
 });
 
+=======
+>>>>>>> Rename production files for distribution.:DistortableImage.js
 L.DistortableImageOverlay = L.ImageOverlay.extend({
 	options: {
 		alt: '',
@@ -419,7 +422,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 	_reset: function() {
 		var map = this._map,
 			image = this._image,
-			topLeft = map.latLngToLayerPoint(this._corners[0]),
+			topLeft = map.latLngToContainerPoint(this._corners[0]),
 			translation, warp,
 			transformMatrix;
 
@@ -437,6 +440,11 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		image.style[L.DomUtil.TRANSFORM + '-origin'] = "0 0 0";
 	},
 
+	/*
+	 * Calculates the transform string that will be correct *at the end* of zooming.
+	 * Leaflet then generates a CSS3 animation between the current transform and 
+	 *     future transform which makes the transition appear smooth.
+	 */
 	_animateZoom: function(event) {
 		var map = this._map,
 			image = this._image,
@@ -445,7 +453,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 				return map._latLngToNewLayerPoint(latlng, event.zoom, event.center);
 			},
 
-			topLeft = latLngToNewLayerPoint(nw),
+			topLeft = map.layerPointToContainerPoint(latLngToNewLayerPoint(nw)),
 			transformMatrix = this._calculateProjectiveTransform(latLngToNewLayerPoint),
 
 			warp = L.DomUtil.getMatrixString(transformMatrix),
@@ -535,17 +543,17 @@ L.DistortableImage.Edit = L.Handler.extend({
 		this._handles = [this._warpHandles, this._rotateHandles];
 
 
-		/* TODO: Tell L>Draggable how to find the position of the image. */
+		/* TODO: Tell L.Draggable how to find the position of the image. */
 		this._enableDragging();
 
 		map.addLayer(this._warpHandles);
 
 		/* TODO: Why doesn't this._overlay.on('click') work? */
-		L.DomEvent.on(this._overlay._image, 'click', this._changeMode, this);
+		L.DomEvent.on(this._overlay._image, 'click', this._toggleMode, this);
 		L.DomEvent.on(this._overlay._image, 'click', this._showToolbar, this);
 	},
 
-	_changeMode: function() {
+	_toggleMode: function() {
 		var map = this._overlay._map;
 
 		map.removeLayer(this._handles[this._mode]);
@@ -625,7 +633,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			this.fire('drag');
 		};
 
-		this.dragging.on('dragend', this._changeMode, this);
+		this.dragging.on('dragend', this._toggleMode, this);
 	},
 
 	_showToolbar: function() {
@@ -672,126 +680,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 	// 		},
 	// 	 'Delete Image'
 	// 	);
-	// },
+	// },	
 
-	toggleTransparency: function() {
-		this.transparent = !this.transparent;
-		if (this.transparent) {
-			this.setOpacity(0.4);
-		} else {
-			this.setOpacity(1);
-		}
-	},
-
-	toggleIsolate: function() {
-		this.isolated = !this.isolated;
-		if (this.isolated) {
-			$.each($L.images,function(i,img) {
-				img.hidden = false;
-				img.setOpacity(1);
-			});
-		} else {
-			$.each($L.images,function(i,img) {
-				img.hidden = true;
-				img.setOpacity(0);
-			});
-		}
-		this.hidden = false;
-		this.setOpacity(1);
-	},
-
-	toggleVisibility: function() {
-		this.hidden = !this.hidden;
-		if (this.hidden) {
-			this.setOpacity(1);
-		} else {
-			this.setOpacity(0);
-		}
-	},	
-
-	// This overlaps somewhat with the changeMode() method. 
-	// Could consolidate.
-	lock: function() {
-		this.locked = true;
-		this.off('dragstart');
-		this.off('drag');
-		this.draggable.disable();
-		this.changeMode('locked');
-	},
-
-	unlock: function() {
-		this.locked = false;
-		this.draggable.enable();
-		this.changeMode('distort');
-	},
-
-	deselect: function() {
-		$L.selected = false;
-		for (var i in this.markers) {
-			// this isn't a good way to hide markers:
-			this._overlay._map.removeLayer(this.markers[i]);
-		}
-		if (this.outlineBtn) {
-			// delete existing buttons
-			this.outlineBtn._container.remove();
-			this.transparencyBtn._container.remove();
-			this.deleteBtn._container.remove();
-		}
-		this.onDeselect();
-	},
-
-	select: function() {
-		// deselect other images
-		$.each($L.images,function(i,d) {
-			d.deselect.apply(d);
-		});
-
-		// re-establish order
-		$L.impose_order();
-		$L.selected = this;
-		// show corner markers
-		for (var i in this.markers) {
-			this.markers[i].addTo(this._overlay._map);
-		}
-
-		// create buttons
-		this.transparencyBtn = L.easyButton('fa-adjust', 
-			L.bind(function() { this.toggleTransparency(); }, this),
-			'Toggle Image Transparency',
-			this._overlay._map,
-			this
-		);
-
-		this.outlineBtn = L.easyButton('fa-square-o',
-			L.bind(function() { this.toggleOutline(); }, this),
-			'Outline',
-			this._overlay._map,
-			this
-		);
-
-		this.deleteBtn = L.easyButton('fa-bitbucket',
-			L.bind(function () {
-				this._overlay._map.removeLayer($(this.parentImgId));
-				for (var i = 0; i < 4; i++) { 
-					this._overlay._map.removeLayer(this.markers[i]); 
-				}
-			}, this),
-		'Delete Image');
-
-		this.bringToFront();
-		this.onSelect();
-	},
-
-	toggleOutline: function() {
-		this.outlined = !this.outlined;
-		if (this.outlined) {
-			this.setOpacity(0.4);
-			$(this._image).css('border','1px solid red');
-		} else {
-			this.setOpacity(1);
-			$(this._image).css('border', 'none');
-		}
-	}
 });
 
 L.DistortableImageOverlay.addInitHook(function() {
