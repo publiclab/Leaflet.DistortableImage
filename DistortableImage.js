@@ -523,14 +523,78 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
 L.DistortableImage = L.DistortableImage || {};
 
+L.DistortableImage.EDIT_TOOLBAR = [
+
+	/* Toggle transparency. */
+	function(map, overlay) {
+		return L.DistortableImage.toolbarHandlerFor(overlay.editing._toggleTransparency, {
+			html: '<span class="fa fa-adjust"></span>',
+			title: 'Toggle Image Transparency'	
+		}, overlay.editing);
+	},
+
+	/* Delete image. */
+	function(map, overlay) {
+		return L.DistortableImage.toolbarHandlerFor(function() {
+			map.removeLayer(overlay);
+		}, {
+			html: '<span class="fa fa-trash"></span>',
+			title: 'Delete image'
+		}, overlay);
+	},
+
+	/* Toggle image outline. */
+	function(map, overlay) {
+		return L.DistortableImage.toolbarHandlerFor(overlay.editing._toggleOutline, {
+			html: '<span class="fa fa-square-o"></span>',
+			title: 'Toggle Image Outline'
+		}, overlay.editing);
+	},
+
+	/* Toggle locked / unlocked state. */
+	function(map, overlay) {
+		return L.DistortableImage.toolbarHandlerFor(function() {
+			if (this.enabled()) { this.disable(); }
+			else { this.enable(); }
+		}, {
+			html: '<span class="fa fa-lock"></span>',
+			title: 'Lock / Unlock editing'
+		}, overlay.editing);
+	}
+];
+
+/* Shortcut for constructing a ToolbarHandler which executes a function and then finishes. */
+L.DistortableImage.toolbarHandlerFor = function(fn, options, context) {
+	var T = L.ToolbarHandler.extend({
+		initialize: function(iconOptions) {
+			L.setOptions(this, { 
+				toolbarIcon: new L.ToolbarIcon(iconOptions)
+			});
+		},
+
+		addHooks: function() {
+			fn.call(context);
+			this.disable();
+		}
+	});
+
+	return new T(options);
+};
+
+L.DistortableImage = L.DistortableImage || {};
+
 L.DistortableImage.Edit = L.Handler.extend({
 	options: {
-		transparent: 0.7
+		opacity: 0.7,
+		outline: '1px solid red'
 	},
 
 	initialize: function(overlay) {
 		this._overlay = overlay;
+
+		/* Interaction modes. */
 		this._transparent = false;
+		this._outlined = false;
 		this._mode = 0; // warp
 	},
 
@@ -551,17 +615,15 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		this._handles = [this._warpHandles, this._rotateHandles];
 
-		this._initButtons();
-
-		/* TODO: Tell L.Draggable how to find the position of the image. */
 		this._enableDragging();
 
 		map.addLayer(this._warpHandles);
-		map.addLayer(this._buttons);
 
-		/* TODO: Why doesn't this._overlay.on('click') work? */
-		L.DomEvent.on(this._overlay._image, 'click', this._toggleMode, this);
-		L.DomEvent.on(this._overlay._image, 'click', this._showButtons, this);
+		this._overlay.on('click', this._toggleMode, this);
+
+		this._overlay.on('click', function(event) {
+			new L.Toolbar.Popup(event.latlng, L.DistortableImage.EDIT_TOOLBAR).addTo(map, this._overlay);
+		}, this);
 	},
 
 	_toggleMode: function() {
@@ -578,7 +640,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 	removeHooks: function() {
 		var map = this._overlay._map;
 
-		map.removeLayer(this._buttons);
+		this._overlay.off('click', this._toggleMode, this);
+
 		map.removeLayer(this._handles[this._mode]);
 	},
 
@@ -648,90 +711,29 @@ L.DistortableImage.Edit = L.Handler.extend({
 		this.dragging.on('dragend', this._toggleMode, this);
 	},
 
-	_initButtons: function() {
-		this._buttons = new L.LayerGroup();
-
-		// this._buttons.addLayer(L.easyButton('fa-adjust', L.bind(this._toggleTransparency, this),
-		// 	'Toggle Image Transparency', ''
-		// ));
-		// this._buttons.addLayer(L.easyButton('fa-square-o', L.bind(this._toggleOutline, this),
-		// 	'Outline', ''
-		// ));
-		// this._buttons.addLayer(L.easyButton('fa-bitbucket', L.bind(this.onRemove, this),
-		// 	'Delete Image', ''
-		// ));
-	},
-
 	_toggleTransparency: function() {
 		var image = this._overlay._image,
 			opacity;
 
 		this._transparent = !this._transparent;
-		opacity = this._transparent ? this.options.transparent : 1;
+		opacity = this._transparent ? this.options.opacity : 1;
 
 		L.DomUtil.setOpacity(image, opacity);
 		image.setAttribute('opacity', opacity);
 	},
 
 	_toggleOutline: function() {
+		var image = this._overlay._image,
+			opacity, outline;
 
-	},
+		this._outlined = !this._outlined;
+		opacity = this._outlined ? this.options.opacity / 2 : 1;
+		outline = this._outlined ? this.options.outline : 'none';
 
-	// onclick: function() {
-	// 	var map = this._map;
+		L.DomUtil.setOpacity(image, opacity);
+		image.setAttribute('opacity', opacity);
 
-	// 	// first, delete existing buttons
-	// 	$('#image-distort-transparency').parent().remove();
-	// 	$('#image-distort-outline').parent().remove();
-	// 	$('#image-distort-delete').parent().remove();
-
-	// 	this.transparencyBtn = L.easyButton('fa-adjust', 
-	// 		 function () {
-	// 			 var e = $('#'+$('#image-distort-outline')[0].getAttribute('parentImgId'))[0];
-	// 			 if (e.opacity === 1) {
-	// 				 L.setOpacity(e,0.7);
-	// 				 e.setAttribute('opacity',0.7);
-	// 			 } else {
-	// 				 L.setOpacity(e,1);
-	// 				 e.setAttribute('opacity',1);
-	// 			 }
-	// 		 },
-	// 		'Toggle Image Transparency'
-	// 	).getContainer(); //.children[0]
-		
-	// 	this.outlineBtn = L.easyButton('fa-square-o', 
-	// 																 function () {
-	// 																	 this.scope.toggleOutline();
-	// 																 },
-	// 																 'Outline',
-	// 																 map,
-	// 																 this
-	// 	);
- 
-	// 	this.deleteBtn = L.easyButton('fa-bitbucket', 
-	// 		function () {
-	// 			map.removeLayer($(this.parentImgId));
-	// 			for(var i=0; i < 4; i++) {
-	// 				map.removeLayer(this.markers[i]);
-	// 			}
-	// 		},
-	// 	 'Delete Image'
-	// 	);
-	// },
-
-	toggleTransparency: function() {
-		this.transparent = !this.transparent;
-		if (this.transparent) {
-			this.setOpacity(0.4);
-		} else {
-			this.setOpacity(1);
-		}
-	},
-
-	_showButtons: function() {
-		var map = this._overlay._map;
-
-		map.addLayer(this._buttons);
+		image.style.outline = outline;
 	},
 
 	toggleIsolate: function() {
@@ -758,22 +760,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 		} else {
 			this.setOpacity(0);
 		}
-	},	
-
-	// This overlaps somewhat with the changeMode() method. 
-	// Could consolidate.
-	lock: function() {
-		this.locked = true;
-		this.off('dragstart');
-		this.off('drag');
-		this.draggable.disable();
-		this.changeMode('locked');
-	},
-
-	unlock: function() {
-		this.locked = false;
-		this.draggable.enable();
-		this.changeMode('distort');
 	},
 
 	deselect: function() {
@@ -831,17 +817,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		// this.bringToFront();
 		// this.onSelect();
-	},
-
-	toggleOutline: function() {
-		this.outlined = !this.outlined;
-		if (this.outlined) {
-			this.setOpacity(0.4);
-			$(this._image).css('border','1px solid red');
-		} else {
-			this.setOpacity(1);
-			$(this._image).css('border', 'none');
-		}
 	}
 });
 
@@ -851,4 +826,8 @@ L.DistortableImageOverlay.addInitHook(function() {
 	if (this.options.editable) {
 		L.DomEvent.on(this._image, 'load', this.editing.enable, this.editing);
 	}
+
+	this.on('remove', function () {
+		if (this.editing) { this.editing.disable(); }
+	});	
 });
