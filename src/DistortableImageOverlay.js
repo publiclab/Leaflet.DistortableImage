@@ -82,7 +82,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 			translation, warp,
 			transformMatrix;
 
-		transformMatrix = this._calculateProjectiveTransform(L.bind(map.latLngToContainerPoint, map));
+		transformMatrix = this._calculateProjectiveTransform(L.bind(map.latLngToLayerPoint, map));
 
 		warp = L.DomUtil.getMatrixString(transformMatrix);
 		translation = L.DomUtil.getTranslateString(topLeft);
@@ -96,6 +96,11 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		image.style[L.DomUtil.TRANSFORM + '-origin'] = "0 0 0";
 	},
 
+	/*
+	 * Calculates the transform string that will be correct *at the end* of zooming.
+	 * Leaflet then generates a CSS3 animation between the current transform and 
+	 *     future transform which makes the transition appear smooth.
+	 */
 	_animateZoom: function(event) {
 		var map = this._map,
 			image = this._image,
@@ -104,7 +109,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 				return map._latLngToNewLayerPoint(latlng, event.zoom, event.center);
 			},
 
-			topLeft = latLngToNewLayerPoint(nw),
+			topLeft = map.layerPointToContainerPoint(latLngToNewLayerPoint(nw)),
 			transformMatrix = this._calculateProjectiveTransform(latLngToNewLayerPoint),
 
 			warp = L.DomUtil.getMatrixString(transformMatrix),
