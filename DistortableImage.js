@@ -315,6 +315,8 @@ L.WarpHandle = L.EditHandle.extend({
 	}
 });
 L.DistortableImageOverlay = L.ImageOverlay.extend({
+	include: L.Mixin.Events,
+
 	options: {
 		alt: '',
 		height: 200
@@ -331,9 +333,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		/* Copied from L.ImageOverlay */
 		this._map = map;
 
-		if (!this._image) {
-			this._initImage();
-		}
+		if (!this._image) { this._initImage(); }
+		if (!this._events) { this._initEvents(); }
 
 		map._panes.overlayPane.appendChild(this._image);
 
@@ -349,6 +350,14 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 			this._initImageDimensions();
 			this._reset();
 		}, this);		
+
+		this.fire('add');	
+	},
+
+	onRemove: function(map) {
+		this.fire('remove');
+
+		L.ImageOverlay.prototype.onRemove.call(this, map);
 	},
 
 	_initImage: function () {
@@ -385,6 +394,31 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 			];
 		}
 	},
+
+ 	_initEvents: function() {
+ 		this._events = [ 'click' ];
+
+ 		for (var i = 0, l = this._events.length; i < l; i++) {
+	 		L.DomEvent.on(this._image, this._events[i], this._fireMouseEvent, this);
+ 		}
+ 	},
+
+ 	/* See src/layer/vector/Path.SVG.js in the Leaflet source. */
+ 	_fireMouseEvent: function(event) {
+ 		if (!this.hasEventListeners(event.type)) { return; }
+
+		var map = this._map,
+		    containerPoint = map.mouseEventToContainerPoint(event),
+		    layerPoint = map.containerPointToLayerPoint(containerPoint),
+		    latlng = map.layerPointToLatLng(layerPoint);
+
+		this.fire(event.type, {
+			latlng: latlng,
+			layerPoint: layerPoint,
+			containerPoint: containerPoint,
+			originalEvent: event
+		});
+ 	},
 
 	_updateCorner: function(corner, latlng) {
 		this._corners[corner] = latlng;
@@ -701,20 +735,20 @@ L.DistortableImage.Edit = L.Handler.extend({
 	},
 
 	toggleIsolate: function() {
-		this.isolated = !this.isolated;
-		if (this.isolated) {
-			$.each($L.images,function(i,img) {
-				img.hidden = false;
-				img.setOpacity(1);
-			});
-		} else {
-			$.each($L.images,function(i,img) {
-				img.hidden = true;
-				img.setOpacity(0);
-			});
-		}
-		this.hidden = false;
-		this.setOpacity(1);
+		// this.isolated = !this.isolated;
+		// if (this.isolated) {
+		// 	$.each($L.images,function(i,img) {
+		// 		img.hidden = false;
+		// 		img.setOpacity(1);
+		// 	});
+		// } else {
+		// 	$.each($L.images,function(i,img) {
+		// 		img.hidden = true;
+		// 		img.setOpacity(0);
+		// 	});
+		// }
+		// this.hidden = false;
+		// this.setOpacity(1);
 	},
 
 	toggleVisibility: function() {
@@ -743,60 +777,60 @@ L.DistortableImage.Edit = L.Handler.extend({
 	},
 
 	deselect: function() {
-		$L.selected = false;
-		for (var i in this.markers) {
-			// this isn't a good way to hide markers:
-			this._overlay._map.removeLayer(this.markers[i]);
-		}
-		if (this.outlineBtn) {
-			// delete existing buttons
-			this.outlineBtn._container.remove();
-			this.transparencyBtn._container.remove();
-			this.deleteBtn._container.remove();
-		}
-		this.onDeselect();
+		// $L.selected = false;
+		// for (var i in this.markers) {
+		// 	// this isn't a good way to hide markers:
+		// 	this._overlay._map.removeLayer(this.markers[i]);
+		// }
+		// if (this.outlineBtn) {
+		// 	// delete existing buttons
+		// 	this.outlineBtn._container.remove();
+		// 	this.transparencyBtn._container.remove();
+		// 	this.deleteBtn._container.remove();
+		// }
+		// this.onDeselect();
 	},
 
 	select: function() {
-		// deselect other images
-		$.each($L.images,function(i,d) {
-			d.deselect.apply(d);
-		});
+		// // deselect other images
+		// $.each($L.images,function(i,d) {
+		// 	d.deselect.apply(d);
+		// });
 
-		// re-establish order
-		$L.impose_order();
-		$L.selected = this;
-		// show corner markers
-		for (var i in this.markers) {
-			this.markers[i].addTo(this._overlay._map);
-		}
+		// // re-establish order
+		// $L.impose_order();
+		// $L.selected = this;
+		// // show corner markers
+		// for (var i in this.markers) {
+		// 	this.markers[i].addTo(this._overlay._map);
+		// }
 
-		// create buttons
-		this.transparencyBtn = L.easyButton('fa-adjust', 
-			L.bind(function() { this.toggleTransparency(); }, this),
-			'Toggle Image Transparency',
-			this._overlay._map,
-			this
-		);
+		// // create buttons
+		// this.transparencyBtn = L.easyButton('fa-adjust', 
+		// 	L.bind(function() { this.toggleTransparency(); }, this),
+		// 	'Toggle Image Transparency',
+		// 	this._overlay._map,
+		// 	this
+		// );
 
-		this.outlineBtn = L.easyButton('fa-square-o',
-			L.bind(function() { this.toggleOutline(); }, this),
-			'Outline',
-			this._overlay._map,
-			this
-		);
+		// this.outlineBtn = L.easyButton('fa-square-o',
+		// 	L.bind(function() { this.toggleOutline(); }, this),
+		// 	'Outline',
+		// 	this._overlay._map,
+		// 	this
+		// );
 
-		this.deleteBtn = L.easyButton('fa-bitbucket',
-			L.bind(function () {
-				this._overlay._map.removeLayer($(this.parentImgId));
-				for (var i = 0; i < 4; i++) { 
-					this._overlay._map.removeLayer(this.markers[i]); 
-				}
-			}, this),
-		'Delete Image');
+		// this.deleteBtn = L.easyButton('fa-bitbucket',
+		// 	L.bind(function () {
+		// 		this._overlay._map.removeLayer($(this.parentImgId));
+		// 		for (var i = 0; i < 4; i++) { 
+		// 			this._overlay._map.removeLayer(this.markers[i]); 
+		// 		}
+		// 	}, this),
+		// 'Delete Image');
 
-		this.bringToFront();
-		this.onSelect();
+		// this.bringToFront();
+		// this.onSelect();
 	},
 
 	toggleOutline: function() {

@@ -1,4 +1,6 @@
 L.DistortableImageOverlay = L.ImageOverlay.extend({
+	include: L.Mixin.Events,
+
 	options: {
 		alt: '',
 		height: 200
@@ -15,9 +17,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		/* Copied from L.ImageOverlay */
 		this._map = map;
 
-		if (!this._image) {
-			this._initImage();
-		}
+		if (!this._image) { this._initImage(); }
+		if (!this._events) { this._initEvents(); }
 
 		map._panes.overlayPane.appendChild(this._image);
 
@@ -33,6 +34,14 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 			this._initImageDimensions();
 			this._reset();
 		}, this);		
+
+		this.fire('add');	
+	},
+
+	onRemove: function(map) {
+		this.fire('remove');
+
+		L.ImageOverlay.prototype.onRemove.call(this, map);
 	},
 
 	_initImage: function () {
@@ -69,6 +78,31 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 			];
 		}
 	},
+
+ 	_initEvents: function() {
+ 		this._events = [ 'click' ];
+
+ 		for (var i = 0, l = this._events.length; i < l; i++) {
+	 		L.DomEvent.on(this._image, this._events[i], this._fireMouseEvent, this);
+ 		}
+ 	},
+
+ 	/* See src/layer/vector/Path.SVG.js in the Leaflet source. */
+ 	_fireMouseEvent: function(event) {
+ 		if (!this.hasEventListeners(event.type)) { return; }
+
+		var map = this._map,
+		    containerPoint = map.mouseEventToContainerPoint(event),
+		    layerPoint = map.containerPointToLayerPoint(containerPoint),
+		    latlng = map.layerPointToLatLng(layerPoint);
+
+		this.fire(event.type, {
+			latlng: latlng,
+			layerPoint: layerPoint,
+			containerPoint: containerPoint,
+			originalEvent: event
+		});
+ 	},
 
 	_updateCorner: function(corner, latlng) {
 		this._corners[corner] = latlng;
