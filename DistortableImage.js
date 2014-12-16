@@ -1,17 +1,27 @@
 L.DomUtil = L.extend(L.DomUtil, {
 	getMatrixString: function(m) {
 		var is3d = L.Browser.webkit3d,
-			/* Since matrix3d takes a 4*4 matrix, we add in an empty row and column, which act as the identity on the z-axis. */
+
+			/* 
+		     * Since matrix3d takes a 4*4 matrix, we add in an empty row and column, which act as the identity on the z-axis.
+		     * See:
+		     *     http://franklinta.com/2014/09/08/computing-css-matrix3d-transforms/
+		     *     https://developer.mozilla.org/en-US/docs/Web/CSS/transform-function#M.C3.B6bius'_homogeneous_coordinates_in_projective_geometry
+		     */
 			matrix = [
 				m[0], m[3], 0, m[6],
 				m[1], m[4], 0, m[7],
 				   0,    0, 1,    0,
 				m[2], m[5], 0, m[8]
-			];
+			],
 
-		if (!is3d) { throw 'Your browser must support 3D CSS transforms in order to use DistortableImageOverlay.'; }
+			str = is3d ? 'matrix3d(' + matrix.join(',') + ')' : '';
 
-		return 'matrix3d(' + matrix.join(',') + ')';
+		if (!is3d) {
+			console.log('Your browser must support 3D CSS transforms in order to use DistortableImageOverlay.');
+		}
+
+		return str;
 	},
 
 	getRotateString: function(angle, units) {
@@ -595,7 +605,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 		/* Interaction modes. */
 		this._transparent = false;
 		this._outlined = false;
-		this._mode = 0; // warp
 	},
 
 	addHooks: function() {
@@ -615,32 +624,21 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		this._handles = [this._warpHandles, this._rotateHandles];
 
-		this._enableDragging();
-
+		this._mode = 0; // warp
 		map.addLayer(this._warpHandles);
 
-		this._overlay.on('click', this._toggleMode, this);
+		this._enableDragging();
 
+		this._overlay.on('click', this._toggleRotateDistort, this);
 		this._overlay.on('click', function(event) {
 			new L.Toolbar.Popup(event.latlng, L.DistortableImage.EDIT_TOOLBAR).addTo(map, this._overlay);
 		}, this);
 	},
 
-	_toggleMode: function() {
-		var map = this._overlay._map;
-
-		map.removeLayer(this._handles[this._mode]);
-
-		/* Switch mode. */
-		this._mode = (this._mode + 1) % 2;
-
-		map.addLayer(this._handles[this._mode]);
-	},
-
 	removeHooks: function() {
 		var map = this._overlay._map;
 
-		this._overlay.off('click', this._toggleMode, this);
+		this._overlay.off('click', this._toggleRotateDistort, this);
 
 		map.removeLayer(this._handles[this._mode]);
 	},
@@ -708,7 +706,18 @@ L.DistortableImage.Edit = L.Handler.extend({
 			this.fire('drag');
 		};
 
-		this.dragging.on('dragend', this._toggleMode, this);
+		this.dragging.on('dragend', this._toggleRotateDistort, this);
+	},
+
+	_toggleRotateDistort: function() {
+		var map = this._overlay._map;
+
+		map.removeLayer(this._handles[this._mode]);
+
+		/* Switch mode. */
+		this._mode = (this._mode + 1) % 2;
+
+		map.addLayer(this._handles[this._mode]);
 	},
 
 	_toggleTransparency: function() {

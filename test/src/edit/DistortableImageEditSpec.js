@@ -35,7 +35,7 @@ describe("L.DistortableImage.Edit", function() {
 			expect(handle.getLatLng()).to.be.closeToLatLng(corners[handle._corner]);
 		});
 
-		overlay.editing._toggleMode();
+		overlay.editing._toggleRotateDistort();
 
 		/* After we toggle modes, the rotateHandles are on the map and should be synced. */
 		overlay.editing._rotateHandles.eachLayer(function(handle) {

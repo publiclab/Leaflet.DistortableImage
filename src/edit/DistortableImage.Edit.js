@@ -12,7 +12,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 		/* Interaction modes. */
 		this._transparent = false;
 		this._outlined = false;
-		this._mode = 0; // warp
 	},
 
 	addHooks: function() {
@@ -32,32 +31,21 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		this._handles = [this._warpHandles, this._rotateHandles];
 
-		this._enableDragging();
-
+		this._mode = 0; // warp
 		map.addLayer(this._warpHandles);
 
-		this._overlay.on('click', this._toggleMode, this);
+		this._enableDragging();
 
+		this._overlay.on('click', this._toggleRotateDistort, this);
 		this._overlay.on('click', function(event) {
 			new L.Toolbar.Popup(event.latlng, L.DistortableImage.EDIT_TOOLBAR).addTo(map, this._overlay);
 		}, this);
 	},
 
-	_toggleMode: function() {
-		var map = this._overlay._map;
-
-		map.removeLayer(this._handles[this._mode]);
-
-		/* Switch mode. */
-		this._mode = (this._mode + 1) % 2;
-
-		map.addLayer(this._handles[this._mode]);
-	},
-
 	removeHooks: function() {
 		var map = this._overlay._map;
 
-		this._overlay.off('click', this._toggleMode, this);
+		this._overlay.off('click', this._toggleRotateDistort, this);
 
 		map.removeLayer(this._handles[this._mode]);
 	},
@@ -125,7 +113,18 @@ L.DistortableImage.Edit = L.Handler.extend({
 			this.fire('drag');
 		};
 
-		this.dragging.on('dragend', this._toggleMode, this);
+		this.dragging.on('dragend', this._toggleRotateDistort, this);
+	},
+
+	_toggleRotateDistort: function() {
+		var map = this._overlay._map;
+
+		map.removeLayer(this._handles[this._mode]);
+
+		/* Switch mode. */
+		this._mode = (this._mode + 1) % 2;
+
+		map.addLayer(this._handles[this._mode]);
 	},
 
 	_toggleTransparency: function() {
