@@ -83,7 +83,7 @@ module.exports = function(grunt) {
                     'src/DistortableImageOverlay.js',
                     'src/edit/DistortableImage.Edit.js',
                 ],
-                dest: 'DistortableImageOverlay.js',
+                dest: 'DistortableImage.js',
             }
         }
     });
