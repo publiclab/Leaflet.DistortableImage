@@ -38,7 +38,7 @@ describe("L.DistortableImageOverlay", function() {
 	});
 
 	describe("getCenter", function() {
-		it.skip("Should return the center when the outline of the image is a rectangle.", function(done) {
+		it("Should return the center when the outline of the image is a rectangle.", function(done) {
 			distortable.addTo(map);
 			
 			L.DomEvent.on(distortable._image, 'load', function() {
@@ -47,7 +47,6 @@ describe("L.DistortableImageOverlay", function() {
 				expect(center).to.be.closeToLatLng(new L.LatLng(41.7884, -87.5952));
 				done();
 			});
-
 		});
 	});
 });

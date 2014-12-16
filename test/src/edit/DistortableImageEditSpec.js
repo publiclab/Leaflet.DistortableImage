@@ -35,11 +35,30 @@ describe("L.DistortableImage.Edit", function() {
 			expect(handle.getLatLng()).to.be.closeToLatLng(corners[handle._corner]);
 		});
 
-		overlay.editing._changeMode();
+		overlay.editing._toggleMode();
 
 		/* After we toggle modes, the rotateHandles are on the map and should be synced. */
 		overlay.editing._rotateHandles.eachLayer(function(handle) {
 			expect(handle.getLatLng()).to.be.closeToLatLng(corners[handle._corner]);
 		});
+	});
+
+	it.skip("Should keep image in sync with the map while dragging.", function() {
+		var corners = overlay._corners,
+			dragging;
+
+		overlay.editing.enable();
+
+		dragging = overlay.editing.dragging;
+
+		/* _reset is not called by #onAdd, for some reason... */
+		overlay._reset();
+
+		/* Simulate a sequence of drag events. */
+		dragging._onDown({ touches: [{ clientX: 0, clientY: 0 }], target: overlay._image });
+		dragging._onMove({ touches: [{ clientX: 20, clientY: 30 }], target: overlay._image });
+		dragging._onUp();
+
+		map.setView([41.7896,-87.6996]);
 	});
 });

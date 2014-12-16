@@ -422,14 +422,13 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 	_reset: function() {
 		var map = this._map,
 			image = this._image,
-			topLeft = map.latLngToContainerPoint(this._corners[0]),
-			translation, warp,
-			transformMatrix;
+			latLngToLayerPoint = L.bind(map.latLngToLayerPoint, map),
 
-		transformMatrix = this._calculateProjectiveTransform(L.bind(map.latLngToContainerPoint, map));
+			transformMatrix = this._calculateProjectiveTransform(latLngToLayerPoint),
+			topLeft = latLngToLayerPoint(this._corners[0]),
 
-		warp = L.DomUtil.getMatrixString(transformMatrix);
-		translation = L.DomUtil.getTranslateString(topLeft);
+			warp = L.DomUtil.getMatrixString(transformMatrix),
+			translation = L.DomUtil.getTranslateString(topLeft);
 
 		/* See L.DomUtil.setPosition. Mainly for the purposes of L.Draggable. */
 		image._leaflet_pos = topLeft;
@@ -448,13 +447,12 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 	_animateZoom: function(event) {
 		var map = this._map,
 			image = this._image,
-			nw = this._corners[0],
 			latLngToNewLayerPoint = function(latlng) {
 				return map._latLngToNewLayerPoint(latlng, event.zoom, event.center);
 			},
 
-			topLeft = map.layerPointToContainerPoint(latLngToNewLayerPoint(nw)),
 			transformMatrix = this._calculateProjectiveTransform(latLngToNewLayerPoint),
+			topLeft = latLngToNewLayerPoint(this._corners[0]),
 
 			warp = L.DomUtil.getMatrixString(transformMatrix),
 			translation = L.DomUtil.getTranslateString(topLeft);
@@ -618,14 +616,14 @@ L.DistortableImage.Edit = L.Handler.extend({
 	     *     that we want when it calls L.DomUtil.setPosition.
 		 */
 		this.dragging._updatePosition = function() {
-			var delta = this._newPos.subtract(map.latLngToContainerPoint(overlay._corners[0])),
+			var delta = this._newPos.subtract(map.latLngToLayerPoint(overlay._corners[0])),
 				currentPoint, i;
 
 			this.fire('predrag');
 
 			for (i = 0; i < 4; i++) {
-				currentPoint = map.latLngToContainerPoint(overlay._corners[i]);
-				overlay._corners[i] = map.containerPointToLatLng(currentPoint.add(delta));
+				currentPoint = map.latLngToLayerPoint(overlay._corners[i]);
+				overlay._corners[i] = map.layerPointToLatLng(currentPoint.add(delta));
 			}
 			overlay._reset();
 			overlay.fire('update');

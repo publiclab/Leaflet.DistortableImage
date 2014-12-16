@@ -314,31 +314,6 @@ L.WarpHandle = L.EditHandle.extend({
 		this._handled.fire('update');
 	}
 });
-L.ImageMarker = L.Marker.extend({
-  // icons generated from FontAwesome at: http://fa2png.io/
-  icons: { grey: 'circle-o_444444_16.png',
-            red: 'circle-o_cc4444_16.png',
-         locked: 'close_444444_16.png'
-  },
-  options: {
-    pane: 'markerPane',
-    icon: false,
-    // title: '',
-    // alt: '',
-    clickable: true,
-    draggable: true, 
-    keyboard: true,
-    zIndexOffset: 0,
-    opacity: 1,
-    riseOnHover: true,
-    riseOffset: 250
-  },
-  setFromIcons: function(name) {
-    this.setIcon(new L.Icon({iconUrl:$L.options.img_dir+this.icons[name],iconSize:[16,16],iconAnchor:[8,8]}));
-  }
-  
-});
-
 L.DistortableImageOverlay = L.ImageOverlay.extend({
 	options: {
 		alt: '',
@@ -419,14 +394,13 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 	_reset: function() {
 		var map = this._map,
 			image = this._image,
-			topLeft = map.latLngToLayerPoint(this._corners[0]),
-			translation, warp,
-			transformMatrix;
+			latLngToLayerPoint = L.bind(map.latLngToLayerPoint, map),
 
-		transformMatrix = this._calculateProjectiveTransform(L.bind(map.latLngToContainerPoint, map));
+			transformMatrix = this._calculateProjectiveTransform(latLngToLayerPoint),
+			topLeft = latLngToLayerPoint(this._corners[0]),
 
-		warp = L.DomUtil.getMatrixString(transformMatrix);
-		translation = L.DomUtil.getTranslateString(topLeft);
+			warp = L.DomUtil.getMatrixString(transformMatrix),
+			translation = L.DomUtil.getTranslateString(topLeft);
 
 		/* See L.DomUtil.setPosition. Mainly for the purposes of L.Draggable. */
 		image._leaflet_pos = topLeft;
@@ -437,16 +411,20 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		image.style[L.DomUtil.TRANSFORM + '-origin'] = "0 0 0";
 	},
 
+	/*
+	 * Calculates the transform string that will be correct *at the end* of zooming.
+	 * Leaflet then generates a CSS3 animation between the current transform and 
+	 *     future transform which makes the transition appear smooth.
+	 */
 	_animateZoom: function(event) {
 		var map = this._map,
 			image = this._image,
-			nw = this._corners[0],
 			latLngToNewLayerPoint = function(latlng) {
 				return map._latLngToNewLayerPoint(latlng, event.zoom, event.center);
 			},
 
-			topLeft = latLngToNewLayerPoint(nw),
 			transformMatrix = this._calculateProjectiveTransform(latLngToNewLayerPoint),
+			topLeft = latLngToNewLayerPoint(this._corners[0]),
 
 			warp = L.DomUtil.getMatrixString(transformMatrix),
 			translation = L.DomUtil.getTranslateString(topLeft);
@@ -535,17 +513,17 @@ L.DistortableImage.Edit = L.Handler.extend({
 		this._handles = [this._warpHandles, this._rotateHandles];
 
 
-		/* TODO: Tell L>Draggable how to find the position of the image. */
+		/* TODO: Tell L.Draggable how to find the position of the image. */
 		this._enableDragging();
 
 		map.addLayer(this._warpHandles);
 
 		/* TODO: Why doesn't this._overlay.on('click') work? */
-		L.DomEvent.on(this._overlay._image, 'click', this._changeMode, this);
+		L.DomEvent.on(this._overlay._image, 'click', this._toggleMode, this);
 		L.DomEvent.on(this._overlay._image, 'click', this._showToolbar, this);
 	},
 
-	_changeMode: function() {
+	_toggleMode: function() {
 		var map = this._overlay._map;
 
 		map.removeLayer(this._handles[this._mode]);
@@ -610,14 +588,14 @@ L.DistortableImage.Edit = L.Handler.extend({
 	     *     that we want when it calls L.DomUtil.setPosition.
 		 */
 		this.dragging._updatePosition = function() {
-			var delta = this._newPos.subtract(map.latLngToContainerPoint(overlay._corners[0])),
+			var delta = this._newPos.subtract(map.latLngToLayerPoint(overlay._corners[0])),
 				currentPoint, i;
 
 			this.fire('predrag');
 
 			for (i = 0; i < 4; i++) {
-				currentPoint = map.latLngToContainerPoint(overlay._corners[i]);
-				overlay._corners[i] = map.containerPointToLatLng(currentPoint.add(delta));
+				currentPoint = map.latLngToLayerPoint(overlay._corners[i]);
+				overlay._corners[i] = map.layerPointToLatLng(currentPoint.add(delta));
 			}
 			overlay._reset();
 			overlay.fire('update');
@@ -625,7 +603,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			this.fire('drag');
 		};
 
-		this.dragging.on('dragend', this._changeMode, this);
+		this.dragging.on('dragend', this._toggleMode, this);
 	},
 
 	_showToolbar: function() {
