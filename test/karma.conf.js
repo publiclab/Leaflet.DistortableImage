@@ -18,6 +18,7 @@ module.exports = function(config) {
       { pattern: 'examples/*.jpg', included: false, served: true },
       'node_modules/leaflet/dist/leaflet-src.js',
       'node_modules/leaflet/dist/leaflet.css',
+      'lib/easybutton.js',
       'node_modules/chai/chai.js',
       'node_modules/sinon/pkg/sinon.js',
       'src/util/*.js',

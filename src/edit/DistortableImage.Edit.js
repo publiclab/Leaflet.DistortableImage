@@ -1,8 +1,13 @@
 L.DistortableImage = L.DistortableImage || {};
 
 L.DistortableImage.Edit = L.Handler.extend({
+	options: {
+		transparent: 0.7
+	},
+
 	initialize: function(overlay) {
 		this._overlay = overlay;
+		this._transparent = false;
 		this._mode = 0; // warp
 	},
 
@@ -23,15 +28,17 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		this._handles = [this._warpHandles, this._rotateHandles];
 
+		this._initButtons();
 
 		/* TODO: Tell L.Draggable how to find the position of the image. */
 		this._enableDragging();
 
 		map.addLayer(this._warpHandles);
+		map.addLayer(this._buttons);
 
 		/* TODO: Why doesn't this._overlay.on('click') work? */
 		L.DomEvent.on(this._overlay._image, 'click', this._toggleMode, this);
-		L.DomEvent.on(this._overlay._image, 'click', this._showToolbar, this);
+		L.DomEvent.on(this._overlay._image, 'click', this._showButtons, this);
 	},
 
 	_toggleMode: function() {
@@ -48,6 +55,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 	removeHooks: function() {
 		var map = this._overlay._map;
 
+		map.removeLayer(this._buttons);
 		map.removeLayer(this._handles[this._mode]);
 	},
 
@@ -117,7 +125,32 @@ L.DistortableImage.Edit = L.Handler.extend({
 		this.dragging.on('dragend', this._toggleMode, this);
 	},
 
-	_showToolbar: function() {
+	_initButtons: function() {
+		this._buttons = new L.LayerGroup();
+
+		this._buttons.addLayer(L.easyButton('fa-adjust', L.bind(this._toggleTransparency, this),
+			'Toggle Image Transparency', ''
+		));
+		this._buttons.addLayer(L.easyButton('fa-square-o', L.bind(this._toggleOutline, this),
+			'Outline', ''
+		));
+		this._buttons.addLayer(L.easyButton('fa-bitbucket', L.bind(this.onRemove, this),
+			'Delete Image', ''
+		));
+	},
+
+	_toggleTransparency: function() {
+		var image = this._overlay._image,
+			opacity;
+
+		this._transparent = !this._transparent;
+		opacity = this._transparent ? this.options.transparent : 1;
+
+		L.DomUtil.setOpacity(image, opacity);
+		image.setAttribute('opacity', opacity);
+	},
+
+	_toggleOutline: function() {
 
 	},
 
@@ -170,6 +203,12 @@ L.DistortableImage.Edit = L.Handler.extend({
 		} else {
 			this.setOpacity(1);
 		}
+	},
+
+	_showButtons: function() {
+		var map = this._overlay._map;
+
+		map.addLayer(this._buttons);
 	},
 
 	toggleIsolate: function() {

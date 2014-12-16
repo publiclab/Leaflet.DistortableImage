@@ -314,34 +314,6 @@ L.WarpHandle = L.EditHandle.extend({
 		this._handled.fire('update');
 	}
 });
-<<<<<<< HEAD:DistortableImageOverlay.js
-L.ImageMarker = L.Marker.extend({
-  // icons generated from FontAwesome at: http://fa2png.io/
-  icons: { grey: 'circle-o_444444_16.png',
-            red: 'circle-o_cc4444_16.png',
-         locked: 'close_444444_16.png'
-  },
-  options: {
-    pane: 'markerPane',
-    icon: false,
-    // title: '',
-    // alt: '',
-    clickable: true,
-    draggable: true, 
-    keyboard: true,
-    zIndexOffset: 0,
-    opacity: 1,
-    riseOnHover: true,
-    riseOffset: 250
-  },
-  setFromIcons: function(name) {
-    this.setIcon(new L.Icon({iconUrl:$L.options.img_dir+this.icons[name],iconSize:[16,16],iconAnchor:[8,8]}));
-  }
-  
-});
-
-=======
->>>>>>> Rename production files for distribution.:DistortableImage.js
 L.DistortableImageOverlay = L.ImageOverlay.extend({
 	options: {
 		alt: '',
@@ -518,8 +490,13 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 L.DistortableImage = L.DistortableImage || {};
 
 L.DistortableImage.Edit = L.Handler.extend({
+	options: {
+		transparent: 0.7
+	},
+
 	initialize: function(overlay) {
 		this._overlay = overlay;
+		this._transparent = false;
 		this._mode = 0; // warp
 	},
 
@@ -540,15 +517,17 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		this._handles = [this._warpHandles, this._rotateHandles];
 
+		this._initButtons();
 
 		/* TODO: Tell L.Draggable how to find the position of the image. */
 		this._enableDragging();
 
 		map.addLayer(this._warpHandles);
+		map.addLayer(this._buttons);
 
 		/* TODO: Why doesn't this._overlay.on('click') work? */
 		L.DomEvent.on(this._overlay._image, 'click', this._toggleMode, this);
-		L.DomEvent.on(this._overlay._image, 'click', this._showToolbar, this);
+		L.DomEvent.on(this._overlay._image, 'click', this._showButtons, this);
 	},
 
 	_toggleMode: function() {
@@ -565,6 +544,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 	removeHooks: function() {
 		var map = this._overlay._map;
 
+		map.removeLayer(this._buttons);
 		map.removeLayer(this._handles[this._mode]);
 	},
 
@@ -634,7 +614,32 @@ L.DistortableImage.Edit = L.Handler.extend({
 		this.dragging.on('dragend', this._toggleMode, this);
 	},
 
-	_showToolbar: function() {
+	_initButtons: function() {
+		this._buttons = new L.LayerGroup();
+
+		this._buttons.addLayer(L.easyButton('fa-adjust', L.bind(this._toggleTransparency, this),
+			'Toggle Image Transparency', ''
+		));
+		this._buttons.addLayer(L.easyButton('fa-square-o', L.bind(this._toggleOutline, this),
+			'Outline', ''
+		));
+		this._buttons.addLayer(L.easyButton('fa-bitbucket', L.bind(this.onRemove, this),
+			'Delete Image', ''
+		));
+	},
+
+	_toggleTransparency: function() {
+		var image = this._overlay._image,
+			opacity;
+
+		this._transparent = !this._transparent;
+		opacity = this._transparent ? this.options.transparent : 1;
+
+		L.DomUtil.setOpacity(image, opacity);
+		image.setAttribute('opacity', opacity);
+	},
+
+	_toggleOutline: function() {
 
 	},
 
@@ -678,8 +683,132 @@ L.DistortableImage.Edit = L.Handler.extend({
 	// 		},
 	// 	 'Delete Image'
 	// 	);
-	// },	
+	// },
 
+	toggleTransparency: function() {
+		this.transparent = !this.transparent;
+		if (this.transparent) {
+			this.setOpacity(0.4);
+		} else {
+			this.setOpacity(1);
+		}
+	},
+
+	_showButtons: function() {
+		var map = this._overlay._map;
+
+		map.addLayer(this._buttons);
+	},
+
+	toggleIsolate: function() {
+		this.isolated = !this.isolated;
+		if (this.isolated) {
+			$.each($L.images,function(i,img) {
+				img.hidden = false;
+				img.setOpacity(1);
+			});
+		} else {
+			$.each($L.images,function(i,img) {
+				img.hidden = true;
+				img.setOpacity(0);
+			});
+		}
+		this.hidden = false;
+		this.setOpacity(1);
+	},
+
+	toggleVisibility: function() {
+		this.hidden = !this.hidden;
+		if (this.hidden) {
+			this.setOpacity(1);
+		} else {
+			this.setOpacity(0);
+		}
+	},	
+
+	// This overlaps somewhat with the changeMode() method. 
+	// Could consolidate.
+	lock: function() {
+		this.locked = true;
+		this.off('dragstart');
+		this.off('drag');
+		this.draggable.disable();
+		this.changeMode('locked');
+	},
+
+	unlock: function() {
+		this.locked = false;
+		this.draggable.enable();
+		this.changeMode('distort');
+	},
+
+	deselect: function() {
+		$L.selected = false;
+		for (var i in this.markers) {
+			// this isn't a good way to hide markers:
+			this._overlay._map.removeLayer(this.markers[i]);
+		}
+		if (this.outlineBtn) {
+			// delete existing buttons
+			this.outlineBtn._container.remove();
+			this.transparencyBtn._container.remove();
+			this.deleteBtn._container.remove();
+		}
+		this.onDeselect();
+	},
+
+	select: function() {
+		// deselect other images
+		$.each($L.images,function(i,d) {
+			d.deselect.apply(d);
+		});
+
+		// re-establish order
+		$L.impose_order();
+		$L.selected = this;
+		// show corner markers
+		for (var i in this.markers) {
+			this.markers[i].addTo(this._overlay._map);
+		}
+
+		// create buttons
+		this.transparencyBtn = L.easyButton('fa-adjust', 
+			L.bind(function() { this.toggleTransparency(); }, this),
+			'Toggle Image Transparency',
+			this._overlay._map,
+			this
+		);
+
+		this.outlineBtn = L.easyButton('fa-square-o',
+			L.bind(function() { this.toggleOutline(); }, this),
+			'Outline',
+			this._overlay._map,
+			this
+		);
+
+		this.deleteBtn = L.easyButton('fa-bitbucket',
+			L.bind(function () {
+				this._overlay._map.removeLayer($(this.parentImgId));
+				for (var i = 0; i < 4; i++) { 
+					this._overlay._map.removeLayer(this.markers[i]); 
+				}
+			}, this),
+		'Delete Image');
+
+		this.bringToFront();
+		this.onSelect();
+	},
+
+	toggleOutline: function() {
+		this.outlined = !this.outlined;
+		if (this.outlined) {
+			this.setOpacity(0.4);
+			$(this._image).css('border','1px solid red');
+		} else {
+			this.setOpacity(1);
+			$(this._image).css('border', 'none');
+		}
+	}
 });
 
 L.DistortableImageOverlay.addInitHook(function() {
