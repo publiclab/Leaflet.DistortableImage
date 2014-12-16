@@ -117,7 +117,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
      
       // the zoom level at the time the image was created:
       this.defaultZoom = map._zoom; 
-      this.opaque = false;
+      this.transparent = false;
+      this.hidden = false;
       this.outlined = false;
       this._url = url;
       this._bounds = L.latLngBounds(bounds);// (LatLngBounds, Object)
@@ -261,10 +262,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this.outlined = !this.outlined;
     if (this.outlined) {
       $('#'+this._image.id).css('border','1px solid red');
-      $('#'+this._image.id).css('background-image','url('+this._image.src+')');
     } else {
       $('#'+this._image.id).css('border', 'none');
-      $('#'+this._image.id).css('background-image','none');
     }
   },
 
@@ -277,7 +276,34 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     }
   },
 
+  toggleIsolate: function() {
+    this.isolated = !this.isolated
+    if (this.isolated) {
+      $.each($L.images,function(i,img) {
+        img.hidden = false
+        img.setOpacity(1)
+      })
+    } else {
+      $.each($L.images,function(i,img) {
+        img.hidden = true
+        img.setOpacity(0)
+      })
+    }
+    this.hidden = false
+    this.setOpacity(1);
+  },
+
+  toggleVisibility: function() {
+    this.hidden = !this.hidden;
+    if (this.hidden) {
+      this.setOpacity(1);
+    } else {
+      this.setOpacity(0);
+    }
+  },
+
   deselect: function() {
+    $L.selected = false
     for (i in this.markers) {
       // this isn't a good way to hide markers:
       map.removeLayer(this.markers[i])
@@ -291,18 +317,17 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   select: function() {
-    $L.selected = this
     // deselect other images
     $.each($L.images,function(i,d) {
       d.deselect.apply(d)
     })
+    $L.selected = this
     // show corner markers
     for (i in this.markers) {
       this.markers[i].addTo(map)
     }
-    // create buttons
 
-    // this doesn't work
+    // create buttons
     this.transparencyBtn = L.easyButton('fa-adjust', 
       (function (s) {
         return function() {
@@ -336,15 +361,16 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   // has scope of img element; use this.parentObj
   onclick: function(e) {
+    this.parentObj.bringToFront()
     if ($L.selected == this.parentObj) {
       // switch modes
       if (this.parentObj.draggable._enabled) {
-        this.parentObj.bringToFront()
         this.parentObj.toggleMode.apply(this.parentObj)
       }
     } else {
       this.parentObj.select.apply(this.parentObj)
     }
+    L.DomEvent.stopPropagation(e);
   },
 
   rotateStart: function(e) {

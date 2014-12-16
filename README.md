@@ -28,8 +28,8 @@ This plugin is not yet complete!
 ##To do:
 
 * fix outlining without outline being transparent -- maybe use leaflet poly
-* map.on('click') should deselect all images, but is unfort. triggered even when you click directly on an image
 * fix image ordering -- bringToFront() kinda janky? check event sequence
+  * ordering is done with css z-index: http://stackoverflow.com/questions/12848812/layer-ordering-in-leaflet-js
 * figure out what `_bounds` is for and if we really need to update it
 * ensure it's easy to attach event callback to 'deselect' for saving
   * and/or mouseup?

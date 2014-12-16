@@ -13,6 +13,12 @@ $L = {
 
     $(window).keydown(function(e){
       switch (e.which) {
+        case 73: // i
+          $L.selected.toggleIsolate()
+          break;
+        case 72: // h
+          $L.selected.toggleVisibility()
+          break;
         case 68: // d
           $L.selected.toggleMode.apply($L.selected)
           break;
@@ -35,10 +41,9 @@ $L = {
     // this runs *as well as* image.click events, 
     // when you click an image
     map.on('click', function(e) {
-//      $L.clearImageButtons()
-//      $.each($L.images,function(i,d) {
-//        d.deselect.apply(d)
-//      })
+      $.each($L.images,function(i,d) {
+        d.deselect.apply(d)
+      })
     })
 
     map.on('mousemove',function(e) {
