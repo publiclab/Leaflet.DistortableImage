@@ -14,15 +14,13 @@ $L = {
     $(window).keydown(function(e){
       switch (e.which) {
         case 68: // d
-          $L.selected.mode = 'distort'
-          $L.selected.changeMode.apply($L.selected)
+          $L.selected.toggleMode.apply($L.selected)
           break;
         case 82: // r
-          $L.selected.mode = 'rotate'
-          $L.selected.changeMode.apply($L.selected)
+          $L.selected.toggleMode.apply($L.selected)
           break;
         case 84: // t
-          // transparency
+          $L.selected.toggleTransparency()
           break;
         case 79: // o
           $L.selected.toggleOutline()
@@ -291,9 +289,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
           [a.lat, a.lng],
           // might as well do this now, so there's no possibility 
           // of dragging between initialization and final image load
-          { draggable:this.options.locked }
+          { draggable: (this.options.locked != true) }
         )
-        if (this.options.locked) marker.setFromIcons('locked')
+        if (this.options.locked == true) marker.setFromIcons('locked')
         else marker.setFromIcons('grey')
         marker.addTo(map);
         marker.parentImage = this
@@ -368,8 +366,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       if (mode == 'rotate') {
         m.off('dragstart');
         m.off('drag');
-        m.on('dragstart',this.rotateStart,this);
-        m.on('drag',this.rotate,this);
+        m.on('dragstart',this.parentImage.rotateStart,this.parentImage);
+        m.on('drag',this.parentImage.rotate,this.parentImage);
         m.setFromIcons('red')
       } else if (mode == 'locked') {
         m.off('dragstart');
@@ -381,10 +379,26 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
         m.setFromIcons('locked')
       } else { // default
         m.off('drag');
-        m.on('drag',this.distort,this);
+        m.on('drag',this.parentImage.distort,this.parentImage);
         m.setFromIcons('grey')
       }
     })
+  },
+
+  // This overlaps somewhat with the changeMode() method. 
+  // Could consolidate.
+  lock: function() {
+    this.locked = true
+    this.off('dragstart');
+    this.off('drag');
+    this.draggable.disable()
+    this.changeMode('locked')
+  },
+
+  unlock: function() {
+    this.locked = false
+    this.draggable.enable()
+    this.changeMode('distort')
   },
 
   // remember 'this' gets context of marker, not image
@@ -431,34 +445,23 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this.debug()
   },
 
-  debug: function() {
-    if ($L.debug) {
-      $('#debugmarkers').show()
-      $('#debug-green').css('left',this.getPosition().x)
-      $('#debug-green').css('top',this.getPosition().y)
-
-      $('#debug-green').css('right',this.getPosition().y)
-      $('#debugb').css('left',this.getPosition().x)
-      $('#debugb').css('top',this.getPosition().y)
-      $('#debugb').css('width',this.getPosition().x)
-      $('#debugb').css('height',this.getPosition().y)
-      $('#debug').css('left',this.initialPos.x)
-      $('#debug').css('top',this.initialPos.y)
-      for (i=0;i<4;i++) {
-        $('#debug'+i).css('left',this.corners[2*i])
-        $('#debug'+i).css('top',this.corners[2*i+1])
-      }
-    }
-  },
-
   toggleOutline: function() {
     this.outlined = !this.outlined;
     if (this.outlined) {
-      this.setOpacity(0.4);
       $('#'+this._image.id).css('border','1px solid red');
+      $('#'+this._image.id).css('background-image','url('+this._image.src+')');
+    } else {
+      $('#'+this._image.id).css('border', 'none');
+      $('#'+this._image.id).css('background-image','none');
+    }
+  },
+
+  toggleTransparency: function() {
+    this.transparent = !this.transparent;
+    if (this.transparent) {
+      this.setOpacity(0.4);
     } else {
       this.setOpacity(1);
-      $('#'+this._image.id).css('border', 'none');
     }
   },
 
@@ -489,17 +492,14 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
     // this doesn't work
     this.transparencyBtn = L.easyButton('fa-adjust', 
-       function () {
-         var e = $('#'+$('#image-distort-outline')[0].getAttribute('parentImgId'))[0]
-         if (e.opacity == 1) {
-           L.setOpacity(e,0.7);
-           e.setAttribute('opacity',0.7);
-         } else {
-           L.setOpacity(e,1);
-           e.setAttribute('opacity',1);
-         }
-       },
-      'Toggle Image Transparency'
+      (function (s) {
+        return function() {
+          s.toggleTransparency();
+        }
+      })(this),
+      'Toggle Image Transparency',
+      map,
+      this
     )
     
     this.outlineBtn = L.easyButton('fa-square-o', 
@@ -528,8 +528,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       // switch modes
       if (this.parentObj.draggable._enabled) {
         this.parentObj.bringToFront()
-        if (this.parentObj.mode == 'rotate') this.parentObj.mode = 'distort'
-        else this.parentObj.mode = 'rotate'
         this.parentObj.toggleMode.apply(this.parentObj)
       }
     } else {
@@ -591,20 +589,24 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return [x,y]
   },
 
-  // This overlaps somewhat with the changeMode() method. 
-  // Could consolidate.
-  lock: function() {
-    this.locked = true
-    this.off('dragstart');
-    this.off('drag');
-    this.draggable.disable()
-    this.changeMode('locked')
-  },
+  debug: function() {
+    if ($L.debug) {
+      $('#debugmarkers').show()
+      $('#debug-green').css('left',this.getPosition().x)
+      $('#debug-green').css('top',this.getPosition().y)
 
-  unlock: function() {
-    this.locked = false
-    this.draggable.enable()
-    this.changeMode('distort')
+      $('#debug-green').css('right',this.getPosition().y)
+      $('#debugb').css('left',this.getPosition().x)
+      $('#debugb').css('top',this.getPosition().y)
+      $('#debugb').css('width',this.getPosition().x)
+      $('#debugb').css('height',this.getPosition().y)
+      $('#debug').css('left',this.initialPos.x)
+      $('#debug').css('top',this.initialPos.y)
+      for (i=0;i<4;i++) {
+        $('#debug'+i).css('left',this.corners[2*i])
+        $('#debug'+i).css('top',this.corners[2*i+1])
+      }
+    }
   }
 
 });

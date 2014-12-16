@@ -14,15 +14,13 @@ $L = {
     $(window).keydown(function(e){
       switch (e.which) {
         case 68: // d
-          $L.selected.mode = 'distort'
-          $L.selected.changeMode.apply($L.selected)
+          $L.selected.toggleMode.apply($L.selected)
           break;
         case 82: // r
-          $L.selected.mode = 'rotate'
-          $L.selected.changeMode.apply($L.selected)
+          $L.selected.toggleMode.apply($L.selected)
           break;
         case 84: // t
-          // transparency
+          $L.selected.toggleTransparency()
           break;
         case 79: // o
           $L.selected.toggleOutline()

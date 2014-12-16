@@ -27,12 +27,13 @@ This plugin is not yet complete!
 
 ##To do:
 
+* fix outlining without outline being transparent -- maybe use leaflet poly
 * map.on('click') should deselect all images, but is unfort. triggered even when you click directly on an image
 * fix image ordering -- bringToFront() kinda janky? check event sequence
 * figure out what `_bounds` is for and if we really need to update it
 * ensure it's easy to attach event callback to 'deselect' for saving
   * and/or mouseup?
-* fix/separate transparency and outlining
+  * be aware that attaching events before dom creation won't work
 * create/document easy properties so we can send a concise description of an image to MapKnitter in JSON: locked, four corners in lat/lng, last touched/edited, uniq id or name of editor? (this belongs in mapknitter, not here), layer order
 * there are some Chrome/Firefox bugs on Android
 * hotkey defaults that can be turned off?
