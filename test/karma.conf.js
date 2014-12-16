@@ -41,8 +41,11 @@ module.exports = function(config) {
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: [ 'mocha' ],
+    reporters: [ 'mocha', 'coverage' ],
 
+    preprocessors: {
+      '../src/**/*.js': 'coverage'
+    },
 
     // web server port
     port: 9876,
@@ -65,13 +68,22 @@ module.exports = function(config) {
     plugins: [
       'karma-mocha',
       'karma-phantomjs-launcher',
-      'karma-mocha-reporter'
+      'karma-mocha-reporter',
+      'karma-coverage'      
     ],
 
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: false
+    singleRun: false,
+
+    coverageReporter: {
+      reporters: [
+        { type: 'text', dir: '../coverage/', file: 'coverage.txt' },
+        { type: 'lcovonly', dir: '../coverage/' },
+        { type: 'html', dir: '../coverage/' }
+      ]
+    }    
     
   });
 };

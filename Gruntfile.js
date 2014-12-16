@@ -97,8 +97,31 @@ module.exports = function(grunt) {
     grunt.registerTask('build', [
         'jshint',
         'karma:development:run',
+        'coverage',
         'concat:dist'
     ]);
 
-    grunt.registerTask('build:css', [ 'less' ]);
+    grunt.registerTask('coverage', 'Custom commmand-line reporter for karma-coverage', function() {
+        var coverageReports = grunt.file.expand('coverage/*/coverage.txt'),
+            reports = {},
+            report, i, len;
+
+        for (i = 0, len = coverageReports.length; i < len; i++) {
+            report = grunt.file.read(coverageReports[i]);
+            if (!reports[report]) {
+                reports[report] = [coverageReports[i]];
+            } else {
+                reports[report].push(coverageReports[i]);
+            }
+        }
+
+        for (report in reports) {
+            if (reports.hasOwnProperty(report)) {
+                for (i = 0, len = reports[report].length; i < len; i++) {
+                    grunt.log.writeln(reports[report][i]);
+                }
+                grunt.log.writeln(report);
+            }
+        }
+    });    
 };
