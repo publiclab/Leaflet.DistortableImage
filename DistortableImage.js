@@ -617,15 +617,15 @@ L.DistortableImage.Edit = L.Handler.extend({
 	_initButtons: function() {
 		this._buttons = new L.LayerGroup();
 
-		this._buttons.addLayer(L.easyButton('fa-adjust', L.bind(this._toggleTransparency, this),
-			'Toggle Image Transparency', ''
-		));
-		this._buttons.addLayer(L.easyButton('fa-square-o', L.bind(this._toggleOutline, this),
-			'Outline', ''
-		));
-		this._buttons.addLayer(L.easyButton('fa-bitbucket', L.bind(this.onRemove, this),
-			'Delete Image', ''
-		));
+		// this._buttons.addLayer(L.easyButton('fa-adjust', L.bind(this._toggleTransparency, this),
+		// 	'Toggle Image Transparency', ''
+		// ));
+		// this._buttons.addLayer(L.easyButton('fa-square-o', L.bind(this._toggleOutline, this),
+		// 	'Outline', ''
+		// ));
+		// this._buttons.addLayer(L.easyButton('fa-bitbucket', L.bind(this.onRemove, this),
+		// 	'Delete Image', ''
+		// ));
 	},
 
 	_toggleTransparency: function() {

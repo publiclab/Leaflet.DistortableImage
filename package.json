@@ -37,6 +37,7 @@
     "leaflet": "^0.7.3",
     "matchdep": "^0.3.0",
     "mocha": "^2.0.1",
-    "sinon": "^1.12.2"
+    "sinon": "^1.12.2",
+    "leaflet-toolbar": "git+https://github.com/manleyjster/Leaflet.Toolbar.git"
   }
 }
