@@ -99,14 +99,14 @@ L.DistortableImage.Edit = L.Handler.extend({
 	     *     that we want when it calls L.DomUtil.setPosition.
 		 */
 		this.dragging._updatePosition = function() {
-			var delta = this._newPos.subtract(map.latLngToContainerPoint(overlay._corners[0])),
+			var delta = this._newPos.subtract(map.latLngToLayerPoint(overlay._corners[0])),
 				currentPoint, i;
 
 			this.fire('predrag');
 
 			for (i = 0; i < 4; i++) {
-				currentPoint = map.latLngToContainerPoint(overlay._corners[i]);
-				overlay._corners[i] = map.containerPointToLatLng(currentPoint.add(delta));
+				currentPoint = map.latLngToLayerPoint(overlay._corners[i]);
+				overlay._corners[i] = map.layerPointToLatLng(currentPoint.add(delta));
 			}
 			overlay._reset();
 			overlay.fire('update');
