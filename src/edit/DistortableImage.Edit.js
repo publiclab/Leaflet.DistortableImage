@@ -24,17 +24,17 @@ L.DistortableImage.Edit = L.Handler.extend({
 		this._handles = [this._warpHandles, this._rotateHandles];
 
 
-		/* TODO: Tell L>Draggable how to find the position of the image. */
+		/* TODO: Tell L.Draggable how to find the position of the image. */
 		this._enableDragging();
 
 		map.addLayer(this._warpHandles);
 
 		/* TODO: Why doesn't this._overlay.on('click') work? */
-		L.DomEvent.on(this._overlay._image, 'click', this._changeMode, this);
+		L.DomEvent.on(this._overlay._image, 'click', this._toggleMode, this);
 		L.DomEvent.on(this._overlay._image, 'click', this._showToolbar, this);
 	},
 
-	_changeMode: function() {
+	_toggleMode: function() {
 		var map = this._overlay._map;
 
 		map.removeLayer(this._handles[this._mode]);
@@ -114,7 +114,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			this.fire('drag');
 		};
 
-		this.dragging.on('dragend', this._changeMode, this);
+		this.dragging.on('dragend', this._toggleMode, this);
 	},
 
 	_showToolbar: function() {
