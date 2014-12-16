@@ -123,7 +123,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       this._url = url;
       this._bounds = L.latLngBounds(bounds);// (LatLngBounds, Object)
       this.initialPos = this.getPosition()
-      // tracking pans
+      // for tracking pans
       this.offsetX = 0
       this.offsetY = 0
      
@@ -151,6 +151,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
                       - this.initialPos.y
       },this)
 
+      // this also deselects other images:
+      this.select()
+
       // this actually displays it on the map:
       this.bringToFront().addTo(map)
       this.updateTransform()
@@ -162,6 +165,16 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
     // we ought to separate Leaflet options from native options
     L.setOptions(this, options);
+  },
+
+  // empty handler; can be user-replaced:
+  onSelect: function() {
+
+  },
+
+  // empty handler; can be user-replaced:
+  onDeselect: function() {
+
   },
 
   // change between 'distort' and 'rotate' mode
@@ -314,6 +327,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       this.transparencyBtn._container.remove()
       this.deleteBtn._container.remove()
     }
+    this.onDeselect()
   },
 
   select: function() {
@@ -357,6 +371,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
         map.removeLayer(this.markers[i]);
       },
      'Delete Image')
+    this.onSelect()
   },
 
   // has scope of img element; use this.parentObj

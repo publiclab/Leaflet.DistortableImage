@@ -27,9 +27,9 @@ This plugin is not yet complete!
 
 ##To do:
 
-* fix outlining without outline being transparent -- maybe use leaflet poly
 * fix image ordering -- bringToFront() kinda janky? check event sequence
   * ordering is done with css z-index: http://stackoverflow.com/questions/12848812/layer-ordering-in-leaflet-js
+* implement tab to select next image; $L.selectedIndex?
 * figure out what `_bounds` is for and if we really need to update it
 * ensure it's easy to attach event callback to 'deselect' for saving
   * and/or mouseup?
@@ -44,6 +44,8 @@ This plugin is not yet complete!
 
 ##Leftovers, persnickity stuff:
 
+* plumb or remove debug system
+* integrate creation of #inputimage DOM element into $L
 * make shift-drag drag the nearest marker, not the image?
 * long-click or double-click to lock an image? Can't get more advanced event handling working, only .onclick = function, which doesn't support dblclick event
 * scale is not true scaling -- it moves points equally from the "center" which causes distortion in some edge cases
