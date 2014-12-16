@@ -27,18 +27,17 @@ This plugin is not yet complete!
 
 ##To do:
 
-* fix image ordering -- bringToFront() kinda janky? check event sequence
-  * ordering is done with css z-index: http://stackoverflow.com/questions/12848812/layer-ordering-in-leaflet-js
-* implement tab to select next image; $L.selectedIndex?
-* figure out what `_bounds` is for and if we really need to update it
-* ensure it's easy to attach event callback to 'deselect' for saving
-  * and/or mouseup?
-  * be aware that attaching events before dom creation won't work
-* create/document easy properties so we can send a concise description of an image to MapKnitter in JSON: locked, four corners in lat/lng, last touched/edited, uniq id or name of editor? (this belongs in mapknitter, not here), layer order
 * there are some Chrome/Firefox bugs on Android
-* hotkey defaults that can be turned off?
-  * t: transparency
-  * shift-drag: scale, no rotate
+* figure out what `_bounds` is for and if we really need to update it
+* create img.toGeoJSON() so we can send a concise description of an image to MapKnitter, plus properties: 
+  * locked
+  * layer order
+  * last touched/edited?
+  * "{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[-0.08,51.509],[-0.06,51.503],[-0.047,51.51],[-0.08,51.509]]]}}"
+* add image ordering -- bringToFront() should be temporary only; we need img.raise() or img.lower() or img.raiseToTop() etc... also img.order() for current position in order
+* shift-drag (scale with no rotate) doesnt work if you shift first, only if you drag first
+* add an img.revert() which reverts it to orig dimensions and rotation
+* implement tab to select next image; $L.selectedIndex?
 
 =================
 
@@ -48,6 +47,6 @@ This plugin is not yet complete!
 * integrate creation of #inputimage DOM element into $L
 * make shift-drag drag the nearest marker, not the image?
 * long-click or double-click to lock an image? Can't get more advanced event handling working, only .onclick = function, which doesn't support dblclick event
-* scale is not true scaling -- it moves points equally from the "center" which causes distortion in some edge cases
+* scale is not true scaling -- it moves points equally from the "center" which causes distortion when scaling down a lot
 
 

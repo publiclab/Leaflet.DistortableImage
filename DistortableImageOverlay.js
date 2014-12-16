@@ -2,41 +2,50 @@ $L = {
   debug: false,
   images: [],
   pointer: {x:0,y:0},
+  shifted: false,
   initialize: function(options) {
 
     this.options = options || {}
+    this.options.hotkeys = this.options.hotkeys || true
 
     // disable some default Leaflet interactions
     // not really sure why this is necessary
     map.touchZoom.disable();
     map.doubleClickZoom.disable();
+    map.boxZoom.disable();
 
-    $(window).keydown(function(e){
-      switch (e.which) {
-        case 73: // i
-          $L.selected.toggleIsolate()
-          break;
-        case 72: // h
-          $L.selected.toggleVisibility()
-          break;
-        case 68: // d
-          $L.selected.toggleMode.apply($L.selected)
-          break;
-        case 82: // r
-          $L.selected.toggleMode.apply($L.selected)
-          break;
-        case 84: // t
-          $L.selected.toggleTransparency()
-          break;
-        case 79: // o
-          $L.selected.toggleOutline()
-          break;
-        case 76: // l
-          if ($L.selected.locked) $L.selected.unlock()
-          else $L.selected.lock()
-          break;
-      }
-    })
+    if (this.options.hotkeys) {
+      $(document).on('keyup keydown', function(e){$L.shifted = e.shiftKey} );
+ 
+      $(document).keydown(function(e){
+        if ($L.selected) {
+          switch (e.which) {
+            case 73: // i
+              $L.selected.toggleIsolate()
+              break;
+            case 72: // h
+              $L.selected.toggleVisibility()
+              break;
+            case 68: // d
+              $L.selected.toggleMode.apply($L.selected)
+              break;
+            case 82: // r
+              $L.selected.toggleMode.apply($L.selected)
+              break;
+            case 84: // t
+              $L.selected.toggleTransparency()
+              break;
+            case 79: // o
+              $L.selected.toggleOutline()
+              break;
+            case 76: // l
+              if ($L.selected.locked) $L.selected.unlock()
+              else $L.selected.lock()
+              break;
+          }
+        }
+      })
+    }
 
     // this runs *as well as* image.click events, 
     // when you click an image
@@ -44,6 +53,7 @@ $L = {
       $.each($L.images,function(i,d) {
         d.deselect.apply(d)
       })
+      $L.impose_order()
     })
 
     map.on('mousemove',function(e) {
@@ -62,12 +72,18 @@ $L = {
           var reader = new FileReader();
           reader.onload = function(e) {
             img = new L.DistortableImageOverlay(e.target.result);
-            img.select()
           }
           reader.readAsDataURL(this.files[0]);
         }
       });
     }
+  },
+
+  // impose the ordering of $L.images on the z-indices
+  impose_order: function() {
+    $.each($L.images,function(i,img) {
+      img.bringToFront()
+    })
   },
 
   // Compute the adjugate of m
@@ -528,6 +544,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     $.each($L.images,function(i,d) {
       d.deselect.apply(d)
     })
+
+    // re-establish order
+    $L.impose_order()
     $L.selected = this
     // show corner markers
     for (i in this.markers) {
@@ -564,20 +583,21 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
         map.removeLayer(this.markers[i]);
       },
      'Delete Image')
+
+    this.bringToFront()
     this.onSelect()
   },
 
   // has scope of img element; use this.parentObj
   onclick: function(e) {
-    this.parentObj.bringToFront()
     if ($L.selected == this.parentObj) {
-      // switch modes
-      if (this.parentObj.draggable._enabled) {
+      if (this.parentObj.locked != true) {
         this.parentObj.toggleMode.apply(this.parentObj)
       }
     } else {
       this.parentObj.select.apply(this.parentObj)
     }
+    // this prevents the event from propagating to the map object:
     L.DomEvent.stopPropagation(e);
   },
 
@@ -603,7 +623,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     var angle_change = angle-this.pointer_angle
 
     // keyboard keypress event is not hooked up:
-    if (false) angle_change = 0 
+    if ($L.shifted) angle_change = 0 
 
     // use angle to recalculate each of the points in this.parent_shape.points
     for (var i in this.markers) {
