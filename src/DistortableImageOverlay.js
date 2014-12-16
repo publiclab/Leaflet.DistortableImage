@@ -25,11 +25,11 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       }
     })(this)
  
-    this.mode = 'distort'
-    this.changeMode()
+    this.changeMode('distort')
 
     this.draggable = new L.Draggable(this._image);
     this.draggable.enable();
+    if (this.options.locked) this.lock()
 
     this.draggable.on('dragstart',function() {
       this.dragStartPos = map.latLngToLayerPoint(this._bounds._northEast) // get position so we can track offset
@@ -54,9 +54,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     },this)
 
     this.draggable.on('dragend',function() {
-      if (this.mode == 'rotate') this.mode = 'distort'
-      else this.mode = 'rotate'
-      this.changeMode()
+      // undo the toggling of mode from the initial click
+      this.toggleMode()
     },this)
  
   },
@@ -98,8 +97,14 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       for(var i = 0; i < 8; i = i+2) {
         // convert to lat/lng
         var a = map.layerPointToLatLng([this.corners[i],this.corners[i+1]]);
-        var marker = new L.ImageMarker([a.lat, a.lng])
-        marker.setFromIcons('grey')
+        var marker = new L.ImageMarker(
+          [a.lat, a.lng],
+          // might as well do this now, so there's no possibility 
+          // of dragging between initialization and final image load
+          { draggable:this.options.locked }
+        )
+        if (this.options.locked) marker.setFromIcons('locked')
+        else marker.setFromIcons('grey')
         marker.addTo(map);
         marker.parentImage = this
         marker.orderId = i 
@@ -146,7 +151,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       },this)
 
       // this actually displays it on the map:
-      this.bringToFront().addTo(map);
+      this.bringToFront().addTo(map)
       this.updateTransform()
 
     },this, 'load');
@@ -159,24 +164,37 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   // change between 'distort' and 'rotate' mode
-  changeMode: function() {
-    for (var i in this.markers) {
-      if (this.mode == 'rotate') {
-        this.markers[i].off('dragstart');
-        this.markers[i].off('drag');
-        this.markers[i].on('dragstart',this.rotateStart,this);
-        this.markers[i].on('drag',this.rotate,this);
-        $.each(this.markers,function(i,m) {
-          m.setFromIcons('red')
-        })
-      } else {
-        this.markers[i].off('drag');
-        this.markers[i].on('drag',this.distort,this);
-        $.each(this.markers,function(i,m) {
-          m.setFromIcons('grey')
-        })
-      }
+  toggleMode: function() {
+    if (this.mode == 'rotate') {
+      this.changeMode('distort')
+    } else {
+      this.changeMode('rotate')
     }
+  },
+
+  changeMode: function(mode) {
+    this.mode = mode
+    $.each(this.markers,function(i,m) {
+      if (mode == 'rotate') {
+        m.off('dragstart');
+        m.off('drag');
+        m.on('dragstart',this.rotateStart,this);
+        m.on('drag',this.rotate,this);
+        m.setFromIcons('red')
+      } else if (mode == 'locked') {
+        m.off('dragstart');
+        m.off('drag');
+        // setIcon and draggable.disable() conflict;
+        // described here but not yet fixed: 
+        // https://github.com/Leaflet/Leaflet/issues/2578
+        //m.draggable.disable()
+        m.setFromIcons('locked')
+      } else { // default
+        m.off('drag');
+        m.on('drag',this.distort,this);
+        m.setFromIcons('grey')
+      }
+    })
   },
 
   // remember 'this' gets context of marker, not image
@@ -322,7 +340,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
         this.parentObj.bringToFront()
         if (this.parentObj.mode == 'rotate') this.parentObj.mode = 'distort'
         else this.parentObj.mode = 'rotate'
-        this.parentObj.changeMode.apply(this.parentObj)
+        this.parentObj.toggleMode.apply(this.parentObj)
       }
     } else {
       this.parentObj.select.apply(this.parentObj)
@@ -383,24 +401,20 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return [x,y]
   },
 
+  // This overlaps somewhat with the changeMode() method. 
+  // Could consolidate.
   lock: function() {
     this.locked = true
     this.off('dragstart');
     this.off('drag');
     this.draggable.disable()
-    $.each(this.markers,function(i,m) {
-      m.setFromIcons('locked')
-    })
+    this.changeMode('locked')
   },
 
   unlock: function() {
     this.locked = false
     this.draggable.enable()
-    this.mode = 'distort'
-    this.changeMode() // reattaches listeners
-    $.each(this.markers,function(i,m) {
-      m.setFromIcons('grey')
-    })
+    this.changeMode('distort')
   }
 
 });
