@@ -231,6 +231,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this._image.onload = (function(s) {
       return function() {
         s._image.onclick = s.onclick
+        // lock on doubleclick
+        $('#'+s._image.id).dblclick(function(e){ this.parentObj.toggleLock.apply(this.parentObj) })
       }
     })(this)
  
@@ -434,6 +436,11 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this.locked = false
     this.draggable.enable()
     this.changeMode('distort')
+  },
+
+  toggleLock: function() {
+    if (this.locked) this.unlock()
+    else this.lock()
   },
 
   // remember 'this' gets context of marker, not image
