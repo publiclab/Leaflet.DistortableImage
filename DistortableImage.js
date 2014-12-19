@@ -570,6 +570,18 @@ L.DistortableImage.EDIT_TOOLBAR = [
 			html: '<span class="fa fa-lock"></span>',
 			title: 'Lock / Unlock editing'
 		}, overlay.editing);
+	},
+
+	/* */
+	function(map, overlay) {
+		var icon = overlay.editing._mode ? 
+			'image' : 
+			'rotate-left';
+
+		return L.DistortableImage.toolbarHandlerFor(overlay.editing._toggleRotateDistort, {
+			html: '<span class="fa fa-' + icon + '"></span>',
+			title: 'Rotate'
+		}, overlay.editing);
 	}
 ];
 
@@ -629,7 +641,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		this._enableDragging();
 
-		this._overlay.on('click', this._toggleRotateDistort, this);
 		this._overlay.on('click', function(event) {
 			new L.Toolbar.Popup(event.latlng, L.DistortableImage.EDIT_TOOLBAR).addTo(map, this._overlay);
 		}, this);
@@ -637,8 +648,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 	removeHooks: function() {
 		var map = this._overlay._map;
-
-		this._overlay.off('click', this._toggleRotateDistort, this);
 
 		map.removeLayer(this._handles[this._mode]);
 	},
@@ -705,8 +714,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 			this.fire('drag');
 		};
-
-		this.dragging.on('dragend', this._toggleRotateDistort, this);
 	},
 
 	_toggleRotateDistort: function() {
@@ -763,12 +770,12 @@ L.DistortableImage.Edit = L.Handler.extend({
 	},
 
 	toggleVisibility: function() {
-		this.hidden = !this.hidden;
-		if (this.hidden) {
-			this.setOpacity(1);
-		} else {
-			this.setOpacity(0);
-		}
+		// this.hidden = !this.hidden;
+		// if (this.hidden) {
+		// 	this.setOpacity(1);
+		// } else {
+		// 	this.setOpacity(0);
+		// }
 	},
 
 	deselect: function() {

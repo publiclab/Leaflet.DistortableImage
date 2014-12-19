@@ -37,6 +37,18 @@ L.DistortableImage.EDIT_TOOLBAR = [
 			html: '<span class="fa fa-lock"></span>',
 			title: 'Lock / Unlock editing'
 		}, overlay.editing);
+	},
+
+	/* */
+	function(map, overlay) {
+		var icon = overlay.editing._mode ? 
+			'image' : 
+			'rotate-left';
+
+		return L.DistortableImage.toolbarHandlerFor(overlay.editing._toggleRotateDistort, {
+			html: '<span class="fa fa-' + icon + '"></span>',
+			title: 'Rotate'
+		}, overlay.editing);
 	}
 ];
 
