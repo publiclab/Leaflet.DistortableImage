@@ -6,14 +6,14 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <script src="../node_modules/leaflet/dist/leaflet.js" type="text/javascript" charset="utf-8"></script>
+  <script src="../node_modules/leaflet/dist/leaflet-src.js" type="text/javascript" charset="utf-8"></script>
   <link href="../node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet">
   <link rel="stylesheet" href="../node_modules/leaflet/dist/leaflet.css" type="text/css" media="screen" title="no title" charset="utf-8">
-  <script src="../node_modules/jquery/dist/jquery.min.js"></script>
-  <script src="../lib/easybutton.js" type="text/javascript" charset="utf-8"></script>
+  <script src="../node_modules/leaflet-toolbar/dist/Leaflet.Toolbar.js"></script>
+  <link href="../node_modules/leaflet-toolbar/dist/Leaflet.Toolbar.css" rel="stylesheet"/>
 
-  <link rel="stylesheet" href="../DistortableImageOverlay.css" type="text/css" media="screen" title="no title" charset="utf-8">
-  <script src="../DistortableImageOverlay.js"></script>
+  <link rel="stylesheet" href="../DistortableImage.css" type="text/css" media="screen" title="no title" charset="utf-8">
+  <script src="../DistortableImage.js"></script>
 </head>
 <body style="margin:0;">
 
@@ -50,32 +50,23 @@
       }).addTo(map);
 
       // startup the ImageDistort plugin
-      $L.initialize( {
-        uploadBtn: true, // prompt and handle new images
-        img_dir: '../src/images/' 
-      })
+      // $L.initialize( {
+      //   uploadBtn: true // prompt and handle new images
+      // })
       // create an image
       img = new L.DistortableImageOverlay(
-        'example.jpg'
-      );
-      // normally we'd need to run img.addTo(map) but in this case we need to wait until the image is ready; so it's handled in the constructor
+        'example.jpg', {
+          corners: [
+            new L.latLng(51.52,-0.10),
+            new L.latLng(51.52,-0.14),
+            new L.latLng(51.50,-0.10),
+            new L.latLng(51.50,-0.14)
+          ]
+        }
+      ).addTo(map);
 
-      // or create one with a known location;
-      // [NW,NE,SW,SE] :
-
-      //img = new L.DistortableImageOverlay(
-      //  'example.jpg',
-      //  { latlng:  [ 
-      //               new L.latLng(51.52,-0.10),
-      //               new L.latLng(51.52,-0.14),
-      //               new L.latLng(51.50,-0.10),
-      //               new L.latLng(51.50,-0.14),
-      //             ],
-      //    locked:true 
-      //  });
-
-    })()
-      
+      L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
+    })();
   </script>
       
 </html>

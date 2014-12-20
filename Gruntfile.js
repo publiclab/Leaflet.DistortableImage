@@ -25,6 +25,7 @@ module.exports = function(grunt) {
                 smarttabs: true,
                 globals: {
                     L: false,
+                    $: false,
 
                     // Mocha
 
@@ -40,7 +41,7 @@ module.exports = function(grunt) {
                 }
             },
             source: {
-                src: [ 'src/*.js', 'package.json' ]
+                src: [ 'src/**/*.js', 'package.json' ]
             },
             grunt: {
                 src: [ 'Gruntfile.js' ]
@@ -51,6 +52,11 @@ module.exports = function(grunt) {
             development: {
                 configFile: 'test/karma.conf.js',
                 background: true
+            },
+            test: {
+                configFile: 'test/karma.conf.js',
+                background: false,
+                singleRun: true
             }
         },
 
@@ -60,7 +66,8 @@ module.exports = function(grunt) {
             },
             source: {
                 files: [
-                    'src/*.js',
+                    'src/**/*.js',
+                    'test/**/*.js',
                     'Gruntfile.js'
                 ],
                 tasks: [ 'build:js' ]
@@ -70,11 +77,13 @@ module.exports = function(grunt) {
         concat: {
             dist: {
                 src: [
-                    'src/config.js',
-                    'src/ImageMarker.js',                    
-                    'src/DistortableImageOverlay.js'
+                    'src/util/*.js',
+                    'src/edit/*Handle.js',
+                    'src/DistortableImageOverlay.js',
+                    'src/edit/DistortableImage.EditToolbar.js',
+                    'src/edit/DistortableImage.Edit.js',
                 ],
-                dest: 'DistortableImageOverlay.js',
+                dest: 'DistortableImage.js',
             }
         }
     });
@@ -86,10 +95,33 @@ module.exports = function(grunt) {
     grunt.registerTask('default', ['karma:development:start', 'watch']);
 
     grunt.registerTask('build', [
-        // 'jshint',
-        // 'karma:development:run',
+        'jshint',
+        'karma:development:run',
+        'coverage',
         'concat:dist'
     ]);
 
-    grunt.registerTask('build:css', [ 'less' ]);
+    grunt.registerTask('coverage', 'Custom commmand-line reporter for karma-coverage', function() {
+        var coverageReports = grunt.file.expand('coverage/*/coverage.txt'),
+            reports = {},
+            report, i, len;
+
+        for (i = 0, len = coverageReports.length; i < len; i++) {
+            report = grunt.file.read(coverageReports[i]);
+            if (!reports[report]) {
+                reports[report] = [coverageReports[i]];
+            } else {
+                reports[report].push(coverageReports[i]);
+            }
+        }
+
+        for (report in reports) {
+            if (reports.hasOwnProperty(report)) {
+                for (i = 0, len = reports[report].length; i < len; i++) {
+                    grunt.log.writeln(reports[report][i]);
+                }
+                grunt.log.writeln(report);
+            }
+        }
+    });    
 };

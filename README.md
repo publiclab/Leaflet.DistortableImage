@@ -53,4 +53,8 @@ This plugin is not yet complete!
 * make shift-drag drag the nearest marker, not the image?
 * scale is not true scaling -- it moves points equally from the "center" which causes distortion when scaling down a lot
 
+### Contributors
 
+* Anish Shah, [@anishshah101](https://github.com/anishshah101)
+* Justin Manley, [@manleyjster](https://github.com/manleyjster)
+* Jeff Warren [@jywarren](https://github.com/jywarren)

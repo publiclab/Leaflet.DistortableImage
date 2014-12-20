@@ -5,7 +5,7 @@ module.exports = function(config) {
   config.set({
 
     // base path that will be used to resolve all patterns (eg. files, exclude)
-    basePath: '',
+    basePath: '../',
 
 
     // frameworks to use
@@ -15,21 +15,37 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      '../node_modules/leaflet/dist/leaflet-src.js',
-      '../node_modules/leaflet/dist/leaflet.css',
-      '../node_modules/chai/chai.js',
-      '../src/config.js',
-      '../src/ImageMarker.js',
-      '../src/DistortableImageOverlay.js',
-      '../test/src/*Spec.js',
+      { pattern: 'examples/*.jpg', included: false, served: true },
+      'node_modules/leaflet/dist/leaflet-src.js',
+      'node_modules/leaflet/dist/leaflet.css',
+      'node_modules/leaflet-toolbar/dist/Leaflet.Toolbar.js',
+      'node_modules/leaflet-toolbar/dist/Leaflet.Toolbar.css',
+      'node_modules/chai/chai.js',
+      'node_modules/sinon/pkg/sinon.js',
+      'src/util/*.js',
+      'src/edit/*Handle.js',
+      'src/ImageMarker.js',
+      'src/DistortableImageOverlay.js',
+      'src/edit/DistortableImage.EditToolbar.js',      
+      'src/edit/DistortableImage.Edit.js',
+      'test/SpecHelper.js',
+      'test/src/**/*Spec.js'
     ],
 
+
+    // so that karma can serve examples/example.jpg
+    proxies: {
+      '/examples/': '/base/examples/'
+    },
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: [ 'mocha' ],
+    reporters: [ 'mocha', 'coverage' ],
 
+    preprocessors: {
+      '../src/**/*.js': 'coverage'
+    },
 
     // web server port
     port: 9876,
@@ -44,22 +60,30 @@ module.exports = function(config) {
     logLevel: config.LOG_INFO,
 
 
-    // enable / disable watching file and executing tests whenever any file changes
-    autoWatch: true,
-
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
     browsers: [ 'PhantomJS' ],
 
+
     plugins: [
       'karma-mocha',
       'karma-phantomjs-launcher',
-      'karma-mocha-reporter'
+      'karma-mocha-reporter',
+      'karma-coverage'      
     ],
+
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: false
+    singleRun: false,
+
+    coverageReporter: {
+      reporters: [
+        { type: 'text', dir: '../coverage/', file: 'coverage.txt' },
+        { type: 'lcovonly', dir: '../coverage/' },
+        { type: 'html', dir: '../coverage/' }
+      ]
+    }    
     
   });
 };
