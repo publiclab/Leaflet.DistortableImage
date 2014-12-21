@@ -240,6 +240,26 @@ L.EditHandle = L.RotatableMarker.extend({
 		this._handled.off('update', this.updateHandle, this);
 	}
 });
+L.DistortHandle = L.EditHandle.extend({
+	options: {
+		TYPE: 'distort',
+		icon: new L.Icon({ 
+			iconUrl: '../src/images/circle-o_444444_16.png',
+			iconSize: [16, 16],
+			iconAnchor: [8, 8]}
+		)
+	},
+
+	updateHandle: function() {
+		this.setLatLng(this._handled._corners[this._corner]);
+	},
+
+	_onHandleDrag: function() {
+		this._handled._updateCorner(this._corner, this.getLatLng());
+
+		this._handled.fire('update');
+	}
+});
 L.RotateHandle = L.EditHandle.extend({
 	options: {
 		TYPE: 'rotate',
@@ -302,26 +322,6 @@ L.RotateHandle = L.EditHandle.extend({
 			dy = a.y - b.y;
 
 		return Math.pow(dx, 2) + Math.pow(dy, 2);
-	}
-});
-L.WarpHandle = L.EditHandle.extend({
-	options: {
-		TYPE: 'warp',
-		icon: new L.Icon({ 
-			iconUrl: '../src/images/circle-o_444444_16.png',
-			iconSize: [16, 16],
-			iconAnchor: [8, 8]}
-		)
-	},
-
-	updateHandle: function() {
-		this.setLatLng(this._handled._corners[this._corner]);
-	},
-
-	_onHandleDrag: function() {
-		this._handled._updateCorner(this._corner, this.getLatLng());
-
-		this._handled.fire('update');
 	}
 });
 L.DistortableImageOverlay = L.ImageOverlay.extend({
@@ -624,9 +624,9 @@ L.DistortableImage.Edit = L.Handler.extend({
 			map = overlay._map,
 			i;
 
-		this._warpHandles = new L.LayerGroup();
+		this._distortHandles = new L.LayerGroup();
 		for (i = 0; i < 4; i++) {
-			this._warpHandles.addLayer(new L.WarpHandle(overlay, i));
+			this._distortHandles.addLayer(new L.DistortHandle(overlay, i));
 		}
 
 		this._rotateHandles = new L.LayerGroup();
@@ -634,14 +634,17 @@ L.DistortableImage.Edit = L.Handler.extend({
 			this._rotateHandles.addLayer(new L.RotateHandle(overlay, i));
 		}
 
-		this._handles = [this._warpHandles, this._rotateHandles];
+		this._mode = 'distort';
+		this._handles = { 
+			'distort': this._distortHandles, 
+			'rotate':  this._rotateHandles
+		};
 
-		this._mode = 0; // warp
-		map.addLayer(this._warpHandles);
+		map.addLayer(this._distortHandles);
 
 		this._enableDragging();
 
-		this._overlay.on('click', function(event) {
+		overlay.on('click', function(event) {
 			new L.Toolbar.Popup(event.latlng, L.DistortableImage.EDIT_TOOLBAR).addTo(map, this._overlay);
 		}, this);
 	},
@@ -696,7 +699,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		/* 
 		 * Adjust default behavior of L.Draggable.
-	     * By default, L.Draggable overwrites the CSS3 warp transform 
+	     * By default, L.Draggable overwrites the CSS3 distort transform 
 	     *     that we want when it calls L.DomUtil.setPosition.
 		 */
 		this.dragging._updatePosition = function() {
@@ -722,7 +725,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 		map.removeLayer(this._handles[this._mode]);
 
 		/* Switch mode. */
-		this._mode = (this._mode + 1) % 2;
+		if (this._mode === 'rotate') { this._mode = 'distort'; }
+		else { this._mode = 'rotate'; }
 
 		map.addLayer(this._handles[this._mode]);
 	},

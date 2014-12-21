@@ -1,4 +1,4 @@
-// Karma configuration
+  // Karma configuration
 // Generated on Tue Jul 08 2014 12:47:31 GMT-0500 (CDT)
 
 module.exports = function(config) {
@@ -23,8 +23,9 @@ module.exports = function(config) {
       'node_modules/chai/chai.js',
       'node_modules/sinon/pkg/sinon.js',
       'src/util/*.js',
-      'src/edit/*Handle.js',
-      'src/ImageMarker.js',
+      'src/edit/EditHandle.js',
+      'src/edit/DistortHandle.js',
+      'src/edit/RotateHandle.js',
       'src/DistortableImageOverlay.js',
       'src/edit/DistortableImage.EditToolbar.js',      
       'src/edit/DistortableImage.Edit.js',
