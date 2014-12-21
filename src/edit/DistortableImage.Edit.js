@@ -3,7 +3,15 @@ L.DistortableImage = L.DistortableImage || {};
 L.DistortableImage.Edit = L.Handler.extend({
 	options: {
 		opacity: 0.7,
-		outline: '1px solid red'
+		outline: '1px solid red',
+		keymap: {
+			68: '_toggleRotateDistort', // d
+			73: '_toggleIsolate', // i
+			76: '_toggleEnabled', // l
+			79: '_toggleOutline', // o
+			82: '_toggleRotateDistort', // r
+			84: '_toggleTransparency', // t
+		}
 	},
 
 	initialize: function(overlay) {
@@ -42,6 +50,9 @@ L.DistortableImage.Edit = L.Handler.extend({
 		overlay.on('click', function(event) {
 			new L.Toolbar.Popup(event.latlng, L.DistortableImage.EDIT_TOOLBAR).addTo(map, this._overlay);
 		}, this);
+
+		/* Enable hotkeys. */
+		L.DomEvent.on(window, 'keydown', this._onKeydown, this);
 	},
 
 	removeHooks: function() {
@@ -113,6 +124,21 @@ L.DistortableImage.Edit = L.Handler.extend({
 			this.fire('drag');
 		};
 	},
+
+	_onKeydown: function(event) {
+		var keymap = this.options.keymap,
+			hasHandler = false,
+			handler = keymap[event.which], // might be undefined.
+			key;
+
+		for (key in keymap) {
+			if (keymap.hasOwnProperty(key)) {
+				hasHandler = true;
+			}
+		}
+
+		if (hasHandler) { handler.call(this); }
+	},	
 
 	_toggleRotateDistort: function() {
 		var map = this._overlay._map;
