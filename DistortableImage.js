@@ -125,52 +125,7 @@ L.MatrixUtil = {
 		return L.MatrixUtil.multsm(1/m[8], m);
 	}
 };
-L.RotatableMarker = L.Marker.extend({
-
-	options: {
-		rotation: 0
-	},
-
-	initialize: function(latlng, options) {
-		L.Marker.prototype.initialize.call(this, latlng, options);
-		this.setRotation(this.options.rotation);
-	},
-
-	setRotation: function(theta) {
-		this._rotation = theta;
-		
-		this.update();
-		this.fire('rotate', { rotation: this._rotation });
-
-		return this;
-	},
-
-	getRotation: function() {
-		return this._rotation;
-	},
-
-	_setPos: function(pos) {
-		var rotation = this.getRotation(),
-			transformString = [L.DomUtil.getTranslateString(pos), L.DomUtil.getRotateString(rotation, 'rad')].join(' ');
-
-		this._icon._leaflet_pos = pos;
-		this._icon.style[L.DomUtil.TRANSFORM] = transformString;
-
-		if (this._shadow) {
-			this._shadow._leaflet_pos = pos;
-			this._shadow.style[L.DomUtil.TRANSFORM] = transformString;
-		}
-
-		this._zIndex = pos.y + this.options.zIndexOffset;
-
-		this._resetZIndex();
-	}
-});
-
-L.rotatableMarker = function(latlng, options) {
-	return new L.RotatableMarker(latlng, options);
-};
-L.EditHandle = L.RotatableMarker.extend({
+L.EditHandle = L.Marker.extend({
 	initialize: function(overlay, corner, options) {
 		var markerOptions,
 			latlng = overlay._corners[corner];
@@ -185,15 +140,11 @@ L.EditHandle = L.RotatableMarker.extend({
 			zIndexOffset: 10
 		};
 
-		if (this._handled.getRotation) {
-			markerOptions.rotation = this._handled.getRotation();
-		}
-
-		L.RotatableMarker.prototype.initialize.call(this, latlng, markerOptions);
+		L.Marker.prototype.initialize.call(this, latlng, markerOptions);
 	},
 
 	onAdd: function(map) {
-		L.RotatableMarker.prototype.onAdd.call(this, map);
+		L.Marker.prototype.onAdd.call(this, map);
 		this._bindListeners();
 
 		this.updateHandle();
@@ -201,7 +152,7 @@ L.EditHandle = L.RotatableMarker.extend({
 
 	onRemove: function(map) {
 		this._unbindListeners();
-		L.RotatableMarker.prototype.onRemove.call(this, map);
+		L.Marker.prototype.onRemove.call(this, map);
 	},
 
 	_onHandleDragStart: function() {
