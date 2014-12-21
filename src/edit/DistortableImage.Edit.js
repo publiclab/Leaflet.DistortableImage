@@ -47,16 +47,22 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		this._enableDragging();
 
-		overlay.on('click', function(event) {
-			new L.Toolbar.Popup(event.latlng, L.DistortableImage.EDIT_TOOLBAR).addTo(map, this._overlay);
-		}, this);
+		overlay.on('click', this._showToolbar, this);
 
 		/* Enable hotkeys. */
-		L.DomEvent.on(window, 'keydown', this._onKeydown, this);
+		L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
 	},
 
 	removeHooks: function() {
-		var map = this._overlay._map;
+		var overlay = this._overlay,
+			map = overlay._map;
+
+		// L.DomEvent.off(window, 'keydown', this._onKeyDown, this);
+
+		overlay.off('click', this._showToolbar, this);
+
+		this.dragging.disable();
+		delete this.dragging;
 
 		map.removeLayer(this._handles[this._mode]);
 	},
@@ -125,19 +131,13 @@ L.DistortableImage.Edit = L.Handler.extend({
 		};
 	},
 
-	_onKeydown: function(event) {
+	_onKeyDown: function(event) {
 		var keymap = this.options.keymap,
-			hasHandler = false,
-			handler = keymap[event.which], // might be undefined.
-			key;
+			handlerName = keymap[event.which];
 
-		for (key in keymap) {
-			if (keymap.hasOwnProperty(key)) {
-				hasHandler = true;
-			}
+		if (handlerName !== undefined) {
+			this[handlerName].call(this);
 		}
-
-		if (hasHandler) { handler.call(this); }
 	},	
 
 	_toggleRotateDistort: function() {
@@ -175,6 +175,20 @@ L.DistortableImage.Edit = L.Handler.extend({
 		image.setAttribute('opacity', opacity);
 
 		image.style.outline = outline;
+	},
+
+	_toggleEnabled: function() {
+		if (this.enabled()) { 
+			this.disable(); 
+		}
+		else { 
+			this.enable(); 
+		}
+	},
+
+	_showToolbar: function(event) {
+		new L.Toolbar.Popup(event.latlng, L.DistortableImage.EDIT_TOOLBAR)
+			.addTo(this._overlay._map, this._overlay);
 	},
 
 	toggleIsolate: function() {
