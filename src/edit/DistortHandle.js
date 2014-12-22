@@ -1,7 +1,7 @@
-L.WarpHandle = L.EditHandle.extend({
+L.DistortHandle = L.EditHandle.extend({
 	options: {
-		TYPE: 'warp',
-		icon: new L.Icon({ 
+		TYPE: 'distort',
+		icon: new L.Icon({
 			iconUrl: '../src/images/circle-o_444444_16.png',
 			iconSize: [16, 16],
 			iconAnchor: [8, 8]}

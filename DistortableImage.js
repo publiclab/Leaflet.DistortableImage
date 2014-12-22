@@ -125,52 +125,7 @@ L.MatrixUtil = {
 		return L.MatrixUtil.multsm(1/m[8], m);
 	}
 };
-L.RotatableMarker = L.Marker.extend({
-
-	options: {
-		rotation: 0
-	},
-
-	initialize: function(latlng, options) {
-		L.Marker.prototype.initialize.call(this, latlng, options);
-		this.setRotation(this.options.rotation);
-	},
-
-	setRotation: function(theta) {
-		this._rotation = theta;
-		
-		this.update();
-		this.fire('rotate', { rotation: this._rotation });
-
-		return this;
-	},
-
-	getRotation: function() {
-		return this._rotation;
-	},
-
-	_setPos: function(pos) {
-		var rotation = this.getRotation(),
-			transformString = [L.DomUtil.getTranslateString(pos), L.DomUtil.getRotateString(rotation, 'rad')].join(' ');
-
-		this._icon._leaflet_pos = pos;
-		this._icon.style[L.DomUtil.TRANSFORM] = transformString;
-
-		if (this._shadow) {
-			this._shadow._leaflet_pos = pos;
-			this._shadow.style[L.DomUtil.TRANSFORM] = transformString;
-		}
-
-		this._zIndex = pos.y + this.options.zIndexOffset;
-
-		this._resetZIndex();
-	}
-});
-
-L.rotatableMarker = function(latlng, options) {
-	return new L.RotatableMarker(latlng, options);
-};
-L.EditHandle = L.RotatableMarker.extend({
+L.EditHandle = L.Marker.extend({
 	initialize: function(overlay, corner, options) {
 		var markerOptions,
 			latlng = overlay._corners[corner];
@@ -185,15 +140,11 @@ L.EditHandle = L.RotatableMarker.extend({
 			zIndexOffset: 10
 		};
 
-		if (this._handled.getRotation) {
-			markerOptions.rotation = this._handled.getRotation();
-		}
-
-		L.RotatableMarker.prototype.initialize.call(this, latlng, markerOptions);
+		L.Marker.prototype.initialize.call(this, latlng, markerOptions);
 	},
 
 	onAdd: function(map) {
-		L.RotatableMarker.prototype.onAdd.call(this, map);
+		L.Marker.prototype.onAdd.call(this, map);
 		this._bindListeners();
 
 		this.updateHandle();
@@ -201,7 +152,7 @@ L.EditHandle = L.RotatableMarker.extend({
 
 	onRemove: function(map) {
 		this._unbindListeners();
-		L.RotatableMarker.prototype.onRemove.call(this, map);
+		L.Marker.prototype.onRemove.call(this, map);
 	},
 
 	_onHandleDragStart: function() {
@@ -238,6 +189,26 @@ L.EditHandle = L.RotatableMarker.extend({
 
 		this._handled._map.off('zoomend', this.updateHandle, this);
 		this._handled.off('update', this.updateHandle, this);
+	}
+});
+L.DistortHandle = L.EditHandle.extend({
+	options: {
+		TYPE: 'distort',
+		icon: new L.Icon({
+			iconUrl: '../src/images/circle-o_444444_16.png',
+			iconSize: [16, 16],
+			iconAnchor: [8, 8]}
+		)
+	},
+
+	updateHandle: function() {
+		this.setLatLng(this._handled._corners[this._corner]);
+	},
+
+	_onHandleDrag: function() {
+		this._handled._updateCorner(this._corner, this.getLatLng());
+
+		this._handled.fire('update');
 	}
 });
 L.RotateHandle = L.EditHandle.extend({
@@ -302,26 +273,6 @@ L.RotateHandle = L.EditHandle.extend({
 			dy = a.y - b.y;
 
 		return Math.pow(dx, 2) + Math.pow(dy, 2);
-	}
-});
-L.WarpHandle = L.EditHandle.extend({
-	options: {
-		TYPE: 'warp',
-		icon: new L.Icon({ 
-			iconUrl: '../src/images/circle-o_444444_16.png',
-			iconSize: [16, 16],
-			iconAnchor: [8, 8]}
-		)
-	},
-
-	updateHandle: function() {
-		this.setLatLng(this._handled._corners[this._corner]);
-	},
-
-	_onHandleDrag: function() {
-		this._handled._updateCorner(this._corner, this.getLatLng());
-
-		this._handled.fire('update');
 	}
 });
 L.DistortableImageOverlay = L.ImageOverlay.extend({
@@ -608,7 +559,15 @@ L.DistortableImage = L.DistortableImage || {};
 L.DistortableImage.Edit = L.Handler.extend({
 	options: {
 		opacity: 0.7,
-		outline: '1px solid red'
+		outline: '1px solid red',
+		keymap: {
+			68: '_toggleRotateDistort', // d
+			73: '_toggleIsolate', // i
+			76: '_toggleEnabled', // l
+			79: '_toggleOutline', // o
+			82: '_toggleRotateDistort', // r
+			84: '_toggleTransparency', // t
+		}
 	},
 
 	initialize: function(overlay) {
@@ -624,9 +583,9 @@ L.DistortableImage.Edit = L.Handler.extend({
 			map = overlay._map,
 			i;
 
-		this._warpHandles = new L.LayerGroup();
+		this._distortHandles = new L.LayerGroup();
 		for (i = 0; i < 4; i++) {
-			this._warpHandles.addLayer(new L.WarpHandle(overlay, i));
+			this._distortHandles.addLayer(new L.DistortHandle(overlay, i));
 		}
 
 		this._rotateHandles = new L.LayerGroup();
@@ -634,20 +593,32 @@ L.DistortableImage.Edit = L.Handler.extend({
 			this._rotateHandles.addLayer(new L.RotateHandle(overlay, i));
 		}
 
-		this._handles = [this._warpHandles, this._rotateHandles];
+		this._mode = 'distort';
+		this._handles = { 
+			'distort': this._distortHandles, 
+			'rotate':  this._rotateHandles
+		};
 
-		this._mode = 0; // warp
-		map.addLayer(this._warpHandles);
+		map.addLayer(this._distortHandles);
 
 		this._enableDragging();
 
-		this._overlay.on('click', function(event) {
-			new L.Toolbar.Popup(event.latlng, L.DistortableImage.EDIT_TOOLBAR).addTo(map, this._overlay);
-		}, this);
+		overlay.on('click', this._showToolbar, this);
+
+		/* Enable hotkeys. */
+		L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
 	},
 
 	removeHooks: function() {
-		var map = this._overlay._map;
+		var overlay = this._overlay,
+			map = overlay._map;
+
+		// L.DomEvent.off(window, 'keydown', this._onKeyDown, this);
+
+		overlay.off('click', this._showToolbar, this);
+
+		this.dragging.disable();
+		delete this.dragging;
 
 		map.removeLayer(this._handles[this._mode]);
 	},
@@ -696,7 +667,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		/* 
 		 * Adjust default behavior of L.Draggable.
-	     * By default, L.Draggable overwrites the CSS3 warp transform 
+	     * By default, L.Draggable overwrites the CSS3 distort transform 
 	     *     that we want when it calls L.DomUtil.setPosition.
 		 */
 		this.dragging._updatePosition = function() {
@@ -716,13 +687,23 @@ L.DistortableImage.Edit = L.Handler.extend({
 		};
 	},
 
+	_onKeyDown: function(event) {
+		var keymap = this.options.keymap,
+			handlerName = keymap[event.which];
+
+		if (handlerName !== undefined) {
+			this[handlerName].call(this);
+		}
+	},	
+
 	_toggleRotateDistort: function() {
 		var map = this._overlay._map;
 
 		map.removeLayer(this._handles[this._mode]);
 
 		/* Switch mode. */
-		this._mode = (this._mode + 1) % 2;
+		if (this._mode === 'rotate') { this._mode = 'distort'; }
+		else { this._mode = 'rotate'; }
 
 		map.addLayer(this._handles[this._mode]);
 	},
@@ -750,6 +731,20 @@ L.DistortableImage.Edit = L.Handler.extend({
 		image.setAttribute('opacity', opacity);
 
 		image.style.outline = outline;
+	},
+
+	_toggleEnabled: function() {
+		if (this.enabled()) { 
+			this.disable(); 
+		}
+		else { 
+			this.enable(); 
+		}
+	},
+
+	_showToolbar: function(event) {
+		new L.Toolbar.Popup(event.latlng, L.DistortableImage.EDIT_TOOLBAR)
+			.addTo(this._overlay._map, this._overlay);
 	},
 
 	toggleIsolate: function() {

@@ -1,4 +1,4 @@
-L.EditHandle = L.RotatableMarker.extend({
+L.EditHandle = L.Marker.extend({
 	initialize: function(overlay, corner, options) {
 		var markerOptions,
 			latlng = overlay._corners[corner];
@@ -13,15 +13,11 @@ L.EditHandle = L.RotatableMarker.extend({
 			zIndexOffset: 10
 		};
 
-		if (this._handled.getRotation) {
-			markerOptions.rotation = this._handled.getRotation();
-		}
-
-		L.RotatableMarker.prototype.initialize.call(this, latlng, markerOptions);
+		L.Marker.prototype.initialize.call(this, latlng, markerOptions);
 	},
 
 	onAdd: function(map) {
-		L.RotatableMarker.prototype.onAdd.call(this, map);
+		L.Marker.prototype.onAdd.call(this, map);
 		this._bindListeners();
 
 		this.updateHandle();
@@ -29,7 +25,7 @@ L.EditHandle = L.RotatableMarker.extend({
 
 	onRemove: function(map) {
 		this._unbindListeners();
-		L.RotatableMarker.prototype.onRemove.call(this, map);
+		L.Marker.prototype.onRemove.call(this, map);
 	},
 
 	_onHandleDragStart: function() {

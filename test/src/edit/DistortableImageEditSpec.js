@@ -31,7 +31,7 @@ describe("L.DistortableImage.Edit", function() {
 		overlay.fire('update');
 		
 		/* Warp handles are currently on the map; they should have been updated. */
-		overlay.editing._warpHandles.eachLayer(function(handle) {
+		overlay.editing._distortHandles.eachLayer(function(handle) {
 			expect(handle.getLatLng()).to.be.closeToLatLng(corners[handle._corner]);
 		});
 
