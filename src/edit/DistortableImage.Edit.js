@@ -187,8 +187,16 @@ L.DistortableImage.Edit = L.Handler.extend({
 	},
 
 	_showToolbar: function(event) {
-		new L.Toolbar.Popup(event.latlng, L.DistortableImage.EDIT_TOOLBAR)
-			.addTo(this._overlay._map, this._overlay);
+		var overlay = this._overlay,
+			map = overlay._map;
+
+		/* Ensure that there is only ever one toolbar attached to each image. */
+		if (this.toolbar) {
+			map.removeLayer(this.toolbar);
+		}
+
+		this.toolbar = new L.Toolbar.Popup(event.latlng, L.DistortableImage.EDIT_TOOLBAR)
+			.addTo(map, overlay);
 	},
 
 	toggleIsolate: function() {
