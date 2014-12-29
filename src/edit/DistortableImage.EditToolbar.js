@@ -99,11 +99,6 @@ L.DistortableImage.EditToolbar = L.Toolbar.Popup.extend({
 		]
 	},
 
-	initialize: function(latlng, options) {
-		L.setOptions(this, options);
-		L.Toolbar.Popup.prototype.initialize.call(this, latlng, this.options.actions, options);
-	},
-
 	/* Remove the toolbar after each action. */
 	_getActionConstructor: function(Action) {
 		var A = Action.extend({
