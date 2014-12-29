@@ -1,71 +1,119 @@
 L.DistortableImage = L.DistortableImage || {};
 
-L.DistortableImage.EDIT_TOOLBAR = [
+var EditOverlayAction = L.ToolbarAction.extend({
+		initialize: function(map, overlay, options) {
+			this._overlay = overlay;
+			this._map = map;
 
-	/* Toggle transparency. */
-	function(map, overlay) {
-		return L.DistortableImage.toolbarHandlerFor(overlay.editing._toggleTransparency, {
+			L.ToolbarAction.prototype.initialize.call(this, options);
+		}
+	}),
+
+	ToggleTransparency = EditOverlayAction.extend({
+		options: { toolbarIcon: { 
 			html: '<span class="fa fa-adjust"></span>',
 			title: 'Toggle Image Transparency'	
-		}, overlay.editing);
-	},
+		}},
 
-	/* Delete image. */
-	function(map, overlay) {
-		return L.DistortableImage.toolbarHandlerFor(function() {
-			map.removeLayer(overlay);
-		}, {
-			html: '<span class="fa fa-trash"></span>',
-			title: 'Delete image'
-		}, overlay);
-	},
+		addHooks: function() {
+			var editing = this._overlay.editing;
 
-	/* Toggle image outline. */
-	function(map, overlay) {
-		return L.DistortableImage.toolbarHandlerFor(overlay.editing._toggleOutline, {
+			editing._toggleTransparency();
+			this.disable();
+		}
+	}),
+
+	ToggleOutline = EditOverlayAction.extend({
+		options: { toolbarIcon: { 
 			html: '<span class="fa fa-square-o"></span>',
 			title: 'Toggle Image Outline'
-		}, overlay.editing);
-	},
+		}},
 
-	/* Toggle locked / unlocked state. */
-	function(map, overlay) {
-		return L.DistortableImage.toolbarHandlerFor(function() {
-			if (this.enabled()) { this.disable(); }
-			else { this.enable(); }
-		}, {
+		addHooks: function() {
+			var editing = this._overlay.editing;
+
+			editing._toggleOutline();
+			this.disable();
+		}
+	}),
+
+	RemoveOverlay = EditOverlayAction.extend({
+		options: { toolbarIcon: { 
+			html: '<span class="fa fa-trash"></span>',
+			title: 'Delete image'
+		}},
+
+		addHooks: function() {
+			var map = this._map;
+
+			map.removeLayer(this._overlay);
+			this.disable();
+		}
+	}),
+
+	ToggleEditable = EditOverlayAction.extend({
+		options: { toolbarIcon: {
 			html: '<span class="fa fa-lock"></span>',
-			title: 'Lock / Unlock editing'
-		}, overlay.editing);
-	},
+			title: 'Lock / Unlock editing'			
+		}},
 
-	/* */
-	function(map, overlay) {
-		var icon = overlay.editing._mode ? 
-			'image' : 
-			'rotate-left';
+		addHooks: function() {
+			var editing = this._overlay.editing;
 
-		return L.DistortableImage.toolbarHandlerFor(overlay.editing._toggleRotateDistort, {
-			html: '<span class="fa fa-' + icon + '"></span>',
-			title: 'Rotate'
-		}, overlay.editing);
-	}
-];
+			if (editing.enabled()) { editing.disable(); }
+			else { editing.enable(); }
 
-/* Shortcut for constructing a ToolbarHandler which executes a function and then finishes. */
-L.DistortableImage.toolbarHandlerFor = function(fn, options, context) {
-	var T = L.ToolbarHandler.extend({
-		initialize: function(iconOptions) {
-			L.setOptions(this, { 
-				toolbarIcon: new L.ToolbarIcon(iconOptions)
-			});
+			this.disable();
+		}
+	}),
+
+	ToggleRotateDistort = EditOverlayAction.extend({
+		initialize: function(map, overlay, options) {
+			var icon = overlay.editing._mode ? 'image' : 'rotate-left';
+
+			options = options || {};
+			options.toolbarIcon = {
+				html: '<span class="fa fa-' + icon + '"></span>',
+				title: 'Rotate'	
+			};
+
+			EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
 		},
 
 		addHooks: function() {
-			fn.call(context);
+			var editing = this._overlay.editing;
+
+			editing._toggleRotateDistort();
 			this.disable();
 		}
 	});
 
-	return new T(options);
-};
+L.DistortableImage.EditToolbar = L.Toolbar.Popup.extend({
+	options: {
+		actions: [
+			ToggleTransparency,
+			RemoveOverlay,
+			ToggleOutline,
+			ToggleEditable,
+			ToggleRotateDistort
+		]
+	},
+
+	initialize: function(latlng, options) {
+		L.setOptions(this, options);
+		L.Toolbar.Popup.prototype.initialize.call(this, latlng, this.options.actions, options);
+	},
+
+	/* Remove the toolbar after each action. */
+	_getActionConstructor: function(Action) {
+		var A = Action.extend({
+			removeHooks: function() {
+				var map = this._map;
+
+				map.removeLayer(this.toolbar);
+			}
+		});
+
+		return L.Toolbar.prototype._getActionConstructor.call(this, A);
+	}
+});

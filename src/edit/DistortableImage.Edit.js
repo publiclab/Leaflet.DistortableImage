@@ -195,8 +195,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			map.removeLayer(this.toolbar);
 		}
 
-		this.toolbar = new L.Toolbar.Popup(event.latlng, L.DistortableImage.EDIT_TOOLBAR)
-			.addTo(map, overlay);
+		this.toolbar = new L.DistortableImage.EditToolbar(event.latlng).addTo(map, overlay);
 	},
 
 	toggleIsolate: function() {
