@@ -17,16 +17,6 @@
 </head>
 <body style="margin:0;">
 
-<div id="debugmarkers" style="display:none;">
-<div style="z-index:999;width:2px;height:2px;position:absolute;border:1px solid green;" id="debug-green"></div>
-<div style="z-index:999;width:2px;height:2px;position:absolute;border:1px solid yellow;" id="debug"></div>
-<div style="z-index:999;width:4px;height:4px;position:absolute;border:1px solid yellow;" id="debugb"></div>
-<div style="z-index:999;width:3px;height:3px;position:absolute;border:1px solid red;" id="debug0"></div>
-<div style="z-index:999;width:3px;height:3px;position:absolute;border:1px solid red;" id="debug1"></div>
-<div style="z-index:999;width:3px;height:3px;position:absolute;border:1px solid red;" id="debug2"></div>
-<div style="z-index:999;width:3px;height:3px;position:absolute;border:1px solid red;" id="debug3"></div>
-</div>
-
   <form id="test_form" >
     <input type="file" id="inputimage" accept="image/*">
   </form>
@@ -49,13 +39,8 @@
         id: 'examples.map-i86knfo3'
       }).addTo(map);
 
-      // startup the ImageDistort plugin
-      // $L.initialize( {
-      //   uploadBtn: true // prompt and handle new images
-      // })
-
       images = []
-      deselectOthers = function(){
+      select = function(e){
         for (var i in images) {
           img = this
           if (img._leaflet_id != images[i]._leaflet_id) {
@@ -69,6 +54,8 @@
         }
         /* Ensure this is enabled */
         this.editing.enable()
+        /* If it's locked, allow event to propagate on to map below */
+        if (this.editing._mode != "lock") e.stopPropagation()
       }
 
       // create an image
@@ -83,10 +70,7 @@
         }
       ).addTo(map);
       images.push(img)
-
-      L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
-      L.DomEvent.on(img._image, 'mousedown', deselectOthers, img);
-
+      L.DomEvent.on(img._image, 'mousedown', select, img);
 
       // create a second image
       img = new L.DistortableImageOverlay(
@@ -102,7 +86,21 @@
       images.push(img)
 
       L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
-      L.DomEvent.on(img._image, 'mousedown', deselectOthers, img);
+      L.DomEvent.on(img._image, 'mousedown', select, img);
+
+      // this doesn't work -- it triggers when clicking toolbar
+      // can we stopPropagation of toolbar clicks? is that impolite.
+      map.on('mousedown', function() {
+        for (var i in images) {
+          /* Deselect (disable) all images */
+          //images[i].editing.disable()
+          /* Remove toolbars */
+          if (images[i].editing.toolbar) {
+            //map.removeLayer(images[i].editing.toolbar);
+          }
+        }
+      });
+
     })();
   </script>
       
