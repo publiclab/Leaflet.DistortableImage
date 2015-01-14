@@ -583,11 +583,6 @@ L.DistortableImage.EditToolbar = L.Toolbar.Popup.extend({
 		]
 	},
 
-	initialize: function(latlng, options) {
-		L.setOptions(this, options);
-		L.Toolbar.Popup.prototype.initialize.call(this, latlng, this.options.actions, options);
-	},
-
 	/* Remove the toolbar after each action. */
 	_getActionConstructor: function(Action) {
 		var A = Action.extend({
@@ -798,7 +793,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 			map.removeLayer(this.toolbar);
 		}
 
-		this.toolbar = new L.DistortableImage.EditToolbar(event.latlng).addTo(map, overlay);
+    var point = map.containerPointToLatLng(new L.Point(event.containerPoint.x,event.containerPoint.y-20));
+		this.toolbar = new L.DistortableImage.EditToolbar(point).addTo(map, overlay);
 	},
 
 	toggleIsolate: function() {
