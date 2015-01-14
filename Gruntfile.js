@@ -79,6 +79,7 @@ module.exports = function(grunt) {
                 src: [
                     'src/util/*.js',
                     'src/edit/EditHandle.js',
+                    'src/edit/LockHandle.js',
                     'src/edit/DistortHandle.js',
                     'src/edit/RotateHandle.js',
                     'src/DistortableImageOverlay.js',

@@ -12,6 +12,7 @@ var EditOverlayAction = L.ToolbarAction.extend({
 	ToggleTransparency = EditOverlayAction.extend({
 		options: { toolbarIcon: { 
 			html: '<span class="fa fa-adjust"></span>',
+			tooltip: 'Toggle Image Transparency',
 			title: 'Toggle Image Transparency'	
 		}},
 
@@ -26,6 +27,7 @@ var EditOverlayAction = L.ToolbarAction.extend({
 	ToggleOutline = EditOverlayAction.extend({
 		options: { toolbarIcon: { 
 			html: '<span class="fa fa-square-o"></span>',
+			tooltip: 'Toggle Image Outline',
 			title: 'Toggle Image Outline'
 		}},
 
@@ -40,6 +42,7 @@ var EditOverlayAction = L.ToolbarAction.extend({
 	RemoveOverlay = EditOverlayAction.extend({
 		options: { toolbarIcon: { 
 			html: '<span class="fa fa-trash"></span>',
+			tooltip: 'Delete image',
 			title: 'Delete image'
 		}},
 
@@ -54,26 +57,26 @@ var EditOverlayAction = L.ToolbarAction.extend({
 	ToggleEditable = EditOverlayAction.extend({
 		options: { toolbarIcon: {
 			html: '<span class="fa fa-lock"></span>',
+			tooltip: 'Lock / Unlock editing',
 			title: 'Lock / Unlock editing'			
 		}},
 
 		addHooks: function() {
 			var editing = this._overlay.editing;
 
-			if (editing.enabled()) { editing.disable(); }
-			else { editing.enable(); }
-
+			editing._toggleLock();
 			this.disable();
 		}
 	}),
 
 	ToggleRotateDistort = EditOverlayAction.extend({
 		initialize: function(map, overlay, options) {
-			var icon = overlay.editing._mode ? 'image' : 'rotate-left';
+			var icon = overlay.editing._mode === 'rotate' ? 'image' : 'rotate-left';
 
 			options = options || {};
 			options.toolbarIcon = {
 				html: '<span class="fa fa-' + icon + '"></span>',
+				tooltip: 'Rotate',
 				title: 'Rotate'	
 			};
 
