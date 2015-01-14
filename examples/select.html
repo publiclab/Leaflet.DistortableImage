@@ -89,6 +89,7 @@
       L.DomEvent.on(img._image, 'mousedown', select, img);
 
       // this doesn't work -- it triggers when clicking toolbar
+      // can we stopPropagation of toolbar clicks? is that impolite.
       map.on('mousedown', function() {
         for (var i in images) {
           /* Deselect (disable) all images */

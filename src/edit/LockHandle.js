@@ -8,14 +8,12 @@ L.LockHandle = L.EditHandle.extend({
 		)
 	},
 
+	/* cannot be dragged */
 	_onHandleDrag: function() {
-		//this.setLatLng(this._handled._corners[this._corner]);
 	},
 
 	updateHandle: function() {
-		this._handled._updateCorner(this._corner, this.getLatLng());
-
-		//this._handled.fire('update');
+		this.setLatLng(this._handled._corners[this._corner]);
 	}
 
 });

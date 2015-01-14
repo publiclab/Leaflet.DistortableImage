@@ -191,6 +191,7 @@ L.EditHandle = L.Marker.extend({
 		this._handled.off('update', this.updateHandle, this);
 	}
 });
+
 L.LockHandle = L.EditHandle.extend({
 	options: {
 		TYPE: 'lock',
@@ -201,14 +202,12 @@ L.LockHandle = L.EditHandle.extend({
 		)
 	},
 
+	/* cannot be dragged */
 	_onHandleDrag: function() {
-		//this.setLatLng(this._handled._corners[this._corner]);
 	},
 
 	updateHandle: function() {
-		this._handled._updateCorner(this._corner, this.getLatLng());
-
-		//this._handled.fire('update');
+		this.setLatLng(this._handled._corners[this._corner]);
 	}
 
 });
@@ -679,9 +678,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		overlay.on('click', this._showToolbar, this);
 
-		/* Hide toolbars while dragging; mouseup will re-show it */
+		/* Hide toolbars while dragging; click will re-show it */
 		this.dragging.on('dragstart', this._hideToolbar, this);
-		//this.dragging.on('dragend', this._showToolbar, this);
 
 		/* Enable hotkeys. */
 		L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
@@ -701,6 +699,9 @@ L.DistortableImage.Edit = L.Handler.extend({
 		delete this.dragging;
 
 		map.removeLayer(this._handles[this._mode]);
+
+ 		/* Disable hotkeys. */
+		L.DomEvent.off(window, 'keydown', this._onKeyDown, this);
 	},
 
 	_rotateBy: function(angle) {
@@ -747,8 +748,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		/* 
 		 * Adjust default behavior of L.Draggable.
-			 * By default, L.Draggable overwrites the CSS3 distort transform 
-			 *     that we want when it calls L.DomUtil.setPosition.
+		 * By default, L.Draggable overwrites the CSS3 distort transform 
+		 * that we want when it calls L.DomUtil.setPosition.
 		 */
 		this.dragging._updatePosition = function() {
 			var delta = this._newPos.subtract(map.latLngToLayerPoint(overlay._corners[0])),
@@ -846,7 +847,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		
 		var point;
 		if (event.containerPoint) { point = event.containerPoint; }
-    else { point = event.target._dragStartTarget._leaflet_pos; }
+		else { point = event.target._dragStartTarget._leaflet_pos; }
 		var raised_point = map.containerPointToLatLng(new L.Point(point.x,point.y-20));
 		this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(map, overlay);
 	},
