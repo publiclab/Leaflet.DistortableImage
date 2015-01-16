@@ -23,7 +23,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		this._outlined = false;
 	},
 
-  /* Run on image seletion. */
+	/* Run on image seletion. */
 	addHooks: function() {
 		var overlay = this._overlay,
 			map = overlay._map,
@@ -45,7 +45,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		}
 
 		this._handles = { 
-			'lock':		this._lockHandles, 
+			'lock':		 this._lockHandles, 
 			'distort': this._distortHandles, 
 			'rotate':  this._rotateHandles
 		};
@@ -64,7 +64,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
 	},
 
-  /* Run on image deseletion. */
+	/* Run on image deseletion. */
 	removeHooks: function() {
 		var overlay = this._overlay,
 			map = overlay._map;

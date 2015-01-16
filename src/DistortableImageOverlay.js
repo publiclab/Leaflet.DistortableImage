@@ -92,9 +92,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
  		if (!this.hasEventListeners(event.type)) { return; }
 
 		var map = this._map,
-		    containerPoint = map.mouseEventToContainerPoint(event),
-		    layerPoint = map.containerPointToLayerPoint(containerPoint),
-		    latlng = map.layerPointToLatLng(layerPoint);
+				containerPoint = map.mouseEventToContainerPoint(event),
+				layerPoint = map.containerPointToLayerPoint(containerPoint),
+				latlng = map.layerPointToLatLng(layerPoint);
 
 		this.fire(event.type, {
 			latlng: latlng,
@@ -132,7 +132,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 	/*
 	 * Calculates the transform string that will be correct *at the end* of zooming.
 	 * Leaflet then generates a CSS3 animation between the current transform and 
-	 *     future transform which makes the transition appear smooth.
+	 *		 future transform which makes the transition appear smooth.
 	 */
 	_animateZoom: function(event) {
 		var map = this._map,
@@ -159,7 +159,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
 	/*
 	 * Calculates the centroid of the image.
-	 *     See http://stackoverflow.com/questions/6149175/logical-question-given-corners-find-center-of-quadrilateral
+	 *		 See http://stackoverflow.com/questions/6149175/logical-question-given-corners-find-center-of-quadrilateral
 	 */
 	getCenter: function(ll2c, c2ll) {
 		var map = this._map,
@@ -191,10 +191,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		/*
 		 * This matrix describes the action of the CSS transform on each corner of the image.
 		 * It maps from the coordinate system centered at the upper left corner of the image
-		 *     to the region bounded by the latlngs in this._corners.
+		 *		 to the region bounded by the latlngs in this._corners.
 		 * For example:
-		 *     0, 0, c[0].x, c[0].y
-		 *     says that the upper-left corner of the image maps to the first latlng in this._corners.
+		 *		 0, 0, c[0].x, c[0].y
+		 *		 says that the upper-left corner of the image maps to the first latlng in this._corners.
 		 */
 		return L.MatrixUtil.general2DProjection(
 			0, 0, c[0].x, c[0].y,
