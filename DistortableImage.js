@@ -641,10 +641,12 @@ L.DistortableImage.Edit = L.Handler.extend({
 		this._overlay = overlay;
 
 		/* Interaction modes. */
+		this._mode = this._overlay.options.mode || 'distort';
 		this._transparent = false;
 		this._outlined = false;
 	},
 
+  /* Run on image seletion. */
 	addHooks: function() {
 		var overlay = this._overlay,
 			map = overlay._map,
@@ -665,26 +667,27 @@ L.DistortableImage.Edit = L.Handler.extend({
 			this._rotateHandles.addLayer(new L.RotateHandle(overlay, i));
 		}
 
-		this._mode = 'distort';
 		this._handles = { 
 			'lock':		this._lockHandles, 
 			'distort': this._distortHandles, 
 			'rotate':  this._rotateHandles
 		};
 
-		map.addLayer(this._distortHandles);
-
-		this._enableDragging();
+		if (this._mode === 'lock') {
+			map.addLayer(this._lockHandles);
+		} else {
+			this._mode = 'distort';
+			map.addLayer(this._distortHandles);
+			this._enableDragging();
+		}
 
 		overlay.on('click', this._showToolbar, this);
-
-		/* Hide toolbars while dragging; click will re-show it */
-		this.dragging.on('dragstart', this._hideToolbar, this);
 
 		/* Enable hotkeys. */
 		L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
 	},
 
+  /* Run on image deseletion. */
 	removeHooks: function() {
 		var overlay = this._overlay,
 			map = overlay._map;
@@ -745,6 +748,9 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		this.dragging = new L.Draggable(overlay._image);
 		this.dragging.enable();
+
+		/* Hide toolbars while dragging; click will re-show it */
+		this.dragging.on('dragstart', this._hideToolbar, this);
 
 		/* 
 		 * Adjust default behavior of L.Draggable.
@@ -867,26 +873,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 		// }
 		// this.hidden = false;
 		// this.setOpacity(1);
-	},
-
-	deselect: function() {
-		// $L.selected = false;
-		// this.onDeselect();
-	},
-
-	select: function() {
-		// // deselect other images
-		// $.each($L.images,function(i,d) {
-		// 	d.deselect.apply(d);
-		// });
-
-		// // re-establish order
-		// $L.impose_order();
-		// $L.selected = this;
-
-		// this.bringToFront();
-		// this.onSelect();
 	}
+
 });
 
 L.DistortableImageOverlay.addInitHook(function() {
