@@ -62,6 +62,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		/* Enable hotkeys. */
 		L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
+
+    overlay.fire('select');
 	},
 
 	/* Run on image deseletion. */
@@ -82,6 +84,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 
  		/* Disable hotkeys. */
 		L.DomEvent.off(window, 'keydown', this._onKeyDown, this);
+
+    overlay.fire('deselect');
 	},
 
 	_rotateBy: function(angle) {
