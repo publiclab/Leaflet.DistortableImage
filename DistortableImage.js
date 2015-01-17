@@ -358,21 +358,19 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 			originalImageWidth = L.DomUtil.getStyle(this._image, 'width'),
 			originalImageHeight = L.DomUtil.getStyle(this._image, 'height'),
 
-			aspectRatio = originalImageWidth / originalImageHeight,
-			mapHeight = L.DomUtil.getStyle(map._container, 'height'),
-			mapWidth = L.DomUtil.getStyle(map._container, 'width'),
+			aspectRatio = parseInt(originalImageWidth) / parseInt(originalImageHeight),
 
 			imageHeight = this.options.height,
-			imageWidth = aspectRatio*imageHeight,
+			imageWidth = parseInt(aspectRatio*imageHeight),
 
 			center = map.latLngToContainerPoint(map.getCenter()),
-			offset = new L.Point(mapWidth - imageWidth, mapHeight - imageHeight).divideBy(2);
+			offset = new L.Point(imageWidth, imageHeight).divideBy(2);
 
 		if (this.options.corners) { this._corners = this.options.corners; }
 		else {
 			this._corners = [
-				map.containerPointToLatLng(center.subtract(offset)),
 				map.containerPointToLatLng(center.add(new L.Point(offset.x, - offset.y))),
+				map.containerPointToLatLng(center.subtract(offset)),
 				map.containerPointToLatLng(center.add(offset)),
 				map.containerPointToLatLng(center.add(new L.Point(- offset.x, offset.y)))
 			];
