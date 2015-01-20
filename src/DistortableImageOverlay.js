@@ -69,10 +69,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		if (this.options.corners) { this._corners = this.options.corners; }
 		else {
 			this._corners = [
-				map.containerPointToLatLng(center.add(new L.Point(offset.x, - offset.y))),
 				map.containerPointToLatLng(center.subtract(offset)),
-				map.containerPointToLatLng(center.add(offset)),
-				map.containerPointToLatLng(center.add(new L.Point(- offset.x, offset.y)))
+				map.containerPointToLatLng(center.add(new L.Point(offset.x, - offset.y))),
+				map.containerPointToLatLng(center.add(new L.Point(- offset.x, offset.y))),
+				map.containerPointToLatLng(center.add(offset))
 			];
 		}
 	},
