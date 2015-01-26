@@ -86,7 +86,7 @@ module.exports = function(grunt) {
                     'src/edit/DistortableImage.EditToolbar.js',
                     'src/edit/DistortableImage.Edit.js',
                 ],
-                dest: 'DistortableImage.js',
+                dest: 'dist/leaflet.distortableimage.js',
             }
         }
     });
