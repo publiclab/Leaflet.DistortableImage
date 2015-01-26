@@ -1,6 +1,6 @@
 L.DomUtil = L.extend(L.DomUtil, {
 	getMatrixString: function(m) {
-		var is3d = L.Browser.webkit3d,
+		var is3d = L.Browser.webkit3d || L.Browser.gecko3d,
 
 			/* 
 		     * Since matrix3d takes a 4*4 matrix, we add in an empty row and column, which act as the identity on the z-axis.
