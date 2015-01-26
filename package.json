@@ -7,7 +7,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/publiclab/ImageDistortLeaflet.git"
+    "url": "https://github.com/publiclab/Leaflet.DistortableImage.git"
   },
   "keywords": [
     "leaflet",
@@ -18,9 +18,9 @@
   "author": "Anish Shah, Jeff Warren, Justin Manley",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/publiclab/ImageDistortLeaflet/issues"
+    "url": "https://github.com/publiclab/Leaflet.DistortableImage/issues"
   },
-  "homepage": "https://github.com/publiclab/ImageDistortLeaflet",
+  "homepage": "https://github.com/publiclab/Leaflet.DistortableImage",
   "devDependencies": {
     "chai": "^1.10.0",
     "font-awesome": "^4.2.0",
