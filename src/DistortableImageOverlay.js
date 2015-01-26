@@ -23,16 +23,15 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		map._panes.overlayPane.appendChild(this._image);
 
 		map.on('viewreset', this._reset, this);
-
-		if (map.options.zoomAnimation && L.Browser.any3d) {
-			map.on('zoomanim', this._animateZoom, this);
-		}
 		/* End copied from L.ImageOverlay */
 
 		/* Have to wait for the image to load because we need to access its width and height. */
 		L.DomEvent.on(this._image, 'load', function() {
 			this._initImageDimensions();
 			this._reset();
+			if (map.options.zoomAnimation && L.Browser.any3d) {
+				map.on('zoomanim', this._animateZoom, this);
+			}
 		}, this);		
 
 		this.fire('add');	
