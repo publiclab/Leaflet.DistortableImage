@@ -71,7 +71,7 @@
         }
       ).addTo(map);
       images.push(img)
-      L.DomEvent.on(img._image, 'mousedown', select, img);
+      L.DomEvent.on(img._image, 'click', select, img);
 
       // create a second image
       img = new L.DistortableImageOverlay(
@@ -87,7 +87,7 @@
       images.push(img)
 
       L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
-      L.DomEvent.on(img._image, 'mousedown', select, img);
+      L.DomEvent.on(img._image, 'click', select, img);
 
       // this doesn't work -- it triggers when clicking toolbar
       // can we stopPropagation of toolbar clicks? is that impolite.

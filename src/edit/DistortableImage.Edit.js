@@ -47,7 +47,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		this._handles = { 
 			'lock':		 this._lockHandles, 
 			'distort': this._distortHandles, 
-			'rotate':  this._rotateHandles
+			'rotate':	this._rotateHandles
 		};
 
 		if (this._mode === 'lock') {
@@ -58,12 +58,13 @@ L.DistortableImage.Edit = L.Handler.extend({
 			this._enableDragging();
 		}
 
-		overlay.on('click', this._showToolbar, this);
+		//overlay.on('click', this._showToolbar, this);
+		L.DomEvent.on(overlay, 'click', this._showToolbar, this);
 
 		/* Enable hotkeys. */
 		L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
 
-    overlay.fire('select');
+		overlay.fire('select');
 	},
 
 	/* Run on image deseletion. */
@@ -85,7 +86,7 @@ L.DistortableImage.Edit = L.Handler.extend({
  		/* Disable hotkeys. */
 		L.DomEvent.off(window, 'keydown', this._onKeyDown, this);
 
-    overlay.fire('deselect');
+		overlay.fire('deselect');
 	},
 
 	_rotateBy: function(angle) {
@@ -222,6 +223,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		var map = this._overlay._map;
 		if (this.toolbar) {
 			map.removeLayer(this.toolbar);
+			this.toolbar = false;
 		}
 	},
 
