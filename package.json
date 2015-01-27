@@ -36,7 +36,7 @@
     "karma-mocha-reporter": "^0.3.1",
     "karma-phantomjs-launcher": "^0.1.4",
     "leaflet": "^0.7.3",
-    "leaflet-toolbar": "git+https://github.com/manleyjster/Leaflet.Toolbar.git",
+    "leaflet-toolbar": "git+https://github.com/Leaflet/Leaflet.toolbar.git",
     "matchdep": "^0.3.0",
     "mocha": "^2.0.1",
     "sinon": "^1.12.2"
