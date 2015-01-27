@@ -433,22 +433,24 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 	 *		 future transform which makes the transition appear smooth.
 	 */
 	_animateZoom: function(event) {
-		var map = this._map,
-			image = this._image,
-			latLngToNewLayerPoint = function(latlng) {
-				return map._latLngToNewLayerPoint(latlng, event.zoom, event.center);
-			},
-
-			transformMatrix = this._calculateProjectiveTransform(latLngToNewLayerPoint),
-			topLeft = latLngToNewLayerPoint(this._corners[0]),
-
-			warp = L.DomUtil.getMatrixString(transformMatrix),
-			translation = L.DomUtil.getTranslateString(topLeft);
-
-		/* See L.DomUtil.setPosition. Mainly for the purposes of L.Draggable. */
-		image._leaflet_pos = topLeft;
-
-		image.style[L.DomUtil.TRANSFORM] = [translation, warp].join(' ');
+		if (this._corners.length > 0) {
+			var map = this._map,
+				image = this._image,
+				latLngToNewLayerPoint = function(latlng) {
+					return map._latLngToNewLayerPoint(latlng, event.zoom, event.center);
+				},
+  
+				transformMatrix = this._calculateProjectiveTransform(latLngToNewLayerPoint),
+				topLeft = latLngToNewLayerPoint(this._corners[0]),
+  
+				warp = L.DomUtil.getMatrixString(transformMatrix),
+				translation = L.DomUtil.getTranslateString(topLeft);
+  
+			/* See L.DomUtil.setPosition. Mainly for the purposes of L.Draggable. */
+			image._leaflet_pos = topLeft;
+  
+			image.style[L.DomUtil.TRANSFORM] = [translation, warp].join(' ');
+    }
 	},
 
 	getCorners: function() {
