@@ -31,12 +31,12 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 			if (map.options.zoomAnimation && L.Browser.any3d) {
 				map.on('zoomanim', this._animateZoom, this);
 			}
-		}
 
-		/* This reset happens before image load; it allows 
-		 * us to place the image on the map earlier with 
-		 * "guessed" dimensions. */
-		this._reset();
+			/* This reset happens before image load; it allows 
+			 * us to place the image on the map earlier with 
+			 * "guessed" dimensions. */
+			this._reset();
+		}
 
 		/* Have to wait for the image to load because 
 		 * we need to access its width and height. */
