@@ -26,23 +26,23 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		/* End copied from L.ImageOverlay */
 
 		/* Use provided corners if available */
-    if (this.options.corners) { 
-      this._corners = this.options.corners; 
+		if (this.options.corners) { 
+			this._corners = this.options.corners; 
 			if (map.options.zoomAnimation && L.Browser.any3d) {
 				map.on('zoomanim', this._animateZoom, this);
 			}
-    }
+		}
 
 		/* Have to wait for the image to load because 
-     * we need to access its width and height. */
+		 * we need to access its width and height. */
 		L.DomEvent.on(this._image, 'load', function() {
 			this._initImageDimensions();
 			this._reset();
-		  /* Initialize default corners if not already set */
-      if (!this._corners) { 
-			  if (map.options.zoomAnimation && L.Browser.any3d) {
-				  map.on('zoomanim', this._animateZoom, this);
-			  }
+			/* Initialize default corners if not already set */
+			if (!this._corners) { 
+				if (map.options.zoomAnimation && L.Browser.any3d) {
+					map.on('zoomanim', this._animateZoom, this);
+				}
 			}
 		}, this);		
 
@@ -101,9 +101,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
  		if (!this.hasEventListeners(event.type)) { return; }
 
 		var map = this._map,
-				containerPoint = map.mouseEventToContainerPoint(event),
-				layerPoint = map.containerPointToLayerPoint(containerPoint),
-				latlng = map.layerPointToLatLng(layerPoint);
+			containerPoint = map.mouseEventToContainerPoint(event),
+			layerPoint = map.containerPointToLayerPoint(containerPoint),
+			latlng = map.layerPointToLatLng(layerPoint);
 
 		this.fire(event.type, {
 			latlng: latlng,
@@ -191,12 +191,12 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 			h = this._image.offsetHeight,
 			c = [],
 			j;
-	  
+		
 		/* Convert corners to container points (i.e. cartesian coordinates). */
 		for (j = 0; j < this._corners.length; j++) {
 			c.push(latLngToCartesian(this._corners[j])._subtract(offset));
 		}
-	  
+		
 		/*
 		 * This matrix describes the action of the CSS transform on each corner of the image.
 		 * It maps from the coordinate system centered at the upper left corner of the image
