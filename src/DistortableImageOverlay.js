@@ -25,12 +25,24 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		map.on('viewreset', this._reset, this);
 		/* End copied from L.ImageOverlay */
 
-		/* Have to wait for the image to load because we need to access its width and height. */
+		/* Use provided corners if available */
+    if (this.options.corners) { 
+      this._corners = this.options.corners; 
+			if (map.options.zoomAnimation && L.Browser.any3d) {
+				map.on('zoomanim', this._animateZoom, this);
+			}
+    }
+
+		/* Have to wait for the image to load because 
+     * we need to access its width and height. */
 		L.DomEvent.on(this._image, 'load', function() {
 			this._initImageDimensions();
 			this._reset();
-			if (map.options.zoomAnimation && L.Browser.any3d) {
-				map.on('zoomanim', this._animateZoom, this);
+		  /* Initialize default corners if not already set */
+      if (!this._corners) { 
+			  if (map.options.zoomAnimation && L.Browser.any3d) {
+				  map.on('zoomanim', this._animateZoom, this);
+			  }
 			}
 		}, this);		
 
