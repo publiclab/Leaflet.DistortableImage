@@ -445,24 +445,22 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 	 *		 future transform which makes the transition appear smooth.
 	 */
 	_animateZoom: function(event) {
-		if (this._corners.length > 0) {
-			var map = this._map,
-				image = this._image,
-				latLngToNewLayerPoint = function(latlng) {
-					return map._latLngToNewLayerPoint(latlng, event.zoom, event.center);
-				},
+		var map = this._map,
+			image = this._image,
+			latLngToNewLayerPoint = function(latlng) {
+				return map._latLngToNewLayerPoint(latlng, event.zoom, event.center);
+			},
 	
-				transformMatrix = this._calculateProjectiveTransform(latLngToNewLayerPoint),
-				topLeft = latLngToNewLayerPoint(this._corners[0]),
+			transformMatrix = this._calculateProjectiveTransform(latLngToNewLayerPoint),
+			topLeft = latLngToNewLayerPoint(this._corners[0]),
 	
-				warp = L.DomUtil.getMatrixString(transformMatrix),
-				translation = L.DomUtil.getTranslateString(topLeft);
+			warp = L.DomUtil.getMatrixString(transformMatrix),
+			translation = L.DomUtil.getTranslateString(topLeft);
 	
-			/* See L.DomUtil.setPosition. Mainly for the purposes of L.Draggable. */
-			image._leaflet_pos = topLeft;
+		/* See L.DomUtil.setPosition. Mainly for the purposes of L.Draggable. */
+		image._leaflet_pos = topLeft;
 	
-			image.style[L.DomUtil.TRANSFORM] = [translation, warp].join(' ');
-	  }
+		image.style[L.DomUtil.TRANSFORM] = [translation, warp].join(' ');
 	},
 
 	getCorners: function() {
@@ -489,33 +487,31 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 	},
 
 	_calculateProjectiveTransform: function(latLngToCartesian) {
-		if (this._corners.length > 0) {
-			var offset = latLngToCartesian(this._corners[0]),
-				w = this._image.offsetWidth, 
-				h = this._image.offsetHeight,
-				c = [],
-				j;
-	    
-			/* Convert corners to container points (i.e. cartesian coordinates). */
-			for (j = 0; j < this._corners.length; j++) {
-				c.push(latLngToCartesian(this._corners[j])._subtract(offset));
-			}
-	    
-			/*
-			 * This matrix describes the action of the CSS transform on each corner of the image.
-			 * It maps from the coordinate system centered at the upper left corner of the image
-			 *		 to the region bounded by the latlngs in this._corners.
-			 * For example:
-			 *		 0, 0, c[0].x, c[0].y
-			 *		 says that the upper-left corner of the image maps to the first latlng in this._corners.
-			 */
-			return L.MatrixUtil.general2DProjection(
-				0, 0, c[0].x, c[0].y,
-				w, 0, c[1].x, c[1].y,
-				0, h, c[2].x, c[2].y,
-				w, h, c[3].x, c[3].y
-			);
+		var offset = latLngToCartesian(this._corners[0]),
+			w = this._image.offsetWidth, 
+			h = this._image.offsetHeight,
+			c = [],
+			j;
+	  
+		/* Convert corners to container points (i.e. cartesian coordinates). */
+		for (j = 0; j < this._corners.length; j++) {
+			c.push(latLngToCartesian(this._corners[j])._subtract(offset));
 		}
+	  
+		/*
+		 * This matrix describes the action of the CSS transform on each corner of the image.
+		 * It maps from the coordinate system centered at the upper left corner of the image
+		 *		 to the region bounded by the latlngs in this._corners.
+		 * For example:
+		 *		 0, 0, c[0].x, c[0].y
+		 *		 says that the upper-left corner of the image maps to the first latlng in this._corners.
+		 */
+		return L.MatrixUtil.general2DProjection(
+			0, 0, c[0].x, c[0].y,
+			w, 0, c[1].x, c[1].y,
+			0, h, c[2].x, c[2].y,
+			w, h, c[3].x, c[3].y
+		);
 	}
 });
 
