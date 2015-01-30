@@ -33,6 +33,11 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 			}
 		}
 
+		/* This reset happens before image load; it allows 
+		 * us to place the image on the map earlier with 
+		 * "guessed" dimensions. */
+		this._reset();
+
 		/* Have to wait for the image to load because 
 		 * we need to access its width and height. */
 		L.DomEvent.on(this._image, 'load', function() {
@@ -186,12 +191,14 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 	},
 
 	_calculateProjectiveTransform: function(latLngToCartesian) {
+		/* Setting reasonable but made-up image defaults 
+		 * allow us to place images on the map before 
+		 * they've finished downloading. */
 		var offset = latLngToCartesian(this._corners[0]),
-			w = this._image.offsetWidth, 
-			h = this._image.offsetHeight,
+			w = this._image.offsetWidth || 500, 
+			h = this._image.offsetHeight || 375,
 			c = [],
 			j;
-		
 		/* Convert corners to container points (i.e. cartesian coordinates). */
 		for (j = 0; j < this._corners.length; j++) {
 			c.push(latLngToCartesian(this._corners[j])._subtract(offset));
