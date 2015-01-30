@@ -13,6 +13,10 @@ L.EditHandle = L.Marker.extend({
 			zIndexOffset: 10
 		};
 
+		if (options && options.hasOwnProperty('draggable')) {
+			markerOptions.draggable = options.draggable;
+		}
+
 		L.Marker.prototype.initialize.call(this, latlng, markerOptions);
 	},
 

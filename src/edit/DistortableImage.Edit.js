@@ -31,7 +31,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		this._lockHandles = new L.LayerGroup();
 		for (i = 0; i < 4; i++) {
-			this._lockHandles.addLayer(new L.LockHandle(overlay, i));
+			this._lockHandles.addLayer(new L.LockHandle(overlay, i, { draggable: false }));
 		}
 
 		this._distortHandles = new L.LayerGroup();

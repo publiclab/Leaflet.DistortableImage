@@ -141,6 +141,10 @@ L.EditHandle = L.Marker.extend({
 			zIndexOffset: 10
 		};
 
+		if (options && options.hasOwnProperty('draggable')) {
+			markerOptions.draggable = options.draggable;
+		}
+
 		L.Marker.prototype.initialize.call(this, latlng, markerOptions);
 	},
 
@@ -673,7 +677,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		this._lockHandles = new L.LayerGroup();
 		for (i = 0; i < 4; i++) {
-			this._lockHandles.addLayer(new L.LockHandle(overlay, i));
+			this._lockHandles.addLayer(new L.LockHandle(overlay, i, { draggable: false }));
 		}
 
 		this._distortHandles = new L.LayerGroup();
