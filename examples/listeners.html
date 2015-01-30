@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Leaflet.DistortableImage Example</title>
+  <meta charset="utf-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <script src="../node_modules/leaflet/dist/leaflet-src.js" type="text/javascript" charset="utf-8"></script>
+  <link href="../node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../node_modules/leaflet/dist/leaflet.css" type="text/css" media="screen" title="no title" charset="utf-8">
+  <script src="../node_modules/leaflet-toolbar/dist/leaflet.toolbar.js"></script>
+  <link href="../node_modules/leaflet-toolbar/dist/leaflet.toolbar.css" rel="stylesheet"/>
+
+  <link rel="stylesheet" href="../dist/leaflet.distortableimage.css" type="text/css" media="screen" title="no title" charset="utf-8">
+  <script src="../dist/leaflet.distortableimage.js"></script>
+</head>
+<body style="margin:0;">
+
+  <form id="test_form" >
+    <input type="file" id="inputimage" accept="image/*">
+  </form>
+
+  <div id="map" style="width:100%; height:100%; position:absolute; top:0;"></div>
+
+  <script>
+
+    var map
+
+    (function(){
+
+      // basic Leaflet map setup
+      map = new L.map('map').setView([51.505, -0.09], 13);
+      L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+          '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+          'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+        id: 'examples.map-i86knfo3'
+      }).addTo(map);
+
+      // create an image
+      img = new L.DistortableImageOverlay(
+        'example.jpg', {
+          corners: [
+            new L.latLng(51.52,-0.10),
+            new L.latLng(51.52,-0.14),
+            new L.latLng(51.50,-0.10),
+            new L.latLng(51.50,-0.14)
+          ]
+        }
+      ).addTo(map);
+
+      L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
+
+      /* Wait until image is loaded before setting 
+       * up DOM element listeners */
+      L.DomEvent.on(img._image, 'load', function() {
+        var img = this
+        img.on('edit', function() {alert('edited')}, img);
+        L.DomEvent.on(img._image, 'mouseup', function() {alert('edited')}, img);
+        L.DomEvent.on(img._image, 'touchend', function() {alert('edited')}, img);
+      }, img);
+    })();
+  </script>
+      
+</html>
