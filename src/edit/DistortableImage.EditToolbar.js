@@ -50,6 +50,7 @@ var EditOverlayAction = L.ToolbarAction.extend({
 			var map = this._map;
 
 			map.removeLayer(this._overlay);
+			this._overlay.fire('delete');
 			this.disable();
 		}
 	}),
