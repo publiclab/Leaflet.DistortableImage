@@ -888,6 +888,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		else { point = event.target._dragStartTarget._leaflet_pos; }
 		var raised_point = map.containerPointToLatLng(new L.Point(point.x,point.y-20));
 		this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(map, overlay);
+		overlay.fire('toolbar:created');
 	},
 
 	toggleIsolate: function() {
