@@ -1,13 +1,13 @@
-Leaflet.DistortableImageOverlay
+Leaflet.DistortableImage
 ===================
 
 A Leaflet extension to distort images -- "rubbersheeting" -- mainly for the [MapKnitter.org](http://mapknitter.org) ([src](https://github.com/publiclab/mapknitter)) image georectification service by [Public Lab](http://publiclab.org).
 
-Download as zip or clone to get a copy of the Repo.
+Download as zip or clone to get a copy of the repo.
 
 To test the code, open index.html in your browser and click and drag the markers on the edges of the image. The image will show perspectival distortions.
 
-A copy is also running at https://publiclab.github.io/ImageDistortLeaflet/examples/
+Check out the [simple demo](https://publiclab.github.io/Leaflet.DistortableImage/examples/index.html).
 
 This plugin is not yet complete!
 
