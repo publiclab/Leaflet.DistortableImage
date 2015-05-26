@@ -193,7 +193,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			opacity, outline;
 
 		this._outlined = !this._outlined;
-		opacity = this._outlined ? this.options.opacity / 2 : 1;
+		opacity = this._outlined ? 0 : 1;
 		outline = this._outlined ? this.options.outline : 'none';
 
 		L.DomUtil.setOpacity(image, opacity);
