@@ -11,7 +11,7 @@ Here's a screenshot:
 
 ![screenshot](example.png)
 
-Check out the [simple demo](https://publiclab.github.io/Leaflet.DistortableImage/examples/index.html).
+Check out this [simple demo](https://publiclab.github.io/Leaflet.DistortableImage/examples/index.html).
 
 ##
 
