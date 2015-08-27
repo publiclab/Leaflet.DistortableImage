@@ -27,22 +27,24 @@
   "license": "MIT",
   "devDependencies": {
     "chai": "^1.10.0",
-    "font-awesome": "^4.2.0",
     "grunt": "^0.4.5",
     "grunt-contrib-concat": "^0.5.0",
     "grunt-contrib-jshint": "^0.10.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-karma": "^0.9.0",
-    "jquery": "^2.1.3",
     "karma": "^0.12.28",
     "karma-coverage": "^0.2.7",
     "karma-mocha": "^0.1.10",
     "karma-mocha-reporter": "^0.3.1",
     "karma-phantomjs-launcher": "^0.1.4",
-    "leaflet": "^0.7.3",
-    "leaflet-toolbar": "git+https://github.com/manleyjster/Leaflet.Toolbar.git",
     "matchdep": "^0.3.0",
     "mocha": "^2.0.1",
     "sinon": "^1.12.2"
+  },
+  "dependencies": {
+    "font-awesome": "^4.2.0",
+    "jquery": "^2.1.3",
+    "leaflet": "^0.7.3",
+    "leaflet-toolbar": "git+https://github.com/manleyjster/Leaflet.Toolbar.git"
   }
 }
