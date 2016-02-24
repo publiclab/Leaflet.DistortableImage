@@ -1,6 +1,6 @@
 L.DomUtil = L.extend(L.DomUtil, {
 	getMatrixString: function(m) {
-		var is3d = L.Browser.webkit3d || L.Browser.gecko3d,
+		var is3d = L.Browser.webkit3d || L.Browser.gecko3d || L.Browser.ie3d,
 
 			/* 
 		     * Since matrix3d takes a 4*4 matrix, we add in an empty row and column, which act as the identity on the z-axis.
@@ -25,7 +25,7 @@ L.DomUtil = L.extend(L.DomUtil, {
 	},
 
 	getRotateString: function(angle, units) {
-		var is3d = L.Browser.webkit3d,
+		var is3d = L.Browser.webkit3d || L.Browser.gecko3d || L.Browser.ie3d,
 			open = 'rotate' + (is3d ? '3d' : '') + '(',
 			rotateString = (is3d ? '0, 0, 1, ' : '') + angle + units;
 			
