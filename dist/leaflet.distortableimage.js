@@ -428,6 +428,21 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		this._reset();
 	},
 
+
+	/* Copied from Leaflet v0.7 https://github.com/Leaflet/Leaflet/blob/66282f14bcb180ec87d9818d9f3c9f75afd01b30/src/dom/DomUtil.js#L189-L199 */
+	/* since L.DomUtil.getTranslateString() is deprecated in Leaflet v1.0 */
+	_getTranslateString: function (point) {
+		// on WebKit browsers (Chrome/Safari/iOS Safari/Android) using translate3d instead of translate
+		// makes animation smoother as it ensures HW accel is used. Firefox 13 doesn't care
+		// (same speed either way), Opera 12 doesn't support translate3d
+
+		var is3d = L.Browser.webkit3d,
+		    open = 'translate' + (is3d ? '3d' : '') + '(',
+		    close = (is3d ? ',0' : '') + ')';
+
+		return open + point.x + 'px,' + point.y + 'px' + close;
+	},
+
 	_reset: function() {
 		var map = this._map,
 			image = this._image,
@@ -437,7 +452,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 			topLeft = latLngToLayerPoint(this._corners[0]),
 
 			warp = L.DomUtil.getMatrixString(transformMatrix),
-			translation = L.DomUtil.getTranslateString(topLeft);
+			translation = this._getTranslateString(topLeft);
 
 		/* See L.DomUtil.setPosition. Mainly for the purposes of L.Draggable. */
 		image._leaflet_pos = topLeft;
@@ -464,7 +479,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 			topLeft = latLngToNewLayerPoint(this._corners[0]),
 	
 			warp = L.DomUtil.getMatrixString(transformMatrix),
-			translation = L.DomUtil.getTranslateString(topLeft);
+			translation = this._.getTranslateString(topLeft);
 	
 		/* See L.DomUtil.setPosition. Mainly for the purposes of L.Draggable. */
 		image._leaflet_pos = topLeft;
