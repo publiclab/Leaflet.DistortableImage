@@ -5,6 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "main": "dist/leaflet.distortableimage.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/publiclab/Leaflet.DistortableImage.git"
