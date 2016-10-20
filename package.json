@@ -1,5 +1,5 @@
 {
-  "name": "Leaflet.DistortableImage",
+  "name": "leaflet-distortableimage",
   "version": "0.0.11",
   "description": "Leaflet plugin enabling image overlays to be distorted, stretched, and warped (built for Public Lab's MapKnitter: http://publiclab.org).",
   "scripts": {
@@ -16,6 +16,12 @@
     "rubbersheeting",
     "maps"
   ],
+  "directories": {
+    "examples": "./examples",
+    "distribution": "./dist",
+    "source": "./src",
+    "tests": "./test"
+  },
   "author": "Anish Shah, Jeff Warren, Justin Manley",
   "license": "MIT",
   "bugs": {
