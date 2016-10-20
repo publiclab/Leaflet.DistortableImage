@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="../node_modules/leaflet/dist/leaflet.css" />
+	<link rel="stylesheet" type="text/css" href="../node_modules/leaflet-draw/dist/leaflet.draw.css" />
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"/>
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css"/>
+	<link rel="stylesheet" href="../dist/leaflet.toolbar.css"/>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+	<script src="../node_modules/leaflet/dist/leaflet-src.js"></script>
+	<script src="../dist/leaflet.toolbar-src.js"></script>
+	<script src="../node_modules/leaflet-draw/dist/leaflet.draw-src.js"></script>
+	<style>
+		html, body, #map { margin: 0; height: 100%; width: 100%; }
+	</style>
+</head>
+<body>
+	<div id="map"></div>
+	<script>
+		var map = L.map('map').setView([41.7896,-87.5996], 15),
+			drawnItems = new L.FeatureGroup().addTo(map);
+
+		L.tileLayer("http://otile1.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.jpg", {
+			attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.'
+		}).addTo(map);
+
+		new L.DrawToolbar.Control({
+			position: 'topleft',
+			className: 'leaflet-draw-toolbar'
+		}).addTo(map);
+
+		new L.EditToolbar.Control({
+			position: 'topleft',
+			className: 'leaflet-draw-toolbar'
+		}).addTo(map, drawnItems);
+
+		map.on('draw:created', function(evt) {
+			var type = evt.layerType,
+				layer = evt.layer;
+
+			drawnItems.addLayer(layer);
+		});
+	</script>
+</body>
+</html>
