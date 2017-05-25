@@ -257,7 +257,14 @@ L.RotateHandle = L.EditHandle.extend({
 			scale = this._calculateScalingFactor(formerLatLng, newLatLng);
 
 		overlay.editing._rotateBy(angle);
-		overlay.editing._scaleBy(scale);
+		var w = L.latLng(overlay._corners[0]).distanceTo(overlay._corners[1]),
+			h = L.latLng(overlay._corners[1]).distanceTo(overlay._corners[2]);
+		if (this._handled.options.hasOwnProperty('edgeMinWidth')){
+			const edgeMinWidth = this._handled.options.edgeMinWidth;
+			if ((w > edgeMinWidth && h > edgeMinWidth) || scale > 1) overlay.editing._scaleBy(scale);
+		} else {
+			overlay.editing._scaleBy(scale);
+		}
 
 		overlay.fire('update');
 	},
