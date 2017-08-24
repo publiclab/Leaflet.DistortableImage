@@ -1,0 +1,14 @@
+{
+  "name": "karma-mocha",
+  "homepage": "https://github.com/karma-runner/karma-mocha",
+  "version": "0.1.10",
+  "_release": "0.1.10",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.1.10",
+    "commit": "1379d99ab86467878147a1014c142e6f95581f4c"
+  },
+  "_source": "https://github.com/karma-runner/karma-mocha.git",
+  "_target": "^0.1.10",
+  "_originalSource": "git+https://github.com/karma-runner/karma-mocha"
+}

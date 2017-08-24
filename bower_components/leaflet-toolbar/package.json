@@ -1,0 +1,62 @@
+{
+  "name": "leaflet-toolbar",
+  "version": "0.1.2",
+  "description": "Flexible, extensible toolbars for Leaflet maps.",
+  "scripts": {
+    "test": "grunt travis",
+    "coveralls": "PHANTOM=`ls ./coverage | grep PhantomJS` && cat \"coverage/$PHANTOM/lcov.info\" | coveralls"
+  },
+  "devDependencies": {
+    "autoprefixer": "^5.1.0",
+    "chai": "1.9.1",
+    "coveralls": "2.11.1",
+    "grunt": "~0.4.2",
+    "grunt-autoprefixer": "^2.2.0",
+    "grunt-bump": "0.0.14",
+    "grunt-contrib-clean": "~0.5.0",
+    "grunt-contrib-coffee": "~0.10.1",
+    "grunt-contrib-concat": "0.4.x",
+    "grunt-contrib-jshint": "~0.6.3",
+    "grunt-contrib-less": "~0.11.0",
+    "grunt-contrib-nodeunit": "~0.2.0",
+    "grunt-contrib-uglify": "^0.7.0",
+    "grunt-contrib-watch": ">=0.3.1",
+    "grunt-karma": "0.8.3",
+    "grunt-mocha": "~0.4.11",
+    "grunt-shell": "^1.1.1",
+    "jshint": "2.5.x",
+    "karma": "0.12.16",
+    "karma-chrome-launcher": "^0.1.4",
+    "karma-coverage": "0.2.4",
+    "karma-firefox-launcher": "^0.1.3",
+    "karma-mocha": "^0.1.4",
+    "karma-mocha-reporter": "0.2.7",
+    "karma-phantomjs-launcher": "0.1.4",
+    "karma-safari-launcher": "^0.1.1",
+    "leaflet": "~0.7.0",
+    "leaflet-draw": "manleyjster/Leaflet.draw#leaflet-toolbar-plugin",
+    "matchdep": "~0.3.0",
+    "mocha": "~1.14.0",
+    "sinon": "1.10.3",
+    "uglify-js": "~2.4.3"
+  },
+  "directories": {
+    "examples": "./examples",
+    "distribution": "./dist",
+    "source": "./src",
+    "tests": "./test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Leaflet/Leaflet.toolbar.git"
+  },
+  "keywords": [
+    "maps",
+    "leaflet",
+    "toolbar",
+    "user-interface"
+  ],
+  "author": "Justin Manley",
+  "license": "MIT",
+  "readmeFilename": "README.md"
+}

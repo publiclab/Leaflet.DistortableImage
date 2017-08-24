@@ -1,0 +1,14 @@
+{
+  "name": "leaflet-toolbar",
+  "homepage": "https://github.com/manleyjster/Leaflet.Toolbar",
+  "version": "0.1.2",
+  "_release": "0.1.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.1.2",
+    "commit": "930e25e7d40c9b7d9302d035f2f9d0ea5b39eb71"
+  },
+  "_source": "https://github.com/manleyjster/Leaflet.Toolbar.git",
+  "_target": "*",
+  "_originalSource": "git+https://github.com/manleyjster/Leaflet.Toolbar.git"
+}

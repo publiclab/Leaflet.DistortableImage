@@ -32,11 +32,11 @@
     "grunt-contrib-jshint": "^0.10.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-karma": "^0.9.0",
-    "karma": "^0.12.28",
-    "karma-coverage": "^0.2.7",
-    "karma-mocha": "^0.1.10",
-    "karma-mocha-reporter": "^0.3.1",
-    "karma-phantomjs-launcher": "^0.1.4",
+    "karma": "git+https://github.com/karma-runner/karma#^0.12.28",
+    "karma-coverage": "git+https://github.com/karma-runner/karma-coverage#^0.2.7",
+    "karma-mocha": "git+https://github.com/karma-runner/karma-mocha#^0.1.10",
+    "karma-mocha-reporter": "git+https://github.com/litixsoft/karma-mocha-reporter#^0.3.1",
+    "karma-phantomjs-launcher": "git+https://github.com/karma-runner/karma-phantomjs-launcher#^0.1.4",
     "matchdep": "^0.3.0",
     "mocha": "^2.0.1",
     "sinon": "^1.12.2"
@@ -44,7 +44,7 @@
   "dependencies": {
     "font-awesome": "^4.2.0",
     "jquery": "^2.1.3",
-    "leaflet": "^0.7.3",
+    "leaflet": "^1.0.0",
     "leaflet-toolbar": "git+https://github.com/manleyjster/Leaflet.Toolbar.git"
   }
 }

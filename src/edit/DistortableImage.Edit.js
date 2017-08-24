@@ -25,6 +25,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 	/* Run on image seletion. */
 	addHooks: function() {
+console.log('adding hooks');
 		var overlay = this._overlay,
 			map = overlay._map,
 			i;
@@ -58,6 +59,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			this._enableDragging();
 		}
 
+console.log('click listener');
 		//overlay.on('click', this._showToolbar, this);
 		L.DomEvent.on(overlay, 'click', this._showToolbar, this);
 
@@ -65,6 +67,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
 
 		overlay.fire('select');
+
 	},
 
 	/* Run on image deseletion. */
@@ -240,6 +243,9 @@ L.DistortableImage.Edit = L.Handler.extend({
 		var raised_point = map.containerPointToLatLng(new L.Point(point.x,point.y-20));
 		this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(map, overlay);
 		overlay.fire('toolbar:created');
+
+console.log('showToolbar');
+		L.DomEvent.stopPropagation(event);
 	},
 
 	toggleIsolate: function() {
