@@ -1,9 +1,0 @@
-.*
-src
-test
-tasks
-
-Gruntfile.coffee
-karma.conf.js
-karma-v0.8.conf.js
-CONTRIBUTING.md
