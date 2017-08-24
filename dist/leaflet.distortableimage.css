@@ -24,3 +24,7 @@
   position:absolute; 
   top:-100px;
 }
+
+.leaflet-pane .leaflet-overlay-pane img {
+  pointer-events: all !important;
+}
