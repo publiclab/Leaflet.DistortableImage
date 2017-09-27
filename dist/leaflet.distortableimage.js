@@ -545,7 +545,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
 L.DistortableImage = L.DistortableImage || {};
 
-var EditOverlayAction = L.ToolbarAction.extend({
+var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 		initialize: function(map, overlay, options) {
 			this._overlay = overlay;
 			this._map = map;
@@ -637,29 +637,14 @@ var EditOverlayAction = L.ToolbarAction.extend({
 		}
 	});
 
-L.DistortableImage.EditToolbar = L.Toolbar.Popup.extend({
-	options: {
-		actions: [
-			ToggleTransparency,
-			RemoveOverlay,
-			ToggleOutline,
-			ToggleEditable,
-			ToggleRotateDistort
-		]
-	},
-
-	/* Remove the toolbar after each action. */
-	_getActionConstructor: function(Action) {
-		var A = Action.extend({
-			removeHooks: function() {
-				var map = this._map;
-
-				map.removeLayer(this.toolbar);
-			}
-		});
-
-		return L.Toolbar.prototype._getActionConstructor.call(this, A);
-	}
+L.DistortableImage.EditToolbar = new LeafletToolbar.Popup({
+	actions: [
+		ToggleTransparency,
+		RemoveOverlay,
+		ToggleOutline,
+		ToggleEditable,
+		ToggleRotateDistort
+	]
 });
 
 L.DistortableImage = L.DistortableImage || {};
@@ -689,7 +674,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 	/* Run on image seletion. */
 	addHooks: function() {
-console.log('adding hooks');
 		var overlay = this._overlay,
 			map = overlay._map,
 			i;
@@ -723,7 +707,6 @@ console.log('adding hooks');
 			this._enableDragging();
 		}
 
-console.log('click listener');
 		//overlay.on('click', this._showToolbar, this);
 		L.DomEvent.on(overlay, 'click', this._showToolbar, this);
 
@@ -908,7 +891,6 @@ console.log('click listener');
 		this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(map, overlay);
 		overlay.fire('toolbar:created');
 
-console.log('showToolbar');
 		L.DomEvent.stopPropagation(event);
 	},
 
