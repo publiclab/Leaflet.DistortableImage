@@ -59,7 +59,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		}
 
 		//overlay.on('click', this._showToolbar, this);
-		L.DomEvent.on(overlay, 'click', this._showToolbar, this);
+		L.DomEvent.on(overlay._image, 'click', this._showToolbar, this);
 
 		/* Enable hotkeys. */
 		L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
@@ -75,7 +75,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		// L.DomEvent.off(window, 'keydown', this._onKeyDown, this);
 
-		overlay.off('click', this._showToolbar, this);
+		L.DomEvent.off(overlay._image, 'click', this._showToolbar, this);
 
 		// First, check if dragging exists;
 		// it may be off due to locking
@@ -230,14 +230,14 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 	_showToolbar: function(event) {
 		var overlay = this._overlay,
+                     target = event.target,
 			map = overlay._map;
 
 		/* Ensure that there is only ever one toolbar attached to each image. */
 		this._hideToolbar();
-		
 		var point;
 		if (event.containerPoint) { point = event.containerPoint; }
-		else { point = event.target._dragStartTarget._leaflet_pos; }
+		else { point = target._leaflet_pos; }
 		var raised_point = map.containerPointToLatLng(new L.Point(point.x,point.y-20));
 		this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(map, overlay);
 		overlay.fire('toolbar:created');
