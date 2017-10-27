@@ -545,12 +545,12 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
 L.DistortableImage = L.DistortableImage || {};
 
-var EditOverlayAction = L.ToolbarAction.extend({
+var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 		initialize: function(map, overlay, options) {
 			this._overlay = overlay;
 			this._map = map;
 
-			L.ToolbarAction.prototype.initialize.call(this, options);
+			LeafletToolbar.ToolbarAction.prototype.initialize.call(this, options);
 		}
 	}),
 
@@ -637,7 +637,7 @@ var EditOverlayAction = L.ToolbarAction.extend({
 		}
 	});
 
-L.DistortableImage.EditToolbar = L.Toolbar.Popup.extend({
+L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
 	actions: [
 		ToggleTransparency,
 		RemoveOverlay,
