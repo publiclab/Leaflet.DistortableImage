@@ -93,11 +93,13 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 	});
 
 L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
-	actions: [
-		ToggleTransparency,
-		RemoveOverlay,
-		ToggleOutline,
-		ToggleEditable,
-		ToggleRotateDistort
-	]
+	options: {
+		actions: [
+			ToggleTransparency,
+			RemoveOverlay,
+			ToggleOutline,
+			ToggleEditable,
+			ToggleRotateDistort
+		]
+	}
 });

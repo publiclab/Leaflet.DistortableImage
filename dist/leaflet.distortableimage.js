@@ -638,13 +638,15 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 	});
 
 L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
-	actions: [
-		ToggleTransparency,
-		RemoveOverlay,
-		ToggleOutline,
-		ToggleEditable,
-		ToggleRotateDistort
-	]
+	options: {
+		actions: [
+			ToggleTransparency,
+			RemoveOverlay,
+			ToggleOutline,
+			ToggleEditable,
+			ToggleRotateDistort
+		]
+	}
 });
 
 L.DistortableImage = L.DistortableImage || {};
@@ -878,14 +880,12 @@ L.DistortableImage.Edit = L.Handler.extend({
 	},
 
 	_showToolbar: function(event) {
-console.log(event, this);
 		var overlay = this._overlay,
                      target = event.target,
 			map = overlay._map;
 
 		/* Ensure that there is only ever one toolbar attached to each image. */
 		this._hideToolbar();
-console.log(event, this);
 		var point;
 		if (event.containerPoint) { point = event.containerPoint; }
 		else { point = target._leaflet_pos; }
