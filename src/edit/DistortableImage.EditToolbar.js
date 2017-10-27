@@ -1,6 +1,6 @@
 L.DistortableImage = L.DistortableImage || {};
 
-var EditOverlayAction = L.Toolbar.ToolbarAction.extend({
+var EditOverlayAction = L.ToolbarAction.extend({
 		initialize: function(map, overlay, options) {
 			this._overlay = overlay;
 			this._map = map;
