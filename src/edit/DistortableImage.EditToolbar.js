@@ -1,6 +1,6 @@
 L.DistortableImage = L.DistortableImage || {};
 
-var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
+var EditOverlayAction = L.Toolbar.ToolbarAction.extend({
 		initialize: function(map, overlay, options) {
 			this._overlay = overlay;
 			this._map = map;
@@ -92,7 +92,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 		}
 	});
 
-L.DistortableImage.EditToolbar = new LeafletToolbar.Popup({
+L.DistortableImage.EditToolbar = L.Toolbar.Popup.extend({
 	actions: [
 		ToggleTransparency,
 		RemoveOverlay,
