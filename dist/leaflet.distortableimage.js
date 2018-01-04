@@ -545,12 +545,12 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
 L.DistortableImage = L.DistortableImage || {};
 
-var EditOverlayAction = L.ToolbarAction.extend({
+var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 		initialize: function(map, overlay, options) {
 			this._overlay = overlay;
 			this._map = map;
 
-			L.ToolbarAction.prototype.initialize.call(this, options);
+			LeafletToolbar.ToolbarAction.prototype.initialize.call(this, options);
 		}
 	}),
 
@@ -637,7 +637,7 @@ var EditOverlayAction = L.ToolbarAction.extend({
 		}
 	});
 
-L.DistortableImage.EditToolbar = L.Toolbar.Popup.extend({
+L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
 	options: {
 		actions: [
 			ToggleTransparency,
@@ -646,19 +646,6 @@ L.DistortableImage.EditToolbar = L.Toolbar.Popup.extend({
 			ToggleEditable,
 			ToggleRotateDistort
 		]
-	},
-
-	/* Remove the toolbar after each action. */
-	_getActionConstructor: function(Action) {
-		var A = Action.extend({
-			removeHooks: function() {
-				var map = this._map;
-
-				map.removeLayer(this.toolbar);
-			}
-		});
-
-		return L.Toolbar.prototype._getActionConstructor.call(this, A);
 	}
 });
 
@@ -689,7 +676,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 	/* Run on image seletion. */
 	addHooks: function() {
-console.log('adding hooks');
 		var overlay = this._overlay,
 			map = overlay._map,
 			i;
@@ -723,9 +709,8 @@ console.log('adding hooks');
 			this._enableDragging();
 		}
 
-console.log('click listener');
 		//overlay.on('click', this._showToolbar, this);
-		L.DomEvent.on(overlay, 'click', this._showToolbar, this);
+		L.DomEvent.on(overlay._image, 'click', this._showToolbar, this);
 
 		/* Enable hotkeys. */
 		L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
@@ -741,7 +726,7 @@ console.log('click listener');
 
 		// L.DomEvent.off(window, 'keydown', this._onKeyDown, this);
 
-		overlay.off('click', this._showToolbar, this);
+		L.DomEvent.off(overlay._image, 'click', this._showToolbar, this);
 
 		// First, check if dragging exists;
 		// it may be off due to locking
@@ -896,19 +881,19 @@ console.log('click listener');
 
 	_showToolbar: function(event) {
 		var overlay = this._overlay,
+                     target = event.target,
 			map = overlay._map;
 
 		/* Ensure that there is only ever one toolbar attached to each image. */
 		this._hideToolbar();
-		
 		var point;
 		if (event.containerPoint) { point = event.containerPoint; }
-		else { point = event.target._dragStartTarget._leaflet_pos; }
+		else { point = target._leaflet_pos; }
 		var raised_point = map.containerPointToLatLng(new L.Point(point.x,point.y-20));
+		raised_point.lng = overlay.getCenter().lng; 
 		this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(map, overlay);
 		overlay.fire('toolbar:created');
 
-console.log('showToolbar');
 		L.DomEvent.stopPropagation(event);
 	},
 

@@ -1,11 +1,11 @@
 L.DistortableImage = L.DistortableImage || {};
 
-var EditOverlayAction = L.ToolbarAction.extend({
+var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 		initialize: function(map, overlay, options) {
 			this._overlay = overlay;
 			this._map = map;
 
-			L.ToolbarAction.prototype.initialize.call(this, options);
+			LeafletToolbar.ToolbarAction.prototype.initialize.call(this, options);
 		}
 	}),
 
@@ -92,7 +92,7 @@ var EditOverlayAction = L.ToolbarAction.extend({
 		}
 	});
 
-L.DistortableImage.EditToolbar = L.Toolbar.Popup.extend({
+L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
 	options: {
 		actions: [
 			ToggleTransparency,
@@ -101,18 +101,5 @@ L.DistortableImage.EditToolbar = L.Toolbar.Popup.extend({
 			ToggleEditable,
 			ToggleRotateDistort
 		]
-	},
-
-	/* Remove the toolbar after each action. */
-	_getActionConstructor: function(Action) {
-		var A = Action.extend({
-			removeHooks: function() {
-				var map = this._map;
-
-				map.removeLayer(this.toolbar);
-			}
-		});
-
-		return L.Toolbar.prototype._getActionConstructor.call(this, A);
 	}
 });
