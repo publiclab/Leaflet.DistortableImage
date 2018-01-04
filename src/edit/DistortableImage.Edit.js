@@ -239,6 +239,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		if (event.containerPoint) { point = event.containerPoint; }
 		else { point = target._leaflet_pos; }
 		var raised_point = map.containerPointToLatLng(new L.Point(point.x,point.y-20));
+		raised_point.lng = overlay.getCenter().lng; 
 		this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(map, overlay);
 		overlay.fire('toolbar:created');
 

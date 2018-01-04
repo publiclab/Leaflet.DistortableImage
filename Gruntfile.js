@@ -26,6 +26,7 @@ module.exports = function(grunt) {
                 globals: {
                     L: false,
                     $: false,
+                    LeafletToolbar: false,
 
                     // Mocha
 
