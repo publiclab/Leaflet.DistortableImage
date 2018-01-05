@@ -15,40 +15,40 @@ Advantages include:
 
 This plugin has basic functionality, and is in production as part of MapKnitter, but there are [plenty of outstanding issues to resolve](https://github.com/publiclab/Leaflet.DistortableImage/issues). Please consider helping out!
 
+The recommended Google satellite base layer can be integrated using this Leaflet plugin: https://gitlab.com/IvanSanchez/Leaflet.GridLayer.GoogleMutant
+
 Here's a screenshot:
 
 ![screenshot](example.png)
 
 Check out this [simple demo](https://publiclab.github.io/Leaflet.DistortableImage/examples/index.html).
 
-##
-
 Download as zip or clone to get a copy of the Repo.
 
-To test the code, open index.html in your browser and click and drag the markers on the edges of the image. The image will show perspectival distortions.
+To test the code, open `index.html` in your browser and click and drag the markers on the edges of the image. The image will show perspectival distortions.
 
 ****
 
-##Setup
+## Setup
 
 1. From the root directory, run `npm install` or `sudo npm install`
 2. Open examples/index.html in a browser
 
-##Contributing
+## Contributing
 
 1. This project uses `grunt` to do a lot of things, including concatenate source files from /src/ to /DistortableImageOverlay.js. But you may need to install grunt-cli: `npm install -g grunt-cli` first.
 2. Run `grunt` in the root directory, and it will watch for changes and concatenate them on the fly.
 
 ****
 
-##To do:
+## To do:
 
 * there are some Chrome/Firefox bugs on Android
 * shift-drag (scale with no rotate) doesnt work if you shift first, only if you drag first
 * default to order by size -- maybe need a custom $L.customOrdering boolean?
 * [plenty of other issues](https://github.com/publiclab/Leaflet.DistortableImage/issues)
 
-##Lower priority:
+## Lower priority:
 
 * decide if we need to keep updating `_bounds`
 * create img.toGeoJSON() so we can send a concise description of an image to MapKnitter, plus properties: 
