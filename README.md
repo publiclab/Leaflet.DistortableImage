@@ -41,36 +41,10 @@ To test the code, open `index.html` in your browser and click and drag the marke
 
 ****
 
-## To do:
-
-* there are some Chrome/Firefox bugs on Android
-* shift-drag (scale with no rotate) doesnt work if you shift first, only if you drag first
-* default to order by size -- maybe need a custom $L.customOrdering boolean?
-* [plenty of other issues](https://github.com/publiclab/Leaflet.DistortableImage/issues)
-
-## Lower priority:
-
-* decide if we need to keep updating `_bounds`
-* create img.toGeoJSON() so we can send a concise description of an image to MapKnitter, plus properties: 
-  * locked
-  * layer order
-  * last touched/edited?
-  * "{"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[-0.08,51.509],[-0.06,51.503],[-0.047,51.51],[-0.08,51.509]]]}}"
-* add onLock, onUnlock, onDistortEnd - and consider plumbing events properly
-* add image ordering -- bringToFront() should be temporary only; we need img.raise() or img.lower() or img.raiseToTop() etc... also img.order() for current position in order
-* add an img.revert() which reverts it to orig dimensions and rotation
-* implement tab to select next image; $L.selectedIndex?
-
-=================
-
-##Leftovers, persnickity stuff:
-
-* plumb or remove debug system
-* make shift-drag drag the nearest marker, not the image?
-* scale is not true scaling -- it moves points equally from the "center" which causes distortion when scaling down a lot
-
 ### Contributors
 
 * Anish Shah, [@anishshah101](https://github.com/anishshah101)
 * Justin Manley, [@manleyjster](https://github.com/manleyjster)
 * Jeff Warren [@jywarren](https://github.com/jywarren)
+
+More at https://github.com/publiclab/Leaflet.DistortableImage/graphs/contributors
