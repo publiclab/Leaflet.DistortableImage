@@ -3,7 +3,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
 	options: {
 		alt: '',
-		height: 200
+		height: 200,
+		crossorigin: true
 	},
 
 	initialize: function(url, options) {
