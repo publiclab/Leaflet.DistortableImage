@@ -90,6 +90,24 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 			editing._toggleRotateDistort();
 			this.disable();
 		}
+	}),
+
+	ToggleExport = EditOverlayAction.extend({
+		options: {
+			toolbarIcon: {
+				html: '<span class="fa fa-save"></span>',
+				tooltip: 'Export Image',
+				title: 'Export Image'
+			}
+		},
+		
+		addHooks: function ()
+		{
+			var editing = this._overlay.editing;
+
+			editing._toggleExport();
+			this.disable(); 
+		}
 	});
 
 L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
@@ -99,7 +117,8 @@ L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
 			RemoveOverlay,
 			ToggleOutline,
 			ToggleEditable,
-			ToggleRotateDistort
+			ToggleRotateDistort,
+			ToggleExport
 		]
 	}
 });

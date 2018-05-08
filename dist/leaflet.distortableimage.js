@@ -645,13 +645,13 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 				title: 'Export Image'
 			}
 		},
-
+		
 		addHooks: function ()
 		{
-			var map = this.map;
+			var editing = this._overlay.editing;
 
-			map._toggleExport();
-			this.disable();
+			editing._toggleExport();
+			this.disable(); 
 		}
 	});
 
@@ -917,39 +917,41 @@ L.DistortableImage.Edit = L.Handler.extend({
 	_toggleExport: function ()
 	{
 		var map = this._overlay._map;
-		var downloadEl = $('.img-download-' + warpable.id),
-			imgEl = $('#full-img-' + warpable.id);
+		var overlay = this._overlay;
+		var image = overlay._image;
 
-		imgEl[0].onload = function ()
-		{
+		image.id = "thisImageId";
 
+		var imgEl = $(image.id);
 
-			var height = imgEl.height(),
-				width = imgEl.width(),
-				nw = map.latLngToContainerPoint(warpable.nodes[0]),
-				ne = map.latLngToContainerPoint(warpable.nodes[1]),
-				se = map.latLngToContainerPoint(warpable.nodes[2]),
-				sw = map.latLngToContainerPoint(warpable.nodes[3]);
+		var height = image.height,
+			width = image.width,
+			nw = map.latLngToLayerPoint(overlay._corners[0]),
+			ne = map.latLngToLayerPoint(overlay._corners[1]),
+			se = map.latLngToLayerPoint(overlay._corners[2]),
+			sw = map.latLngToLayerPoint(overlay._corners[3]);
 
-			nw.x -= nw.x;
-			ne.x -= nw.x;
-			se.x -= nw.x;
-			sw.x -= nw.x;
+		nw.x -= nw.x;
+		ne.x -= nw.x;
+		se.x -= nw.x;
+		sw.x -= nw.x;
 
-			nw.y -= nw.y;
-			ne.y -= nw.y;
-			se.y -= nw.y;
-			sw.y -= nw.y;
+		nw.y -= nw.y;
+		ne.y -= nw.y;
+		se.y -= nw.y;
+		sw.y -= nw.y;
 
-			warpWebGl(
-				'full-img-' + warpable.id,
-				[0, 0, width, 0, width, height, 0, height],
-				[nw.x, nw.y, ne.x, ne.y, se.x, se.y, sw.x, sw.y],
-				true // trigger download
-			);
-		};
+		warpWebGl(
+			image.id,
+			[0, 0, width, 0, width, height, 0, height],
+			[nw.x, nw.y, ne.x, ne.y, se.x, se.y, sw.x, sw.y],
+			true // trigger download
+		);
+		//};
 
-		imgEl[0].src = $('.img-download-' + warpable.id).attr('data-image');
+		imgEl.src = image.getAttribute('data-image');
+
+		//});
 
 	},
 
