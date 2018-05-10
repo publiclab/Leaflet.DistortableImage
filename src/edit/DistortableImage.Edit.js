@@ -11,12 +11,11 @@ L.DistortableImage.Edit = L.Handler.extend({
 			76: '_toggleLock', // l
 			79: '_toggleOutline', // o
 			82: '_toggleRotateDistort', // r
-			84: '_toggleTransparency', // t
+			84: '_toggleTransparency' // t
 		}
 	},
 
-	initialize: function (overlay)
-	{
+	initialize: function (overlay){
 		this._overlay = overlay;
 
 		/* Interaction modes. */
@@ -25,9 +24,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 		this._outlined = false;
 	},
 
-	/* Run on image seletion. */
-	addHooks: function ()
-	{
+	/* Run on image selection. */
+	addHooks: function (){
 		var overlay = this._overlay,
 			map = overlay._map,
 			i;
@@ -77,8 +75,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 	},
 
 	/* Run on image deseletion. */
-	removeHooks: function ()
-	{
+	removeHooks: function (){
 		var overlay = this._overlay,
 			map = overlay._map;
 
@@ -99,8 +96,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		overlay.fire('deselect');
 	},
 
-	_rotateBy: function (angle)
-	{
+	_rotateBy: function (angle){
 		var overlay = this._overlay,
 			map = overlay._map,
 			center = map.latLngToLayerPoint(overlay.getCenter()),
@@ -119,8 +115,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		overlay._reset();
 	},
 
-	_scaleBy: function (scale)
-	{
+	_scaleBy: function (scale){
 		var overlay = this._overlay,
 			map = overlay._map,
 			center = map.latLngToLayerPoint(overlay.getCenter()),
@@ -138,8 +133,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		overlay._reset();
 	},
 
-	_enableDragging: function ()
-	{
+	_enableDragging: function (){
 		var overlay = this._overlay,
 			map = overlay._map;
 
@@ -173,8 +167,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		};
 	},
 
-	_onKeyDown: function (event)
-	{
+	_onKeyDown: function (event){
 		var keymap = this.options.keymap,
 			handlerName = keymap[event.which];
 
@@ -184,8 +177,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		}
 	},
 
-	_toggleRotateDistort: function ()
-	{
+	_toggleRotateDistort: function (){
 		var map = this._overlay._map;
 
 		map.removeLayer(this._handles[this._mode]);
@@ -197,8 +189,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		map.addLayer(this._handles[this._mode]);
 	},
 
-	_toggleTransparency: function ()
-	{
+	_toggleTransparency: function (){
 		var image = this._overlay._image,
 			opacity;
 
@@ -209,8 +200,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		image.setAttribute('opacity', opacity);
 	},
 
-	_toggleOutline: function ()
-	{
+	_toggleOutline: function (){
 		var image = this._overlay._image,
 			opacity, outline;
 
@@ -224,8 +214,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		image.style.outline = outline;
 	},
 
-	_toggleLock: function ()
-	{
+	_toggleLock: function (){
 		var map = this._overlay._map;
 
 		map.removeLayer(this._handles[this._mode]);
@@ -244,9 +233,9 @@ L.DistortableImage.Edit = L.Handler.extend({
 		map.addLayer(this._handles[this._mode]);
 	},
 
-	_toggleExport: function ()
-	{
-		var map = this._overlay._map;
+	// Based on https://github.com/publiclab/mapknitter/blob/8d94132c81b3040ae0d0b4627e685ff75275b416/app/assets/javascripts/mapknitter/Map.js#L47-L82
+	_toggleExport: function (){
+		var map = this._overlay._map; 
 		var overlay = this._overlay;
 		var image = overlay._image;
 
@@ -258,18 +247,19 @@ L.DistortableImage.Edit = L.Handler.extend({
 			width = image.width,
 			nw = map.latLngToLayerPoint(overlay._corners[0]),
 			ne = map.latLngToLayerPoint(overlay._corners[1]),
-			se = map.latLngToLayerPoint(overlay._corners[2]),
-			sw = map.latLngToLayerPoint(overlay._corners[3]);
+			sw = map.latLngToLayerPoint(overlay._corners[2]),
+			se = map.latLngToLayerPoint(overlay._corners[3]);
 
-		nw.x -= nw.x;
-		ne.x -= nw.x;
-		se.x -= nw.x;
-		sw.x -= nw.x;
+		// I think this is to move the image to the upper left corner, but I don't think it's necessary in this case
+		//nw.x -= nw.x;
+		//ne.x -= nw.x;
+		//se.x -= nw.x;
+		//sw.x -= nw.x;
 
-		nw.y -= nw.y;
-		ne.y -= nw.y;
-		se.y -= nw.y;
-		sw.y -= nw.y;
+		//nw.y -= nw.y;
+		//ne.y -= nw.y;
+		//se.y -= nw.y;
+		//sw.y -= nw.y;
 
 		warpWebGl(
 			image.id,
@@ -277,16 +267,12 @@ L.DistortableImage.Edit = L.Handler.extend({
 			[nw.x, nw.y, ne.x, ne.y, se.x, se.y, sw.x, sw.y],
 			true // trigger download
 		);
-		//};
 
 		imgEl.src = image.getAttribute('data-image');
 
-		//});
-
 	},
 
-	_hideToolbar: function ()
-	{
+	_hideToolbar: function (){
 		var map = this._overlay._map;
 		if (this.toolbar)
 		{
@@ -295,8 +281,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		}
 	},
 
-	_showToolbar: function (event)
-	{
+	_showToolbar: function (event){
 		var overlay = this._overlay,
 			target = event.target,
 			map = overlay._map;
@@ -314,8 +299,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		L.DomEvent.stopPropagation(event);
 	},
 
-	toggleIsolate: function ()
-	{
+	toggleIsolate: function (){
 		// this.isolated = !this.isolated;
 		// if (this.isolated) {
 		// 	$.each($L.images,function(i,img) {
@@ -334,8 +318,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 });
 
-L.DistortableImageOverlay.addInitHook(function ()
-{
+L.DistortableImageOverlay.addInitHook(function (){
 	this.editing = new L.DistortableImage.Edit(this);
 
 	if (this.options.editable)

@@ -95,7 +95,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 	ToggleExport = EditOverlayAction.extend({
 		options: {
 			toolbarIcon: {
-				html: '<span class="fa fa-save"></span>',
+				html: '<span class="fa fa-download"></span>',
 				tooltip: 'Export Image',
 				title: 'Export Image'
 			}
