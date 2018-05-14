@@ -94,17 +94,17 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		}
 	},
 
- 	_initEvents: function() {
- 		this._events = [ 'click' ];
+	_initEvents: function() {
+		this._events = [ 'click' ];
 
- 		for (var i = 0, l = this._events.length; i < l; i++) {
-	 		L.DomEvent.on(this._image, this._events[i], this._fireMouseEvent, this);
- 		}
- 	},
+		for (var i = 0, l = this._events.length; i < l; i++) {
+			L.DomEvent.on(this._image, this._events[i], this._fireMouseEvent, this);
+		}
+	},
 
- 	/* See src/layer/vector/Path.SVG.js in the Leaflet source. */
- 	_fireMouseEvent: function(event) {
- 		if (!this.hasEventListeners(event.type)) { return; }
+	/* See src/layer/vector/Path.SVG.js in the Leaflet source. */
+	_fireMouseEvent: function(event) {
+		if (!this.hasEventListeners(event.type)) { return; }
 
 		var map = this._map,
 			containerPoint = map.mouseEventToContainerPoint(event),
@@ -117,7 +117,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 			containerPoint: containerPoint,
 			originalEvent: event
 		});
- 	},
+	},
 
 	_updateCorner: function(corner, latlng) {
 		this._corners[corner] = latlng;
@@ -133,8 +133,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		// (same speed either way), Opera 12 doesn't support translate3d
 
 		var is3d = L.Browser.webkit3d,
-		    open = 'translate' + (is3d ? '3d' : '') + '(',
-		    close = (is3d ? ',0' : '') + ')';
+			open = 'translate' + (is3d ? '3d' : '') + '(',
+			close = (is3d ? ',0' : '') + ')';
 
 		return open + point.x + 'px,' + point.y + 'px' + close;
 	},

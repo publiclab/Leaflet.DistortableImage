@@ -28,6 +28,11 @@
     "url": "https://github.com/publiclab/Leaflet.DistortableImage/issues"
   },
   "homepage": "https://github.com/publiclab/Leaflet.DistortableImage",
+  "dependencies": {
+    "glfx-js": "github:jywarren/glfx.js",
+    "npm": "^5.7.1",
+    "webgl-distort": "github:jywarren/webgl-distort"
+  },
   "devDependencies": {
     "chai": "^4.1.2",
     "font-awesome": "^4.2.0",
