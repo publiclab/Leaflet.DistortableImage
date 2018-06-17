@@ -636,7 +636,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 			editing._toggleRotateDistort();
 			this.disable();
 		}
-	});
+	}),
 
 
 	ToggleExport = EditOverlayAction.extend({
@@ -951,7 +951,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		//se.y -= nw.y;
 		//sw.y -= nw.y;
 
-		warpWebGl(
+		if (this.hasOwnProperty('warpWebGl')) warpWebGl(
 			image.id,
 			[0, 0, width, 0, width, height, 0, height],
 			[nw.x, nw.y, ne.x, ne.y, se.x, se.y, sw.x, sw.y],

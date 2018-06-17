@@ -90,7 +90,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 			editing._toggleRotateDistort();
 			this.disable();
 		}
-	});
+	}),
 
 
 	ToggleExport = EditOverlayAction.extend({
