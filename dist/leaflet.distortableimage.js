@@ -929,36 +929,55 @@ L.DistortableImage.Edit = L.Handler.extend({
 		var overlay = this._overlay;
 		var image = overlay._image;
 
-		image.id = "thisImageId";
+		// make a new image
+		var downloadable = new Image();
+		
+		downloadable.id = downloadable.id || "tempId12345";
+		$('body').append(downloadable);
 
-		var imgEl = $(image.id);
+		downloadable.onload = function onLoadDownloadableImage() {
+        
+			var height = downloadable.height,
+				width = downloadable.width,
+				nw = map.latLngToLayerPoint(overlay._corners[0]),
+				ne = map.latLngToLayerPoint(overlay._corners[1]),
+				sw = map.latLngToLayerPoint(overlay._corners[2]),
+				se = map.latLngToLayerPoint(overlay._corners[3]);
+        
+			// I think this is to move the image to the upper left corner, 
+			// jywarren: i think we may need these or the image goes off the edge of the canvas
+                        // jywarren: but these seem to break the distortion math... 
 
-		var height = image.height,
-			width = image.width,
-			nw = map.latLngToLayerPoint(overlay._corners[0]),
-			ne = map.latLngToLayerPoint(overlay._corners[1]),
-			sw = map.latLngToLayerPoint(overlay._corners[2]),
-			se = map.latLngToLayerPoint(overlay._corners[3]);
+			// jywarren: i think it should be rejiggered so it 
+			// finds the most negative values of x and y and then
+			// adds those to all coordinates
 
-		// I think this is to move the image to the upper left corner, but I don't think it's necessary in this case
-		//nw.x -= nw.x;
-		//ne.x -= nw.x;
-		//se.x -= nw.x;
-		//sw.x -= nw.x;
+			//nw.x -= nw.x;
+			//ne.x -= nw.x;
+			//se.x -= nw.x;
+			//sw.x -= nw.x;
+        
+			//nw.y -= nw.y;
+			//ne.y -= nw.y;
+			//se.y -= nw.y;
+			//sw.y -= nw.y;
 
-		//nw.y -= nw.y;
-		//ne.y -= nw.y;
-		//se.y -= nw.y;
-		//sw.y -= nw.y;
+			// run once warping is complete
+       			downloadable.onload = function() {
+				//window.open(downloadable.src);
+				//$(downloadable).remove();
+			};
+ 
+			if (window && window.hasOwnProperty('warpWebGl')) warpWebGl(
+				downloadable.id,
+				[0, 0, width, 0, width, height, 0, height],
+				[nw.x, nw.y, ne.x, ne.y, se.x, se.y, sw.x, sw.y],
+				true //false // trigger download
+			);
 
-		if (this.hasOwnProperty('warpWebGl')) warpWebGl(
-			image.id,
-			[0, 0, width, 0, width, height, 0, height],
-			[nw.x, nw.y, ne.x, ne.y, se.x, se.y, sw.x, sw.y],
-			true // trigger download
-		);
+		}
 
-		imgEl.src = image.getAttribute('data-image');
+		downloadable.src = overlay.fullResolutionSrc || overlay._image.src;
 
 	},
 
