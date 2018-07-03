@@ -25,6 +25,11 @@ Here's a screenshot:
 
 Check out this [simple demo](https://publiclab.github.io/Leaflet.DistortableImage/examples/index.html).
 
+And watch this GIF demo:
+
+![demo gif](https://raw.githubusercontent.com/publiclab/mapknitter/master/public/demo.gif)
+
+
 Download as zip or clone to get a copy of the Repo.
 
 To test the code, open `index.html` in your browser and click and drag the markers on the edges of the image. The image will show perspectival distortions.
@@ -49,4 +54,4 @@ To test the code, open `index.html` in your browser and click and drag the marke
 * Justin Manley, [@manleyjster](https://github.com/manleyjster)
 * Jeff Warren [@jywarren](https://github.com/jywarren)
 
-More at https://github.com/publiclab/Leaflet.DistortableImage/graphs/contributors
+Many more at https://github.com/publiclab/Leaflet.DistortableImage/graphs/contributors
