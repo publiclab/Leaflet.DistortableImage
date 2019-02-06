@@ -304,7 +304,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		}
 
-		downloadable.src = overlay.fullResolutionSrc || overlay._image.src;
+		downloadable.src = overlay.options.fullResolutionSrc || overlay._image.src;
 
 	},
 
