@@ -52,12 +52,9 @@ module.exports = function(grunt) {
         karma: {
             development: {
                 configFile: 'test/karma.conf.js',
-                background: true
             },
             test: {
                 configFile: 'test/karma.conf.js',
-                background: false,
-                singleRun: true
             }
         },
 
@@ -100,7 +97,7 @@ module.exports = function(grunt) {
 
     grunt.registerTask('build', [
         'jshint',
-        'karma:development:run',
+        'karma:development:start',
         'coverage',
         'concat:dist'
     ]);
@@ -127,5 +124,5 @@ module.exports = function(grunt) {
                 grunt.log.writeln(report);
             }
         }
-    });    
+    });
 };

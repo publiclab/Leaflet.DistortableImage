@@ -681,6 +681,9 @@ L.DistortableImage.Edit = L.Handler.extend({
 			map = overlay._map,
 			i;
 
+			/* bring the selected image into view */
+			overlay.bringToFront();
+
 		this._lockHandles = new L.LayerGroup();
 		for (i = 0; i < 4; i++) {
 			this._lockHandles.addLayer(new L.LockHandle(overlay, i, { draggable: false }));
@@ -696,9 +699,9 @@ L.DistortableImage.Edit = L.Handler.extend({
 			this._rotateHandles.addLayer(new L.RotateHandle(overlay, i));
 		}
 
-		this._handles = { 
-			'lock':		 this._lockHandles, 
-			'distort': this._distortHandles, 
+		this._handles = {
+			'lock':		 this._lockHandles,
+			'distort': this._distortHandles,
 			'rotate':	this._rotateHandles
 		};
 
@@ -787,9 +790,9 @@ L.DistortableImage.Edit = L.Handler.extend({
 		/* Hide toolbars while dragging; click will re-show it */
 		this.dragging.on('dragstart', this._hideToolbar, this);
 
-		/* 
+		/*
 		 * Adjust default behavior of L.Draggable.
-		 * By default, L.Draggable overwrites the CSS3 distort transform 
+		 * By default, L.Draggable overwrites the CSS3 distort transform
 		 * that we want when it calls L.DomUtil.setPosition.
 		 */
 		this.dragging._updatePosition = function() {
@@ -816,7 +819,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		if (handlerName !== undefined) {
 			this[handlerName].call(this);
 		}
-	},	
+	},
 
 	_toggleRotateDistort: function() {
 		var map = this._overlay._map;
@@ -860,8 +863,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		map.removeLayer(this._handles[this._mode]);
 		/* Switch mode. */
-		if (this._mode === 'lock') { 
-			this._mode = 'distort'; 
+		if (this._mode === 'lock') {
+			this._mode = 'distort';
 			this._enableDragging();
 		} else {
 			this._mode = 'lock';
@@ -891,7 +894,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		if (event.containerPoint) { point = event.containerPoint; }
 		else { point = target._leaflet_pos; }
 		var raised_point = map.containerPointToLatLng(new L.Point(point.x,point.y-20));
-		raised_point.lng = overlay.getCenter().lng; 
+		raised_point.lng = overlay.getCenter().lng;
 		this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(map, overlay);
 		overlay.fire('toolbar:created');
 
@@ -926,5 +929,5 @@ L.DistortableImageOverlay.addInitHook(function() {
 
 	this.on('remove', function () {
 		if (this.editing) { this.editing.disable(); }
-	});	
+	});
 });
