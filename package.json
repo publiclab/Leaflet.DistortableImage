@@ -44,7 +44,7 @@
     "karma-phantomjs-launcher": "^1.0.4",
     "leaflet": "^1.0.0",
     "leaflet-toolbar": "^0.3.0",
-    "matchdep": "^0.3.0",
+    "matchdep": "^2.0.0",
     "mocha": "^5.2.0",
     "sinon": "^7.2.2"
   },
