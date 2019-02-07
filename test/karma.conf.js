@@ -25,6 +25,8 @@ module.exports = function(config) {
       "node_modules/leaflet/dist/leaflet.css",
       "node_modules/leaflet-toolbar/dist/leaflet.toolbar.js",
       "node_modules/leaflet-toolbar/dist/leaflet.toolbar.css",
+      "node_modules/webgl-distort/dist/webgl-distort.js",
+      "node_modules/glfx-js/dist/glfx.js",
       "node_modules/chai/chai.js",
       "node_modules/sinon/pkg/sinon.js",
       "src/util/*.js",
