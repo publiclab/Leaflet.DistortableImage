@@ -63,6 +63,15 @@ L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing); // enable ed
 
 ```
 
+## Full-resolution download
+
+We've added a GPU-accelerated means to generate a full resolution version of the distorted image; it requires two additional dependencies to enable; see how we've included them in the demo:
+
+
+```
+<script src="../node_modules/webgl-distort/dist/webgl-distort.js"></script>
+<script src="../node_modules/glfx-js/dist/glfx.js"></script>
+```
 
 ****
 
