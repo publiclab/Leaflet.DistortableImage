@@ -927,7 +927,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 	_toggleExport: function (){
 		var map = this._overlay._map; 
 		var overlay = this._overlay;
-		var image = overlay._image;
 
 		// make a new image
 		var downloadable = new Image();
@@ -967,12 +966,14 @@ L.DistortableImage.Edit = L.Handler.extend({
 				$(downloadable).remove();
 			};
  
-			if (window && window.hasOwnProperty('warpWebGl')) warpWebGl(
-				downloadable.id,
-				[0, 0, width, 0, width, height, 0, height],
-				[nw.x, nw.y, ne.x, ne.y, se.x, se.y, sw.x, sw.y],
-				true // trigger download
-			);
+			if (window && window.hasOwnProperty('warpWebGl')) {
+				warpWebGl(
+					downloadable.id,
+					[0, 0, width, 0, width, height, 0, height],
+					[nw.x, nw.y, ne.x, ne.y, se.x, se.y, sw.x, sw.y],
+					true // trigger download
+				);
+			}
 
 		};
 
