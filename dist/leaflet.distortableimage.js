@@ -964,20 +964,19 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 			// run once warping is complete
        			downloadable.onload = function() {
-				//window.open(downloadable.src);
-				//$(downloadable).remove();
+				$(downloadable).remove();
 			};
  
 			if (window && window.hasOwnProperty('warpWebGl')) warpWebGl(
 				downloadable.id,
 				[0, 0, width, 0, width, height, 0, height],
 				[nw.x, nw.y, ne.x, ne.y, se.x, se.y, sw.x, sw.y],
-				true //false // trigger download
+				true // trigger download
 			);
 
-		}
+		};
 
-		downloadable.src = overlay.fullResolutionSrc || overlay._image.src;
+		downloadable.src = overlay.options.fullResolutionSrc || overlay._image.src;
 
 	},
 
