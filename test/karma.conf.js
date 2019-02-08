@@ -23,6 +23,7 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       { pattern: "examples/*.jpg", included: false, served: true },
+      { pattern: "examples/*.png", included: false, served: true },
       "node_modules/leaflet/dist/leaflet-src.js",
       "node_modules/leaflet/dist/leaflet.css",
       "node_modules/leaflet-toolbar/dist/leaflet.toolbar.js",
