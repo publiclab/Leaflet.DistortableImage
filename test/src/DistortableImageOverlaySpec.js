@@ -14,7 +14,7 @@ describe("L.DistortableImageOverlay", function() {
 			fullSize[i].style.height = '100%';
 		}
 
-		distortable = new L.DistortableImageOverlay('/examples/example.jpg', {
+		distortable = new L.DistortableImageOverlay('/examples/example.png', {
 			corners: [
 				new L.LatLng(41.7934, -87.6052),
 				new L.LatLng(41.7934, -87.5852),

@@ -12,6 +12,11 @@
   <script src="../node_modules/leaflet-toolbar/dist/leaflet.toolbar.js"></script>
   <link href="../node_modules/leaflet-toolbar/dist/leaflet.toolbar.css" rel="stylesheet"/>
 
+  <!-- for full-res export -->
+  <script src="../node_modules/jquery/dist/jquery.js"></script>
+  <script src="../node_modules/webgl-distort/dist/webgl-distort.js"></script>
+  <script src="../node_modules/glfx/glfx.js"></script>
+
   <link rel="stylesheet" href="../dist/leaflet.distortableimage.css" type="text/css" media="screen" title="no title" charset="utf-8">
   <script src="../dist/leaflet.distortableimage.js"></script>
 </head>
@@ -41,18 +46,19 @@
 
       // create an image
       img = new L.DistortableImageOverlay(
-        'example.jpg', {
+        'example.png', {
           corners: [
             new L.latLng(51.52,-0.10),
             new L.latLng(51.52,-0.14),
             new L.latLng(51.50,-0.10),
             new L.latLng(51.50,-0.14)
-          ]
+          ],
+          fullResolutionSrc: 'large.jpg'
         }
       ).addTo(map);
 
       L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
     })();
   </script>
-      
+
 </html>

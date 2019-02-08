@@ -11,7 +11,9 @@ module.exports = function(config) {
       require("karma-mocha"),
       require("karma-coverage"),
       require("karma-mocha-reporter"),
-      require("karma-phantomjs-launcher")
+      require("karma-phantomjs-launcher"),
+      require("glfx"),
+      require("webgl-distort/dist/webgl-distort.js")
     ],
 
     // frameworks to use
@@ -21,10 +23,13 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       { pattern: "examples/*.jpg", included: false, served: true },
+      { pattern: "examples/*.png", included: false, served: true },
       "node_modules/leaflet/dist/leaflet-src.js",
       "node_modules/leaflet/dist/leaflet.css",
       "node_modules/leaflet-toolbar/dist/leaflet.toolbar.js",
       "node_modules/leaflet-toolbar/dist/leaflet.toolbar.css",
+      "node_modules/webgl-distort/dist/webgl-distort.js",
+      "node_modules/glfx/glfx.js",
       "node_modules/chai/chai.js",
       "node_modules/sinon/pkg/sinon.js",
       "src/util/*.js",
