@@ -27,6 +27,7 @@ module.exports = function(grunt) {
                     L: false,
                     $: false,
                     LeafletToolbar: false,
+                    warpWebGl: false,
 
                     // Mocha
 
