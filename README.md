@@ -79,6 +79,46 @@ We've added a GPU-accelerated means to generate a full resolution version of the
 <script src="../node_modules/glfx-js/dist/glfx.js"></script>
 ```
 
+## Usage
+
+```js
+// basic Leaflet map setup
+map = new L.map('map').setView([51.505, -0.09], 13);
+L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.png', {
+  maxZoom: 18,
+  attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+    '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+    'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+  id: 'examples.map-i86knfo3'
+}).addTo(map);
+
+// create an image
+img = new L.DistortableImageOverlay(
+  'example.png', {
+    corners: [
+      new L.latLng(51.52,-0.10),
+      new L.latLng(51.52,-0.14),
+      new L.latLng(51.50,-0.10),
+      new L.latLng(51.50,-0.14)
+    ],
+    fullResolutionSrc: 'large.jpg' // optionally pass in a higher resolution image to use in full-res exporting
+  }
+).addTo(map);
+
+L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing); // enable editing
+
+```
+
+## Full-resolution download
+
+We've added a GPU-accelerated means to generate a full resolution version of the distorted image; it requires two additional dependencies to enable; see how we've included them in the demo:
+
+
+```
+<script src="../node_modules/webgl-distort/dist/webgl-distort.js"></script>
+<script src="../node_modules/glfx-js/dist/glfx.js"></script>
+```
+
 ****
 
 ## Setup
