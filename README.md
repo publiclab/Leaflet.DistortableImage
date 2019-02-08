@@ -12,6 +12,7 @@ Advantages include:
 * CSS3 transforms are GPU-accelerated in most (all?) browsers, for a very smooth UI
 * no need to server-side generate raster GeoTiffs, tilesets, etc in order to view distorted imagery layers
 * images use DOM event handling for real-time distortion 
+* [full resolution download option](https://github.com/publiclab/Leaflet.DistortableImage/pull/100) for large images, using WebGL acceleration
 
 [Download as zip](https://github.com/publiclab/Leaflet.DistortableImage/releases) or clone to get a copy of the repo.
 
@@ -31,6 +32,11 @@ And watch this GIF demo:
 
 ![demo gif](https://raw.githubusercontent.com/publiclab/mapknitter/master/public/demo.gif)
 
+<<<<<<< HEAD
+=======
+Download as zip or clone to get a copy of the Repo.
+
+>>>>>>> Update README.md
 To test the code, open `index.html` in your browser and click and drag the markers on the edges of the image. The image will show perspectival distortions.
 
 ## Usage
