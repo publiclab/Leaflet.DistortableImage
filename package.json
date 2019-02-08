@@ -1,6 +1,6 @@
 {
   "name": "leaflet-distortableimage",
-  "version": "0.1.6",
+  "version": "0.2.0",
   "description": "Leaflet plugin enabling image overlays to be distorted, stretched, and warped (built for Public Lab's MapKnitter: http://publiclab.org).",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -28,6 +28,9 @@
     "url": "https://github.com/publiclab/Leaflet.DistortableImage/issues"
   },
   "homepage": "https://github.com/publiclab/Leaflet.DistortableImage",
+  "dependencies": {
+    "grunt-cli": "^1.2.0"
+  },
   "devDependencies": {
     "chai": "^4.1.2",
     "font-awesome": "^4.2.0",
@@ -47,8 +50,5 @@
     "matchdep": "^2.0.0",
     "mocha": "^5.2.0",
     "sinon": "^7.2.2"
-  },
-  "dependencies": {
-    "grunt-cli": "^1.2.0"
   }
 }
