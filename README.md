@@ -46,6 +46,8 @@ To test the code, open `index.html` in your browser and click and drag the marke
 1. This project uses `grunt` to do a lot of things, including concatenate source files from /src/ to /DistortableImageOverlay.js. But you may need to install grunt-cli: `npm install -g grunt-cli` first.
 2. Run `grunt` in the root directory, and it will watch for changes and concatenate them on the fly.
 
+To build all files from `/src/` into the `/dist/` folder, run `grunt concat:dist`.
+
 ****
 
 ### Contributors
