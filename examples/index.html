@@ -42,6 +42,7 @@
       // create an image
       img = new L.DistortableImageOverlay(
         'example.jpg', {
+          suppressToolbar: false,
           corners: [
             new L.latLng(51.52,-0.10),
             new L.latLng(51.52,-0.14),
@@ -54,5 +55,5 @@
       L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
     })();
   </script>
-      
+
 </html>
