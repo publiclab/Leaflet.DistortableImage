@@ -47,7 +47,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		this._rotateHandles = new L.LayerGroup();
 		for (i = 0; i < 4; i++) {
-			this._rotateHandles.addLayer(new L.RotateHandle(overlay, i));
+			this._rotateHandles.addLayer(new L.RotateAndScaleHandle(overlay, i));
 		}
 
 		this._handles = {
