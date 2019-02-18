@@ -849,7 +849,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		var keymap = this.options.keymap,
 			handlerName = keymap[event.which];
 
-		if (handlerName !== undefined) {
+		if (handlerName !== undefined && this._overlay.options.suppressToolbar !== true) {
 			this[handlerName].call(this);
 		}
 	},
@@ -928,8 +928,10 @@ L.DistortableImage.Edit = L.Handler.extend({
 		else { point = target._leaflet_pos; }
 		var raised_point = map.containerPointToLatLng(new L.Point(point.x,point.y-20));
 		raised_point.lng = overlay.getCenter().lng;
+		if (this._overlay.options.suppressToolbar !== true) {
 		this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(map, overlay);
 		overlay.fire('toolbar:created');
+		}
 
 		L.DomEvent.stopPropagation(event);
 	},
