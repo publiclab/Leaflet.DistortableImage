@@ -1,4 +1,4 @@
-describe("L.RotateHandle", function() {
+describe("L.RotateAndScaleHandle", function() {
 	var map,
 		distortable,
 		rotateHandle;
@@ -15,7 +15,7 @@ describe("L.RotateHandle", function() {
 		}).addTo(map);
 
 		L.DomEvent.on(distortable._image, 'load', function() {
-			rotateHandle = new L.RotateHandle(distortable, 0);
+			rotateHandle = new L.RotateAndScaleHandle(distortable, 0);
 			done();
 		});
 	});

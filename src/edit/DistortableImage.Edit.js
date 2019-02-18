@@ -10,6 +10,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			76: '_toggleLock', // l
 			79: '_toggleOutline', // o
 			82: '_toggleRotateDistort', // r
+			//83: '_toggleScale', // s
 			84: '_toggleTransparency', // t
 		}
 	},
@@ -44,13 +45,19 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		this._rotateHandles = new L.LayerGroup();
 		for (i = 0; i < 4; i++) {
-			this._rotateHandles.addLayer(new L.RotateHandle(overlay, i));
+			this._rotateHandles.addLayer(new L.RotateAndScaleHandle(overlay, i)); //check karma confs
 		}
+
+		// this._scaleHandles = new L.LayerGroup();
+   	// for (i = 0; i < 4; i++) {
+   	// 	this._rotateHandles.addLayer(new L.ScaleHandle(overlay, i));
+    // }
 
 		this._handles = {
 			'lock':		 this._lockHandles,
 			'distort': this._distortHandles,
-			'rotate':	this._rotateHandles
+			'rotate':	this._rotateHandles,
+			//'scale': this._scaleHandles
 		};
 
 		if (this._mode === 'lock') {
@@ -180,6 +187,13 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		map.addLayer(this._handles[this._mode]);
 	},
+
+	// _toggleScale: function() {
+	// 	 var map = this._overlay._map;
+	// 	 map.removeLayer(this._handles[this._mode]);
+	// 	 this._mode='scale';
+	// 	 map.addLayer(this._handles[this._mode]);
+	//  },
 
 	_toggleTransparency: function() {
 		var image = this._overlay._image,
