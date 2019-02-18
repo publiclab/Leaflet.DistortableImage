@@ -11,7 +11,9 @@ L.DistortableImage.Edit = L.Handler.extend({
 			76: '_toggleLock', // l
 			79: '_toggleOutline', // o
 			82: '_toggleRotateDistort', // r
-			84: '_toggleTransparency', // t
+      84: '_toggleTransparency', // t
+      46: "_removeOverlay", // delete windows / delete + fn mac
+      8: "_removeOverlay" // backspace windows / delete mac
 		}
 	},
 
@@ -92,7 +94,12 @@ L.DistortableImage.Edit = L.Handler.extend({
 		L.DomEvent.off(window, 'keydown', this._onKeyDown, this);
 
 		overlay.fire('deselect');
-	},
+  },
+  
+  confirmDelete: function () {
+    return window.confirm("Are you sure you want to delete?");
+  },
+
 
 	_rotateBy: function(angle) {
 		var overlay = this._overlay,
@@ -250,7 +257,19 @@ L.DistortableImage.Edit = L.Handler.extend({
 		}
 
 		L.DomEvent.stopPropagation(event);
-	},
+  },
+  
+  _removeOverlay: function () {
+    var overlay = this._overlay;
+    if (this._mode !== "lock") {
+      var choice = this.confirmDelete();
+      if (choice) {
+        overlay._map.removeLayer(overlay);
+        overlay.fire('delete');
+        this.disable();
+      }
+    }
+  },
 
 
 	// Based on https://github.com/publiclab/mapknitter/blob/8d94132c81b3040ae0d0b4627e685ff75275b416/app/assets/javascripts/mapknitter/Map.js#L47-L82
