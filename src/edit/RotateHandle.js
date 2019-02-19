@@ -19,6 +19,16 @@ L.RotateHandle = L.EditHandle.extend({
 		overlay.editing._rotateBy(angle);
 		overlay.editing._scaleBy(scale);
 
+		/* checks whether the "edgeMinWidth" property is set and tracks the minimum edge length */		
+		if (this._handled.options.hasOwnProperty('edgeMinWidth')){
+			var edgeMinWidth = this._handled.options.edgeMinWidth,
+			    w = L.latLng(overlay._corners[0]).distanceTo(overlay._corners[1]),
+			    h = L.latLng(overlay._corners[1]).distanceTo(overlay._corners[2]);
+			if ((w > edgeMinWidth && h > edgeMinWidth) || scale > 1) overlay.editing._scaleBy(scale);
+		} else {
+			overlay.editing._scaleBy(scale);
+		}
+
 		overlay.fire('update');
 	},
 

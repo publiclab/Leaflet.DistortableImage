@@ -257,7 +257,8 @@ L.RotateHandle = L.EditHandle.extend({
 			scale = this._calculateScalingFactor(formerLatLng, newLatLng);
 
 		overlay.editing._rotateBy(angle);
-		
+		overlay.editing._scaleBy(scale);
+
 		/* checks whether the "edgeMinWidth" property is set and tracks the minimum edge length */		
 		if (this._handled.options.hasOwnProperty('edgeMinWidth')){
 			var edgeMinWidth = this._handled.options.edgeMinWidth,
