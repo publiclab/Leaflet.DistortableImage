@@ -28,3 +28,7 @@
 .leaflet-pane .leaflet-overlay-pane img {
   pointer-events: all !important;
 }
+
+.leaflet-toolbar-icon {
+  box-sizing: initial;
+}
