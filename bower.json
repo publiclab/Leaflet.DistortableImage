@@ -7,14 +7,10 @@
   },
   "main": "dist/leaflet.distortableimage.js",
   "ignore": [
-    "examples",
     "node_modules",
     "src",
     "test",
-    "bower.json",
-    "Gruntfile.js",
-    "package.json",
-    "README.md"
+    "Gruntfile.js"
   ],
   "keywords": [
     "leaflet",
