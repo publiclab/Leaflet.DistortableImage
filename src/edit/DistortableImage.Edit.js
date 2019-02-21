@@ -13,7 +13,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			82: '_toggleRotateDistort', // r
       84: '_toggleTransparency', // t
       46: "_removeOverlay", // delete windows / delete + fn mac
-      8: "_removeOverlay" // backspace windows / delete mac
+      8: 	"_removeOverlay" // backspace windows / delete mac
 		}
 	},
 
@@ -95,7 +95,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		overlay.fire('deselect');
   },
-  
+
   confirmDelete: function () {
     return window.confirm("Are you sure you want to delete?");
   },
@@ -258,7 +258,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		L.DomEvent.stopPropagation(event);
   },
-  
+
   _removeOverlay: function () {
     var overlay = this._overlay;
     if (this._mode !== "lock") {
@@ -271,32 +271,31 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
   },
 
-
 	// Based on https://github.com/publiclab/mapknitter/blob/8d94132c81b3040ae0d0b4627e685ff75275b416/app/assets/javascripts/mapknitter/Map.js#L47-L82
 	_toggleExport: function (){
-		var map = this._overlay._map; 
+		var map = this._overlay._map;
 		var overlay = this._overlay;
 
 		// make a new image
 		var downloadable = new Image();
-		
+
 		downloadable.id = downloadable.id || "tempId12345";
 		$('body').append(downloadable);
 
 		downloadable.onload = function onLoadDownloadableImage() {
-        
+
 			var height = downloadable.height,
 				width = downloadable.width,
 				nw = map.latLngToLayerPoint(overlay._corners[0]),
 				ne = map.latLngToLayerPoint(overlay._corners[1]),
 				sw = map.latLngToLayerPoint(overlay._corners[2]),
 				se = map.latLngToLayerPoint(overlay._corners[3]);
-        
-			// I think this is to move the image to the upper left corner, 
-			// jywarren: i think we may need these or the image goes off the edge of the canvas
-                        // jywarren: but these seem to break the distortion math... 
 
-			// jywarren: i think it should be rejiggered so it 
+			// I think this is to move the image to the upper left corner,
+			// jywarren: i think we may need these or the image goes off the edge of the canvas
+                        // jywarren: but these seem to break the distortion math...
+
+			// jywarren: i think it should be rejiggered so it
 			// finds the most negative values of x and y and then
 			// adds those to all coordinates
 
@@ -304,7 +303,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			//ne.x -= nw.x;
 			//se.x -= nw.x;
 			//sw.x -= nw.x;
-        
+
 			//nw.y -= nw.y;
 			//ne.y -= nw.y;
 			//se.y -= nw.y;
@@ -314,66 +313,7 @@ L.DistortableImage.Edit = L.Handler.extend({
        			downloadable.onload = function() {
 				$(downloadable).remove();
 			};
- 
-			if (window && window.hasOwnProperty('warpWebGl')) {
-				warpWebGl(
-					downloadable.id,
-					[0, 0, width, 0, width, height, 0, height],
-					[nw.x, nw.y, ne.x, ne.y, se.x, se.y, sw.x, sw.y],
-					true // trigger download
-				);
-			}
 
-		};
-
-		downloadable.src = overlay.options.fullResolutionSrc || overlay._image.src;
-
-	},
-
-
-	// Based on https://github.com/publiclab/mapknitter/blob/8d94132c81b3040ae0d0b4627e685ff75275b416/app/assets/javascripts/mapknitter/Map.js#L47-L82
-	_toggleExport: function (){
-		var map = this._overlay._map; 
-		var overlay = this._overlay;
-
-		// make a new image
-		var downloadable = new Image();
-		
-		downloadable.id = downloadable.id || "tempId12345";
-		$('body').append(downloadable);
-
-		downloadable.onload = function onLoadDownloadableImage() {
-        
-			var height = downloadable.height,
-				width = downloadable.width,
-				nw = map.latLngToLayerPoint(overlay._corners[0]),
-				ne = map.latLngToLayerPoint(overlay._corners[1]),
-				sw = map.latLngToLayerPoint(overlay._corners[2]),
-				se = map.latLngToLayerPoint(overlay._corners[3]);
-        
-			// I think this is to move the image to the upper left corner, 
-			// jywarren: i think we may need these or the image goes off the edge of the canvas
-                        // jywarren: but these seem to break the distortion math... 
-
-			// jywarren: i think it should be rejiggered so it 
-			// finds the most negative values of x and y and then
-			// adds those to all coordinates
-
-			//nw.x -= nw.x;
-			//ne.x -= nw.x;
-			//se.x -= nw.x;
-			//sw.x -= nw.x;
-        
-			//nw.y -= nw.y;
-			//ne.y -= nw.y;
-			//se.y -= nw.y;
-			//sw.y -= nw.y;
-
-			// run once warping is complete
-       			downloadable.onload = function() {
-				$(downloadable).remove();
-			};
- 
 			if (window && window.hasOwnProperty('warpWebGl')) {
 				warpWebGl(
 					downloadable.id,
