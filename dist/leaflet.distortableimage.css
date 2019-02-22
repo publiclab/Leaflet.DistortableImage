@@ -5,6 +5,13 @@
   overflow: clip;
 }
 
+.l-container {
+  background-color: rgba(0,0,0,0.5);
+  color: white;
+  padding: 0px 0px 5px 0px;
+  font-size: 12px;
+}
+
 #imgdistort {
   position: absolute;
   top: 0px;
@@ -21,7 +28,7 @@
 }
 
 #inputimage {
-  position:absolute; 
+  position:absolute;
   top:-100px;
 }
 
