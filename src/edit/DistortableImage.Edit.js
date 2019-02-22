@@ -30,13 +30,36 @@ L.DistortableImage.Edit = L.Handler.extend({
 		this._mode = this._overlay.options.mode || 'distort';
 		this._transparent = false;
 		this._outlined = false;
+
+		/* Add custom toolbars */
+		this._addToolbar = function(map, position, el, styleClass, DOMString) {
+			var custom_toolbar = L.control({ position: position });
+
+			custom_toolbar.onAdd = function() {
+				var el_wrapper = L.DomUtil.create(el, styleClass);
+				el_wrapper.innerHTML = DOMString;
+				return el_wrapper;
+			};
+			custom_toolbar.addTo(map);
+		};
 	},
 
 	/* Run on image selection. */
 	addHooks: function() {
 		var overlay = this._overlay,
 			map = overlay._map,
+			addToolbar = this._addToolbar,
 			i;
+
+		/* define guides here */
+
+		// keymapper guide
+		addToolbar(overlay._map, "topright", "div", "l-container", L.DistortableImage.Guides[0]);
+
+		/* ------------------ */
+
+		/* bring the selected image into view */
+		overlay.bringToFront();
 
 		this._lockHandles = new L.LayerGroup();
 		for (i = 0; i < 4; i++) {
