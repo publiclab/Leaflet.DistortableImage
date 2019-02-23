@@ -33,10 +33,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		var overlay = this._overlay,
 			map = overlay._map,
 			i;
-
-			/* bring the selected image into view */
-			// overlay.bringToFront(); allow user to manipulate images without changing their order
-
+			
 		this._lockHandles = new L.LayerGroup();
 		for (i = 0; i < 4; i++) {
 			this._lockHandles.addLayer(new L.LockHandle(overlay, i, { draggable: false }));
