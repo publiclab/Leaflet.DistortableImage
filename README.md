@@ -103,6 +103,27 @@ img = new L.DistortableImageOverlay(
 L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing); // enable editing
 
 ```
+**Note:** For multiple images, we've added a `ToggleOrder` action, that switches overlapping images back and forth into view.
+
+```js
+ToggleOrder = EditOverlayAction.extend({
+  options: {
+    toolbarIcon: {
+      html: '<span class="fa fa-sort"></span>',
+      tooltip: 'Change order',
+      title: 'Toggle order'
+    }
+  },
+
+  addHooks: function ()
+  {
+    var editing = this._overlay.editing;
+
+    editing._toggleOrder(); // toggles images into view
+    this.disable();
+  }
+});
+```
 
 ## Full-resolution download
 
