@@ -103,7 +103,9 @@ img = new L.DistortableImageOverlay(
 L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing); // enable editing
 
 ```
-**Note:** For multiple images, we've added a `ToggleOrder` action, that switches overlapping images back and forth into view.
+## Image-ordering
+
+For multiple images, we've added a `ToggleOrder` action, that switches overlapping images back and forth into view by employing the [`bringToFront()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtoback).
 
 ```js
 ToggleOrder = EditOverlayAction.extend({
@@ -123,6 +125,7 @@ ToggleOrder = EditOverlayAction.extend({
     this.disable();
   }
 });
+
 ```
 
 ## Full-resolution download
