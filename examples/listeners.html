@@ -15,7 +15,7 @@
   <!-- for full-res export -->
   <script src="../node_modules/jquery/dist/jquery.js"></script>
   <script src="../node_modules/webgl-distort/dist/webgl-distort.js"></script>
-  <script src="../node_modules/glfx-js/dist/glfx.js"></script>
+  <script src="../node_modules/glfx/glfx.js"></script>
 
   <link rel="stylesheet" href="../dist/leaflet.distortableimage.css" type="text/css" media="screen" title="no title" charset="utf-8">
   <script src="../dist/leaflet.distortableimage.js"></script>
@@ -58,7 +58,7 @@
 
       L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
 
-      /* Wait until image is loaded before setting 
+      /* Wait until image is loaded before setting
        * up DOM element listeners */
       L.DomEvent.on(img._image, 'load', function() {
         var img = this
@@ -68,5 +68,5 @@
       }, img);
     })();
   </script>
-      
+
 </html>

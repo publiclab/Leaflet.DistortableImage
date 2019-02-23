@@ -10,10 +10,10 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 	}),
 
 	ToggleTransparency = EditOverlayAction.extend({
-		options: { toolbarIcon: { 
+		options: { toolbarIcon: {
 			html: '<span class="fa fa-adjust"></span>',
 			tooltip: 'Toggle Image Transparency',
-			title: 'Toggle Image Transparency'	
+			title: 'Toggle Image Transparency'
 		}},
 
 		addHooks: function() {
@@ -25,7 +25,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 	}),
 
 	ToggleOutline = EditOverlayAction.extend({
-		options: { toolbarIcon: { 
+		options: { toolbarIcon: {
 			html: '<span class="fa fa-square-o"></span>',
 			tooltip: 'Toggle Image Outline',
 			title: 'Toggle Image Outline'
@@ -40,7 +40,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 	}),
 
 	RemoveOverlay = EditOverlayAction.extend({
-		options: { toolbarIcon: { 
+		options: { toolbarIcon: {
 			html: '<span class="fa fa-trash"></span>',
 			tooltip: 'Delete image',
 			title: 'Delete image'
@@ -59,7 +59,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 		options: { toolbarIcon: {
 			html: '<span class="fa fa-lock"></span>',
 			tooltip: 'Lock / Unlock editing',
-			title: 'Lock / Unlock editing'			
+			title: 'Lock / Unlock editing'
 		}},
 
 		addHooks: function() {
@@ -78,7 +78,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 			options.toolbarIcon = {
 				html: '<span class="fa fa-' + icon + '"></span>',
 				tooltip: 'Rotate',
-				title: 'Rotate'	
+				title: 'Rotate'
 			};
 
 			EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
@@ -101,13 +101,31 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 				title: 'Export Image'
 			}
 		},
-		
+
 		addHooks: function ()
 		{
 			var editing = this._overlay.editing;
 
 			editing._toggleExport();
-			this.disable(); 
+			this.disable();
+		}
+	}),
+
+	ToggleOrder = EditOverlayAction.extend({
+		options: {
+			toolbarIcon: {
+				html: '<span class="fa fa-sort"></span>',
+				tooltip: 'Change order',
+				title: 'Toggle order'
+			}
+		},
+
+		addHooks: function ()
+		{
+			var editing = this._overlay.editing;
+
+			editing._toggleOrder();
+			this.disable();
 		}
 	});
 
@@ -119,7 +137,8 @@ L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
 			ToggleOutline,
 			ToggleEditable,
 			ToggleRotateDistort,
-			ToggleExport
+			ToggleExport,
+			ToggleOrder
 		]
 	}
 });

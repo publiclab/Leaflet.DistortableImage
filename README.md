@@ -3,15 +3,15 @@ Leaflet.DistortableImage
 
 [![Build Status](https://travis-ci.org/publiclab/Leaflet.DistortableImage.svg?branch=master)](https://travis-ci.org/publiclab/Leaflet.DistortableImage)
 
-A Leaflet extension to distort images -- "rubbersheeting" -- for the [MapKnitter.org](http://mapknitter.org) ([src](https://github.com/publiclab/mapknitter)) image georectification service by [Public Lab](http://publiclab.org). Leaflet.DistortableImage allows for perspectival distortions of images, client-side, using CSS3 transformations in the DOM. 
+A Leaflet extension to distort images -- "rubbersheeting" -- for the [MapKnitter.org](http://mapknitter.org) ([src](https://github.com/publiclab/mapknitter)) image georectification service by [Public Lab](http://publiclab.org). Leaflet.DistortableImage allows for perspectival distortions of images, client-side, using CSS3 transformations in the DOM.
 
 Advantages include:
 
-* it can handle over 100 images smoothly, even on a smartphone. 
+* it can handle over 100 images smoothly, even on a smartphone.
 * images can be right-clicked and downloaded individually in their original state
 * CSS3 transforms are GPU-accelerated in most (all?) browsers, for a very smooth UI
 * no need to server-side generate raster GeoTiffs, tilesets, etc in order to view distorted imagery layers
-* images use DOM event handling for real-time distortion 
+* images use DOM event handling for real-time distortion
 * [full resolution download option](https://github.com/publiclab/Leaflet.DistortableImage/pull/100) for large images, using WebGL acceleration
 
 [Download as zip](https://github.com/publiclab/Leaflet.DistortableImage/releases) or clone to get a copy of the repo.
@@ -71,7 +71,7 @@ We've added a GPU-accelerated means to generate a full resolution version of the
 
 ```
 <script src="../node_modules/webgl-distort/dist/webgl-distort.js"></script>
-<script src="../node_modules/glfx-js/dist/glfx.js"></script>
+<script src="../node_modules/glfx/glfx.js"></script>
 ```
 
 ## Usage
@@ -111,7 +111,7 @@ We've added a GPU-accelerated means to generate a full resolution version of the
 
 ```
 <script src="../node_modules/webgl-distort/dist/webgl-distort.js"></script>
-<script src="../node_modules/glfx-js/dist/glfx.js"></script>
+<script src="../node_modules/glfx/glfx.js"></script>
 ```
 
 ****
