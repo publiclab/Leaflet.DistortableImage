@@ -44,7 +44,7 @@ module.exports = function(config) {
       "test/src/**/*Spec.js"
     ],
 
-    // so that karma can serve examples/example.jpg
+    // so that karma can serve examples/example.png
     proxies: {
       "/examples/": "/base/examples/"
     },
