@@ -85,33 +85,25 @@
       }).addTo(map);
 
       /* add custom icon functionality */
-      // refer this snippet below
-      // inorder to add a custom functionality
-      
-      /* var tool = EditOverlayAction.extend({
-        initialize: function(map, overlay, options) {
-          var icon = "rotate-left";
-          options = options || {};
-          options.toolbarIcon = {
-            html: '<span class="fa fa-' + icon + '"></span>',
-            tooltip: "Rotate",
-            title: "Rotate"
-          };
-          EditOverlayAction.prototype.initialize.call(
-            this,
-            map,
-            overlay,
-            options
-          );
-        },
-        addHooks: function() {
-          var editing = this._overlay.editing;
-          editing._toggleRotateDistort();
-          this.disable();
-        }
-      });
+      // refer this snippet below inorder to add a custom functionality
 
-      img._addTool(tool); */
+      //  var tool = EditOverlayAction.extend({
+      //    options: {
+      //      toolbarIcon: {
+      //        html: '<span class="fa fa-plus-circle"></span>',
+      //        tooltip: "Export Image",
+      //        title: "Export Image"
+      //      }
+      //    },
+      //
+      //    addHooks: function() {
+      //      var editing = this._overlay.editing;
+      //      editing._demonstrator();
+      //      this.disable();
+      //    }
+      //  });
+      //
+      // img._addTool(tool);
 
       L.DomEvent.on(img._image, "load", img.editing.enable, img.editing);
     })();

@@ -922,6 +922,11 @@ L.DistortableImage.Edit = L.Handler.extend({
     image.setAttribute("opacity", opacity);
   },
 
+
+  // _demonstrator: function() {
+  //   console.log('Hi there!');
+  // },
+
   _toggleOutline: function() {
     var image = this._overlay._image,
       opacity,
