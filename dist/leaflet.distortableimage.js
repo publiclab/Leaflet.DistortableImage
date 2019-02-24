@@ -392,7 +392,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
 	_addTool: function(tool) {
 		this._toolArray.push(tool);
-		L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
+		L.DistortableImage.EditToolbar = LeafletToolbar.Control.extend({
 			options: {
 				actions: this._toolArray
 			}
