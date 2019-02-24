@@ -571,10 +571,10 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 	}),
 
 	ToggleTransparency = EditOverlayAction.extend({
-		options: { toolbarIcon: { 
+		options: { toolbarIcon: {
 			html: '<span class="fa fa-adjust"></span>',
 			tooltip: 'Toggle Image Transparency',
-			title: 'Toggle Image Transparency'	
+			title: 'Toggle Image Transparency'
 		}},
 
 		addHooks: function() {
@@ -586,7 +586,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 	}),
 
 	ToggleOutline = EditOverlayAction.extend({
-		options: { toolbarIcon: { 
+		options: { toolbarIcon: {
 			html: '<span class="fa fa-square-o"></span>',
 			tooltip: 'Toggle Image Outline',
 			title: 'Toggle Image Outline'
@@ -601,7 +601,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 	}),
 
 	RemoveOverlay = EditOverlayAction.extend({
-		options: { toolbarIcon: { 
+		options: { toolbarIcon: {
 			html: '<span class="fa fa-trash"></span>',
 			tooltip: 'Delete image',
 			title: 'Delete image'
@@ -620,7 +620,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 		options: { toolbarIcon: {
 			html: '<span class="fa fa-lock"></span>',
 			tooltip: 'Lock / Unlock editing',
-			title: 'Lock / Unlock editing'			
+			title: 'Lock / Unlock editing'
 		}},
 
 		addHooks: function() {
@@ -639,7 +639,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 			options.toolbarIcon = {
 				html: '<span class="fa fa-' + icon + '"></span>',
 				tooltip: 'Rotate',
-				title: 'Rotate'	
+				title: 'Rotate'
 			};
 
 			EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
@@ -662,18 +662,19 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 				title: 'Export Image'
 			}
 		},
-		
+
 		addHooks: function ()
 		{
 			var editing = this._overlay.editing;
 
 			editing._toggleExport();
-			this.disable(); 
+			this.disable();
 		}
 	});
 
-L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
+L.DistortableImage.EditToolbar = LeafletToolbar.Control.extend({
 	options: {
+		position:'topleft',
 		actions: [
 			ToggleTransparency,
 			RemoveOverlay,
@@ -711,13 +712,31 @@ L.DistortableImage.Edit = L.Handler.extend({
 		this._mode = this._overlay.options.mode || 'distort';
 		this._transparent = false;
 		this._outlined = false;
+
+		/* Add custom toolbars */
+		this._addToolbar = function(map, position, el, styleClass, DOMString) {
+			var custom_toolbar = L.control({ position: position });
+
+			custom_toolbar.onAdd = function() {
+				var el_wrapper = L.DomUtil.create(el, styleClass);
+				el_wrapper.innerHTML = DOMString;
+				return el_wrapper;
+			};
+			custom_toolbar.addTo(map);
+		};
 	},
 
 	/* Run on image seletion. */
 	addHooks: function() {
 		var overlay = this._overlay,
 			map = overlay._map,
+			addToolbar = this._addToolbar,
 			i;
+
+			/* make a keymapping guide */
+			var dom_string = "<b><center><h3>Keymappings</h3><center><hr/></center></center><ul><li>L: Lock overlay</li><li>O: Outline overlay</li><li>R: Rotate overlay</li><li>RR: Distort overlay</li><li>T: Transparent overlay&nbsp;&nbsp;&nbsp;&nbsp;</li><li>DEL: Remove overlay</li></ul></b>";
+
+			addToolbar(overlay._map, "topright", "div", "l-container", dom_string);
 
 			/* bring the selected image into view */
 			overlay.bringToFront();
