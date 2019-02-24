@@ -11,6 +11,24 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 			this._toolArray = window.defaults;
 			this._url = url;
 			this._rotation = this.options.rotation;
+			this._addTool = function(tool) {
+				this._toolArray.push(tool);
+				L.DistortableImage.EditToolbar = LeafletToolbar.Control.extend({
+					options: {
+						actions: this._toolArray
+					}
+				});
+			};
+			this._removeTool = function(tool) {
+				this._toolArray = this._toolArray.filter(function(x){
+					return x!==tool;
+				});
+				L.DistortableImage.EditToolbar = LeafletToolbar.Control.extend({
+					options: {
+						actions: this._toolArray
+					}
+				});
+			};
 
 			L.setOptions(this, options);
 	},
@@ -67,15 +85,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
 		L.extend(this._image, {
 			alt: this.options.alt
-		});
-	},
-
-	_addTool: function(tool) {
-		this._toolArray.push(tool);
-		L.DistortableImage.EditToolbar = LeafletToolbar.Control.extend({
-			options: {
-				actions: this._toolArray
-			}
 		});
 	},
 

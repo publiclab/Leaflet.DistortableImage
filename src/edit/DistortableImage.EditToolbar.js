@@ -8,7 +8,6 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       LeafletToolbar.ToolbarAction.prototype.initialize.call(this, options);
     }
   }),
-
   ToggleTransparency = EditOverlayAction.extend({
     options: {
       toolbarIcon: {
@@ -25,7 +24,6 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       this.disable();
     }
   }),
-
   ToggleOutline = EditOverlayAction.extend({
     options: {
       toolbarIcon: {
@@ -42,7 +40,22 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       this.disable();
     }
   }),
+  ToggleExport = EditOverlayAction.extend({
+    options: {
+      toolbarIcon: {
+        html: '<span class="fa fa-download"></span>',
+        tooltip: "Export Image",
+        title: "Export Image"
+      }
+    },
 
+    addHooks: function() {
+      var editing = this._overlay.editing;
+
+      editing._toggleExport();
+      this.disable();
+    }
+  }),
   RemoveOverlay = EditOverlayAction.extend({
     options: {
       toolbarIcon: {
@@ -60,24 +73,6 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       this.disable();
     }
   }),
-
-  ToggleEditable = EditOverlayAction.extend({
-    options: {
-      toolbarIcon: {
-        html: '<span class="fa fa-lock"></span>',
-        tooltip: "Lock / Unlock editing",
-        title: "Lock / Unlock editing"
-      }
-    },
-
-    addHooks: function() {
-      var editing = this._overlay.editing;
-
-      editing._toggleLock();
-      this.disable();
-    }
-  }),
-
   ToggleRotateDistort = EditOverlayAction.extend({
     initialize: function(map, overlay, options) {
       var icon = overlay.editing._mode === "rotate" ? "image" : "rotate-left";
@@ -99,38 +94,54 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       this.disable();
     }
   }),
-
-  ToggleExport = EditOverlayAction.extend({
+  ToggleEditable = EditOverlayAction.extend({
     options: {
       toolbarIcon: {
-        html: '<span class="fa fa-download"></span>',
-        tooltip: "Export Image",
-        title: "Export Image"
+        html: '<span class="fa fa-lock"></span>',
+        tooltip: "Lock / Unlock editing",
+        title: "Lock / Unlock editing"
       }
     },
 
     addHooks: function() {
       var editing = this._overlay.editing;
 
-      editing._toggleExport();
+      editing._toggleLock();
       this.disable();
+    }
+  }),
+  ToggleReveal = EditOverlayAction.extend({
+    options: {
+      toolbarIcon: {
+        html: '<span class="fa fa-arrows-alt"></span>',
+        tooltip: "Enable reveal",
+        title: "More options"
+      }
+    },
+
+    addHooks: function() {
+      var hidden_tools = [
+          ToggleEditable,
+          ToggleExport,
+          ToggleRotateDistort,
+          RemoveOverlay
+        ],
+        i;
+      for (i = 0; i < hidden_tools.length; i++) {
+        this._overlay._addTool(hidden_tools[i]);
+      }
+      this._overlay._removeTool(ToggleReveal);
+      this._overlay.editing._hideToolbar();
     }
   });
 
-var defaults = [
-  ToggleTransparency,
-  RemoveOverlay,
-  ToggleOutline,
-  ToggleEditable,
-  ToggleRotateDistort,
-  ToggleExport
-];
+var defaults = [ToggleTransparency, RemoveOverlay, ToggleOutline, ToggleReveal];
 
 window.defaults = defaults;
 
 L.DistortableImage.EditToolbar = LeafletToolbar.Control.extend({
   options: {
-		position: 'topleft',
+    position: "topright",
     actions: defaults
   }
 });
