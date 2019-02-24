@@ -123,8 +123,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       var hidden_tools = [
           ToggleEditable,
           ToggleExport,
-          ToggleRotateDistort,
-          RemoveOverlay
+          ToggleRotateDistort
         ],
         i;
       for (i = 0; i < hidden_tools.length; i++) {
@@ -141,7 +140,7 @@ window.defaults = defaults;
 
 L.DistortableImage.EditToolbar = LeafletToolbar.Control.extend({
   options: {
-    position: "topright",
+    position: "topleft",
     actions: defaults
   }
 });

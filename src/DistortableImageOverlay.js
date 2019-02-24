@@ -15,6 +15,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 				this._toolArray.push(tool);
 				L.DistortableImage.EditToolbar = LeafletToolbar.Control.extend({
 					options: {
+						position: 'topleft',
 						actions: this._toolArray
 					}
 				});
@@ -25,6 +26,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 				});
 				L.DistortableImage.EditToolbar = LeafletToolbar.Control.extend({
 					options: {
+						position: 'topleft',
 						actions: this._toolArray
 					}
 				});
