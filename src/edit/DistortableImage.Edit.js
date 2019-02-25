@@ -12,7 +12,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			79: '_toggleOutline', // o
 			82: '_toggleRotateDistort', // r
                         46: "_removeOverlay", // delete windows / delete + fn mac
-                        8: 	"_removeOverlay" // backspace windows / delete mac
+                        8:  "_removeOverlay", // backspace windows / delete mac
 			83: '_toggleScale', // s
 			84: '_toggleTransparency', // t
 			20:	'_toggleRotate' // CAPS
