@@ -11,9 +11,11 @@ L.DistortableImage.Edit = L.Handler.extend({
 			76: '_toggleLock', // l
 			79: '_toggleOutline', // o
 			82: '_toggleRotateDistort', // r
-      84: '_toggleTransparency', // t
-      46: "_removeOverlay", // delete windows / delete + fn mac
-      8: 	"_removeOverlay" // backspace windows / delete mac
+                        46: "_removeOverlay", // delete windows / delete + fn mac
+                        8:  "_removeOverlay", // backspace windows / delete mac
+			83: '_toggleScale', // s
+			84: '_toggleTransparency', // t
+			20:	'_toggleRotate' // CAPS
 		}
 	},
 
@@ -45,15 +47,27 @@ L.DistortableImage.Edit = L.Handler.extend({
 			this._distortHandles.addLayer(new L.DistortHandle(overlay, i));
 		}
 
-		this._rotateHandles = new L.LayerGroup();
+		this._rotateHandles = new L.LayerGroup(); // handle includes rotate AND scale
 		for (i = 0; i < 4; i++) {
-			this._rotateHandles.addLayer(new L.RotateHandle(overlay, i));
+			this._rotateHandles.addLayer(new L.RotateAndScaleHandle(overlay, i));
+		}
+
+		this._scaleHandles = new L.LayerGroup();
+		for (i = 0; i < 4; i++) {
+			this._scaleHandles.addLayer(new L.ScaleHandle(overlay, i));
+		}
+
+		this.__rotateHandles = new L.LayerGroup(); // individual rotate
+		for (i = 0; i < 4; i++) {
+			this.__rotateHandles.addLayer(new L.RotateHandle(overlay, i));
 		}
 
 		this._handles = {
 			'lock':		 this._lockHandles,
 			'distort': this._distortHandles,
-			'rotate':	this._rotateHandles
+			'rotate':	this._rotateHandles,
+			'scale': this._scaleHandles,
+			'rotateStandalone': this.__rotateHandles
 		};
 
 		if (this._mode === 'lock') {
@@ -185,6 +199,26 @@ L.DistortableImage.Edit = L.Handler.extend({
 		/* Switch mode. */
 		if (this._mode === 'rotate') { this._mode = 'distort'; }
 		else { this._mode = 'rotate'; }
+
+		map.addLayer(this._handles[this._mode]);
+	},
+
+	_toggleScale: function() {
+		var map = this._overlay._map;
+
+		map.removeLayer(this._handles[this._mode]);
+
+		this._mode = 'scale';
+
+		map.addLayer(this._handles[this._mode]);
+	},
+
+	_toggleRotate: function() {
+		var map = this._overlay._map;
+
+		map.removeLayer(this._handles[this._mode]);
+
+		this._mode = 'rotateStandalone';
 
 		map.addLayer(this._handles[this._mode]);
 	},
