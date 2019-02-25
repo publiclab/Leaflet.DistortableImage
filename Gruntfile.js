@@ -1,6 +1,7 @@
 module.exports = function(grunt) {
 
     require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
+    // require('exif-js');
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -28,6 +29,7 @@ module.exports = function(grunt) {
                     $: false,
                     LeafletToolbar: false,
                     warpWebGl: false,
+                    EXIF: false,
 
                     // Mocha
 

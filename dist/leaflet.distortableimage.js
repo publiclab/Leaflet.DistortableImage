@@ -571,10 +571,10 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 	}),
 
 	ToggleTransparency = EditOverlayAction.extend({
-		options: { toolbarIcon: { 
+		options: { toolbarIcon: {
 			html: '<span class="fa fa-adjust"></span>',
 			tooltip: 'Toggle Image Transparency',
-			title: 'Toggle Image Transparency'	
+			title: 'Toggle Image Transparency'
 		}},
 
 		addHooks: function() {
@@ -586,7 +586,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 	}),
 
 	ToggleOutline = EditOverlayAction.extend({
-		options: { toolbarIcon: { 
+		options: { toolbarIcon: {
 			html: '<span class="fa fa-square-o"></span>',
 			tooltip: 'Toggle Image Outline',
 			title: 'Toggle Image Outline'
@@ -601,7 +601,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 	}),
 
 	RemoveOverlay = EditOverlayAction.extend({
-		options: { toolbarIcon: { 
+		options: { toolbarIcon: {
 			html: '<span class="fa fa-trash"></span>',
 			tooltip: 'Delete image',
 			title: 'Delete image'
@@ -620,7 +620,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 		options: { toolbarIcon: {
 			html: '<span class="fa fa-lock"></span>',
 			tooltip: 'Lock / Unlock editing',
-			title: 'Lock / Unlock editing'			
+			title: 'Lock / Unlock editing'
 		}},
 
 		addHooks: function() {
@@ -639,7 +639,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 			options.toolbarIcon = {
 				html: '<span class="fa fa-' + icon + '"></span>',
 				tooltip: 'Rotate',
-				title: 'Rotate'	
+				title: 'Rotate'
 			};
 
 			EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
@@ -662,13 +662,98 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 				title: 'Export Image'
 			}
 		},
-		
+
 		addHooks: function ()
 		{
 			var editing = this._overlay.editing;
 
 			editing._toggleExport();
-			this.disable(); 
+			this.disable();
+		}
+	}),
+
+	EnableEXIF = EditOverlayAction.extend({
+		options: {
+			toolbarIcon: {
+				html: '<span class="fa fa-compass"></span>',
+				tooltip: 'Enable EXIF',
+				title: 'Geocode Image'
+			}
+		},
+
+		addHooks: function ()
+		{
+			console.log(this._overlay._image);
+			var img = this._overlay._image;
+
+			EXIF.getData(img, function() {
+      var GPS = EXIF.getAllTags(img), altitude;
+
+      console.log(GPS);
+
+      /* If the lat/lng is available. */
+      if (typeof GPS.GPSLatitude !== 'undefined' && typeof GPS.GPSLongitude !== 'undefined'){
+
+        // sadly, encoded in [degrees,minutes,seconds]
+        // primitive value = GPS.GPSLatitude[x].numerator
+        var lat = (GPS.GPSLatitude[0]) +
+                  (GPS.GPSLatitude[1]/60) +
+                  (GPS.GPSLatitude[2]/3600);
+        var lng = (GPS.GPSLongitude[0]) +
+                  (GPS.GPSLongitude[1]/60) +
+                  (GPS.GPSLongitude[2]/3600);
+
+        if (GPS.GPSLatitudeRef !== "N")  {lat = lat*-1;}
+        if (GPS.GPSLongitudeRef === "W") {lng = lng*-1;}
+      }
+
+      // Attempt to use GPS compass heading; will require
+      // some trig to calc corner points, which you can find below:
+
+      var angle = 0;
+      // "T" refers to "True north", so -90.
+      if (GPS.GPSImgDirectionRef === "T")
+      {
+        angle = (Math.PI / 180) * (GPS.GPSImgDirection.numerator/GPS.GPSImgDirection.denominator - 90);
+      }
+      // "M" refers to "Magnetic north"
+      else if (GPS.GPSImgDirectionRef === "M")
+      {
+        angle = (Math.PI / 180) * (GPS.GPSImgDirection.numerator/GPS.GPSImgDirection.denominator - 90);
+      }
+      else
+      {
+        console.log("No compass data found");
+      }
+
+      console.log("Orientation:",GPS.Orientation);
+
+      /* If there is orientation data -- i.e. landscape/portrait etc */
+      if (GPS.Orientation === 6) { //CCW
+        angle += (Math.PI / 180) * -90;
+      } else if (GPS.Orientation === 8) { //CW
+        angle += (Math.PI / 180) * 90;
+      } else if (GPS.Orientation === 3) { //180
+        angle += (Math.PI / 180) * 180;
+      }
+
+      /* If there is altitude data */
+      if (typeof GPS.GPSAltitude !== 'undefined' && typeof GPS.GPSAltitudeRef  !== 'undefined'){
+        // Attempt to use GPS altitude:
+        // (may eventually need to find EXIF field of view for correction)
+        if (typeof GPS.GPSAltitude !== 'undefined' &&
+            typeof GPS.GPSAltitudeRef !== 'undefined') {
+          altitude = (GPS.GPSAltitude.numerator /GPS.GPSAltitude.denominator + GPS.GPSAltitudeRef);
+        } else {
+          altitude = 0; // none
+        }
+      }
+
+      /* only execute callback if lat (and by
+       * implication lng) exists */
+      // if (lat) fn(lat,lng,id,angle,altitude);
+      // console.log(lat,lng,angle,altitude);
+    });
 		}
 	});
 
@@ -680,7 +765,8 @@ L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
 			ToggleOutline,
 			ToggleEditable,
 			ToggleRotateDistort,
-			ToggleExport
+			ToggleExport,
+			EnableEXIF
 		]
 	}
 });
@@ -713,7 +799,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		this._outlined = false;
 	},
 
-	/* Run on image seletion. */
+	/* Run on image selection. */
 	addHooks: function() {
 		var overlay = this._overlay,
 			map = overlay._map,
@@ -761,7 +847,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 	},
 
-	/* Run on image deseletion. */
+	/* Run on image deselection. */
 	removeHooks: function() {
 		var overlay = this._overlay,
 			map = overlay._map;

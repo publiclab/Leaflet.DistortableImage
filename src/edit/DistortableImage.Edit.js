@@ -26,7 +26,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		this._outlined = false;
 	},
 
-	/* Run on image seletion. */
+	/* Run on image selection. */
 	addHooks: function() {
 		var overlay = this._overlay,
 			map = overlay._map,
@@ -74,7 +74,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 	},
 
-	/* Run on image deseletion. */
+	/* Run on image deselection. */
 	removeHooks: function() {
 		var overlay = this._overlay,
 			map = overlay._map;
