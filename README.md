@@ -56,7 +56,8 @@ img = new L.DistortableImageOverlay(
       new L.latLng(51.50,-0.10),
       new L.latLng(51.50,-0.14)
     ],
-    fullResolutionSrc: 'large.jpg' // optionally pass in a higher resolution image to use in full-res exporting
+    fullResolutionSrc: 'large.jpg', // optionally pass in a higher resolution image to use in full-res exporting
+    suppressToolbar: false // defaults to false, but you can turn off the toolbar interface and build your own
   }
 ).addTo(map);
 
