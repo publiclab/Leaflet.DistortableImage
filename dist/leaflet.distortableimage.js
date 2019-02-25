@@ -259,6 +259,21 @@ L.RotateAndScaleHandle = L.EditHandle.extend({
 		overlay.editing._rotateBy(angle);
 		overlay.editing._scaleBy(scale);
 
+		/* 
+		  checks whether the "edgeMinWidth" property is set and tracks the minimum edge length;
+		  this enables preventing scaling to zero, but we might also add an overall scale limit
+		*/		
+		if (this._handled.options.hasOwnProperty('edgeMinWidth')){
+			var edgeMinWidth = this._handled.options.edgeMinWidth,
+			    w = L.latLng(overlay._corners[0]).distanceTo(overlay._corners[1]),
+			    h = L.latLng(overlay._corners[1]).distanceTo(overlay._corners[2]);
+			if ((w > edgeMinWidth && h > edgeMinWidth) || scale > 1) {
+				overlay.editing._scaleBy(scale);
+			}
+		} else {
+			overlay.editing._scaleBy(scale);
+		}
+
 		overlay.fire('update');
 	},
 
@@ -384,21 +399,6 @@ L.ScaleHandle = L.EditHandle.extend({
 			scale = this._calculateScalingFactor(formerLatLng, newLatLng);
 
 		overlay.editing._scaleBy(scale);
-
-		/* 
-		  checks whether the "edgeMinWidth" property is set and tracks the minimum edge length;
-		  this enables preventing scaling to zero, but we might also add an overall scale limit
-		*/		
-		if (this._handled.options.hasOwnProperty('edgeMinWidth')){
-			var edgeMinWidth = this._handled.options.edgeMinWidth,
-			    w = L.latLng(overlay._corners[0]).distanceTo(overlay._corners[1]),
-			    h = L.latLng(overlay._corners[1]).distanceTo(overlay._corners[2]);
-			if ((w > edgeMinWidth && h > edgeMinWidth) || scale > 1) {
-				overlay.editing._scaleBy(scale);
-			}
-		} else {
-			overlay.editing._scaleBy(scale);
-		}
 
 		overlay.fire('update');
 	},
@@ -824,15 +824,11 @@ L.DistortableImage.Edit = L.Handler.extend({
 			76: '_toggleLock', // l
 			79: '_toggleOutline', // o
 			82: '_toggleRotateDistort', // r
-<<<<<<< 4cdda0fc684de4e04135c494cfeca379097f8008
-      84: '_toggleTransparency', // t
-      46: "_removeOverlay", // delete windows / delete + fn mac
-      8: 	"_removeOverlay" // backspace windows / delete mac
-=======
+                        46: "_removeOverlay", // delete windows / delete + fn mac
+                        8: 	"_removeOverlay" // backspace windows / delete mac
 			83: '_toggleScale', // s
 			84: '_toggleTransparency', // t
 			20:	'_toggleRotate' // CAPS
->>>>>>> Update refs
 		}
 	},
 
