@@ -90,6 +90,7 @@ module.exports = function(grunt) {
                   'src/DistortableImageOverlay.js',
                   'src/edit/DistortableImage.EditToolbar.js',
                   'src/edit/DistortableImage.Edit.js',
+                  'src/edit/BoxSelectHandle.js'
               ],
                 dest: 'dist/leaflet.distortableimage.js',
             }

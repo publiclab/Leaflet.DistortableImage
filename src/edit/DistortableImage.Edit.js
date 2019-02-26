@@ -5,19 +5,19 @@ L.DistortableImage.Edit = L.Handler.extend({
 		opacity: 0.7,
 		outline: '1px solid red',
 		keymap: {
+			8: "_removeOverlay", // backspace windows / delete mac
+			46: "_removeOverlay", // delete windows / delete + fn mac
+			20: '_toggleRotate', // CAPS
 			68: '_toggleRotateDistort', // d
 			69: '_toggleIsolate', // e
 			73: '_toggleIsolate', // i
+			74: '_sendUp', // j
+			75: '_sendDown', // k
 			76: '_toggleLock', // l
 			79: '_toggleOutline', // o
 			82: '_toggleRotateDistort', // r
-			74: '_sendUp', // j
-			75:	'_sendDown', // k
-      46: "_removeOverlay", // delete windows / delete + fn mac
-      8:  "_removeOverlay", // backspace windows / delete mac
 			83: '_toggleScale', // s
 			84: '_toggleTransparency', // t
-			20:	'_toggleRotate' // CAPS
 		}
 	},
 
