@@ -34,36 +34,6 @@ And watch this GIF demo:
 
 To test the code, open `index.html` in your browser and click and drag the markers on the edges of the image. The image will show perspectival distortions.
 
-## Usage
-
-```js
-// basic Leaflet map setup
-map = new L.map('map').setView([51.505, -0.09], 13);
-L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.png', {
-  maxZoom: 18,
-  attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-    '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-    'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-  id: 'examples.map-i86knfo3'
-}).addTo(map);
-
-// create an image
-img = new L.DistortableImageOverlay(
-  'example.png', {
-    corners: [
-      new L.latLng(51.52,-0.10),
-      new L.latLng(51.52,-0.14),
-      new L.latLng(51.50,-0.10),
-      new L.latLng(51.50,-0.14)
-    ],
-    fullResolutionSrc: 'large.jpg', // optionally pass in a higher resolution image to use in full-res exporting
-    suppressToolbar: false // defaults to false, but you can turn off the toolbar interface and build your own
-  }
-).addTo(map);
-
-L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing); // enable editing
-
-```
 
 ## Full-resolution download
 
