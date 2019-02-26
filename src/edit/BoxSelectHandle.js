@@ -65,10 +65,10 @@ L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
 
     let contents = $(this._pane).children();
     let images = contents.filter('img');
-    window.images = images;
+    // window.images = images;
 
     this._finish();
-    console.log(images);
+    
     return images;
   },
 
