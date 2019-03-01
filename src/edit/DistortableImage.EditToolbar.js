@@ -126,7 +126,7 @@ var defaults = [
   ToggleExport
 ];
 
-window.defaults = defaults;
+L.DistortableImage.EditToolbarDefaults = defaults;
 
 L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
   options: {

@@ -215,7 +215,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     image.setAttribute("opacity", opacity);
   },
 
-
+  // sample fn to demonstrate custom icon functionality #149
   // _demonstrator: function() {
   //   console.log('Hi there!');
   // },

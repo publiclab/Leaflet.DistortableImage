@@ -328,7 +328,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 	},
 
 	initialize: function(url, options) {
-			this._toolArray = window.defaults;
+			this._toolArray = L.DistortableImage.EditToolbarDefaults;
 			this._url = url;
 			this._rotation = this.options.rotation;
 
@@ -697,7 +697,7 @@ var defaults = [
   ToggleExport
 ];
 
-window.defaults = defaults;
+L.DistortableImage.EditToolbarDefaults = defaults;
 
 L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
   options: {
@@ -922,7 +922,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     image.setAttribute("opacity", opacity);
   },
 
-
+  // sample fn to demonstrate custom icon functionality #149
   // _demonstrator: function() {
   //   console.log('Hi there!');
   // },
