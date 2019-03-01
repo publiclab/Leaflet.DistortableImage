@@ -30,6 +30,7 @@ module.exports = function(grunt) {
                     LeafletToolbar: false,
                     warpWebGl: false,
                     EXIF: false,
+                    alert: false,
 
                     // Mocha
 
@@ -79,13 +80,14 @@ module.exports = function(grunt) {
             dist: {
                 src: [
                     'src/util/*.js',
+                    'src/edit/getEXIFdata.js',
                     'src/edit/EditHandle.js',
                     'src/edit/LockHandle.js',
                     'src/edit/DistortHandle.js',
                     'src/edit/RotateHandle.js',
                     'src/DistortableImageOverlay.js',
                     'src/edit/DistortableImage.EditToolbar.js',
-                    'src/edit/DistortableImage.Edit.js',
+                    'src/edit/DistortableImage.Edit.js'
                 ],
                 dest: 'dist/leaflet.distortableimage.js',
             }
