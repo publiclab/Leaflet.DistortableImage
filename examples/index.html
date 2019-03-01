@@ -80,7 +80,8 @@
 
       // create an image
       img = L.distortableImageOverlay("example.png", {
-        suppressToolbar: false,
+        // add a suppressToolbar: 'true' here to disable toolbars
+        // add a toolbarType field with values 'popup' (default) or 'control'
         corners: [
           new L.latLng(51.52, -0.1),
           new L.latLng(51.52, -0.14),
