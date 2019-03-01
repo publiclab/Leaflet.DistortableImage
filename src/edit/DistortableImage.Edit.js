@@ -12,7 +12,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 			79: '_toggleOutline', // o
 			82: '_toggleRotateDistort', // r
       84: '_toggleTransparency', // t
-			88: '_toggleOrder', // x
+			74: '_sendUp', // j
+			75:	'_sendDown', // k
       46: "_removeOverlay", // delete windows / delete + fn mac
       8: 	"_removeOverlay" // backspace windows / delete mac
 		}
@@ -33,7 +34,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		var overlay = this._overlay,
 			map = overlay._map,
 			i;
-			
+
 		this._lockHandles = new L.LayerGroup();
 		for (i = 0; i < 4; i++) {
 			this._lockHandles.addLayer(new L.LockHandle(overlay, i, { draggable: false }));
@@ -213,15 +214,12 @@ L.DistortableImage.Edit = L.Handler.extend({
 		image.style.outline = outline;
 	},
 
-	_toggleOrder: function () {
-		if (this._toggledImage) {
-			this._overlay.bringToFront();
-			this._toggledImage = false;
-		}
-		else {
-			this._overlay.bringToBack();
-			this._toggledImage = true;
-		}
+	_sendUp: function() {
+		this._overlay.bringToFront();
+	},
+
+	_sendDown: function() {
+		this._overlay.bringToBack();
 	},
 
 	_toggleLock: function() {
