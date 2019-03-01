@@ -330,7 +330,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 	initialize: function(url, options) {
 		this._url = url;
 		this._rotation = this.options.rotation;
-
+		L.DistortableImage._options = options;
 		L.setOptions(this, options);
 	},
 
@@ -347,32 +347,32 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		/* End copied from L.ImageOverlay */
 
 		/* Use provided corners if available */
-		if (this.options.corners) { 
-			this._corners = this.options.corners; 
+		if (this.options.corners) {
+			this._corners = this.options.corners;
 			if (map.options.zoomAnimation && L.Browser.any3d) {
 				map.on('zoomanim', this._animateZoom, this);
 			}
 
-			/* This reset happens before image load; it allows 
-			 * us to place the image on the map earlier with 
+			/* This reset happens before image load; it allows
+			 * us to place the image on the map earlier with
 			 * "guessed" dimensions. */
 			this._reset();
 		}
 
-		/* Have to wait for the image to load because 
+		/* Have to wait for the image to load because
 		 * we need to access its width and height. */
 		L.DomEvent.on(this._image, 'load', function() {
 			this._initImageDimensions();
 			this._reset();
 			/* Initialize default corners if not already set */
-			if (!this._corners) { 
+			if (!this._corners) {
 				if (map.options.zoomAnimation && L.Browser.any3d) {
 					map.on('zoomanim', this._animateZoom, this);
 				}
 			}
-		}, this);		
+		}, this);
 
-		this.fire('add');	
+		this.fire('add');
 	},
 
 	onRemove: function(map) {
@@ -481,7 +481,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
 	/*
 	 * Calculates the transform string that will be correct *at the end* of zooming.
-	 * Leaflet then generates a CSS3 animation between the current transform and 
+	 * Leaflet then generates a CSS3 animation between the current transform and
 	 *		 future transform which makes the transition appear smooth.
 	 */
 	_animateZoom: function(event) {
@@ -490,16 +490,16 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 			latLngToNewLayerPoint = function(latlng) {
 				return map._latLngToNewLayerPoint(latlng, event.zoom, event.center);
 			},
-	
+
 			transformMatrix = this._calculateProjectiveTransform(latLngToNewLayerPoint),
 			topLeft = latLngToNewLayerPoint(this._corners[0]),
-	
+
 			warp = L.DomUtil.getMatrixString(transformMatrix),
 			translation = this._getTranslateString(topLeft);
-	
+
 		/* See L.DomUtil.setPosition. Mainly for the purposes of L.Draggable. */
 		image._leaflet_pos = topLeft;
-	
+
 		if (!L.Browser.gecko) {
 			image.style[L.DomUtil.TRANSFORM] = [translation, warp].join(' ');
 		}
@@ -529,11 +529,11 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 	},
 
 	_calculateProjectiveTransform: function(latLngToCartesian) {
-		/* Setting reasonable but made-up image defaults 
-		 * allow us to place images on the map before 
+		/* Setting reasonable but made-up image defaults
+		 * allow us to place images on the map before
 		 * they've finished downloading. */
 		var offset = latLngToCartesian(this._corners[0]),
-			w = this._image.offsetWidth || 500, 
+			w = this._image.offsetWidth || 500,
 			h = this._image.offsetHeight || 375,
 			c = [],
 			j;
@@ -541,7 +541,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		for (j = 0; j < this._corners.length; j++) {
 			c.push(latLngToCartesian(this._corners[j])._subtract(offset));
 		}
-		
+
 		/*
 		 * This matrix describes the action of the CSS transform on each corner of the image.
 		 * It maps from the coordinate system centered at the upper left corner of the image
@@ -672,19 +672,22 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 		}
 	});
 
-L.DistortableImage.EditToolbar = LeafletToolbar.Control.extend({
-	options: {
-		position:'topleft',
-		actions: [
-			ToggleTransparency,
-			RemoveOverlay,
-			ToggleOutline,
-			ToggleEditable,
-			ToggleRotateDistort,
-			ToggleExport
-		]
-	}
-});
+	setTimeout(function(){
+		var toolbarStyle = L.DistortableImage._options.toolbarType;
+		L.DistortableImage.EditToolbar = LeafletToolbar[toolbarStyle].extend({
+			options: {
+				position:'topleft',
+				actions: [
+					ToggleTransparency,
+					RemoveOverlay,
+					ToggleOutline,
+					ToggleEditable,
+					ToggleRotateDistort,
+					ToggleExport
+				]
+			}
+		});
+	},1000); // prevent asynchronity during toolbar construction
 
 L.DistortableImage = L.DistortableImage || {};
 

@@ -111,16 +111,19 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 		}
 	});
 
-L.DistortableImage.EditToolbar = LeafletToolbar.Control.extend({
-	options: {
-		position:'topleft',
-		actions: [
-			ToggleTransparency,
-			RemoveOverlay,
-			ToggleOutline,
-			ToggleEditable,
-			ToggleRotateDistort,
-			ToggleExport
-		]
-	}
-});
+	setTimeout(function(){
+		var toolbarStyle = L.DistortableImage._options.toolbarType;
+		L.DistortableImage.EditToolbar = LeafletToolbar[toolbarStyle].extend({
+			options: {
+				position:'topleft',
+				actions: [
+					ToggleTransparency,
+					RemoveOverlay,
+					ToggleOutline,
+					ToggleEditable,
+					ToggleRotateDistort,
+					ToggleExport
+				]
+			}
+		});
+	},1000); // prevent asynchronity during toolbar construction
