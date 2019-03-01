@@ -788,6 +788,203 @@ L.RotateHandle = L.EditHandle.extend({
 	}
 });
 
+L.DistortableImageOverlay = L.ImageOverlay.extend({
+	include: L.Mixin.Events,
+
+	options: {
+		alt: '',
+		height: 200,
+		crossOrigin: true,
+		edgeMinWidth: 500,
+	},
+
+	initialize: function(url, options) {
+		this._toolArray = L.DistortableImage.EditToolbarDefaults;
+		this._url = url;
+		this._rotation = this.options.rotation;
+		L.DistortableImage._options = options;
+		
+		L.setOptions(this, options);
+	},
+
+	onAdd: function(map) {
+		/* Copied from L.ImageOverlay */
+		this._map = map;
+
+		if (!this._image) { this._initImage(); }
+		if (!this._events) { this._initEvents(); }
+
+		map._panes.overlayPane.appendChild(this._image);
+
+		map.on('viewreset', this._reset, this);
+		/* End copied from L.ImageOverlay */
+
+		/* Use provided corners if available */
+		if (this.options.corners) {
+			this._corners = this.options.corners;
+			if (map.options.zoomAnimation && L.Browser.any3d) {
+				map.on('zoomanim', this._animateZoom, this);
+			}
+
+			/* This reset happens before image load; it allows
+			 * us to place the image on the map earlier with
+			 * "guessed" dimensions. */
+			this._reset();
+		}
+
+		/* Have to wait for the image to load because
+		 * we need to access its width and height. */
+		L.DomEvent.on(this._image, 'load', function() {
+			this._initImageDimensions();
+			this._reset();
+			/* Initialize default corners if not already set */
+			if (!this._corners) {
+				if (map.options.zoomAnimation && L.Browser.any3d) {
+					map.on('zoomanim', this._animateZoom, this);
+				}
+			}
+		}, this);
+
+		this.fire('add');
+	},
+
+	onRemove: function(map) {
+		this.fire('remove');
+
+		L.ImageOverlay.prototype.onRemove.call(this, map);
+	},
+
+	_initImage: function () {
+		L.ImageOverlay.prototype._initImage.call(this);
+
+		L.extend(this._image, {
+			alt: this.options.alt
+		});
+	},
+
+	_addTool: function(tool) {
+		this._toolArray.push(tool);
+		L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
+			options: {
+				actions: this._toolArray
+			}
+		});
+	},
+
+	_initImageDimensions: function() {
+		var map = this._map,
+
+			originalImageWidth = L.DomUtil.getStyle(this._image, 'width'),
+			originalImageHeight = L.DomUtil.getStyle(this._image, 'height'),
+
+			aspectRatio = parseInt(originalImageWidth) / parseInt(originalImageHeight),
+
+			imageHeight = this.options.height,
+			imageWidth = parseInt(aspectRatio*imageHeight),
+
+			center = map.latLngToContainerPoint(map.getCenter()),
+			offset = new L.Point(imageWidth, imageHeight).divideBy(2);
+
+		if (this.options.corners) { this._corners = this.options.corners; }
+		else {
+			this._corners = [
+				map.containerPointToLatLng(center.subtract(offset)),
+				map.containerPointToLatLng(center.add(new L.Point(offset.x, - offset.y))),
+				map.containerPointToLatLng(center.add(new L.Point(- offset.x, offset.y))),
+				map.containerPointToLatLng(center.add(offset))
+			];
+		}
+	},
+
+ 	_initEvents: function() {
+ 		this._events = [ 'click' ];
+
+ 		for (var i = 0, l = this._events.length; i < l; i++) {
+	 		L.DomEvent.on(this._image, this._events[i], this._fireMouseEvent, this);
+ 		}
+ 	},
+
+ 	/* See src/layer/vector/Path.SVG.js in the Leaflet source. */
+ 	_fireMouseEvent: function(event) {
+ 		if (!this.hasEventListeners(event.type)) { return; }
+
+		var map = this._map,
+			containerPoint = map.mouseEventToContainerPoint(event),
+			layerPoint = map.containerPointToLayerPoint(containerPoint),
+			latlng = map.layerPointToLatLng(layerPoint);
+
+		this.fire(event.type, {
+			latlng: latlng,
+			layerPoint: layerPoint,
+			containerPoint: containerPoint,
+			originalEvent: event
+		});
+ 	},
+
+	_updateCorner: function(corner, latlng) {
+		this._corners[corner] = latlng;
+		this._reset();
+	},
+
+	// fires a reset after all corner positions are updated instead of after each one (above). Use for translating
+	_updateCorners: function (latlngObj) {
+		var i = 0;
+		for (var k in latlngObj) {
+			this._corners[i] = latlngObj[k];
+			i += 1;
+		}
+
+		this._reset();
+	},
+
+	_updateCornersFromPoints: function (pointsObj) {
+		var map = this._map;
+		var i = 0;
+		for (var k in pointsObj) {
+			this._corners[i] = map.layerPointToLatLng(pointsObj[k]);
+			i += 1;
+		}
+
+		this._reset();
+	},
+
+	/* Copied from Leaflet v0.7 https://github.com/Leaflet/Leaflet/blob/66282f14bcb180ec87d9818d9f3c9f75afd01b30/src/dom/DomUtil.js#L189-L199 */
+	/* since L.DomUtil.getTranslateString() is deprecated in Leaflet v1.0 */
+	_getTranslateString: function (point) {
+		// on WebKit browsers (Chrome/Safari/iOS Safari/Android) using translate3d instead of translate
+		// makes animation smoother as it ensures HW accel is used. Firefox 13 doesn't care
+		// (same speed either way), Opera 12 doesn't support translate3d
+
+		var is3d = L.Browser.webkit3d,
+		    open = 'translate' + (is3d ? '3d' : '') + '(',
+		    close = (is3d ? ',0' : '') + ')';
+
+		return newAngle - initialAngle;
+	},
+
+	/* Takes two latlngs and calculates the scaling difference. */
+	_calculateScalingFactor: function(latlngA, latlngB) {
+		var map = this._handled._map,
+
+			centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
+			formerPoint = map.latLngToLayerPoint(latlngA),
+			newPoint = map.latLngToLayerPoint(latlngB),
+
+			formerRadiusSquared = this._d2(centerPoint, formerPoint),
+			newRadiusSquared = this._d2(centerPoint, newPoint);
+
+		return Math.sqrt(newRadiusSquared / formerRadiusSquared);
+	},
+
+	/* Distance between two points in cartesian space, squared (distance formula). */
+	_d2: function(a, b) {
+		var dx = a.x - b.x,
+			dy = a.y - b.y;
+
+		return Math.pow(dx, 2) + Math.pow(dy, 2);
+	}
+});
+
 L.ScaleHandle = L.EditHandle.extend({
 	options: {
 		TYPE: 'rotate',
