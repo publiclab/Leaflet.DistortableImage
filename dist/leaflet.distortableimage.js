@@ -454,10 +454,11 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 	},
 
 	initialize: function(url, options) {
-		this._url = url;
-		this._rotation = this.options.rotation;
+			this._toolArray = L.DistortableImage.EditToolbarDefaults;
+			this._url = url;
+			this._rotation = this.options.rotation;
 
-		L.setOptions(this, options);
+			L.setOptions(this, options);
 	},
 
 	onAdd: function(map) {
@@ -473,32 +474,32 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		/* End copied from L.ImageOverlay */
 
 		/* Use provided corners if available */
-		if (this.options.corners) { 
-			this._corners = this.options.corners; 
+		if (this.options.corners) {
+			this._corners = this.options.corners;
 			if (map.options.zoomAnimation && L.Browser.any3d) {
 				map.on('zoomanim', this._animateZoom, this);
 			}
 
-			/* This reset happens before image load; it allows 
-			 * us to place the image on the map earlier with 
+			/* This reset happens before image load; it allows
+			 * us to place the image on the map earlier with
 			 * "guessed" dimensions. */
 			this._reset();
 		}
 
-		/* Have to wait for the image to load because 
+		/* Have to wait for the image to load because
 		 * we need to access its width and height. */
 		L.DomEvent.on(this._image, 'load', function() {
 			this._initImageDimensions();
 			this._reset();
 			/* Initialize default corners if not already set */
-			if (!this._corners) { 
+			if (!this._corners) {
 				if (map.options.zoomAnimation && L.Browser.any3d) {
 					map.on('zoomanim', this._animateZoom, this);
 				}
 			}
-		}, this);		
+		}, this);
 
-		this.fire('add');	
+		this.fire('add');
 	},
 
 	onRemove: function(map) {
@@ -512,6 +513,15 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
 		L.extend(this._image, {
 			alt: this.options.alt
+		});
+	},
+
+	_addTool: function(tool) {
+		this._toolArray.push(tool);
+		L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
+			options: {
+				actions: this._toolArray
+			}
 		});
 	},
 
@@ -607,7 +617,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
 	/*
 	 * Calculates the transform string that will be correct *at the end* of zooming.
-	 * Leaflet then generates a CSS3 animation between the current transform and 
+	 * Leaflet then generates a CSS3 animation between the current transform and
 	 *		 future transform which makes the transition appear smooth.
 	 */
 	_animateZoom: function(event) {
@@ -616,16 +626,16 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 			latLngToNewLayerPoint = function(latlng) {
 				return map._latLngToNewLayerPoint(latlng, event.zoom, event.center);
 			},
-	
+
 			transformMatrix = this._calculateProjectiveTransform(latLngToNewLayerPoint),
 			topLeft = latLngToNewLayerPoint(this._corners[0]),
-	
+
 			warp = L.DomUtil.getMatrixString(transformMatrix),
 			translation = this._getTranslateString(topLeft);
-	
+
 		/* See L.DomUtil.setPosition. Mainly for the purposes of L.Draggable. */
 		image._leaflet_pos = topLeft;
-	
+
 		if (!L.Browser.gecko) {
 			image.style[L.DomUtil.TRANSFORM] = [translation, warp].join(' ');
 		}
@@ -655,11 +665,11 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 	},
 
 	_calculateProjectiveTransform: function(latLngToCartesian) {
-		/* Setting reasonable but made-up image defaults 
-		 * allow us to place images on the map before 
+		/* Setting reasonable but made-up image defaults
+		 * allow us to place images on the map before
 		 * they've finished downloading. */
 		var offset = latLngToCartesian(this._corners[0]),
-			w = this._image.offsetWidth || 500, 
+			w = this._image.offsetWidth || 500,
 			h = this._image.offsetHeight || 375,
 			c = [],
 			j;
@@ -667,7 +677,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		for (j = 0; j < this._corners.length; j++) {
 			c.push(latLngToCartesian(this._corners[j])._subtract(offset));
 		}
-		
+
 		/*
 		 * This matrix describes the action of the CSS transform on each corner of the image.
 		 * It maps from the coordinate system centered at the upper left corner of the image
@@ -688,127 +698,137 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 L.DistortableImage = L.DistortableImage || {};
 
 var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
-		initialize: function(map, overlay, options) {
-			this._overlay = overlay;
-			this._map = map;
+    initialize: function(map, overlay, options) {
+      this._overlay = overlay;
+      this._map = map;
 
-			LeafletToolbar.ToolbarAction.prototype.initialize.call(this, options);
-		}
-	}),
+      LeafletToolbar.ToolbarAction.prototype.initialize.call(this, options);
+    }
+  }),
 
-	ToggleTransparency = EditOverlayAction.extend({
-		options: { toolbarIcon: { 
-			html: '<span class="fa fa-adjust"></span>',
-			tooltip: 'Toggle Image Transparency',
-			title: 'Toggle Image Transparency'	
-		}},
+  ToggleTransparency = EditOverlayAction.extend({
+    options: {
+      toolbarIcon: {
+        html: '<span class="fa fa-adjust"></span>',
+        tooltip: "Toggle Image Transparency",
+        title: "Toggle Image Transparency"
+      }
+    },
 
-		addHooks: function() {
-			var editing = this._overlay.editing;
+    addHooks: function() {
+      var editing = this._overlay.editing;
 
-			editing._toggleTransparency();
-			this.disable();
-		}
-	}),
+      editing._toggleTransparency();
+      this.disable();
+    }
+  }),
 
-	ToggleOutline = EditOverlayAction.extend({
-		options: { toolbarIcon: { 
-			html: '<span class="fa fa-square-o"></span>',
-			tooltip: 'Toggle Image Outline',
-			title: 'Toggle Image Outline'
-		}},
+  ToggleOutline = EditOverlayAction.extend({
+    options: {
+      toolbarIcon: {
+        html: '<span class="fa fa-square-o"></span>',
+        tooltip: "Toggle Image Outline",
+        title: "Toggle Image Outline"
+      }
+    },
 
-		addHooks: function() {
-			var editing = this._overlay.editing;
+    addHooks: function() {
+      var editing = this._overlay.editing;
 
-			editing._toggleOutline();
-			this.disable();
-		}
-	}),
+      editing._toggleOutline();
+      this.disable();
+    }
+  }),
 
-	RemoveOverlay = EditOverlayAction.extend({
-		options: { toolbarIcon: { 
-			html: '<span class="fa fa-trash"></span>',
-			tooltip: 'Delete image',
-			title: 'Delete image'
-		}},
+  RemoveOverlay = EditOverlayAction.extend({
+    options: {
+      toolbarIcon: {
+        html: '<span class="fa fa-trash"></span>',
+        tooltip: "Delete image",
+        title: "Delete image"
+      }
+    },
 
-		addHooks: function() {
-			var map = this._map;
+    addHooks: function() {
+      var map = this._map;
 
-			map.removeLayer(this._overlay);
-			this._overlay.fire('delete');
-			this.disable();
-		}
-	}),
+      map.removeLayer(this._overlay);
+      this._overlay.fire("delete");
+      this.disable();
+    }
+  }),
 
-	ToggleEditable = EditOverlayAction.extend({
-		options: { toolbarIcon: {
-			html: '<span class="fa fa-lock"></span>',
-			tooltip: 'Lock / Unlock editing',
-			title: 'Lock / Unlock editing'			
-		}},
+  ToggleEditable = EditOverlayAction.extend({
+    options: {
+      toolbarIcon: {
+        html: '<span class="fa fa-lock"></span>',
+        tooltip: "Lock / Unlock editing",
+        title: "Lock / Unlock editing"
+      }
+    },
 
-		addHooks: function() {
-			var editing = this._overlay.editing;
+    addHooks: function() {
+      var editing = this._overlay.editing;
 
-			editing._toggleLock();
-			this.disable();
-		}
-	}),
+      editing._toggleLock();
+      this.disable();
+    }
+  }),
 
-	ToggleRotateDistort = EditOverlayAction.extend({
-		initialize: function(map, overlay, options) {
-			var icon = overlay.editing._mode === 'rotate' ? 'image' : 'rotate-left';
+  ToggleRotateDistort = EditOverlayAction.extend({
+    initialize: function(map, overlay, options) {
+      var icon = overlay.editing._mode === "rotate" ? "image" : "rotate-left";
 
-			options = options || {};
-			options.toolbarIcon = {
-				html: '<span class="fa fa-' + icon + '"></span>',
-				tooltip: 'Rotate',
-				title: 'Rotate'	
-			};
+      options = options || {};
+      options.toolbarIcon = {
+        html: '<span class="fa fa-' + icon + '"></span>',
+        tooltip: "Rotate",
+        title: "Rotate"
+      };
 
-			EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
-		},
+      EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
+    },
 
-		addHooks: function() {
-			var editing = this._overlay.editing;
+    addHooks: function() {
+      var editing = this._overlay.editing;
 
-			editing._toggleRotateDistort();
-			this.disable();
-		}
-	}),
+      editing._toggleRotateDistort();
+      this.disable();
+    }
+  }),
 
+  ToggleExport = EditOverlayAction.extend({
+    options: {
+      toolbarIcon: {
+        html: '<span class="fa fa-download"></span>',
+        tooltip: "Export Image",
+        title: "Export Image"
+      }
+    },
 
-	ToggleExport = EditOverlayAction.extend({
-		options: {
-			toolbarIcon: {
-				html: '<span class="fa fa-download"></span>',
-				tooltip: 'Export Image',
-				title: 'Export Image'
-			}
-		},
-		
-		addHooks: function ()
-		{
-			var editing = this._overlay.editing;
+    addHooks: function() {
+      var editing = this._overlay.editing;
 
-			editing._toggleExport();
-			this.disable(); 
-		}
-	});
+      editing._toggleExport();
+      this.disable();
+    }
+  });
+
+var defaults = [
+  ToggleTransparency,
+  RemoveOverlay,
+  ToggleOutline,
+  ToggleEditable,
+  ToggleRotateDistort,
+  ToggleExport
+];
+
+L.DistortableImage.EditToolbarDefaults = defaults;
 
 L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
-	options: {
-		actions: [
-			ToggleTransparency,
-			RemoveOverlay,
-			ToggleOutline,
-			ToggleEditable,
-			ToggleRotateDistort,
-			ToggleExport
-		]
-	}
+  options: {
+    actions: defaults
+  }
 });
 
 L.DistortableImage = L.DistortableImage || {};
@@ -824,8 +844,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 			76: '_toggleLock', // l
 			79: '_toggleOutline', // o
 			82: '_toggleRotateDistort', // r
-                        46: "_removeOverlay", // delete windows / delete + fn mac
-                        8:  "_removeOverlay", // backspace windows / delete mac
+      46: "_removeOverlay", // delete windows / delete + fn mac
+      8:  "_removeOverlay", // backspace windows / delete mac
 			83: '_toggleScale', // s
 			84: '_toggleTransparency', // t
 			20:	'_toggleRotate' // CAPS
@@ -883,7 +903,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			'rotateStandalone': this.__rotateHandles
 		};
 
-		if (this._mode === 'lock') {
+    if (this._mode === 'lock') {
 			map.addLayer(this._lockHandles);
 		} else {
 			this._mode = 'distort';

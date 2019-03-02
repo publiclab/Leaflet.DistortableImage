@@ -11,8 +11,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 			76: '_toggleLock', // l
 			79: '_toggleOutline', // o
 			82: '_toggleRotateDistort', // r
-                        46: "_removeOverlay", // delete windows / delete + fn mac
-                        8:  "_removeOverlay", // backspace windows / delete mac
+      46: "_removeOverlay", // delete windows / delete + fn mac
+      8:  "_removeOverlay", // backspace windows / delete mac
 			83: '_toggleScale', // s
 			84: '_toggleTransparency', // t
 			20:	'_toggleRotate' // CAPS
@@ -70,7 +70,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			'rotateStandalone': this.__rotateHandles
 		};
 
-		if (this._mode === 'lock') {
+    if (this._mode === 'lock') {
 			map.addLayer(this._lockHandles);
 		} else {
 			this._mode = 'distort';
