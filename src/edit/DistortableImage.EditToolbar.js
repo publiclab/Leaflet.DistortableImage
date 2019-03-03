@@ -136,7 +136,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 
 var defaults = [ToggleTransparency, RemoveOverlay, ToggleOutline, ToggleReveal];
 
-window.defaults = defaults;
+L.DistortableImage.defaults = defaults;
 
 L.DistortableImage.EditToolbar = LeafletToolbar.Control.extend({
   options: {

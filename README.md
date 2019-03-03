@@ -1,4 +1,4 @@
-Leaflet.DistortableImage
+﻿Leaflet.DistortableImage
 ===================
 
 [![Build Status](https://travis-ci.org/publiclab/Leaflet.DistortableImage.svg?branch=master)](https://travis-ci.org/publiclab/Leaflet.DistortableImage)
@@ -56,7 +56,8 @@ img = new L.DistortableImageOverlay(
       new L.latLng(51.50,-0.10),
       new L.latLng(51.50,-0.14)
     ],
-    fullResolutionSrc: 'large.jpg' // optionally pass in a higher resolution image to use in full-res exporting
+    fullResolutionSrc: 'large.jpg', // optionally pass in a higher resolution image to use in full-res exporting
+    suppressToolbar: false // defaults to false, but you can turn off the toolbar interface and build your own
   }
 ).addTo(map);
 
@@ -102,16 +103,6 @@ img = new L.DistortableImageOverlay(
 
 L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing); // enable editing
 
-```
-
-## Full-resolution download
-
-We've added a GPU-accelerated means to generate a full resolution version of the distorted image; it requires two additional dependencies to enable; see how we've included them in the demo:
-
-
-```
-<script src="../node_modules/webgl-distort/dist/webgl-distort.js"></script>
-<script src="../node_modules/glfx-js/dist/glfx.js"></script>
 ```
 
 ****

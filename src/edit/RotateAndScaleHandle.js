@@ -1,4 +1,4 @@
-L.RotateHandle = L.EditHandle.extend({
+L.RotateAndScaleHandle = L.EditHandle.extend({
 	options: {
 		TYPE: 'rotate',
 		icon: new L.Icon({
@@ -13,9 +13,26 @@ L.RotateHandle = L.EditHandle.extend({
 			formerLatLng = this._handled._corners[this._corner],
 			newLatLng = this.getLatLng(),
 
-			angle = this._calculateAngle(formerLatLng, newLatLng);
+			angle = this._calculateAngle(formerLatLng, newLatLng),
+			scale = this._calculateScalingFactor(formerLatLng, newLatLng);
 
 		overlay.editing._rotateBy(angle);
+		overlay.editing._scaleBy(scale);
+
+		/* 
+		  checks whether the "edgeMinWidth" property is set and tracks the minimum edge length;
+		  this enables preventing scaling to zero, but we might also add an overall scale limit
+		*/		
+		if (this._handled.options.hasOwnProperty('edgeMinWidth')){
+			var edgeMinWidth = this._handled.options.edgeMinWidth,
+			    w = L.latLng(overlay._corners[0]).distanceTo(overlay._corners[1]),
+			    h = L.latLng(overlay._corners[1]).distanceTo(overlay._corners[2]);
+			if ((w > edgeMinWidth && h > edgeMinWidth) || scale > 1) {
+				overlay.editing._scaleBy(scale);
+			}
+		} else {
+			overlay.editing._scaleBy(scale);
+		}
 
 		overlay.fire('update');
 	},
