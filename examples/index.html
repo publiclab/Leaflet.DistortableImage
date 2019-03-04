@@ -72,9 +72,20 @@
         }
       ).addTo(map);
 
+      // keymap guide
+      var keymapper = {
+        position: "topright",
+        el: "div",
+        styleClass: "l-container",
+        DOMString:
+          "<b><center><h3>Keymappings</h3><center><hr/></center></center><ul><li>L: Lock overlay</li><li>O: Outline overlay</li><li>R: Rotate overlay</li><li>RR: Distort overlay</li><li>T: Transparent overlay&nbsp;&nbsp;&nbsp;&nbsp;</li><li>DEL: Remove overlay</li></ul></b>"
+      };
+
       // create an image
       img = new L.DistortableImageOverlay("example.png", {
         suppressToolbar: false,
+        customToolbarArray: [keymapper],
+        hidden_tools: [ToggleEditable, ToggleExport, RemoveOverlay],
         corners: [
           new L.latLng(51.52, -0.1),
           new L.latLng(51.52, -0.14),

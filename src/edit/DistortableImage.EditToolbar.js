@@ -120,21 +120,26 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
     },
 
     addHooks: function() {
-      var hidden_tools = [
-          ToggleEditable,
-          ToggleExport,
-          ToggleRotateDistort
-        ],
+      var hidden_tools = this._overlay.options.hidden_tools,
         i;
+
+      this._overlay._removeTool(ToggleReveal);
+
       for (i = 0; i < hidden_tools.length; i++) {
         this._overlay._addTool(hidden_tools[i]);
       }
-      this._overlay._removeTool(ToggleReveal);
       this._overlay.editing._hideToolbar();
     }
   });
 
-var defaults = [ToggleTransparency, RemoveOverlay, ToggleOutline, ToggleReveal];
+var defaults = [
+  ToggleTransparency,
+  ToggleOutline,
+  ToggleRotateDistort,
+  ToggleReveal
+];
+
+console.log(ToggleExport, ToggleEditable, RemoveOverlay);
 
 L.DistortableImage.defaults = defaults;
 
