@@ -105,6 +105,18 @@ L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing); // enable ed
 
 ```
 
+### Corners
+
+The corners are stored in `img._corners` as `L.latLng` objects, so after instantiating the image and moving it around, you can always access them like this:
+
+```js
+img = new L.DistortableImageOverlay(...);
+img.addTo(map);
+// move the image around
+JSON.stringify(img._corners)
+=> "[{"lat":51.52,"lng":-0.1},{"lat":51.52,"lng":-0.14},{"lat":51.5,"lng":-0.1},{"lat":51.5,"lng":-0.14}]"
+```
+
 ****
 
 ## Setup
