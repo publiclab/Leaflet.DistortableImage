@@ -128,7 +128,17 @@ ToggleOrder = EditOverlayAction.extend({
 
 ```
 
-****
+### Corners
+
+The corners are stored in `img._corners` as `L.latLng` objects, so after instantiating the image and moving it around, you can always access them like this:
+
+```js
+img = new L.DistortableImageOverlay(...);
+img.addTo(map);
+// move the image around
+JSON.stringify(img._corners)
+=> "[{"lat":51.52,"lng":-0.1},{"lat":51.52,"lng":-0.14},{"lat":51.5,"lng":-0.1},{"lat":51.5,"lng":-0.14}]"
+```
 
 ## Setup
 
@@ -151,3 +161,4 @@ To build all files from `/src/` into the `/dist/` folder, run `grunt concat:dist
 * Jeff Warren [@jywarren](https://github.com/jywarren)
 
 Many more at https://github.com/publiclab/Leaflet.DistortableImage/graphs/contributors
+﻿
