@@ -11,6 +11,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 			76: '_toggleLock', // l
 			79: '_toggleOutline', // o
 			82: '_toggleRotateDistort', // r
+			74: '_sendUp', // j
+			75:	'_sendDown', // k
       46: "_removeOverlay", // delete windows / delete + fn mac
       8:  "_removeOverlay", // backspace windows / delete mac
 			83: '_toggleScale', // s
@@ -21,6 +23,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 	initialize: function(overlay) {
 		this._overlay = overlay;
+		this._toggledImage = false;
 
 		/* Interaction modes. */
 		this._mode = this._overlay.options.mode || 'distort';
@@ -33,9 +36,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 		var overlay = this._overlay,
 			map = overlay._map,
 			i;
-
-			/* bring the selected image into view */
-			overlay.bringToFront();
 
 		this._lockHandles = new L.LayerGroup();
 		for (i = 0; i < 4; i++) {
@@ -248,6 +248,14 @@ L.DistortableImage.Edit = L.Handler.extend({
 		image.style.outline = outline;
 	},
 
+	_sendUp: function() {
+		this._overlay.bringToFront();
+	},
+
+	_sendDown: function() {
+		this._overlay.bringToBack();
+	},
+
 	_toggleLock: function() {
 		var map = this._overlay._map;
 
@@ -304,6 +312,17 @@ L.DistortableImage.Edit = L.Handler.extend({
       }
     }
   },
+
+	_toggleOrder: function () {
+	if (this._toggledImage) {
+		this._overlay.bringToFront();
+		this._toggledImage = false;
+		}
+	else {
+		this._overlay.bringToBack();
+		this._toggledImage = true;
+		}
+	},
 
 	// Based on https://github.com/publiclab/mapknitter/blob/8d94132c81b3040ae0d0b4627e685ff75275b416/app/assets/javascripts/mapknitter/Map.js#L47-L82
 	_toggleExport: function (){

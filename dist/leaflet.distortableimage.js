@@ -698,137 +698,146 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 L.DistortableImage = L.DistortableImage || {};
 
 var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
-    initialize: function(map, overlay, options) {
-      this._overlay = overlay;
-      this._map = map;
+		initialize: function(map, overlay, options) {
+			this._overlay = overlay;
+			this._map = map;
 
-      LeafletToolbar.ToolbarAction.prototype.initialize.call(this, options);
-    }
-  }),
+			LeafletToolbar.ToolbarAction.prototype.initialize.call(this, options);
+		}
+	}),
 
-  ToggleTransparency = EditOverlayAction.extend({
-    options: {
-      toolbarIcon: {
-        html: '<span class="fa fa-adjust"></span>',
-        tooltip: "Toggle Image Transparency",
-        title: "Toggle Image Transparency"
-      }
-    },
+	ToggleTransparency = EditOverlayAction.extend({
+		options: { toolbarIcon: {
+			html: '<span class="fa fa-adjust"></span>',
+			tooltip: 'Toggle Image Transparency',
+			title: 'Toggle Image Transparency'
+		}},
 
-    addHooks: function() {
-      var editing = this._overlay.editing;
+		addHooks: function() {
+			var editing = this._overlay.editing;
 
-      editing._toggleTransparency();
-      this.disable();
-    }
-  }),
+			editing._toggleTransparency();
+			this.disable();
+		}
+	}),
 
-  ToggleOutline = EditOverlayAction.extend({
-    options: {
-      toolbarIcon: {
-        html: '<span class="fa fa-square-o"></span>',
-        tooltip: "Toggle Image Outline",
-        title: "Toggle Image Outline"
-      }
-    },
+	ToggleOutline = EditOverlayAction.extend({
+		options: { toolbarIcon: {
+			html: '<span class="fa fa-square-o"></span>',
+			tooltip: 'Toggle Image Outline',
+			title: 'Toggle Image Outline'
+		}},
 
-    addHooks: function() {
-      var editing = this._overlay.editing;
+		addHooks: function() {
+			var editing = this._overlay.editing;
 
-      editing._toggleOutline();
-      this.disable();
-    }
-  }),
+			editing._toggleOutline();
+			this.disable();
+		}
+	}),
 
-  RemoveOverlay = EditOverlayAction.extend({
-    options: {
-      toolbarIcon: {
-        html: '<span class="fa fa-trash"></span>',
-        tooltip: "Delete image",
-        title: "Delete image"
-      }
-    },
+	RemoveOverlay = EditOverlayAction.extend({
+		options: { toolbarIcon: {
+			html: '<span class="fa fa-trash"></span>',
+			tooltip: 'Delete image',
+			title: 'Delete image'
+		}},
 
-    addHooks: function() {
-      var map = this._map;
+		addHooks: function() {
+			var map = this._map;
 
-      map.removeLayer(this._overlay);
-      this._overlay.fire("delete");
-      this.disable();
-    }
-  }),
+			map.removeLayer(this._overlay);
+			this._overlay.fire('delete');
+			this.disable();
+		}
+	}),
 
-  ToggleEditable = EditOverlayAction.extend({
-    options: {
-      toolbarIcon: {
-        html: '<span class="fa fa-lock"></span>',
-        tooltip: "Lock / Unlock editing",
-        title: "Lock / Unlock editing"
-      }
-    },
+	ToggleEditable = EditOverlayAction.extend({
+		options: { toolbarIcon: {
+			html: '<span class="fa fa-lock"></span>',
+			tooltip: 'Lock / Unlock editing',
+			title: 'Lock / Unlock editing'
+		}},
 
-    addHooks: function() {
-      var editing = this._overlay.editing;
+		addHooks: function() {
+			var editing = this._overlay.editing;
 
-      editing._toggleLock();
-      this.disable();
-    }
-  }),
+			editing._toggleLock();
+			this.disable();
+		}
+	}),
 
-  ToggleRotateDistort = EditOverlayAction.extend({
-    initialize: function(map, overlay, options) {
-      var icon = overlay.editing._mode === "rotate" ? "image" : "rotate-left";
+	ToggleRotateDistort = EditOverlayAction.extend({
+		initialize: function(map, overlay, options) {
+			var icon = overlay.editing._mode === 'rotate' ? 'image' : 'rotate-left';
 
-      options = options || {};
-      options.toolbarIcon = {
-        html: '<span class="fa fa-' + icon + '"></span>',
-        tooltip: "Rotate",
-        title: "Rotate"
-      };
+			options = options || {};
+			options.toolbarIcon = {
+				html: '<span class="fa fa-' + icon + '"></span>',
+				tooltip: 'Rotate',
+				title: 'Rotate'
+			};
 
-      EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
-    },
+			EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
+		},
 
-    addHooks: function() {
-      var editing = this._overlay.editing;
+		addHooks: function() {
+			var editing = this._overlay.editing;
 
-      editing._toggleRotateDistort();
-      this.disable();
-    }
-  }),
+			editing._toggleRotateDistort();
+			this.disable();
+		}
+	}),
 
-  ToggleExport = EditOverlayAction.extend({
-    options: {
-      toolbarIcon: {
-        html: '<span class="fa fa-download"></span>',
-        tooltip: "Export Image",
-        title: "Export Image"
-      }
-    },
 
-    addHooks: function() {
-      var editing = this._overlay.editing;
+	ToggleExport = EditOverlayAction.extend({
+		options: {
+			toolbarIcon: {
+				html: '<span class="fa fa-download"></span>',
+				tooltip: 'Export Image',
+				title: 'Export Image'
+			}
+		},
 
-      editing._toggleExport();
-      this.disable();
-    }
-  });
+		addHooks: function ()
+		{
+			var editing = this._overlay.editing;
 
-var defaults = [
-  ToggleTransparency,
-  RemoveOverlay,
-  ToggleOutline,
-  ToggleEditable,
-  ToggleRotateDistort,
-  ToggleExport
-];
+			editing._toggleExport();
+			this.disable();
+		}
+	}),
 
-L.DistortableImage.EditToolbarDefaults = defaults;
+	ToggleOrder = EditOverlayAction.extend({
+		options: {
+			toolbarIcon: {
+				html: '<span class="fa fa-sort"></span>',
+				tooltip: 'Change order',
+				title: 'Toggle order'
+			}
+		},
+
+		addHooks: function ()
+		{
+			var editing = this._overlay.editing;
+
+			editing._toggleOrder();
+			this.disable();
+		}
+	});
 
 L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
-  options: {
-    actions: defaults
-  }
+	options: {
+		actions: [
+			ToggleTransparency,
+			RemoveOverlay,
+			ToggleOutline,
+			ToggleEditable,
+			ToggleRotateDistort,
+			ToggleExport,
+			ToggleOrder
+		]
+	}
 });
 
 L.DistortableImage = L.DistortableImage || {};
@@ -844,6 +853,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 			76: '_toggleLock', // l
 			79: '_toggleOutline', // o
 			82: '_toggleRotateDistort', // r
+			74: '_sendUp', // j
+			75:	'_sendDown', // k
       46: "_removeOverlay", // delete windows / delete + fn mac
       8:  "_removeOverlay", // backspace windows / delete mac
 			83: '_toggleScale', // s
@@ -854,6 +865,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 	initialize: function(overlay) {
 		this._overlay = overlay;
+		this._toggledImage = false;
 
 		/* Interaction modes. */
 		this._mode = this._overlay.options.mode || 'distort';
@@ -866,9 +878,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 		var overlay = this._overlay,
 			map = overlay._map,
 			i;
-
-			/* bring the selected image into view */
-			overlay.bringToFront();
 
 		this._lockHandles = new L.LayerGroup();
 		for (i = 0; i < 4; i++) {
@@ -1081,6 +1090,14 @@ L.DistortableImage.Edit = L.Handler.extend({
 		image.style.outline = outline;
 	},
 
+	_sendUp: function() {
+		this._overlay.bringToFront();
+	},
+
+	_sendDown: function() {
+		this._overlay.bringToBack();
+	},
+
 	_toggleLock: function() {
 		var map = this._overlay._map;
 
@@ -1137,6 +1154,17 @@ L.DistortableImage.Edit = L.Handler.extend({
       }
     }
   },
+
+	_toggleOrder: function () {
+	if (this._toggledImage) {
+		this._overlay.bringToFront();
+		this._toggledImage = false;
+		}
+	else {
+		this._overlay.bringToBack();
+		this._toggledImage = true;
+		}
+	},
 
 	// Based on https://github.com/publiclab/mapknitter/blob/8d94132c81b3040ae0d0b4627e685ff75275b416/app/assets/javascripts/mapknitter/Map.js#L47-L82
 	_toggleExport: function (){
