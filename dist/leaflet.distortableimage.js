@@ -1361,20 +1361,36 @@ L.Map.mergeOptions({ boxSelector: true, boxZoom: false });
 
 L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
 
+  initialize: function (map) {
+    this._map = map;
+    this._container = map._container;
+    this._pane = map._panes.overlayPane;
+    // this._resetStateTimeout = 0;
+    // map.on('unload', this._destroy, this);
+  },
+
   addHooks: function () {
     L.DomEvent.on(this._container, 'mousedown', this._onMouseDown, this);
   },
 
   removeHooks: function () {
-    L.DomEvent.off(this._container, 'mousedown', this._onMouseDown);
+    L.DomEvent.off(this._container, 'mousedown', this._onMouseDown, this);
   },
+
+  // _destroy: function () {
+  //   L.DomUtil.remove(this._pane);
+  //   delete this._pane;
+  // },
 
   _onMouseDown: function (e) {
     if (!e.shiftKey || ((e.which !== 1) && (e.button !== 1))) { return false; }
 
     L.DomUtil.disableTextSelection();
+    L.DomUtil.disableImageDrag();
 
     this._startLayerPoint = this._map.mouseEventToLayerPoint(e);
+
+    // this._startLayerPoint = this._map.mouseEventToLayerPoint(e);
 
     this._box = L.DomUtil.create('div', 'leaflet-zoom-box', this._pane);
     L.DomUtil.setPosition(this._box, this._startLayerPoint);
@@ -1408,15 +1424,22 @@ L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
   },
 
   _onMouseUp: function (e) {
+    if (!$(this._pane).children('.leaflet-zoom-box').length) { return false; }
     // window.e = e;
     var map = this._map,
       layerPoint = map.mouseEventToLayerPoint(e);
 
     if (this._startLayerPoint.equals(layerPoint)) { return; }
 
-    // var bounds = new L.LatLngBounds(
-    //   map.layerPointToLatLng(this._startLayerPoint),
-    //   map.layerPointToLatLng(layerPoint));
+    var bounds = new L.LatLngBounds(
+      map.layerPointToLatLng(this._startLayerPoint),
+      map.layerPointToLatLng(layerPoint));
+
+    window.bounds = bounds;
+    window.box = this._box;
+    window.pane = this._pane;
+    window.map = map;
+    window.container = this._container;
 
     map.fire('boxzoomend', {
       // boxBounds: bounds
@@ -1427,15 +1450,18 @@ L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
     // window.images = images;
 
     this._finish();
-    
+    console.log(images);
     return images;
   },
 
   _finish: function () {
-    this._pane.removeChild(this._box);
+    // if (!this._box) { return false; }
+    // this._pane.removeChild(this._box);
+    $(this._box).remove();
     this._container.style.cursor = '';
 
     L.DomUtil.enableTextSelection();
+    L.DomUtil.enableImageDrag();
 
     L.DomEvent
       .off(document, 'mousemove', this._onMouseMove)
@@ -1453,3 +1479,4 @@ L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
 });
 
 L.Map.addInitHook('addHandler', 'boxSelector', L.Map.BoxSelectHandle);
+//# sourceMappingURL=leaflet.distortableimage.js.map
