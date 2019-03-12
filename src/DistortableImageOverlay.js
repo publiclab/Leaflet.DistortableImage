@@ -19,10 +19,18 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		/* Copied from L.ImageOverlay */
 		this._map = map;
 
+		// this._div = $(this._pane).append($("<div id='holding'></div>"));
 		if (!this._image) { this._initImage(); }
 		if (!this._events) { this._initEvents(); }
 
 		map._panes.overlayPane.appendChild(this._image);
+
+		if (!this._divNode) { 
+			this._divNode = document.createElement("div");
+			// this._divNode = divNode;
+			this._divNode.setAttribute("id", "holding");
+			map._panes.overlayPane.appendChild(this._divNode); 
+		}
 
 		map.on('viewreset', this._reset, this);
 		/* End copied from L.ImageOverlay */
@@ -69,6 +77,20 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 			alt: this.options.alt
 		});
 	},
+
+	setAnchors: function (anchors) {
+		this._anchors = [];
+		this._bounds = L.latLngBounds(anchors);
+		for (var i = 0, len = anchors.length; i < len; i++) {
+			var yx = anchors[i];
+			this._anchors.push(L.latLng(yx));
+		}
+
+		if (this._map) {
+			this._reset();
+		}
+	},
+
 
 	_addTool: function(tool) {
 		this._toolArray.push(tool);

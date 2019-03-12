@@ -50,7 +50,7 @@
           img = this
           if (img._leaflet_id != images[i]._leaflet_id) {
             /* Deselect (disable) other images */
-            images[i].editing.disable()
+            // images[i].editing.disable()
             /* Ensure that other toolbars are removed */
             if (images[i].editing.toolbar) {
               map.removeLayer(images[i].editing.toolbar);
@@ -89,7 +89,8 @@
           ]
         }
       ).addTo(map);
-      images.push(img)
+      images.push(img);
+
 
       L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
       L.DomEvent.on(img._image, 'click', select, img);
@@ -109,5 +110,7 @@
 
     })();
   </script>
+
+  
 
 </html>
