@@ -610,20 +610,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		});
 	},
 
-	setAnchors: function (anchors) {
-		this._anchors = [];
-		this._bounds = L.latLngBounds(anchors);
-		for (var i = 0, len = anchors.length; i < len; i++) {
-			var yx = anchors[i];
-			this._anchors.push(L.latLng(yx));
-		}
-
-		if (this._map) {
-			this._reset();
-		}
-	},
-
-
 	_addTool: function(tool) {
 		this._toolArray.push(tool);
 		L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
@@ -1124,7 +1110,10 @@ L.DistortableImage.Edit = L.Handler.extend({
 		this.dragging.enable();
 
 		/* Hide toolbars while dragging; click will re-show it */
-		this.dragging.on('dragstart', this._hideToolbar, this);
+		this.dragging.on('dragstart', function () {
+			overlay.fire('dragstart');
+			this._hideToolbar();
+		}, this);
 
 		/*
 		 * Adjust default behavior of L.Draggable.
@@ -1143,6 +1132,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			}
 			overlay._reset();
 			overlay.fire('update');
+			overlay.fire('drag');
 
 			this.fire('drag');
 		};

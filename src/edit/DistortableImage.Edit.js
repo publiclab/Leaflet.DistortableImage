@@ -158,7 +158,10 @@ L.DistortableImage.Edit = L.Handler.extend({
 		this.dragging.enable();
 
 		/* Hide toolbars while dragging; click will re-show it */
-		this.dragging.on('dragstart', this._hideToolbar, this);
+		this.dragging.on('dragstart', function () {
+			overlay.fire('dragstart');
+			this._hideToolbar();
+		}, this);
 
 		/*
 		 * Adjust default behavior of L.Draggable.
@@ -177,6 +180,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			}
 			overlay._reset();
 			overlay.fire('update');
+			overlay.fire('drag');
 
 			this.fire('drag');
 		};
@@ -312,7 +316,7 @@ L.DistortableImage.Edit = L.Handler.extend({
       }
     }
   },
-
+	// compare this to using overlay zIndex
 	_toggleOrder: function () {
 	if (this._toggledImage) {
 		this._overlay.bringToFront();

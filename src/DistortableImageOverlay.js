@@ -78,20 +78,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		});
 	},
 
-	setAnchors: function (anchors) {
-		this._anchors = [];
-		this._bounds = L.latLngBounds(anchors);
-		for (var i = 0, len = anchors.length; i < len; i++) {
-			var yx = anchors[i];
-			this._anchors.push(L.latLng(yx));
-		}
-
-		if (this._map) {
-			this._reset();
-		}
-	},
-
-
 	_addTool: function(tool) {
 		this._toolArray.push(tool);
 		L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
