@@ -80,7 +80,7 @@ module.exports = function(grunt) {
             dist: {
               src: [
                   'src/util/*.js',
-                  'src/edit/getEXIFdata.js',
+                  'src/edit/tools/getEXIFdata.js',
                   'src/edit/EditHandle.js',
                   'src/edit/LockHandle.js',
                   'src/edit/DistortHandle.js',
