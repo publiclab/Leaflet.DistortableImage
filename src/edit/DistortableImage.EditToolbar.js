@@ -109,7 +109,40 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 			editing._toggleExport();
 			this.disable();
 		}
-	});
+	}),
+
+	ToggleOrder = EditOverlayAction.extend({
+		options: {
+			toolbarIcon: {
+				html: '<span class="fa fa-sort"></span>',
+				tooltip: 'Change order',
+				title: 'Toggle order'
+			}
+		},
+
+		addHooks: function ()
+		{
+			var editing = this._overlay.editing;
+
+			editing._toggleOrder();
+			this.disable();
+		}
+	}),
+
+  EnableEXIF = EditOverlayAction.extend({
+  options: {
+    toolbarIcon: {
+      html: '<span class="fa fa-compass"></span>',
+      tooltip: "Enable EXIF",
+      title: "Geocode Image"
+    }
+  },
+
+  addHooks: function() {
+    var image = this._overlay._image;
+    EXIF.getData(image, L.EXIF(image));
+  }
+  });
 
 	setTimeout(function(){
 		var toolbarStyle = L.DistortableImage._options.toolbarType;
@@ -122,7 +155,9 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 					ToggleOutline,
 					ToggleEditable,
 					ToggleRotateDistort,
-					ToggleExport
+					ToggleExport,
+					EnableEXIF,
+					ToggleOrder
 				]
 			}
 		});

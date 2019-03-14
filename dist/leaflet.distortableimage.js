@@ -126,6 +126,92 @@ L.MatrixUtil = {
 		return L.MatrixUtil.multsm(1/m[8], m);
 	}
 };
+L.EXIF = function getEXIFdata(img) {
+  if (Object.keys(EXIF.getAllTags(img)).length !== 0) {
+    console.log(EXIF.getAllTags(img));
+    var GPS = EXIF.getAllTags(img),
+      altitude;
+
+    /* If the lat/lng is available. */
+    if (
+      typeof GPS.GPSLatitude !== "undefined" &&
+      typeof GPS.GPSLongitude !== "undefined"
+    ) {
+      // sadly, encoded in [degrees,minutes,seconds]
+      // primitive value = GPS.GPSLatitude[x].numerator
+      var lat =
+        GPS.GPSLatitude[0] +
+        GPS.GPSLatitude[1] / 60 +
+        GPS.GPSLatitude[2] / 3600;
+      var lng =
+        GPS.GPSLongitude[0] +
+        GPS.GPSLongitude[1] / 60 +
+        GPS.GPSLongitude[2] / 3600;
+
+      if (GPS.GPSLatitudeRef !== "N") {
+        lat = lat * -1;
+      }
+      if (GPS.GPSLongitudeRef === "W") {
+        lng = lng * -1;
+      }
+    }
+
+    // Attempt to use GPS compass heading; will require
+    // some trig to calc corner points, which you can find below:
+
+    var angle = 0;
+    // "T" refers to "True north", so -90.
+    if (GPS.GPSImgDirectionRef === "T") {
+      angle =
+        (Math.PI / 180) *
+        (GPS.GPSImgDirection.numerator / GPS.GPSImgDirection.denominator - 90);
+    }
+    // "M" refers to "Magnetic north"
+    else if (GPS.GPSImgDirectionRef === "M") {
+      angle =
+        (Math.PI / 180) *
+        (GPS.GPSImgDirection.numerator / GPS.GPSImgDirection.denominator - 90);
+    } else {
+      console.log("No compass data found");
+    }
+
+    console.log("Orientation:", GPS.Orientation);
+
+    /* If there is orientation data -- i.e. landscape/portrait etc */
+    if (GPS.Orientation === 6) {
+      //CCW
+      angle += (Math.PI / 180) * -90;
+    } else if (GPS.Orientation === 8) {
+      //CW
+      angle += (Math.PI / 180) * 90;
+    } else if (GPS.Orientation === 3) {
+      //180
+      angle += (Math.PI / 180) * 180;
+    }
+
+    /* If there is altitude data */
+    if (
+      typeof GPS.GPSAltitude !== "undefined" &&
+      typeof GPS.GPSAltitudeRef !== "undefined"
+    ) {
+      // Attempt to use GPS altitude:
+      // (may eventually need to find EXIF field of view for correction)
+      if (
+        typeof GPS.GPSAltitude !== "undefined" &&
+        typeof GPS.GPSAltitudeRef !== "undefined"
+      ) {
+        altitude =
+          GPS.GPSAltitude.numerator / GPS.GPSAltitude.denominator +
+          GPS.GPSAltitudeRef;
+      } else {
+        altitude = 0; // none
+      }
+    }
+  } else {
+    alert("EXIF initialized. Press again to view data in console.");
+  }
+};
+
 L.EditHandle = L.Marker.extend({
 	initialize: function(overlay, corner, options) {
 		var markerOptions,
@@ -238,10 +324,10 @@ L.DistortHandle = L.EditHandle.extend({
 	}
 });
 
-L.RotateHandle = L.EditHandle.extend({
+L.RotateAndScaleHandle = L.EditHandle.extend({
 	options: {
 		TYPE: 'rotate',
-		icon: new L.Icon({ 
+		icon: new L.Icon({
 			iconUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAHiSURBVMXBa3HbShgA0PMp/1sCCo8oCEpgTaCXgIXAJiDzyCJoAUTm4UVQAns1Y8+snWnTvJyeE16hkjDgDrfoNTMKcpC9UPiLSo8JyetkjEHxjPCMyoS199kFoz8Iv1HpMaN3qWDCHoegOKkkRwnJpRmroHgiPFEZ8IBekzEGxQtUEhKSS/fB7Ew4U+lxcGkVZG9QWWPSFAxBcdK59KApuA+yNwp2uEdx1GN25sZJZULSfAtm77SlbNjju6MvG75u+WHRWVR6rDVjMPsgwYyVZl3pLTpHkyYHOx8syMiayaJzlDTZ9YyaZNFVkiYH2ZUEBcVJJXVImuz6Js3Qofe59pq7DoOTILu+g+a288mCouk7/1iH4qTS+2QdDppbV1ZJmrnDXnPnc5UOs2Z0fUmTuyBr+krvSioJyUmQO0dZM7mepMkWnaNRkyrJB6uskTSjxY3Fll8bvmJwlDb83FJ8gMqAB80uyBY3Trb82PAfvjj6vuHnluIdKgMeNXOwctK5NKBoHitrb1RJeHRp5Ux4ojLg0aWMHGQvUOkxIWkKVsHsTPiNSo8HDC5lZIsgO6n0uMUdRvQuFQxB8UR4RmXC2vvsgtEfhL+o9JiQvE7GGBTPCK9QSUjoMWgKDthjDrIX+h/k0I7gth6N5gAAAABJRU5ErkJggg==',
 			iconSize: [32, 32],
 			iconAnchor: [16, 16]}
@@ -318,6 +404,132 @@ L.RotateHandle = L.EditHandle.extend({
 	}
 });
 
+L.RotateHandle = L.EditHandle.extend({
+	options: {
+		TYPE: 'rotate',
+		icon: new L.Icon({
+			iconUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAHiSURBVMXBa3HbShgA0PMp/1sCCo8oCEpgTaCXgIXAJiDzyCJoAUTm4UVQAns1Y8+snWnTvJyeE16hkjDgDrfoNTMKcpC9UPiLSo8JyetkjEHxjPCMyoS199kFoz8Iv1HpMaN3qWDCHoegOKkkRwnJpRmroHgiPFEZ8IBekzEGxQtUEhKSS/fB7Ew4U+lxcGkVZG9QWWPSFAxBcdK59KApuA+yNwp2uEdx1GN25sZJZULSfAtm77SlbNjju6MvG75u+WHRWVR6rDVjMPsgwYyVZl3pLTpHkyYHOx8syMiayaJzlDTZ9YyaZNFVkiYH2ZUEBcVJJXVImuz6Js3Qofe59pq7DoOTILu+g+a288mCouk7/1iH4qTS+2QdDppbV1ZJmrnDXnPnc5UOs2Z0fUmTuyBr+krvSioJyUmQO0dZM7mepMkWnaNRkyrJB6uskTSjxY3Fll8bvmJwlDb83FJ8gMqAB80uyBY3Trb82PAfvjj6vuHnluIdKgMeNXOwctK5NKBoHitrb1RJeHRp5Ux4ojLg0aWMHGQvUOkxIWkKVsHsTPiNSo8HDC5lZIsgO6n0uMUdRvQuFQxB8UR4RmXC2vvsgtEfhL+o9JiQvE7GGBTPCK9QSUjoMWgKDthjDrIX+h/k0I7gth6N5gAAAABJRU5ErkJggg==',
+			iconSize: [32, 32],
+			iconAnchor: [16, 16]}
+		)
+	},
+
+	_onHandleDrag: function() {
+		var overlay = this._handled,
+			formerLatLng = this._handled._corners[this._corner],
+			newLatLng = this.getLatLng(),
+
+			angle = this._calculateAngle(formerLatLng, newLatLng);
+
+		overlay.editing._rotateBy(angle);
+
+		overlay.fire('update');
+	},
+
+	updateHandle: function() {
+		this.setLatLng(this._handled._corners[this._corner]);
+	},
+
+	/* Takes two latlngs and calculates the angle between them. */
+	_calculateAngle: function(latlngA, latlngB) {
+		var map = this._handled._map,
+
+			centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
+			formerPoint = map.latLngToLayerPoint(latlngA),
+			newPoint = map.latLngToLayerPoint(latlngB),
+
+			initialAngle = Math.atan2(centerPoint.y - formerPoint.y, centerPoint.x - formerPoint.x),
+			newAngle = Math.atan2(centerPoint.y - newPoint.y, centerPoint.x - newPoint.x);
+
+		return newAngle - initialAngle;
+	},
+
+	/* Takes two latlngs and calculates the scaling difference. */
+	_calculateScalingFactor: function(latlngA, latlngB) {
+		var map = this._handled._map,
+
+			centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
+			formerPoint = map.latLngToLayerPoint(latlngA),
+			newPoint = map.latLngToLayerPoint(latlngB),
+
+			formerRadiusSquared = this._d2(centerPoint, formerPoint),
+			newRadiusSquared = this._d2(centerPoint, newPoint);
+
+		return Math.sqrt(newRadiusSquared / formerRadiusSquared);
+	},
+
+	/* Distance between two points in cartesian space, squared (distance formula). */
+	_d2: function(a, b) {
+		var dx = a.x - b.x,
+			dy = a.y - b.y;
+
+		return Math.pow(dx, 2) + Math.pow(dy, 2);
+	}
+});
+
+L.ScaleHandle = L.EditHandle.extend({
+	options: {
+		TYPE: 'rotate',
+		icon: new L.Icon({
+			iconUrl:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIHdpZHRoPSI0NTkiIGhlaWdodD0iNDY0IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA1MTIgNTEyIiB4bWw6c3BhY2U9InByZXNlcnZlIiBzdHlsZT0iIj48cmVjdCBpZD0iYmFja2dyb3VuZHJlY3QiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHg9IjAiIHk9IjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0ibm9uZSIgY2xhc3M9IiIgc3R5bGU9IiIvPjxnIGNsYXNzPSJjdXJyZW50TGF5ZXIiIHN0eWxlPSIiPjx0aXRsZT5MYXllciAxPC90aXRsZT48cGF0aCBkPSJNNDU5LjA0OTE1OTUzMDQ3MTM0LDg2LjkyNjIzNDUxMjU1MDAyIFYwIGgtODUuNzE0NTczMzU2MzEyMDkgdjI3LjA0MzcxNzQwMzkwNDQ1MiBIODUuNzE0NTczMzU2MzEyMDMgVjAgSDAgdjg2LjkyNjIzNDUxMjU1MDAyIGgyNS43MTQzNzIwMDY4OTM2MjYgdjI4OS43NTQxMTUwNDE4MzM0IEgwIHY4Ni45MjYyMzQ1MTI1NTAwMiBoODUuNzE0NTczMzU2MzEyMDkgdi0yNy4wNDM3MTc0MDM5MDQ0NTIgaDI4NS43MTUyNDQ1MjEwNDAzIHYyNy4wNDM3MTc0MDM5MDQ0NTIgaDg1LjcxNDU3MzM1NjMxMjA5IHYtODYuOTI2MjM0NTEyNTUwMDIgaC0yMy44MDk2MDM3MTAwODY2OSBWODYuOTI2MjM0NTEyNTUwMDIgSDQ1OS4wNDkxNTk1MzA0NzEzNCB6TTM4NC43NjMxOTU5NTUwMDA5LDEyLjU1NjAxMTY1MTgxMjc4MSBoNjEuOTA0OTY5NjQ2MjI1Mzk2IHY2Mi43ODAwNTgyNTkwNjM5MSBoLTYxLjkwNDk2OTY0NjIyNTM5NiBWMTIuNTU2MDExNjUxODEyNzgxIHpNMTIuMzgwOTkzOTI5MjQ1MDUsMTIuNTU2MDExNjUxODEyNzgxIGg2MS45MDQ5Njk2NDYyMjUzOTYgdjYyLjc4MDA1ODI1OTA2MzkxIEgxMi4zODA5OTM5MjkyNDUwNSBWMTIuNTU2MDExNjUxODEyNzgxIHpNNzQuMjg1OTYzNTc1NDcwNTMsNDUxLjA1MDU3MjQxNTEyMDY2IEgxMi4zODA5OTM5MjkyNDUwNSB2LTYyLjc4MDA1ODI1OTA2MzkxIGg2MS45MDQ5Njk2NDYyMjUzOTYgVjQ1MS4wNTA1NzI0MTUxMjA2NiB6TTQ0NS43MTU3ODE0NTI4MjI3NCw0NTEuMDUwNTcyNDE1MTIwNjYgaC02Mi44NTczNTM3OTQ2Mjg4NjQgdi02Mi43ODAwNTgyNTkwNjM5MSBoNjIuODU3MzUzNzk0NjI4ODY0IFY0NTEuMDUwNTcyNDE1MTIwNjYgek00MDcuNjIwNDE1NTE2Njg0MjYsMzc2LjY4MDM0OTU1NDM4MzQ0IGgtMzYuMTkwNTk3NjM5MzMxNzcgdjMyLjgzODc5OTcwNDc0MTEyIEg4NS43MTQ1NzMzNTYzMTIwMyB2LTMyLjgzODc5OTcwNDc0MTEyIEg0OS41MjM5NzU3MTY5ODAzMiBWODYuOTI2MjM0NTEyNTUwMDIgaDM2LjE5MDU5NzYzOTMzMTc3IFY1MC4yMjQwNDY2MDcyNTExMjUgaDI4Ny42MjAwMTI4MTc4NDcyIHYzNi43MDIxODc5MDUyOTg5IGgzNC4yODU4MjkzNDI1MjQ4MzUgVjM3Ni42ODAzNDk1NTQzODM0NCB6IiBpZD0ic3ZnXzIiIGNsYXNzPSIiIGZpbGw9IiMxYTFhZWIiIGZpbGwtb3BhY2l0eT0iMSIvPjwvZz48L3N2Zz4=',
+			iconSize: [32, 32],
+			iconAnchor: [16, 16]}
+		)
+	},
+
+	_onHandleDrag: function() {
+		var overlay = this._handled,
+			formerLatLng = this._handled._corners[this._corner],
+			newLatLng = this.getLatLng(),
+
+			scale = this._calculateScalingFactor(formerLatLng, newLatLng);
+
+		overlay.editing._scaleBy(scale);
+
+		overlay.fire('update');
+	},
+
+	updateHandle: function() {
+		this.setLatLng(this._handled._corners[this._corner]);
+	},
+
+	/* Takes two latlngs and calculates the angle between them. */
+	_calculateAngle: function(latlngA, latlngB) {
+		var map = this._handled._map,
+
+			centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
+			formerPoint = map.latLngToLayerPoint(latlngA),
+			newPoint = map.latLngToLayerPoint(latlngB),
+
+			initialAngle = Math.atan2(centerPoint.y - formerPoint.y, centerPoint.x - formerPoint.x),
+			newAngle = Math.atan2(centerPoint.y - newPoint.y, centerPoint.x - newPoint.x);
+
+		return newAngle - initialAngle;
+	},
+
+	/* Takes two latlngs and calculates the scaling difference. */
+	_calculateScalingFactor: function(latlngA, latlngB) {
+		var map = this._handled._map,
+
+			centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
+			formerPoint = map.latLngToLayerPoint(latlngA),
+			newPoint = map.latLngToLayerPoint(latlngB),
+
+			formerRadiusSquared = this._d2(centerPoint, formerPoint),
+			newRadiusSquared = this._d2(centerPoint, newPoint);
+
+		return Math.sqrt(newRadiusSquared / formerRadiusSquared);
+	},
+
+	/* Distance between two points in cartesian space, squared (distance formula). */
+	_d2: function(a, b) {
+		var dx = a.x - b.x,
+			dy = a.y - b.y;
+
+		return Math.pow(dx, 2) + Math.pow(dy, 2);
+	}
+});
+
 L.DistortableImageOverlay = L.ImageOverlay.extend({
 	include: L.Mixin.Events,
 
@@ -328,10 +540,12 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 	},
 
 	initialize: function(url, options) {
-		this._url = url;
-		this._rotation = this.options.rotation;
-		L.DistortableImage._options = options;
-		L.setOptions(this, options);
+			this._toolArray = L.DistortableImage.EditToolbarDefaults;
+			this._url = url;
+			this._rotation = this.options.rotation;
+			L.DistortableImage._options = options;
+
+			L.setOptions(this, options);
 	},
 
 	onAdd: function(map) {
@@ -386,6 +600,15 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
 		L.extend(this._image, {
 			alt: this.options.alt
+		});
+	},
+
+	_addTool: function(tool) {
+		this._toolArray.push(tool);
+		L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
+			options: {
+				actions: this._toolArray
+			}
 		});
 	},
 
@@ -670,7 +893,40 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 			editing._toggleExport();
 			this.disable();
 		}
-	});
+	}),
+
+	ToggleOrder = EditOverlayAction.extend({
+		options: {
+			toolbarIcon: {
+				html: '<span class="fa fa-sort"></span>',
+				tooltip: 'Change order',
+				title: 'Toggle order'
+			}
+		},
+
+		addHooks: function ()
+		{
+			var editing = this._overlay.editing;
+
+			editing._toggleOrder();
+			this.disable();
+		}
+	}),
+
+  EnableEXIF = EditOverlayAction.extend({
+  options: {
+    toolbarIcon: {
+      html: '<span class="fa fa-compass"></span>',
+      tooltip: "Enable EXIF",
+      title: "Geocode Image"
+    }
+  },
+
+  addHooks: function() {
+    var image = this._overlay._image;
+    EXIF.getData(image, L.EXIF(image));
+  }
+  });
 
 	setTimeout(function(){
 		var toolbarStyle = L.DistortableImage._options.toolbarType;
@@ -683,7 +939,9 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 					ToggleOutline,
 					ToggleEditable,
 					ToggleRotateDistort,
-					ToggleExport
+					ToggleExport,
+					EnableEXIF,
+					ToggleOrder
 				]
 			}
 		});
@@ -702,14 +960,19 @@ L.DistortableImage.Edit = L.Handler.extend({
 			76: '_toggleLock', // l
 			79: '_toggleOutline', // o
 			82: '_toggleRotateDistort', // r
-      84: '_toggleTransparency', // t
+			74: '_sendUp', // j
+			75:	'_sendDown', // k
       46: "_removeOverlay", // delete windows / delete + fn mac
-      8: 	"_removeOverlay" // backspace windows / delete mac
+      8:  "_removeOverlay", // backspace windows / delete mac
+			83: '_toggleScale', // s
+			84: '_toggleTransparency', // t
+			20:	'_toggleRotate' // CAPS
 		}
 	},
 
 	initialize: function(overlay) {
 		this._overlay = overlay;
+		this._toggledImage = false;
 
 		/* Interaction modes. */
 		this._mode = this._overlay.options.mode || 'distort';
@@ -729,7 +992,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		};
 	},
 
-	/* Run on image seletion. */
+	/* Run on image selection. */
 	addHooks: function() {
 		var overlay = this._overlay,
 			map = overlay._map,
@@ -754,18 +1017,30 @@ L.DistortableImage.Edit = L.Handler.extend({
 			this._distortHandles.addLayer(new L.DistortHandle(overlay, i));
 		}
 
-		this._rotateHandles = new L.LayerGroup();
+		this._rotateHandles = new L.LayerGroup(); // handle includes rotate AND scale
 		for (i = 0; i < 4; i++) {
-			this._rotateHandles.addLayer(new L.RotateHandle(overlay, i));
+			this._rotateHandles.addLayer(new L.RotateAndScaleHandle(overlay, i));
+		}
+
+		this._scaleHandles = new L.LayerGroup();
+		for (i = 0; i < 4; i++) {
+			this._scaleHandles.addLayer(new L.ScaleHandle(overlay, i));
+		}
+
+		this.__rotateHandles = new L.LayerGroup(); // individual rotate
+		for (i = 0; i < 4; i++) {
+			this.__rotateHandles.addLayer(new L.RotateHandle(overlay, i));
 		}
 
 		this._handles = {
 			'lock':		 this._lockHandles,
 			'distort': this._distortHandles,
-			'rotate':	this._rotateHandles
+			'rotate':	this._rotateHandles,
+			'scale': this._scaleHandles,
+			'rotateStandalone': this.__rotateHandles
 		};
 
-		if (this._mode === 'lock') {
+    if (this._mode === 'lock') {
 			map.addLayer(this._lockHandles);
 		} else {
 			this._mode = 'distort';
@@ -783,7 +1058,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 	},
 
-	/* Run on image deseletion. */
+	/* Run on image deselection. */
 	removeHooks: function() {
 		var overlay = this._overlay,
 			map = overlay._map;
@@ -898,6 +1173,26 @@ L.DistortableImage.Edit = L.Handler.extend({
 		map.addLayer(this._handles[this._mode]);
 	},
 
+	_toggleScale: function() {
+		var map = this._overlay._map;
+
+		map.removeLayer(this._handles[this._mode]);
+
+		this._mode = 'scale';
+
+		map.addLayer(this._handles[this._mode]);
+	},
+
+	_toggleRotate: function() {
+		var map = this._overlay._map;
+
+		map.removeLayer(this._handles[this._mode]);
+
+		this._mode = 'rotateStandalone';
+
+		map.addLayer(this._handles[this._mode]);
+	},
+
 	_toggleTransparency: function() {
 		var image = this._overlay._image,
 			opacity;
@@ -921,6 +1216,14 @@ L.DistortableImage.Edit = L.Handler.extend({
 		image.setAttribute('opacity', opacity);
 
 		image.style.outline = outline;
+	},
+
+	_sendUp: function() {
+		this._overlay.bringToFront();
+	},
+
+	_sendDown: function() {
+		this._overlay.bringToBack();
 	},
 
 	_toggleLock: function() {
@@ -979,6 +1282,17 @@ L.DistortableImage.Edit = L.Handler.extend({
       }
     }
   },
+
+	_toggleOrder: function () {
+	if (this._toggledImage) {
+		this._overlay.bringToFront();
+		this._toggledImage = false;
+		}
+	else {
+		this._overlay.bringToBack();
+		this._toggledImage = true;
+		}
+	},
 
 	// Based on https://github.com/publiclab/mapknitter/blob/8d94132c81b3040ae0d0b4627e685ff75275b416/app/assets/javascripts/mapknitter/Map.js#L47-L82
 	_toggleExport: function (){

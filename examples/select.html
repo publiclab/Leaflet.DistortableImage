@@ -15,7 +15,7 @@
   <!-- for full-res export -->
   <script src="../node_modules/jquery/dist/jquery.js"></script>
   <script src="../node_modules/webgl-distort/dist/webgl-distort.js"></script>
-  <script src="../node_modules/glfx-js/dist/glfx.js"></script>
+  <script src="../node_modules/glfx/glfx.js"></script>
 
   <link rel="stylesheet" href="../dist/leaflet.distortableimage.css" type="text/css" media="screen" title="no title" charset="utf-8">
   <script src="../dist/leaflet.distortableimage.js"></script>
@@ -65,7 +65,7 @@
 
       // create an image
       img = new L.DistortableImageOverlay(
-        'example.jpg', {
+        'example.png', {
           corners: [
             new L.latLng(51.52,-0.10),
             new L.latLng(51.52,-0.14),
@@ -80,7 +80,7 @@
 
       // create a second image
       img = new L.DistortableImageOverlay(
-        'example.jpg', {
+        'example.png', {
           corners: [
             new L.latLng(51.51,-0.10),
             new L.latLng(51.51,-0.14),
@@ -109,5 +109,5 @@
 
     })();
   </script>
-      
+
 </html>

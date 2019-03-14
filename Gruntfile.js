@@ -1,6 +1,7 @@
 module.exports = function(grunt) {
 
     require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
+    // require('exif-js');
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -28,6 +29,8 @@ module.exports = function(grunt) {
                     $: false,
                     LeafletToolbar: false,
                     warpWebGl: false,
+                    EXIF: false,
+                    alert: false,
 
                     // Mocha
 
@@ -75,16 +78,19 @@ module.exports = function(grunt) {
 
         concat: {
             dist: {
-                src: [
-                    'src/util/*.js',
-                    'src/edit/EditHandle.js',
-                    'src/edit/LockHandle.js',
-                    'src/edit/DistortHandle.js',
-                    'src/edit/RotateHandle.js',
-                    'src/DistortableImageOverlay.js',
-                    'src/edit/DistortableImage.EditToolbar.js',
-                    'src/edit/DistortableImage.Edit.js',
-                ],
+              src: [
+                  'src/util/*.js',
+                  'src/edit/getEXIFdata.js',
+                  'src/edit/EditHandle.js',
+                  'src/edit/LockHandle.js',
+                  'src/edit/DistortHandle.js',
+                  'src/edit/RotateAndScaleHandle.js',
+                  'src/edit/RotateHandle.js',
+                  'src/edit/ScaleHandle.js',
+                  'src/DistortableImageOverlay.js',
+                  'src/edit/DistortableImage.EditToolbar.js',
+                  'src/edit/DistortableImage.Edit.js',
+              ],
                 dest: 'dist/leaflet.distortableimage.js',
             }
         }

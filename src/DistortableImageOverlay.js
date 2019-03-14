@@ -8,10 +8,12 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 	},
 
 	initialize: function(url, options) {
-		this._url = url;
-		this._rotation = this.options.rotation;
-		L.DistortableImage._options = options;
-		L.setOptions(this, options);
+			this._toolArray = L.DistortableImage.EditToolbarDefaults;
+			this._url = url;
+			this._rotation = this.options.rotation;
+			L.DistortableImage._options = options;
+
+			L.setOptions(this, options);
 	},
 
 	onAdd: function(map) {
@@ -66,6 +68,15 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
 		L.extend(this._image, {
 			alt: this.options.alt
+		});
+	},
+
+	_addTool: function(tool) {
+		this._toolArray.push(tool);
+		L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
+			options: {
+				actions: this._toolArray
+			}
 		});
 	},
 

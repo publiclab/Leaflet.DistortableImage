@@ -3,15 +3,15 @@ Leaflet.DistortableImage
 
 [![Build Status](https://travis-ci.org/publiclab/Leaflet.DistortableImage.svg?branch=master)](https://travis-ci.org/publiclab/Leaflet.DistortableImage)
 
-A Leaflet extension to distort images -- "rubbersheeting" -- for the [MapKnitter.org](http://mapknitter.org) ([src](https://github.com/publiclab/mapknitter)) image georectification service by [Public Lab](http://publiclab.org). Leaflet.DistortableImage allows for perspectival distortions of images, client-side, using CSS3 transformations in the DOM. 
+A Leaflet extension to distort images -- "rubbersheeting" -- for the [MapKnitter.org](http://mapknitter.org) ([src](https://github.com/publiclab/mapknitter)) image georectification service by [Public Lab](http://publiclab.org). Leaflet.DistortableImage allows for perspectival distortions of images, client-side, using CSS3 transformations in the DOM.
 
 Advantages include:
 
-* it can handle over 100 images smoothly, even on a smartphone. 
+* it can handle over 100 images smoothly, even on a smartphone.
 * images can be right-clicked and downloaded individually in their original state
 * CSS3 transforms are GPU-accelerated in most (all?) browsers, for a very smooth UI
 * no need to server-side generate raster GeoTiffs, tilesets, etc in order to view distorted imagery layers
-* images use DOM event handling for real-time distortion 
+* images use DOM event handling for real-time distortion
 * [full resolution download option](https://github.com/publiclab/Leaflet.DistortableImage/pull/100) for large images, using WebGL acceleration
 
 [Download as zip](https://github.com/publiclab/Leaflet.DistortableImage/releases) or clone to get a copy of the repo.
@@ -71,7 +71,7 @@ We've added a GPU-accelerated means to generate a full resolution version of the
 
 ```
 <script src="../node_modules/webgl-distort/dist/webgl-distort.js"></script>
-<script src="../node_modules/glfx-js/dist/glfx.js"></script>
+<script src="../node_modules/glfx/glfx.js"></script>
 ```
 
 ## Usage
@@ -103,18 +103,42 @@ img = new L.DistortableImageOverlay(
 L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing); // enable editing
 
 ```
+## Image-ordering
 
-## Full-resolution download
+For multiple images, we've added a `ToggleOrder` action, that switches overlapping images back and forth into view by employing the [`bringToFront()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtoback).
 
-We've added a GPU-accelerated means to generate a full resolution version of the distorted image; it requires two additional dependencies to enable; see how we've included them in the demo:
+```js
+ToggleOrder = EditOverlayAction.extend({
+  options: {
+    toolbarIcon: {
+      html: '<span class="fa fa-sort"></span>',
+      tooltip: 'Change order',
+      title: 'Toggle order'
+    }
+  },
 
+  addHooks: function ()
+  {
+    var editing = this._overlay.editing;
+
+    editing._toggleOrder(); // toggles images into view
+    this.disable();
+  }
+});
 
 ```
-<script src="../node_modules/webgl-distort/dist/webgl-distort.js"></script>
-<script src="../node_modules/glfx-js/dist/glfx.js"></script>
-```
 
-****
+### Corners
+
+The corners are stored in `img._corners` as `L.latLng` objects, so after instantiating the image and moving it around, you can always access them like this:
+
+```js
+img = new L.DistortableImageOverlay(...);
+img.addTo(map);
+// move the image around
+JSON.stringify(img._corners)
+=> "[{"lat":51.52,"lng":-0.1},{"lat":51.52,"lng":-0.14},{"lat":51.5,"lng":-0.1},{"lat":51.5,"lng":-0.14}]"
+```
 
 ## Setup
 
@@ -137,3 +161,4 @@ To build all files from `/src/` into the `/dist/` folder, run `grunt concat:dist
 * Jeff Warren [@jywarren](https://github.com/jywarren)
 
 Many more at https://github.com/publiclab/Leaflet.DistortableImage/graphs/contributors
+﻿

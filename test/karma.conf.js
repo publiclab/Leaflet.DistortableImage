@@ -19,7 +19,7 @@ module.exports = function(config) {
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
     frameworks: ["mocha"],
-
+    
     // list of files / patterns to load in the browser
     files: [
       { pattern: "examples/*.jpg", included: false, served: true },
@@ -33,10 +33,13 @@ module.exports = function(config) {
       "node_modules/chai/chai.js",
       "node_modules/sinon/pkg/sinon.js",
       "src/util/*.js",
+      "src/edit/getEXIFdata.js",
       "src/edit/EditHandle.js",
       "src/edit/LockHandle.js",
       "src/edit/DistortHandle.js",
+      "src/edit/RotateAndScaleHandle.js",
       "src/edit/RotateHandle.js",
+      "src/edit/ScaleHandle.js",
       "src/DistortableImageOverlay.js",
       "src/edit/DistortableImage.EditToolbar.js",
       "src/edit/DistortableImage.Edit.js",
@@ -44,7 +47,7 @@ module.exports = function(config) {
       "test/src/**/*Spec.js"
     ],
 
-    // so that karma can serve examples/example.jpg
+    // so that karma can serve examples/example.png
     proxies: {
       "/examples/": "/base/examples/"
     },
