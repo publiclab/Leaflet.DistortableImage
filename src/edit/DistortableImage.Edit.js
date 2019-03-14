@@ -11,14 +11,19 @@ L.DistortableImage.Edit = L.Handler.extend({
 			76: '_toggleLock', // l
 			79: '_toggleOutline', // o
 			82: '_toggleRotateDistort', // r
-      84: '_toggleTransparency', // t
+			74: '_sendUp', // j
+			75:	'_sendDown', // k
       46: "_removeOverlay", // delete windows / delete + fn mac
-      8: 	"_removeOverlay" // backspace windows / delete mac
+      8:  "_removeOverlay", // backspace windows / delete mac
+			83: '_toggleScale', // s
+			84: '_toggleTransparency', // t
+			20:	'_toggleRotate' // CAPS
 		}
 	},
 
 	initialize: function(overlay) {
 		this._overlay = overlay;
+		this._toggledImage = false;
 
 		/* Interaction modes. */
 		this._mode = this._overlay.options.mode || 'distort';
@@ -32,9 +37,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 			map = overlay._map,
 			i;
 
-			/* bring the selected image into view */
-			overlay.bringToFront();
-
 		this._lockHandles = new L.LayerGroup();
 		for (i = 0; i < 4; i++) {
 			this._lockHandles.addLayer(new L.LockHandle(overlay, i, { draggable: false }));
@@ -45,18 +47,30 @@ L.DistortableImage.Edit = L.Handler.extend({
 			this._distortHandles.addLayer(new L.DistortHandle(overlay, i));
 		}
 
-		this._rotateHandles = new L.LayerGroup();
+		this._rotateHandles = new L.LayerGroup(); // handle includes rotate AND scale
 		for (i = 0; i < 4; i++) {
-			this._rotateHandles.addLayer(new L.RotateHandle(overlay, i));
+			this._rotateHandles.addLayer(new L.RotateAndScaleHandle(overlay, i));
+		}
+
+		this._scaleHandles = new L.LayerGroup();
+		for (i = 0; i < 4; i++) {
+			this._scaleHandles.addLayer(new L.ScaleHandle(overlay, i));
+		}
+
+		this.__rotateHandles = new L.LayerGroup(); // individual rotate
+		for (i = 0; i < 4; i++) {
+			this.__rotateHandles.addLayer(new L.RotateHandle(overlay, i));
 		}
 
 		this._handles = {
 			'lock':		 this._lockHandles,
 			'distort': this._distortHandles,
-			'rotate':	this._rotateHandles
+			'rotate':	this._rotateHandles,
+			'scale': this._scaleHandles,
+			'rotateStandalone': this.__rotateHandles
 		};
 
-		if (this._mode === 'lock') {
+    if (this._mode === 'lock') {
 			map.addLayer(this._lockHandles);
 		} else {
 			this._mode = 'distort';
@@ -189,6 +203,26 @@ L.DistortableImage.Edit = L.Handler.extend({
 		map.addLayer(this._handles[this._mode]);
 	},
 
+	_toggleScale: function() {
+		var map = this._overlay._map;
+
+		map.removeLayer(this._handles[this._mode]);
+
+		this._mode = 'scale';
+
+		map.addLayer(this._handles[this._mode]);
+	},
+
+	_toggleRotate: function() {
+		var map = this._overlay._map;
+
+		map.removeLayer(this._handles[this._mode]);
+
+		this._mode = 'rotateStandalone';
+
+		map.addLayer(this._handles[this._mode]);
+	},
+
 	_toggleTransparency: function() {
 		var image = this._overlay._image,
 			opacity;
@@ -212,6 +246,14 @@ L.DistortableImage.Edit = L.Handler.extend({
 		image.setAttribute('opacity', opacity);
 
 		image.style.outline = outline;
+	},
+
+	_sendUp: function() {
+		this._overlay.bringToFront();
+	},
+
+	_sendDown: function() {
+		this._overlay.bringToBack();
 	},
 
 	_toggleLock: function() {
@@ -270,6 +312,17 @@ L.DistortableImage.Edit = L.Handler.extend({
       }
     }
   },
+
+	_toggleOrder: function () {
+	if (this._toggledImage) {
+		this._overlay.bringToFront();
+		this._toggledImage = false;
+		}
+	else {
+		this._overlay.bringToBack();
+		this._toggledImage = true;
+		}
+	},
 
 	// Based on https://github.com/publiclab/mapknitter/blob/8d94132c81b3040ae0d0b4627e685ff75275b416/app/assets/javascripts/mapknitter/Map.js#L47-L82
 	_toggleExport: function (){
