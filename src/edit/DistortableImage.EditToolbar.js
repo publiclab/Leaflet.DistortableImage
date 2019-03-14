@@ -127,7 +127,22 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 			editing._toggleOrder();
 			this.disable();
 		}
-	});
+	}),
+
+  EnableEXIF = EditOverlayAction.extend({
+  options: {
+    toolbarIcon: {
+      html: '<span class="fa fa-compass"></span>',
+      tooltip: "Enable EXIF",
+      title: "Geocode Image"
+    }
+  },
+
+  addHooks: function() {
+    var image = this._overlay._image;
+    EXIF.getData(image, L.EXIF(image));
+  }
+  });
 
 L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
 	options: {
@@ -138,6 +153,7 @@ L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
 			ToggleEditable,
 			ToggleRotateDistort,
 			ToggleExport,
+      EnableEXIF,
 			ToggleOrder
 		]
 	}
