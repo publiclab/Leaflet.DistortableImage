@@ -100,6 +100,24 @@
       window.img = img;
       window.img2 = img2;
 
+      // var bounds2 = new L.LatLngBounds(new L.LatLng(51.40, -0.10), new L.LatLng(51.55, -0.15));
+      // var div = document.createElement("div");
+      // div.id = "fooo";
+      // div.style.background = "rgba(255,255,255,0.5)";
+      // div.innerHTML = "<h3>This is a div element</h3> in an element overlay";
+      // layer2 = L.elementOverlay(
+      //   div, {
+      //   corners: [
+      //     new L.latLng(51.40, -0.10),
+      //     new L.latLng(51.40, -0.15),
+      //     new L.latLng(51.47, -0.11),
+      //     new L.latLng(51.47, -0.16)
+      //   ],
+      // }
+      // ).addTo(map);
+      // images.push(layer2);
+      // window.layer2 = layer2;
+
       // L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
       // L.DomEvent.on(img2._image, 'load', img2.editing.enable, img2.editing);
       // L.DomEvent.on(img2._image, 'click', select, img2);
@@ -107,14 +125,6 @@
       map.on('click', function () {
         $('.selected').removeClass('selected');
       });
-
-      // L.DomEvent.on(img, 'drag', function (e) {
-      //   console.log(e);
-      // });
-
-      // img.on('drag, dragend', function (e) {
-      //   console.log(e);
-      // })
 
       L.DomEvent.on(img._image, 'mousedown', function (e) {
         if (e.metaKey || e.ctrlKey)
@@ -190,17 +200,16 @@
         console.log('New: ', obj2);
         window.obj2 = obj2;
 
+        img2._reset();
+
         img2.fire('update');
         map.fire('update');
-
-        // map.invalidateSize();
-        // map.getCenter();
-        // map.setZoom(13);
-        // map.fire('reset')
+        
       });
 
       L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
       L.DomEvent.on(img2._image, 'load', img2.editing.enable, img2.editing);
+      // L.DomEvent.on(layer2._image, 'load', layer2.editing.enable, layer2.editing);
 
       // this doesn't work -- it triggers when clicking toolbar
       // can we stopPropagation of toolbar clicks? is that impolite.
