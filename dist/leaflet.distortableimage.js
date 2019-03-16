@@ -1931,6 +1931,7 @@ L.distortableImage.keymapper = function (options) {
 };
 
 L.DistortableImage = L.DistortableImage || {};
+// L.DistortableImage.Guides = L.DistortableImage.Guides || {};
 
 L.DistortableImage.Edit = L.Handler.extend({
   options: {
