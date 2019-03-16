@@ -51,7 +51,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			addToolbar = this._addToolbar,
 			i;
 
-			addToolbar(overlay._map, "topright", "div", "l-container", L.DistortableImage.Guides[0]);
+			addToolbar(overlay._map, "topright", "div", "l-container", L.DistortableImage.Guides[0]); // referring keymap guide
 
 			/* bring the selected image into view */
 			overlay.bringToFront();

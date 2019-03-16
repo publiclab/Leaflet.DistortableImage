@@ -103,7 +103,7 @@ img = new L.DistortableImageOverlay(
 L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing); // enable editing
 
 ```
-## Image-ordering
+### Image-ordering
 
 For multiple images, we've added a `ToggleOrder` action, that switches overlapping images back and forth into view by employing the [`bringToFront()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtoback).
 
@@ -139,6 +139,18 @@ img.addTo(map);
 JSON.stringify(img._corners)
 => "[{"lat":51.52,"lng":-0.1},{"lat":51.52,"lng":-0.14},{"lat":51.5,"lng":-0.1},{"lat":51.5,"lng":-0.14}]"
 ```
+
+### Adding "DOMStrings" for custom toolbars
+
+Custom "DOMStrings" that define the custom toolbars can easily be added by describing those in the `src/edit/tools/DistortableImage.Guides.js` file and referencing those in the `addToolbar` method inside the `src/edit/DistortableImage.Edit.js` file.
+
+```js
+var guide_strings = [dom_string]; // add guides here for custom toolbars
+
+L.DistortableImage.Guides = guide_strings;
+```
+
+**Note:** The default `toolbarStyle` will initially be set to "Popup", unless specified otherwise.
 
 ## Setup
 
