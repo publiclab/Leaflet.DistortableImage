@@ -35,6 +35,7 @@ module.exports = function(config) {
       "src/util/*.js",
       "src/edit/getEXIFdata.js",
       "src/edit/BoxSelectHandle.js",
+      'src/edit/tools/DistortableImage.Guides.js',
       "src/edit/EditHandle.js",
       "src/edit/LockHandle.js",
       "src/edit/DistortHandle.js",

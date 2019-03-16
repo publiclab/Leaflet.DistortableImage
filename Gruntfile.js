@@ -78,6 +78,7 @@ module.exports = function(grunt) {
         concat: {
             dist: {
               src: [
+                  'src/edit/tools/DistortableImage.Guides.js',
                   'src/util/*.js',
                   'src/DistortableImageOverlay.js',
                   'src/DistortableCollection.js',
