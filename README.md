@@ -179,6 +179,18 @@ JSON.stringify(img.getCorners())
 
 We further added a `getCorner(idx)` method used the same way as its plural counterpart but with an index passed to it.
 
+### Adding "DOMStrings" for custom toolbars
+
+Custom "DOMStrings" that define the custom toolbars can easily be added by describing those in the `src/edit/tools/DistortableImage.Guides.js` file and referencing those in the `addToolbar` method inside the `src/edit/DistortableImage.Edit.js` file.
+
+```js
+var guide_strings = [dom_string]; // add guides here for custom toolbars
+
+L.DistortableImage.Guides = guide_strings;
+```
+
+**Note:** The default `toolbarStyle` will initially be set to "Popup", unless specified otherwise.
+
 ## Setup
 
 1. From the root directory, run `npm install` or `sudo npm install`
