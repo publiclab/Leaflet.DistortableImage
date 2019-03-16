@@ -78,8 +78,16 @@ L.DistortableImage.Edit = L.Handler.extend({
 			this._enableDragging();
 		}
 
+		L.DomEvent.on(map, 'click', this._removeSelections, this);
+
+		L.DomEvent.on(overlay, 'dragstart', this._dragStartMultiple, this);
+
+		L.DomEvent.on(overlay, 'drag', this._dragMultiple, this);
+
 		//overlay.on('click', this._showToolbar, this);
 		L.DomEvent.on(overlay._image, 'click', this._showToolbar, this);
+
+		L.DomEvent.on(overlay._image, 'mousedown', this._showSelected, this);
 
 		/* Enable hotkeys. */
 		L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
@@ -148,6 +156,55 @@ L.DistortableImage.Edit = L.Handler.extend({
 		}
 
 		overlay._reset();
+	},
+
+	// drag events for multiple images are separated out from enableDragging initialization -- two different concepts
+	_dragStartMultiple: function(e) {
+		var overlay = this._overlay;
+		console.log(this,e,overlay);
+		// pass by value
+		overlay._initialCorners = JSON.parse(JSON.stringify(overlay.getCorners()));
+		// window.initial = this._initialCorners;
+		//this.initialCorner =
+		//console.log('dragstart initial lat: ', img._corners[0].lat);
+		// window.e = e;
+		// var overlay = this._overlay,
+		// 	map = overlay._map;
+
+		// var obj = {};
+		// // let objC = {};
+		// var obj2 = {};
+		// // let objD = {};
+
+		// obj.initVal = 0;
+		// obj.initVal1 = 0;
+		// obj.initVal2 = 0;
+		// obj.initVal3 = 0;
+
+		// obj2.initVal = 0;
+		// obj2.initVal1 = 0;
+		// obj2.initVal2 = 0;
+		// obj2.initVal3 = 0;
+
+		// var imgCollection = $(map.getPane('overlayPane').children).filter('img');
+
+		// var img = imgCollection[1];
+
+		// var img2 = imgCollection[2];
+
+		// var i = 0;
+		// for (var k in obj) {
+		// 	obj[k] = map.latLngToLayerPoint(img.getCorners()[i]);
+		// 	obj2[k] = map.latLngToLayerPoint(img2.getCorners()[i]);
+		// 	i += 1;
+		// }
+		// console.log('Initial: ', obj);
+		// window.obj = obj;
+
+	},
+
+	_dragMultiple: function() {
+
 	},
 
 	_enableDragging: function() {
@@ -303,7 +360,17 @@ L.DistortableImage.Edit = L.Handler.extend({
 		}
 
 		L.DomEvent.stopPropagation(event);
-  },
+	},
+	
+	_showSelected: function(event) {
+		if (event.metaKey || event.ctrlKey) {
+			$(event.target).toggleClass('selected');
+		}
+	},
+
+	_removeSelections: function() {
+		$('.selected').removeClass('selected');
+	},
 
   _removeOverlay: function () {
     var overlay = this._overlay;

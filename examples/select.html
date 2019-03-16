@@ -122,90 +122,91 @@
       // L.DomEvent.on(img2._image, 'load', img2.editing.enable, img2.editing);
       // L.DomEvent.on(img2._image, 'click', select, img2);
 
-      map.on('click', function () {
-        $('.selected').removeClass('selected');
-      });
+      // map.on('click', function () {
+      //   $('.selected').removeClass('selected');
+      // });
 
-      L.DomEvent.on(img._image, 'mousedown', function (e) {
-        if (e.metaKey || e.ctrlKey)
-          $(e.target).toggleClass('selected');
-      });
+      // L.DomEvent.on(img._image, 'mousedown', function (e) {
+      //   if (e.metaKey || e.ctrlKey)
+      //     $(e.target).toggleClass('selected');
+      // });
 
-      L.DomEvent.on(img2._image, 'mousedown', function (e) {
-        if (e.metaKey || e.ctrlKey)
-          $(e.target).toggleClass('selected');
-      });
+      // L.DomEvent.on(img2._image, 'mousedown', function (e) {
+      //   if (e.metaKey || e.ctrlKey)
+      //     $(e.target).toggleClass('selected');
+      // });
 
       // img2 is on the left (or initially bottom) img is on the right
 
-      let obj = {};
-      let objC = {};
-      let obj2 = {};
-      let objD = {};
+      // let obj = {};
+      // let objC = {};
+      // let obj2 = {};
+      // let objD = {};
       
-      obj.initVal = 0;
-      obj.initVal1 = 0;
-      obj.initVal2 = 0;
-      obj.initVal3 = 0;
+      // obj.initVal = 0;
+      // obj.initVal1 = 0;
+      // obj.initVal2 = 0;
+      // obj.initVal3 = 0;
 
-      obj2.initVal = 0;
-      obj2.initVal1 = 0;
-      obj2.initVal2 = 0;
-      obj2.initVal3 = 0;
+      // obj2.initVal = 0;
+      // obj2.initVal1 = 0;
+      // obj2.initVal2 = 0;
+      // obj2.initVal3 = 0;
 
 
-      L.DomEvent.on(img, 'dragstart', function (e) {
-        //console.log('dragstart initial lat: ', img._corners[0].lat);
-        let i = 0
-        for (let k in obj) {
-            obj[k] = map.latLngToLayerPoint(img.getCorners()[i]);
-            obj2[k] = map.latLngToLayerPoint(img2.getCorners()[i]);
-            i += 1;
-        }
-        console.log('Initial: ', obj);
-        window.obj = obj;
+      // L.DomEvent.on(img, 'dragstart', function (e) {
+      //   //this.initialCorner =
+      //   //console.log('dragstart initial lat: ', img._corners[0].lat);
+      //   let i = 0
+      //   for (let k in obj) {
+      //       obj[k] = map.latLngToLayerPoint(img.getCorners()[i]);
+      //       obj2[k] = map.latLngToLayerPoint(img2.getCorners()[i]);
+      //       i += 1;
+      //   }
+      //   console.log('Initial: ', obj);
+      //   window.obj = obj;
     
-      });
+      // });
       
-      L.DomEvent.on(img, 'drag', function (e) {
-        //console.log('dragging changing lat: ', img._corners[0].lat);
-        objC.changes = obj.initVal.x -  map.latLngToLayerPoint(img.getCorners()[0]).x;
-        objC.changes1 = obj.initVal.y -  map.latLngToLayerPoint(img.getCorners()[0]).y;
+      // L.DomEvent.on(img, 'drag', function (e) {
+      //   //console.log('dragging changing lat: ', img._corners[0].lat);
+      //   objC.changes = obj.initVal.x -  map.latLngToLayerPoint(img.getCorners()[0]).x;
+      //   objC.changes1 = obj.initVal.y -  map.latLngToLayerPoint(img.getCorners()[0]).y;
 
-        objC.changes2 = obj.initVal1.x -  map.latLngToLayerPoint(img.getCorners()[1]).x;
-        objC.changes3 = obj.initVal1.y -  map.latLngToLayerPoint(img.getCorners()[1]).y;
+      //   objC.changes2 = obj.initVal1.x -  map.latLngToLayerPoint(img.getCorners()[1]).x;
+      //   objC.changes3 = obj.initVal1.y -  map.latLngToLayerPoint(img.getCorners()[1]).y;
 
-        objC.changes4 = obj.initVal2.x -  map.latLngToLayerPoint(img.getCorners()[2]).x;
-        objC.changes5 = obj.initVal2.y -  map.latLngToLayerPoint(img.getCorners()[2]).y;
+      //   objC.changes4 = obj.initVal2.x -  map.latLngToLayerPoint(img.getCorners()[2]).x;
+      //   objC.changes5 = obj.initVal2.y -  map.latLngToLayerPoint(img.getCorners()[2]).y;
 
-        objC.changes6 = obj.initVal3.x -  map.latLngToLayerPoint(img.getCorners()[3]).x;
-        objC.changes7 = obj.initVal3.y -  map.latLngToLayerPoint(img.getCorners()[3]).y;
+      //   objC.changes6 = obj.initVal3.x -  map.latLngToLayerPoint(img.getCorners()[3]).x;
+      //   objC.changes7 = obj.initVal3.y -  map.latLngToLayerPoint(img.getCorners()[3]).y;
 
-        window.objC = objC;
-        console.log('Changes: ', objC);
+      //   window.objC = objC;
+      //   console.log('Changes: ', objC);
 
          
-        objD.newVal = L.point([obj2.initVal.x - objC.changes, obj2.initVal.y - objC.changes1]);
-        objD.newVal1 = L.point([obj2.initVal1.x - objC.changes2, obj2.initVal1.y - objC.changes3]);
-        objD.newVal2 = L.point([obj2.initVal2.x - objC.changes4, obj2.initVal2.y - objC.changes5]);
-        objD.newVal3 = L.point([obj2.initVal3.x - objC.changes6, obj2.initVal3.y - objC.changes7]);
+      //   objD.newVal = L.point([obj2.initVal.x - objC.changes, obj2.initVal.y - objC.changes1]);
+      //   objD.newVal1 = L.point([obj2.initVal1.x - objC.changes2, obj2.initVal1.y - objC.changes3]);
+      //   objD.newVal2 = L.point([obj2.initVal2.x - objC.changes4, obj2.initVal2.y - objC.changes5]);
+      //   objD.newVal3 = L.point([obj2.initVal3.x - objC.changes6, obj2.initVal3.y - objC.changes7]);
 
-        let i = 0;
-        for (let k in objD) {
-          img2.getCorners()[i].lat = map.layerPointToLatLng(objD[k]).lat;
-          img2.getCorners()[i].lng = map.layerPointToLatLng(objD[k]).lng;
-          i += 1;
-        }
+      //   let i = 0;
+      //   for (let k in objD) {
+      //     img2.getCorners()[i].lat = map.layerPointToLatLng(objD[k]).lat;
+      //     img2.getCorners()[i].lng = map.layerPointToLatLng(objD[k]).lng;
+      //     i += 1;
+      //   }
 
-        console.log('New: ', obj2);
-        window.obj2 = obj2;
+      //   console.log('New: ', obj2);
+      //   window.obj2 = obj2;
 
-        img2._reset();
+      //   img2._reset();
 
-        img2.fire('update');
-        map.fire('update');
+      //   img2.fire('update');
+      //   map.fire('update');
         
-      });
+      // });
 
       L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
       L.DomEvent.on(img2._image, 'load', img2.editing.enable, img2.editing);
