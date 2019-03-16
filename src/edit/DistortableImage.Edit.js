@@ -159,52 +159,78 @@ L.DistortableImage.Edit = L.Handler.extend({
 	},
 
 	// drag events for multiple images are separated out from enableDragging initialization -- two different concepts
-	_dragStartMultiple: function(e) {
-		var overlay = this._overlay;
-		console.log(this,e,overlay);
-		// pass by value
-		overlay._initialCorners = JSON.parse(JSON.stringify(overlay.getCorners()));
-		// window.initial = this._initialCorners;
-		//this.initialCorner =
-		//console.log('dragstart initial lat: ', img._corners[0].lat);
-		// window.e = e;
-		// var overlay = this._overlay,
-		// 	map = overlay._map;
+	_dragStartMultiple: function() {
+		var overlay = this._overlay,
+			map = overlay._map;
 
-		// var obj = {};
-		// // let objC = {};
-		// var obj2 = {};
-		// // let objD = {};
+		// pass by value alternative for future code refactoring possibility
+		// overlay._initialCorners = JSON.parse(JSON.stringify(overlay.getCorners()));
 
-		// obj.initVal = 0;
-		// obj.initVal1 = 0;
-		// obj.initVal2 = 0;
-		// obj.initVal3 = 0;
+		var obj = {};
+		obj.initVal = 0;
+		obj.initVal1 = 0;
+		obj.initVal2 = 0;
+		obj.initVal3 = 0;
 
-		// obj2.initVal = 0;
-		// obj2.initVal1 = 0;
-		// obj2.initVal2 = 0;
-		// obj2.initVal3 = 0;
+		var i = 0;
+		for (var k in obj) {
+			obj[k] = map.latLngToLayerPoint(overlay.getCorners()[i]);
+			i += 1;
+		}
 
-		// var imgCollection = $(map.getPane('overlayPane').children).filter('img');
+		overlay._initialCornerPoints = obj;
 
-		// var img = imgCollection[1];
-
-		// var img2 = imgCollection[2];
-
-		// var i = 0;
-		// for (var k in obj) {
-		// 	obj[k] = map.latLngToLayerPoint(img.getCorners()[i]);
-		// 	obj2[k] = map.latLngToLayerPoint(img2.getCorners()[i]);
-		// 	i += 1;
-		// }
-		// console.log('Initial: ', obj);
-		// window.obj = obj;
-
+		// TMRW: SAVE CHANGES AS CHANGES VALUES IN IMAGE.
+		overlay._cornerPointChanges = {};
 	},
 
 	_dragMultiple: function() {
+		var overlay = this._overlay,
+			map = overlay._map;
 
+		var obj2 = {};
+
+		obj2.initVal = 0;
+		obj2.initVal1 = 0;
+		obj2.initVal2 = 0;
+		obj2.initVal3 = 0;
+
+		var i = 0;
+		for (var k in obj2) {
+			obj2[k] = map.latLngToLayerPoint(overlay.getCorners()[i]);
+			i += 1;
+		}
+
+		overlay._currentCornerPoints = obj2;
+
+		// this.calculateCornerChanges(objC);
+
+		  //  objC.changes = obj.initVal.x -  map.latLngToLayerPoint(img.getCorners()[0]).x;
+      //   objC.changes1 = obj.initVal.y -  map.latLngToLayerPoint(img.getCorners()[0]).y;
+
+      //   objC.changes2 = obj.initVal1.x -  map.latLngToLayerPoint(img.getCorners()[1]).x;
+      //   objC.changes3 = obj.initVal1.y -  map.latLngToLayerPoint(img.getCorners()[1]).y;
+
+      //   objC.changes4 = obj.initVal2.x -  map.latLngToLayerPoint(img.getCorners()[2]).x;
+      //   objC.changes5 = obj.initVal2.y -  map.latLngToLayerPoint(img.getCorners()[2]).y;
+
+      //   objC.changes6 = obj.initVal3.x -  map.latLngToLayerPoint(img.getCorners()[3]).x;
+      //   objC.changes7 = obj.initVal3.y -  map.latLngToLayerPoint(img.getCorners()[3]).y;
+	},
+
+	calculateCornerChanges: function() {
+
+		// objC.changes = obj.initVal.x - map.latLngToLayerPoint(img.getCorners()[0]).x;
+		// objC.changes1 = obj.initVal.y - map.latLngToLayerPoint(img.getCorners()[0]).y;
+
+		// objC.changes2 = obj.initVal1.x - map.latLngToLayerPoint(img.getCorners()[1]).x;
+		// objC.changes3 = obj.initVal1.y - map.latLngToLayerPoint(img.getCorners()[1]).y;
+
+		// objC.changes4 = obj.initVal2.x - map.latLngToLayerPoint(img.getCorners()[2]).x;
+		// objC.changes5 = obj.initVal2.y - map.latLngToLayerPoint(img.getCorners()[2]).y;
+
+		// objC.changes6 = obj.initVal3.x - map.latLngToLayerPoint(img.getCorners()[3]).x;
+		// objC.changes7 = obj.initVal3.y - map.latLngToLayerPoint(img.getCorners()[3]).y;
 	},
 
 	_enableDragging: function() {

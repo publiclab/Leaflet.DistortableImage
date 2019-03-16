@@ -1030,8 +1030,16 @@ L.DistortableImage.Edit = L.Handler.extend({
 			this._enableDragging();
 		}
 
+		L.DomEvent.on(map, 'click', this._removeSelections, this);
+
+		L.DomEvent.on(overlay, 'dragstart', this._dragStartMultiple, this);
+
+		L.DomEvent.on(overlay, 'drag', this._dragMultiple, this);
+
 		//overlay.on('click', this._showToolbar, this);
 		L.DomEvent.on(overlay._image, 'click', this._showToolbar, this);
+
+		L.DomEvent.on(overlay._image, 'mousedown', this._showSelected, this);
 
 		/* Enable hotkeys. */
 		L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
@@ -1100,6 +1108,81 @@ L.DistortableImage.Edit = L.Handler.extend({
 		}
 
 		overlay._reset();
+	},
+
+	// drag events for multiple images are separated out from enableDragging initialization -- two different concepts
+	_dragStartMultiple: function() {
+		var overlay = this._overlay,
+			map = overlay._map;
+
+		// pass by value alternative for future code refactoring possibility
+		// overlay._initialCorners = JSON.parse(JSON.stringify(overlay.getCorners()));
+
+		var obj = {};
+		obj.initVal = 0;
+		obj.initVal1 = 0;
+		obj.initVal2 = 0;
+		obj.initVal3 = 0;
+
+		var i = 0;
+		for (var k in obj) {
+			obj[k] = map.latLngToLayerPoint(overlay.getCorners()[i]);
+			i += 1;
+		}
+
+		overlay._initialCornerPoints = obj;
+
+		// TMRW: SAVE CHANGES AS CHANGES VALUES IN IMAGE.
+		overlay._cornerPointChanges = {};
+	},
+
+	_dragMultiple: function() {
+		var overlay = this._overlay,
+			map = overlay._map;
+
+		var obj2 = {};
+
+		obj2.initVal = 0;
+		obj2.initVal1 = 0;
+		obj2.initVal2 = 0;
+		obj2.initVal3 = 0;
+
+		var i = 0;
+		for (var k in obj2) {
+			obj2[k] = map.latLngToLayerPoint(overlay.getCorners()[i]);
+			i += 1;
+		}
+
+		overlay._currentCornerPoints = obj2;
+
+		// this.calculateCornerChanges(objC);
+
+		  //  objC.changes = obj.initVal.x -  map.latLngToLayerPoint(img.getCorners()[0]).x;
+      //   objC.changes1 = obj.initVal.y -  map.latLngToLayerPoint(img.getCorners()[0]).y;
+
+      //   objC.changes2 = obj.initVal1.x -  map.latLngToLayerPoint(img.getCorners()[1]).x;
+      //   objC.changes3 = obj.initVal1.y -  map.latLngToLayerPoint(img.getCorners()[1]).y;
+
+      //   objC.changes4 = obj.initVal2.x -  map.latLngToLayerPoint(img.getCorners()[2]).x;
+      //   objC.changes5 = obj.initVal2.y -  map.latLngToLayerPoint(img.getCorners()[2]).y;
+
+      //   objC.changes6 = obj.initVal3.x -  map.latLngToLayerPoint(img.getCorners()[3]).x;
+      //   objC.changes7 = obj.initVal3.y -  map.latLngToLayerPoint(img.getCorners()[3]).y;
+	},
+
+	calculateCornerChanges: function() {
+
+		// objC.changes = obj.initVal.x - map.latLngToLayerPoint(img.getCorners()[0]).x;
+		// objC.changes1 = obj.initVal.y - map.latLngToLayerPoint(img.getCorners()[0]).y;
+
+		// objC.changes2 = obj.initVal1.x - map.latLngToLayerPoint(img.getCorners()[1]).x;
+		// objC.changes3 = obj.initVal1.y - map.latLngToLayerPoint(img.getCorners()[1]).y;
+
+		// objC.changes4 = obj.initVal2.x - map.latLngToLayerPoint(img.getCorners()[2]).x;
+		// objC.changes5 = obj.initVal2.y - map.latLngToLayerPoint(img.getCorners()[2]).y;
+
+		// objC.changes6 = obj.initVal3.x - map.latLngToLayerPoint(img.getCorners()[3]).x;
+		// objC.changes7 = obj.initVal3.y - map.latLngToLayerPoint(img.getCorners()[3]).y;
 	},
 
 	_enableDragging: function() {
@@ -1255,7 +1338,17 @@ L.DistortableImage.Edit = L.Handler.extend({
 		}
 
 		L.DomEvent.stopPropagation(event);
-  },
+	},
+	
+	_showSelected: function(event) {
+		if (event.metaKey || event.ctrlKey) {
+			$(event.target).toggleClass('selected');
+		}
+	},
+
+	_removeSelections: function() {
+		$('.selected').removeClass('selected');
+	},
 
   _removeOverlay: function () {
     var overlay = this._overlay;
@@ -1369,6 +1462,13 @@ L.DistortableImageOverlay.addInitHook(function() {
 	});
 });
 
+
+// L.DistortableImages.Edit = L.DistortableImage.Edit.extend({
+//   // initialize: function (overlay) {
+//   //   L.DistortableImage.Edit.prototype.initialize.call(this, latlng, markerOptions);
+//   // }
+
+// });
 L.Map.mergeOptions({ boxSelector: true, boxZoom: false });
 
 L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
@@ -1499,4 +1599,3 @@ L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
 });
 
 L.Map.addInitHook('addHandler', 'boxSelector', L.Map.BoxSelectHandle);
-//# sourceMappingURL=leaflet.distortableimage.js.map
