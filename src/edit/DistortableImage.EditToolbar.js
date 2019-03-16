@@ -145,7 +145,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
   });
 
 	setTimeout(function(){
-		var toolbarStyle = L.DistortableImage._options.toolbarType;
+		var toolbarStyle = L.DistortableImage._options.toolbarType || "Popup" ;
 		L.DistortableImage.EditToolbar = LeafletToolbar[toolbarStyle].extend({
 			options: {
 				position:'topleft',
