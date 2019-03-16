@@ -145,40 +145,19 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
   }
   });
 
-L.DistortableImage.EditToolbar = LeafletToolbar.Control.extend({
-	options: {
-		position:'topleft',
-		actions: [
-			ToggleTransparency,
-			RemoveOverlay,
-			ToggleOutline,
-			ToggleEditable,
-			ToggleRotateDistort,
-			ToggleExport,
-      EnableEXIF,
-      ToggleOrder
-    ]
-	},
-	
-	// todo: move to some sort of util class, these methods could be useful in future
-  _rotateToolbarAngleDeg: function(angle) {
-		var div = this._container,
-			divStyle = div.style;
-
-		var oldTransform = divStyle.transform;
-		
-		divStyle.transform = oldTransform + "rotate(" + angle + "deg)";
-    divStyle.transformOrigin = "1080% 650%";
-
-		this._rotateToolbarIcons(angle);
-	},
-	
-	_rotateToolbarIcons: function(angle) {
-		var icons = document.querySelectorAll(".fa");
-
-		for (var i = 0; i < icons.length; i++) {
-			icons.item(i).style.transform = "rotate(" + -angle + "deg)";
-		}
-	},
-
-});
+	setTimeout(function(){
+		var toolbarStyle = L.DistortableImage._options.toolbarType || "Popup" ;
+		L.DistortableImage.EditToolbar = LeafletToolbar[toolbarStyle].extend({
+			options: {
+				position:'topleft',
+				actions: [
+					ToggleTransparency,
+					RemoveOverlay,
+					ToggleOutline,
+					ToggleEditable,
+					ToggleRotateDistort,
+					ToggleExport
+				]
+			}
+		});
+	},1000); // prevent asynchronity during toolbar construction
