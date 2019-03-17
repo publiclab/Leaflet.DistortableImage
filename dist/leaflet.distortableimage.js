@@ -126,11 +126,10 @@ L.MatrixUtil = {
 		return L.MatrixUtil.multsm(1/m[8], m);
 	}
 };
-L.EXIF = function getEXIFdata(img) {
+L.EXIF = function getEXIFdata(overlay,img) {
   if (Object.keys(EXIF.getAllTags(img)).length !== 0) {
-    console.log(EXIF.getAllTags(img));
     var GPS = EXIF.getAllTags(img),
-      altitude;
+      altitude, lat, lng;
 
     /* If the lat/lng is available. */
     if (
@@ -139,11 +138,11 @@ L.EXIF = function getEXIFdata(img) {
     ) {
       // sadly, encoded in [degrees,minutes,seconds]
       // primitive value = GPS.GPSLatitude[x].numerator
-      var lat =
+      lat =
         GPS.GPSLatitude[0] +
         GPS.GPSLatitude[1] / 60 +
         GPS.GPSLatitude[2] / 3600;
-      var lng =
+      lng =
         GPS.GPSLongitude[0] +
         GPS.GPSLongitude[1] / 60 +
         GPS.GPSLongitude[2] / 3600;
@@ -207,8 +206,23 @@ L.EXIF = function getEXIFdata(img) {
         altitude = 0; // none
       }
     }
+
+      var panTo = new L.latLng(lat,lng);
+
+      var x_diff = overlay._corners[0].lng - overlay._corners[1].lng;  // width -- a
+      var y_diff = overlay._corners[0].lat - overlay._corners[2].lat;  // height -- b
+
+      overlay._corners[0] = new L.latLng(lat + y_diff/2, lng + x_diff/2);
+      overlay._corners[1] = new L.latLng(lat + y_diff/2, lng - x_diff/2);
+      overlay._corners[2] = new L.latLng(lat - y_diff/2, lng + x_diff/2);
+      overlay._corners[3] = new L.latLng(lat - y_diff/2, lng - x_diff/2);
+
+      overlay.editing._rotateBy(angle);
+
+      overlay._map.setView(panTo,14);
+
   } else {
-    alert("EXIF initialized. Press again to view data in console.");
+    alert("EXIF initialized. Press again to view data in console and locate to original EXIF coordinates.");
   }
 };
 
@@ -784,162 +798,161 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 L.DistortableImage = L.DistortableImage || {};
 
 var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
-		initialize: function(map, overlay, options) {
-			this._overlay = overlay;
-			this._map = map;
+    initialize: function(map, overlay, options) {
+      this._overlay = overlay;
+      this._map = map;
 
-			LeafletToolbar.ToolbarAction.prototype.initialize.call(this, options);
-		}
-	}),
-
-	ToggleTransparency = EditOverlayAction.extend({
-		options: { toolbarIcon: {
-			html: '<span class="fa fa-adjust"></span>',
-			tooltip: 'Toggle Image Transparency',
-			title: 'Toggle Image Transparency'
-		}},
-
-		addHooks: function() {
-			var editing = this._overlay.editing;
-
-			editing._toggleTransparency();
-			this.disable();
-		}
-	}),
-
-	ToggleOutline = EditOverlayAction.extend({
-		options: { toolbarIcon: {
-			html: '<span class="fa fa-square-o"></span>',
-			tooltip: 'Toggle Image Outline',
-			title: 'Toggle Image Outline'
-		}},
-
-		addHooks: function() {
-			var editing = this._overlay.editing;
-
-			editing._toggleOutline();
-			this.disable();
-		}
-	}),
-
-	RemoveOverlay = EditOverlayAction.extend({
-		options: { toolbarIcon: {
-			html: '<span class="fa fa-trash"></span>',
-			tooltip: 'Delete image',
-			title: 'Delete image'
-		}},
-
-		addHooks: function() {
-			var map = this._map;
-
-			map.removeLayer(this._overlay);
-			this._overlay.fire('delete');
-			this.disable();
-		}
-	}),
-
-	ToggleEditable = EditOverlayAction.extend({
-		options: { toolbarIcon: {
-			html: '<span class="fa fa-lock"></span>',
-			tooltip: 'Lock / Unlock editing',
-			title: 'Lock / Unlock editing'
-		}},
-
-		addHooks: function() {
-			var editing = this._overlay.editing;
-
-			editing._toggleLock();
-			this.disable();
-		}
-	}),
-
-	ToggleRotateDistort = EditOverlayAction.extend({
-		initialize: function(map, overlay, options) {
-			var icon = overlay.editing._mode === 'rotate' ? 'image' : 'rotate-left';
-
-			options = options || {};
-			options.toolbarIcon = {
-				html: '<span class="fa fa-' + icon + '"></span>',
-				tooltip: 'Rotate',
-				title: 'Rotate'
-			};
-
-			EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
-		},
-
-		addHooks: function() {
-			var editing = this._overlay.editing;
-
-			editing._toggleRotateDistort();
-			this.disable();
-		}
-	}),
-
-
-	ToggleExport = EditOverlayAction.extend({
-		options: {
-			toolbarIcon: {
-				html: '<span class="fa fa-download"></span>',
-				tooltip: 'Export Image',
-				title: 'Export Image'
-			}
-		},
-
-		addHooks: function ()
-		{
-			var editing = this._overlay.editing;
-
-			editing._toggleExport();
-			this.disable();
-		}
-	}),
-
-	ToggleOrder = EditOverlayAction.extend({
-		options: {
-			toolbarIcon: {
-				html: '<span class="fa fa-sort"></span>',
-				tooltip: 'Change order',
-				title: 'Toggle order'
-			}
-		},
-
-		addHooks: function ()
-		{
-			var editing = this._overlay.editing;
-
-			editing._toggleOrder();
-			this.disable();
-		}
-	}),
-
-  EnableEXIF = EditOverlayAction.extend({
-  options: {
-    toolbarIcon: {
-      html: '<span class="fa fa-compass"></span>',
-      tooltip: "Enable EXIF",
-      title: "Geocode Image"
+      LeafletToolbar.ToolbarAction.prototype.initialize.call(this, options);
     }
-  },
+  }),
+  ToggleTransparency = EditOverlayAction.extend({
+    options: {
+      toolbarIcon: {
+        html: '<span class="fa fa-adjust"></span>',
+        tooltip: "Toggle Image Transparency",
+        title: "Toggle Image Transparency"
+      }
+    },
 
-  addHooks: function() {
-    var image = this._overlay._image;
-    EXIF.getData(image, L.EXIF(image));
-  }
+    addHooks: function() {
+      var editing = this._overlay.editing;
+
+      editing._toggleTransparency();
+      this.disable();
+    }
+  }),
+  ToggleOutline = EditOverlayAction.extend({
+    options: {
+      toolbarIcon: {
+        html: '<span class="fa fa-square-o"></span>',
+        tooltip: "Toggle Image Outline",
+        title: "Toggle Image Outline"
+      }
+    },
+
+    addHooks: function() {
+      var editing = this._overlay.editing;
+
+      editing._toggleOutline();
+      this.disable();
+    }
+  }),
+  RemoveOverlay = EditOverlayAction.extend({
+    options: {
+      toolbarIcon: {
+        html: '<span class="fa fa-trash"></span>',
+        tooltip: "Delete image",
+        title: "Delete image"
+      }
+    },
+
+    addHooks: function() {
+      var map = this._map;
+
+      map.removeLayer(this._overlay);
+      this._overlay.fire("delete");
+      this.disable();
+    }
+  }),
+  ToggleEditable = EditOverlayAction.extend({
+    options: {
+      toolbarIcon: {
+        html: '<span class="fa fa-lock"></span>',
+        tooltip: "Lock / Unlock editing",
+        title: "Lock / Unlock editing"
+      }
+    },
+
+    addHooks: function() {
+      var editing = this._overlay.editing;
+
+      editing._toggleLock();
+      this.disable();
+    }
+  }),
+  ToggleRotateDistort = EditOverlayAction.extend({
+    initialize: function(map, overlay, options) {
+      var icon = overlay.editing._mode === "rotate" ? "image" : "rotate-left";
+
+      options = options || {};
+      options.toolbarIcon = {
+        html: '<span class="fa fa-' + icon + '"></span>',
+        tooltip: "Rotate",
+        title: "Rotate"
+      };
+
+      EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
+    },
+
+    addHooks: function() {
+      var editing = this._overlay.editing;
+
+      editing._toggleRotateDistort();
+      this.disable();
+    }
+  }),
+  ToggleExport = EditOverlayAction.extend({
+    options: {
+      toolbarIcon: {
+        html: '<span class="fa fa-download"></span>',
+        tooltip: "Export Image",
+        title: "Export Image"
+      }
+    },
+
+    addHooks: function() {
+      var editing = this._overlay.editing;
+
+      editing._toggleExport();
+      this.disable();
+    }
+  }),
+  ToggleOrder = EditOverlayAction.extend({
+    options: {
+      toolbarIcon: {
+        html: '<span class="fa fa-sort"></span>',
+        tooltip: "Change order",
+        title: "Toggle order"
+      }
+    },
+
+    addHooks: function() {
+      var editing = this._overlay.editing;
+
+      editing._toggleOrder();
+      this.disable();
+    }
+  }),
+  EnableEXIF = EditOverlayAction.extend({
+    options: {
+      toolbarIcon: {
+        html: '<span class="fa fa-compass"></span>',
+        tooltip: "Enable EXIF",
+        title: "Geocode Image"
+      }
+    },
+
+    addHooks: function() {
+      var overlay = this._overlay;
+      var image = overlay._image;
+
+      EXIF.getData(image, L.EXIF(overlay,image));
+    }
   });
 
 L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
-	options: {
-		actions: [
-			ToggleTransparency,
-			RemoveOverlay,
-			ToggleOutline,
-			ToggleEditable,
-			ToggleRotateDistort,
-			ToggleExport,
+  options: {
+    actions: [
+      ToggleTransparency,
+      RemoveOverlay,
+      ToggleOutline,
+      ToggleEditable,
+      ToggleRotateDistort,
+      ToggleExport,
       EnableEXIF,
-			ToggleOrder
-		]
-	}
+      ToggleOrder
+    ]
+  }
 });
 
 L.DistortableImage = L.DistortableImage || {};

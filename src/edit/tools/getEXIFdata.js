@@ -1,8 +1,7 @@
-L.EXIF = function getEXIFdata(img) {
+L.EXIF = function getEXIFdata(overlay,img) {
   if (Object.keys(EXIF.getAllTags(img)).length !== 0) {
-    console.log(EXIF.getAllTags(img));
     var GPS = EXIF.getAllTags(img),
-      altitude;
+      altitude, lat, lng;
 
     /* If the lat/lng is available. */
     if (
@@ -11,11 +10,11 @@ L.EXIF = function getEXIFdata(img) {
     ) {
       // sadly, encoded in [degrees,minutes,seconds]
       // primitive value = GPS.GPSLatitude[x].numerator
-      var lat =
+      lat =
         GPS.GPSLatitude[0] +
         GPS.GPSLatitude[1] / 60 +
         GPS.GPSLatitude[2] / 3600;
-      var lng =
+      lng =
         GPS.GPSLongitude[0] +
         GPS.GPSLongitude[1] / 60 +
         GPS.GPSLongitude[2] / 3600;
@@ -79,7 +78,22 @@ L.EXIF = function getEXIFdata(img) {
         altitude = 0; // none
       }
     }
+
+      var panTo = new L.latLng(lat,lng);
+
+      var x_diff = overlay._corners[0].lng - overlay._corners[1].lng;  // width -- a
+      var y_diff = overlay._corners[0].lat - overlay._corners[2].lat;  // height -- b
+
+      overlay._corners[0] = new L.latLng(lat + y_diff/2, lng + x_diff/2);
+      overlay._corners[1] = new L.latLng(lat + y_diff/2, lng - x_diff/2);
+      overlay._corners[2] = new L.latLng(lat - y_diff/2, lng + x_diff/2);
+      overlay._corners[3] = new L.latLng(lat - y_diff/2, lng - x_diff/2);
+
+      overlay.editing._rotateBy(angle);
+
+      overlay._map.setView(panTo,14);
+
   } else {
-    alert("EXIF initialized. Press again to view data in console.");
+    alert("EXIF initialized. Press again to view data in console and locate to original EXIF coordinates.");
   }
 };
