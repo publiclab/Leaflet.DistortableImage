@@ -95,6 +95,9 @@
         }
       ).addTo(map);
 
+      var imagesLayerGroup = L.layerGroup([img, img2]).addTo(map);
+      window.imagesLayerGroup = imagesLayerGroup;
+
       images.push(img2);
 
       window.img = img;
