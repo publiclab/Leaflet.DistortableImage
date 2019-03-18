@@ -87,7 +87,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		//overlay.on('click', this._showToolbar, this);
 		L.DomEvent.on(overlay._image, 'click', this._showToolbar, this);
 
-		L.DomEvent.on(overlay._image, 'mousedown', this._showSelected, this);
+		L.DomEvent.on(overlay._image, 'mousedown', this._toggleSelections, this);
 
 		/* Enable hotkeys. */
 		L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
@@ -98,6 +98,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 	/* Run on image deselection. */
 	removeHooks: function() {
+		
 		var overlay = this._overlay,
 			map = overlay._map;
 
@@ -160,6 +161,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 	// drag events for multiple images are separated out from enableDragging initialization -- two different concepts
 	_dragStartMultiple: function() {
+		if (!L.DomUtil.hasClass(this._overlay._image, 'selected')) { return; }
+		if (this._getImages().length <= 1) { return; }
 		var overlay = this._overlay,
 			map = overlay._map;
 
@@ -184,6 +187,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 	},
 
 	_dragMultiple: function() {
+		if (!L.DomUtil.hasClass(this._overlay._image, 'selected')) { return; }
+		if (this._getImages().length <= 1) { return; }
 		var overlay = this._overlay,
 			map = overlay._map;
 
@@ -195,43 +200,42 @@ L.DistortableImage.Edit = L.Handler.extend({
 			i += 1;
 		}
 
-		this.calcCornerDelta(overlay);
+		var cornerPointDelta = this.calcCornerDelta(overlay);
 
-		var objD = this.calcNewCorners(overlay);
+		var objD = this.calcNewCorners(cornerPointDelta);
 
 		this._updateCorners(objD);
 	},
 
 	calcCornerDelta: function(overlay) {
-		overlay._cornerPointDelta = overlay._startCornerPoints.initVal.subtract(overlay._currentCornerPoints.initVal);
+		return overlay._startCornerPoints.initVal.subtract(overlay._currentCornerPoints.initVal);
 	},
 
-	calcNewCorners: function(overlay) {
+	calcNewCorners: function(cornerPointDelta) {
 		var objD = {};
-		// TODO: consider refactoring with transformation
-		// var transformation = new L.Transformation(1, -overlay._currentPointDelta.x, 1,  )
-		objD.newVal = window.obj.initVal.subtract(overlay._cornerPointDelta);
-		objD.newVal1 = window.obj.initVal1.subtract(overlay._cornerPointDelta);
-		objD.newVal2 = window.obj.initVal2.subtract(overlay._cornerPointDelta);
-		objD.newVal3 = window.obj.initVal3.subtract(overlay._cornerPointDelta);
+		var transformation = new L.Transformation(1, -cornerPointDelta.x, 1, -cornerPointDelta.y);
+		objD.newVal = transformation.transform(window.obj.initVal);
+		objD.newVal1 = transformation.transform(window.obj.initVal1);
+		objD.newVal2 = transformation.transform(window.obj.initVal2);
+		objD.newVal3 = transformation.transform(window.obj.initVal3);
 		
 		return objD;
 	},
 
 	// TODO: move to overlay class
 	_updateCorners: function(objD) {
-		var imgAry = this.getImages();
+		var imgAry = this._getImages();
 
 		imgAry[0]._updateCornersFromPoints(objD);
 
 		imgAry[0].fire('update');
 	},
 
-	getImages: function() {
+	_getImages: function() {
 
 		var image_array = [];
 
-		window.imagesLayerGroup.eachLayer(function (layer) {
+		window.imagesFeatureGroup.eachLayer(function (layer) {
 			image_array.push(layer);
 		});
 
@@ -378,10 +382,11 @@ L.DistortableImage.Edit = L.Handler.extend({
 			this.toolbar = false;
 		}
 	},
-
+	
+	// TODO: toolbar for multiple image selection
 	_showToolbar: function(event) {
 		var overlay = this._overlay,
-                     target = event.target,
+      target = event.target,
 			map = overlay._map;
 
 		/* Ensure that there is only ever one toolbar attached to each image. */
@@ -398,15 +403,34 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		L.DomEvent.stopPropagation(event);
 	},
-	
-	_showSelected: function(event) {
+
+	_toggleSelections: function(event) {
+		var overlay = this._overlay,
+			target = event.target,
+			// image = overlay._image,
+			map = overlay._map;
+
 		if (event.metaKey || event.ctrlKey) {
-			$(event.target).toggleClass('selected');
+			$(target).toggleClass('selected');
 		}
+
+		if (L.DomUtil.hasClass(target, 'selected') && !window.imagesFeatureGroup.hasLayer) {
+			window.imagesFeatureGroup.addLayer(overlay);
+		} else {
+			window.imagesFeatureGroup.removeLayer(overlay);
+			window.overlay = overlay;
+			overlay.addTo(map);
+			overlay.editing.enable();
+			overlay._reset();
+			overlay.fire('update');
+			// this.fire('update');
+		}
+
 	},
 
 	_removeSelections: function() {
 		$('.selected').removeClass('selected');
+		this._hideToolbar();
 	},
 
   _removeOverlay: function () {
