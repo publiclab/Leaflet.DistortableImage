@@ -1115,17 +1115,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 	_dragStartMultiple: function() {
 		var overlay = this._overlay,
 			map = overlay._map;
-
-		// pass by value alternative for future code refactoring possibility
-		// overlay._initialCorners = JSON.parse(JSON.stringify(overlay.getCorners()));
-
-		// var obj = {};
-		// var marker = L.marker([35.10418, -106.62987]).bindPopup("I am a Marker");
-		// var polyline = L.polyline([[35.10418, -106.62987], [35.19738, -106.875], [35.07946, -106.80634]], { color: 'red', weight: 8 }).bindPopup("I am a Polyline"); 
-		// var pointsLayerGroup = L.layerGroup([marker, polyline]).addTo(map);
-		// this.pointsLayerGroup = L.layerGroup().addTo(map);
-		// window.pointsLayerGroup = this.pointsLayerGroup;
-		// window.points2LayerGroup = points2LayerGroup;
+			
 		overlay._initialCornerPoints = {};
 		
 		window.obj = {};
@@ -1157,8 +1147,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 			overlay._currentCornerPoints[k] = map.latLngToLayerPoint(overlay.getCorners()[i]);
 			i += 1;
 		}
-
-		// this.pointsLayerGroup.addLayer(overlay);
 
 		this.calcCornerChanges(overlay);
 
@@ -1192,27 +1180,22 @@ L.DistortableImage.Edit = L.Handler.extend({
 	},
 
 	// TODO: move to overlay class
-	_updateCorners: function(objD, overlay) {
-		window.overlay = overlay;
+	_updateCorners: function(objD) {
+		var overlay = this._overlay,
+			map = overlay._map;
+		// window.overlay = overlay;
 		var imgAry = this.getImages();
 		var i = 0;
 		for (var k in objD) {
-			imgAry[0]._updateCorner(i, overlay._map.layerPointToLatLng(objD[k]));
+			imgAry[0]._updateCorner(i, map.layerPointToLatLng(objD[k]));
 			i += 1;
 		}
 
 		imgAry[0].fire('update');
 	},
 
-	// cannot use the DistortableImageOverlay update corner method for this
-	// _updateImageCorner: function(img, corner, latlng) {
-
-	// 	imgAry[0].getCorners()[i].lat = overlay._map.layerPointToLatLng(objD[k]).lat;
-	// 	imgAry[0].getCorners()[i].lng = overlay._map.layerPointToLatLng(objD[k]).lng;
-	// },
-
 	getImages: function() {
-		// this._overlay._map.getPane('overlayPane').children();
+
 		var image_array = [];
 
 		window.imagesLayerGroup.eachLayer(function (layer) {
