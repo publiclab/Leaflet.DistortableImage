@@ -161,10 +161,11 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 	// drag events for multiple images are separated out from enableDragging initialization -- two different concepts
 	_dragStartMultiple: function() {
-		if (!L.DomUtil.hasClass(this._overlay._image, 'selected')) { return; }
-		if (this._getImages().length <= 1) { return; }
 		var overlay = this._overlay,
 			map = overlay._map;
+
+		if (!L.DomUtil.hasClass(overlay.getElement(), 'selected')) { return; }
+		if (this._getSelectedImages().length <= 1) { return; }
 
 		overlay._startCornerPoints = {};
 		
@@ -187,10 +188,11 @@ L.DistortableImage.Edit = L.Handler.extend({
 	},
 
 	_dragMultiple: function() {
-		if (!L.DomUtil.hasClass(this._overlay._image, 'selected')) { return; }
-		if (this._getImages().length <= 1) { return; }
 		var overlay = this._overlay,
 			map = overlay._map;
+
+		if (!L.DomUtil.hasClass(overlay.getElement(), 'selected')) { return; }
+		if (this._getSelectedImages().length <= 1) { return; }
 
 		overlay._currentCornerPoints = {};
 
@@ -224,14 +226,14 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 	// TODO: rename so not the same overlay class method
 	_updateCorners: function(objD) {
-		var imgAry = this._getImages();
+		var imgAry = this._getSelectedImages();
 
 		imgAry[0]._updateCornersFromPoints(objD);
 
 		imgAry[0].fire('update');
 	},
 
-	_getImages: function() {
+	_getSelectedImages: function() {
 
 		return window.imagesFeatureGroup.getLayers();
 		
@@ -405,6 +407,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			map = overlay._map;
 
 		if (event.metaKey || event.ctrlKey) {
+			// TODO: make a toggleClass DOM Util method
 			$(target).toggleClass('selected');
 		}
 
@@ -412,16 +415,25 @@ L.DistortableImage.Edit = L.Handler.extend({
 			window.imagesFeatureGroup.addLayer(overlay);
 		} else {
 			window.imagesFeatureGroup.removeLayer(overlay);
-			window.overlay = overlay;
+			// window.overlay = overlay;
 			overlay.addTo(map);
 			overlay.editing.enable();
 			// overlay._reset();
 			// overlay.fire('update');
 		}
 	},
-
+	// TODO: move this and similar collection methods into separate class?
 	_removeSelections: function() {
-		$('.selected').removeClass('selected');
+		var overlay = this._overlay,
+			map = overlay._map;
+
+		window.imagesFeatureGroup.eachLayer(function(layer) {
+			L.DomUtil.removeClass(layer.getElement(), 'selected');
+			window.imagesFeatureGroup.removeLayer(layer);
+			layer.addTo(map);
+			layer.editing.enable();
+		});
+		// $('.selected').removeClass('selected');
 		this._hideToolbar();
 	},
 

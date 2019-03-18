@@ -22,15 +22,16 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		// this._div = $(this._pane).append($("<div id='holding'></div>"));
 		if (!this._image) { this._initImage(); }
 		if (!this._events) { this._initEvents(); }
-		// TODO: delete div child 
+
 		map._panes.overlayPane.appendChild(this._image);
 
-		if (!this._divNode) { 
-			this._divNode = document.createElement("div");
-			// this._divNode = divNode;
-			this._divNode.setAttribute("id", "holding");
-			map._panes.overlayPane.appendChild(this._divNode); 
-		}
+		// TODO: remove completely 
+		// if (!this._divNode) { 
+		// 	this._divNode = document.createElement("div");
+		// 	// this._divNode = divNode;
+		// 	this._divNode.setAttribute("id", "holding");
+		// 	map._panes.overlayPane.appendChild(this._divNode); 
+		// }
 
 		map.on('viewreset', this._reset, this);
 		/* End copied from L.ImageOverlay */

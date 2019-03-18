@@ -109,19 +109,6 @@
       L.DomEvent.on(img2._image, 'load', img2.editing.enable, img2.editing);
       // L.DomEvent.on(layer2._image, 'load', layer2.editing.enable, layer2.editing);
 
-      // this doesn't work -- it triggers when clicking toolbar
-      // can we stopPropagation of toolbar clicks? is that impolite.
-      map.on('mousedown', function() {
-        for (var i in images) {
-          /* Deselect (disable) all images */
-          //images[i].editing.disable()
-          /* Remove toolbars */
-          if (images[i].editing.toolbar) {
-            //map.removeLayer(images[i].editing.toolbar);
-          }
-        }
-      });
-
     })();
   </script>
 
