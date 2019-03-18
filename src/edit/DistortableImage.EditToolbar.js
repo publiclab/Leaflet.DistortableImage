@@ -140,17 +140,20 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
         title: "More options"
       }
     },
-
     addHooks: function() {
-      var hidden_tools = this._overlay.options.hidden_tools;
-      var tools = this._overlay._toolArray;
-      var i;
+      if (L.DistortableImage.EditToolbar.hidden_tools) {
+        var hidden_tools = L.DistortableImage.EditToolbar.hidden_tools; // this._overlay.options.hidden_tools;
+        var tools = this._overlay._toolArray;
+        var i;
 
-      this.removeTool(tools, ToggleReveal);
-      for (i = 0; i < hidden_tools.length; i++) {
-        this.addTool(tools, hidden_tools[i]);
+        this.removeTool(tools, ToggleReveal);
+        for (i = 0; i < hidden_tools.length; i++) {
+          this.addTool(tools, hidden_tools[i]);
+        }
+        this._overlay.editing._hideToolbar();
+      } else {
+        console.error("L.DistortableImage.EditToolbar.hidden_tools not initialized!");
       }
-      this._overlay.editing._hideToolbar();
     }
   });
 

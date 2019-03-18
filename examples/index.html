@@ -85,7 +85,6 @@
       img = new L.DistortableImageOverlay("example.png", {
         suppressToolbar: false,
         customToolbarArray: [keymapper],
-        hidden_tools: [ToggleEditable, ToggleExport, RemoveOverlay], // expose
         corners: [
           new L.latLng(51.52, -0.1),
           new L.latLng(51.52, -0.14),
@@ -94,6 +93,8 @@
         ],
         fullResolutionSrc: "large.jpg"
       }).addTo(map);
+
+      L.DistortableImage.EditToolbar.hidden_tools = [ToggleEditable, ToggleExport, RemoveOverlay];
 
       /* add custom icon functionality */
       // refer this snippet below inorder to add a custom functionality
