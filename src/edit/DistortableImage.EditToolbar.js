@@ -5,6 +5,28 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       this._overlay = overlay;
       this._map = map;
 
+      this.removeTool = function(tools, tool) {
+        tools = tools.filter(function(x) {
+          return x !== tool;
+        });
+        L.DistortableImage.EditToolbar = LeafletToolbar.Control.extend({
+          options: {
+            position: "topleft",
+            actions: tools
+          }
+        });
+      };
+
+      this.addTool = function(tools, tool) {
+        tools.push(tool);
+        L.DistortableImage.EditToolbar = LeafletToolbar.Control.extend({
+          options: {
+            position: "topleft",
+            actions: tools
+          }
+        });
+      };
+
       LeafletToolbar.ToolbarAction.prototype.initialize.call(this, options);
     }
   }),
@@ -120,13 +142,13 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
     },
 
     addHooks: function() {
-      var hidden_tools = this._overlay.options.hidden_tools,
-        i;
+      var hidden_tools = this._overlay.options.hidden_tools;
+      var tools = this._overlay._toolArray;
+      var i;
 
-      this._overlay._removeTool(ToggleReveal);
-
+      this.removeTool(tools, ToggleReveal);
       for (i = 0; i < hidden_tools.length; i++) {
-        this._overlay._addTool(hidden_tools[i]);
+        this.addTool(tools, hidden_tools[i]);
       }
       this._overlay.editing._hideToolbar();
     }

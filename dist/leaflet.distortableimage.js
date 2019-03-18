@@ -457,26 +457,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 			this._toolArray = L.DistortableImage.defaults;
 			this._url = url;
 			this._rotation = this.options.rotation;
-			this._addTool = function(tool) {
-				this._toolArray.push(tool);
-				L.DistortableImage.EditToolbar = LeafletToolbar.Control.extend({
-					options: {
-						position: 'topleft',
-						actions: this._toolArray
-					}
-				});
-			};
-			this._removeTool = function(tool) {
-				this._toolArray = this._toolArray.filter(function(x){
-					return x!==tool;
-				});
-				L.DistortableImage.EditToolbar = LeafletToolbar.Control.extend({
-					options: {
-						position: 'topleft',
-						actions: this._toolArray
-					}
-				});
-			};
 
 			L.setOptions(this, options);
 	},
@@ -533,15 +513,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
 		L.extend(this._image, {
 			alt: this.options.alt
-		});
-	},
-
-	_addTool: function(tool) {
-		this._toolArray.push(tool);
-		L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
-			options: {
-				actions: this._toolArray
-			}
 		});
 	},
 
@@ -722,6 +693,28 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       this._overlay = overlay;
       this._map = map;
 
+      this.removeTool = function(tools, tool) {
+        tools = tools.filter(function(x) {
+          return x !== tool;
+        });
+        L.DistortableImage.EditToolbar = LeafletToolbar.Control.extend({
+          options: {
+            position: "topleft",
+            actions: tools
+          }
+        });
+      };
+
+      this.addTool = function(tools, tool) {
+        tools.push(tool);
+        L.DistortableImage.EditToolbar = LeafletToolbar.Control.extend({
+          options: {
+            position: "topleft",
+            actions: tools
+          }
+        });
+      };
+
       LeafletToolbar.ToolbarAction.prototype.initialize.call(this, options);
     }
   }),
@@ -837,13 +830,13 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
     },
 
     addHooks: function() {
-      var hidden_tools = this._overlay.options.hidden_tools,
-        i;
+      var hidden_tools = this._overlay.options.hidden_tools;
+      var tools = this._overlay._toolArray;
+      var i;
 
-      this._overlay._removeTool(ToggleReveal);
-
+      this.removeTool(tools, ToggleReveal);
       for (i = 0; i < hidden_tools.length; i++) {
-        this._overlay._addTool(hidden_tools[i]);
+        this.addTool(tools, hidden_tools[i]);
       }
       this._overlay.editing._hideToolbar();
     }
