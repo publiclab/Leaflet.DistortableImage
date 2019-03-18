@@ -1520,13 +1520,6 @@ L.DistortableImageOverlay.addInitHook(function() {
 	});
 });
 
-
-// L.DistortableImages.Edit = L.DistortableImage.Edit.extend({
-//   // initialize: function (overlay) {
-//   //   L.DistortableImage.Edit.prototype.initialize.call(this, latlng, markerOptions);
-//   // }
-
-// });
 L.Map.mergeOptions({ boxSelector: true, boxZoom: false });
 
 L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
