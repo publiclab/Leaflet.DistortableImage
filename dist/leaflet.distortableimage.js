@@ -674,7 +674,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		this._reset();
 	},
 
-
 	/* Copied from Leaflet v0.7 https://github.com/Leaflet/Leaflet/blob/66282f14bcb180ec87d9818d9f3c9f75afd01b30/src/dom/DomUtil.js#L189-L199 */
 	/* since L.DomUtil.getTranslateString() is deprecated in Leaflet v1.0 */
 	_getTranslateString: function (point) {
@@ -788,6 +787,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		);
 	}
 });
+
+
 
 L.DistortableImage = L.DistortableImage || {};
 
@@ -1118,71 +1119,112 @@ L.DistortableImage.Edit = L.Handler.extend({
 		// pass by value alternative for future code refactoring possibility
 		// overlay._initialCorners = JSON.parse(JSON.stringify(overlay.getCorners()));
 
-		var obj = {};
-		obj.initVal = 0;
-		obj.initVal1 = 0;
-		obj.initVal2 = 0;
-		obj.initVal3 = 0;
+		// var obj = {};
+		// var marker = L.marker([35.10418, -106.62987]).bindPopup("I am a Marker");
+		// var polyline = L.polyline([[35.10418, -106.62987], [35.19738, -106.875], [35.07946, -106.80634]], { color: 'red', weight: 8 }).bindPopup("I am a Polyline"); 
+		// var pointsLayerGroup = L.layerGroup([marker, polyline]).addTo(map);
+		// this.pointsLayerGroup = L.layerGroup().addTo(map);
+		// window.pointsLayerGroup = this.pointsLayerGroup;
+		// window.points2LayerGroup = points2LayerGroup;
+		overlay._initialCornerPoints = {};
+		
+		window.obj = {};
+
+		window.obj.initVal = 0;
+		window.obj.initVal1 = 0;
+		window.obj.initVal2 = 0;
+		window.obj.initVal3 = 0;
 
 		var i = 0;
-		for (var k in obj) {
-			obj[k] = map.latLngToLayerPoint(overlay.getCorners()[i]);
+		for (var k in window.obj) {
+			window.obj[k] = map.latLngToLayerPoint(window.img.getCorners()[i]);
+			overlay._initialCornerPoints[k] = map.latLngToLayerPoint(overlay.getCorners()[i]);
 			i += 1;
 		}
 
-		overlay._initialCornerPoints = obj;
-
-		// TMRW: SAVE CHANGES AS CHANGES VALUES IN IMAGE.
 		overlay._cornerPointChanges = {};
+
 	},
 
 	_dragMultiple: function() {
 		var overlay = this._overlay,
 			map = overlay._map;
 
-		var obj2 = {};
-
-		obj2.initVal = 0;
-		obj2.initVal1 = 0;
-		obj2.initVal2 = 0;
-		obj2.initVal3 = 0;
+		overlay._currentCornerPoints = {};
 
 		var i = 0;
-		for (var k in obj2) {
-			obj2[k] = map.latLngToLayerPoint(overlay.getCorners()[i]);
+		for (var k in window.obj) {
+			overlay._currentCornerPoints[k] = map.latLngToLayerPoint(overlay.getCorners()[i]);
 			i += 1;
 		}
 
-		overlay._currentCornerPoints = obj2;
+		// this.pointsLayerGroup.addLayer(overlay);
 
-		// this.calculateCornerChanges(objC);
+		this.calcCornerChanges(overlay);
 
-		  //  objC.changes = obj.initVal.x -  map.latLngToLayerPoint(img.getCorners()[0]).x;
-      //   objC.changes1 = obj.initVal.y -  map.latLngToLayerPoint(img.getCorners()[0]).y;
+		var objD = this.calcNewCorners(overlay);
 
-      //   objC.changes2 = obj.initVal1.x -  map.latLngToLayerPoint(img.getCorners()[1]).x;
-      //   objC.changes3 = obj.initVal1.y -  map.latLngToLayerPoint(img.getCorners()[1]).y;
-
-      //   objC.changes4 = obj.initVal2.x -  map.latLngToLayerPoint(img.getCorners()[2]).x;
-      //   objC.changes5 = obj.initVal2.y -  map.latLngToLayerPoint(img.getCorners()[2]).y;
-
-      //   objC.changes6 = obj.initVal3.x -  map.latLngToLayerPoint(img.getCorners()[3]).x;
-      //   objC.changes7 = obj.initVal3.y -  map.latLngToLayerPoint(img.getCorners()[3]).y;
+		this._updateCorners(objD, overlay);
 	},
 
-	calculateCornerChanges: function() {
+	calcCornerChanges: function(overlay) {
+		overlay._cornerPointChanges.changes = overlay._initialCornerPoints.initVal.x - overlay._currentCornerPoints.initVal.x;
+		overlay._cornerPointChanges.changes1 = overlay._initialCornerPoints.initVal.y - overlay._currentCornerPoints.initVal.y;
 
-		// objC.changes = obj.initVal.x - map.latLngToLayerPoint(img.getCorners()[0]).x;
-		// objC.changes1 = obj.initVal.y - map.latLngToLayerPoint(img.getCorners()[0]).y;
+		overlay._cornerPointChanges.changes2 = overlay._initialCornerPoints.initVal1.x - overlay._currentCornerPoints.initVal1.x;
+		overlay._cornerPointChanges.changes3 = overlay._initialCornerPoints.initVal1.y - overlay._currentCornerPoints.initVal1.y;
 
-		// objC.changes2 = obj.initVal1.x - map.latLngToLayerPoint(img.getCorners()[1]).x;
-		// objC.changes3 = obj.initVal1.y - map.latLngToLayerPoint(img.getCorners()[1]).y;
+		overlay._cornerPointChanges.changes4 = overlay._initialCornerPoints.initVal2.x - overlay._currentCornerPoints.initVal2.x;
+		overlay._cornerPointChanges.changes5 = overlay._initialCornerPoints.initVal2.y - overlay._currentCornerPoints.initVal2.y;
 
-		// objC.changes4 = obj.initVal2.x - map.latLngToLayerPoint(img.getCorners()[2]).x;
-		// objC.changes5 = obj.initVal2.y - map.latLngToLayerPoint(img.getCorners()[2]).y;
+		overlay._cornerPointChanges.changes6 = overlay._initialCornerPoints.initVal3.x - overlay._currentCornerPoints.initVal3.x;
+		overlay._cornerPointChanges.changes7 = overlay._initialCornerPoints.initVal3.y - overlay._currentCornerPoints.initVal3.y;
+	},
 
-		// objC.changes6 = obj.initVal3.x - map.latLngToLayerPoint(img.getCorners()[3]).x;
-		// objC.changes7 = obj.initVal3.y - map.latLngToLayerPoint(img.getCorners()[3]).y;
+	calcNewCorners: function(overlay) {
+		var objD = {};
+		objD.newVal = [window.obj.initVal.x - overlay._cornerPointChanges.changes, window.obj.initVal.y - overlay._cornerPointChanges.changes1];
+		objD.newVal1 = [window.obj.initVal1.x - overlay._cornerPointChanges.changes2, window.obj.initVal1.y - overlay._cornerPointChanges.changes3];
+		objD.newVal2 = [window.obj.initVal2.x - overlay._cornerPointChanges.changes4, window.obj.initVal2.y - overlay._cornerPointChanges.changes5];
+		objD.newVal3 = [window.obj.initVal3.x - overlay._cornerPointChanges.changes6, window.obj.initVal3.y - overlay._cornerPointChanges.changes7];
+		
+		return objD;
+	},
+
+	// TODO: move to overlay class
+	_updateCorners: function(objD, overlay) {
+		window.overlay = overlay;
+		var imgAry = this.getImages();
+		var i = 0;
+		for (var k in objD) {
+			imgAry[0]._updateCorner(i, overlay._map.layerPointToLatLng(objD[k]));
+			i += 1;
+		}
+
+		imgAry[0].fire('update');
+	},
+
+	// cannot use the DistortableImageOverlay update corner method for this
+	// _updateImageCorner: function(img, corner, latlng) {
+
+	// 	imgAry[0].getCorners()[i].lat = overlay._map.layerPointToLatLng(objD[k]).lat;
+	// 	imgAry[0].getCorners()[i].lng = overlay._map.layerPointToLatLng(objD[k]).lng;
+	// },
+
+	getImages: function() {
+		// this._overlay._map.getPane('overlayPane').children();
+		var image_array = [];
+
+		window.imagesLayerGroup.eachLayer(function (layer) {
+			image_array.push(layer);
+		});
+
+		return image_array;
+		// this._polyline = L.polyline(polyline_array);
+		// this._overlay._map.eachLayer(function (layer) {
+		// 	if layer 
+		// 	console.log(layer.name);
+		// });
 	},
 
 	_enableDragging: function() {

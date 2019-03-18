@@ -211,7 +211,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		var objD = this.calcNewCorners(overlay);
 
-		this.updateCorners(objD, overlay);
+		this._updateCorners(objD, overlay);
 	},
 
 	calcCornerChanges: function(overlay) {
@@ -230,29 +230,33 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 	calcNewCorners: function(overlay) {
 		var objD = {};
-		objD.newVal = L.point([window.obj.initVal.x - overlay._cornerPointChanges.changes, window.obj.initVal.y - overlay._cornerPointChanges.changes1]);
-		objD.newVal1 = L.point([window.obj.initVal1.x - overlay._cornerPointChanges.changes2, window.obj.initVal1.y - overlay._cornerPointChanges.changes3]);
-		objD.newVal2 = L.point([window.obj.initVal2.x - overlay._cornerPointChanges.changes4, window.obj.initVal2.y - overlay._cornerPointChanges.changes5]);
-		objD.newVal3 = L.point([window.obj.initVal3.x - overlay._cornerPointChanges.changes6, window.obj.initVal3.y - overlay._cornerPointChanges.changes7]);
+		objD.newVal = [window.obj.initVal.x - overlay._cornerPointChanges.changes, window.obj.initVal.y - overlay._cornerPointChanges.changes1];
+		objD.newVal1 = [window.obj.initVal1.x - overlay._cornerPointChanges.changes2, window.obj.initVal1.y - overlay._cornerPointChanges.changes3];
+		objD.newVal2 = [window.obj.initVal2.x - overlay._cornerPointChanges.changes4, window.obj.initVal2.y - overlay._cornerPointChanges.changes5];
+		objD.newVal3 = [window.obj.initVal3.x - overlay._cornerPointChanges.changes6, window.obj.initVal3.y - overlay._cornerPointChanges.changes7];
 		
 		return objD;
 	},
 
-	updateCorners: function(objD, overlay) {
-		window.objD = objD;
+	// TODO: move to overlay class
+	_updateCorners: function(objD, overlay) {
 		window.overlay = overlay;
 		var imgAry = this.getImages();
 		var i = 0;
 		for (var k in objD) {
-			imgAry[0].getCorners()[i].lat = overlay._map.layerPointToLatLng(objD[k]).lat;
-			imgAry[0].getCorners()[i].lng = overlay._map.layerPointToLatLng(objD[k]).lng;
+			imgAry[0]._updateCorner(i, overlay._map.layerPointToLatLng(objD[k]));
 			i += 1;
 		}
 
-		window.img._reset();
-
-		window.img.fire('update');
+		imgAry[0].fire('update');
 	},
+
+	// cannot use the DistortableImageOverlay update corner method for this
+	// _updateImageCorner: function(img, corner, latlng) {
+
+	// 	imgAry[0].getCorners()[i].lat = overlay._map.layerPointToLatLng(objD[k]).lat;
+	// 	imgAry[0].getCorners()[i].lng = overlay._map.layerPointToLatLng(objD[k]).lng;
+	// },
 
 	getImages: function() {
 		// this._overlay._map.getPane('overlayPane').children();
