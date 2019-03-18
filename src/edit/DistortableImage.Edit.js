@@ -222,7 +222,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		return objD;
 	},
 
-	// TODO: move to overlay class
+	// TODO: rename so not the same overlay class method
 	_updateCorners: function(objD) {
 		var imgAry = this._getImages();
 
@@ -233,13 +233,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 	_getImages: function() {
 
-		var image_array = [];
-
-		window.imagesFeatureGroup.eachLayer(function (layer) {
-			image_array.push(layer);
-		});
-
-		return image_array;
+		return window.imagesFeatureGroup.getLayers();
+		
 		// TODO: polyline for selection so that it doesn't get distorted
 		// this._polyline = L.polyline(polyline_array);
 		// this._overlay._map.eachLayer(function (layer) {
@@ -407,25 +402,22 @@ L.DistortableImage.Edit = L.Handler.extend({
 	_toggleSelections: function(event) {
 		var overlay = this._overlay,
 			target = event.target,
-			// image = overlay._image,
 			map = overlay._map;
 
 		if (event.metaKey || event.ctrlKey) {
 			$(target).toggleClass('selected');
 		}
 
-		if (L.DomUtil.hasClass(target, 'selected') && !window.imagesFeatureGroup.hasLayer) {
+		if (L.DomUtil.hasClass(target, 'selected')) {
 			window.imagesFeatureGroup.addLayer(overlay);
 		} else {
 			window.imagesFeatureGroup.removeLayer(overlay);
 			window.overlay = overlay;
 			overlay.addTo(map);
 			overlay.editing.enable();
-			overlay._reset();
-			overlay.fire('update');
-			// this.fire('update');
+			// overlay._reset();
+			// overlay.fire('update');
 		}
-
 	},
 
 	_removeSelections: function() {
