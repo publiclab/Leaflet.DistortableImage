@@ -162,8 +162,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 	_dragStartMultiple: function() {
 		var overlay = this._overlay,
 			map = overlay._map;
-			
-		overlay._initialCornerPoints = {};
+
+		overlay._startCornerPoints = {};
 		
 		window.obj = {};
 
@@ -175,11 +175,11 @@ L.DistortableImage.Edit = L.Handler.extend({
 		var i = 0;
 		for (var k in window.obj) {
 			window.obj[k] = map.latLngToLayerPoint(window.img.getCorners()[i]);
-			overlay._initialCornerPoints[k] = map.latLngToLayerPoint(overlay.getCorners()[i]);
+			overlay._startCornerPoints[k] = map.latLngToLayerPoint(overlay.getCorners()[i]);
 			i += 1;
 		}
 
-		overlay._cornerPointChanges = {};
+		overlay._cornerPointDelta = {};
 
 	},
 
@@ -195,48 +195,34 @@ L.DistortableImage.Edit = L.Handler.extend({
 			i += 1;
 		}
 
-		this.calcCornerChanges(overlay);
+		this.calcCornerDelta(overlay);
 
 		var objD = this.calcNewCorners(overlay);
 
-		this._updateCorners(objD, overlay);
+		this._updateCorners(objD);
 	},
 
-	calcCornerChanges: function(overlay) {
-		overlay._cornerPointChanges.changes = overlay._initialCornerPoints.initVal.x - overlay._currentCornerPoints.initVal.x;
-		overlay._cornerPointChanges.changes1 = overlay._initialCornerPoints.initVal.y - overlay._currentCornerPoints.initVal.y;
-
-		overlay._cornerPointChanges.changes2 = overlay._initialCornerPoints.initVal1.x - overlay._currentCornerPoints.initVal1.x;
-		overlay._cornerPointChanges.changes3 = overlay._initialCornerPoints.initVal1.y - overlay._currentCornerPoints.initVal1.y;
-
-		overlay._cornerPointChanges.changes4 = overlay._initialCornerPoints.initVal2.x - overlay._currentCornerPoints.initVal2.x;
-		overlay._cornerPointChanges.changes5 = overlay._initialCornerPoints.initVal2.y - overlay._currentCornerPoints.initVal2.y;
-
-		overlay._cornerPointChanges.changes6 = overlay._initialCornerPoints.initVal3.x - overlay._currentCornerPoints.initVal3.x;
-		overlay._cornerPointChanges.changes7 = overlay._initialCornerPoints.initVal3.y - overlay._currentCornerPoints.initVal3.y;
+	calcCornerDelta: function(overlay) {
+		overlay._cornerPointDelta = overlay._startCornerPoints.initVal.subtract(overlay._currentCornerPoints.initVal);
 	},
 
 	calcNewCorners: function(overlay) {
 		var objD = {};
-		objD.newVal = [window.obj.initVal.x - overlay._cornerPointChanges.changes, window.obj.initVal.y - overlay._cornerPointChanges.changes1];
-		objD.newVal1 = [window.obj.initVal1.x - overlay._cornerPointChanges.changes2, window.obj.initVal1.y - overlay._cornerPointChanges.changes3];
-		objD.newVal2 = [window.obj.initVal2.x - overlay._cornerPointChanges.changes4, window.obj.initVal2.y - overlay._cornerPointChanges.changes5];
-		objD.newVal3 = [window.obj.initVal3.x - overlay._cornerPointChanges.changes6, window.obj.initVal3.y - overlay._cornerPointChanges.changes7];
+		// TODO: consider refactoring with transformation
+		// var transformation = new L.Transformation(1, -overlay._currentPointDelta.x, 1,  )
+		objD.newVal = window.obj.initVal.subtract(overlay._cornerPointDelta);
+		objD.newVal1 = window.obj.initVal1.subtract(overlay._cornerPointDelta);
+		objD.newVal2 = window.obj.initVal2.subtract(overlay._cornerPointDelta);
+		objD.newVal3 = window.obj.initVal3.subtract(overlay._cornerPointDelta);
 		
 		return objD;
 	},
 
 	// TODO: move to overlay class
 	_updateCorners: function(objD) {
-		var overlay = this._overlay,
-			map = overlay._map;
-		// window.overlay = overlay;
 		var imgAry = this.getImages();
-		var i = 0;
-		for (var k in objD) {
-			imgAry[0]._updateCorner(i, map.layerPointToLatLng(objD[k]));
-			i += 1;
-		}
+
+		imgAry[0]._updateCornersFromPoints(objD);
 
 		imgAry[0].fire('update');
 	},
@@ -250,6 +236,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		});
 
 		return image_array;
+		// TODO: polyline for selection so that it doesn't get distorted
 		// this._polyline = L.polyline(polyline_array);
 		// this._overlay._map.eachLayer(function (layer) {
 		// 	if layer 

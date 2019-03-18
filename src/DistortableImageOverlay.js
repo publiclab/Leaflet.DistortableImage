@@ -22,7 +22,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		// this._div = $(this._pane).append($("<div id='holding'></div>"));
 		if (!this._image) { this._initImage(); }
 		if (!this._events) { this._initEvents(); }
-
+		// TODO: delete div child 
 		map._panes.overlayPane.appendChild(this._image);
 
 		if (!this._divNode) { 
@@ -139,6 +139,28 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
 	_updateCorner: function(corner, latlng) {
 		this._corners[corner] = latlng;
+		this._reset();
+	},
+
+	// fires a reset after all corner positions are updated instead of after each one (above). Use for translating
+	_updateCorners: function (latlngObj) {
+		var i = 0;
+		for (var k in latlngObj) {
+			this._corners[i] = latlngObj[k];
+			i += 1;
+		}
+
+		this._reset();
+	},
+
+	_updateCornersFromPoints: function (pointsObj) {
+		var map = this._map;
+		var i = 0;
+		for (var k in pointsObj) {
+			this._corners[i] = map.layerPointToLatLng(pointsObj[k]);
+			i += 1;
+		}
+
 		this._reset();
 	},
 
