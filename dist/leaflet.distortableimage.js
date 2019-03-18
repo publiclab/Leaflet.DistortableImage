@@ -126,6 +126,92 @@ L.MatrixUtil = {
 		return L.MatrixUtil.multsm(1/m[8], m);
 	}
 };
+L.EXIF = function getEXIFdata(img) {
+  if (Object.keys(EXIF.getAllTags(img)).length !== 0) {
+    console.log(EXIF.getAllTags(img));
+    var GPS = EXIF.getAllTags(img),
+      altitude;
+
+    /* If the lat/lng is available. */
+    if (
+      typeof GPS.GPSLatitude !== "undefined" &&
+      typeof GPS.GPSLongitude !== "undefined"
+    ) {
+      // sadly, encoded in [degrees,minutes,seconds]
+      // primitive value = GPS.GPSLatitude[x].numerator
+      var lat =
+        GPS.GPSLatitude[0] +
+        GPS.GPSLatitude[1] / 60 +
+        GPS.GPSLatitude[2] / 3600;
+      var lng =
+        GPS.GPSLongitude[0] +
+        GPS.GPSLongitude[1] / 60 +
+        GPS.GPSLongitude[2] / 3600;
+
+      if (GPS.GPSLatitudeRef !== "N") {
+        lat = lat * -1;
+      }
+      if (GPS.GPSLongitudeRef === "W") {
+        lng = lng * -1;
+      }
+    }
+
+    // Attempt to use GPS compass heading; will require
+    // some trig to calc corner points, which you can find below:
+
+    var angle = 0;
+    // "T" refers to "True north", so -90.
+    if (GPS.GPSImgDirectionRef === "T") {
+      angle =
+        (Math.PI / 180) *
+        (GPS.GPSImgDirection.numerator / GPS.GPSImgDirection.denominator - 90);
+    }
+    // "M" refers to "Magnetic north"
+    else if (GPS.GPSImgDirectionRef === "M") {
+      angle =
+        (Math.PI / 180) *
+        (GPS.GPSImgDirection.numerator / GPS.GPSImgDirection.denominator - 90);
+    } else {
+      console.log("No compass data found");
+    }
+
+    console.log("Orientation:", GPS.Orientation);
+
+    /* If there is orientation data -- i.e. landscape/portrait etc */
+    if (GPS.Orientation === 6) {
+      //CCW
+      angle += (Math.PI / 180) * -90;
+    } else if (GPS.Orientation === 8) {
+      //CW
+      angle += (Math.PI / 180) * 90;
+    } else if (GPS.Orientation === 3) {
+      //180
+      angle += (Math.PI / 180) * 180;
+    }
+
+    /* If there is altitude data */
+    if (
+      typeof GPS.GPSAltitude !== "undefined" &&
+      typeof GPS.GPSAltitudeRef !== "undefined"
+    ) {
+      // Attempt to use GPS altitude:
+      // (may eventually need to find EXIF field of view for correction)
+      if (
+        typeof GPS.GPSAltitude !== "undefined" &&
+        typeof GPS.GPSAltitudeRef !== "undefined"
+      ) {
+        altitude =
+          GPS.GPSAltitude.numerator / GPS.GPSAltitude.denominator +
+          GPS.GPSAltitudeRef;
+      } else {
+        altitude = 0; // none
+      }
+    }
+  } else {
+    alert("EXIF initialized. Press again to view data in console.");
+  }
+};
+
 L.EditHandle = L.Marker.extend({
 	initialize: function(overlay, corner, options) {
 		var markerOptions,
@@ -693,24 +779,24 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       this._overlay = overlay;
       this._map = map;
 
-      this.removeTool = function(tools, tool) {
-        tools = tools.filter(function(x) {
+      this.removeTool = function(tool) {
+        this._overlay._toolArray = this._overlay._toolArray.filter(function(x) {
           return x !== tool;
         });
         L.DistortableImage.EditToolbar = LeafletToolbar.Control.extend({
           options: {
             position: "topleft",
-            actions: tools
+            actions: this._overlay._toolArray
           }
         });
       };
 
-      this.addTool = function(tools, tool) {
-        tools.push(tool);
+      this.addTool = function(tool) {
+        this._overlay._toolArray.push(tool);
         L.DistortableImage.EditToolbar = LeafletToolbar.Control.extend({
           options: {
             position: "topleft",
-            actions: tools
+            actions: this._overlay._toolArray
           }
         });
       };
@@ -820,6 +906,36 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       this.disable();
     }
   }),
+  EnableEXIF = EditOverlayAction.extend({
+    options: {
+      toolbarIcon: {
+        html: '<span class="fa fa-compass"></span>',
+        tooltip: "Enable EXIF",
+        title: "Geocode Image"
+      }
+    },
+
+    addHooks: function() {
+      var image = this._overlay._image;
+      EXIF.getData(image, L.EXIF(image));
+    }
+  }),
+  ToggleOrder = EditOverlayAction.extend({
+    options: {
+      toolbarIcon: {
+        html: '<span class="fa fa-sort"></span>',
+        tooltip: "Change order",
+        title: "Toggle order"
+      }
+    },
+
+    addHooks: function() {
+      var editing = this._overlay.editing;
+
+      editing._toggleOrder();
+      this.disable();
+    }
+  }),
   ToggleReveal = EditOverlayAction.extend({
     options: {
       toolbarIcon: {
@@ -830,17 +946,24 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
     },
     addHooks: function() {
       if (L.DistortableImage.EditToolbar.hidden_tools) {
+
         var hidden_tools = L.DistortableImage.EditToolbar.hidden_tools; // this._overlay.options.hidden_tools;
-        var tools = this._overlay._toolArray;
         var i;
 
-        this.removeTool(tools, ToggleReveal);
+        this.removeTool(ToggleReveal);
+
         for (i = 0; i < hidden_tools.length; i++) {
-          this.addTool(tools, hidden_tools[i]);
+          this.addTool(hidden_tools[i]);
         }
+
         this._overlay.editing._hideToolbar();
+
       } else {
-        console.error("L.DistortableImage.EditToolbar.hidden_tools not initialized!");
+
+        console.error(
+          "L.DistortableImage.EditToolbar.hidden_tools not initialized!"
+        );
+
       }
     }
   });
@@ -849,6 +972,8 @@ var defaults = [
   ToggleTransparency,
   ToggleOutline,
   ToggleRotateDistort,
+  EnableEXIF,
+  ToggleOrder,
   ToggleReveal
 ];
 
@@ -876,6 +1001,8 @@ L.DistortableImage.Edit = L.Handler.extend({
       76: "_toggleLock", // l
       79: "_toggleOutline", // o
       82: "_toggleRotateDistort", // r
+      74: "_sendUp", // j
+      75: "_sendDown", // k
       46: "_removeOverlay", // delete windows / delete + fn mac
       8: "_removeOverlay", // backspace windows / delete mac
       83: "_toggleScale", // s
@@ -886,6 +1013,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   initialize: function(overlay) {
     this._overlay = overlay;
+    this._toggledImage = false;
 
     /* Interaction modes. */
     this._mode = this._overlay.options.mode || "distort";
@@ -1162,6 +1290,14 @@ L.DistortableImage.Edit = L.Handler.extend({
     image.style.outline = outline;
   },
 
+  _sendUp: function() {
+    this._overlay.bringToFront();
+  },
+
+  _sendDown: function() {
+    this._overlay.bringToBack();
+  },
+
   _toggleLock: function() {
     var map = this._overlay._map;
 
@@ -1226,6 +1362,16 @@ L.DistortableImage.Edit = L.Handler.extend({
         overlay.fire("delete");
         this.disable();
       }
+    }
+  },
+
+  _toggleOrder: function() {
+    if (this._toggledImage) {
+      this._overlay.bringToFront();
+      this._toggledImage = false;
+    } else {
+      this._overlay.bringToBack();
+      this._toggledImage = true;
     }
   },
 

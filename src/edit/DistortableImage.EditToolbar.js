@@ -5,24 +5,24 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       this._overlay = overlay;
       this._map = map;
 
-      this.removeTool = function(tools, tool) {
-        tools = tools.filter(function(x) {
+      this.removeTool = function(tool) {
+        this._overlay._toolArray = this._overlay._toolArray.filter(function(x) {
           return x !== tool;
         });
         L.DistortableImage.EditToolbar = LeafletToolbar.Control.extend({
           options: {
             position: "topleft",
-            actions: tools
+            actions: this._overlay._toolArray
           }
         });
       };
 
-      this.addTool = function(tools, tool) {
-        tools.push(tool);
+      this.addTool = function(tool) {
+        this._overlay._toolArray.push(tool);
         L.DistortableImage.EditToolbar = LeafletToolbar.Control.extend({
           options: {
             position: "topleft",
-            actions: tools
+            actions: this._overlay._toolArray
           }
         });
       };
@@ -132,6 +132,36 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       this.disable();
     }
   }),
+  EnableEXIF = EditOverlayAction.extend({
+    options: {
+      toolbarIcon: {
+        html: '<span class="fa fa-compass"></span>',
+        tooltip: "Enable EXIF",
+        title: "Geocode Image"
+      }
+    },
+
+    addHooks: function() {
+      var image = this._overlay._image;
+      EXIF.getData(image, L.EXIF(image));
+    }
+  }),
+  ToggleOrder = EditOverlayAction.extend({
+    options: {
+      toolbarIcon: {
+        html: '<span class="fa fa-sort"></span>',
+        tooltip: "Change order",
+        title: "Toggle order"
+      }
+    },
+
+    addHooks: function() {
+      var editing = this._overlay.editing;
+
+      editing._toggleOrder();
+      this.disable();
+    }
+  }),
   ToggleReveal = EditOverlayAction.extend({
     options: {
       toolbarIcon: {
@@ -142,17 +172,24 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
     },
     addHooks: function() {
       if (L.DistortableImage.EditToolbar.hidden_tools) {
+
         var hidden_tools = L.DistortableImage.EditToolbar.hidden_tools; // this._overlay.options.hidden_tools;
-        var tools = this._overlay._toolArray;
         var i;
 
-        this.removeTool(tools, ToggleReveal);
+        this.removeTool(ToggleReveal);
+
         for (i = 0; i < hidden_tools.length; i++) {
-          this.addTool(tools, hidden_tools[i]);
+          this.addTool(hidden_tools[i]);
         }
+
         this._overlay.editing._hideToolbar();
+
       } else {
-        console.error("L.DistortableImage.EditToolbar.hidden_tools not initialized!");
+
+        console.error(
+          "L.DistortableImage.EditToolbar.hidden_tools not initialized!"
+        );
+
       }
     }
   });
@@ -161,6 +198,8 @@ var defaults = [
   ToggleTransparency,
   ToggleOutline,
   ToggleRotateDistort,
+  EnableEXIF,
+  ToggleOrder,
   ToggleReveal
 ];
 
