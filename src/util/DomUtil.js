@@ -30,5 +30,11 @@ L.DomUtil = L.extend(L.DomUtil, {
 			rotateString = (is3d ? '0, 0, 1, ' : '') + angle + units;
 			
 		return open + rotateString + ')';
+	},
+
+	toggleClass: function(el, className) {
+		var c = className;
+		return this.hasClass(el, c) ? this.removeClass(el, c) : this.addClass(el, c);
 	}
+
 });

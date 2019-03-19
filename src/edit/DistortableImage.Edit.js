@@ -23,6 +23,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 	initialize: function(overlay) {
 		this._overlay = overlay;
+		// TODO: consider renaming to ._cornersPoints for consistency with current code
 		this._overlay._dragStartPoints = { 0: 0, 1: 0, 2: 0, 3: 0 };
 		this._toggledImage = false;
 
@@ -122,8 +123,11 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   confirmDelete: function () {
     return window.confirm("Are you sure you want to delete?");
-  },
-
+	},
+	
+	isSelected: function(overlay) {
+		return L.DomUtil.hasClass(overlay.getElement(), 'selected');
+	},
 
 	_rotateBy: function(angle) {
 		var overlay = this._overlay,
@@ -162,14 +166,12 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 	// drag events for multiple images are separated out from enableDragging initialization -- two different concepts
 	_dragStartMultiple: function() {
-		var overlay = this._overlay;
+		var overlay = this._overlay,
+			i;
 
-		if (!L.DomUtil.hasClass(overlay.getElement(), 'selected')) { return; }
+		if (!this.isSelected(overlay)) { return; }
 		if (window.imagesFeatureGroup._getSelectedImages().length <= 1) { return; }
-
-		// window.overlay = overlay;
 	
-		var i;
 		window.imagesFeatureGroup.eachLayer(function (layer) {
 				for (i = 0; i < 4; i++) {
 					if (layer !== overlay) { layer.editing._hideToolbar(); }
@@ -183,50 +185,21 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 	_dragMultiple: function() {
 		var overlay = this._overlay,
-			map = overlay._map;
+			map = overlay._map,
+			i;
 
-		if (!L.DomUtil.hasClass(overlay.getElement(), 'selected')) { return; }
+		if (!this.isSelected(overlay)) { return; }
 		if (window.imagesFeatureGroup._getSelectedImages().length <= 1) { return; }
 
 		overlay._dragPoints = {};
 
-		var i;
 		for (i = 0; i < 4; i++) {
 			overlay._dragPoints[i] = map.latLngToLayerPoint(overlay.getCorners()[i]);
 		}
 
 		var cornerPointDelta = overlay._calcCornerPointDelta();
 
-		var layersToMove = this._calcNewCorners(cornerPointDelta);
-
-		// window.layersToMove = layersToMove;
-
-		window.imagesFeatureGroup._updateCollectionFromPoints(layersToMove);
-	},
-
-	// _calcCornerPointDelta: function(overlay) {
-	// 	return overlay._dragStartPoints[0].subtract(overlay._dragPoints[0]);
-	// },
-
-	_calcNewCorners: function(cornerPointDelta) {
-		var overlay = this._overlay;
-		
-		var layersToMove = [];
-		var transformation = new L.Transformation(1, -cornerPointDelta.x, 1, -cornerPointDelta.y);
-		window.imagesFeatureGroup.eachLayer(function (layer) {
-				if (layer !== overlay) {
-					layer._objD = {};
-
-					layer._objD.newVal = transformation.transform(layer._dragStartPoints[0]);
-					layer._objD.newVal1 = transformation.transform(layer._dragStartPoints[1]);
-					layer._objD.newVal2 = transformation.transform(layer._dragStartPoints[2]);
-					layer._objD.newVal3 = transformation.transform(layer._dragStartPoints[3]);
-
-					layersToMove.push(layer);
-				}
-		});
-
-		return layersToMove;
+		window.imagesFeatureGroup._updateCollectionFromPoints(cornerPointDelta, overlay);
 	},
 
 	_enableDragging: function() {
@@ -391,8 +364,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			map = overlay._map;
 
 		if (event.metaKey || event.ctrlKey) {
-			// TODO: make a toggleClass DOM Util method
-			$(target).toggleClass('selected');
+			L.DomUtil.toggleClass(target, 'selected');
 		}
 	
 		if (L.DomUtil.hasClass(target, 'selected')) {

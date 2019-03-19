@@ -12,100 +12,34 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return this.getLayers();
   },
 
-  _updateCollectionFromPoints: function (layersToMove) {
+  _calcCollectionFromPoints: function (cornerPointDelta, overlay) {
+    var layersToMove = [];
+    var transformation = new L.Transformation(1, -cornerPointDelta.x, 1, -cornerPointDelta.y);
+    this.eachLayer(function (layer) {
+      if (layer !== overlay) {
+        layer._objD = {};
+
+        layer._objD.newVal = transformation.transform(layer._dragStartPoints[0]);
+        layer._objD.newVal1 = transformation.transform(layer._dragStartPoints[1]);
+        layer._objD.newVal2 = transformation.transform(layer._dragStartPoints[2]);
+        layer._objD.newVal3 = transformation.transform(layer._dragStartPoints[3]);
+
+        layersToMove.push(layer);
+      }
+    });
+
+    return layersToMove;
+  },
+
+  _updateCollectionFromPoints: function (cornerPointDelta, overlay) {
+    
+    var layersToMove = this._calcCollectionFromPoints(cornerPointDelta, overlay);
+
     layersToMove.forEach(function (layer) {
       layer._updateCornersFromPoints(layer._objD);
       layer.fire('update');
     });
   },
-
-
-//   // drag events for multiple images are separated out from enableDragging initialization -- two different concepts
-//   _dragStartMultiple: function() {
-//     var overlay = this._overlay,
-//       map = overlay._map;
-
-//     if (!L.DomUtil.hasClass(overlay.getElement(), 'selected')) { return; }
-//     if (window.imagesFeatureGroup._getSelectedImages().length <= 1) { return; }
-
-//     overlay._startCornerPoints = {};
-
-//     window.obj = {};
-
-//     window.obj.initVal = 0;
-//     window.obj.initVal1 = 0;
-//     window.obj.initVal2 = 0;
-//     window.obj.initVal3 = 0;
-
-//     var i = 0;
-//     for (var k in window.obj) {
-//       window.obj[k] = map.latLngToLayerPoint(window.img.getCorners()[i]);
-//       overlay._startCornerPoints[k] = map.latLngToLayerPoint(overlay.getCorners()[i]);
-//       i += 1;
-//     }
-
-//     overlay._cornerPointDelta = {};
-
-//   },
-
-//   _dragMultiple: function () {
-//     var overlay = this._overlay,
-//       map = overlay._map;
-
-//     if (!L.DomUtil.hasClass(overlay.getElement(), 'selected')) { return; }
-//     if (window.imagesFeatureGroup._getSelectedImages().length <= 1) { return; }
-
-//     overlay._currentCornerPoints = {};
-
-//     var i = 0;
-//     for (var k in window.obj) {
-//       overlay._currentCornerPoints[k] = map.latLngToLayerPoint(overlay.getCorners()[i]);
-//       i += 1;
-//     }
-
-//     var cornerPointDelta = this.calcCornerDelta(overlay);
-
-//     var objD = this.calcNewCorners(cornerPointDelta);
-
-//     this._updateCorners(objD);
-//   },
-
-//   calcCornerDelta: function (overlay) {
-//     return overlay._startCornerPoints.initVal.subtract(overlay._currentCornerPoints.initVal);
-//   },
-
-//   calcNewCorners: function (cornerPointDelta) {
-//     var objD = {};
-//     var transformation = new L.Transformation(1, -cornerPointDelta.x, 1, -cornerPointDelta.y);
-//     objD.newVal = transformation.transform(window.obj.initVal);
-//     objD.newVal1 = transformation.transform(window.obj.initVal1);
-//     objD.newVal2 = transformation.transform(window.obj.initVal2);
-//     objD.newVal3 = transformation.transform(window.obj.initVal3);
-
-//     return objD;
-//   },
-
-//   // TODO: rename so not the same overlay class method
-//   _updateCorners: function (objD) {
-
-//     var imgAry = window.imagesFeatureGroup._getSelectedImages();
-
-//     imgAry[0]._updateCornersFromPoints(objD);
-
-//     imgAry[0].fire('update');
-//   },
-
-//   _getSelectedImages: function () {
-
-//     return this.getLayers();
-
-//     // TODO: polyline for selection so that it doesn't get distorted
-//     // this._polyline = L.polyline(polyline_array);
-//     // this._overlay._map.eachLayer(function (layer) {
-//     // 	if layer 
-//     // 	console.log(layer.name);
-//     // });
-//   },
 
 //   _toggleSelections: function (event) {
 //     var overlay = this._overlay,
