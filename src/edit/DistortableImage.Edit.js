@@ -165,7 +165,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		var overlay = this._overlay;
 
 		if (!L.DomUtil.hasClass(overlay.getElement(), 'selected')) { return; }
-		if (this._getSelectedImages().length <= 1) { return; }
+		if (window.imagesFeatureGroup._getSelectedImages().length <= 1) { return; }
 
 		window.overlay = overlay;
 	
@@ -185,7 +185,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			map = overlay._map;
 
 		if (!L.DomUtil.hasClass(overlay.getElement(), 'selected')) { return; }
-		if (this._getSelectedImages().length <= 1) { return; }
+		if (window.imagesFeatureGroup._getSelectedImages().length <= 1) { return; }
 
 		overlay._dragPoints = {};
 
@@ -196,20 +196,20 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		var cornerPointDelta = this._calcCornerPointDelta(overlay);
 
-		window.cornerPointDelta = cornerPointDelta;
+		// window.cornerPointDelta = cornerPointDelta;
 
-		var layersToMove = this.calcNewCorners(cornerPointDelta);
+		var layersToMove = this._calcNewCorners(cornerPointDelta);
 
-		window.layersToMove = layersToMove;
+		// window.layersToMove = layersToMove;
 
-		this._updateCorners(layersToMove);
+		window.imagesFeatureGroup._updateCollectionFromPoints(layersToMove);
 	},
 
 	_calcCornerPointDelta: function(overlay) {
 		return overlay._dragStartPoints[0].subtract(overlay._dragPoints[0]);
 	},
 
-	calcNewCorners: function(cornerPointDelta) {
+	_calcNewCorners: function(cornerPointDelta) {
 		var overlay = this._overlay;
 		
 		var layersToMove = [];
@@ -228,32 +228,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 		});
 
 		return layersToMove;
-	},
-
-	// // TODO: rename so not the same overlay class method
-	_updateCorners: function(layersToMove) {
-
-		// var imgAry = this._getSelectedImages();
-		layersToMove.forEach(function(layer) {
-			layer._updateCornersFromPoints(layer._objD);
-			layer.fire('update');
-		});
-
-		// imgAry[0]._updateCornersFromPoints(objD);
-
-		// imgAry[0].fire('update');
-	},
-
-	_getSelectedImages: function() {
-
-		return window.imagesFeatureGroup.getLayers();
-		
-		// TODO: polyline for selection so that it doesn't get distorted
-		// this._polyline = L.polyline(polyline_array);
-		// this._overlay._map.eachLayer(function (layer) {
-		// 	if layer 
-		// 	console.log(layer.name);
-		// });
 	},
 
 	_enableDragging: function() {
