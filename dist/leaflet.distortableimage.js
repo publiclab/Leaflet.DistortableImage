@@ -1139,7 +1139,15 @@ L.DistortableImage.Edit = L.Handler.extend({
 		var overlay = this._overlay,
 			map = overlay._map;
 
+		L.DomEvent.off(map, 'click', this._removeSelections, this);
+
+		L.DomEvent.off(overlay, 'dragstart', this._dragStartMultiple, this);
+
+		L.DomEvent.off(overlay, 'drag', this._dragMultiple, this);
+
 		L.DomEvent.off(overlay._image, 'click', this._showToolbar, this);
+
+		L.DomEvent.off(overlay._image, 'mousedown', this._toggleSelections, this);
 
 		// First, check if dragging exists;
 		// it may be off due to locking
