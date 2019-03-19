@@ -120,6 +120,10 @@ L.DistortableImage.Edit = L.Handler.extend({
 		if (this.dragging) { this.dragging.disable(); }
 		delete this.dragging;
 
+		if (this.toolbar) { this._hideToolbar(); }
+
+		if (this.editing) { this.editing.disable(); }
+
 		map.removeLayer(this._handles[this._mode]);
 
  		/* Disable hotkeys. */
@@ -391,7 +395,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		  group = this._group,
 			map = overlay._map;
 
-		if (!(group instanceof L.DistortableCollection) || this._mode === 'lock') { return; } 
+		if (!(group instanceof L.DistortableCollection)) { return; } 
 
 		group.eachLayer(function(layer) {
 			L.DomUtil.removeClass(layer.getElement(), 'selected');
@@ -408,6 +412,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (this._mode !== "lock") {
       var choice = this.confirmDelete();
       if (choice) {
+				this._hideToolbar();
         overlay._map.removeLayer(overlay);
         overlay.fire('delete');
         this.disable();

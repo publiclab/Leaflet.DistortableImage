@@ -49,24 +49,12 @@
         id: 'examples.map-i86knfo3'
       }).addTo(map);
 
-      images = []
-      select = function(e){
-        for (var i in images) {
-          img = this
-          if (img._leaflet_id != images[i]._leaflet_id) {
+      // images = []
+        // for (var i in images) {
+        //   img = this
+        //   if (img._leaflet_id != images[i]._leaflet_id) {
             /* Deselect (disable) other images */
             // images[i].editing.disable()
-            /* Ensure that other toolbars are removed */
-            if (images[i].editing.toolbar) {
-              map.removeLayer(images[i].editing.toolbar);
-            }
-          }
-        }
-        /* Ensure this is enabled */
-        this.editing.enable()
-        /* If it's locked, allow event to propagate on to map below */
-        if (this.editing._mode != "lock") e.stopPropagation()
-      }
 
       var imagesFeatureGroup = new L.DistortableCollection().addTo(map);
       // window.imagesFeatureGroup = imagesFeatureGroup;
@@ -84,10 +72,10 @@
           group: imagesFeatureGroup,
           // HARDCODED: we should find the img w/h dynamically so that it fits the image each time.
           edgeMinWidth: 521,
-          edgeMinHeight: 521,
+          edgeMinHeight: 348,
         }
       ).addTo(map);
-      images.push(img)
+      // images.push(img)
       // L.DomEvent.on(img._image, 'click', select, img);
 
       // create a second image
@@ -102,16 +90,12 @@
           group: imagesFeatureGroup,
           // HARDCODED: we should find the img w/h dynamically so that it fits the image each time.
           edgeMinWidth: 521,
-          edgeMinHeight: 521
+          edgeMinHeight: 348
         }
       ).addTo(map);
 
-      images.push(img2);
-
       window.img = img;
       window.img2 = img2;
-
-      // L.DomEvent.on(img2._image, 'click', select, img2);
 
       L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
       L.DomEvent.on(img2._image, 'load', img2.editing.enable, img2.editing);

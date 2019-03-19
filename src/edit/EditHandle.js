@@ -1,7 +1,4 @@
 L.EditHandle = L.Marker.extend({
-	options: {
-		edgeMinWidth: 500
-	},
 
 	initialize: function(overlay, corner, options) {
 		var markerOptions,
