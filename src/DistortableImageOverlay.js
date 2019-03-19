@@ -4,7 +4,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 	options: {
 		alt: '',
 		height: 200,
-		crossOrigin: true
+		crossOrigin: true,
+		group: ''
 	},
 
 	initialize: function(url, options) {
@@ -19,19 +20,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		/* Copied from L.ImageOverlay */
 		this._map = map;
 
-		// this._div = $(this._pane).append($("<div id='holding'></div>"));
 		if (!this._image) { this._initImage(); }
 		if (!this._events) { this._initEvents(); }
 
 		map._panes.overlayPane.appendChild(this._image);
-
-		// TODO: remove completely 
-		// if (!this._divNode) { 
-		// 	this._divNode = document.createElement("div");
-		// 	// this._divNode = divNode;
-		// 	this._divNode.setAttribute("id", "holding");
-		// 	map._panes.overlayPane.appendChild(this._divNode); 
-		// }
 
 		map.on('viewreset', this._reset, this);
 		/* End copied from L.ImageOverlay */
@@ -42,6 +34,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 			if (map.options.zoomAnimation && L.Browser.any3d) {
 				map.on('zoomanim', this._animateZoom, this);
 			}
+
+			window.overlay = this;
 
 			/* This reset happens before image load; it allows
 			 * us to place the image on the map earlier with
@@ -283,5 +277,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		);
 	}
 });
+
+
 
 

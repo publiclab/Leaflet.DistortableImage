@@ -1,13 +1,5 @@
 L.DistortableCollection = L.FeatureGroup.extend({
 
-  // DistortableImage.Edit events are automatically propogated to the feature group
-  
-//   initialize: function () {
-
-//     L.featureGroup.prototype.initialize.call(this);
-
-//   },
-
   _getSelectedImages: function () {
     return this.getLayers();
   },

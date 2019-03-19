@@ -304,7 +304,9 @@ L.LockHandle = L.EditHandle.extend({
 	},
 
 	updateHandle: function() {
+		window.this = this;
 		this.setLatLng(this._handled._corners[this._corner]);
+		L.DomUtil.removeClass(this._handled.getElement(), 'selected');
 	}
 
 });
@@ -542,7 +544,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 	options: {
 		alt: '',
 		height: 200,
-		crossOrigin: true
+		crossOrigin: true,
+		group: ''
 	},
 
 	initialize: function(url, options) {
@@ -557,19 +560,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		/* Copied from L.ImageOverlay */
 		this._map = map;
 
-		// this._div = $(this._pane).append($("<div id='holding'></div>"));
 		if (!this._image) { this._initImage(); }
 		if (!this._events) { this._initEvents(); }
 
 		map._panes.overlayPane.appendChild(this._image);
-
-		// TODO: remove completely 
-		// if (!this._divNode) { 
-		// 	this._divNode = document.createElement("div");
-		// 	// this._divNode = divNode;
-		// 	this._divNode.setAttribute("id", "holding");
-		// 	map._panes.overlayPane.appendChild(this._divNode); 
-		// }
 
 		map.on('viewreset', this._reset, this);
 		/* End copied from L.ImageOverlay */
@@ -580,6 +574,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 			if (map.options.zoomAnimation && L.Browser.any3d) {
 				map.on('zoomanim', this._animateZoom, this);
 			}
+
+			window.overlay = this;
 
 			/* This reset happens before image load; it allows
 			 * us to place the image on the map earlier with
@@ -824,15 +820,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
 
 
+
+
 L.DistortableCollection = L.FeatureGroup.extend({
-
-  // DistortableImage.Edit events are automatically propogated to the feature group
-  
-//   initialize: function () {
-
-//     L.featureGroup.prototype.initialize.call(this);
-
-//   },
 
   _getSelectedImages: function () {
     return this.getLayers();
@@ -1085,6 +1075,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		/* Interaction modes. */
 		this._mode = this._overlay.options.mode || 'distort';
+		this._group = this._overlay.options.group;
+		window._group = this._group;
 		this._transparent = false;
 		this._outlined = false;
 	},
@@ -1223,9 +1215,10 @@ L.DistortableImage.Edit = L.Handler.extend({
 			i;
 
 		if (!this.isSelected(overlay)) { return; }
-		if (window.imagesFeatureGroup._getSelectedImages().length <= 1) { return; }
+		// if (!(this._group instanceof L.DistortableCollection)) { return; }
+		if (this._group._getSelectedImages().length <= 1) { return; }
 	
-		window.imagesFeatureGroup.eachLayer(function (layer) {
+		this._group.eachLayer(function (layer) {
 				for (i = 0; i < 4; i++) {
 					if (layer !== overlay) { layer.editing._hideToolbar(); }
 					layer._dragStartPoints[i] = layer._map.latLngToLayerPoint(layer.getCorners()[i]);
@@ -1233,7 +1226,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 		});
 
 		overlay._cornerPointDelta = {};
-
 	},
 
 	_dragMultiple: function() {
@@ -1242,7 +1234,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			i;
 
 		if (!this.isSelected(overlay)) { return; }
-		if (window.imagesFeatureGroup._getSelectedImages().length <= 1) { return; }
+		if (this._group._getSelectedImages().length <= 1) { return; }
 
 		overlay._dragPoints = {};
 
@@ -1252,7 +1244,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		var cornerPointDelta = overlay._calcCornerPointDelta();
 
-		window.imagesFeatureGroup._updateCollectionFromPoints(cornerPointDelta, overlay);
+		this._group._updateCollectionFromPoints(cornerPointDelta, overlay);
 	},
 
 	_enableDragging: function() {
@@ -1413,31 +1405,35 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 	_toggleSelections: function(event) {
 		var overlay = this._overlay,
+			group = this._group,
 			target = event.target,
 			map = overlay._map;
+
+		if (!(group instanceof L.DistortableCollection) || this._mode === 'lock') { return; }
 
 		if (event.metaKey || event.ctrlKey) {
 			L.DomUtil.toggleClass(target, 'selected');
 		}
-	
+
 		if (L.DomUtil.hasClass(target, 'selected')) {
-			window.imagesFeatureGroup.addLayer(overlay);
+			group.addLayer(overlay);
 		} else {
-			window.imagesFeatureGroup.removeLayer(overlay);
+			group.removeLayer(overlay);
 			overlay.addTo(map);
 			overlay.editing.enable();
-			// overlay._reset();
-			// overlay.fire('update');
 		}
 	},
 	// TODO: move this and similar collection methods into separate class?
 	_removeSelections: function() {
 		var overlay = this._overlay,
+		  group = this._group,
 			map = overlay._map;
 
-		window.imagesFeatureGroup.eachLayer(function(layer) {
+		if (!(group instanceof L.DistortableCollection) || this._mode === 'lock') { return; } 
+
+		group.eachLayer(function(layer) {
 			L.DomUtil.removeClass(layer.getElement(), 'selected');
-			window.imagesFeatureGroup.removeLayer(layer);
+			group.removeLayer(layer);
 			layer.addTo(map);
 			layer.editing.enable();
 		});
@@ -1556,7 +1552,6 @@ L.DistortableImageOverlay.addInitHook(function() {
 		if (this.editing) { this.editing.disable(); }
 	});
 });
-
 L.Map.mergeOptions({ boxSelector: true, boxZoom: false });
 
 L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
