@@ -248,6 +248,11 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		return cartesianToLatLng.call(map, nmid.add(smid.subtract(nmid).divideBy(2)));
 	},
 
+	// Use for translation calculations - for translation the delta for 1 corner applies to all 4
+	_calcCornerPointDelta: function () {
+		return this._dragStartPoints[0].subtract(this._dragPoints[0]);
+	},
+
 	_calculateProjectiveTransform: function(latLngToCartesian) {
 		/* Setting reasonable but made-up image defaults
 		 * allow us to place images on the map before

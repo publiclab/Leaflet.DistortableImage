@@ -167,11 +167,12 @@ L.DistortableImage.Edit = L.Handler.extend({
 		if (!L.DomUtil.hasClass(overlay.getElement(), 'selected')) { return; }
 		if (window.imagesFeatureGroup._getSelectedImages().length <= 1) { return; }
 
-		window.overlay = overlay;
+		// window.overlay = overlay;
 	
 		var i;
 		window.imagesFeatureGroup.eachLayer(function (layer) {
 				for (i = 0; i < 4; i++) {
+					if (layer !== overlay) { layer.editing._hideToolbar(); }
 					layer._dragStartPoints[i] = layer._map.latLngToLayerPoint(layer.getCorners()[i]);
 				}
 		});
@@ -194,9 +195,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			overlay._dragPoints[i] = map.latLngToLayerPoint(overlay.getCorners()[i]);
 		}
 
-		var cornerPointDelta = this._calcCornerPointDelta(overlay);
-
-		// window.cornerPointDelta = cornerPointDelta;
+		var cornerPointDelta = overlay._calcCornerPointDelta();
 
 		var layersToMove = this._calcNewCorners(cornerPointDelta);
 
@@ -205,9 +204,9 @@ L.DistortableImage.Edit = L.Handler.extend({
 		window.imagesFeatureGroup._updateCollectionFromPoints(layersToMove);
 	},
 
-	_calcCornerPointDelta: function(overlay) {
-		return overlay._dragStartPoints[0].subtract(overlay._dragPoints[0]);
-	},
+	// _calcCornerPointDelta: function(overlay) {
+	// 	return overlay._dragStartPoints[0].subtract(overlay._dragPoints[0]);
+	// },
 
 	_calcNewCorners: function(cornerPointDelta) {
 		var overlay = this._overlay;

@@ -780,6 +780,11 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		return cartesianToLatLng.call(map, nmid.add(smid.subtract(nmid).divideBy(2)));
 	},
 
+	// Use for translation calculations - for translation the delta for 1 corner applies to all 4
+	_calcCornerPointDelta: function () {
+		return this._dragStartPoints[0].subtract(this._dragPoints[0]);
+	},
+
 	_calculateProjectiveTransform: function(latLngToCartesian) {
 		/* Setting reasonable but made-up image defaults
 		 * allow us to place images on the map before
@@ -1274,11 +1279,12 @@ L.DistortableImage.Edit = L.Handler.extend({
 		if (!L.DomUtil.hasClass(overlay.getElement(), 'selected')) { return; }
 		if (window.imagesFeatureGroup._getSelectedImages().length <= 1) { return; }
 
-		window.overlay = overlay;
+		// window.overlay = overlay;
 	
 		var i;
 		window.imagesFeatureGroup.eachLayer(function (layer) {
 				for (i = 0; i < 4; i++) {
+					if (layer !== overlay) { layer.editing._hideToolbar(); }
 					layer._dragStartPoints[i] = layer._map.latLngToLayerPoint(layer.getCorners()[i]);
 				}
 		});
@@ -1301,9 +1307,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			overlay._dragPoints[i] = map.latLngToLayerPoint(overlay.getCorners()[i]);
 		}
 
-		var cornerPointDelta = this._calcCornerPointDelta(overlay);
-
-		// window.cornerPointDelta = cornerPointDelta;
+		var cornerPointDelta = overlay._calcCornerPointDelta();
 
 		var layersToMove = this._calcNewCorners(cornerPointDelta);
 
@@ -1312,9 +1316,9 @@ L.DistortableImage.Edit = L.Handler.extend({
 		window.imagesFeatureGroup._updateCollectionFromPoints(layersToMove);
 	},
 
-	_calcCornerPointDelta: function(overlay) {
-		return overlay._dragStartPoints[0].subtract(overlay._dragPoints[0]);
-	},
+	// _calcCornerPointDelta: function(overlay) {
+	// 	return overlay._dragStartPoints[0].subtract(overlay._dragPoints[0]);
+	// },
 
 	_calcNewCorners: function(cornerPointDelta) {
 		var overlay = this._overlay;
