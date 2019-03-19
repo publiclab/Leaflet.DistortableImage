@@ -81,7 +81,10 @@
             new L.latLng(51.50,-0.14)
           ],
           mode: 'lock',
-          group: imagesFeatureGroup
+          group: imagesFeatureGroup,
+          // HARDCODED: we should find the img w/h dynamically so that it fits the image each time.
+          edgeMinWidth: 521,
+          edgeMinHeight: 521,
         }
       ).addTo(map);
       images.push(img)
@@ -96,7 +99,10 @@
             new L.latLng(51.49,-0.11),
             new L.latLng(51.49,-0.15)
           ],
-          group: imagesFeatureGroup
+          group: imagesFeatureGroup,
+          // HARDCODED: we should find the img w/h dynamically so that it fits the image each time.
+          edgeMinWidth: 521,
+          edgeMinHeight: 521
         }
       ).addTo(map);
 

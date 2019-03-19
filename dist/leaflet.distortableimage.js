@@ -219,6 +219,10 @@ L.EXIF = function getEXIFdata(img) {
 };
 
 L.EditHandle = L.Marker.extend({
+	options: {
+		edgeMinWidth: 500
+	},
+
 	initialize: function(overlay, corner, options) {
 		var markerOptions,
 			latlng = overlay._corners[corner];
@@ -357,6 +361,10 @@ L.RotateAndScaleHandle = L.EditHandle.extend({
 		  checks whether the "edgeMinWidth" property is set and tracks the minimum edge length;
 		  this enables preventing scaling to zero, but we might also add an overall scale limit
 		*/		
+
+		// window.scale = scale;
+		// window.handled = this._handled;
+		
 		if (this._handled.options.hasOwnProperty('edgeMinWidth')){
 			var edgeMinWidth = this._handled.options.edgeMinWidth,
 			    w = L.latLng(overlay._corners[0]).distanceTo(overlay._corners[1]),
@@ -364,11 +372,10 @@ L.RotateAndScaleHandle = L.EditHandle.extend({
 			if ((w > edgeMinWidth && h > edgeMinWidth) || scale > 1) {
 				overlay.editing._scaleBy(scale);
 			}
-		} else {
-			overlay.editing._scaleBy(scale);
-		}
+		} 
 
 		overlay.fire('update');
+
 	},
 
 	updateHandle: function() {
@@ -421,13 +428,14 @@ L.RotateHandle = L.EditHandle.extend({
 			iconAnchor: [16, 16]}
 		)
 	},
-
+	
 	_onHandleDrag: function() {
 		var overlay = this._handled,
 			formerLatLng = this._handled._corners[this._corner],
 			newLatLng = this.getLatLng(),
-
 			angle = this._calculateAngle(formerLatLng, newLatLng);
+
+		overlay.editing._hideToolbar();
 
 		overlay.editing._rotateBy(angle);
 
@@ -545,7 +553,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		alt: '',
 		height: 200,
 		crossOrigin: true,
-		group: ''
+		group: '',
+		edgeMinWidth: 500
 	},
 
 	initialize: function(url, options) {
