@@ -23,6 +23,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 	initialize: function(overlay) {
 		this._overlay = overlay;
+		this._overlay._dragStartPoints = { 0: 0, 1: 0, 2: 0, 3: 0 };
 		this._toggledImage = false;
 
 		/* Interaction modes. */
@@ -161,27 +162,19 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 	// drag events for multiple images are separated out from enableDragging initialization -- two different concepts
 	_dragStartMultiple: function() {
-		var overlay = this._overlay,
-			map = overlay._map;
+		var overlay = this._overlay;
 
 		if (!L.DomUtil.hasClass(overlay.getElement(), 'selected')) { return; }
 		if (this._getSelectedImages().length <= 1) { return; }
 
-		overlay._startCornerPoints = {};
-		
-		window.obj = {};
-
-		window.obj.initVal = 0;
-		window.obj.initVal1 = 0;
-		window.obj.initVal2 = 0;
-		window.obj.initVal3 = 0;
-
-		var i = 0;
-		for (var k in window.obj) {
-			window.obj[k] = map.latLngToLayerPoint(window.img.getCorners()[i]);
-			overlay._startCornerPoints[k] = map.latLngToLayerPoint(overlay.getCorners()[i]);
-			i += 1;
-		}
+		window.overlay = overlay;
+	
+		var i;
+		window.imagesFeatureGroup.eachLayer(function (layer) {
+				for (i = 0; i < 4; i++) {
+					layer._dragStartPoints[i] = layer._map.latLngToLayerPoint(layer.getCorners()[i]);
+				}
+		});
 
 		overlay._cornerPointDelta = {};
 
@@ -194,43 +187,61 @@ L.DistortableImage.Edit = L.Handler.extend({
 		if (!L.DomUtil.hasClass(overlay.getElement(), 'selected')) { return; }
 		if (this._getSelectedImages().length <= 1) { return; }
 
-		overlay._currentCornerPoints = {};
+		overlay._dragPoints = {};
 
-		var i = 0;
-		for (var k in window.obj) {
-			overlay._currentCornerPoints[k] = map.latLngToLayerPoint(overlay.getCorners()[i]);
-			i += 1;
+		var i;
+		for (i = 0; i < 4; i++) {
+			overlay._dragPoints[i] = map.latLngToLayerPoint(overlay.getCorners()[i]);
 		}
 
-		var cornerPointDelta = this.calcCornerDelta(overlay);
+		var cornerPointDelta = this._calcCornerPointDelta(overlay);
 
-		var objD = this.calcNewCorners(cornerPointDelta);
+		window.cornerPointDelta = cornerPointDelta;
 
-		this._updateCorners(objD);
+		var layersToMove = this.calcNewCorners(cornerPointDelta);
+
+		window.layersToMove = layersToMove;
+
+		this._updateCorners(layersToMove);
 	},
 
-	calcCornerDelta: function(overlay) {
-		return overlay._startCornerPoints.initVal.subtract(overlay._currentCornerPoints.initVal);
+	_calcCornerPointDelta: function(overlay) {
+		return overlay._dragStartPoints[0].subtract(overlay._dragPoints[0]);
 	},
 
 	calcNewCorners: function(cornerPointDelta) {
-		var objD = {};
-		var transformation = new L.Transformation(1, -cornerPointDelta.x, 1, -cornerPointDelta.y);
-		objD.newVal = transformation.transform(window.obj.initVal);
-		objD.newVal1 = transformation.transform(window.obj.initVal1);
-		objD.newVal2 = transformation.transform(window.obj.initVal2);
-		objD.newVal3 = transformation.transform(window.obj.initVal3);
+		var overlay = this._overlay;
 		
-		return objD;
+		var layersToMove = [];
+		var transformation = new L.Transformation(1, -cornerPointDelta.x, 1, -cornerPointDelta.y);
+		window.imagesFeatureGroup.eachLayer(function (layer) {
+				if (layer !== overlay) {
+					layer._objD = {};
+
+					layer._objD.newVal = transformation.transform(layer._dragStartPoints[0]);
+					layer._objD.newVal1 = transformation.transform(layer._dragStartPoints[1]);
+					layer._objD.newVal2 = transformation.transform(layer._dragStartPoints[2]);
+					layer._objD.newVal3 = transformation.transform(layer._dragStartPoints[3]);
+
+					layersToMove.push(layer);
+				}
+		});
+
+		return layersToMove;
 	},
 
-	// TODO: rename so not the same overlay class method
-	_updateCorners: function(objD) {
-		var imgAry = this._getSelectedImages();
+	// // TODO: rename so not the same overlay class method
+	_updateCorners: function(layersToMove) {
 
-		imgAry[0]._updateCornersFromPoints(objD);
+		// var imgAry = this._getSelectedImages();
+		layersToMove.forEach(function(layer) {
+			layer._updateCornersFromPoints(layer._objD);
+			layer.fire('update');
+		});
 
-		imgAry[0].fire('update');
+		// imgAry[0]._updateCornersFromPoints(objD);
+
+		// imgAry[0].fire('update');
 	},
 
 	_getSelectedImages: function() {
@@ -410,7 +421,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			// TODO: make a toggleClass DOM Util method
 			$(target).toggleClass('selected');
 		}
-
+	
 		if (L.DomUtil.hasClass(target, 'selected')) {
 			window.imagesFeatureGroup.addLayer(overlay);
 		} else {
