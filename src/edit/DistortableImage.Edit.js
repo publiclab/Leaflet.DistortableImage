@@ -30,7 +30,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		/* Interaction modes. */
 		this._mode = this._overlay.options.mode || 'distort';
 		this._group = this._overlay.options.group;
-		window._group = this._group;
+		// window._group = this._group;
 		this._transparent = false;
 		this._outlined = false;
 	},
@@ -377,7 +377,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			overlay.editing.enable();
 		}
 	},
-	// TODO: move this and similar collection methods into separate class?
+
 	_removeSelections: function() {
 		var overlay = this._overlay,
 		  group = this._group,

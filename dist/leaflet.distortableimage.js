@@ -304,7 +304,6 @@ L.LockHandle = L.EditHandle.extend({
 	},
 
 	updateHandle: function() {
-		window.this = this;
 		this.setLatLng(this._handled._corners[this._corner]);
 		L.DomUtil.removeClass(this._handled.getElement(), 'selected');
 	}
@@ -350,8 +349,9 @@ L.RotateAndScaleHandle = L.EditHandle.extend({
 			angle = this._calculateAngle(formerLatLng, newLatLng),
 			scale = this._calculateScalingFactor(formerLatLng, newLatLng);
 
+		overlay.editing._hideToolbar();
+
 		overlay.editing._rotateBy(angle);
-		overlay.editing._scaleBy(scale);
 
 		/* 
 		  checks whether the "edgeMinWidth" property is set and tracks the minimum edge length;
@@ -860,28 +860,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
       layer.fire('update');
     });
   },
-
-//   _toggleSelections: function (event) {
-//     var overlay = this._overlay,
-//       target = event.target,
-//       map = overlay._map;
-
-//     if (event.metaKey || event.ctrlKey) {
-//       // TODO: make a toggleClass DOM Util method
-//       $(target).toggleClass('selected');
-//     }
-
-//     if (L.DomUtil.hasClass(target, 'selected')) {
-//       window.imagesFeatureGroup.addLayer(overlay);
-//     } else {
-//       window.imagesFeatureGroup.removeLayer(overlay);
-//       // window.overlay = overlay;
-//       overlay.addTo(map);
-//       overlay.editing.enable();
-//       // overlay._reset();
-//       // overlay.fire('update');
-//     }
-//   },
+  
 });
 L.DistortableImage = L.DistortableImage || {};
 
@@ -1076,7 +1055,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		/* Interaction modes. */
 		this._mode = this._overlay.options.mode || 'distort';
 		this._group = this._overlay.options.group;
-		window._group = this._group;
+		// window._group = this._group;
 		this._transparent = false;
 		this._outlined = false;
 	},
@@ -1423,7 +1402,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			overlay.editing.enable();
 		}
 	},
-	// TODO: move this and similar collection methods into separate class?
+
 	_removeSelections: function() {
 		var overlay = this._overlay,
 		  group = this._group,

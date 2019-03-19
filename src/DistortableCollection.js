@@ -36,26 +36,5 @@ L.DistortableCollection = L.FeatureGroup.extend({
       layer.fire('update');
     });
   },
-
-//   _toggleSelections: function (event) {
-//     var overlay = this._overlay,
-//       target = event.target,
-//       map = overlay._map;
-
-//     if (event.metaKey || event.ctrlKey) {
-//       // TODO: make a toggleClass DOM Util method
-//       $(target).toggleClass('selected');
-//     }
-
-//     if (L.DomUtil.hasClass(target, 'selected')) {
-//       window.imagesFeatureGroup.addLayer(overlay);
-//     } else {
-//       window.imagesFeatureGroup.removeLayer(overlay);
-//       // window.overlay = overlay;
-//       overlay.addTo(map);
-//       overlay.editing.enable();
-//       // overlay._reset();
-//       // overlay.fire('update');
-//     }
-//   },
+  
 });

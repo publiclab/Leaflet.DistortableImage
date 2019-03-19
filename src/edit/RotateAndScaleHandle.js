@@ -16,8 +16,9 @@ L.RotateAndScaleHandle = L.EditHandle.extend({
 			angle = this._calculateAngle(formerLatLng, newLatLng),
 			scale = this._calculateScalingFactor(formerLatLng, newLatLng);
 
+		overlay.editing._hideToolbar();
+
 		overlay.editing._rotateBy(angle);
-		overlay.editing._scaleBy(scale);
 
 		/* 
 		  checks whether the "edgeMinWidth" property is set and tracks the minimum edge length;
