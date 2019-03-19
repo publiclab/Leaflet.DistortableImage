@@ -100,11 +100,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 	/* Run on image deselection. */
 	removeHooks: function() {
-		
 		var overlay = this._overlay,
 			map = overlay._map;
-
-		// L.DomEvent.off(window, 'keydown', this._onKeyDown, this);
 
 		L.DomEvent.off(overlay._image, 'click', this._showToolbar, this);
 
@@ -371,7 +368,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 			window.imagesFeatureGroup.addLayer(overlay);
 		} else {
 			window.imagesFeatureGroup.removeLayer(overlay);
-			// window.overlay = overlay;
 			overlay.addTo(map);
 			overlay.editing.enable();
 			// overlay._reset();
@@ -389,7 +385,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			layer.addTo(map);
 			layer.editing.enable();
 		});
-		// $('.selected').removeClass('selected');
+
 		this._hideToolbar();
 	},
 

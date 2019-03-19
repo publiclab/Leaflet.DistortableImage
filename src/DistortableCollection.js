@@ -12,11 +12,15 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return this.getLayers();
   },
 
+  /**
+   * images in 'lock' mode are included in this feature group collection for functionalities 
+   * such as export, but are filtered out for editing / dragging here
+   */
   _calcCollectionFromPoints: function (cornerPointDelta, overlay) {
     var layersToMove = [];
     var transformation = new L.Transformation(1, -cornerPointDelta.x, 1, -cornerPointDelta.y);
     this.eachLayer(function (layer) {
-      if (layer !== overlay) {
+      if (layer !== overlay && layer.editing._mode !== 'lock') {
         layer._objD = {};
 
         layer._objD.newVal = transformation.transform(layer._dragStartPoints[0]);

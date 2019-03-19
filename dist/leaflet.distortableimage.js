@@ -838,11 +838,15 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return this.getLayers();
   },
 
+  /**
+   * images in 'lock' mode are included in this feature group collection for functionalities 
+   * such as export, but are filtered out for editing / dragging here
+   */
   _calcCollectionFromPoints: function (cornerPointDelta, overlay) {
     var layersToMove = [];
     var transformation = new L.Transformation(1, -cornerPointDelta.x, 1, -cornerPointDelta.y);
     this.eachLayer(function (layer) {
-      if (layer !== overlay) {
+      if (layer !== overlay && layer.editing._mode !== 'lock') {
         layer._objD = {};
 
         layer._objD.newVal = transformation.transform(layer._dragStartPoints[0]);
@@ -1152,11 +1156,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 	/* Run on image deselection. */
 	removeHooks: function() {
-		
 		var overlay = this._overlay,
 			map = overlay._map;
-
-		// L.DomEvent.off(window, 'keydown', this._onKeyDown, this);
 
 		L.DomEvent.off(overlay._image, 'click', this._showToolbar, this);
 
@@ -1423,7 +1424,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 			window.imagesFeatureGroup.addLayer(overlay);
 		} else {
 			window.imagesFeatureGroup.removeLayer(overlay);
-			// window.overlay = overlay;
 			overlay.addTo(map);
 			overlay.editing.enable();
 			// overlay._reset();
@@ -1441,7 +1441,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			layer.addTo(map);
 			layer.editing.enable();
 		});
-		// $('.selected').removeClass('selected');
+
 		this._hideToolbar();
 	},
 
