@@ -91,7 +91,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		//overlay.on('click', this._showToolbar, this);
 		L.DomEvent.on(overlay._image, 'click', this._showToolbar, this);
 
-		L.DomEvent.on(overlay._image, 'mousedown', this._toggleSelections, this);
+		// L.DomEvent.on(overlay._image, 'mousedown', this._toggleSelections);
 
 		/* Enable hotkeys. */
 		L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
@@ -113,7 +113,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		L.DomEvent.off(overlay._image, 'click', this._showToolbar, this);
 
-		L.DomEvent.off(overlay._image, 'mousedown', this._toggleSelections, this);
+		// L.DomEvent.off(overlay._image, 'mousedown', this._toggleSelections, this);
 
 		// First, check if dragging exists;
 		// it may be off due to locking
@@ -369,26 +369,26 @@ L.DistortableImage.Edit = L.Handler.extend({
 		L.DomEvent.stopPropagation(event);
 	},
 
-	_toggleSelections: function(event) {
-		var overlay = this._overlay,
-			group = this._group,
-			target = event.target,
-			map = overlay._map;
+	// _toggleSelections: function(event) {
+	// 	var overlay = this._overlay,
+	// 		group = this._group,
+	// 		target = event.target,
+	// 		map = overlay._map;
 
-		if (!(group instanceof L.DistortableCollection) || this._mode === 'lock') { return; }
+	// 	if (this._mode === 'lock') { return; }
 
-		if (event.metaKey || event.ctrlKey) {
-			L.DomUtil.toggleClass(target, 'selected');
-		}
+	// 	if (event.metaKey || event.ctrlKey) {
+	// 		L.DomUtil.toggleClass(target, 'selected');
+	// 	}
 
-		if (L.DomUtil.hasClass(target, 'selected')) {
-			group.addLayer(overlay);
-		} else {
-			group.removeLayer(overlay);
-			overlay.addTo(map);
-			overlay.editing.enable();
-		}
-	},
+	// 	if (L.DomUtil.hasClass(target, 'selected')) {
+	// 		group.addLayer(overlay);
+	// 	} else {
+	// 		group.removeLayer(overlay);
+	// 		overlay.addTo(map);
+	// 		overlay.editing.enable();
+	// 	}
+	// },
 
 	_removeSelections: function() {
 		var overlay = this._overlay,
