@@ -163,7 +163,7 @@ JSON.stringify(img._corners)
 
 ### Adding "DOMStrings" for custom toolbars
 
-Custom "DOMStrings" that define the custom toolbars can easily be added by describing those in the `src/edit/tools/DistortableImage.Guides.js` file and referencing those in the `addToolbar` method inside the `src/edit/DistortableImage.Edit.js` file.
+Custom "DOMStrings" **(i.e., strings of HTML)** that define the custom toolbars can easily be added by describing those in the `src/edit/tools/DistortableImage.Guides.js` file and referencing those in the `addToolbar` method inside the `src/edit/DistortableImage.Edit.js` file.
 
 ```js
 var guide_strings = [dom_string]; // add guides here for custom toolbars
