@@ -831,6 +831,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 L.DistortableCollection = L.FeatureGroup.extend({
   include: L.Mixin.Events,
 
+  // TODO: save all essential image properties in an easily iterable object locally
+
 
   // TODO: do feature groups only allow for click event groupings. do other events just not propogate
   onAdd: function (map) {
@@ -838,21 +840,16 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     this._map = map;
     this.eachLayer(function(layer) {
-      L.DomEvent.on(layer._image, 'mousedown', this._toggleSelections);
+      L.DomEvent.on(layer._image, 'mousedown', this._toggleSelections, this);
     }, this);
    
   },
 
-  onRemove: function(map) {
-    window.mapp = map;
-    // this.eachLayer(function (layer) {
-    //   layer.on(this, 'mousedown', this._toggleSelections);
-    // });
-    // this.eachLayer(function (layer) {
-      // this.on('mousedown', this._toggleSelections);
-    // });
-    // L.DomEvent.off(this, 'mousedown', this._toggleSelections);
-    //  L.DomEvent.on(this, 'mousedown', this._toggleSelections);
+  onRemove: function() {
+    // window.map = map;
+    this.eachLayer(function (layer) {
+      L.DomEvent.on(layer._image, 'mousedown', this._toggleSelections, this);
+    }, this);
   },
 
   _getSelectedImages: function () {
@@ -860,8 +857,10 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   _toggleSelections: function (event) {
-      window.prompt("you made it");
-      window.ttarget = event;
+    window.event = event;
+    var layer = event.layer;
+      window.layer = layer;
+
     //   map = overlay._map;
 
     // if (!(group instanceof L.DistortableCollection) || this._mode === 'lock') { return; }
