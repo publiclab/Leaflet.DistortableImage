@@ -5,7 +5,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		alt: '',
 		height: 200,
 		crossOrigin: true,
-		group: '',
 		edgeMinWidth: 500
 	},
 
@@ -35,8 +34,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 			if (map.options.zoomAnimation && L.Browser.any3d) {
 				map.on('zoomanim', this._animateZoom, this);
 			}
-
-			window.overlay = this;
 
 			/* This reset happens before image load; it allows
 			 * us to place the image on the map earlier with
@@ -244,9 +241,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 	},
 
 	// Use for translation calculations - for translation the delta for 1 corner applies to all 4
-	// _calcCornerPointDelta: function (layer) {
-	// 	return layer._dragStartPoints[0].subtract(layer._dragPoints[0]);
-	// },
+	_calcCornerPointDelta: function () {
+		return this._dragStartPoints[0].subtract(this._dragPoints[0]);
+	},
 
 	_calculateProjectiveTransform: function(latLngToCartesian) {
 		/* Setting reasonable but made-up image defaults
