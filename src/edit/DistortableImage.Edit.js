@@ -82,16 +82,9 @@ L.DistortableImage.Edit = L.Handler.extend({
 			this._enableDragging();
 		}
 
-		// L.DomEvent.on(map, 'click', this._removeSelections, this);
-
-		// L.DomEvent.on(overlay, 'dragstart', this._dragStartMultiple, this);
-
-		// L.DomEvent.on(overlay, 'drag', this._dragMultiple, this);
-
-		//overlay.on('click', this._showToolbar, this);
 		L.DomEvent.on(overlay._image, 'click', this._showToolbar, this);
 
-		// L.DomEvent.on(overlay._image, 'mousedown', this._toggleSelections);
+		L.DomEvent.on(overlay._image, 'mousedown', this._toggleSelections, this);
 
 		/* Enable hotkeys. */
 		L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
@@ -105,15 +98,9 @@ L.DistortableImage.Edit = L.Handler.extend({
 		var overlay = this._overlay,
 			map = overlay._map;
 
-		// L.DomEvent.off(map, 'click', this._removeSelections, this);
-
-		// L.DomEvent.off(overlay, 'dragstart', this._dragStartMultiple, this);
-
-		// L.DomEvent.off(overlay, 'drag', this._dragMultiple, this);
-
 		L.DomEvent.off(overlay._image, 'click', this._showToolbar, this);
 
-		// L.DomEvent.off(overlay._image, 'mousedown', this._toggleSelections, this);
+		L.DomEvent.off(overlay._image, 'mousedown', this._toggleSelections, this);
 
 		// First, check if dragging exists;
 		// it may be off due to locking
@@ -134,10 +121,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   confirmDelete: function () {
     return window.confirm("Are you sure you want to delete?");
-	},
-	
-	isSelected: function(overlay) {
-		return L.DomUtil.hasClass(overlay.getElement(), 'selected');
 	},
 
 	_rotateBy: function(angle) {
@@ -174,44 +157,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		overlay._reset();
 	},
-
-	// drag events for multiple images are separated out from enableDragging initialization -- two different concepts
-	// _dragStartMultiple: function() {
-	// 	var overlay = this._overlay,
-	// 		i;
-
-	// 	if (!this.isSelected(overlay)) { return; }
-	// 	// if (!(this._group instanceof L.DistortableCollection)) { return; }
-	// 	if (this._group._getSelectedImages().length <= 1) { return; }
-	
-	// 	this._group.eachLayer(function (layer) {
-	// 			for (i = 0; i < 4; i++) {
-	// 				if (layer !== overlay) { layer.editing._hideToolbar(); }
-	// 				layer._dragStartPoints[i] = layer._map.latLngToLayerPoint(layer.getCorners()[i]);
-	// 			}
-	// 	});
-
-	// 	overlay._cornerPointDelta = {};
-	// },
-
-	// _dragMultiple: function() {
-	// 	var overlay = this._overlay,
-	// 		map = overlay._map,
-	// 		i;
-
-	// 	if (!this.isSelected(overlay)) { return; }
-	// 	if (this._group._getSelectedImages().length <= 1) { return; }
-
-	// 	overlay._dragPoints = {};
-
-	// 	for (i = 0; i < 4; i++) {
-	// 		overlay._dragPoints[i] = map.latLngToLayerPoint(overlay.getCorners()[i]);
-	// 	}
-
-	// 	var cornerPointDelta = overlay._calcCornerPointDelta();
-
-	// 	this._group._updateCollectionFromPoints(cornerPointDelta, overlay);
-	// },
 
 	_enableDragging: function() {
 		var overlay = this._overlay,
@@ -369,43 +314,15 @@ L.DistortableImage.Edit = L.Handler.extend({
 		L.DomEvent.stopPropagation(event);
 	},
 
-	// _toggleSelections: function(event) {
-	// 	var overlay = this._overlay,
-	// 		group = this._group,
-	// 		target = event.target,
-	// 		map = overlay._map;
+	_toggleSelections: function(event) {
+		var target = event.target;
 
-	// 	if (this._mode === 'lock') { return; }
+		if (this._mode === 'lock') { return; }
 
-	// 	if (event.metaKey || event.ctrlKey) {
-	// 		L.DomUtil.toggleClass(target, 'selected');
-	// 	}
-
-	// 	if (L.DomUtil.hasClass(target, 'selected')) {
-	// 		group.addLayer(overlay);
-	// 	} else {
-	// 		group.removeLayer(overlay);
-	// 		overlay.addTo(map);
-	// 		overlay.editing.enable();
-	// 	}
-	// },
-
-	// _removeSelections: function() {
-	// 	var overlay = this._overlay,
-	// 	  group = this._group,
-	// 		map = overlay._map;
-
-	// 	if (!(group instanceof L.DistortableCollection)) { return; } 
-
-	// 	group.eachLayer(function(layer) {
-	// 		L.DomUtil.removeClass(layer.getElement(), 'selected');
-	// 		group.removeLayer(layer);
-	// 		layer.addTo(map);
-	// 		layer.editing.enable();
-	// 	});
-
-	// 	this._hideToolbar();
-	// },
+		if (event.metaKey || event.ctrlKey) {
+			L.DomUtil.toggleClass(target, 'selected');
+		}
+	},
 
   _removeOverlay: function () {
     var overlay = this._overlay;
