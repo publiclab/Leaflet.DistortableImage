@@ -36,3 +36,7 @@
 .leaflet-toolbar-tip {
   box-sizing: border-box;
 }
+
+img.leaflet-image-layer.selected {
+  box-shadow: 0px 0px 0px 12px #ffea00;
+}
