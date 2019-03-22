@@ -37,9 +37,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var overlay = event.target,
       i;
 
-    if (!this.isSelected(overlay)) {
-      return;
-    }
+    if (!this.isSelected(overlay)) { return; }
 
     this.eachLayer(function(layer) {
       for (i = 0; i < 4; i++) {
@@ -51,8 +49,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
         );
       }
     });
-
-    overlay._cornerPointDelta = {};
   },
 
   _dragMultiple: function(event) {
@@ -70,9 +66,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
       overlay._dragPoints[i] = map.latLngToLayerPoint(overlay.getCorners()[i]);
     }
 
-    overlay._cornerPointDelta = overlay._calcCornerPointDelta();
+    var cornerPointDelta = overlay._calcCornerPointDelta();
 
-    this._updateCollectionFromPoints(overlay._cornerPointDelta, overlay);
+    this._updateCollectionFromPoints(cornerPointDelta, overlay);
   },
 
   _removeSelections: function() {
@@ -90,7 +86,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
    */
   _calcCollectionFromPoints: function(cpd, overlay) {
     var layersToMove = [],
-      transformation = new L.Transformation(1, -cpd.x, 1, -cpd.y);
+      p = new L.Transformation(1, -cpd.x, 1, -cpd.y);
 
     this.eachLayer(function(layer) {
       if (
@@ -98,20 +94,13 @@ L.DistortableCollection = L.FeatureGroup.extend({
         layer.editing._mode !== "lock" &&
         this.isSelected(layer)
       ) {
-        layer._objD = {};
 
-        layer._objD.newVal = transformation.transform(
-          layer._dragStartPoints[0]
-        );
-        layer._objD.newVal1 = transformation.transform(
-          layer._dragStartPoints[1]
-        );
-        layer._objD.newVal2 = transformation.transform(
-          layer._dragStartPoints[2]
-        );
-        layer._objD.newVal3 = transformation.transform(
-          layer._dragStartPoints[3]
-        );
+        layer._cpd = {};
+
+        layer._cpd.val0 = p.transform(layer._dragStartPoints[0]);
+        layer._cpd.val1 = p.transform(layer._dragStartPoints[1]);
+        layer._cpd.val2 = p.transform(layer._dragStartPoints[2]);
+        layer._cpd.val3 = p.transform(layer._dragStartPoints[3]);
 
         layersToMove.push(layer);
       }
@@ -120,25 +109,17 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return layersToMove;
   },
 
-  _updateCornersFromPoints: function(layer) {
-    var map = this._map;
-    var i = 0;
-    for (var k in layer._objD) {
-      layer._corners[i] = map.layerPointToLatLng(layer._objD[k]);
-      i += 1;
-    }
-
-    layer._reset();
-  },
-
-  _updateCollectionFromPoints: function(cornerPointDelta, overlay) {
+  /**
+   * cpd === cornerPointDelta
+   */
+  _updateCollectionFromPoints: function(cpd, overlay) {
     var layersToMove = this._calcCollectionFromPoints(
-      cornerPointDelta,
+      cpd,
       overlay
     );
 
     layersToMove.forEach(function(layer) {
-      this._updateCornersFromPoints(layer);
+      layer._updateCornersFromPoints(layer._cpd);
       layer.fire("update");
     }, this);
   }

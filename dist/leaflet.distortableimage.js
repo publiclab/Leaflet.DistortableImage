@@ -691,16 +691,16 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		this._reset();
 	},
 
-	// _updateCornersFromPoints: function (pointsObj) {
-	// 	var map = this._map;
-	// 	var i = 0;
-	// 	for (var k in pointsObj) {
-	// 		this._corners[i] = map.layerPointToLatLng(pointsObj[k]);
-	// 		i += 1;
-	// 	}
+	_updateCornersFromPoints: function (pointsObj) {
+		var map = this._map;
+		var i = 0;
+		for (var k in pointsObj) {
+			this._corners[i] = map.layerPointToLatLng(pointsObj[k]);
+			i += 1;
+		}
 
-	// 	this._reset();
-	// },
+		this._reset();
+	},
 
 	/* Copied from Leaflet v0.7 https://github.com/Leaflet/Leaflet/blob/66282f14bcb180ec87d9818d9f3c9f75afd01b30/src/dom/DomUtil.js#L189-L199 */
 	/* since L.DomUtil.getTranslateString() is deprecated in Leaflet v1.0 */
@@ -864,9 +864,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var overlay = event.target,
       i;
 
-    if (!this.isSelected(overlay)) {
-      return;
-    }
+    if (!this.isSelected(overlay)) { return; }
 
     this.eachLayer(function(layer) {
       for (i = 0; i < 4; i++) {
@@ -878,8 +876,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
         );
       }
     });
-
-    overlay._cornerPointDelta = {};
   },
 
   _dragMultiple: function(event) {
@@ -897,9 +893,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
       overlay._dragPoints[i] = map.latLngToLayerPoint(overlay.getCorners()[i]);
     }
 
-    overlay._cornerPointDelta = overlay._calcCornerPointDelta();
+    var cornerPointDelta = overlay._calcCornerPointDelta();
 
-    this._updateCollectionFromPoints(overlay._cornerPointDelta, overlay);
+    this._updateCollectionFromPoints(cornerPointDelta, overlay);
   },
 
   _removeSelections: function() {
@@ -917,7 +913,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
    */
   _calcCollectionFromPoints: function(cpd, overlay) {
     var layersToMove = [],
-      transformation = new L.Transformation(1, -cpd.x, 1, -cpd.y);
+      p = new L.Transformation(1, -cpd.x, 1, -cpd.y);
 
     this.eachLayer(function(layer) {
       if (
@@ -925,20 +921,13 @@ L.DistortableCollection = L.FeatureGroup.extend({
         layer.editing._mode !== "lock" &&
         this.isSelected(layer)
       ) {
-        layer._objD = {};
 
-        layer._objD.newVal = transformation.transform(
-          layer._dragStartPoints[0]
-        );
-        layer._objD.newVal1 = transformation.transform(
-          layer._dragStartPoints[1]
-        );
-        layer._objD.newVal2 = transformation.transform(
-          layer._dragStartPoints[2]
-        );
-        layer._objD.newVal3 = transformation.transform(
-          layer._dragStartPoints[3]
-        );
+        layer._cpd = {};
+
+        layer._cpd.val0 = p.transform(layer._dragStartPoints[0]);
+        layer._cpd.val1 = p.transform(layer._dragStartPoints[1]);
+        layer._cpd.val2 = p.transform(layer._dragStartPoints[2]);
+        layer._cpd.val3 = p.transform(layer._dragStartPoints[3]);
 
         layersToMove.push(layer);
       }
@@ -947,25 +936,17 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return layersToMove;
   },
 
-  _updateCornersFromPoints: function(layer) {
-    var map = this._map;
-    var i = 0;
-    for (var k in layer._objD) {
-      layer._corners[i] = map.layerPointToLatLng(layer._objD[k]);
-      i += 1;
-    }
-
-    layer._reset();
-  },
-
-  _updateCollectionFromPoints: function(cornerPointDelta, overlay) {
+  /**
+   * cpd === cornerPointDelta
+   */
+  _updateCollectionFromPoints: function(cpd, overlay) {
     var layersToMove = this._calcCollectionFromPoints(
-      cornerPointDelta,
+      cpd,
       overlay
     );
 
     layersToMove.forEach(function(layer) {
-      this._updateCornersFromPoints(layer);
+      layer._updateCornersFromPoints(layer._cpd);
       layer.fire("update");
     }, this);
   }
@@ -1156,7 +1137,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 	initialize: function(overlay) {
 		this._overlay = overlay;
-		// TODO: consider renaming to ._cornersPoints for consistency with current code
 		this._overlay._dragStartPoints = { 0: new L.point(0, 0), 1: new L.point(0, 0), 2: new L.point(0, 0), 3: new L.point(0, 0) };
 		this._toggledImage = false;
 

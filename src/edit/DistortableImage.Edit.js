@@ -23,7 +23,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 	initialize: function(overlay) {
 		this._overlay = overlay;
-		// TODO: consider renaming to ._cornersPoints for consistency with current code
 		this._overlay._dragStartPoints = { 0: new L.point(0, 0), 1: new L.point(0, 0), 2: new L.point(0, 0), 3: new L.point(0, 0) };
 		this._toggledImage = false;
 

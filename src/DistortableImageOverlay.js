@@ -146,16 +146,16 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		this._reset();
 	},
 
-	// _updateCornersFromPoints: function (pointsObj) {
-	// 	var map = this._map;
-	// 	var i = 0;
-	// 	for (var k in pointsObj) {
-	// 		this._corners[i] = map.layerPointToLatLng(pointsObj[k]);
-	// 		i += 1;
-	// 	}
+	_updateCornersFromPoints: function (pointsObj) {
+		var map = this._map;
+		var i = 0;
+		for (var k in pointsObj) {
+			this._corners[i] = map.layerPointToLatLng(pointsObj[k]);
+			i += 1;
+		}
 
-	// 	this._reset();
-	// },
+		this._reset();
+	},
 
 	/* Copied from Leaflet v0.7 https://github.com/Leaflet/Leaflet/blob/66282f14bcb180ec87d9818d9f3c9f75afd01b30/src/dom/DomUtil.js#L189-L199 */
 	/* since L.DomUtil.getTranslateString() is deprecated in Leaflet v1.0 */
