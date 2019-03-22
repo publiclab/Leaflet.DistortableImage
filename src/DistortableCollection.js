@@ -9,43 +9,128 @@ L.DistortableCollection = L.FeatureGroup.extend({
     L.FeatureGroup.prototype.onAdd.call(this, map);
 
     this._map = map;
-    this.eachLayer(function(layer) {
-      L.DomEvent.on(layer._image, 'mousedown', this._toggleSelections, this);
-    }, this);
-   
+    this._members = {};
+
+    window._members = this._members;
+
+    L.DomEvent.on(map, 'layeradd', this._getFeatureGroupId, this);
+    L.DomEvent.on(map, 'click', this._removeSelections, this);
+    
+    
   },
 
   onRemove: function() {
+    var map = this._map;
+    L.DomEvent.off(map, 'layeradd', this._getFeatureGroupId, this);
+    L.DomEvent.off(map, 'click', this._removeSelections, this);
     // window.map = map;
-    this.eachLayer(function (layer) {
-      L.DomEvent.on(layer._image, 'mousedown', this._toggleSelections, this);
-    }, this);
+    // this.eachLayer(function (layer) {
+    //   L.DomEvent.on(layer._image, 'mousedown', this._toggleSelections, this);
+    // }, this);
   },
 
   _getSelectedImages: function () {
     return this.getLayers();
   },
 
-  _toggleSelections: function (event) {
-    window.event = event;
+  _getFeatureGroupId: function (event) {
+    window.eventy = event;
     var layer = event.layer;
-      window.layer = layer;
+    window.layery = layer;
 
-    //   map = overlay._map;
+    if (event.layer instanceof L.DistortableCollection) {
+      this._id = this.getLayerId(event.layer);
+    }
 
-    // if (!(group instanceof L.DistortableCollection) || this._mode === 'lock') { return; }
+    this.eachLayer(function(layer) {
+      this._members[this.getLayerId(layer)] = { 
+        layer: layer,
+        mode: layer.editing._mode,
+        image: layer._image
+      };
+    }, this);
 
-    // if (event.metaKey || event.ctrlKey) {
-    //   L.DomUtil.toggleClass(target, 'selected');
-    // }
+    for (var k in this._members) {
+      L.DomEvent.on(this._members[k].image, "mousedown", this._toggleSelections, this);
+      L.DomEvent.on(this._members[k].layer, "drag", this._dragMultiple, this);
+      L.DomEvent.on(this._members[k].layer, 'dragstart', this._dragStartMultiple, this);
+      // L.DomEvent.on(this._map, 'click', this._removeSelections, this);
+    }
+  },
 
-    // if (L.DomUtil.hasClass(target, 'selected')) {
-    //   group.addLayer(overlay);
-    // } else {
-    //   group.removeLayer(overlay);
-    //   overlay.addTo(map);
-    //   overlay.editing.enable();
-    // }
+  _dragMultiple: function (event) {
+    var layer = event.target,
+      map = this._map,
+      i;
+ 
+    // var layer = this,
+      // map = this._map,
+      // i;
+
+    window.eventT = event;
+
+    // if (!this.isSelected(overlay)) { return; }
+    // if (this._group._getSelectedImages().length <= 1) { return; }
+
+    layer._dragPoints = {};
+
+    for (i = 0; i < 4; i++) {
+      layer._dragPoints[i] = map.latLngToLayerPoint(layer.getCorners()[i]);
+    }
+
+    layer._cornerPointDelta = this._calcCornerPointDelta(layer);
+
+    this._updateCollectionFromPoints(layer._cornerPointDelta, layer);
+  },
+
+  _dragStartMultiple: function (event) {
+    var overlay = event.target,
+      i;
+
+    // if (!this.isSelected(overlay)) { return; }
+    // if (!(this._group instanceof L.DistortableCollection)) { return; }
+    // if (this._group._getSelectedImages().length <= 1) { return; }
+
+    this.eachLayer(function (layer) {
+      for (i = 0; i < 4; i++) {
+        if (layer !== overlay) { layer.editing._hideToolbar(); }
+        layer._dragStartPoints[i] = layer._map.latLngToLayerPoint(layer.getCorners()[i]);
+      }
+    });
+
+    overlay._cornerPointDelta = {};
+  },
+
+  _calcCornerPointDelta: function (layer) {
+    return layer._dragStartPoints[0].subtract(layer._dragPoints[0]);
+  },
+
+  _toggleSelections: function (event) {
+    var target = event.target,
+      members = this._members,
+      member;
+
+    for (var k in members) {
+      if (members[k].image === target) {
+        member = members[k];
+        break;
+      }
+    }
+
+    if (member) {
+      if (member.mode === 'lock') { return; }
+    }
+
+    if (event.metaKey || event.ctrlKey) {
+      L.DomUtil.toggleClass(target, 'selected');
+    }
+  },
+
+  _removeSelections: function () {
+    this.eachLayer(function (layer) {
+      L.DomUtil.removeClass(layer.getElement(), 'selected');
+      if (layer.editing.toolbar) { layer.editing._hideToolbar(); }
+    });
   },
 
   /**
@@ -56,6 +141,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var layersToMove = [];
     var transformation = new L.Transformation(1, -cornerPointDelta.x, 1, -cornerPointDelta.y);
     this.eachLayer(function (layer) {
+      window.layerrr = layer;
       if (layer !== overlay && layer.editing._mode !== 'lock') {
         layer._objD = {};
 
@@ -71,14 +157,25 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return layersToMove;
   },
 
+  _updateCornersFromPoints: function (layer) {
+    var map = this._map;
+    var i = 0;
+    for (var k in layer._objD) {
+      layer._corners[i] = map.layerPointToLatLng(layer._objD[k]);
+      i += 1;
+    }
+
+    layer._reset();
+  },
+
   _updateCollectionFromPoints: function (cornerPointDelta, overlay) {
     
     var layersToMove = this._calcCollectionFromPoints(cornerPointDelta, overlay);
 
     layersToMove.forEach(function (layer) {
-      layer._updateCornersFromPoints(layer._objD);
+      this._updateCornersFromPoints(layer);
       layer.fire('update');
-    });
+    }, this);
   },
   
 });

@@ -24,7 +24,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 	initialize: function(overlay) {
 		this._overlay = overlay;
 		// TODO: consider renaming to ._cornersPoints for consistency with current code
-		this._overlay._dragStartPoints = { 0: 0, 1: 0, 2: 0, 3: 0 };
+		this._overlay._dragStartPoints = { 0: new L.point(0, 0), 1: new L.point(0, 0), 2: new L.point(0, 0), 3: new L.point(0, 0) };
 		this._toggledImage = false;
 
 		/* Interaction modes. */
@@ -82,11 +82,11 @@ L.DistortableImage.Edit = L.Handler.extend({
 			this._enableDragging();
 		}
 
-		L.DomEvent.on(map, 'click', this._removeSelections, this);
+		// L.DomEvent.on(map, 'click', this._removeSelections, this);
 
-		L.DomEvent.on(overlay, 'dragstart', this._dragStartMultiple, this);
+		// L.DomEvent.on(overlay, 'dragstart', this._dragStartMultiple, this);
 
-		L.DomEvent.on(overlay, 'drag', this._dragMultiple, this);
+		// L.DomEvent.on(overlay, 'drag', this._dragMultiple, this);
 
 		//overlay.on('click', this._showToolbar, this);
 		L.DomEvent.on(overlay._image, 'click', this._showToolbar, this);
@@ -105,11 +105,11 @@ L.DistortableImage.Edit = L.Handler.extend({
 		var overlay = this._overlay,
 			map = overlay._map;
 
-		L.DomEvent.off(map, 'click', this._removeSelections, this);
+		// L.DomEvent.off(map, 'click', this._removeSelections, this);
 
-		L.DomEvent.off(overlay, 'dragstart', this._dragStartMultiple, this);
+		// L.DomEvent.off(overlay, 'dragstart', this._dragStartMultiple, this);
 
-		L.DomEvent.off(overlay, 'drag', this._dragMultiple, this);
+		// L.DomEvent.off(overlay, 'drag', this._dragMultiple, this);
 
 		L.DomEvent.off(overlay._image, 'click', this._showToolbar, this);
 
@@ -176,42 +176,42 @@ L.DistortableImage.Edit = L.Handler.extend({
 	},
 
 	// drag events for multiple images are separated out from enableDragging initialization -- two different concepts
-	_dragStartMultiple: function() {
-		var overlay = this._overlay,
-			i;
+	// _dragStartMultiple: function() {
+	// 	var overlay = this._overlay,
+	// 		i;
 
-		if (!this.isSelected(overlay)) { return; }
-		// if (!(this._group instanceof L.DistortableCollection)) { return; }
-		if (this._group._getSelectedImages().length <= 1) { return; }
+	// 	if (!this.isSelected(overlay)) { return; }
+	// 	// if (!(this._group instanceof L.DistortableCollection)) { return; }
+	// 	if (this._group._getSelectedImages().length <= 1) { return; }
 	
-		this._group.eachLayer(function (layer) {
-				for (i = 0; i < 4; i++) {
-					if (layer !== overlay) { layer.editing._hideToolbar(); }
-					layer._dragStartPoints[i] = layer._map.latLngToLayerPoint(layer.getCorners()[i]);
-				}
-		});
+	// 	this._group.eachLayer(function (layer) {
+	// 			for (i = 0; i < 4; i++) {
+	// 				if (layer !== overlay) { layer.editing._hideToolbar(); }
+	// 				layer._dragStartPoints[i] = layer._map.latLngToLayerPoint(layer.getCorners()[i]);
+	// 			}
+	// 	});
 
-		overlay._cornerPointDelta = {};
-	},
+	// 	overlay._cornerPointDelta = {};
+	// },
 
-	_dragMultiple: function() {
-		var overlay = this._overlay,
-			map = overlay._map,
-			i;
+	// _dragMultiple: function() {
+	// 	var overlay = this._overlay,
+	// 		map = overlay._map,
+	// 		i;
 
-		if (!this.isSelected(overlay)) { return; }
-		if (this._group._getSelectedImages().length <= 1) { return; }
+	// 	if (!this.isSelected(overlay)) { return; }
+	// 	if (this._group._getSelectedImages().length <= 1) { return; }
 
-		overlay._dragPoints = {};
+	// 	overlay._dragPoints = {};
 
-		for (i = 0; i < 4; i++) {
-			overlay._dragPoints[i] = map.latLngToLayerPoint(overlay.getCorners()[i]);
-		}
+	// 	for (i = 0; i < 4; i++) {
+	// 		overlay._dragPoints[i] = map.latLngToLayerPoint(overlay.getCorners()[i]);
+	// 	}
 
-		var cornerPointDelta = overlay._calcCornerPointDelta();
+	// 	var cornerPointDelta = overlay._calcCornerPointDelta();
 
-		this._group._updateCollectionFromPoints(cornerPointDelta, overlay);
-	},
+	// 	this._group._updateCollectionFromPoints(cornerPointDelta, overlay);
+	// },
 
 	_enableDragging: function() {
 		var overlay = this._overlay,
@@ -390,22 +390,22 @@ L.DistortableImage.Edit = L.Handler.extend({
 	// 	}
 	// },
 
-	_removeSelections: function() {
-		var overlay = this._overlay,
-		  group = this._group,
-			map = overlay._map;
+	// _removeSelections: function() {
+	// 	var overlay = this._overlay,
+	// 	  group = this._group,
+	// 		map = overlay._map;
 
-		if (!(group instanceof L.DistortableCollection)) { return; } 
+	// 	if (!(group instanceof L.DistortableCollection)) { return; } 
 
-		group.eachLayer(function(layer) {
-			L.DomUtil.removeClass(layer.getElement(), 'selected');
-			group.removeLayer(layer);
-			layer.addTo(map);
-			layer.editing.enable();
-		});
+	// 	group.eachLayer(function(layer) {
+	// 		L.DomUtil.removeClass(layer.getElement(), 'selected');
+	// 		group.removeLayer(layer);
+	// 		layer.addTo(map);
+	// 		layer.editing.enable();
+	// 	});
 
-		this._hideToolbar();
-	},
+	// 	this._hideToolbar();
+	// },
 
   _removeOverlay: function () {
     var overlay = this._overlay;
