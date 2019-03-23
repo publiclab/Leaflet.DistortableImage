@@ -111,15 +111,16 @@ To test the multi-image interface, open `select.html`. Currently it supports mul
 
 Our `DistortableCollection` class allows working with multiple images simultaneously. Say we instantiated 3 images, saved them to the variables `img`, `img2`, and `img3`, and enabled editing on all of them. To access the UI and functionalities available in the multiple image interface, pass them to the collection class:
 
-
 ```js
 // OPTION 1: Pass in images immediately
-new L.DistortableCollection([img, img2]).addTo(map);
+new L.DistortableCollection([img, img2, img3]).addTo(map);
 
 // OPTION 2: Instantiate an empty collection and pass in images later 
 var imageFeatureGroup = new L.DistortableCollection().addTo(map);
 
-imageFeatureGroup.addLayer(img); imageFeatureGroup.addLayer(img2);
+imageFeatureGroup.addLayer(img);
+imageFeatureGroup.addLayer(img2);
+imageFeatureGroup.addLayer(img3);
 
 ```
 
