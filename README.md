@@ -34,8 +34,6 @@ And watch this GIF demo:
 
 To test the code, open `index.html` in your browser and click and drag the markers on the edges of the image. The image will show perspectival distortions.
 
-To test the multi-image interface, open `select.html`. Currently it supports multiple image selection and translations; image distortions still use the single-image interface. 
-
 ## Basic Usage
 
 The most simple implementation to get started:
@@ -99,49 +97,35 @@ L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
 
 ```
 
-## Multiple Image Functionality
+## Multiple Images
 
+To test the multi-image interface, open `select.html`. Currently it supports multiple image selection and translations; image distortions still use the single-image interface.
+
+  - Multiple images can be selected using:
+
+    - a) <kbd>cmd</kbd> + `click`: to select one at a time
+
+    - b) <kbd>shift</kbd> + `drag`: create and expand a selection box over the area you want selected. 
+
+      - *For selection accuracy - drag over the image selection markers from bottom right -> upper left
+
+Our `DistortableCollection` class allows working with multiple images simultaneously. Say we instantiated 3 images, saved them to the variables `img`, `img2`, and `img3`, and enabled editing on all of them. To access the UI and functionalities available in the multiple image interface, pass them to the collection class:
 
 
 ```js
-// create an image
-img = new L.DistortableImageOverlay(
-  'example.png', {
-    corners: [
-      new L.latLng(51.52,-0.10),
-      new L.latLng(51.52,-0.14),
-      new L.latLng(51.50,-0.10),
-      new L.latLng(51.50,-0.14)
-    ],
-    fullResolutionSrc: 'large.jpg'
-).addTo(map);
+// OPTION 1: Pass in images immediately
+new L.DistortableCollection([img, img2]).addTo(map);
 
-// create a second image
-img2 = new L.DistortableImageOverlay(
-  'example.png', {
-    corners: [
-      new L.latLng(51.52,-0.10),
-      new L.latLng(51.52,-0.14),
-      new L.latLng(51.50,-0.10),
-      new L.latLng(51.50,-0.14)
-    ],
-    fullResolutionSrc: 'large.jpg'
-  }
-).addTo(map);
+// OPTION 2: Instantiate an empty collection and pass in images later 
+var imageFeatureGroup = new L.DistortableCollection().addTo(map);
 
-L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
-L.DomEvent.on(img2._image, 'load', img2.editing.enable, img2.editing);
-
-
-var imagesFeatureGroup = new L.DistortableCollection([img, img2]).addTo(map);
+imageFeatureGroup.addLayer(img); imageFeatureGroup.addLayer(img2);
 
 ```
 
-
-
 ## Image-ordering
 
-For multiple images, we've added a `ToggleOrder` action, that switches overlapping images back and forth into view by employing [`bringToFront()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtoback) from the Leaflet API. 
+For multiple images, we've also added a `ToggleOrder` action, that switches overlapping images back and forth into view by employing [`bringToFront()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtoback) from the Leaflet API. 
 
 ```js
 ToggleOrder = EditOverlayAction.extend({
