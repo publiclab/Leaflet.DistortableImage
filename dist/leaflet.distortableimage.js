@@ -828,14 +828,23 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 L.DistortableCollection = L.FeatureGroup.extend({
   include: L.Mixin.Events,
 
+  options: {
+    keymap: {
+      27: '_removeSelections' // esc
+    }
+  },
+
   onAdd: function(map) {
     L.FeatureGroup.prototype.onAdd.call(this, map);
 
     this._map = map;
+    window.thisis = this;
+
+    L.DomEvent.on(document, "keydown", this._onKeyDown, this);
 
     L.DomEvent.on(map, "click", this._removeSelections, this);
-    L.DomEvent.on(map, "boxzoomend", this._check, this);
-
+    L.DomEvent.on(map, "boxzoomend", this._addSelections, this);
+    
     this.eachLayer(function(layer) {
       L.DomEvent.on(layer, "drag", this._dragMultiple, this);
       L.DomEvent.on(layer, "dragstart", this._dragStartMultiple, this);
@@ -849,7 +858,10 @@ L.DistortableCollection = L.FeatureGroup.extend({
   onRemove: function() {
     var map = this._map;
 
+    L.DomEvent.on(document, "keydown", this._onKeyDown, this);
+
     L.DomEvent.off(map, "click", this._removeSelections, this);
+    L.DomEvent.off(map, "boxzoomend", this._addSelections, this);
 
     this.eachLayer(function(layer) {
       L.DomEvent.off(layer, "drag", this._dragMultiple, this);
@@ -857,12 +869,14 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
   },
 
-
-  _check: function(e) {
+  _addSelections: function(e) {
     var boxBounds = e.boxZoomBounds,
     i = 0;
 
     this.eachLayer(function(layer) {
+      if (layer.editing.toolbar) {
+        layer.editing._hideToolbar();
+      }
       for (i = 0; i < 4; i++) {
         if (boxBounds.contains(layer.getCorners()[i]) && layer.editing._mode !== "lock") {
           console.log("hit image", layer);
@@ -871,6 +885,12 @@ L.DistortableCollection = L.FeatureGroup.extend({
         }
       }
     });
+  },
+
+  _onKeyDown: function (e) {
+    if (e.keyCode === 27) {
+      this._removeSelections();
+    }
   },
 
   _getSelectedImages: function() {
@@ -1136,8 +1156,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 		opacity: 0.7,
 		outline: '1px solid red',
 		keymap: {
-			8: "_removeOverlay", // backspace windows / delete mac
-			46: "_removeOverlay", // delete windows / delete + fn mac
+			8: '_removeOverlay', // backspace windows / delete mac
+			46: '_removeOverlay', // delete windows / delete + fn mac
 			20: '_toggleRotate', // CAPS
 			68: '_toggleRotateDistort', // d
 			69: '_toggleIsolate', // e
@@ -1463,7 +1483,8 @@ L.DistortableImage.Edit = L.Handler.extend({
         this.disable();
       }
     }
-  },
+	},
+	
 	// compare this to using overlay zIndex
 	_toggleOrder: function () {
 	if (this._toggledImage) {
@@ -1598,7 +1619,7 @@ L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
     L.DomEvent
       .on(document, 'mousemove', this._onMouseMove, this)
       .on(document, 'mouseup', this._onMouseUp, this)
-      .on(document, 'keydown', this._onKeyDown, this)
+      // .on(document, 'keydown', this._onKeyDown, this)
       .preventDefault(e);
 
     this._map.fire('boxzoomstart');
@@ -1623,7 +1644,7 @@ L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
 
   _onMouseUp: function (e) {
     if (!$(this._pane).children('.leaflet-zoom-box').length) { return false; }
-    // window.e = e;
+
     var map = this._map,
       layerPoint = map.mouseEventToLayerPoint(e);
 
@@ -1636,29 +1657,20 @@ L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
     window.bounds = this._boxBounds;
     // window.div = this._div;
     window.box = this._box;
-    window.pane = this._pane;
-    window.map = map;
-    window.container = this._container;
+    // window.pane = this._pane;
+    // window.map = map;
+    // window.container = this._container;
 
     map.fire('boxzoomend', {
       boxZoomBounds: this._boxBounds
     }, this);
 
-    // window._boxBounds = this._boxBounds;
-
-    let contents = $(this._pane).children();
-    let images = contents.filter('img');
+    // let contents = $(this._pane).children();
+    // let images = contents.filter('img');
 
     this._finish();
 
-    this._attach(images);
-
-    console.log(images);
-    return images;
-  },
-
-  _check: function(e){
-    window.zoome = e;
+    // return images;
   },
 
   _finish: function () {
@@ -1672,29 +1684,9 @@ L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
 
     L.DomEvent
       .off(document, 'mousemove', this._onMouseMove)
-      .off(document, 'mouseup', this._onMouseUp)
-      .off(document, 'keydown', this._onKeyDown);
+      .off(document, 'mouseup', this._onMouseUp);
+      // .off(document, 'keydown', this._onKeyDown);
   },
-
-  _attach: function(images) {
-    if ($('#holding')) {
-      this._imagesDiv = $('#holding');
-      $(images).appendTo(this._imagesDiv);
-      window.imagesDiv = this._imagesDiv;
-    }
-  },
-
-  // escape keybinding for getting rid of the selection box (alternative to mouse up). keep for now to see if it will become useful
-  // in deselecting images
-  _onKeyDown: function (e) {
-    if (e.keyCode === 27) {
-      if ($(this._pane).children('.leaflet-zoom-box').length) {
-        $(this._box).remove();
-      }
-      // this._finish();
-    }
-  },
-
 });
 
 L.Map.addInitHook('addHandler', 'boxSelector', L.Map.BoxSelectHandle);

@@ -5,8 +5,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 		opacity: 0.7,
 		outline: '1px solid red',
 		keymap: {
-			8: "_removeOverlay", // backspace windows / delete mac
-			46: "_removeOverlay", // delete windows / delete + fn mac
+			8: '_removeOverlay', // backspace windows / delete mac
+			46: '_removeOverlay', // delete windows / delete + fn mac
 			20: '_toggleRotate', // CAPS
 			68: '_toggleRotateDistort', // d
 			69: '_toggleIsolate', // e
@@ -332,7 +332,8 @@ L.DistortableImage.Edit = L.Handler.extend({
         this.disable();
       }
     }
-  },
+	},
+	
 	// compare this to using overlay zIndex
 	_toggleOrder: function () {
 	if (this._toggledImage) {

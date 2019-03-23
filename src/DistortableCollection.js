@@ -1,14 +1,23 @@
 L.DistortableCollection = L.FeatureGroup.extend({
   include: L.Mixin.Events,
 
+  options: {
+    keymap: {
+      27: '_removeSelections' // esc
+    }
+  },
+
   onAdd: function(map) {
     L.FeatureGroup.prototype.onAdd.call(this, map);
 
     this._map = map;
+    window.thisis = this;
+
+    L.DomEvent.on(document, "keydown", this._onKeyDown, this);
 
     L.DomEvent.on(map, "click", this._removeSelections, this);
-    L.DomEvent.on(map, "boxzoomend", this._check, this);
-
+    L.DomEvent.on(map, "boxzoomend", this._addSelections, this);
+    
     this.eachLayer(function(layer) {
       L.DomEvent.on(layer, "drag", this._dragMultiple, this);
       L.DomEvent.on(layer, "dragstart", this._dragStartMultiple, this);
@@ -22,7 +31,10 @@ L.DistortableCollection = L.FeatureGroup.extend({
   onRemove: function() {
     var map = this._map;
 
+    L.DomEvent.on(document, "keydown", this._onKeyDown, this);
+
     L.DomEvent.off(map, "click", this._removeSelections, this);
+    L.DomEvent.off(map, "boxzoomend", this._addSelections, this);
 
     this.eachLayer(function(layer) {
       L.DomEvent.off(layer, "drag", this._dragMultiple, this);
@@ -30,12 +42,14 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
   },
 
-
-  _check: function(e) {
+  _addSelections: function(e) {
     var boxBounds = e.boxZoomBounds,
     i = 0;
 
     this.eachLayer(function(layer) {
+      if (layer.editing.toolbar) {
+        layer.editing._hideToolbar();
+      }
       for (i = 0; i < 4; i++) {
         if (boxBounds.contains(layer.getCorners()[i]) && layer.editing._mode !== "lock") {
           console.log("hit image", layer);
@@ -44,6 +58,12 @@ L.DistortableCollection = L.FeatureGroup.extend({
         }
       }
     });
+  },
+
+  _onKeyDown: function (e) {
+    if (e.keyCode === 27) {
+      this._removeSelections();
+    }
   },
 
   _getSelectedImages: function() {

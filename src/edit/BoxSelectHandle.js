@@ -32,7 +32,7 @@ L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
     L.DomEvent
       .on(document, 'mousemove', this._onMouseMove, this)
       .on(document, 'mouseup', this._onMouseUp, this)
-      .on(document, 'keydown', this._onKeyDown, this)
+      // .on(document, 'keydown', this._onKeyDown, this)
       .preventDefault(e);
 
     this._map.fire('boxzoomstart');
@@ -57,7 +57,7 @@ L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
 
   _onMouseUp: function (e) {
     if (!$(this._pane).children('.leaflet-zoom-box').length) { return false; }
-    // window.e = e;
+
     var map = this._map,
       layerPoint = map.mouseEventToLayerPoint(e);
 
@@ -70,29 +70,20 @@ L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
     window.bounds = this._boxBounds;
     // window.div = this._div;
     window.box = this._box;
-    window.pane = this._pane;
-    window.map = map;
-    window.container = this._container;
+    // window.pane = this._pane;
+    // window.map = map;
+    // window.container = this._container;
 
     map.fire('boxzoomend', {
       boxZoomBounds: this._boxBounds
     }, this);
 
-    // window._boxBounds = this._boxBounds;
-
-    let contents = $(this._pane).children();
-    let images = contents.filter('img');
+    // let contents = $(this._pane).children();
+    // let images = contents.filter('img');
 
     this._finish();
 
-    this._attach(images);
-
-    console.log(images);
-    return images;
-  },
-
-  _check: function(e){
-    window.zoome = e;
+    // return images;
   },
 
   _finish: function () {
@@ -106,29 +97,9 @@ L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
 
     L.DomEvent
       .off(document, 'mousemove', this._onMouseMove)
-      .off(document, 'mouseup', this._onMouseUp)
-      .off(document, 'keydown', this._onKeyDown);
+      .off(document, 'mouseup', this._onMouseUp);
+      // .off(document, 'keydown', this._onKeyDown);
   },
-
-  _attach: function(images) {
-    if ($('#holding')) {
-      this._imagesDiv = $('#holding');
-      $(images).appendTo(this._imagesDiv);
-      window.imagesDiv = this._imagesDiv;
-    }
-  },
-
-  // escape keybinding for getting rid of the selection box (alternative to mouse up). keep for now to see if it will become useful
-  // in deselecting images
-  _onKeyDown: function (e) {
-    if (e.keyCode === 27) {
-      if ($(this._pane).children('.leaflet-zoom-box').length) {
-        $(this._box).remove();
-      }
-      // this._finish();
-    }
-  },
-
 });
 
 L.Map.addInitHook('addHandler', 'boxSelector', L.Map.BoxSelectHandle);
