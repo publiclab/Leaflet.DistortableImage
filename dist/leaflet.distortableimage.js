@@ -834,6 +834,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     this._map = map;
 
     L.DomEvent.on(map, "click", this._removeSelections, this);
+    L.DomEvent.on(map, "boxzoomend", this._check, this);
 
     this.eachLayer(function(layer) {
       L.DomEvent.on(layer, "drag", this._dragMultiple, this);
@@ -854,6 +855,22 @@ L.DistortableCollection = L.FeatureGroup.extend({
       L.DomEvent.off(layer, "drag", this._dragMultiple, this);
       L.DomEvent.off(layer, "dragstart", this._dragStartMultiple, this);
     }, this);
+  },
+
+
+  _check: function(e) {
+    var boxBounds = e.boxZoomBounds,
+    i = 0;
+
+    this.eachLayer(function(layer) {
+      for (i = 0; i < 4; i++) {
+        if (boxBounds.contains(layer.getCorners()[i]) && layer.editing._mode !== "lock") {
+          console.log("hit image", layer);
+          L.DomUtil.addClass(layer._image, "selected");
+          break;
+        }
+      }
+    });
   },
 
   _getSelectedImages: function() {
@@ -1612,11 +1629,11 @@ L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
 
     if (this._startLayerPoint.equals(layerPoint)) { return; }
 
-    var bounds = new L.LatLngBounds(
+    this._boxBounds = new L.LatLngBounds(
       map.layerPointToLatLng(this._startLayerPoint),
       map.layerPointToLatLng(layerPoint));
 
-    window.bounds = bounds;
+    window.bounds = this._boxBounds;
     // window.div = this._div;
     window.box = this._box;
     window.pane = this._pane;
@@ -1624,10 +1641,10 @@ L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
     window.container = this._container;
 
     map.fire('boxzoomend', {
-      // boxBounds: bounds
-    });
+      boxZoomBounds: this._boxBounds
+    }, this);
 
-
+    // window._boxBounds = this._boxBounds;
 
     let contents = $(this._pane).children();
     let images = contents.filter('img');
@@ -1638,6 +1655,10 @@ L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
 
     console.log(images);
     return images;
+  },
+
+  _check: function(e){
+    window.zoome = e;
   },
 
   _finish: function () {
