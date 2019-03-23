@@ -8,6 +8,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			8: '_removeOverlay', // backspace windows / delete mac
 			46: '_removeOverlay', // delete windows / delete + fn mac
 			20: '_toggleRotate', // CAPS
+			27: '_removeSelections', // esc
 			68: '_toggleRotateDistort', // d
 			69: '_toggleIsolate', // e
 			73: '_toggleIsolate', // i
@@ -196,7 +197,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 			handlerName = keymap[event.which];
 
 		if (handlerName !== undefined && this._overlay.options.suppressToolbar !== true) {
-			this[handlerName].call(this);
+			if (handlerName === '_removeSelections') { return; }
+			else { this[handlerName].call(this); }
 		}
 	},
 

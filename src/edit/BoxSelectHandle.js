@@ -32,7 +32,6 @@ L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
     L.DomEvent
       .on(document, 'mousemove', this._onMouseMove, this)
       .on(document, 'mouseup', this._onMouseUp, this)
-      // .on(document, 'keydown', this._onKeyDown, this)
       .preventDefault(e);
 
     this._map.fire('boxzoomstart');
@@ -56,8 +55,6 @@ L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
   },
 
   _onMouseUp: function (e) {
-    if (!$(this._pane).children('.leaflet-zoom-box').length) { return false; }
-
     var map = this._map,
       layerPoint = map.mouseEventToLayerPoint(e);
 
@@ -67,29 +64,13 @@ L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
       map.layerPointToLatLng(this._startLayerPoint),
       map.layerPointToLatLng(layerPoint));
 
-    window.bounds = this._boxBounds;
-    // window.div = this._div;
-    window.box = this._box;
-    // window.pane = this._pane;
-    // window.map = map;
-    // window.container = this._container;
-
-    map.fire('boxzoomend', {
-      boxZoomBounds: this._boxBounds
-    }, this);
-
-    // let contents = $(this._pane).children();
-    // let images = contents.filter('img');
+    map.fire('boxzoomend', { boxZoomBounds: this._boxBounds });
 
     this._finish();
-
-    // return images;
   },
 
   _finish: function () {
-    // if (!this._box) { return false; }
-    // this._pane.removeChild(this._box);[]
-    $(this._box).remove();
+    L.DomUtil.remove(this._box);
     this._container.style.cursor = '';
 
     L.DomUtil.enableTextSelection();
@@ -98,7 +79,6 @@ L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
     L.DomEvent
       .off(document, 'mousemove', this._onMouseMove)
       .off(document, 'mouseup', this._onMouseUp);
-      // .off(document, 'keydown', this._onKeyDown);
   },
 });
 

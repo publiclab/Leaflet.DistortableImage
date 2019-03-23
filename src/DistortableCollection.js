@@ -1,17 +1,10 @@
 L.DistortableCollection = L.FeatureGroup.extend({
   include: L.Mixin.Events,
 
-  options: {
-    keymap: {
-      27: '_removeSelections' // esc
-    }
-  },
-
   onAdd: function(map) {
     L.FeatureGroup.prototype.onAdd.call(this, map);
 
     this._map = map;
-    window.thisis = this;
 
     L.DomEvent.on(document, "keydown", this._onKeyDown, this);
 
@@ -19,13 +12,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
     L.DomEvent.on(map, "boxzoomend", this._addSelections, this);
     
     this.eachLayer(function(layer) {
-      L.DomEvent.on(layer, "drag", this._dragMultiple, this);
       L.DomEvent.on(layer, "dragstart", this._dragStartMultiple, this);
+      L.DomEvent.on(layer, "drag", this._dragMultiple, this);
     }, this);
-  },
-
-  isSelected: function(overlay) {
-    return L.DomUtil.hasClass(overlay.getElement(), "selected");
   },
 
   onRemove: function() {
@@ -37,23 +26,27 @@ L.DistortableCollection = L.FeatureGroup.extend({
     L.DomEvent.off(map, "boxzoomend", this._addSelections, this);
 
     this.eachLayer(function(layer) {
-      L.DomEvent.off(layer, "drag", this._dragMultiple, this);
       L.DomEvent.off(layer, "dragstart", this._dragStartMultiple, this);
+      L.DomEvent.off(layer, "drag", this._dragMultiple, this);
     }, this);
   },
 
+
+  isSelected: function (overlay) {
+    return L.DomUtil.hasClass(overlay.getElement(), "selected");
+  },
+
+
   _addSelections: function(e) {
-    var boxBounds = e.boxZoomBounds,
-    i = 0;
+    var box = e.boxZoomBounds,
+      i = 0;
 
     this.eachLayer(function(layer) {
-      if (layer.editing.toolbar) {
-        layer.editing._hideToolbar();
-      }
+      var edit = layer.editing;
+      if (edit.toolbar) { edit._hideToolbar(); }
       for (i = 0; i < 4; i++) {
-        if (boxBounds.contains(layer.getCorners()[i]) && layer.editing._mode !== "lock") {
-          console.log("hit image", layer);
-          L.DomUtil.addClass(layer._image, "selected");
+        if (box.contains(layer.getCorners()[i]) && edit._mode !== "lock") {
+          L.DomUtil.addClass(layer.getElement(), "selected");
           break;
         }
       }
@@ -61,13 +54,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   _onKeyDown: function (e) {
-    if (e.keyCode === 27) {
+    if (e.key === 'Escape') {
       this._removeSelections();
     }
-  },
-
-  _getSelectedImages: function() {
-    return this.getLayers();
   },
 
   _dragStartMultiple: function(event) {
@@ -93,9 +82,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
       map = this._map,
       i;
 
-    if (!this.isSelected(overlay)) {
-      return;
-    }
+    if (!this.isSelected(overlay)) { return; }
 
     overlay._dragPoints = {};
 
