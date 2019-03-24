@@ -928,6 +928,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
       if (layer.editing.toolbar) {
         layer.editing._hideToolbar();
       }
+      console.log(layer.editing.toolbar);
     });
   },
 

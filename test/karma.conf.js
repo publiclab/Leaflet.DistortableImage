@@ -33,17 +33,23 @@ module.exports = function(config) {
       "node_modules/chai/chai.js",
       "node_modules/sinon/pkg/sinon.js",
       "src/util/*.js",
+<<<<<<< HEAD
       "src/edit/getEXIFdata.js",
+=======
+      "src/edit/BoxSelectHandle.js",
+>>>>>>> Add tests for locking / selection as part of documentation
       "src/edit/EditHandle.js",
       "src/edit/LockHandle.js",
       "src/edit/DistortHandle.js",
       "src/edit/RotateAndScaleHandle.js",
       "src/edit/RotateHandle.js",
       "src/edit/ScaleHandle.js",
+      "src/DistortableCollection.js",
       "src/DistortableImageOverlay.js",
       "src/edit/DistortableImage.EditToolbar.js",
       "src/edit/DistortableImage.Edit.js",
       "test/SpecHelper.js",
+      "test/src/*Spec.js",
       "test/src/**/*Spec.js"
     ],
 
