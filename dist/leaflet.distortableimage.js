@@ -847,7 +847,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
   onRemove: function() {
     var map = this._map;
 
-    L.DomEvent.on(document, "keydown", this._onKeyDown, this);
+    L.DomEvent.off(document, "keydown", this._onKeyDown, this);
 
     L.DomEvent.off(map, "click", this._removeSelections, this);
     L.DomEvent.off(map, "boxzoomend", this._addSelections, this);
@@ -862,7 +862,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
   isSelected: function (overlay) {
     return L.DomUtil.hasClass(overlay.getElement(), "selected");
   },
-
 
   _addSelections: function(e) {
     var box = e.boxZoomBounds,
@@ -928,7 +927,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
       if (layer.editing.toolbar) {
         layer.editing._hideToolbar();
       }
-      console.log(layer.editing.toolbar);
     });
   },
 
