@@ -101,15 +101,10 @@ L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
 
 To test the multi-image interface, open `select.html`. Currently it supports multiple image selection and translations; image distortions still use the single-image interface.
 
-  - Multiple images can be selected using:
-
-    - a) <kbd>cmd</kbd> + `click`: to select one at a time
-
-    - b) <kbd>shift</kbd> + `drag`: create and expand a selection box over the area you want selected. 
-
-      - *For selection accuracy - drag over the image selection markers from bottom right -> upper left
-
-Our `DistortableCollection` class allows working with multiple images simultaneously. Say we instantiated 3 images, saved them to the variables `img`, `img2`, and `img3`, and enabled editing on all of them. To access the UI and functionalities available in the multiple image interface, pass them to the collection class:
+  - Multiple images can be selected using <kbd>cmd</kbd> + `click` to toggle individual image selection.
+  - Click on the map or hit the <kbd>esc</kbd> key to quickly deselect all images.
+   
+Our `DistortableCollection` lass allows working with multiple images simultaneously. Say we instantiated 3 images, saved them to the variables `img`, `img2`, and `img3`, and enabled editing on all of them. To access the UI and functionalities available in the multiple image interface, pass them to the collection class:
 
 ```js
 // OPTION 1: Pass in images immediately

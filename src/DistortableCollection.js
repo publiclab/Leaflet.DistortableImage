@@ -9,7 +9,12 @@ L.DistortableCollection = L.FeatureGroup.extend({
     L.DomEvent.on(document, "keydown", this._onKeyDown, this);
 
     L.DomEvent.on(map, "click", this._removeSelections, this);
-    L.DomEvent.on(map, "boxzoomend", this._addSelections, this);
+
+    /** 
+     * the box zoom override works, but there is a bug involving click event propogation.
+     * keeping uncommented for now so that it isn't used as a multi-select mechanism
+     */ 
+    // L.DomEvent.on(map, "boxzoomend", this._addSelections, this);
     
     this.eachLayer(function(layer) {
       L.DomEvent.on(layer, "dragstart", this._dragStartMultiple, this);

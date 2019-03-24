@@ -836,7 +836,12 @@ L.DistortableCollection = L.FeatureGroup.extend({
     L.DomEvent.on(document, "keydown", this._onKeyDown, this);
 
     L.DomEvent.on(map, "click", this._removeSelections, this);
-    L.DomEvent.on(map, "boxzoomend", this._addSelections, this);
+
+    /** 
+     * the box zoom override works, but there is a bug involving click event propogation.
+     * keeping uncommented for now so that it isn't used as a multi-select mechanism
+     */ 
+    // L.DomEvent.on(map, "boxzoomend", this._addSelections, this);
     
     this.eachLayer(function(layer) {
       L.DomEvent.on(layer, "dragstart", this._dragStartMultiple, this);
@@ -1580,6 +1585,9 @@ L.DistortableImageOverlay.addInitHook(function() {
 });
 L.Map.mergeOptions({ boxSelector: true, boxZoom: false });
 
+// used for multiple image select. Temporarily disabled until click
+// propogation issue is fixed
+
 L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
 
   initialize: function (map) {
@@ -1644,13 +1652,17 @@ L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
       map.layerPointToLatLng(this._startLayerPoint),
       map.layerPointToLatLng(layerPoint));
 
+    this._finish();
+
     map.fire('boxzoomend', { boxZoomBounds: this._boxBounds });
 
-    this._finish();
+    // this._finish();
   },
 
   _finish: function () {
-    L.DomUtil.remove(this._box);
+    $(this._map.boxSelector._box).remove();
+    // L.DomUtil.remove(this._box);
+    // L.DomUtil.remove(this._map.boxSelector);
     this._container.style.cursor = '';
 
     L.DomUtil.enableTextSelection();
