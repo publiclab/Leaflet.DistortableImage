@@ -1,7 +1,7 @@
 L.Map.mergeOptions({ boxSelector: true, boxZoom: false });
 
 // used for multiple image select. Temporarily disabled until click
-// propogation issue is fixed
+// propagation issue is fixed
 
 L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
 
