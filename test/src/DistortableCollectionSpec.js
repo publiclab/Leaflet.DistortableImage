@@ -1,11 +1,9 @@
-function simulateClick(el) {
+function simulateCommandClick(el) {
   if (document.createEvent) {
     var e = document.createEvent('MouseEvents');
     e.initMouseEvent('mousedown', true, true, window,
       0, 0, 0, 0, 0, true, false, false, true, 0, null);
     return el.dispatchEvent(e);
-  // } else if (el.fireEvent) {
-  //   return el.fireEvent('mousedown');
   }
 };
 
@@ -36,12 +34,7 @@ describe("L.DistortableCollection", function () {
       ]
     }).addTo(map);
 
-    /* Forces the image to load before any tests are run. */
-    // L.DomEvent.on(overlay._image, 'load', function () {
-    //   L.DomEvent.on(overlay2._image, 'load');
-    //   done();
-    // });
-
+    /* Forces the images and feature group to load before any tests are run. */
     L.DomEvent.on(overlay._image, 'load', function () { 
       overlay.editing.enable();
       overlay2.editing.enable();
@@ -54,31 +47,9 @@ describe("L.DistortableCollection", function () {
       L.DomUtil.remove(overlay2);
     });
 
-
-    // overlay.editing.enable();
-    // overlay2.editing.enable();
-
-    // imageFeatureGroup = new L.DistortableCollection([overlay]).addTo(map);
   });
+
   it.skip("Should keep selected images in sync with eachother during translation", function () {
-    L.DomUtil.addClass(overlay.getElement(), "selected");
-    L.DomUtil.addClass(overlay2.getElement(), "selected");
-
-    dragging = overlay.editing.dragging;
-    dragging = overlay2.editing.dragging;
-
-    overlay._reset();
-    overlay2._reset();
-
-    L.DomEvent.on(overlay, "dragstart", this._dragStartMultiple, this);
-    L.DomEvent.on(overlay, "drag", this._dragMultiple, this);
-
-    dragging._onDown({ touches: [{ clientX: 0, clientY: 0 }], target: overlay._image });
-    dragging._onMove({ touches: [{ clientX: 20, clientY: 30 }], target: overlay._image });
-    dragging._onUp();
-
-    map.setView([41.7896, -87.6996]);
-
 
   });
 
@@ -96,10 +67,9 @@ describe("L.DistortableCollection", function () {
   });
 
   it("Should allow selection of an image on command + click", function() {
-   
     L.DomUtil.removeClass(overlay.getElement(), "selected");
     
-    simulateClick(overlay.getElement());
+    simulateCommandClick(overlay.getElement());
 
     var classStr = L.DomUtil.getClass(overlay.getElement());
 
@@ -107,16 +77,14 @@ describe("L.DistortableCollection", function () {
   });
 
   it("But it should now allow selection of a locked image", function() {
-   
     L.DomUtil.removeClass(overlay.getElement(), "selected");
     overlay.editing._mode = "lock";
 
-    simulateClick(overlay.getElement());
+    simulateCommandClick(overlay.getElement());
 
     var classStr = L.DomUtil.getClass(overlay.getElement());
 
     expect(classStr).to.not.include("selected");
   });
-
 
 });

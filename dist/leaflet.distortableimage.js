@@ -928,7 +928,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
       if (layer.editing.toolbar) {
         layer.editing._hideToolbar();
       }
-      console.log(layer.editing.toolbar);
     });
   },
 
@@ -1163,7 +1162,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 	initialize: function(overlay) {
 		this._overlay = overlay;
-		this._overlay._dragStartPoints = { 0: new L.point(0, 0), 1: new L.point(0, 0), 2: new L.point(0, 0), 3: new L.point(0, 0) };
 		this._toggledImage = false;
 
 		/* Interaction modes. */
@@ -1219,6 +1217,13 @@ L.DistortableImage.Edit = L.Handler.extend({
 			this._enableDragging();
 		}
 
+		this._overlay._dragStartPoints = {
+			0: new L.point(0, 0),
+			1: new L.point(0, 0),
+			2: new L.point(0, 0),
+			3: new L.point(0, 0)
+		};
+
 		L.DomEvent.on(overlay._image, 'click', this._showToolbar, this);
 
 		L.DomEvent.on(overlay._image, 'mousedown', this._toggleSelections, this);
@@ -1239,8 +1244,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		L.DomEvent.off(overlay._image, 'mousedown', this._toggleSelections, this);
 
-		// First, check if dragging exists;
-		// it may be off due to locking
+		// First, check if dragging exists - it may be off due to locking
 		if (this.dragging) { this.dragging.disable(); }
 		delete this.dragging;
 
