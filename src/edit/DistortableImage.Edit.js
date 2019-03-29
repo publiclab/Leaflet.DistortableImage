@@ -310,12 +310,14 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 	_hideMarkers: function() {
 		this._distortHandles.eachLayer(function (layer) {
+			var drag = layer.dragging,
+				opts = layer.options;
+
 			layer.setOpacity(0);
-			if (layer.dragging) { layer.dragging.disable(); }
-			if (layer.options.draggable) {
-				layer.options.draggable = false;
-			}	
+			if (drag) { drag.disable(); }
+			if (opts.draggable) { opts.draggable = false; }	
 		});
+		
 	},
 	
 	// TODO: toolbar for multiple image selection
