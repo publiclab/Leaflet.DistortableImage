@@ -17,6 +17,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     // L.DomEvent.on(map, "boxzoomend", this._addSelections, this);
     
     this.eachLayer(function(layer) {
+      L.DomEvent.on(layer._image, 'mousedown', this._hideMultipleMarkers, this);
       L.DomEvent.on(layer, "dragstart", this._dragStartMultiple, this);
       L.DomEvent.on(layer, "drag", this._dragMultiple, this);
     }, this);
@@ -31,6 +32,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     L.DomEvent.off(map, "boxzoomend", this._addSelections, this);
 
     this.eachLayer(function(layer) {
+      L.DomEvent.off(layer._image, 'mousedown', this._hideMultipleMarkers, this);
       L.DomEvent.off(layer, "dragstart", this._dragStartMultiple, this);
       L.DomEvent.off(layer, "drag", this._dragMultiple, this);
     }, this);
@@ -39,6 +41,12 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
   isSelected: function (overlay) {
     return L.DomUtil.hasClass(overlay.getElement(), "selected");
+  },
+
+  _hideMultipleMarkers: function() {
+    this.eachLayer(function (layer) {
+     layer.editing._hideMarkers();
+    });
   },
 
   _addSelections: function(e) {

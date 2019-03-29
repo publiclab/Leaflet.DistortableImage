@@ -850,6 +850,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     // L.DomEvent.on(map, "boxzoomend", this._addSelections, this);
     
     this.eachLayer(function(layer) {
+      L.DomEvent.on(layer._image, 'mousedown', this._hideMultipleMarkers, this);
       L.DomEvent.on(layer, "dragstart", this._dragStartMultiple, this);
       L.DomEvent.on(layer, "drag", this._dragMultiple, this);
     }, this);
@@ -864,6 +865,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     L.DomEvent.off(map, "boxzoomend", this._addSelections, this);
 
     this.eachLayer(function(layer) {
+      L.DomEvent.off(layer._image, 'mousedown', this._hideMultipleMarkers, this);
       L.DomEvent.off(layer, "dragstart", this._dragStartMultiple, this);
       L.DomEvent.off(layer, "drag", this._dragMultiple, this);
     }, this);
@@ -872,6 +874,12 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
   isSelected: function (overlay) {
     return L.DomUtil.hasClass(overlay.getElement(), "selected");
+  },
+
+  _hideMultipleMarkers: function() {
+    this.eachLayer(function (layer) {
+     layer.editing._hideMarkers();
+    });
   },
 
   _addSelections: function(e) {
@@ -1242,7 +1250,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		L.DomEvent.on(overlay._image, 'click', this._showToolbar, this);
 
-		L.DomEvent.on(overlay._image, 'mousedown', this._toggleSelection, this);
+		// L.DomEvent.on(overlay._image, 'mousedown', this._toggleSelection, this);
 
 		/* Enable hotkeys. */
 		L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
@@ -1456,18 +1464,9 @@ L.DistortableImage.Edit = L.Handler.extend({
 		this._distortHandles.eachLayer(function (layer) {
 			if (layer.options.opacity === 1) {
 				layer.setOpacity(0);
-				// L.DomUtil.setOpacity(layer.getElement(), 0);
 			}
 		});
 	},
-
-	// _hideAllMarkers: function() {
-	// 	img4._map.eachLayer(function (layer) {
-	// 		if (layer === thisis._overlay) {
-	// 			console.log("found one");
-	// 		}
-	// 	});
-	// },
 	
 	// TODO: toolbar for multiple image selection
 	_showToolbar: function(event) {
@@ -1476,7 +1475,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			map = overlay._map;
 
 		/* Ensure that there is only ever one toolbar attached to each image. */
-		// this._hideToolbar();
+		this._hideToolbar();
 		var point;
 		if (event.containerPoint) { point = event.containerPoint; }
 		else { point = target._leaflet_pos; }
@@ -1486,11 +1485,9 @@ L.DistortableImage.Edit = L.Handler.extend({
 		this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(map, overlay);
 		overlay.fire('toolbar:created');
 		}
-		map.eachLayer(function(layer) {
-			if (layer !== this._overlay) {
-				this._hideMarkers();
-			}
-		}, this );
+
+		this._toggleSelectBorder(event);
+
 		this._distortHandles.eachLayer(function(layer) {
 			if (layer.options.opacity === 0) {
 				layer.setOpacity(1);
@@ -1501,13 +1498,11 @@ L.DistortableImage.Edit = L.Handler.extend({
 		L.DomEvent.stopPropagation(event);
 	},
 
-	_toggleSelection: function(event) {
-		var target = event.target;
-
+	_toggleSelectBorder: function(event) {
 		if (this._mode === 'lock') { return; }
-
+		
 		if (event.metaKey || event.ctrlKey) {
-			L.DomUtil.toggleClass(target, 'selected');
+			L.DomUtil.toggleClass(event.target, 'selected');
 		}
 	},
 
