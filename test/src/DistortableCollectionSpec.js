@@ -1,7 +1,7 @@
 function simulateCommandClick(el) {
   if (document.createEvent) {
     var e = document.createEvent('MouseEvents');
-    e.initMouseEvent('mousedown', true, true, window,
+    e.initMouseEvent('click', true, true, window,
       0, 0, 0, 0, 0, true, false, false, true, 0, null);
     return el.dispatchEvent(e);
   }
