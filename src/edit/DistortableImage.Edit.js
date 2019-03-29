@@ -91,6 +91,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 			3: new L.point(0, 0)
 		};
 
+		L.DomEvent.on(map, "click", this._removeSelection, this);
+
 		L.DomEvent.on(overlay._image, 'click', this._select, this);
 
 		/* Enable hotkeys. */
@@ -105,6 +107,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			map = overlay._map;
 
 		L.DomEvent.off(overlay._image, 'click', this._select, this);
+		L.DomEvent.off(map, "click", this._removeSelection, this);
 
 		// First, check if dragging exists - it may be off due to locking
 		if (this.dragging) { this.dragging.disable(); }
@@ -288,6 +291,13 @@ L.DistortableImage.Edit = L.Handler.extend({
 		this._showToolbar(event);
 		this._toggleMultipleSelect(event);
 		this._showMarkers();
+
+		L.DomEvent.stopPropagation(event);
+	},
+
+	_removeSelection: function (event) {
+		this._hideToolbar(event);
+		this._hideMarkers();
 
 		L.DomEvent.stopPropagation(event);
 	},
