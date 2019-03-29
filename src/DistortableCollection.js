@@ -43,12 +43,21 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return L.DomUtil.hasClass(overlay.getElement(), "selected");
   },
 
-  _hideMultipleMarkers: function() {
+  _hideMultipleMarkers: function(e) {
+    var i = 0;
     this.eachLayer(function (layer) {
-      layer.editing._hideMarkers();
+      if (layer._image !== e.target) {
+        console.log(i);
+        layer.editing._hideMarkers();
+        window.asd = layer.editing;
+        i++;
+      } else {
+        layer.editing._showMarkers();
+      }
       // layer.editing.dragging.disable();
       // layer.options.draggable = false;
     });
+    
   },
 
   _addSelections: function(e) {

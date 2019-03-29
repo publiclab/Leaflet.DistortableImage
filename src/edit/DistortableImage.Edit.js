@@ -78,7 +78,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			map.addLayer(this._distortHandles);
 			this._distortHandles.eachLayer(function (layer) {
 				layer.setOpacity(0);
-				// layer.dragging.disable();
+				layer.dragging.disable();
 				layer.options.draggable = false;
 			});
 			this._enableDragging();
@@ -298,11 +298,18 @@ L.DistortableImage.Edit = L.Handler.extend({
 		}
 	},
 
+	_showMarkers: function() {
+		this._distortHandles.eachLayer(function (layer) {
+			layer.setOpacity(1);
+			layer.dragging.enable();
+			layer.options.draggable = true;
+		});
+	},
+
 	_hideMarkers: function() {
 		this._distortHandles.eachLayer(function (layer) {
-			if (layer.options.opacity === 1) {
 				layer.setOpacity(0);
-			}
+		
 			window.latt = layer;
 			if (layer.options.draggable) {
 				// layer.dragging._draggable.disable();

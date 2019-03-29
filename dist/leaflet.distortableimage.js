@@ -35,13 +35,7 @@ L.DomUtil = L.extend(L.DomUtil, {
 	toggleClass: function(el, className) {
 		var c = className;
 		return this.hasClass(el, c) ? this.removeClass(el, c) : this.addClass(el, c);
-	},
-
-	// getOpacity: function(el, className) {
-	// 	if ('opacity' in el.style) {
-	// 		el.style.opacity = value;
-	// 	}
-	// }
+	}
 
 });
 
@@ -879,12 +873,21 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return L.DomUtil.hasClass(overlay.getElement(), "selected");
   },
 
-  _hideMultipleMarkers: function() {
+  _hideMultipleMarkers: function(e) {
+    var i = 0;
     this.eachLayer(function (layer) {
-      layer.editing._hideMarkers();
+      if (layer._image !== e.target) {
+        console.log(i);
+        layer.editing._hideMarkers();
+        window.asd = layer.editing;
+        i++;
+      } else {
+        layer.editing._showMarkers();
+      }
       // layer.editing.dragging.disable();
       // layer.options.draggable = false;
     });
+    
   },
 
   _addSelections: function(e) {
@@ -1240,7 +1243,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			map.addLayer(this._distortHandles);
 			this._distortHandles.eachLayer(function (layer) {
 				layer.setOpacity(0);
-				// layer.dragging.disable();
+				layer.dragging.disable();
 				layer.options.draggable = false;
 			});
 			this._enableDragging();
@@ -1460,11 +1463,18 @@ L.DistortableImage.Edit = L.Handler.extend({
 		}
 	},
 
+	_showMarkers: function() {
+		this._distortHandles.eachLayer(function (layer) {
+			layer.setOpacity(1);
+			layer.dragging.enable();
+			layer.options.draggable = true;
+		});
+	},
+
 	_hideMarkers: function() {
 		this._distortHandles.eachLayer(function (layer) {
-			if (layer.options.opacity === 1) {
 				layer.setOpacity(0);
-			}
+		
 			window.latt = layer;
 			if (layer.options.draggable) {
 				// layer.dragging._draggable.disable();
