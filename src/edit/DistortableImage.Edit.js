@@ -76,6 +76,11 @@ L.DistortableImage.Edit = L.Handler.extend({
 		} else {
 			this._mode = 'distort';
 			map.addLayer(this._distortHandles);
+			this._distortHandles.eachLayer(function (layer) {
+				layer.setOpacity(0);
+				// L.DomUtil.setOpacity(layer.getElement(), 0);
+				// console.log("layer" + layer.getElement().style.opacity);
+			});
 			this._enableDragging();
 		}
 
@@ -88,7 +93,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		L.DomEvent.on(overlay._image, 'click', this._showToolbar, this);
 
-		L.DomEvent.on(overlay._image, 'mousedown', this._toggleSelections, this);
+		L.DomEvent.on(overlay._image, 'mousedown', this._toggleSelection, this);
 
 		/* Enable hotkeys. */
 		L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
@@ -104,7 +109,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		L.DomEvent.off(overlay._image, 'click', this._showToolbar, this);
 
-		L.DomEvent.off(overlay._image, 'mousedown', this._toggleSelections, this);
+		L.DomEvent.off(overlay._image, 'mousedown', this._toggleSelection, this);
 
 		// First, check if dragging exists - it may be off due to locking
 		if (this.dragging) { this.dragging.disable(); }
@@ -172,6 +177,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		this.dragging.on('dragstart', function () {
 			overlay.fire('dragstart');
 			this._hideToolbar();
+			this._hideMarkers();
 		}, this);
 
 		/*
@@ -296,6 +302,23 @@ L.DistortableImage.Edit = L.Handler.extend({
 			this.toolbar = false;
 		}
 	},
+
+	_hideMarkers: function() {
+		this._distortHandles.eachLayer(function (layer) {
+			if (layer.options.opacity === 1) {
+				layer.setOpacity(0);
+				// L.DomUtil.setOpacity(layer.getElement(), 0);
+			}
+		});
+	},
+
+	// _hideAllMarkers: function() {
+	// 	img4._map.eachLayer(function (layer) {
+	// 		if (layer === thisis._overlay) {
+	// 			console.log("found one");
+	// 		}
+	// 	});
+	// },
 	
 	// TODO: toolbar for multiple image selection
 	_showToolbar: function(event) {
@@ -304,7 +327,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			map = overlay._map;
 
 		/* Ensure that there is only ever one toolbar attached to each image. */
-		this._hideToolbar();
+		// this._hideToolbar();
 		var point;
 		if (event.containerPoint) { point = event.containerPoint; }
 		else { point = target._leaflet_pos; }
@@ -314,11 +337,22 @@ L.DistortableImage.Edit = L.Handler.extend({
 		this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(map, overlay);
 		overlay.fire('toolbar:created');
 		}
-
+		map.eachLayer(function(layer) {
+			if (layer !== this._overlay) {
+				this._hideMarkers();
+			}
+		}, this );
+		this._distortHandles.eachLayer(function(layer) {
+			if (layer.options.opacity === 0) {
+				layer.setOpacity(1);
+			} else {
+				layer.setOpacity(0);
+			}
+    });
 		L.DomEvent.stopPropagation(event);
 	},
 
-	_toggleSelections: function(event) {
+	_toggleSelection: function(event) {
 		var target = event.target;
 
 		if (this._mode === 'lock') { return; }
