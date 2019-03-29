@@ -78,8 +78,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 			map.addLayer(this._distortHandles);
 			this._distortHandles.eachLayer(function (layer) {
 				layer.setOpacity(0);
-				// L.DomUtil.setOpacity(layer.getElement(), 0);
-				// console.log("layer" + layer.getElement().style.opacity);
+				// layer.dragging.disable();
+				layer.options.draggable = false;
 			});
 			this._enableDragging();
 		}
@@ -93,13 +93,10 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		L.DomEvent.on(overlay._image, 'click', this._showToolbar, this);
 
-		// L.DomEvent.on(overlay._image, 'mousedown', this._toggleSelection, this);
-
 		/* Enable hotkeys. */
 		L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
 
 		overlay.fire('select');
-
 	},
 
 	/* Run on image deselection. */
@@ -108,8 +105,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 			map = overlay._map;
 
 		L.DomEvent.off(overlay._image, 'click', this._showToolbar, this);
-
-		L.DomEvent.off(overlay._image, 'mousedown', this._toggleSelection, this);
 
 		// First, check if dragging exists - it may be off due to locking
 		if (this.dragging) { this.dragging.disable(); }
@@ -173,7 +168,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		this.dragging = new L.Draggable(overlay._image);
 		this.dragging.enable();
 
-		/* Hide toolbars while dragging; click will re-show it */
+		/* Hide toolbars and markers while dragging; click will re-show it */
 		this.dragging.on('dragstart', function () {
 			overlay.fire('dragstart');
 			this._hideToolbar();
@@ -308,6 +303,12 @@ L.DistortableImage.Edit = L.Handler.extend({
 			if (layer.options.opacity === 1) {
 				layer.setOpacity(0);
 			}
+			window.latt = layer;
+			if (layer.options.draggable) {
+				// layer.dragging._draggable.disable();
+				// // layer.dragging._draggable.disable();
+					layer.options.draggable = false;
+				}	
 		});
 	},
 	
@@ -319,25 +320,23 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		/* Ensure that there is only ever one toolbar attached to each image. */
 		this._hideToolbar();
+		
 		var point;
 		if (event.containerPoint) { point = event.containerPoint; }
 		else { point = target._leaflet_pos; }
+		
 		var raised_point = map.containerPointToLatLng(new L.Point(point.x,point.y-20));
 		raised_point.lng = overlay.getCenter().lng;
+	
 		if (this._overlay.options.suppressToolbar !== true) {
-		this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(map, overlay);
-		overlay.fire('toolbar:created');
+			this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(map, overlay);
+			overlay.fire('toolbar:created');
 		}
 
 		this._toggleSelectBorder(event);
 
-		this._distortHandles.eachLayer(function(layer) {
-			if (layer.options.opacity === 0) {
-				layer.setOpacity(1);
-			} else {
-				layer.setOpacity(0);
-			}
-    });
+		this._toggleEditMarkers();
+
 		L.DomEvent.stopPropagation(event);
 	},
 
@@ -347,6 +346,17 @@ L.DistortableImage.Edit = L.Handler.extend({
 		if (event.metaKey || event.ctrlKey) {
 			L.DomUtil.toggleClass(event.target, 'selected');
 		}
+	},
+
+	_toggleEditMarkers: function () {
+		window.thisthis = this;
+		this._distortHandles.eachLayer(function (layer) {
+			if (layer.options.opacity === 0) { 
+				layer.setOpacity(1); 
+				// layer.dragging.enable();
+				layer.options.draggable = true;
+			}
+		});
 	},
 
   _removeOverlay: function () {

@@ -45,7 +45,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
   _hideMultipleMarkers: function() {
     this.eachLayer(function (layer) {
-     layer.editing._hideMarkers();
+      layer.editing._hideMarkers();
+      // layer.editing.dragging.disable();
+      // layer.options.draggable = false;
     });
   },
 
