@@ -112,11 +112,12 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
   _removeSelections: function() {
     this.eachLayer(function(layer) {
+      var edit = layer.editing;
       L.DomUtil.removeClass(layer.getElement(), "selected");
-      if (layer.editing.toolbar) {
-        layer.editing._hideToolbar();
+      if (edit.toolbar) {
+        edit._hideToolbar();
       }
-      layer.editing._hideMarkers();
+      edit._hideMarkers();
     });
   },
 

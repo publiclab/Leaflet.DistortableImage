@@ -287,6 +287,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 	_select: function (event) {
 		this._showToolbar(event);
 		this._toggleMultipleSelect(event);
+		this._showMarkers();
 
 		L.DomEvent.stopPropagation(event);
 	},

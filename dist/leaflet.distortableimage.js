@@ -358,10 +358,6 @@ L.RotateAndScaleHandle = L.EditHandle.extend({
 		  checks whether the "edgeMinWidth" property is set and tracks the minimum edge length;
 		  this enables preventing scaling to zero, but we might also add an overall scale limit
 		*/		
-
-		// window.scale = scale;
-		// window.handled = this._handled;
-		
 		if (this._handled.options.hasOwnProperty('edgeMinWidth')){
 			var edgeMinWidth = this._handled.options.edgeMinWidth,
 			    w = L.latLng(overlay._corners[0]).distanceTo(overlay._corners[1]),
@@ -939,11 +935,12 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
   _removeSelections: function() {
     this.eachLayer(function(layer) {
+      var edit = layer.editing;
       L.DomUtil.removeClass(layer.getElement(), "selected");
-      if (layer.editing.toolbar) {
-        layer.editing._hideToolbar();
+      if (edit.toolbar) {
+        edit._hideToolbar();
       }
-      layer.editing._hideMarkers();
+      edit._hideMarkers();
     });
   },
 
@@ -1441,6 +1438,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 	_select: function (event) {
 		this._showToolbar(event);
 		this._toggleMultipleSelect(event);
+		this._showMarkers();
 
 		L.DomEvent.stopPropagation(event);
 	},

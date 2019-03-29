@@ -24,10 +24,6 @@ L.RotateAndScaleHandle = L.EditHandle.extend({
 		  checks whether the "edgeMinWidth" property is set and tracks the minimum edge length;
 		  this enables preventing scaling to zero, but we might also add an overall scale limit
 		*/		
-
-		// window.scale = scale;
-		// window.handled = this._handled;
-		
 		if (this._handled.options.hasOwnProperty('edgeMinWidth')){
 			var edgeMinWidth = this._handled.options.edgeMinWidth,
 			    w = L.latLng(overlay._corners[0]).distanceTo(overlay._corners[1]),
