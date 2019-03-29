@@ -299,6 +299,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 	},
 
 	_showMarkers: function() {
+		if (this._mode === 'lock') { return; }
 		this._distortHandles.eachLayer(function (layer) {
 			layer.setOpacity(1);
 			layer.dragging.enable();
@@ -309,6 +310,9 @@ L.DistortableImage.Edit = L.Handler.extend({
 	_hideMarkers: function() {
 		this._distortHandles.eachLayer(function (layer) {
 				layer.setOpacity(0);
+				if (layer.dragging) {
+					layer.dragging.disable();
+				}
 		
 			window.latt = layer;
 			if (layer.options.draggable) {
@@ -342,7 +346,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		this._toggleSelectBorder(event);
 
-		this._toggleEditMarkers();
+		this._showMarkers();
 
 		L.DomEvent.stopPropagation(event);
 	},
@@ -353,17 +357,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 		if (event.metaKey || event.ctrlKey) {
 			L.DomUtil.toggleClass(event.target, 'selected');
 		}
-	},
-
-	_toggleEditMarkers: function () {
-		window.thisthis = this;
-		this._distortHandles.eachLayer(function (layer) {
-			if (layer.options.opacity === 0) { 
-				layer.setOpacity(1); 
-				// layer.dragging.enable();
-				layer.options.draggable = true;
-			}
-		});
 	},
 
   _removeOverlay: function () {
