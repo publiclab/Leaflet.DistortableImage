@@ -34,10 +34,7 @@ L.EditHandle = L.Marker.extend({
 	},
 
 	_onHandleDragStart: function() {
-		window.thissa = this;
-		if (this._handled.options.opacity !== 0) {
-			this._handled.fire('editstart');
-		}
+		this._handled.fire('editstart');
 	},
 
 	_onHandleDragEnd: function() {

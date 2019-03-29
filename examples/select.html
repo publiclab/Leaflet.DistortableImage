@@ -58,8 +58,6 @@
             edgeMinWidth: 521,
             edgeMinHeight: 348,
           }).addTo(map);
-      
-        // L.DomEvent.on(img._image, 'click', select, img);
 
         // create a second image
         img2 = new L.DistortableImageOverlay(
@@ -107,7 +105,7 @@
           L.DomEvent.on(img4._image, 'load', img4.editing.enable, img4.editing);
 
           new L.DistortableCollection([img, img2, img3, img4]).addTo(map);
-          
+
       }, this);
     })();
 

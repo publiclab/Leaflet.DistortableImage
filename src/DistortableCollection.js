@@ -7,7 +7,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
     this._map = map;
 
     L.DomEvent.on(document, "keydown", this._onKeyDown, this);
-
     L.DomEvent.on(map, "click", this._removeSelections, this);
 
     /** 
@@ -17,7 +16,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     // L.DomEvent.on(map, "boxzoomend", this._addSelections, this);
     
     this.eachLayer(function(layer) {
-      L.DomEvent.on(layer._image, 'mousedown', this._hideMultipleMarkers, this);
+      L.DomEvent.on(layer._image, 'mousedown', this._deselectOthers, this);
       L.DomEvent.on(layer, "dragstart", this._dragStartMultiple, this);
       L.DomEvent.on(layer, "drag", this._dragMultiple, this);
     }, this);
@@ -27,37 +26,30 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var map = this._map;
 
     L.DomEvent.off(document, "keydown", this._onKeyDown, this);
-
     L.DomEvent.off(map, "click", this._removeSelections, this);
-    L.DomEvent.off(map, "boxzoomend", this._addSelections, this);
+    // L.DomEvent.off(map, "boxzoomend", this._addSelections, this);
 
     this.eachLayer(function(layer) {
-      L.DomEvent.off(layer._image, 'mousedown', this._hideMultipleMarkers, this);
+      L.DomEvent.off(layer._image, 'mousedown', this._deselectOthers, this);
       L.DomEvent.off(layer, "dragstart", this._dragStartMultiple, this);
       L.DomEvent.off(layer, "drag", this._dragMultiple, this);
     }, this);
   },
 
-
   isSelected: function (overlay) {
     return L.DomUtil.hasClass(overlay.getElement(), "selected");
   },
 
-  _hideMultipleMarkers: function(e) {
-    var i = 0;
+  _deselectOthers: function(e) {
     this.eachLayer(function (layer) {
+      var edit = layer.editing;
       if (layer._image !== e.target) {
-        console.log(i);
-        layer.editing._hideMarkers();
-        window.asd = layer.editing;
-        i++;
+        edit._hideMarkers();
+        edit._hideToolbar();
       } else {
-        layer.editing._showMarkers();
+        edit._showMarkers();
       }
-      // layer.editing.dragging.disable();
-      // layer.options.draggable = false;
     });
-    
   },
 
   _addSelections: function(e) {

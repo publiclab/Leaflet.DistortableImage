@@ -91,7 +91,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			3: new L.point(0, 0)
 		};
 
-		L.DomEvent.on(overlay._image, 'click', this._showToolbar, this);
+		L.DomEvent.on(overlay._image, 'click', this._select, this);
 
 		/* Enable hotkeys. */
 		L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
@@ -104,14 +104,13 @@ L.DistortableImage.Edit = L.Handler.extend({
 		var overlay = this._overlay,
 			map = overlay._map;
 
-		L.DomEvent.off(overlay._image, 'click', this._showToolbar, this);
+		L.DomEvent.off(overlay._image, 'click', this._select, this);
 
 		// First, check if dragging exists - it may be off due to locking
 		if (this.dragging) { this.dragging.disable(); }
 		delete this.dragging;
 
 		if (this.toolbar) { this._hideToolbar(); }
-
 		if (this.editing) { this.editing.disable(); }
 
 		map.removeLayer(this._handles[this._mode]);
@@ -172,7 +171,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 		this.dragging.on('dragstart', function () {
 			overlay.fire('dragstart');
 			this._hideToolbar();
-			this._hideMarkers();
 		}, this);
 
 		/*
@@ -224,9 +222,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		var map = this._overlay._map;
 
 		map.removeLayer(this._handles[this._mode]);
-
 		this._mode = 'scale';
-
 		map.addLayer(this._handles[this._mode]);
 	},
 
@@ -234,9 +230,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		var map = this._overlay._map;
 
 		map.removeLayer(this._handles[this._mode]);
-
 		this._mode = 'rotateStandalone';
-
 		map.addLayer(this._handles[this._mode]);
 	},
 
@@ -290,6 +284,13 @@ L.DistortableImage.Edit = L.Handler.extend({
 		map.addLayer(this._handles[this._mode]);
 	},
 
+	_select: function (event) {
+		this._showToolbar(event);
+		this._toggleMultipleSelect(event);
+
+		L.DomEvent.stopPropagation(event);
+	},
+
 	_hideToolbar: function() {
 		var map = this._overlay._map;
 		if (this.toolbar) {
@@ -309,17 +310,11 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 	_hideMarkers: function() {
 		this._distortHandles.eachLayer(function (layer) {
-				layer.setOpacity(0);
-				if (layer.dragging) {
-					layer.dragging.disable();
-				}
-		
-			window.latt = layer;
+			layer.setOpacity(0);
+			if (layer.dragging) { layer.dragging.disable(); }
 			if (layer.options.draggable) {
-				// layer.dragging._draggable.disable();
-				// // layer.dragging._draggable.disable();
-					layer.options.draggable = false;
-				}	
+				layer.options.draggable = false;
+			}	
 		});
 	},
 	
@@ -343,15 +338,9 @@ L.DistortableImage.Edit = L.Handler.extend({
 			this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(map, overlay);
 			overlay.fire('toolbar:created');
 		}
-
-		this._toggleSelectBorder(event);
-
-		this._showMarkers();
-
-		L.DomEvent.stopPropagation(event);
 	},
 
-	_toggleSelectBorder: function(event) {
+	_toggleMultipleSelect: function(event) {
 		if (this._mode === 'lock') { return; }
 		
 		if (event.metaKey || event.ctrlKey) {
