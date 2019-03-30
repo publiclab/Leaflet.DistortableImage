@@ -76,7 +76,7 @@ describe("L.DistortableCollection", function () {
     expect(classStr).to.include("selected");
   });
 
-  it("But it should now allow selection of a locked image", function() {
+  it("But it should not allow selection of a locked image", function() {
     L.DomUtil.removeClass(overlay.getElement(), "selected");
     overlay.editing._mode = "lock";
 
