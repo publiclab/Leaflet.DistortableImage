@@ -40,16 +40,25 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return L.DomUtil.hasClass(overlay.getElement(), "selected");
   },
 
-  _deselectOthers: function(e) {
+  _toggleMultiSelect: function (event, edit) {
+    if (edit._mode === 'lock') { return; }
+
+    if (event.metaKey || event.ctrlKey) {
+      L.DomUtil.toggleClass(event.target, 'selected');
+    }
+  },
+
+  _deselectOthers: function(event) {
     this.eachLayer(function (layer) {
       var edit = layer.editing;
-      if (layer._image !== e.target) {
+      if (layer._image !== event.target) {
         edit._hideMarkers();
         edit._hideToolbar();
       } else {
         edit._showMarkers();
+        this._toggleMultiSelect(event, edit);
       }
-    });
+    }, this);
   },
 
   _addSelections: function(e) {

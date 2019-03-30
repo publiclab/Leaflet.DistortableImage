@@ -1,7 +1,7 @@
-function simulateCommandClick(el) {
+function simulateCommandMousedown(el) {
   if (document.createEvent) {
     var e = document.createEvent('MouseEvents');
-    e.initMouseEvent('click', true, true, window,
+    e.initMouseEvent('mousedown', true, true, window,
       0, 0, 0, 0, 0, true, false, false, true, 0, null);
     return el.dispatchEvent(e);
   }
@@ -69,7 +69,7 @@ describe("L.DistortableCollection", function () {
   it("Should allow selection of an image on command + click", function() {
     L.DomUtil.removeClass(overlay.getElement(), "selected");
     
-    simulateCommandClick(overlay.getElement());
+    simulateCommandMousedown(overlay.getElement());
 
     var classStr = L.DomUtil.getClass(overlay.getElement());
 
@@ -80,7 +80,7 @@ describe("L.DistortableCollection", function () {
     L.DomUtil.removeClass(overlay.getElement(), "selected");
     overlay.editing._mode = "lock";
 
-    simulateCommandClick(overlay.getElement());
+    simulateCommandMousedown(overlay.getElement());
 
     var classStr = L.DomUtil.getClass(overlay.getElement());
 

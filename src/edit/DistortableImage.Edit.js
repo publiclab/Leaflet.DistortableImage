@@ -287,7 +287,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 	_select: function (event) {
 		this._showToolbar(event);
-		this._toggleMultipleSelect(event);
+		// this._toggleMultipleSelect(event);
 		this._showMarkers();
 
 		L.DomEvent.stopPropagation(event);
@@ -349,13 +349,13 @@ L.DistortableImage.Edit = L.Handler.extend({
 		}
 	},
 
-	_toggleMultipleSelect: function(event) {
-		if (this._mode === 'lock') { return; }
+	// _toggleMultipleSelect: function(event) {
+	// 	if (this._mode === 'lock') { return; }
 		
-		if (event.metaKey || event.ctrlKey) {
-			L.DomUtil.toggleClass(event.target, 'selected');
-		}
-	},
+	// 	if (event.metaKey || event.ctrlKey) {
+	// 		L.DomUtil.toggleClass(event.target, 'selected');
+	// 	}
+	// },
 
   _removeOverlay: function () {
     var overlay = this._overlay;
