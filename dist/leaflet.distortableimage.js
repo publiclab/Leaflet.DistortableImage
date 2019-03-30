@@ -1159,7 +1159,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			8: '_removeOverlay', // backspace windows / delete mac
 			46: '_removeOverlay', // delete windows / delete + fn mac
 			20: '_toggleRotate', // CAPS
-			27: '_removeSelections', // esc
+			27: '_deselect', // esc
 			68: '_toggleRotateDistort', // d
 			69: '_toggleIsolate', // e
 			73: '_toggleIsolate', // i
@@ -1242,8 +1242,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			3: new L.point(0, 0)
 		};
 
-		L.DomEvent.on(map, "click", this._removeSelection, this);
-
+		L.DomEvent.on(map, "click", this._deselect, this);
 		L.DomEvent.on(overlay._image, 'click', this._select, this);
 
 		/* Enable hotkeys. */
@@ -1257,8 +1256,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 		var overlay = this._overlay,
 			map = overlay._map;
 
+		L.DomEvent.off(map, "click", this._deselect, this);
 		L.DomEvent.off(overlay._image, 'click', this._select, this);
-		L.DomEvent.off(map, "click", this._removeSelection, this);
 
 		// First, check if dragging exists - it may be off due to locking
 		if (this.dragging) { this.dragging.disable(); }
@@ -1355,8 +1354,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			handlerName = keymap[event.which];
 
 		if (handlerName !== undefined && this._overlay.options.suppressToolbar !== true) {
-			if (handlerName === '_removeSelections') { return; }
-			else { this[handlerName].call(this); }
+			this[handlerName].call(this); 
 		}
 	},
 
@@ -1446,11 +1444,9 @@ L.DistortableImage.Edit = L.Handler.extend({
 		L.DomEvent.stopPropagation(event);
 	},
 
-	_removeSelection: function (event) {
+	_deselect: function (event) {
 		this._hideToolbar(event);
 		this._hideMarkers();
-
-		L.DomEvent.stopPropagation(event);
 	},
 
 	_hideToolbar: function() {
