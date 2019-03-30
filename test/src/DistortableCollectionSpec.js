@@ -53,38 +53,42 @@ describe("L.DistortableCollection", function () {
 
   });
 
-  it("Should deselect all images on map click", function() {
-    L.DomUtil.addClass(overlay.getElement(), "selected");
-    L.DomUtil.addClass(overlay2.getElement(), "selected");
+  describe("_deselectAll", function () {
+    it("Should deselect all images on map click", function() {
+      L.DomUtil.addClass(overlay.getElement(), "selected");
+      L.DomUtil.addClass(overlay2.getElement(), "selected");
 
-    map.fire('click');
+      map.fire('click');
 
-    var classStr = L.DomUtil.getClass(overlay.getElement());
-    var classStr2 = L.DomUtil.getClass(overlay2.getElement());
+      var classStr = L.DomUtil.getClass(overlay.getElement());
+      var classStr2 = L.DomUtil.getClass(overlay2.getElement());
 
-    expect(classStr).to.not.include("selected");
-    expect(classStr2).to.not.include("selected");
+      expect(classStr).to.not.include("selected");
+      expect(classStr2).to.not.include("selected");
+    });
   });
 
-  it("Should allow selection of an image on command + click", function() {
-    L.DomUtil.removeClass(overlay.getElement(), "selected");
-    
-    simulateCommandMousedown(overlay.getElement());
+  describe("_toggleMultiSelect", function () {
+    it("Should allow selection of multiple images on command + click", function() {
+      simulateCommandMousedown(overlay.getElement());
+      simulateCommandMousedown(overlay2.getElement());
 
-    var classStr = L.DomUtil.getClass(overlay.getElement());
+      var classStr = L.DomUtil.getClass(overlay.getElement());
+      var classStr2 = L.DomUtil.getClass(overlay2.getElement());
 
-    expect(classStr).to.include("selected");
-  });
+      expect(classStr).to.include("selected");
+      expect(classStr2).to.include("selected");
+    });
 
-  it("But it should not allow selection of a locked image", function() {
-    L.DomUtil.removeClass(overlay.getElement(), "selected");
-    overlay.editing._mode = "lock";
+    it("But it should not allow selection of a locked image", function() {
+      L.DomUtil.removeClass(overlay.getElement(), "selected");
+      overlay.editing._mode = "lock";
 
-    simulateCommandMousedown(overlay.getElement());
+      simulateCommandMousedown(overlay.getElement());
+      var classStr = L.DomUtil.getClass(overlay.getElement());
 
-    var classStr = L.DomUtil.getClass(overlay.getElement());
-
-    expect(classStr).to.not.include("selected");
+      expect(classStr).to.not.include("selected");
+    });
   });
 
 });

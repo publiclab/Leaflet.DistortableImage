@@ -7,7 +7,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     this._map = map;
 
     L.DomEvent.on(document, "keydown", this._onKeyDown, this);
-    L.DomEvent.on(map, "click", this._removeSelections, this);
+    L.DomEvent.on(map, "click", this._deselectAll, this);
 
     /** 
      * the box zoom override works, but there is a bug involving click event propogation.
@@ -26,7 +26,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var map = this._map;
 
     L.DomEvent.off(document, "keydown", this._onKeyDown, this);
-    L.DomEvent.off(map, "click", this._removeSelections, this);
+    L.DomEvent.off(map, "click", this._deselectAll, this);
     // L.DomEvent.off(map, "boxzoomend", this._addSelections, this);
 
     this.eachLayer(function(layer) {
@@ -79,7 +79,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
   _onKeyDown: function (e) {
     if (e.key === 'Escape') {
-      this._removeSelections();
+      this._deselectAll();
     }
   },
 
@@ -113,19 +113,18 @@ L.DistortableCollection = L.FeatureGroup.extend({
     for (i = 0; i < 4; i++) {
       overlay._dragPoints[i] = map.latLngToLayerPoint(overlay.getCorners()[i]);
     }
+    
+    var cpd = overlay._calcCornerPointDelta();
 
-    var cornerPointDelta = overlay._calcCornerPointDelta();
-
-    this._updateCollectionFromPoints(cornerPointDelta, overlay);
+    this._updateCollectionFromPoints(cpd, overlay);
   },
 
-  _removeSelections: function() {
+  _deselectAll: function() {
     this.eachLayer(function(layer) {
       var edit = layer.editing;
+
       L.DomUtil.removeClass(layer.getElement(), "selected");
-      if (edit.toolbar) {
-        edit._hideToolbar();
-      }
+      if (edit.toolbar) { edit._hideToolbar(); }
       edit._hideMarkers();
     });
   },
