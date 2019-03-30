@@ -40,7 +40,7 @@ The most simple implementation to get started:
 
 ```js
 // basic Leaflet map setup
-map = new L.map('map').setView([51.505, -0.09], 13);
+map = L.map('map').setView([51.505, -0.09], 13);
 L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.png', {
   maxZoom: 18,
   attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
