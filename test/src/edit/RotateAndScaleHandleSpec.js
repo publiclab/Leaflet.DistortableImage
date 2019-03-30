@@ -20,6 +20,10 @@ describe("L.RotateAndScaleHandle", function() {
 		});
 	});
 
+	it.skip("Should not distort the image during scaling", function () {
+
+	});
+
 	describe("_calculateRotation", function() {
 		it("Should return 0 when given the same latlng twice.", function() {
 			var latlng = distortable._corners[0],

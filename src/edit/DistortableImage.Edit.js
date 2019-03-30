@@ -5,19 +5,20 @@ L.DistortableImage.Edit = L.Handler.extend({
 		opacity: 0.7,
 		outline: '1px solid red',
 		keymap: {
+			8: '_removeOverlay', // backspace windows / delete mac
+			46: '_removeOverlay', // delete windows / delete + fn mac
+			20: '_toggleRotate', // CAPS
+			27: '_deselect', // esc
 			68: '_toggleRotateDistort', // d
 			69: '_toggleIsolate', // e
 			73: '_toggleIsolate', // i
+			74: '_sendUp', // j
+			75: '_sendDown', // k
 			76: '_toggleLock', // l
 			79: '_toggleOutline', // o
 			82: '_toggleRotateDistort', // r
-			74: '_sendUp', // j
-			75:	'_sendDown', // k
-      46: "_removeOverlay", // delete windows / delete + fn mac
-      8:  "_removeOverlay", // backspace windows / delete mac
 			83: '_toggleScale', // s
 			84: '_toggleTransparency', // t
-			20:	'_toggleRotate' // CAPS
 		}
 	},
 
@@ -75,17 +76,28 @@ L.DistortableImage.Edit = L.Handler.extend({
 		} else {
 			this._mode = 'distort';
 			map.addLayer(this._distortHandles);
+			this._distortHandles.eachLayer(function (layer) {
+				layer.setOpacity(0);
+				layer.dragging.disable();
+				layer.options.draggable = false;
+			});
 			this._enableDragging();
 		}
 
-		//overlay.on('click', this._showToolbar, this);
-		L.DomEvent.on(overlay._image, 'click', this._showToolbar, this);
+		this._overlay._dragStartPoints = {
+			0: new L.point(0, 0),
+			1: new L.point(0, 0),
+			2: new L.point(0, 0),
+			3: new L.point(0, 0)
+		};
+
+		L.DomEvent.on(map, "click", this._deselect, this);
+		L.DomEvent.on(overlay._image, 'click', this._select, this);
 
 		/* Enable hotkeys. */
 		L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
 
 		overlay.fire('select');
-
 	},
 
 	/* Run on image deselection. */
@@ -93,14 +105,15 @@ L.DistortableImage.Edit = L.Handler.extend({
 		var overlay = this._overlay,
 			map = overlay._map;
 
-		// L.DomEvent.off(window, 'keydown', this._onKeyDown, this);
+		L.DomEvent.off(map, "click", this._deselect, this);
+		L.DomEvent.off(overlay._image, 'click', this._select, this);
 
-		L.DomEvent.off(overlay._image, 'click', this._showToolbar, this);
-
-		// First, check if dragging exists;
-		// it may be off due to locking
+		// First, check if dragging exists - it may be off due to locking
 		if (this.dragging) { this.dragging.disable(); }
 		delete this.dragging;
+
+		if (this.toolbar) { this._hideToolbar(); }
+		if (this.editing) { this.editing.disable(); }
 
 		map.removeLayer(this._handles[this._mode]);
 
@@ -112,8 +125,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   confirmDelete: function () {
     return window.confirm("Are you sure you want to delete?");
-  },
-
+	},
 
 	_rotateBy: function(angle) {
 		var overlay = this._overlay,
@@ -157,8 +169,11 @@ L.DistortableImage.Edit = L.Handler.extend({
 		this.dragging = new L.Draggable(overlay._image);
 		this.dragging.enable();
 
-		/* Hide toolbars while dragging; click will re-show it */
-		this.dragging.on('dragstart', this._hideToolbar, this);
+		/* Hide toolbars and markers while dragging; click will re-show it */
+		this.dragging.on('dragstart', function () {
+			overlay.fire('dragstart');
+			this._hideToolbar();
+		}, this);
 
 		/*
 		 * Adjust default behavior of L.Draggable.
@@ -177,6 +192,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			}
 			overlay._reset();
 			overlay.fire('update');
+			overlay.fire('drag');
 
 			this.fire('drag');
 		};
@@ -187,7 +203,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			handlerName = keymap[event.which];
 
 		if (handlerName !== undefined && this._overlay.options.suppressToolbar !== true) {
-			this[handlerName].call(this);
+			this[handlerName].call(this); 
 		}
 	},
 
@@ -207,9 +223,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		var map = this._overlay._map;
 
 		map.removeLayer(this._handles[this._mode]);
-
 		this._mode = 'scale';
-
 		map.addLayer(this._handles[this._mode]);
 	},
 
@@ -217,9 +231,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		var map = this._overlay._map;
 
 		map.removeLayer(this._handles[this._mode]);
-
 		this._mode = 'rotateStandalone';
-
 		map.addLayer(this._handles[this._mode]);
 	},
 
@@ -273,6 +285,18 @@ L.DistortableImage.Edit = L.Handler.extend({
 		map.addLayer(this._handles[this._mode]);
 	},
 
+	_select: function (event) {
+		this._showToolbar(event);
+		this._showMarkers();
+
+		L.DomEvent.stopPropagation(event);
+	},
+
+	_deselect: function (event) {
+		this._hideToolbar(event);
+		this._hideMarkers();
+	},
+
 	_hideToolbar: function() {
 		var map = this._overlay._map;
 		if (this.toolbar) {
@@ -281,38 +305,63 @@ L.DistortableImage.Edit = L.Handler.extend({
 		}
 	},
 
+	_showMarkers: function() {
+		if (this._mode === 'lock') { return; }
+		this._distortHandles.eachLayer(function (layer) {
+			layer.setOpacity(1);
+			layer.dragging.enable();
+			layer.options.draggable = true;
+		});
+	},
+
+	_hideMarkers: function() {
+		this._distortHandles.eachLayer(function (layer) {
+			var drag = layer.dragging,
+				opts = layer.options;
+
+			layer.setOpacity(0);
+			if (drag) { drag.disable(); }
+			if (opts.draggable) { opts.draggable = false; }	
+		});
+		
+	},
+	
+	// TODO: toolbar for multiple image selection
 	_showToolbar: function(event) {
 		var overlay = this._overlay,
-                     target = event.target,
+      target = event.target,
 			map = overlay._map;
 
 		/* Ensure that there is only ever one toolbar attached to each image. */
 		this._hideToolbar();
+		
 		var point;
 		if (event.containerPoint) { point = event.containerPoint; }
 		else { point = target._leaflet_pos; }
+		
 		var raised_point = map.containerPointToLatLng(new L.Point(point.x,point.y-20));
 		raised_point.lng = overlay.getCenter().lng;
+	
 		if (this._overlay.options.suppressToolbar !== true) {
-		this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(map, overlay);
-		overlay.fire('toolbar:created');
+			this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(map, overlay);
+			overlay.fire('toolbar:created');
 		}
-
-		L.DomEvent.stopPropagation(event);
-  },
+	},
 
   _removeOverlay: function () {
     var overlay = this._overlay;
     if (this._mode !== "lock") {
       var choice = this.confirmDelete();
       if (choice) {
+				this._hideToolbar();
         overlay._map.removeLayer(overlay);
         overlay.fire('delete');
         this.disable();
       }
     }
-  },
-
+	},
+	
+	// compare this to using overlay zIndex
 	_toggleOrder: function () {
 	if (this._toggledImage) {
 		this._overlay.bringToFront();
