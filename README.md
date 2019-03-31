@@ -76,10 +76,8 @@ We've added a GPU-accelerated means to generate a full resolution version of the
 <script src="../node_modules/glfx/glfx.js"></script>
 ```
 
-
-<<<<<<< HEAD
 When instantiating a Distortable Image, pass in a `fullResolutionSrc` option set to the url of the higher resolution image. This image will be used in full-res exporting. 
-=======
+
 ```js
 // basic Leaflet map setup
 map = L.map('map').setView([51.505, -0.09], 13);
@@ -90,7 +88,6 @@ L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.p
     'Imagery © <a href="http://mapbox.com">Mapbox</a>',
   id: 'examples.map-i86knfo3'
 }).addTo(map);
->>>>>>> Update README.md
 
 ```js
 // create an image
