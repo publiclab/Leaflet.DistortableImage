@@ -84,6 +84,10 @@ L.DistortableImage.Edit = L.Handler.extend({
 			this._enableDragging();
 		}
 
+		this._showToolbar();
+		this.toolbar._hide();
+		this.toolbar._tip.style.opacity = 0; 
+
 		this._overlay._dragStartPoints = {
 			0: new L.point(0, 0),
 			1: new L.point(0, 0),
@@ -92,6 +96,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 		};
 
 		L.DomEvent.on(map, "click", this._deselect, this);
+		L.DomEvent.on(map, "zoomstart", this._handleZoomStart, this);
+		L.DomEvent.on(map, "zoomend", this._handleZoomEnd, this);
 		L.DomEvent.on(overlay._image, 'click', this._select, this);
 
 		/* Enable hotkeys. */
@@ -204,6 +210,20 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		if (handlerName !== undefined && this._overlay.options.suppressToolbar !== true) {
 			this[handlerName].call(this); 
+		}
+	},
+
+	_handleZoomStart: function() {
+		if (this.toolbar) { 
+			this.toolbar._hide();
+			this.toolbar._tip.style.opacity = 0; 
+		}
+	},
+
+	_handleZoomEnd: function() {
+		if (this.toolbar) { 
+			this.toolbar._show(); 
+			this.toolbar._tip.style.opacity = 1;
 		}
 	},
 
@@ -330,6 +350,14 @@ L.DistortableImage.Edit = L.Handler.extend({
 			if (opts.draggable) { opts.draggable = false; }	
 		});
 		
+	},
+
+	_showToolbar1: function() {
+		this.toolbar.show();
+	},
+
+	_hideToolbar1: function() {
+		this.toolbar.hide();
 	},
 	
 	// TODO: toolbar for multiple image selection
