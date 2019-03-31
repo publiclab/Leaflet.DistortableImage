@@ -8,7 +8,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     L.DomEvent.on(document, "keydown", this._onKeyDown, this);
     L.DomEvent.on(map, "click", this._deselectAll, this);
-    // L.DomEvent.on(overlay._image, "click", this._select, this);
 
     /**
      * the box zoom override works, but there is a bug involving click event propogation.
@@ -50,13 +49,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }
   },
 
-  // _select: function (event) {
-  // 	this._showToolbar(event);
-  // 	this._showMarkers();
-
-  	// L.DomEvent.stopPropagation(event);
-  // },
-
   _deselectOthers: function(event) {
     this.eachLayer(function(layer) {
       var edit = layer.editing;
@@ -66,8 +58,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
         this._toggleMultiSelect(event, edit);
       }
     }, this);
-
-    L.DomEvent.stopPropagation(event);
   },
 
   _addSelections: function(e) {
@@ -98,9 +88,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var overlay = event.target,
       i;
 
-    if (!this.isSelected(overlay)) {
-      return;
-    }
+    if (!this.isSelected(overlay)) { return; }
 
     this.eachLayer(function(layer) {
       for (i = 0; i < 4; i++) {
@@ -119,9 +107,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
       map = this._map,
       i;
 
-    if (!this.isSelected(overlay)) {
-      return;
-    }
+    if (!this.isSelected(overlay)) { return; }
 
     overlay._dragPoints = {};
 

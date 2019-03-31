@@ -834,7 +834,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     L.DomEvent.on(document, "keydown", this._onKeyDown, this);
     L.DomEvent.on(map, "click", this._deselectAll, this);
-    // L.DomEvent.on(overlay._image, "click", this._select, this);
 
     /**
      * the box zoom override works, but there is a bug involving click event propogation.
@@ -876,13 +875,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }
   },
 
-  // _select: function (event) {
-  // 	this._showToolbar(event);
-  // 	this._showMarkers();
-
-  	// L.DomEvent.stopPropagation(event);
-  // },
-
   _deselectOthers: function(event) {
     this.eachLayer(function(layer) {
       var edit = layer.editing;
@@ -892,8 +884,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
         this._toggleMultiSelect(event, edit);
       }
     }, this);
-
-    L.DomEvent.stopPropagation(event);
   },
 
   _addSelections: function(e) {
@@ -924,9 +914,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var overlay = event.target,
       i;
 
-    if (!this.isSelected(overlay)) {
-      return;
-    }
+    if (!this.isSelected(overlay)) { return; }
 
     this.eachLayer(function(layer) {
       for (i = 0; i < 4; i++) {
@@ -945,9 +933,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
       map = this._map,
       i;
 
-    if (!this.isSelected(overlay)) {
-      return;
-    }
+    if (!this.isSelected(overlay)) { return; }
 
     overlay._dragPoints = {};
 
@@ -1279,7 +1265,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 		L.DomEvent.on(overlay._image, 'click', this._select, this);
 		L.DomEvent.on(overlay._image, "dblclick", this._toolbarZIndex, this);
 	
-
 		/* Enable hotkeys. */
 		L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
 
@@ -1399,20 +1384,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 			this[handlerName].call(this); 
 		}
 	},
-
-	// _handleZoomStart: function() {
-	// 	if (this.toolbar) { 
-	// 		this.toolbar._hide();
-	// 		this.toolbar._tip.style.opacity = 0; 
-	// 	}
-	// },
-
-	// _handleZoomEnd: function() {
-	// 	if (this.toolbar) { 
-	// 		this.toolbar._show(); 
-	// 		this.toolbar._tip.style.opacity = 1;
-	// 	}
-	// },
 
 	_toggleRotateDistort: function() {
 		var map = this._overlay._map;
@@ -1538,25 +1509,14 @@ L.DistortableImage.Edit = L.Handler.extend({
 		});
 		
 	},
-
-	_showToolbar1: function() {
-		this.toolbar.show();
-	},
-
-	_hideToolbar1: function() {
-		this.toolbar.hide();
-	},
 	
-	// TODO: toolbar for multiple image selection
+		// TODO: toolbar for multiple image selection
 	_showToolbar: function() {
 		var overlay = this._overlay,
 			map = overlay._map;
 
 		/* Ensure that there is only ever one toolbar attached to each image. */
 		this._hideToolbar();
-		
-		var point;
-		point = overlay._image._leaflet_pos;
 		
 		//Find the topmost point on the image.
 		var corners = overlay.getCorners();
