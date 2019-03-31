@@ -834,6 +834,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     L.DomEvent.on(document, "keydown", this._onKeyDown, this);
     L.DomEvent.on(map, "click", this._deselectAll, this);
+    // L.DomEvent.on(overlay._image, "click", this._select, this);
 
     /**
      * the box zoom override works, but there is a bug involving click event propogation.
@@ -875,6 +876,13 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }
   },
 
+  // _select: function (event) {
+  // 	this._showToolbar(event);
+  // 	this._showMarkers();
+
+  	// L.DomEvent.stopPropagation(event);
+  // },
+
   _deselectOthers: function(event) {
     this.eachLayer(function(layer) {
       var edit = layer.editing;
@@ -884,6 +892,8 @@ L.DistortableCollection = L.FeatureGroup.extend({
         this._toggleMultiSelect(event, edit);
       }
     }, this);
+
+    L.DomEvent.stopPropagation(event);
   },
 
   _addSelections: function(e) {
@@ -914,7 +924,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var overlay = event.target,
       i;
 
-    if (!this.isSelected(overlay)) { return; }
+    if (!this.isSelected(overlay)) {
+      return;
+    }
 
     this.eachLayer(function(layer) {
       for (i = 0; i < 4; i++) {
@@ -933,7 +945,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
       map = this._map,
       i;
 
-    if (!this.isSelected(overlay)) { return; }
+    if (!this.isSelected(overlay)) {
+      return;
+    }
 
     overlay._dragPoints = {};
 
@@ -1524,6 +1538,14 @@ L.DistortableImage.Edit = L.Handler.extend({
 		});
 		
 	},
+
+	_showToolbar1: function() {
+		this.toolbar.show();
+	},
+
+	_hideToolbar1: function() {
+		this.toolbar.hide();
+	},
 	
 	// TODO: toolbar for multiple image selection
 	_showToolbar: function() {
@@ -1547,7 +1569,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		//Longitude is based on the centroid of the image.
 		var raised_point = overlay.getCenter();
-		raised_point.lat = maxLat;
+    raised_point.lat = maxLat;
 	
 		if (this._overlay.options.suppressToolbar !== true) {
 			this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(map, overlay);

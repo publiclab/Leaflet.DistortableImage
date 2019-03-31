@@ -358,6 +358,14 @@ L.DistortableImage.Edit = L.Handler.extend({
 		});
 		
 	},
+
+	_showToolbar1: function() {
+		this.toolbar.show();
+	},
+
+	_hideToolbar1: function() {
+		this.toolbar.hide();
+	},
 	
 	// TODO: toolbar for multiple image selection
 	_showToolbar: function() {
@@ -381,7 +389,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		//Longitude is based on the centroid of the image.
 		var raised_point = overlay.getCenter();
-		raised_point.lat = maxLat;
+    raised_point.lat = maxLat;
 	
 		if (this._overlay.options.suppressToolbar !== true) {
 			this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(map, overlay);
