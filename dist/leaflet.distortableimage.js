@@ -834,7 +834,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     L.DomEvent.on(document, "keydown", this._onKeyDown, this);
     L.DomEvent.on(map, "click", this._deselectAll, this);
-    // L.DomEvent.on(overlay._image, "click", this._select, this);
 
     /**
      * the box zoom override works, but there is a bug involving click event propogation.
@@ -869,35 +868,22 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   _toggleMultiSelect: function(event, edit) {
-    if (edit._mode === "lock") {
-      return;
-    }
+    if (edit._mode === "lock") { return; }
 
     if (event.metaKey || event.ctrlKey) {
       L.DomUtil.toggleClass(event.target, "selected");
     }
   },
 
-  // _select: function (event) {
-  // 	this._showToolbar(event);
-  // 	this._showMarkers();
-
-  	// L.DomEvent.stopPropagation(event);
-  // },
-
   _deselectOthers: function(event) {
     this.eachLayer(function(layer) {
       var edit = layer.editing;
       if (layer._image !== event.target) {
         edit._hideMarkers();
-        if (edit.toolbar) { edit.toolbar._hide(); }
       } else {
-        if (edit.toolbar) { edit.toolbar._show(); }
         this._toggleMultiSelect(event, edit);
       }
     }, this);
-
-    L.DomEvent.stopPropagation(event);
   },
 
   _addSelections: function(e) {
@@ -928,9 +914,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var overlay = event.target,
       i;
 
-    if (!this.isSelected(overlay)) {
-      return;
-    }
+    if (!this.isSelected(overlay)) { return; }
 
     this.eachLayer(function(layer) {
       for (i = 0; i < 4; i++) {
@@ -949,9 +933,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
       map = this._map,
       i;
 
-    if (!this.isSelected(overlay)) {
-      return;
-    }
+    if (!this.isSelected(overlay)) { return; }
 
     overlay._dragPoints = {};
 
@@ -1268,9 +1250,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			this._enableDragging();
 		}
 
-		this._showToolbar();
-		this.toolbar._hide();
-		this.toolbar._tip.style.opacity = 0; 
+		this._initToolbar();
 
 		this._overlay._dragStartPoints = {
 			0: new L.point(0, 0),
@@ -1280,8 +1260,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 		};
 
 		L.DomEvent.on(map, "click", this._deselect, this);
-		L.DomEvent.on(map, "zoomstart", this._handleZoomStart, this);
-		L.DomEvent.on(map, "zoomend", this._handleZoomEnd, this);
+		// L.DomEvent.on(map, "zoomstart", this._handleZoomStart, this);
+		// L.DomEvent.on(map, "zoomend", this._handleZoomEnd, this);
 		L.DomEvent.on(overlay._image, 'click', this._select, this);
 
 		/* Enable hotkeys. */
@@ -1311,7 +1291,13 @@ L.DistortableImage.Edit = L.Handler.extend({
 		L.DomEvent.off(window, 'keydown', this._onKeyDown, this);
 
 		overlay.fire('deselect');
-  },
+	},
+	
+	_initToolbar: function() {
+		this._showToolbar();
+    this.toolbar._hide();
+    this.toolbar._tip.style.opacity = 0; 
+	},
 
   confirmDelete: function () {
     return window.confirm("Are you sure you want to delete?");
@@ -1397,19 +1383,19 @@ L.DistortableImage.Edit = L.Handler.extend({
 		}
 	},
 
-	_handleZoomStart: function() {
-		if (this.toolbar) { 
-			this.toolbar._hide();
-			this.toolbar._tip.style.opacity = 0; 
-		}
-	},
+	// _handleZoomStart: function() {
+	// 	if (this.toolbar) { 
+	// 		this.toolbar._hide();
+	// 		this.toolbar._tip.style.opacity = 0; 
+	// 	}
+	// },
 
-	_handleZoomEnd: function() {
-		if (this.toolbar) { 
-			this.toolbar._show(); 
-			this.toolbar._tip.style.opacity = 1;
-		}
-	},
+	// _handleZoomEnd: function() {
+	// 	if (this.toolbar) { 
+	// 		this.toolbar._show(); 
+	// 		this.toolbar._tip.style.opacity = 1;
+	// 	}
+	// },
 
 	_toggleRotateDistort: function() {
 		var map = this._overlay._map;
@@ -1535,19 +1521,10 @@ L.DistortableImage.Edit = L.Handler.extend({
 		});
 		
 	},
-
-	_showToolbar1: function() {
-		this.toolbar.show();
-	},
-
-	_hideToolbar1: function() {
-		this.toolbar.hide();
-	},
 	
 	// TODO: toolbar for multiple image selection
 	_showToolbar: function() {
 		var overlay = this._overlay,
-      // target = event.target,
 			map = overlay._map;
 
 		/* Ensure that there is only ever one toolbar attached to each image. */
