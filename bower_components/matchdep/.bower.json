@@ -1,0 +1,14 @@
+{
+  "name": "matchdep",
+  "homepage": "https://github.com/tkellen/node-matchdep",
+  "version": "0.3.0",
+  "_release": "0.3.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.3.0",
+    "commit": "6233e9afbfbd29822d73925d9fc3a7df095258f9"
+  },
+  "_source": "https://github.com/tkellen/node-matchdep.git",
+  "_target": "^0.3.0",
+  "_originalSource": "matchdep"
+}
