@@ -331,17 +331,18 @@ L.DistortableImage.Edit = L.Handler.extend({
 	},
 	
 	// TODO: toolbar for multiple image selection
-	_showToolbar: function(event) {
+	_showToolbar: function() {
 		var overlay = this._overlay,
-      target = event.target,
+      // target = event.target,
 			map = overlay._map;
 
 		/* Ensure that there is only ever one toolbar attached to each image. */
 		this._hideToolbar();
 		
 		var point;
-		if (event.containerPoint) { point = event.containerPoint; }
-		else { point = target._leaflet_pos; }
+		// if (event.containerPoint) { point = event.containerPoint; }
+		// point = target._leaflet_pos;
+		point = overlay._image._leaflet_pos;
 		
 		var raised_point = map.containerPointToLatLng(new L.Point(point.x,point.y-20));
 		raised_point.lng = overlay.getCenter().lng;
