@@ -7,14 +7,14 @@ A Leaflet extension to distort images -- "rubbersheeting" -- for the [MapKnitter
 
 Advantages include:
 
-* it can handle over 100 images smoothly, even on a smartphone.
-* images can be right-clicked and downloaded individually in their original state
+* It can handle over 100 images smoothly, even on a smartphone.
+* Images can be right-clicked and downloaded individually in their original state
 * CSS3 transforms are GPU-accelerated in most (all?) browsers, for a very smooth UI
-* no need to server-side generate raster GeoTiffs, tilesets, etc in order to view distorted imagery layers
-* images use DOM event handling for real-time distortion
-* [full resolution download option](https://github.com/publiclab/Leaflet.DistortableImage/pull/100) for large images, using WebGL acceleration
+* No need to server-side generate raster GeoTiffs, tilesets, etc. in order to view distorted imagery layers
+* Images use DOM event handling for real-time distortion
+* [Full resolution download option](https://github.com/publiclab/Leaflet.DistortableImage/pull/100) for large images, using WebGL acceleration
 
-[Download as zip](https://github.com/publiclab/Leaflet.DistortableImage/releases) or clone to get a copy of the repo.
+[Download as zip](https://github.com/publiclab/Leaflet.DistortableImage/releases) or clone the repo to get a local copy.
 
 This plugin has basic functionality, and is in production as part of MapKnitter, but there are [plenty of outstanding issues to resolve](https://github.com/publiclab/Leaflet.DistortableImage/issues). Please consider helping out!
 
@@ -34,7 +34,9 @@ And watch this GIF demo:
 
 To test the code, open `index.html` in your browser and click and drag the markers on the edges of the image. The image will show perspectival distortions.
 
-## Usage
+## Basic Usage
+
+The most simple implementation to get started:
 
 ```js
 // basic Leaflet map setup
@@ -56,11 +58,11 @@ img = new L.DistortableImageOverlay(
       new L.latLng(51.50,-0.10),
       new L.latLng(51.50,-0.14)
     ],
-    fullResolutionSrc: 'large.jpg' // optionally pass in a higher resolution image to use in full-res exporting
   }
 ).addTo(map);
 
-L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing); // enable editing
+// enable editing
+L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing); 
 
 ```
 
@@ -74,19 +76,10 @@ We've added a GPU-accelerated means to generate a full resolution version of the
 <script src="../node_modules/glfx/glfx.js"></script>
 ```
 
-## Usage
+
+When instantiating a Distortable Image, pass in a `fullResolutionSrc` option set to the url of the higher resolution image. This image will be used in full-res exporting. 
 
 ```js
-// basic Leaflet map setup
-map = new L.map('map').setView([51.505, -0.09], 13);
-L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.png', {
-  maxZoom: 18,
-  attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-    '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-    'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-  id: 'examples.map-i86knfo3'
-}).addTo(map);
-
 // create an image
 img = new L.DistortableImageOverlay(
   'example.png', {
@@ -96,16 +89,39 @@ img = new L.DistortableImageOverlay(
       new L.latLng(51.50,-0.10),
       new L.latLng(51.50,-0.14)
     ],
-    fullResolutionSrc: 'large.jpg' // optionally pass in a higher resolution image to use in full-res exporting
+    fullResolutionSrc: 'large.jpg'
   }
 ).addTo(map);
 
-L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing); // enable editing
+L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
 
 ```
+
+## Multiple Images
+
+To test the multi-image interface, open `select.html`. Currently it supports multiple image selection and translations; image distortions still use the single-image interface.
+
+  - Multiple images can be selected using <kbd>cmd</kbd> + `click` to toggle individual image selection.
+  - Click on the map or hit the <kbd>esc</kbd> key to quickly deselect all images.
+   
+Our `DistortableCollection` class allows working with multiple images simultaneously. Say we instantiated 3 images, saved them to the variables `img`, `img2`, and `img3`, and enabled editing on all of them. To access the UI and functionalities available in the multiple image interface, pass them to the collection class:
+
+```js
+// OPTION 1: Pass in images immediately
+new L.DistortableCollection([img, img2, img3]).addTo(map);
+
+// OPTION 2: Instantiate an empty collection and pass in images later 
+var imageFeatureGroup = new L.DistortableCollection().addTo(map);
+
+imageFeatureGroup.addLayer(img);
+imageFeatureGroup.addLayer(img2);
+imageFeatureGroup.addLayer(img3);
+
+```
+
 ## Image-ordering
 
-For multiple images, we've added a `ToggleOrder` action, that switches overlapping images back and forth into view by employing the [`bringToFront()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtoback).
+For multiple images, we've also added a `ToggleOrder` action, that switches overlapping images back and forth into view by employing [`bringToFront()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtoback) from the Leaflet API. 
 
 ```js
 ToggleOrder = EditOverlayAction.extend({
