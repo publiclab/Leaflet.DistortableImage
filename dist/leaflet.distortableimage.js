@@ -1466,7 +1466,9 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 	_showMarkers: function() {
 		if (this._mode === 'lock') { return; }
-		this._distortHandles.eachLayer(function (layer) {
+		var currentHandle = 
+			this._mode === 'distort' ? this._distortHandles : this._rotateHandles;
+		currentHandle.eachLayer(function (layer) {
 			layer.setOpacity(1);
 			layer.dragging.enable();
 			layer.options.draggable = true;
@@ -1474,7 +1476,9 @@ L.DistortableImage.Edit = L.Handler.extend({
 	},
 
 	_hideMarkers: function() {
-		this._distortHandles.eachLayer(function (layer) {
+		var currentHandle =
+      this._mode === "distort" ? this._distortHandles : this._rotateHandles;
+		currentHandle.eachLayer(function (layer) {
 			var drag = layer.dragging,
 				opts = layer.options;
 
