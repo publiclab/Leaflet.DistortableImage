@@ -40,7 +40,7 @@ The most simple implementation to get started:
 
 ```js
 // basic Leaflet map setup
-map = new L.map('map').setView([51.505, -0.09], 13);
+map = L.map('map').setView([51.505, -0.09], 13);
 L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.png', {
   maxZoom: 18,
   attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
@@ -76,8 +76,18 @@ We've added a GPU-accelerated means to generate a full resolution version of the
 <script src="../node_modules/glfx/glfx.js"></script>
 ```
 
-
 When instantiating a Distortable Image, pass in a `fullResolutionSrc` option set to the url of the higher resolution image. This image will be used in full-res exporting. 
+
+```js
+// basic Leaflet map setup
+map = L.map('map').setView([51.505, -0.09], 13);
+L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.png', {
+  maxZoom: 18,
+  attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+    '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+    'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+  id: 'examples.map-i86knfo3'
+}).addTo(map);
 
 ```js
 // create an image
