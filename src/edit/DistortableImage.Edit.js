@@ -99,7 +99,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     // L.DomEvent.on(map, "zoomstart", this._handleZoomStart, this);
     // L.DomEvent.on(map, "zoomend", this._handleZoomEnd, this);
     L.DomEvent.on(overlay._image, "click", this._select, this);
-    L.DomEvent.on(overlay._image, "dblclick", this._toolbarZIndex, this);
 
     /* Enable hotkeys. */
     L.DomEvent.on(window, "keydown", this._onKeyDown, this);
@@ -112,22 +111,17 @@ L.DistortableImage.Edit = L.Handler.extend({
     var overlay = this._overlay,
       map = overlay._map;
 
-    L.DomEvent.off(map, "click", this._deselect, this);
-    L.DomEvent.off(overlay._image, "click", this._select, this);
-    L.DomEvent.off(overlay._image, "dblclick", this._toolbarZIndex, this);
+		L.DomEvent.off(map, "click", this._deselect, this);
+		// L.DomEvent.off(map, "zoomstart", this._handleZoomStart, this);
+		// L.DomEvent.off(map, "zoomend", this._handleZoomEnd, this);
+		L.DomEvent.off(overlay._image, "click", this._select, this);
 
     // First, check if dragging exists - it may be off due to locking
-    if (this.dragging) {
-      this.dragging.disable();
-    }
-    delete this.dragging;
+		if (this.dragging) { this.dragging.disable(); }
+		delete this.dragging;
 
-    if (this.toolbar) {
-      this._hideToolbar();
-    }
-    if (this.editing) {
-      this.editing.disable();
-    }
+		if (this.toolbar) { this._hideToolbar(); }
+		if (this.editing) { this.editing.disable(); }
 
     map.removeLayer(this._handles[this._mode]);
 
@@ -141,7 +135,25 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._showToolbar();
     this.toolbar._hide();
     this.toolbar._tip.style.opacity = 0;
-  },
+	},
+	
+		// _handleZoomStart: function() {
+	// 	if (this.toolbar) {
+	// 		this._showToolbar();
+			// makes the toolbar stop glitching but instead disappear and reappear
+			// quickly. Decide in separate PR all together how to handle zoom glitch for
+			// all components of image
+
+      // this.toolbar._hide();
+      // this.toolbar._tip.style.opacity = 0;
+  //   }
+	// },
+
+	// _handleZoomEnd: function() {
+	// 	if (this.toolbar) {
+	// 		this._showToolbar();
+	// 	}
+	// },
 
   confirmDelete: function() {
     return window.confirm("Are you sure you want to delete?");
@@ -348,11 +360,17 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _showMarkers: function() {
-    if (this._mode === "lock") {
-      return;
-    }
-    var currentHandle =
-      this._mode === "distort" ? this._distortHandles : this._rotateHandles;
+		if (this._mode === 'lock') { return; }
+		var currentHandle = this._handles[this._mode];
+		currentHandle.eachLayer(function (layer) {
+			layer.setOpacity(1);
+			layer.dragging.enable();
+			layer.options.draggable = true;
+		});
+	},
+
+	_hideMarkers: function() {
+		var currentHandle = this._handles[this._mode];
 		currentHandle.eachLayer(function (layer) {
 			var drag = layer.dragging,
 				opts = layer.options;
@@ -360,43 +378,38 @@ L.DistortableImage.Edit = L.Handler.extend({
 			layer.setOpacity(0);
 			if (drag) { drag.disable(); }
 			if (opts.draggable) { opts.draggable = false; }	
-		});
-		
+		});	
 	},
-	
-		// TODO: toolbar for multiple image selection
-	_showToolbar: function() {
-		var overlay = this._overlay,
-			map = overlay._map;
 
-		/* Ensure that there is only ever one toolbar attached to each image. */
-		this._hideToolbar();
-		
-		//Find the topmost point on the image.
-		var corners = overlay.getCorners();
-		var maxLat = -Infinity;
-		for(var i = 0; i < corners.length; i++) {
-			if(corners[i].lat > maxLat) {
-				maxLat = corners[i].lat;
-			}
-		}
+  // TODO: toolbar for multiple image selection
+  _showToolbar: function() {
+    var overlay = this._overlay,
+      map = overlay._map;
 
-		//Longitude is based on the centroid of the image.
-		var raised_point = overlay.getCenter();
+    /* Ensure that there is only ever one toolbar attached to each image. */
+    this._hideToolbar();
+
+    //Find the topmost point on the image.
+    var corners = overlay.getCorners();
+    var maxLat = -Infinity;
+    for (var i = 0; i < corners.length; i++) {
+      if (corners[i].lat > maxLat) {
+        maxLat = corners[i].lat;
+      }
+    }
+
+    //Longitude is based on the centroid of the image.
+    var raised_point = overlay.getCenter();
     raised_point.lat = maxLat;
-	
-		if (this._overlay.options.suppressToolbar !== true) {
-			this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(map, overlay);
-			overlay.fire('toolbar:created');
-		}
-	},
 
-	_toolbarZIndex: function(event) {
-		var tools = this.toolbar._container;
-		
-		tools.style.zIndex = 0;
-		L.DomEvent.stopPropagation(event);
-	},
+    if (this._overlay.options.suppressToolbar !== true) {
+      this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(
+        map,
+        overlay
+      );
+      overlay.fire("toolbar:created");
+    }
+  },
 
   _removeOverlay: function () {
     var overlay = this._overlay;
