@@ -84,7 +84,8 @@ When instantiating a Distortable Image, pass in a `fullResolutionSrc` option set
 
 // create basic map setup from above
 
-// create an image
+// create an image - note the optional 
+// fullResolutionSrc option is now passed in
 img = L.distortableImageOverlay(
   'example.png', {
     corners: [
