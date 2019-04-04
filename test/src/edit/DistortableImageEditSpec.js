@@ -3,7 +3,7 @@ describe("L.DistortableImage.Edit", function() {
 		overlay;
 
 	beforeEach(function(done) {
-		map = new L.Map(L.DomUtil.create('div', '', document.body)).setView([41.7896,-87.5996], 15);
+		map = L.map(L.DomUtil.create('div', '', document.body)).setView([41.7896,-87.5996], 15);
 
 		overlay = new L.DistortableImageOverlay('/examples/example.png', {
 			corners: [
