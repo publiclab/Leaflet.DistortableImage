@@ -1263,6 +1263,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 		// L.DomEvent.on(map, "zoomstart", this._handleZoomStart, this);
 		// L.DomEvent.on(map, "zoomend", this._handleZoomEnd, this);
 		L.DomEvent.on(overlay._image, 'click', this._select, this);
+		L.DomEvent.on(overlay._image, "dblclick", this._toolbarZIndex, this);
+	
 
 		/* Enable hotkeys. */
 		L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
@@ -1277,6 +1279,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		L.DomEvent.off(map, "click", this._deselect, this);
 		L.DomEvent.off(overlay._image, 'click', this._select, this);
+		L.DomEvent.off(overlay._image, "dblclick", this._toolbarZIndex, this);
 
 		// First, check if dragging exists - it may be off due to locking
 		if (this.dragging) { this.dragging.disable(); }
@@ -1550,6 +1553,13 @@ L.DistortableImage.Edit = L.Handler.extend({
 			this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(map, overlay);
 			overlay.fire('toolbar:created');
 		}
+	},
+
+	_toolbarZIndex: function(event) {
+		var tools = this.toolbar._container;
+		
+		tools.style.zIndex = 0;
+		L.DomEvent.stopPropagation(event);
 	},
 
   _removeOverlay: function () {
