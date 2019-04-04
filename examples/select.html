@@ -45,7 +45,7 @@
       }).addTo(map);
 
       map.whenReady(function() {
-        img = new L.DistortableImageOverlay(
+        img = L.distortableImageOverlay(
           'example.png', {
             corners: [
               new L.latLng(51.52,-0.10),
@@ -60,7 +60,7 @@
           }).addTo(map);
 
         // create a second image
-        img2 = new L.DistortableImageOverlay(
+        img2 = L.distortableImageOverlay(
           'example.png', {
             corners: [
               new L.latLng(51.51,-0.10),
@@ -73,7 +73,7 @@
             edgeMinHeight: 348
           }).addTo(map);
 
-        img3 = new L.DistortableImageOverlay(
+        img3 = L.distortableImageOverlay(
           'example.png', {
             corners: [
               new L.latLng(51.51,-0.10),
@@ -86,7 +86,7 @@
             edgeMinHeight: 348
           }).addTo(map);
 
-        img4 = new L.DistortableImageOverlay(
+        img4 = L.distortableImageOverlay(
           'example.png', {
             corners: [
               new L.latLng(51.51,-0.10),
