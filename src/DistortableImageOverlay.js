@@ -276,6 +276,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 	}
 });
 
+L.distortableImageOverlay = function(id, options) {
+	return new L.DistortableImageOverlay(id, options);
+};
 
 
 

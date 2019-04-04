@@ -50,7 +50,7 @@ L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.p
 }).addTo(map);
 
 // create an image
-img = new L.DistortableImageOverlay(
+img = L.distortableImageOverlay(
   'example.png', {
     corners: [
       new L.latLng(51.52,-0.10),
@@ -78,20 +78,14 @@ We've added a GPU-accelerated means to generate a full resolution version of the
 
 When instantiating a Distortable Image, pass in a `fullResolutionSrc` option set to the url of the higher resolution image. This image will be used in full-res exporting. 
 
-```js
-// basic Leaflet map setup
-map = L.map('map').setView([51.505, -0.09], 13);
-L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.png', {
-  maxZoom: 18,
-  attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-    '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-    'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-  id: 'examples.map-i86knfo3'
-}).addTo(map);
+
 
 ```js
+
+// create basic map setup from above
+
 // create an image
-img = new L.DistortableImageOverlay(
+img = L.distortableImageOverlay(
   'example.png', {
     corners: [
       new L.latLng(51.52,-0.10),
@@ -159,7 +153,7 @@ ToggleOrder = EditOverlayAction.extend({
 The corners are stored in `img._corners` as `L.latLng` objects, so after instantiating the image and moving it around, you can always access them like this:
 
 ```js
-img = new L.DistortableImageOverlay(...);
+img = L.distortableImageOverlay(...);
 img.addTo(map);
 // move the image around
 JSON.stringify(img._corners)
