@@ -61,4 +61,11 @@ describe("L.DistortableImage.Edit", function() {
 
 		map.setView([41.7896,-87.6996]);
 	});
+
+	describe("#_toolbarSendDown", function () {
+		it.skip("Should set an image's toolbar z-index lower than its markers on dblclick", function() {
+      
+    
+    });
+	});
 });
