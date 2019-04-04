@@ -32,73 +32,75 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._outlined = false;
   },
 
-	/* Run on image selection. */
-	addHooks: function() {
-		var overlay = this._overlay,
-			map = overlay._map,
-			i;
+  /* Run on image selection. */
+  addHooks: function() {
+    var overlay = this._overlay,
+      map = overlay._map,
+      i;
 
-		this._lockHandles = new L.LayerGroup();
-		for (i = 0; i < 4; i++) {
-			this._lockHandles.addLayer(new L.LockHandle(overlay, i, { draggable: false }));
-		}
+    this._lockHandles = new L.LayerGroup();
+    for (i = 0; i < 4; i++) {
+      this._lockHandles.addLayer(
+        new L.LockHandle(overlay, i, { draggable: false })
+      );
+    }
 
-		this._distortHandles = new L.LayerGroup();
-		for (i = 0; i < 4; i++) {
-			this._distortHandles.addLayer(new L.DistortHandle(overlay, i));
-		}
+    this._distortHandles = new L.LayerGroup();
+    for (i = 0; i < 4; i++) {
+      this._distortHandles.addLayer(new L.DistortHandle(overlay, i));
+    }
 
-		this._rotateHandles = new L.LayerGroup(); // handle includes rotate AND scale
-		for (i = 0; i < 4; i++) {
-			this._rotateHandles.addLayer(new L.RotateAndScaleHandle(overlay, i));
-		}
+    this._rotateHandles = new L.LayerGroup(); // handle includes rotate AND scale
+    for (i = 0; i < 4; i++) {
+      this._rotateHandles.addLayer(new L.RotateAndScaleHandle(overlay, i));
+    }
 
-		this._scaleHandles = new L.LayerGroup();
-		for (i = 0; i < 4; i++) {
-			this._scaleHandles.addLayer(new L.ScaleHandle(overlay, i));
-		}
+    this._scaleHandles = new L.LayerGroup();
+    for (i = 0; i < 4; i++) {
+      this._scaleHandles.addLayer(new L.ScaleHandle(overlay, i));
+    }
 
-		this.__rotateHandles = new L.LayerGroup(); // individual rotate
-		for (i = 0; i < 4; i++) {
-			this.__rotateHandles.addLayer(new L.RotateHandle(overlay, i));
-		}
+    this.__rotateHandles = new L.LayerGroup(); // individual rotate
+    for (i = 0; i < 4; i++) {
+      this.__rotateHandles.addLayer(new L.RotateHandle(overlay, i));
+    }
 
-		this._handles = {
-			'lock':		 this._lockHandles,
-			'distort': this._distortHandles,
-			'rotate':	this._rotateHandles,
-			'scale': this._scaleHandles,
-			'rotateStandalone': this.__rotateHandles
-		};
+    this._handles = {
+      lock: this._lockHandles,
+      distort: this._distortHandles,
+      rotate: this._rotateHandles,
+      scale: this._scaleHandles,
+      rotateStandalone: this.__rotateHandles
+    };
 
-    if (this._mode === 'lock') {
-			map.addLayer(this._lockHandles);
-		} else {
-			this._mode = 'distort';
-			map.addLayer(this._distortHandles);
-			this._distortHandles.eachLayer(function (layer) {
-				layer.setOpacity(0);
-				layer.dragging.disable();
-				// todo i think i can comment this out - shouldnt be changing originally set options
-				layer.options.draggable = false;
-			});
-			this._enableDragging();
-		}
+    if (this._mode === "lock") {
+      map.addLayer(this._lockHandles);
+    } else {
+      this._mode = "distort";
+      map.addLayer(this._distortHandles);
+      this._distortHandles.eachLayer(function(layer) {
+        layer.setOpacity(0);
+        layer.dragging.disable();
+        // todo i think i can comment this out - shouldnt be changing originally set options
+        layer.options.draggable = false;
+      });
+      this._enableDragging();
+    }
 
-		this._initToolbar();
+    this._initToolbar();
 
-		this._overlay._dragStartPoints = {
-			0: new L.point(0, 0),
-			1: new L.point(0, 0),
-			2: new L.point(0, 0),
-			3: new L.point(0, 0)
-		};
+    this._overlay._dragStartPoints = {
+      0: new L.point(0, 0),
+      1: new L.point(0, 0),
+      2: new L.point(0, 0),
+      3: new L.point(0, 0)
+    };
 
-		L.DomEvent.on(map, "click", this._deselect, this);
-		// L.DomEvent.on(map, "zoomstart", this._handleZoomStart, this);
-		// L.DomEvent.on(map, "zoomend", this._handleZoomEnd, this);
-		L.DomEvent.on(overlay._image, 'click', this._select, this);
-	
+    L.DomEvent.on(map, "click", this._deselect, this);
+    // L.DomEvent.on(map, "zoomstart", this._handleZoomStart, this);
+    // L.DomEvent.on(map, "zoomend", this._handleZoomEnd, this);
+    L.DomEvent.on(overlay._image, "click", this._select, this);
+
     /* Enable hotkeys. */
     L.DomEvent.on(window, "keydown", this._onKeyDown, this);
 
@@ -110,17 +112,23 @@ L.DistortableImage.Edit = L.Handler.extend({
     var overlay = this._overlay,
       map = overlay._map;
 
-		L.DomEvent.off(map, "click", this._deselect, this);
-		// L.DomEvent.off(map, "zoomstart", this._handleZoomStart, this);
-		// L.DomEvent.off(map, "zoomend", this._handleZoomEnd, this);
-		L.DomEvent.off(overlay._image, "click", this._select, this);
+    L.DomEvent.off(map, "click", this._deselect, this);
+    // L.DomEvent.off(map, "zoomstart", this._handleZoomStart, this);
+    // L.DomEvent.off(map, "zoomend", this._handleZoomEnd, this);
+    L.DomEvent.off(overlay._image, "click", this._select, this);
 
     // First, check if dragging exists - it may be off due to locking
-		if (this.dragging) { this.dragging.disable(); }
-		delete this.dragging;
+    if (this.dragging) {
+      this.dragging.disable();
+    }
+    delete this.dragging;
 
-		if (this.toolbar) { this._hideToolbar(); }
-		if (this.editing) { this.editing.disable(); }
+    if (this.toolbar) {
+      this._hideToolbar();
+    }
+    if (this.editing) {
+      this.editing.disable();
+    }
 
     map.removeLayer(this._handles[this._mode]);
 
@@ -134,25 +142,25 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._showToolbar();
     this.toolbar._hide();
     this.toolbar._tip.style.opacity = 0;
-	},
-	
-		// _handleZoomStart: function() {
-	// 	if (this.toolbar) {
-	// 		this._showToolbar();
-			// makes the toolbar stop glitching but instead disappear and reappear
-			// quickly. Decide in separate PR all together how to handle zoom glitch for
-			// all components of image
+  },
 
-      // this.toolbar._hide();
-      // this.toolbar._tip.style.opacity = 0;
+  // _handleZoomStart: function() {
+  // 	if (this.toolbar) {
+  // 		this._showToolbar();
+  // makes the toolbar stop glitching but instead disappear and reappear
+  // quickly. Decide in separate PR all together how to handle zoom glitch for
+  // all components of image
+
+  // this.toolbar._hide();
+  // this.toolbar._tip.style.opacity = 0;
   //   }
-	// },
+  // },
 
-	// _handleZoomEnd: function() {
-	// 	if (this.toolbar) {
-	// 		this._showToolbar();
-	// 	}
-	// },
+  // _handleZoomEnd: function() {
+  // 	if (this.toolbar) {
+  // 		this._showToolbar();
+  // 	}
+  // },
 
   confirmDelete: function() {
     return window.confirm("Are you sure you want to delete?");
@@ -359,26 +367,30 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _showMarkers: function() {
-		if (this._mode === 'lock') { return; }
-		var currentHandle = this._handles[this._mode];
-		currentHandle.eachLayer(function (layer) {
-			layer.setOpacity(1);
+    if (this._mode === "lock") {
+      return;
+    }
+    var currentHandle = this._handles[this._mode];
+    currentHandle.eachLayer(function(layer) {
+      layer.setOpacity(1);
 			layer.dragging.enable();
-			layer.options.draggable = true;
-		});
-	},
+			// todo would delete here
+      layer.options.draggable = true;
+    });
+  },
 
-	_hideMarkers: function() {
-		var currentHandle = this._handles[this._mode];
-		currentHandle.eachLayer(function (layer) {
-			var drag = layer.dragging,
-				opts = layer.options;
+  _hideMarkers: function() {
+    var currentHandle = this._handles[this._mode];
+    currentHandle.eachLayer(function(layer) {
+      var drag = layer.dragging,
+        opts = layer.options;
 
-			layer.setOpacity(0);
+      layer.setOpacity(0);
 			if (drag) { drag.disable(); }
-			if (opts.draggable) { opts.draggable = false; }	
-		});	
-	},
+			//todo would also delete this line
+      if (opts.draggable) { opts.draggable = false; }
+    });
+  },
 
   // TODO: toolbar for multiple image selection
   _showToolbar: function() {
@@ -389,7 +401,8 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._hideToolbar();
 
     //Find the topmost point on the image.
-    var corners = overlay.getCorners();
+		var corners = overlay.getCorners();
+		
     var maxLat = -Infinity;
     for (var i = 0; i < corners.length; i++) {
       if (corners[i].lat > maxLat) {
@@ -410,7 +423,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
   },
 
-  _removeOverlay: function () {
+  _removeOverlay: function() {
     var overlay = this._overlay;
     if (this._mode !== "lock") {
       var choice = this.confirmDelete();
