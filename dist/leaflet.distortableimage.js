@@ -132,6 +132,13 @@ L.MatrixUtil = {
 		return L.MatrixUtil.multsm(1/m[8], m);
 	}
 };
+L.TrigUtil = {
+
+  calcAngleDegrees: function(x, y) {
+    return Math.atan2(y, x) * 180 / Math.PI;
+  }
+
+};
 L.EXIF = function getEXIFdata(img) {
   if (Object.keys(EXIF.getAllTags(img)).length !== 0) {
     console.log(EXIF.getAllTags(img));
