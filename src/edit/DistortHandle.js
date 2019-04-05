@@ -16,5 +16,6 @@ L.DistortHandle = L.EditHandle.extend({
 		this._handled._updateCorner(this._corner, this.getLatLng());
 
 		this._handled.fire('update');
+		this._handled.editing._showToolbar();
 	}
 });

@@ -262,10 +262,11 @@ L.EditHandle = L.Marker.extend({
 
 	_onHandleDragStart: function() {
 		this._handled.fire('editstart');
-		this._handled.editing._hideToolbar();
+		// this._handled.editing._hideToolbar();
 	},
 
 	_onHandleDragEnd: function() {
+		// this._handled.editing._showToolbar();
 		this._fireEdit();
 	},
 
@@ -337,6 +338,7 @@ L.DistortHandle = L.EditHandle.extend({
 		this._handled._updateCorner(this._corner, this.getLatLng());
 
 		this._handled.fire('update');
+		this._handled.editing._showToolbar();
 	}
 });
 
@@ -1721,7 +1723,7 @@ L.DistortableImageOverlay.addInitHook(function() {
 	});
 });
 
-L.Map.mergeOptions({ boxSelector: true, boxZoom: false, zoomAnimation: false });
+L.Map.mergeOptions({ boxSelector: true, boxZoom: false });
 
 // used for multiple image select. Temporarily disabled until click
 // propagation issue is fixed
