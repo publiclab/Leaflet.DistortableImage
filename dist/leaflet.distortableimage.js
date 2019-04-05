@@ -1721,7 +1721,7 @@ L.DistortableImageOverlay.addInitHook(function() {
 	});
 });
 
-L.Map.mergeOptions({ boxSelector: true, boxZoom: false });
+L.Map.mergeOptions({ boxSelector: true, boxZoom: false, zoomAnimation: false });
 
 // used for multiple image select. Temporarily disabled until click
 // propagation issue is fixed
