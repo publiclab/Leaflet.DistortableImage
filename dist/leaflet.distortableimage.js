@@ -255,6 +255,7 @@ L.EditHandle = L.Marker.extend({
 
 	_onHandleDragStart: function() {
 		this._handled.fire('editstart');
+		this._handled.editing._hideToolbar();
 	},
 
 	_onHandleDragEnd: function() {
