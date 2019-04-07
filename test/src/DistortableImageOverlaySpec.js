@@ -6,7 +6,7 @@ describe("L.DistortableImageOverlay", function() {
 		var mapContainer = L.DomUtil.create('div', '', document.body),
 			fullSize = [document.querySelector("html"), document.body, mapContainer];
 
-		map = new L.Map(mapContainer).setView([41.7896,-87.5996], 15);
+		map = L.map(mapContainer).setView([41.7896,-87.5996], 15);
 
 		/* Map and its containing elements need to have height and width set. */
 		for (var i = 0, l = fullSize.length; i < l; i++) {
