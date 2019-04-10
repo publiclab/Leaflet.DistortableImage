@@ -1376,6 +1376,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 		/* Switch mode. */
 		if (this._mode === 'rotate') { this._mode = 'distort'; }
 		else { this._mode = 'rotate'; }
+		
+		this._showToolbar();
 
 		map.addLayer(this._handles[this._mode]);
 	},
@@ -1719,4 +1721,3 @@ L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
 });
 
 L.Map.addInitHook('addHandler', 'boxSelector', L.Map.BoxSelectHandle);
-//# sourceMappingURL=leaflet.distortableimage.js.map
