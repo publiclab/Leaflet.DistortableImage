@@ -215,6 +215,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 		/* Switch mode. */
 		if (this._mode === 'rotate') { this._mode = 'distort'; }
 		else { this._mode = 'rotate'; }
+		
+		this._showToolbar();
 
 		map.addLayer(this._handles[this._mode]);
 	},
@@ -307,7 +309,9 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 	_showMarkers: function() {
 		if (this._mode === 'lock') { return; }
-		this._distortHandles.eachLayer(function (layer) {
+		var currentHandle = 
+			this._mode === 'distort' ? this._distortHandles : this._rotateHandles;
+		currentHandle.eachLayer(function (layer) {
 			layer.setOpacity(1);
 			layer.dragging.enable();
 			layer.options.draggable = true;
@@ -315,7 +319,9 @@ L.DistortableImage.Edit = L.Handler.extend({
 	},
 
 	_hideMarkers: function() {
-		this._distortHandles.eachLayer(function (layer) {
+		var currentHandle =
+      this._mode === "distort" ? this._distortHandles : this._rotateHandles;
+		currentHandle.eachLayer(function (layer) {
 			var drag = layer.dragging,
 				opts = layer.options;
 
@@ -327,17 +333,18 @@ L.DistortableImage.Edit = L.Handler.extend({
 	},
 	
 	// TODO: toolbar for multiple image selection
-	_showToolbar: function(event) {
+	_showToolbar: function() {
 		var overlay = this._overlay,
-      target = event.target,
+      // target = event.target,
 			map = overlay._map;
 
 		/* Ensure that there is only ever one toolbar attached to each image. */
 		this._hideToolbar();
 		
 		var point;
-		if (event.containerPoint) { point = event.containerPoint; }
-		else { point = target._leaflet_pos; }
+		// if (event.containerPoint) { point = event.containerPoint; }
+		// point = target._leaflet_pos;
+		point = overlay._image._leaflet_pos;
 		
 		var raised_point = map.containerPointToLatLng(new L.Point(point.x,point.y-20));
 		raised_point.lng = overlay.getCenter().lng;
