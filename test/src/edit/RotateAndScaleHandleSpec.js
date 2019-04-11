@@ -4,7 +4,7 @@ describe("L.RotateAndScaleHandle", function() {
 		rotateHandle;
 
 	beforeEach(function(done) {
-		map = new L.Map(L.DomUtil.create('div', '', document.body)).setView([41.7896,-87.5996], 15);
+		map = L.map(L.DomUtil.create('div', '', document.body)).setView([41.7896,-87.5996], 15);
 		distortable = new L.DistortableImageOverlay('/examples/example.png', {
 			corners: [
 				new L.LatLng(41.7934, -87.6052),
@@ -18,6 +18,10 @@ describe("L.RotateAndScaleHandle", function() {
 			rotateHandle = new L.RotateAndScaleHandle(distortable, 0);
 			done();
 		});
+	});
+
+	it.skip("Should not distort the image during scaling", function () {
+
 	});
 
 	describe("_calculateRotation", function() {
