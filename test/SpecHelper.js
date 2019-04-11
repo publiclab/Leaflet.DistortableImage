@@ -40,7 +40,7 @@ chai.use(function(chai, utils) {
 	Assertion.addMethod('closeToLatLng', function(actual, delta, message) {
 		var obj = utils.flag(this, 'object');
 
-		delta = delta || 1e-4;	
+		delta = delta || 21e-2;	
 
 		expect(obj).to.have.property('lat');
 		expect(obj).to.have.property('lng');
