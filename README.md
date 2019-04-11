@@ -76,7 +76,7 @@ We've added a GPU-accelerated means to generate a full resolution version of the
 ```
 ## "Reveal" functionality
 
-The "reveal" tool extends the native `EditOverlayAction` Leaflet class behaviour and hides some user-specified tools, hence saving up space in the toolbar and giving more room to your mapview! Refer the comments below for a detailed explaination on what happens when the "reveal" tool is executed.
+The "reveal" tool extends the native `EditOverlayAction` Leaflet class behaviour and hides some user-specified tools, hence saving up space in the toolbar and giving more room to your mapview! Reference the comments below for a detailed explaination on what happens when the "reveal" tool is executed.
 
 ```js
 function() {
