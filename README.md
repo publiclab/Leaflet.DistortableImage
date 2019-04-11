@@ -100,7 +100,7 @@ function() {
 ```
 ## Adding Custom Toolbars
 
-You also have the ability to incorporate additional toolbars into view by defining appropriate fields in the exposed `custom_toolbar` API inside your HTML, for eg., we at Public Lab use a custom keymapping guide toolbar by defining it as,
+You also have the ability to incorporate additional toolbars into your view by defining the appropriate fields in the exposed `custom_toolbar` API inside your HTML, for eg., we at Public Lab use a custom keymapping guide toolbar by defining it as,
 ```js
 var keymapper = {
   position: "topright",
