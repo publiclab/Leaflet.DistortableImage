@@ -53,7 +53,8 @@ L.DistortableCollection = L.FeatureGroup.extend({
     this.eachLayer(function(layer) {
       var edit = layer.editing;
       if (layer._image !== event.target) {
-        edit._hideMarkers();
+        // edit._hideMarkers();
+        edit._deselect();
       } else {
         this._toggleMultiSelect(event, edit);
       }
