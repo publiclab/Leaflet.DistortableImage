@@ -88,6 +88,8 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 			var editing = this._overlay.editing;
 
 			editing._toggleRotateDistort();
+			editing._hideToolbar();
+			editing._showToolbar();
 			this.disable();
 		}
 	}),

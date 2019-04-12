@@ -3,7 +3,7 @@ describe("L.DistortableImage.Edit", function() {
 		overlay;
 
 	beforeEach(function(done) {
-		map = new L.Map(L.DomUtil.create('div', '', document.body)).setView([41.7896,-87.5996], 15);
+		map = L.map(L.DomUtil.create('div', '', document.body)).setView([41.7896,-87.5996], 15);
 
 		overlay = new L.DistortableImageOverlay('/examples/example.png', {
 			corners: [
@@ -35,7 +35,7 @@ describe("L.DistortableImage.Edit", function() {
 			expect(handle.getLatLng()).to.be.closeToLatLng(corners[handle._corner]);
 		});
 
-		overlay.editing._toggleRotateDistort();
+		overlay.editing._toggleRotateDistort(true); // setting the testingIntent value to true
 
 		/* After we toggle modes, the rotateHandles are on the map and should be synced. */
 		overlay.editing._rotateHandles.eachLayer(function(handle) {
