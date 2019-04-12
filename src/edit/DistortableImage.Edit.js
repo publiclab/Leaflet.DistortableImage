@@ -231,7 +231,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 		}
 	},
 
-	_toggleRotateDistort: function() {
+	_toggleRotateDistort: function(testingIntent) {
+		var intent = testingIntent === true ? true : false; // || won't work here
 		var map = this._overlay._map;
 
 		map.removeLayer(this._handles[this._mode]);
@@ -357,7 +358,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 	},
 	
 	// TODO: toolbar for multiple image selection
-	_showToolbar: function() {
+	_showToolbar: function(testingIntent) {
+		var intent = testingIntent === true ? true : false; // || won't work here
 		var overlay = this._overlay,
       // target = event.target,
 			map = overlay._map;
