@@ -161,7 +161,7 @@ JSON.stringify(img._corners)
 => "[{"lat":51.52,"lng":-0.1},{"lat":51.52,"lng":-0.14},{"lat":51.5,"lng":-0.1},{"lat":51.5,"lng":-0.14}]"
 ```
 
-### Adding "DOMStrings" for custom toolbars
+## Adding "DOMStrings" for custom toolbars
 
 Custom "DOMStrings" **(i.e., strings of HTML)** that define the custom toolbars can easily be added by describing those in the `src/edit/tools/DistortableImage.Guides.js` file and referencing those in the `addToolbar` method inside the `src/edit/DistortableImage.Edit.js` file.
 
