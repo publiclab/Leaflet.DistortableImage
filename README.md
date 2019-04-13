@@ -189,7 +189,7 @@ var guide_strings = [dom_string]; // add guides here for custom toolbars
 L.DistortableImage.Guides = guide_strings;
 ```
 
-**Note:** The default `toolbarStyle` will initially be set to "Popup", unless specified otherwise.
+**Note:** The default `toolbarStyle` will initially be set to "Popup", unless specified otherwise when initializing the image. 
 
 ## Setup
 
