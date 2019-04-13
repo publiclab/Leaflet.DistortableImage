@@ -24,6 +24,11 @@ Here's a screenshot:
 
 ![screenshot](example.png)
 
+## Setup
+
+1. From the root directory, run `npm install` or `sudo npm install`
+2. Open examples/index.html in a browser
+
 ## Demo
 
 Check out this [simple demo](https://publiclab.github.io/Leaflet.DistortableImage/examples/index.html).
@@ -184,17 +189,47 @@ We further added a `getCorner(idx)` method used the same way as its plural count
 Custom "DOMStrings" **(i.e., strings of HTML)** that define the custom toolbars can easily be added by describing those in the `src/edit/tools/DistortableImage.Guides.js` file and referencing those in the `addToolbar` method inside the `src/edit/DistortableImage.Edit.js` file.
 
 ```js
-var guide_strings = [dom_string]; // add guides here for custom toolbars
+  // inside src/edit/DistortableImage.Edit.js
 
-L.DistortableImage.Guides = guide_strings;
+	/* Add custom toolbars */
+		this._addToolbar = function(map, position, el, styleClass, DOMString) {
+			var custom_toolbar = L.control({ position: position });
+			custom_toolbar.onAdd = function() {
+				var el_wrapper = L.DomUtil.create(el, styleClass);
+				el_wrapper.innerHTML = DOMString;
+				return el_wrapper;
+			};
+			custom_toolbar.addTo(map);
+    };
 ```
 
-**Note:** The default `toolbarStyle` will initially be set to "Popup", unless specified otherwise when initializing the image. 
+```js
+// inside src/edit/tools/DistortableImage.Guides.js
 
-## Setup
+// add guides here for custom toolbars
+var guide_strings = [dom_string];
+L.DistortableImage.Guides = guide_strings;
+```
+***
 
-1. From the root directory, run `npm install` or `sudo npm install`
-2. Open examples/index.html in a browser
+**Note:** The default `toolbarType` will initially be set to "Popup", unless specified otherwise when initializing the image. For eg.,
+
+```js
+ img = new L.DistortableImageOverlay(
+        'example.png', {
+          // add a toolbarType field with values 'popup' (default) or 'control'
+          toolbarType: 'control',
+          corners: [
+            new L.latLng(51.52,-0.10),
+            new L.latLng(51.52,-0.14),
+            new L.latLng(51.50,-0.10),
+            new L.latLng(51.50,-0.14)
+          ],
+          fullResolutionSrc: 'large.jpg'
+        }
+      ).addTo(map);
+```
+***
 
 ## Contributing
 
