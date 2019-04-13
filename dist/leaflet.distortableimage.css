@@ -6,10 +6,15 @@
 }
 
 .l-container {
-  background-color: rgba(0,0,0,0.5);
-  color: white;
-  padding: 0px 0px 5px 0px;
-  font-size: 12px;
+  background-color: rgb(255, 255, 255, 0.75);
+  color: black;
+  padding: 0px 10px 6px 10px;
+  font-size: 14px;
+}
+
+.l-container table th{
+  font-size: 16px;
+  padding-top: 8px;
 }
 
 #imgdistort {

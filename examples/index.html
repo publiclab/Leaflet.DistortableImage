@@ -77,7 +77,8 @@
       // create an image
       img = new L.DistortableImageOverlay(
         'example.png', {
-          toolbarType: 'Popup', // choose b/w popup/control toolbars
+          // add a suppressToolbar: 'true' here to disable toolbars
+          // add a toolbarType field with values 'popup' (default) or 'control'
           corners: [
             new L.latLng(51.52,-0.10),
             new L.latLng(51.52,-0.14),
