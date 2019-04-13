@@ -220,9 +220,12 @@ ToggleOrder = EditOverlayAction.extend({
 ```
 
 ## Corners
+<<<<<<< HEAD
 
 The corners are stored as `L.latLng` objects
 on the image, and can be accessed using our `getCorners()` method after the image is instantiated and added to the map.
+=======
+>>>>>>> develop on sashadev-sky's review
 
 Useful usage example:
 
