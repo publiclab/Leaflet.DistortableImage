@@ -4,3 +4,4 @@ coverage
 *.swo
 package-lock.json
 bower_components
+todo.txt
