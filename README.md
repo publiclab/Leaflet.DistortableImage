@@ -151,14 +151,28 @@ ToggleOrder = EditOverlayAction.extend({
 
 ### Corners
 
-The corners are stored in `img._corners` as `L.latLng` objects, so after instantiating the image and moving it around, you can always access them like this:
+The corners are stored as `L.latLng` objects
+on the image, and can be accessed using our `getCorners()` method after the image is instantiated and added to the map.
+
+Useful usage example: 
 
 ```js
+// instantiate and add to map
 img = L.distortableImageOverlay(...);
 img.addTo(map);
-// move the image around
-JSON.stringify(img._corners)
+
+// grab the initial corner positions
+JSON.stringify(img.getCorners())
 => "[{"lat":51.52,"lng":-0.1},{"lat":51.52,"lng":-0.14},{"lat":51.5,"lng":-0.1},{"lat":51.5,"lng":-0.14}]"
+
+// ...move the image around...
+
+// check the new corner positions.
+JSON.stringify(img.getCorners())
+=> "[{"lat":51.51091971397745,"lng":-0.015994012355804447},{"lat":51.51091971397745,"lng":-0.05599111318588257},{"lat":51.49093697986642,"lng":-0.015994012355804447},{"lat":51.49093697986642,"lng":-0.05599111318588257}]"
+
+// note there is an added level of precision after dragging the image for debugging purposes
+
 ```
 
 ## Setup
