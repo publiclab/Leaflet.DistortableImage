@@ -32,21 +32,11 @@ L.EditHandle = L.Marker.extend({
     L.Marker.prototype.onRemove.call(this, map);
 	},
 	
-  /**
-	 * Note for future devs playing with the toolbar UI: 
-	 * 
-   * the commented _hideToolbar() and _showToolbar() calls in this method and
-   * the method below it, respecitvely, will change the UI in relation to the toolbar
-	 * if uncommented. It will make the toolbar hide while dragging any corners and 
-	 * reappear when you are done, as opposed to always being present.
-   */
   _onHandleDragStart: function() {
 		this._handled.fire("editstart");
-    // this._handled.editing._hideToolbar();
   },
 
   _onHandleDragEnd: function() {
-    // this._handled.editing._showToolbar();
     this._fireEdit();
 	},
 
