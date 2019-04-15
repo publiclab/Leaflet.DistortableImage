@@ -185,7 +185,7 @@ Typically in Leaflet the corners are ordered starting from 0 in the top-left cor
 
 Our corners are a little different. The 0 and 1 index assignments are swapped, so 1 will be in the top-left instead (resulting in **1, 0, 2, 3**).
 
- To ease working with corner logic for developers during complex distortions (such as flipping the image over itself), where corners will also swap places, we have exposed a `corner` property on the `window`. It is available after dragging a corner in `distort` mode (blue square handles) and returns a number between 0 and 3 representing the most recently dragged corner.
+To ease working with corner logic for developers during complex distortions (such as flipping the image over itself), where corners will also swap places, we have exposed a `corner` property on the `window`. It is available after dragging a corner in `distort` mode (blue square handles) and returns a number between 0 and 3 representing the most recently dragged corner.
 
 ## Setup
 
