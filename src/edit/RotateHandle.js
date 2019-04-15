@@ -16,7 +16,7 @@ L.RotateHandle = L.EditHandle.extend({
 
 		overlay.editing._hideToolbar();
 
-		overlay.editing._rotateBy(angle);
+	 	overlay.editing._rotateBy(angle);
 
 		overlay.fire('update');
 	},
