@@ -221,6 +221,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		return this._corners;
 	},
 
+	getCorner: function(i) {
+		return this._corners[i];
+	},
+
 	/*
 	 * Calculates the centroid of the image.
 	 *		 See http://stackoverflow.com/questions/6149175/logical-question-given-corners-find-center-of-quadrilateral

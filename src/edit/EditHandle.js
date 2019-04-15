@@ -41,14 +41,14 @@ L.EditHandle = L.Marker.extend({
 	 * reappear when you are done, as opposed to always being present.
    */
   _onHandleDragStart: function() {
-    this._handled.fire("editstart");
+		this._handled.fire("editstart");
     // this._handled.editing._hideToolbar();
   },
 
   _onHandleDragEnd: function() {
     // this._handled.editing._showToolbar();
     this._fireEdit();
-  },
+	},
 
   _fireEdit: function() {
     this._handled.edited = true;
