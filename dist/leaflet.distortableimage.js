@@ -336,10 +336,10 @@ L.DistortHandle = L.EditHandle.extend({
 
   updateHandle: function() {
     this.setLatLng(this._handled._corners[this._corner]);
-  },
-
+	},
+// todo add smaller comment here about window maybe mention reference in readme
   _onHandleDrag: function() {
-    window.corner = this._corner;
+		window.corner = this._corner;
     this._handled._updateCorner(this._corner, this.getLatLng());
 
     this._handled.fire("update");
@@ -817,22 +817,22 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 	_isInsideOut: function() {
 		var map = this._map,
 			c0P = map.latLngToLayerPoint(this._corners[0]),
-      c1P = map.latLngToLayerPoint(this._corners[1]),
-      c2P = map.latLngToLayerPoint(this._corners[2]),
-			c3P = map.latLngToLayerPoint(this._corners[3]);
+      c1P = map.latLngToLayerPoint(this._corners[1]);
+      // c2P = map.latLngToLayerPoint(this._corners[2]),
+			// c3P = map.latLngToLayerPoint(this._corners[3]);
 			
       var c0PY = c0P.y;
       var c0PX = c0P.x;
       var c1PY = c1P.y;
       var c1PX = c1P.x;
-			var c2PX = c2P.x;
-			var c3PX = c3P.x;
+			// var c2PX = c2P.x;
+			// var c3PX = c3P.x;
 
 			return (
-				(c0PX > c1PX && this._isUpsideDown()) || 	
-				(c0PX < c1PX && this._isRightSideUp()) || 	
-				(this._isSidewaysLeft() && c0PY > c1PY) ||
-				((this._isSidewaysRight() && c0PY < c1PY) && (c1PX > c3PX && c0PX > c2PX))
+				((c0PX > c1PX && this._isUpsideDown()) || 	
+				(c0PX < c1PX && this._isRightSideUp())) || 	
+				((this._isSidewaysLeft() && c0PY > c1PY) ||
+				(this._isSidewaysRight() && c0PY < c1PY))
       );
 	},
 
@@ -848,7 +848,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     var c2PY = c2P.y;
     var c3PY = c3P.y;
    
-    return c0PY < c2PY && c0PY < c3PY && (c1PY < c2PY && c1PY < c3PY);
+    return c0PY < c2PY && c0PY < c3PY && (c1PY < c3PY);
 
 	},
 
@@ -864,7 +864,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		var c2PY = c2P.y;
 		var c3PY = c3P.y;
 	
-		return ((c0PY > c2PY && c0PY > c3PY) && (c1PY > c2PY && c1PY > c3PY));
+		return ((c0PY > c2PY && c0PY > c3PY) && (c1PY > c3PY));
 	},
 
 	_isSidewaysLeft: function () {
