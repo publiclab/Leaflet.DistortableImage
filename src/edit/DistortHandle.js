@@ -12,7 +12,8 @@ L.DistortHandle = L.EditHandle.extend({
   updateHandle: function() {
     this.setLatLng(this._handled._corners[this._corner]);
 	},
-// todo add smaller comment here about window maybe mention reference in readme
+
+	// todo add smaller comment here about window maybe mention reference in readme
   _onHandleDrag: function() {
 		window.corner = this._corner;
     this._handled._updateCorner(this._corner, this.getLatLng());
