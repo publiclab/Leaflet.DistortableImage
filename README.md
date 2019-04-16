@@ -218,7 +218,7 @@ addToolbar(overlay._map, "topright", "div", "l-container", L.DistortableImage.Gu
 **Note:** The default `toolbarType` will initially be set to "Popup", unless specified otherwise when initializing the image. For eg.,
 
 ```js
- img = new L.DistortableImageOverlay(
+ img = L.distortableImageOverlay(
         'example.png', {
           // add a toolbarType field with values 'popup' (default) or 'control'
           toolbarType: 'control',
