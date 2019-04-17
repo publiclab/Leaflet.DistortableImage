@@ -1169,20 +1169,19 @@ L.DistortableImage.Edit = L.Handler.extend({
 		opacity: 0.7,
 		outline: '1px solid red',
 		keymap: {
-			8: '_removeOverlay', // backspace windows / delete mac
-			46: '_removeOverlay', // delete windows / delete + fn mac
-			20: '_toggleRotate', // CAPS
-			27: '_deselect', // esc
-			68: '_toggleRotateDistort', // d
-			69: '_toggleIsolate', // e
-			73: '_toggleIsolate', // i
-			74: '_sendUp', // j
-			75: '_sendDown', // k
-			76: '_toggleLock', // l
-			79: '_toggleOutline', // o
-			82: '_toggleRotateDistort', // r
-			83: '_toggleScale', // s
-			84: '_toggleTransparency', // t
+			'Backspace': '_removeOverlay', // backspace windows / delete mac
+			'Delete': '_removeOverlay', // delete windows / delete + fn mac
+			'CapsLock': '_toggleRotate',
+			'Escape': '_deselect',
+			'd': '_toggleRotateDistort',
+			'i': '_toggleIsolate',
+			'j': '_sendUp',
+			'k': '_sendDown',
+			'l': '_toggleLock',
+			'o': '_toggleOutline',
+			'r': '_toggleRotateDistort',
+			's': '_toggleScale',
+			't': '_toggleTransparency',
 		}
 	},
 
@@ -1364,7 +1363,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 	_onKeyDown: function(event) {
 		var keymap = this.options.keymap,
-			handlerName = keymap[event.which];
+			handlerName = keymap[event.key];
 
 		if (handlerName !== undefined && this._overlay.options.suppressToolbar !== true) {
 			this[handlerName].call(this); 
@@ -1632,6 +1631,7 @@ L.DistortableImageOverlay.addInitHook(function() {
 		if (this.editing) { this.editing.disable(); }
 	});
 });
+
 L.Map.mergeOptions({ boxSelector: true, boxZoom: false });
 
 // used for multiple image select. Temporarily disabled until click
