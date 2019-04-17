@@ -97,7 +97,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
           layer.editing._hideToolbar();
         }
         layer._dragStartPoints[i] = layer._map.latLngToLayerPoint(
-          layer.getCorners()[i]
+          layer.getCorner(i)
         );
       }
     });
@@ -113,7 +113,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     overlay._dragPoints = {};
 
     for (i = 0; i < 4; i++) {
-      overlay._dragPoints[i] = map.latLngToLayerPoint(overlay.getCorners()[i]);
+      overlay._dragPoints[i] = map.latLngToLayerPoint(overlay.getCorner(i));
     }
 
     var cpd = overlay._calcCornerPointDelta();
