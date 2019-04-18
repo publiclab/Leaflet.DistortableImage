@@ -15,8 +15,15 @@ describe("L.DistortableImage.Edit", function() {
 		}).addTo(map);
 
 		/* Forces the image to load before any tests are run. */
-		L.DomEvent.on(overlay._image, 'load', function() { done (); });
+		L.DomEvent.on(overlay._image, 'load', function() { 
+			overlay.editing.enable();
+			done(); 
+		});
 	});
+
+	afterEach(function () {
+      L.DomUtil.remove(overlay);
+    });
 
 	it("Should be initialized along with each instance of L.DistortableImageOverlay.", function() {
 		expect(overlay.editing).to.be.an.instanceOf(L.DistortableImage.Edit);
@@ -35,12 +42,7 @@ describe("L.DistortableImage.Edit", function() {
 			expect(handle.getLatLng()).to.be.closeToLatLng(corners[handle._corner]);
 		});
 		
-		/* testingIntent ensures that this particular test does not include a
-		specified block of code that unintentionally caused it to fail
-		(new L.DistortableImage.EditToolbar(raised_point) was undefined and
-		caused this to fail) and checks if the user is "testing" or not, for
-		which, it'll exclude that part, while having no side effects whatsoever. */
-		overlay.editing._toggleRotateDistort(true); // setting the testingIntent value to true
+		overlay.editing._toggleRotateDistort();
 
 		/* After we toggle modes, the rotateHandles are on the map and should be synced. */
 		overlay.editing._rotateHandles.eachLayer(function(handle) {
