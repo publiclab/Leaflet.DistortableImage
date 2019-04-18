@@ -1711,6 +1711,7 @@ L.DistortableImageOverlay.addInitHook(function () {
   });
 });
 
+<<<<<<< HEAD
 L.distortableImage = L.DistortableImage || {};
 L.distortableImage = L.DistortableImage;
 
@@ -1724,6 +1725,23 @@ L.distortableImage = L.DistortableImage;
         html: use,
         tooltip: 'Export Images'
       };
+=======
+<<<<<<< HEAD
+L.DistortableImage.EditToolbar = LeafletToolbar.Control.extend({
+	options: {
+		position:'topleft',
+		actions: [
+			ToggleTransparency,
+			RemoveOverlay,
+			ToggleOutline,
+			ToggleEditable,
+			ToggleRotateScale,
+			ToggleExport,
+			EnableEXIF,
+			ToggleOrder
+		]
+	},
+>>>>>>> force build dist
 
       L.EditAction.prototype.initialize.call(this, map, group, options);
     },
@@ -1822,6 +1840,26 @@ L.DistortableCollection.addInitHook(function () {
     this.editActions = this.ACTIONS;
   }
 });
+=======
+  console.log(ToggleOrder,EnableEXIF); //find a JShint alternative for this
+
+	setTimeout(function(){
+		var toolbarStyle = L.DistortableImage._options.toolbarType || "Popup" ;
+		L.DistortableImage.EditToolbar = LeafletToolbar[toolbarStyle].extend({
+			options: {
+				position:'topleft',
+				actions: [
+					ToggleTransparency,
+					RemoveOverlay,
+					ToggleOutline,
+					ToggleEditable,
+					ToggleRotateDistort,
+					ToggleExport
+				]
+			}
+		});
+	},1000); // prevent asynchronity during toolbar construction
+>>>>>>> force build dist
 
 L.DomUtil = L.DomUtil || {};
 L.DistortableImage = L.DistortableImage || {};
@@ -2220,6 +2258,7 @@ L.DistortableImage.Edit = L.Handler.extend({
       handlerName = keymap[event.key],
       eventParents = this._overlay._eventParents;
 
+<<<<<<< HEAD
     if (eventParents) {
       var eP = eventParents[Object.keys(eventParents)[0]];
       if (eP.anySelected()) {
@@ -2229,10 +2268,19 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     if (this[handlerName] !== undefined && !this._overlay.options.suppressToolbar) {
       if (this._selected) {
+=======
+<<<<<<< HEAD
+    if (this[handlerName] !== undefined && this._overlay.options.suppressToolbar !== true) {
+       if (this._selected) {
+>>>>>>> force build dist
         this[handlerName].call(this);
       }
     }
   }, 
+=======
+	_toggleRotateDistort: function() {
+		var map = this._overlay._map;
+>>>>>>> force build dist
 
   _toggleRotateScale: function() {
     var map = this._overlay._map;
@@ -2391,6 +2439,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			if (drag) { drag.disable(); }
 			if (opts.draggable) { opts.draggable = false; }
 		});
+<<<<<<< HEAD
   },
 
   _addToolbar: function() {
@@ -2420,6 +2469,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   },
 
+<<<<<<< HEAD
   _showToolbar: function() {
     var overlay = this._overlay,
       eventParents = overlay._eventParents;
@@ -2431,6 +2481,34 @@ L.DistortableImage.Edit = L.Handler.extend({
       if (eP.anySelected()) {
         eP._addToolbar();
         return;
+=======
+=======
+		
+	},
+	
+	// TODO: toolbar for multiple image selection
+	_showToolbar: function() {
+		var overlay = this._overlay,
+      // target = event.target,
+			map = overlay._map;
+
+		/* Ensure that there is only ever one toolbar attached to each image. */
+		this._hideToolbar();
+		
+		var point;
+		// if (event.containerPoint) { point = event.containerPoint; }
+		// point = target._leaflet_pos;
+		point = overlay._image._leaflet_pos;
+		
+		var raised_point = map.containerPointToLatLng(new L.Point(point.x,point.y-20));
+		raised_point.lng = overlay.getCenter().lng;
+	
+>>>>>>> force build dist
+		if (this._overlay.options.suppressToolbar !== true) {
+			try {
+        this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(map, overlay);
+        overlay.fire('toolbar:created');
+>>>>>>> force build dist
       }
     } 
 
