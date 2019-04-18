@@ -21,7 +21,7 @@ module.exports = function(grunt) {
                 noarg: true,
                 regexp: true,
                 undef: true,
-                unused: 'strict',
+                unused: 'vars',
                 trailing: true,
                 smarttabs: true,
                 globals: {
