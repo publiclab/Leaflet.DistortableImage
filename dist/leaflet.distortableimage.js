@@ -1273,19 +1273,11 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._overlay = overlay;
     this._toggledImage = false;
 
-<<<<<<< HEAD
     /* Interaction modes. */
     this._mode = this._overlay.options.mode || "distort";
     this._selected = this._overlay.options.selected || false;
     this._transparent = false;
     this._outlined = false;
-=======
-		/* Interaction modes. */
-		this._mode = this._overlay.options.mode || 'rotate';
-		this._transparent = false;
-		this._outlined = false;
-	},
->>>>>>> add default selector
 
     /* generate instance counts */
     this.instance_count = L.DistortableImage.Edit.prototype.instances =
