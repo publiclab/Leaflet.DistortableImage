@@ -1493,6 +1493,8 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
   }
   });
 
+  console.log(ToggleOrder,EnableEXIF); //find a JShint alternative for this
+
 	setTimeout(function(){
 		var toolbarStyle = L.DistortableImage._options.toolbarType || "Popup" ;
 		L.DistortableImage.EditToolbar = LeafletToolbar[toolbarStyle].extend({
