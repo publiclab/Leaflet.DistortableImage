@@ -1196,6 +1196,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
   }
   });
 
+<<<<<<< HEAD
 L.DistortableImage.EditToolbar = LeafletToolbar.Control.extend({
 	options: {
 		position:'topleft',
@@ -1233,6 +1234,26 @@ L.DistortableImage.EditToolbar = LeafletToolbar.Control.extend({
 	},
 
 });
+=======
+  console.log(ToggleOrder,EnableEXIF); //find a JShint alternative for this
+
+	setTimeout(function(){
+		var toolbarStyle = L.DistortableImage._options.toolbarType || "Popup" ;
+		L.DistortableImage.EditToolbar = LeafletToolbar[toolbarStyle].extend({
+			options: {
+				position:'topleft',
+				actions: [
+					ToggleTransparency,
+					RemoveOverlay,
+					ToggleOutline,
+					ToggleEditable,
+					ToggleRotateDistort,
+					ToggleExport
+				]
+			}
+		});
+	},1000); // prevent asynchronity during toolbar construction
+>>>>>>> force build dist
 
 L.DistortableImage = L.DistortableImage || {};
 // L.DistortableImage.Guides = L.DistortableImage.Guides || {};
@@ -1479,12 +1500,17 @@ L.DistortableImage.Edit = L.Handler.extend({
     var keymap = this.options.keymap,
       handlerName = keymap[event.key];
 
+<<<<<<< HEAD
     if (this[handlerName] !== undefined && this._overlay.options.suppressToolbar !== true) {
        if (this._selected) {
         this[handlerName].call(this);
        }
     }
   }, 
+=======
+	_toggleRotateDistort: function() {
+		var map = this._overlay._map;
+>>>>>>> force build dist
 
   _toggleRotateScale: function() {
     var map = this._overlay._map;
@@ -1635,6 +1661,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			if (drag) { drag.disable(); }
 			if (opts.draggable) { opts.draggable = false; }
 		});
+<<<<<<< HEAD
   },
 
   // TODO: toolbar for multiple image selection
@@ -1655,6 +1682,28 @@ L.DistortableImage.Edit = L.Handler.extend({
 		var raised_point = overlay.getCenter();
 		raised_point.lat = maxLat;
 
+=======
+		
+	},
+	
+	// TODO: toolbar for multiple image selection
+	_showToolbar: function() {
+		var overlay = this._overlay,
+      // target = event.target,
+			map = overlay._map;
+
+		/* Ensure that there is only ever one toolbar attached to each image. */
+		this._hideToolbar();
+		
+		var point;
+		// if (event.containerPoint) { point = event.containerPoint; }
+		// point = target._leaflet_pos;
+		point = overlay._image._leaflet_pos;
+		
+		var raised_point = map.containerPointToLatLng(new L.Point(point.x,point.y-20));
+		raised_point.lng = overlay.getCenter().lng;
+	
+>>>>>>> force build dist
 		if (this._overlay.options.suppressToolbar !== true) {
 			try {
         this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(map, overlay);
