@@ -1168,6 +1168,8 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
   }
   });
 
+  console.log(ToggleOrder,EnableEXIF); //find a JShint alternative for this
+
 	setTimeout(function(){
 		var toolbarStyle = L.DistortableImage._options.toolbarType || "Popup" ;
 		L.DistortableImage.EditToolbar = LeafletToolbar[toolbarStyle].extend({
@@ -1418,8 +1420,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		}
 	},
 
-	_toggleRotateDistort: function(testingIntent) {
-		var intent = testingIntent === true ? true : false; // || won't work here
+	_toggleRotateDistort: function() {
 		var map = this._overlay._map;
 
 		map.removeLayer(this._handles[this._mode]);
@@ -1545,8 +1546,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 	},
 	
 	// TODO: toolbar for multiple image selection
-	_showToolbar: function(testingIntent) {
-		var intent = testingIntent === true ? true : false; // || won't work here
+	_showToolbar: function() {
 		var overlay = this._overlay,
       // target = event.target,
 			map = overlay._map;
