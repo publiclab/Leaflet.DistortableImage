@@ -118,10 +118,10 @@ Our `DistortableCollection` class allows working with multiple images simultaneo
 
 ```js
 // OPTION 1: Pass in images immediately
-new L.DistortableCollection([img, img2, img3]).addTo(map);
+L.distortableCollection([img, img2, img3]).addTo(map);
 
 // OPTION 2: Instantiate an empty collection and pass in images later 
-var imageFeatureGroup = new L.DistortableCollection().addTo(map);
+var imageFeatureGroup = L.distortableCollection().addTo(map);
 
 imageFeatureGroup.addLayer(img);
 imageFeatureGroup.addLayer(img2);
