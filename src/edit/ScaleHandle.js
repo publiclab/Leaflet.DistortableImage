@@ -18,6 +18,8 @@ L.ScaleHandle = L.EditHandle.extend({
 		overlay.editing._scaleBy(scale);
 
 		overlay.fire('update');
+
+		this._handled.editing._showToolbar();
 	},
 
 	updateHandle: function() {

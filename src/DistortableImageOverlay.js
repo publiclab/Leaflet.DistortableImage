@@ -221,6 +221,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		return this._corners;
 	},
 
+	getCorner: function(i) {
+		return this._corners[i];
+	},
+
 	/*
 	 * Calculates the centroid of the image.
 	 *		 See http://stackoverflow.com/questions/6149175/logical-question-given-corners-find-center-of-quadrilateral
@@ -243,6 +247,15 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 	// Use for translation calculations - for translation the delta for 1 corner applies to all 4
 	_calcCornerPointDelta: function () {
 		return this._dragStartPoints[0].subtract(this._dragPoints[0]);
+	},
+
+	_calcCenterTwoCornerPoints: function (topLeft, topRight) {
+			var toolPoint = { x: "", y: "" };
+
+      toolPoint.x = topRight.x + (topLeft.x - topRight.x) / 2;
+			toolPoint.y = topRight.y + (topLeft.y - topRight.y) / 2;
+			
+			return toolPoint;
 	},
 
 	_calculateProjectiveTransform: function(latLngToCartesian) {
