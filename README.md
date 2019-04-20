@@ -179,14 +179,6 @@ JSON.stringify(img.getCorners())
 
 We further added a `getCorner(idx)` method used the same way as its plural counterpart but with an index passed to it.
 
-**An important note about our corners for devs:**
-
-Typically in Leaflet the corners are ordered starting from 0 in the top-left corner moving counter-clockwise. (0, 1, 2, 3)
-
-Our corners are a little different. The 0 and 1 index assignments are swapped, so 1 will be in the top-left instead (resulting in **1, 0, 2, 3**).
-
-To ease working with corner logic for developers during complex distortions (such as flipping the image over itself), where corners will also swap places, we have exposed a `corner` property on the `window`. It is available after dragging a corner in `distort` mode (blue square handles) and returns a number between 0 and 3 representing the most recently dragged corner.
-
 ## Setup
 
 1. From the root directory, run `npm install` or `sudo npm install`
