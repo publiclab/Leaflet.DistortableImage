@@ -14,11 +14,11 @@ L.RotateHandle = L.EditHandle.extend({
 			newLatLng = this.getLatLng(),
 			angle = this._calculateAngle(formerLatLng, newLatLng);
 
-		overlay.editing._hideToolbar();
-
-		overlay.editing._rotateBy(angle);
+	 	overlay.editing._rotateBy(angle);
 
 		overlay.fire('update');
+
+		this._handled.editing._showToolbar();
 	},
 
 	updateHandle: function() {
