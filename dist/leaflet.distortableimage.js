@@ -1408,8 +1408,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     };
 
     L.DomEvent.on(map, "click", this._deselect, this);
-    // L.DomEvent.on(map, "zoomstart", this._handleZoomStart, this);
-    // L.DomEvent.on(map, "zoomend", this._handleZoomEnd, this);
     L.DomEvent.on(overlay._image, "click", this._select, this);
 
     /* Enable hotkeys. */
@@ -1424,8 +1422,6 @@ L.DistortableImage.Edit = L.Handler.extend({
       map = overlay._map;
 
     L.DomEvent.off(map, "click", this._deselect, this);
-    // L.DomEvent.off(map, "zoomstart", this._handleZoomStart, this);
-    // L.DomEvent.off(map, "zoomend", this._handleZoomEnd, this);
     L.DomEvent.off(overlay._image, "click", this._select, this);
 
     // First, check if dragging exists - it may be off due to locking
@@ -1472,24 +1468,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     overlay._reset();
   },
-
-  // _handleZoomStart: function() {
-  // 	if (this.toolbar) {
-  // 		this._showToolbar();
-  // makes the toolbar stop glitching but instead disappear and reappear
-  // quickly. Decide in separate PR all together how to handle zoom glitch for
-  // all components of image
-
-  // this.toolbar._hide();
-  // this.toolbar._tip.style.opacity = 0;
-  //   }
-  // },
-
-  // _handleZoomEnd: function() {
-  // 	if (this.toolbar) {
-  // 		this._showToolbar();
-  // 	}
-  // },
 
   _scaleBy: function(scale) {
     var overlay = this._overlay,
