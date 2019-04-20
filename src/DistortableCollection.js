@@ -8,6 +8,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     L.DomEvent.on(document, "keydown", this._onKeyDown, this);
     L.DomEvent.on(map, "click", this._deselectAll, this);
+    // L.DomEvent.on(overlay._image, "click", this._select, this);
 
     /**
      * the box zoom override works, but there is a bug involving click event propogation.
@@ -53,12 +54,13 @@ L.DistortableCollection = L.FeatureGroup.extend({
     this.eachLayer(function(layer) {
       var edit = layer.editing;
       if (layer._image !== event.target) {
-        // edit._hideMarkers();
-        edit._deselect();
+        edit._hideMarkers();
       } else {
         this._toggleMultiSelect(event, edit);
       }
     }, this);
+
+    L.DomEvent.stopPropagation(event);
   },
 
   _addSelections: function(e) {
@@ -71,7 +73,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
         edit._hideToolbar();
       }
       for (i = 0; i < 4; i++) {
-        if (box.contains(layer.getCorners()[i]) && edit._mode !== "lock") {
+        if (box.contains(layer.getCorner(i)) && edit._mode !== "lock") {
           L.DomUtil.addClass(layer.getElement(), "selected");
           break;
         }
@@ -89,7 +91,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var overlay = event.target,
       i;
 
-    if (!this.isSelected(overlay)) { return; }
+    if (!this.isSelected(overlay)) {
+      return;
+    }
 
     this.eachLayer(function(layer) {
       for (i = 0; i < 4; i++) {
@@ -108,12 +112,14 @@ L.DistortableCollection = L.FeatureGroup.extend({
       map = this._map,
       i;
 
-    if (!this.isSelected(overlay)) { return; }
+    if (!this.isSelected(overlay)) {
+      return;
+    }
 
     overlay._dragPoints = {};
 
     for (i = 0; i < 4; i++) {
-      overlay._dragPoints[i] = map.latLngToLayerPoint(overlay.getCorner(i));
+      overlay._dragPoints[i] = map.latLngToLayerPoint(overlay.getCorners()[i]);
     }
 
     var cpd = overlay._calcCornerPointDelta();
