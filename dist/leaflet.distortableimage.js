@@ -999,6 +999,10 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
   }
 });
+
+L.distortableCollection = function(id, options) {
+  return new L.DistortableCollection(id, options);
+};
 L.DistortableImage = L.DistortableImage || {};
 
 var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
@@ -1506,12 +1510,20 @@ L.DistortableImage.Edit = L.Handler.extend({
 		this._hideToolbar();
 		
 		var point;
-		// if (event.containerPoint) { point = event.containerPoint; }
-		// point = target._leaflet_pos;
 		point = overlay._image._leaflet_pos;
 		
-		var raised_point = map.containerPointToLatLng(new L.Point(point.x,point.y-20));
-		raised_point.lng = overlay.getCenter().lng;
+		//Find the topmost point on the image.
+		var corners = overlay.getCorners();
+		var maxLat = -Infinity;
+		for(var i = 0; i < corners.length; i++) {
+			if(corners[i].lat > maxLat) {
+				maxLat = corners[i].lat;
+			}
+		}
+
+		//Longitude is based on the centroid of the image.
+		var raised_point = overlay.getCenter();
+		raised_point.lat = maxLat;
 	
 		if (this._overlay.options.suppressToolbar !== true) {
 			this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(map, overlay);

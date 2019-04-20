@@ -173,3 +173,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
   }
 });
+
+L.distortableCollection = function(id, options) {
+  return new L.DistortableCollection(id, options);
+};
