@@ -158,6 +158,7 @@ L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
       ToggleOrder
     ]
 	},
+	
 	// todo: move to some sort of util class, these methods could be useful in future
   _rotateToolbarAngleDeg: function(angle) {
 		var div = this._container,

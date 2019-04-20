@@ -8,7 +8,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     L.DomEvent.on(document, "keydown", this._onKeyDown, this);
     L.DomEvent.on(map, "click", this._deselectAll, this);
-    // L.DomEvent.on(overlay._image, "click", this._select, this);
 
     /**
      * the box zoom override works, but there is a bug involving click event propogation.
@@ -119,7 +118,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     overlay._dragPoints = {};
 
     for (i = 0; i < 4; i++) {
-      overlay._dragPoints[i] = map.latLngToLayerPoint(overlay.getCorners()[i]);
+      overlay._dragPoints[i] = map.latLngToLayerPoint(overlay.getCorner(i));
     }
 
     var cpd = overlay._calcCornerPointDelta();
