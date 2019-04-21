@@ -19,10 +19,9 @@ module.exports = function(config) {
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
     frameworks: ["mocha"],
-    
+
     // list of files / patterns to load in the browser
     files: [
-      { pattern: "examples/*.jpg", included: false, served: true },
       { pattern: "examples/*.png", included: false, served: true },
       "node_modules/leaflet/dist/leaflet-src.js",
       "node_modules/leaflet/dist/leaflet.css",
