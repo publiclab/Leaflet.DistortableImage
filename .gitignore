@@ -2,6 +2,5 @@ node_modules
 coverage
 *.swp
 *.swo
-todo.txt
 package-lock.json
 bower_components
