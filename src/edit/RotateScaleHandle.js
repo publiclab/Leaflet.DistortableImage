@@ -1,4 +1,4 @@
-L.RotateAndScaleHandle = L.EditHandle.extend({
+L.RotateScaleHandle = L.EditHandle.extend({
 	options: {
 		TYPE: 'rotateScale',
 		icon: new L.Icon({

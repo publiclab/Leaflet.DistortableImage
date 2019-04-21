@@ -38,7 +38,7 @@ module.exports = function(config) {
       "src/edit/EditHandle.js",
       "src/edit/LockHandle.js",
       "src/edit/DistortHandle.js",
-      "src/edit/RotateAndScaleHandle.js",
+      "src/edit/RotateScaleHandle.js",
       "src/edit/RotateHandle.js",
       "src/edit/ScaleHandle.js",
       "src/DistortableCollection.js",

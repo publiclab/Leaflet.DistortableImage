@@ -139,6 +139,422 @@ L.TrigUtil = {
   }
 
 };
+L.EXIF = function getEXIFdata(img) {
+  if (Object.keys(EXIF.getAllTags(img)).length !== 0) {
+    console.log(EXIF.getAllTags(img));
+    var GPS = EXIF.getAllTags(img),
+      altitude;
+
+    /* If the lat/lng is available. */
+    if (
+      typeof GPS.GPSLatitude !== "undefined" &&
+      typeof GPS.GPSLongitude !== "undefined"
+    ) {
+      // sadly, encoded in [degrees,minutes,seconds]
+      // primitive value = GPS.GPSLatitude[x].numerator
+      var lat =
+        GPS.GPSLatitude[0] +
+        GPS.GPSLatitude[1] / 60 +
+        GPS.GPSLatitude[2] / 3600;
+      var lng =
+        GPS.GPSLongitude[0] +
+        GPS.GPSLongitude[1] / 60 +
+        GPS.GPSLongitude[2] / 3600;
+
+      if (GPS.GPSLatitudeRef !== "N") {
+        lat = lat * -1;
+      }
+      if (GPS.GPSLongitudeRef === "W") {
+        lng = lng * -1;
+      }
+    }
+
+    // Attempt to use GPS compass heading; will require
+    // some trig to calc corner points, which you can find below:
+
+    var angle = 0;
+    // "T" refers to "True north", so -90.
+    if (GPS.GPSImgDirectionRef === "T") {
+      angle =
+        (Math.PI / 180) *
+        (GPS.GPSImgDirection.numerator / GPS.GPSImgDirection.denominator - 90);
+    }
+    // "M" refers to "Magnetic north"
+    else if (GPS.GPSImgDirectionRef === "M") {
+      angle =
+        (Math.PI / 180) *
+        (GPS.GPSImgDirection.numerator / GPS.GPSImgDirection.denominator - 90);
+    } else {
+      console.log("No compass data found");
+    }
+
+    console.log("Orientation:", GPS.Orientation);
+
+    /* If there is orientation data -- i.e. landscape/portrait etc */
+    if (GPS.Orientation === 6) {
+      //CCW
+      angle += (Math.PI / 180) * -90;
+    } else if (GPS.Orientation === 8) {
+      //CW
+      angle += (Math.PI / 180) * 90;
+    } else if (GPS.Orientation === 3) {
+      //180
+      angle += (Math.PI / 180) * 180;
+    }
+
+    /* If there is altitude data */
+    if (
+      typeof GPS.GPSAltitude !== "undefined" &&
+      typeof GPS.GPSAltitudeRef !== "undefined"
+    ) {
+      // Attempt to use GPS altitude:
+      // (may eventually need to find EXIF field of view for correction)
+      if (
+        typeof GPS.GPSAltitude !== "undefined" &&
+        typeof GPS.GPSAltitudeRef !== "undefined"
+      ) {
+        altitude =
+          GPS.GPSAltitude.numerator / GPS.GPSAltitude.denominator +
+          GPS.GPSAltitudeRef;
+      } else {
+        altitude = 0; // none
+      }
+    }
+  } else {
+    alert("EXIF initialized. Press again to view data in console.");
+  }
+};
+
+L.EditHandle = L.Marker.extend({
+  initialize: function(overlay, corner, options) {
+    var markerOptions,
+      latlng = overlay._corners[corner];
+
+    L.setOptions(this, options);
+
+    this._handled = overlay;
+    this._corner = corner;
+
+    markerOptions = {
+      draggable: true,
+      zIndexOffset: 10
+    };
+
+    if (options && options.hasOwnProperty("draggable")) {
+      markerOptions.draggable = options.draggable;
+    }
+
+    L.Marker.prototype.initialize.call(this, latlng, markerOptions);
+  },
+
+  onAdd: function(map) {
+    L.Marker.prototype.onAdd.call(this, map);
+    this._bindListeners();
+
+    this.updateHandle();
+  },
+
+  onRemove: function(map) {
+    this._unbindListeners();
+    L.Marker.prototype.onRemove.call(this, map);
+	},
+	
+  _onHandleDragStart: function() {
+		this._handled.fire("editstart");
+  },
+
+  _onHandleDragEnd: function() {
+    this._fireEdit();
+	},
+
+  _fireEdit: function() {
+    this._handled.edited = true;
+    this._handled.fire("edit");
+  },
+
+  _bindListeners: function() {
+    this.on(
+      {
+        dragstart: this._onHandleDragStart,
+        drag: this._onHandleDrag,
+        dragend: this._onHandleDragEnd
+      },
+      this
+    );
+
+    this._handled._map.on("zoomend", this.updateHandle, this);
+
+    this._handled.on("update", this.updateHandle, this);
+  },
+
+  _unbindListeners: function() {
+    this.off(
+      {
+        dragstart: this._onHandleDragStart,
+        drag: this._onHandleDrag,
+        dragend: this._onHandleDragEnd
+      },
+      this
+    );
+
+    this._handled._map.off("zoomend", this.updateHandle, this);
+    this._handled.off("update", this.updateHandle, this);
+  }
+});
+
+L.LockHandle = L.EditHandle.extend({
+	options: {
+		TYPE: 'lock',
+		icon: new L.Icon({ 
+			iconUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAD8SURBVO3BPU7CYAAA0AdfjIcQlRCQBG7C3gk2uIPG2RC3Dk16Gz0FTO1WZs/gwGCMP/2+xsSl7+n1er1Iz9LtRQjaPeMeO+TinLDCJV78YqjdA04YodKuxhUaPGoRxMmxwRQZSt87Yo4KExGCeAUyLLFB4bMacxywEClIU2KDKXbInTUYo8JCgoFuGoxQO5uiwY1EA91VmDqrcKeDoX8WdNNgjApvmGGLXKIgXY0xGkxQYItrrFFIEKQ5Yo4KEx9yrDFDhlKkIF6NOQ5Y+KpAhiXWKEQI4pxwiwoLPyuxwQw75FoE7fZYocFEuwI7jHCBV39gL92TXq/Xi/AOcmczZmaIMScAAAAASUVORK5CYII=',
+			iconSize: [32, 32],
+			iconAnchor: [16, 16]}
+		)
+	},
+
+	/* cannot be dragged */
+	_onHandleDrag: function() {
+	},
+
+	updateHandle: function() {
+		this.setLatLng(this._handled._corners[this._corner]);
+		L.DomUtil.removeClass(this._handled.getElement(), 'selected');
+	}
+
+});
+
+L.DistortHandle = L.EditHandle.extend({
+  options: {
+    TYPE: "distort",
+    icon: new L.Icon({
+      iconUrl:
+        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAChSURBVO3BIU4DURgGwNkvL2B6AkQTLBqP4QCoSm7DDXoBLBZHDbfgICAIZjEV3YTn9uVHdMZZtcnCfI13bIzxg0emg6Nm6QVbYz3jylEsXRrvwommb49X67jFkz80fR9Mb1YxTzqiWBSLYlEsikWxKBbFolgUi2JRLIpFsSgWxaJY03fHHOu40dH07bAzWCx9Ge/TiWbpHgdsjPGNB2f/yS+7xRCyiiZPJQAAAABJRU5ErkJggg==",
+      iconSize: [32, 32],
+      iconAnchor: [16, 16]
+    })
+  },
+
+  updateHandle: function() {
+    this.setLatLng(this._handled._corners[this._corner]);
+	},
+
+  _onHandleDrag: function() {
+    this._handled._updateCorner(this._corner, this.getLatLng());
+
+    this._handled.fire("update");
+    this._handled.editing._showToolbar();
+  }
+});
+
+L.RotateScaleHandle = L.EditHandle.extend({
+	options: {
+		TYPE: 'rotateScale',
+		icon: new L.Icon({
+			iconUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAHiSURBVMXBa3HbShgA0PMp/1sCCo8oCEpgTaCXgIXAJiDzyCJoAUTm4UVQAns1Y8+snWnTvJyeE16hkjDgDrfoNTMKcpC9UPiLSo8JyetkjEHxjPCMyoS199kFoz8Iv1HpMaN3qWDCHoegOKkkRwnJpRmroHgiPFEZ8IBekzEGxQtUEhKSS/fB7Ew4U+lxcGkVZG9QWWPSFAxBcdK59KApuA+yNwp2uEdx1GN25sZJZULSfAtm77SlbNjju6MvG75u+WHRWVR6rDVjMPsgwYyVZl3pLTpHkyYHOx8syMiayaJzlDTZ9YyaZNFVkiYH2ZUEBcVJJXVImuz6Js3Qofe59pq7DoOTILu+g+a288mCouk7/1iH4qTS+2QdDppbV1ZJmrnDXnPnc5UOs2Z0fUmTuyBr+krvSioJyUmQO0dZM7mepMkWnaNRkyrJB6uskTSjxY3Fll8bvmJwlDb83FJ8gMqAB80uyBY3Trb82PAfvjj6vuHnluIdKgMeNXOwctK5NKBoHitrb1RJeHRp5Ux4ojLg0aWMHGQvUOkxIWkKVsHsTPiNSo8HDC5lZIsgO6n0uMUdRvQuFQxB8UR4RmXC2vvsgtEfhL+o9JiQvE7GGBTPCK9QSUjoMWgKDthjDrIX+h/k0I7gth6N5gAAAABJRU5ErkJggg==',
+			iconSize: [32, 32],
+			iconAnchor: [16, 16]}
+		)
+	},
+
+	_onHandleDrag: function() {
+		var overlay = this._handled,
+			formerLatLng = this._handled._corners[this._corner],
+			newLatLng = this.getLatLng(),
+
+			angle = this._calculateAngle(formerLatLng, newLatLng),
+			scale = this._calculateScalingFactor(formerLatLng, newLatLng);
+
+		overlay.editing._rotateBy(angle);
+
+		/* 
+		  checks whether the "edgeMinWidth" property is set and tracks the minimum edge length;
+		  this enables preventing scaling to zero, but we might also add an overall scale limit
+		*/		
+		if (this._handled.hasOwnProperty('edgeMinWidth')){
+			var edgeMinWidth = this._handled.edgeMinWidth,
+			    w = L.latLng(overlay._corners[0]).distanceTo(overlay._corners[1]),
+					h = L.latLng(overlay._corners[1]).distanceTo(overlay._corners[2]);
+			if ((w > edgeMinWidth && h > edgeMinWidth) || scale > 1) {
+				overlay.editing._scaleBy(scale);
+			}
+		} 
+
+		overlay.fire('update');
+
+		this._handled.editing._showToolbar();
+
+	},
+
+	updateHandle: function() {
+		this.setLatLng(this._handled._corners[this._corner]);
+	},
+
+	/* Takes two latlngs and calculates the angle between them. */
+	_calculateAngle: function(latlngA, latlngB) {
+		var map = this._handled._map,
+
+			centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
+			formerPoint = map.latLngToLayerPoint(latlngA),
+			newPoint = map.latLngToLayerPoint(latlngB),
+
+			initialAngle = Math.atan2(centerPoint.y - formerPoint.y, centerPoint.x - formerPoint.x),
+			newAngle = Math.atan2(centerPoint.y - newPoint.y, centerPoint.x - newPoint.x);
+
+		return newAngle - initialAngle;
+	},
+
+	/* Takes two latlngs and calculates the scaling difference. */
+	_calculateScalingFactor: function(latlngA, latlngB) {
+		var map = this._handled._map,
+
+			centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
+			formerPoint = map.latLngToLayerPoint(latlngA),
+			newPoint = map.latLngToLayerPoint(latlngB),
+
+			formerRadiusSquared = this._d2(centerPoint, formerPoint),
+			newRadiusSquared = this._d2(centerPoint, newPoint);
+
+		return Math.sqrt(newRadiusSquared / formerRadiusSquared);
+	},
+
+	/* Distance between two points in cartesian space, squared (distance formula). */
+	_d2: function(a, b) {
+		var dx = a.x - b.x,
+			dy = a.y - b.y;
+
+		return Math.pow(dx, 2) + Math.pow(dy, 2);
+	}
+});
+
+L.RotateHandle = L.EditHandle.extend({
+	options: {
+		TYPE: 'rotate',
+		icon: new L.Icon({
+			iconUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAHiSURBVMXBa3HbShgA0PMp/1sCCo8oCEpgTaCXgIXAJiDzyCJoAUTm4UVQAns1Y8+snWnTvJyeE16hkjDgDrfoNTMKcpC9UPiLSo8JyetkjEHxjPCMyoS199kFoz8Iv1HpMaN3qWDCHoegOKkkRwnJpRmroHgiPFEZ8IBekzEGxQtUEhKSS/fB7Ew4U+lxcGkVZG9QWWPSFAxBcdK59KApuA+yNwp2uEdx1GN25sZJZULSfAtm77SlbNjju6MvG75u+WHRWVR6rDVjMPsgwYyVZl3pLTpHkyYHOx8syMiayaJzlDTZ9YyaZNFVkiYH2ZUEBcVJJXVImuz6Js3Qofe59pq7DoOTILu+g+a288mCouk7/1iH4qTS+2QdDppbV1ZJmrnDXnPnc5UOs2Z0fUmTuyBr+krvSioJyUmQO0dZM7mepMkWnaNRkyrJB6uskTSjxY3Fll8bvmJwlDb83FJ8gMqAB80uyBY3Trb82PAfvjj6vuHnluIdKgMeNXOwctK5NKBoHitrb1RJeHRp5Ux4ojLg0aWMHGQvUOkxIWkKVsHsTPiNSo8HDC5lZIsgO6n0uMUdRvQuFQxB8UR4RmXC2vvsgtEfhL+o9JiQvE7GGBTPCK9QSUjoMWgKDthjDrIX+h/k0I7gth6N5gAAAABJRU5ErkJggg==',
+			iconSize: [32, 32],
+			iconAnchor: [16, 16]}
+		)
+	},
+	
+	_onHandleDrag: function() {
+		var overlay = this._handled,
+			formerLatLng = this._handled._corners[this._corner],
+			newLatLng = this.getLatLng(),
+			angle = this._calculateAngle(formerLatLng, newLatLng);
+
+	 	overlay.editing._rotateBy(angle);
+
+		overlay.fire('update');
+
+		this._handled.editing._showToolbar();
+	},
+
+	updateHandle: function() {
+		this.setLatLng(this._handled._corners[this._corner]);
+	},
+
+	/* Takes two latlngs and calculates the angle between them. */
+	_calculateAngle: function(latlngA, latlngB) {
+		var map = this._handled._map,
+
+			centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
+			formerPoint = map.latLngToLayerPoint(latlngA),
+			newPoint = map.latLngToLayerPoint(latlngB),
+
+			initialAngle = Math.atan2(centerPoint.y - formerPoint.y, centerPoint.x - formerPoint.x),
+			newAngle = Math.atan2(centerPoint.y - newPoint.y, centerPoint.x - newPoint.x);
+
+		return newAngle - initialAngle;
+	},
+
+	/* Takes two latlngs and calculates the scaling difference. */
+	_calculateScalingFactor: function(latlngA, latlngB) {
+		var map = this._handled._map,
+
+			centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
+			formerPoint = map.latLngToLayerPoint(latlngA),
+			newPoint = map.latLngToLayerPoint(latlngB),
+
+			formerRadiusSquared = this._d2(centerPoint, formerPoint),
+			newRadiusSquared = this._d2(centerPoint, newPoint);
+
+		return Math.sqrt(newRadiusSquared / formerRadiusSquared);
+	},
+
+	/* Distance between two points in cartesian space, squared (distance formula). */
+	_d2: function(a, b) {
+		var dx = a.x - b.x,
+			dy = a.y - b.y;
+
+		return Math.pow(dx, 2) + Math.pow(dy, 2);
+	}
+});
+
+L.ScaleHandle = L.EditHandle.extend({
+	options: {
+		TYPE: 'rotate',
+		icon: new L.Icon({
+			iconUrl:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIHdpZHRoPSI0NTkiIGhlaWdodD0iNDY0IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA1MTIgNTEyIiB4bWw6c3BhY2U9InByZXNlcnZlIiBzdHlsZT0iIj48cmVjdCBpZD0iYmFja2dyb3VuZHJlY3QiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHg9IjAiIHk9IjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0ibm9uZSIgY2xhc3M9IiIgc3R5bGU9IiIvPjxnIGNsYXNzPSJjdXJyZW50TGF5ZXIiIHN0eWxlPSIiPjx0aXRsZT5MYXllciAxPC90aXRsZT48cGF0aCBkPSJNNDU5LjA0OTE1OTUzMDQ3MTM0LDg2LjkyNjIzNDUxMjU1MDAyIFYwIGgtODUuNzE0NTczMzU2MzEyMDkgdjI3LjA0MzcxNzQwMzkwNDQ1MiBIODUuNzE0NTczMzU2MzEyMDMgVjAgSDAgdjg2LjkyNjIzNDUxMjU1MDAyIGgyNS43MTQzNzIwMDY4OTM2MjYgdjI4OS43NTQxMTUwNDE4MzM0IEgwIHY4Ni45MjYyMzQ1MTI1NTAwMiBoODUuNzE0NTczMzU2MzEyMDkgdi0yNy4wNDM3MTc0MDM5MDQ0NTIgaDI4NS43MTUyNDQ1MjEwNDAzIHYyNy4wNDM3MTc0MDM5MDQ0NTIgaDg1LjcxNDU3MzM1NjMxMjA5IHYtODYuOTI2MjM0NTEyNTUwMDIgaC0yMy44MDk2MDM3MTAwODY2OSBWODYuOTI2MjM0NTEyNTUwMDIgSDQ1OS4wNDkxNTk1MzA0NzEzNCB6TTM4NC43NjMxOTU5NTUwMDA5LDEyLjU1NjAxMTY1MTgxMjc4MSBoNjEuOTA0OTY5NjQ2MjI1Mzk2IHY2Mi43ODAwNTgyNTkwNjM5MSBoLTYxLjkwNDk2OTY0NjIyNTM5NiBWMTIuNTU2MDExNjUxODEyNzgxIHpNMTIuMzgwOTkzOTI5MjQ1MDUsMTIuNTU2MDExNjUxODEyNzgxIGg2MS45MDQ5Njk2NDYyMjUzOTYgdjYyLjc4MDA1ODI1OTA2MzkxIEgxMi4zODA5OTM5MjkyNDUwNSBWMTIuNTU2MDExNjUxODEyNzgxIHpNNzQuMjg1OTYzNTc1NDcwNTMsNDUxLjA1MDU3MjQxNTEyMDY2IEgxMi4zODA5OTM5MjkyNDUwNSB2LTYyLjc4MDA1ODI1OTA2MzkxIGg2MS45MDQ5Njk2NDYyMjUzOTYgVjQ1MS4wNTA1NzI0MTUxMjA2NiB6TTQ0NS43MTU3ODE0NTI4MjI3NCw0NTEuMDUwNTcyNDE1MTIwNjYgaC02Mi44NTczNTM3OTQ2Mjg4NjQgdi02Mi43ODAwNTgyNTkwNjM5MSBoNjIuODU3MzUzNzk0NjI4ODY0IFY0NTEuMDUwNTcyNDE1MTIwNjYgek00MDcuNjIwNDE1NTE2Njg0MjYsMzc2LjY4MDM0OTU1NDM4MzQ0IGgtMzYuMTkwNTk3NjM5MzMxNzcgdjMyLjgzODc5OTcwNDc0MTEyIEg4NS43MTQ1NzMzNTYzMTIwMyB2LTMyLjgzODc5OTcwNDc0MTEyIEg0OS41MjM5NzU3MTY5ODAzMiBWODYuOTI2MjM0NTEyNTUwMDIgaDM2LjE5MDU5NzYzOTMzMTc3IFY1MC4yMjQwNDY2MDcyNTExMjUgaDI4Ny42MjAwMTI4MTc4NDcyIHYzNi43MDIxODc5MDUyOTg5IGgzNC4yODU4MjkzNDI1MjQ4MzUgVjM3Ni42ODAzNDk1NTQzODM0NCB6IiBpZD0ic3ZnXzIiIGNsYXNzPSIiIGZpbGw9IiMxYTFhZWIiIGZpbGwtb3BhY2l0eT0iMSIvPjwvZz48L3N2Zz4=',
+			iconSize: [32, 32],
+			iconAnchor: [16, 16]}
+		)
+	},
+
+	_onHandleDrag: function() {
+		var overlay = this._handled,
+			formerLatLng = this._handled._corners[this._corner],
+			newLatLng = this.getLatLng(),
+
+			scale = this._calculateScalingFactor(formerLatLng, newLatLng);
+
+		overlay.editing._scaleBy(scale);
+
+		overlay.fire('update');
+
+		this._handled.editing._showToolbar();
+	},
+
+	updateHandle: function() {
+		this.setLatLng(this._handled._corners[this._corner]);
+	},
+
+	/* Takes two latlngs and calculates the angle between them. */
+	_calculateAngle: function(latlngA, latlngB) {
+		var map = this._handled._map,
+
+			centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
+			formerPoint = map.latLngToLayerPoint(latlngA),
+			newPoint = map.latLngToLayerPoint(latlngB),
+
+			initialAngle = Math.atan2(centerPoint.y - formerPoint.y, centerPoint.x - formerPoint.x),
+			newAngle = Math.atan2(centerPoint.y - newPoint.y, centerPoint.x - newPoint.x);
+
+		return newAngle - initialAngle;
+	},
+
+	/* Takes two latlngs and calculates the scaling difference. */
+	_calculateScalingFactor: function(latlngA, latlngB) {
+		var map = this._handled._map,
+
+			centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
+			formerPoint = map.latLngToLayerPoint(latlngA),
+			newPoint = map.latLngToLayerPoint(latlngB),
+
+			formerRadiusSquared = this._d2(centerPoint, formerPoint),
+			newRadiusSquared = this._d2(centerPoint, newPoint);
+
+		return Math.sqrt(newRadiusSquared / formerRadiusSquared);
+	},
+
+	/* Distance between two points in cartesian space, squared (distance formula). */
+	_d2: function(a, b) {
+		var dx = a.x - b.x,
+			dy = a.y - b.y;
+
+		return Math.pow(dx, 2) + Math.pow(dy, 2);
+	}
+});
+
 L.DistortableImageOverlay = L.ImageOverlay.extend({
   include: L.Mixin.Events,
 
@@ -441,422 +857,6 @@ L.distortableImageOverlay = function(id, options) {
 
 
 
-L.EXIF = function getEXIFdata(img) {
-  if (Object.keys(EXIF.getAllTags(img)).length !== 0) {
-    console.log(EXIF.getAllTags(img));
-    var GPS = EXIF.getAllTags(img),
-      altitude;
-
-    /* If the lat/lng is available. */
-    if (
-      typeof GPS.GPSLatitude !== "undefined" &&
-      typeof GPS.GPSLongitude !== "undefined"
-    ) {
-      // sadly, encoded in [degrees,minutes,seconds]
-      // primitive value = GPS.GPSLatitude[x].numerator
-      var lat =
-        GPS.GPSLatitude[0] +
-        GPS.GPSLatitude[1] / 60 +
-        GPS.GPSLatitude[2] / 3600;
-      var lng =
-        GPS.GPSLongitude[0] +
-        GPS.GPSLongitude[1] / 60 +
-        GPS.GPSLongitude[2] / 3600;
-
-      if (GPS.GPSLatitudeRef !== "N") {
-        lat = lat * -1;
-      }
-      if (GPS.GPSLongitudeRef === "W") {
-        lng = lng * -1;
-      }
-    }
-
-    // Attempt to use GPS compass heading; will require
-    // some trig to calc corner points, which you can find below:
-
-    var angle = 0;
-    // "T" refers to "True north", so -90.
-    if (GPS.GPSImgDirectionRef === "T") {
-      angle =
-        (Math.PI / 180) *
-        (GPS.GPSImgDirection.numerator / GPS.GPSImgDirection.denominator - 90);
-    }
-    // "M" refers to "Magnetic north"
-    else if (GPS.GPSImgDirectionRef === "M") {
-      angle =
-        (Math.PI / 180) *
-        (GPS.GPSImgDirection.numerator / GPS.GPSImgDirection.denominator - 90);
-    } else {
-      console.log("No compass data found");
-    }
-
-    console.log("Orientation:", GPS.Orientation);
-
-    /* If there is orientation data -- i.e. landscape/portrait etc */
-    if (GPS.Orientation === 6) {
-      //CCW
-      angle += (Math.PI / 180) * -90;
-    } else if (GPS.Orientation === 8) {
-      //CW
-      angle += (Math.PI / 180) * 90;
-    } else if (GPS.Orientation === 3) {
-      //180
-      angle += (Math.PI / 180) * 180;
-    }
-
-    /* If there is altitude data */
-    if (
-      typeof GPS.GPSAltitude !== "undefined" &&
-      typeof GPS.GPSAltitudeRef !== "undefined"
-    ) {
-      // Attempt to use GPS altitude:
-      // (may eventually need to find EXIF field of view for correction)
-      if (
-        typeof GPS.GPSAltitude !== "undefined" &&
-        typeof GPS.GPSAltitudeRef !== "undefined"
-      ) {
-        altitude =
-          GPS.GPSAltitude.numerator / GPS.GPSAltitude.denominator +
-          GPS.GPSAltitudeRef;
-      } else {
-        altitude = 0; // none
-      }
-    }
-  } else {
-    alert("EXIF initialized. Press again to view data in console.");
-  }
-};
-
-L.EditHandle = L.Marker.extend({
-  initialize: function(overlay, corner, options) {
-    var markerOptions,
-      latlng = overlay._corners[corner];
-
-    L.setOptions(this, options);
-
-    this._handled = overlay;
-    this._corner = corner;
-
-    markerOptions = {
-      draggable: true,
-      zIndexOffset: 10
-    };
-
-    if (options && options.hasOwnProperty("draggable")) {
-      markerOptions.draggable = options.draggable;
-    }
-
-    L.Marker.prototype.initialize.call(this, latlng, markerOptions);
-  },
-
-  onAdd: function(map) {
-    L.Marker.prototype.onAdd.call(this, map);
-    this._bindListeners();
-
-    this.updateHandle();
-  },
-
-  onRemove: function(map) {
-    this._unbindListeners();
-    L.Marker.prototype.onRemove.call(this, map);
-	},
-	
-  _onHandleDragStart: function() {
-		this._handled.fire("editstart");
-  },
-
-  _onHandleDragEnd: function() {
-    this._fireEdit();
-	},
-
-  _fireEdit: function() {
-    this._handled.edited = true;
-    this._handled.fire("edit");
-  },
-
-  _bindListeners: function() {
-    this.on(
-      {
-        dragstart: this._onHandleDragStart,
-        drag: this._onHandleDrag,
-        dragend: this._onHandleDragEnd
-      },
-      this
-    );
-
-    this._handled._map.on("zoomend", this.updateHandle, this);
-
-    this._handled.on("update", this.updateHandle, this);
-  },
-
-  _unbindListeners: function() {
-    this.off(
-      {
-        dragstart: this._onHandleDragStart,
-        drag: this._onHandleDrag,
-        dragend: this._onHandleDragEnd
-      },
-      this
-    );
-
-    this._handled._map.off("zoomend", this.updateHandle, this);
-    this._handled.off("update", this.updateHandle, this);
-  }
-});
-
-L.LockHandle = L.EditHandle.extend({
-	options: {
-		TYPE: 'lock',
-		icon: new L.Icon({ 
-			iconUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAD8SURBVO3BPU7CYAAA0AdfjIcQlRCQBG7C3gk2uIPG2RC3Dk16Gz0FTO1WZs/gwGCMP/2+xsSl7+n1er1Iz9LtRQjaPeMeO+TinLDCJV78YqjdA04YodKuxhUaPGoRxMmxwRQZSt87Yo4KExGCeAUyLLFB4bMacxywEClIU2KDKXbInTUYo8JCgoFuGoxQO5uiwY1EA91VmDqrcKeDoX8WdNNgjApvmGGLXKIgXY0xGkxQYItrrFFIEKQ5Yo4KEx9yrDFDhlKkIF6NOQ5Y+KpAhiXWKEQI4pxwiwoLPyuxwQw75FoE7fZYocFEuwI7jHCBV39gL92TXq/Xi/AOcmczZmaIMScAAAAASUVORK5CYII=',
-			iconSize: [32, 32],
-			iconAnchor: [16, 16]}
-		)
-	},
-
-	/* cannot be dragged */
-	_onHandleDrag: function() {
-	},
-
-	updateHandle: function() {
-		this.setLatLng(this._handled._corners[this._corner]);
-		L.DomUtil.removeClass(this._handled.getElement(), 'selected');
-	}
-
-});
-
-L.DistortHandle = L.EditHandle.extend({
-  options: {
-    TYPE: "distort",
-    icon: new L.Icon({
-      iconUrl:
-        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAChSURBVO3BIU4DURgGwNkvL2B6AkQTLBqP4QCoSm7DDXoBLBZHDbfgICAIZjEV3YTn9uVHdMZZtcnCfI13bIzxg0emg6Nm6QVbYz3jylEsXRrvwommb49X67jFkz80fR9Mb1YxTzqiWBSLYlEsikWxKBbFolgUi2JRLIpFsSgWxaJY03fHHOu40dH07bAzWCx9Ge/TiWbpHgdsjPGNB2f/yS+7xRCyiiZPJQAAAABJRU5ErkJggg==",
-      iconSize: [32, 32],
-      iconAnchor: [16, 16]
-    })
-  },
-
-  updateHandle: function() {
-    this.setLatLng(this._handled._corners[this._corner]);
-	},
-
-  _onHandleDrag: function() {
-    this._handled._updateCorner(this._corner, this.getLatLng());
-
-    this._handled.fire("update");
-    this._handled.editing._showToolbar();
-  }
-});
-
-L.RotateAndScaleHandle = L.EditHandle.extend({
-	options: {
-		TYPE: 'rotateScale',
-		icon: new L.Icon({
-			iconUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAHiSURBVMXBa3HbShgA0PMp/1sCCo8oCEpgTaCXgIXAJiDzyCJoAUTm4UVQAns1Y8+snWnTvJyeE16hkjDgDrfoNTMKcpC9UPiLSo8JyetkjEHxjPCMyoS199kFoz8Iv1HpMaN3qWDCHoegOKkkRwnJpRmroHgiPFEZ8IBekzEGxQtUEhKSS/fB7Ew4U+lxcGkVZG9QWWPSFAxBcdK59KApuA+yNwp2uEdx1GN25sZJZULSfAtm77SlbNjju6MvG75u+WHRWVR6rDVjMPsgwYyVZl3pLTpHkyYHOx8syMiayaJzlDTZ9YyaZNFVkiYH2ZUEBcVJJXVImuz6Js3Qofe59pq7DoOTILu+g+a288mCouk7/1iH4qTS+2QdDppbV1ZJmrnDXnPnc5UOs2Z0fUmTuyBr+krvSioJyUmQO0dZM7mepMkWnaNRkyrJB6uskTSjxY3Fll8bvmJwlDb83FJ8gMqAB80uyBY3Trb82PAfvjj6vuHnluIdKgMeNXOwctK5NKBoHitrb1RJeHRp5Ux4ojLg0aWMHGQvUOkxIWkKVsHsTPiNSo8HDC5lZIsgO6n0uMUdRvQuFQxB8UR4RmXC2vvsgtEfhL+o9JiQvE7GGBTPCK9QSUjoMWgKDthjDrIX+h/k0I7gth6N5gAAAABJRU5ErkJggg==',
-			iconSize: [32, 32],
-			iconAnchor: [16, 16]}
-		)
-	},
-
-	_onHandleDrag: function() {
-		var overlay = this._handled,
-			formerLatLng = this._handled._corners[this._corner],
-			newLatLng = this.getLatLng(),
-
-			angle = this._calculateAngle(formerLatLng, newLatLng),
-			scale = this._calculateScalingFactor(formerLatLng, newLatLng);
-
-		overlay.editing._rotateBy(angle);
-
-		/* 
-		  checks whether the "edgeMinWidth" property is set and tracks the minimum edge length;
-		  this enables preventing scaling to zero, but we might also add an overall scale limit
-		*/		
-		if (this._handled.hasOwnProperty('edgeMinWidth')){
-			var edgeMinWidth = this._handled.edgeMinWidth,
-			    w = L.latLng(overlay._corners[0]).distanceTo(overlay._corners[1]),
-					h = L.latLng(overlay._corners[1]).distanceTo(overlay._corners[2]);
-			if ((w > edgeMinWidth && h > edgeMinWidth) || scale > 1) {
-				overlay.editing._scaleBy(scale);
-			}
-		} 
-
-		overlay.fire('update');
-
-		this._handled.editing._showToolbar();
-
-	},
-
-	updateHandle: function() {
-		this.setLatLng(this._handled._corners[this._corner]);
-	},
-
-	/* Takes two latlngs and calculates the angle between them. */
-	_calculateAngle: function(latlngA, latlngB) {
-		var map = this._handled._map,
-
-			centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
-			formerPoint = map.latLngToLayerPoint(latlngA),
-			newPoint = map.latLngToLayerPoint(latlngB),
-
-			initialAngle = Math.atan2(centerPoint.y - formerPoint.y, centerPoint.x - formerPoint.x),
-			newAngle = Math.atan2(centerPoint.y - newPoint.y, centerPoint.x - newPoint.x);
-
-		return newAngle - initialAngle;
-	},
-
-	/* Takes two latlngs and calculates the scaling difference. */
-	_calculateScalingFactor: function(latlngA, latlngB) {
-		var map = this._handled._map,
-
-			centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
-			formerPoint = map.latLngToLayerPoint(latlngA),
-			newPoint = map.latLngToLayerPoint(latlngB),
-
-			formerRadiusSquared = this._d2(centerPoint, formerPoint),
-			newRadiusSquared = this._d2(centerPoint, newPoint);
-
-		return Math.sqrt(newRadiusSquared / formerRadiusSquared);
-	},
-
-	/* Distance between two points in cartesian space, squared (distance formula). */
-	_d2: function(a, b) {
-		var dx = a.x - b.x,
-			dy = a.y - b.y;
-
-		return Math.pow(dx, 2) + Math.pow(dy, 2);
-	}
-});
-
-L.RotateHandle = L.EditHandle.extend({
-	options: {
-		TYPE: 'rotate',
-		icon: new L.Icon({
-			iconUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAHiSURBVMXBa3HbShgA0PMp/1sCCo8oCEpgTaCXgIXAJiDzyCJoAUTm4UVQAns1Y8+snWnTvJyeE16hkjDgDrfoNTMKcpC9UPiLSo8JyetkjEHxjPCMyoS199kFoz8Iv1HpMaN3qWDCHoegOKkkRwnJpRmroHgiPFEZ8IBekzEGxQtUEhKSS/fB7Ew4U+lxcGkVZG9QWWPSFAxBcdK59KApuA+yNwp2uEdx1GN25sZJZULSfAtm77SlbNjju6MvG75u+WHRWVR6rDVjMPsgwYyVZl3pLTpHkyYHOx8syMiayaJzlDTZ9YyaZNFVkiYH2ZUEBcVJJXVImuz6Js3Qofe59pq7DoOTILu+g+a288mCouk7/1iH4qTS+2QdDppbV1ZJmrnDXnPnc5UOs2Z0fUmTuyBr+krvSioJyUmQO0dZM7mepMkWnaNRkyrJB6uskTSjxY3Fll8bvmJwlDb83FJ8gMqAB80uyBY3Trb82PAfvjj6vuHnluIdKgMeNXOwctK5NKBoHitrb1RJeHRp5Ux4ojLg0aWMHGQvUOkxIWkKVsHsTPiNSo8HDC5lZIsgO6n0uMUdRvQuFQxB8UR4RmXC2vvsgtEfhL+o9JiQvE7GGBTPCK9QSUjoMWgKDthjDrIX+h/k0I7gth6N5gAAAABJRU5ErkJggg==',
-			iconSize: [32, 32],
-			iconAnchor: [16, 16]}
-		)
-	},
-	
-	_onHandleDrag: function() {
-		var overlay = this._handled,
-			formerLatLng = this._handled._corners[this._corner],
-			newLatLng = this.getLatLng(),
-			angle = this._calculateAngle(formerLatLng, newLatLng);
-
-	 	overlay.editing._rotateBy(angle);
-
-		overlay.fire('update');
-
-		this._handled.editing._showToolbar();
-	},
-
-	updateHandle: function() {
-		this.setLatLng(this._handled._corners[this._corner]);
-	},
-
-	/* Takes two latlngs and calculates the angle between them. */
-	_calculateAngle: function(latlngA, latlngB) {
-		var map = this._handled._map,
-
-			centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
-			formerPoint = map.latLngToLayerPoint(latlngA),
-			newPoint = map.latLngToLayerPoint(latlngB),
-
-			initialAngle = Math.atan2(centerPoint.y - formerPoint.y, centerPoint.x - formerPoint.x),
-			newAngle = Math.atan2(centerPoint.y - newPoint.y, centerPoint.x - newPoint.x);
-
-		return newAngle - initialAngle;
-	},
-
-	/* Takes two latlngs and calculates the scaling difference. */
-	_calculateScalingFactor: function(latlngA, latlngB) {
-		var map = this._handled._map,
-
-			centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
-			formerPoint = map.latLngToLayerPoint(latlngA),
-			newPoint = map.latLngToLayerPoint(latlngB),
-
-			formerRadiusSquared = this._d2(centerPoint, formerPoint),
-			newRadiusSquared = this._d2(centerPoint, newPoint);
-
-		return Math.sqrt(newRadiusSquared / formerRadiusSquared);
-	},
-
-	/* Distance between two points in cartesian space, squared (distance formula). */
-	_d2: function(a, b) {
-		var dx = a.x - b.x,
-			dy = a.y - b.y;
-
-		return Math.pow(dx, 2) + Math.pow(dy, 2);
-	}
-});
-
-L.ScaleHandle = L.EditHandle.extend({
-	options: {
-		TYPE: 'rotate',
-		icon: new L.Icon({
-			iconUrl:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIHdpZHRoPSI0NTkiIGhlaWdodD0iNDY0IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA1MTIgNTEyIiB4bWw6c3BhY2U9InByZXNlcnZlIiBzdHlsZT0iIj48cmVjdCBpZD0iYmFja2dyb3VuZHJlY3QiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHg9IjAiIHk9IjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0ibm9uZSIgY2xhc3M9IiIgc3R5bGU9IiIvPjxnIGNsYXNzPSJjdXJyZW50TGF5ZXIiIHN0eWxlPSIiPjx0aXRsZT5MYXllciAxPC90aXRsZT48cGF0aCBkPSJNNDU5LjA0OTE1OTUzMDQ3MTM0LDg2LjkyNjIzNDUxMjU1MDAyIFYwIGgtODUuNzE0NTczMzU2MzEyMDkgdjI3LjA0MzcxNzQwMzkwNDQ1MiBIODUuNzE0NTczMzU2MzEyMDMgVjAgSDAgdjg2LjkyNjIzNDUxMjU1MDAyIGgyNS43MTQzNzIwMDY4OTM2MjYgdjI4OS43NTQxMTUwNDE4MzM0IEgwIHY4Ni45MjYyMzQ1MTI1NTAwMiBoODUuNzE0NTczMzU2MzEyMDkgdi0yNy4wNDM3MTc0MDM5MDQ0NTIgaDI4NS43MTUyNDQ1MjEwNDAzIHYyNy4wNDM3MTc0MDM5MDQ0NTIgaDg1LjcxNDU3MzM1NjMxMjA5IHYtODYuOTI2MjM0NTEyNTUwMDIgaC0yMy44MDk2MDM3MTAwODY2OSBWODYuOTI2MjM0NTEyNTUwMDIgSDQ1OS4wNDkxNTk1MzA0NzEzNCB6TTM4NC43NjMxOTU5NTUwMDA5LDEyLjU1NjAxMTY1MTgxMjc4MSBoNjEuOTA0OTY5NjQ2MjI1Mzk2IHY2Mi43ODAwNTgyNTkwNjM5MSBoLTYxLjkwNDk2OTY0NjIyNTM5NiBWMTIuNTU2MDExNjUxODEyNzgxIHpNMTIuMzgwOTkzOTI5MjQ1MDUsMTIuNTU2MDExNjUxODEyNzgxIGg2MS45MDQ5Njk2NDYyMjUzOTYgdjYyLjc4MDA1ODI1OTA2MzkxIEgxMi4zODA5OTM5MjkyNDUwNSBWMTIuNTU2MDExNjUxODEyNzgxIHpNNzQuMjg1OTYzNTc1NDcwNTMsNDUxLjA1MDU3MjQxNTEyMDY2IEgxMi4zODA5OTM5MjkyNDUwNSB2LTYyLjc4MDA1ODI1OTA2MzkxIGg2MS45MDQ5Njk2NDYyMjUzOTYgVjQ1MS4wNTA1NzI0MTUxMjA2NiB6TTQ0NS43MTU3ODE0NTI4MjI3NCw0NTEuMDUwNTcyNDE1MTIwNjYgaC02Mi44NTczNTM3OTQ2Mjg4NjQgdi02Mi43ODAwNTgyNTkwNjM5MSBoNjIuODU3MzUzNzk0NjI4ODY0IFY0NTEuMDUwNTcyNDE1MTIwNjYgek00MDcuNjIwNDE1NTE2Njg0MjYsMzc2LjY4MDM0OTU1NDM4MzQ0IGgtMzYuMTkwNTk3NjM5MzMxNzcgdjMyLjgzODc5OTcwNDc0MTEyIEg4NS43MTQ1NzMzNTYzMTIwMyB2LTMyLjgzODc5OTcwNDc0MTEyIEg0OS41MjM5NzU3MTY5ODAzMiBWODYuOTI2MjM0NTEyNTUwMDIgaDM2LjE5MDU5NzYzOTMzMTc3IFY1MC4yMjQwNDY2MDcyNTExMjUgaDI4Ny42MjAwMTI4MTc4NDcyIHYzNi43MDIxODc5MDUyOTg5IGgzNC4yODU4MjkzNDI1MjQ4MzUgVjM3Ni42ODAzNDk1NTQzODM0NCB6IiBpZD0ic3ZnXzIiIGNsYXNzPSIiIGZpbGw9IiMxYTFhZWIiIGZpbGwtb3BhY2l0eT0iMSIvPjwvZz48L3N2Zz4=',
-			iconSize: [32, 32],
-			iconAnchor: [16, 16]}
-		)
-	},
-
-	_onHandleDrag: function() {
-		var overlay = this._handled,
-			formerLatLng = this._handled._corners[this._corner],
-			newLatLng = this.getLatLng(),
-
-			scale = this._calculateScalingFactor(formerLatLng, newLatLng);
-
-		overlay.editing._scaleBy(scale);
-
-		overlay.fire('update');
-
-		this._handled.editing._showToolbar();
-	},
-
-	updateHandle: function() {
-		this.setLatLng(this._handled._corners[this._corner]);
-	},
-
-	/* Takes two latlngs and calculates the angle between them. */
-	_calculateAngle: function(latlngA, latlngB) {
-		var map = this._handled._map,
-
-			centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
-			formerPoint = map.latLngToLayerPoint(latlngA),
-			newPoint = map.latLngToLayerPoint(latlngB),
-
-			initialAngle = Math.atan2(centerPoint.y - formerPoint.y, centerPoint.x - formerPoint.x),
-			newAngle = Math.atan2(centerPoint.y - newPoint.y, centerPoint.x - newPoint.x);
-
-		return newAngle - initialAngle;
-	},
-
-	/* Takes two latlngs and calculates the scaling difference. */
-	_calculateScalingFactor: function(latlngA, latlngB) {
-		var map = this._handled._map,
-
-			centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
-			formerPoint = map.latLngToLayerPoint(latlngA),
-			newPoint = map.latLngToLayerPoint(latlngB),
-
-			formerRadiusSquared = this._d2(centerPoint, formerPoint),
-			newRadiusSquared = this._d2(centerPoint, newPoint);
-
-		return Math.sqrt(newRadiusSquared / formerRadiusSquared);
-	},
-
-	/* Distance between two points in cartesian space, squared (distance formula). */
-	_d2: function(a, b) {
-		var dx = a.x - b.x,
-			dy = a.y - b.y;
-
-		return Math.pow(dx, 2) + Math.pow(dy, 2);
-	}
-});
-
 L.DistortableCollection = L.FeatureGroup.extend({
   include: L.Mixin.Events,
 
@@ -1041,122 +1041,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
 L.distortableCollection = function(id, options) {
   return new L.DistortableCollection(id, options);
 };
-L.Map.mergeOptions({ boxSelector: true, boxZoom: false });
-
-// used for multiple image select. Temporarily disabled until click
-// propagation issue is fixed
-
-L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
-
-  initialize: function (map) {
-    this._map = map;
-    this._container = map._container;
-    this._pane = map._panes.overlayPane;
-  },
-
-  addHooks: function () {
-    L.DomEvent.on(this._container, 'mousedown', this._onMouseDown, this);
-  },
-
-  removeHooks: function () {
-    L.DomEvent.off(this._container, 'mousedown', this._onMouseDown, this);
-  },
-
-  _onMouseDown: function (e) {
-    if (!e.shiftKey || ((e.which !== 1) && (e.button !== 1))) { return false; }
-
-    L.DomUtil.disableTextSelection();
-    L.DomUtil.disableImageDrag();
-
-    this._startLayerPoint = this._map.mouseEventToLayerPoint(e);
-
-    this._box = L.DomUtil.create('div', 'leaflet-zoom-box', this._pane);
-    L.DomUtil.setPosition(this._box, this._startLayerPoint);
-
-    this._container.style.cursor = 'crosshair';
-
-    L.DomEvent
-      .on(document, 'mousemove', this._onMouseMove, this)
-      .on(document, 'mouseup', this._onMouseUp, this)
-      .preventDefault(e);
-
-    this._map.fire('boxzoomstart');
-  },
-
-  _onMouseMove: function (e) {
-    var startPoint = this._startLayerPoint,
-      box = this._box,
-
-      layerPoint = this._map.mouseEventToLayerPoint(e),
-      offset = layerPoint.subtract(startPoint),
-
-      newPos = new L.Point(
-        Math.min(layerPoint.x, startPoint.x),
-        Math.min(layerPoint.y, startPoint.y));
-
-    L.DomUtil.setPosition(box, newPos);
-
-    box.style.width = (Math.max(0, Math.abs(offset.x) - 4)) + 'px';
-    box.style.height = (Math.max(0, Math.abs(offset.y) - 4)) + 'px';
-  },
-
-  _onMouseUp: function (e) {
-    var map = this._map,
-      layerPoint = map.mouseEventToLayerPoint(e);
-
-    if (this._startLayerPoint.equals(layerPoint)) { return; }
-
-    this._boxBounds = new L.LatLngBounds(
-      map.layerPointToLatLng(this._startLayerPoint),
-      map.layerPointToLatLng(layerPoint));
-
-    this._finish();
-
-    map.fire('boxzoomend', { boxZoomBounds: this._boxBounds });
-
-    // this._finish();
-  },
-
-  _finish: function () {
-    $(this._map.boxSelector._box).remove();
-    // L.DomUtil.remove(this._box);
-    // L.DomUtil.remove(this._map.boxSelector);
-    this._container.style.cursor = '';
-
-    L.DomUtil.enableTextSelection();
-    L.DomUtil.enableImageDrag();
-
-    L.DomEvent
-      .off(document, 'mousemove', this._onMouseMove)
-      .off(document, 'mouseup', this._onMouseUp);
-  },
-});
-
-L.Map.addInitHook('addHandler', 'boxSelector', L.Map.BoxSelectHandle);
-L.DomUtil = L.DomUtil || {};
-L.DistortableImage = L.DistortableImage || {};
-
-L.DistortableImage.Keymapper = L.Control.extend({
-    initialize: function(options) {
-        L.Control.prototype.initialize.call(this, options);
-    },
-    onAdd: function() {
-        var el_wrapper = L.DomUtil.create("div", "l-container");
-        el_wrapper.innerHTML = "<table><tbody>" +
-            "<tr><th>Keymappings</th></tr>" +
-            "<tr><td><kbd>j</kbd>, <kbd>k</kbd>: <span>Send up / down (stacking order)</span></td></tr>" +
-            "<tr><td><kbd>l</kbd>: <span>Lock</span></td></tr>" +
-            "<tr><td><kbd>o</kbd>: <span>Outline</span></td></tr>" +
-            "<tr><td><kbd>s</kbd>: <span>Scale</span></td></tr>" +
-            "<tr><td><kbd>t</kbd>: <span>Transparency</span></td></tr>" +
-            "<tr><td><kbd>d</kbd> , <kbd>r</kbd>: <span>RotateScale</span> </td></tr>" +
-            "<tr><td><kbd>esc</kbd>: <span>Deselect All</span></td></tr>" +
-            "<tr><td><kbd>delete</kbd> , <kbd>backspace</kbd>: <span>Delete</span></td></tr>" +
-            "<tr><td><kbd>caps</kbd>: <span>Rotate</span></td></tr>" +
-            "</tbody></table>";
-        return el_wrapper;
-    }
-});
 L.DistortableImage = L.DistortableImage || {};
 
 var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
@@ -1403,7 +1287,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this._rotateScaleHandles = new L.LayerGroup(); // handle includes rotate AND scale
     for (i = 0; i < 4; i++) {
-      this._rotateScaleHandles.addLayer(new L.RotateAndScaleHandle(overlay, i));
+      this._rotateScaleHandles.addLayer(new L.RotateScaleHandle(overlay, i));
     }
 
     this._handles = {
@@ -1851,3 +1735,96 @@ L.DistortableImageOverlay.addInitHook(function() {
 		if (this.editing) { this.editing.disable(); }
 	});
 });
+
+L.Map.mergeOptions({ boxSelector: true, boxZoom: false });
+
+// used for multiple image select. Temporarily disabled until click
+// propagation issue is fixed
+
+L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
+
+  initialize: function (map) {
+    this._map = map;
+    this._container = map._container;
+    this._pane = map._panes.overlayPane;
+  },
+
+  addHooks: function () {
+    L.DomEvent.on(this._container, 'mousedown', this._onMouseDown, this);
+  },
+
+  removeHooks: function () {
+    L.DomEvent.off(this._container, 'mousedown', this._onMouseDown, this);
+  },
+
+  _onMouseDown: function (e) {
+    if (!e.shiftKey || ((e.which !== 1) && (e.button !== 1))) { return false; }
+
+    L.DomUtil.disableTextSelection();
+    L.DomUtil.disableImageDrag();
+
+    this._startLayerPoint = this._map.mouseEventToLayerPoint(e);
+
+    this._box = L.DomUtil.create('div', 'leaflet-zoom-box', this._pane);
+    L.DomUtil.setPosition(this._box, this._startLayerPoint);
+
+    this._container.style.cursor = 'crosshair';
+
+    L.DomEvent
+      .on(document, 'mousemove', this._onMouseMove, this)
+      .on(document, 'mouseup', this._onMouseUp, this)
+      .preventDefault(e);
+
+    this._map.fire('boxzoomstart');
+  },
+
+  _onMouseMove: function (e) {
+    var startPoint = this._startLayerPoint,
+      box = this._box,
+
+      layerPoint = this._map.mouseEventToLayerPoint(e),
+      offset = layerPoint.subtract(startPoint),
+
+      newPos = new L.Point(
+        Math.min(layerPoint.x, startPoint.x),
+        Math.min(layerPoint.y, startPoint.y));
+
+    L.DomUtil.setPosition(box, newPos);
+
+    box.style.width = (Math.max(0, Math.abs(offset.x) - 4)) + 'px';
+    box.style.height = (Math.max(0, Math.abs(offset.y) - 4)) + 'px';
+  },
+
+  _onMouseUp: function (e) {
+    var map = this._map,
+      layerPoint = map.mouseEventToLayerPoint(e);
+
+    if (this._startLayerPoint.equals(layerPoint)) { return; }
+
+    this._boxBounds = new L.LatLngBounds(
+      map.layerPointToLatLng(this._startLayerPoint),
+      map.layerPointToLatLng(layerPoint));
+
+    this._finish();
+
+    map.fire('boxzoomend', { boxZoomBounds: this._boxBounds });
+
+    // this._finish();
+  },
+
+  _finish: function () {
+    $(this._map.boxSelector._box).remove();
+    // L.DomUtil.remove(this._box);
+    // L.DomUtil.remove(this._map.boxSelector);
+    this._container.style.cursor = '';
+
+    L.DomUtil.enableTextSelection();
+    L.DomUtil.enableImageDrag();
+
+    L.DomEvent
+      .off(document, 'mousemove', this._onMouseMove)
+      .off(document, 'mouseup', this._onMouseUp);
+  },
+});
+
+L.Map.addInitHook('addHandler', 'boxSelector', L.Map.BoxSelectHandle);
