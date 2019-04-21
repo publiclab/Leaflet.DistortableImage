@@ -100,7 +100,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     /* Enable hotkeys. */
     L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
 
-    overlay.fire('select');
+    // overlay.fire("select");
   },
 
   removeHooks: function () {
@@ -122,14 +122,15 @@ L.DistortableImage.Edit = L.Handler.extend({
     /* Disable hotkeys. */
     L.DomEvent.off(window, "keydown", this._onKeyDown, this);
 
-    overlay.fire("deselect");
+    // overlay.fire("deselect");
   },
 
   _initToolbar: function () {
     this._showToolbar();
     try {
-      this.toolbar._hide();
-      this.toolbar._tip.style.opacity = 0;
+      // this.toolbar._hide();
+      // this.toolbar._tip.style.opacity = 0;
+      this.toolbar._container.style.opacity = 0;
     }
     catch (e) { }
   },
@@ -224,7 +225,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (this[handlerName] !== undefined && this._overlay.options.suppressToolbar !== true) {
       this[handlerName].call(this);
     }
-  },
+  }, 
 
   _toggleRotateScale: function() {
     var map = this._overlay._map;
@@ -237,9 +238,9 @@ L.DistortableImage.Edit = L.Handler.extend({
 		if (this._mode === "rotateScale") { this._mode = "distort"; } 
 		else { this._mode = "rotateScale"; }
 
-    this._showToolbar();
-
     map.addLayer(this._handles[this._mode]);
+
+    this._showToolbar();
   },
 
   _toggleScale: function() {
@@ -252,9 +253,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 		if (this._mode === "scale") { this._mode = "distort"; }
 		else { this._mode = "scale"; }
 
-    this._showToolbar();
-
     map.addLayer(this._handles[this._mode]);
+
   },
 
   _toggleRotate: function() {
@@ -265,8 +265,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     map.removeLayer(this._handles[this._mode]);
     if (this._mode === "rotate") { this._mode = "distort"; } 
 		else { this._mode = "rotate"; }
-
-		this._showToolbar();
 		
     map.addLayer(this._handles[this._mode]);
   },
@@ -323,14 +321,15 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _select: function(event) {
-    this._showToolbar(event);
+    this._showToolbar();
     this._showMarkers();
 
     L.DomEvent.stopPropagation(event);
   },
 
-  _deselect: function(event) {
-    this._hideToolbar(event);
+  _deselect: function() {
+    if (this._mode === "lock") { return; }
+    this._hideToolbar();
     this._hideMarkers();
   },
 

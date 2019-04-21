@@ -52,8 +52,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
   _deselectOthers: function(event) {
     this.eachLayer(function(layer) {
       var edit = layer.editing;
+      if (edit._mode === "lock") { return; }
       if (layer._image !== event.target) {
-        edit._hideMarkers();
+        edit._deselect();
       } else {
         this._toggleMultiSelect(event, edit);
       }
@@ -82,7 +83,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
   _onKeyDown: function(e) {
     if (e.key === "Escape") {
-      this._deselectAll();
+      this._deselectAll(e);
+    } else {
+      L.DomEvent.stopPropagation(e);
     }
   },
 
@@ -96,7 +99,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     this.eachLayer(function(layer) {
       for (i = 0; i < 4; i++) {
-        if (layer !== overlay) {
+        if (layer !== overlay && layer.editing._mode !== "lock") {
           layer.editing._hideToolbar();
         }
         layer._dragStartPoints[i] = layer._map.latLngToLayerPoint(
@@ -126,16 +129,18 @@ L.DistortableCollection = L.FeatureGroup.extend({
     this._updateCollectionFromPoints(cpd, overlay);
   },
 
-  _deselectAll: function() {
+  _deselectAll: function(event) {
     this.eachLayer(function(layer) {
       var edit = layer.editing;
-
+      if (edit._mode === "lock") { return; }
       L.DomUtil.removeClass(layer.getElement(), "selected");
       if (edit.toolbar) {
         edit._hideToolbar();
       }
       edit._hideMarkers();
     });
+
+    L.DomEvent.stopPropagation(event);
   },
 
   /**
