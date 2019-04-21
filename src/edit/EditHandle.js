@@ -1,71 +1,76 @@
 L.EditHandle = L.Marker.extend({
+  initialize: function(overlay, corner, options) {
+    var markerOptions,
+      latlng = overlay._corners[corner];
 
-	initialize: function(overlay, corner, options) {
-		var markerOptions,
-			latlng = overlay._corners[corner];
+    L.setOptions(this, options);
 
-		L.setOptions(this, options);
+    this._handled = overlay;
+    this._corner = corner;
 
-		this._handled = overlay;
-		this._corner = corner;
+    markerOptions = {
+      draggable: true,
+      zIndexOffset: 10
+    };
 
-		markerOptions = {
-			draggable: true,
-			zIndexOffset: 10
-		};
+    if (options && options.hasOwnProperty("draggable")) {
+      markerOptions.draggable = options.draggable;
+    }
 
-		if (options && options.hasOwnProperty('draggable')) {
-			markerOptions.draggable = options.draggable;
-		}
+    L.Marker.prototype.initialize.call(this, latlng, markerOptions);
+  },
 
-		L.Marker.prototype.initialize.call(this, latlng, markerOptions);
+  onAdd: function(map) {
+    L.Marker.prototype.onAdd.call(this, map);
+    this._bindListeners();
+
+    this.updateHandle();
+  },
+
+  onRemove: function(map) {
+    this._unbindListeners();
+    L.Marker.prototype.onRemove.call(this, map);
+	},
+	
+  _onHandleDragStart: function() {
+		this._handled.fire("editstart");
+  },
+
+  _onHandleDragEnd: function() {
+    this._fireEdit();
 	},
 
-	onAdd: function(map) {
-		L.Marker.prototype.onAdd.call(this, map);
-		this._bindListeners();
+  _fireEdit: function() {
+    this._handled.edited = true;
+    this._handled.fire("edit");
+  },
 
-		this.updateHandle();
-	},
+  _bindListeners: function() {
+    this.on(
+      {
+        dragstart: this._onHandleDragStart,
+        drag: this._onHandleDrag,
+        dragend: this._onHandleDragEnd
+      },
+      this
+    );
 
-	onRemove: function(map) {
-		this._unbindListeners();
-		L.Marker.prototype.onRemove.call(this, map);
-	},
+    this._handled._map.on("zoomend", this.updateHandle, this);
 
-	_onHandleDragStart: function() {
-		this._handled.fire('editstart');
-	},
+    this._handled.on("update", this.updateHandle, this);
+  },
 
-	_onHandleDragEnd: function() {
-		this._fireEdit();
-	},
+  _unbindListeners: function() {
+    this.off(
+      {
+        dragstart: this._onHandleDragStart,
+        drag: this._onHandleDrag,
+        dragend: this._onHandleDragEnd
+      },
+      this
+    );
 
-	_fireEdit: function() {
-		this._handled.edited = true;
-		this._handled.fire('edit');
-	},
-
-	_bindListeners: function() {
-		this.on({
-			'dragstart': this._onHandleDragStart,
-			'drag': this._onHandleDrag,
-			'dragend': this._onHandleDragEnd
-		}, this);
-
-		this._handled._map.on('zoomend', this.updateHandle, this);
-
-		this._handled.on('update', this.updateHandle, this);
-	},
-
-	_unbindListeners: function() {
-		this.off({
-			'dragstart': this._onHandleDragStart,
-			'drag': this._onHandleDrag,
-			'dragend': this._onHandleDragEnd
-		}, this);
-
-		this._handled._map.off('zoomend', this.updateHandle, this);
-		this._handled.off('update', this.updateHandle, this);
-	}
+    this._handled._map.off("zoomend", this.updateHandle, this);
+    this._handled.off("update", this.updateHandle, this);
+  }
 });

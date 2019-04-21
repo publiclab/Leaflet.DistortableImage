@@ -4,3 +4,4 @@ todo.txt
 *.swp
 *.swo
 package-lock.json
+bower_components
