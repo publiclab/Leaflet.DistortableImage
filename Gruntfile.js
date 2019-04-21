@@ -90,7 +90,6 @@ module.exports = function(grunt) {
                       'src/edit/ScaleHandle.js',
                       'src/DistortableCollection.js',
                       'src/edit/BoxSelectHandle.js',
-                      'src/edit/tools/DistortableImage.Guides.js',
                       'src/edit/DistortableImage.EditToolbar.js',
                       'src/edit/DistortableImage.Edit.js'
               ],
