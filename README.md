@@ -67,8 +67,7 @@ img = L.distortableImageOverlay(
 ).addTo(map);
 
 // enable editing
-L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing); 
-
+L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
 ```
 
 ## Full-resolution download
@@ -81,7 +80,7 @@ We've added a GPU-accelerated means to generate a full resolution version of the
 <script src="../node_modules/glfx/glfx.js"></script>
 ```
 
-When instantiating a Distortable Image, pass in a `fullResolutionSrc` option set to the url of the higher resolution image. This image will be used in full-res exporting. 
+When instantiating a Distortable Image, pass in a `fullResolutionSrc` option set to the url of the higher resolution image. This image will be used in full-res exporting.
 
 
 
@@ -89,7 +88,7 @@ When instantiating a Distortable Image, pass in a `fullResolutionSrc` option set
 
 // create basic map setup from above
 
-// create an image - note the optional 
+// create an image - note the optional
 // fullResolutionSrc option is now passed in
 img = L.distortableImageOverlay(
   'example.png', {
@@ -113,14 +112,14 @@ To test the multi-image interface, open `select.html`. Currently it supports mul
 
   - Multiple images can be selected using <kbd>cmd</kbd> + `click` to toggle individual image selection.
   - Click on the map or hit the <kbd>esc</kbd> key to quickly deselect all images.
-   
+
 Our `DistortableCollection` class allows working with multiple images simultaneously. Say we instantiated 3 images, saved them to the variables `img`, `img2`, and `img3`, and enabled editing on all of them. To access the UI and functionalities available in the multiple image interface, pass them to the collection class:
 
 ```js
 // OPTION 1: Pass in images immediately
 L.distortableCollection([img, img2, img3]).addTo(map);
 
-// OPTION 2: Instantiate an empty collection and pass in images later 
+// OPTION 2: Instantiate an empty collection and pass in images later
 var imageFeatureGroup = L.distortableCollection().addTo(map);
 
 imageFeatureGroup.addLayer(img);
@@ -131,7 +130,7 @@ imageFeatureGroup.addLayer(img3);
 
 ## Image-ordering
 
-For multiple images, we've also added a `ToggleOrder` action, that switches overlapping images back and forth into view by employing [`bringToFront()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtoback) from the Leaflet API. 
+For multiple images, we've also added a `ToggleOrder` action, that switches overlapping images back and forth into view by employing [`bringToFront()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtoback) from the Leaflet API.
 
 ```js
 ToggleOrder = EditOverlayAction.extend({
@@ -156,62 +155,28 @@ ToggleOrder = EditOverlayAction.extend({
 
 ## Corners
 
-The corners are stored in `img._corners` as `L.latLng` objects, so after instantiating the image and moving it around, you can always access them like this:
+The corners are stored as `L.latLng` objects
+on the image, and can be accessed using our `getCorners()` method after the image is instantiated and added to the map.
+
+Useful usage example:
 
 ```js
+// instantiate and add to map
 img = L.distortableImageOverlay(...);
 img.addTo(map);
-// move the image around
-JSON.stringify(img._corners)
+
+// grab the initial corner positions
+JSON.stringify(img.getCorners())
 => "[{"lat":51.52,"lng":-0.1},{"lat":51.52,"lng":-0.14},{"lat":51.5,"lng":-0.1},{"lat":51.5,"lng":-0.14}]"
-```
 
-## Adding "DOMStrings" for custom toolbars
+// ...move the image around...
 
-Custom "DOMStrings" **(i.e., strings of HTML)** that define the custom toolbars can easily be added by describing those in the `src/edit/tools/DistortableImage.Guides.js` file and referencing those in the `addToolbar` method inside the `src/edit/DistortableImage.Edit.js` file.
+// check the new corner positions.
+JSON.stringify(img.getCorners())
+=> "[{"lat":51.51091971397745,"lng":-0.015994012355804447},{"lat":51.51091971397745,"lng":-0.05599111318588257},{"lat":51.49093697986642,"lng":-0.015994012355804447},{"lat":51.49093697986642,"lng":-0.05599111318588257}]"
 
-```js
-  // inside src/edit/DistortableImage.Edit.js
+// note there is an added level of precision after dragging the image for debugging purposes
 
-	/* Add custom toolbars */
-		this._addToolbar = function(map, position, el, styleClass, DOMString) {
-			var custom_toolbar = L.control({ position: position });
-			custom_toolbar.onAdd = function() {
-				var el_wrapper = L.DomUtil.create(el, styleClass);
-				el_wrapper.innerHTML = DOMString;
-				return el_wrapper;
-			};
-			custom_toolbar.addTo(map);
-    };
-```
-
-```js
-// inside src/edit/tools/DistortableImage.Guides.js
-
-// add guides here for custom toolbars
-var guide_strings = [dom_string];
-L.DistortableImage.Guides = guide_strings;
-```
-Reference the "keymapper" section below for an example on this.
-
-### Keymapper
-
-The "keymapper" **guide** helps users quickly check the key bindings that have been defined to perform different operations on the `Leaflet` overlays (images). With respect to `src/edit/tools/DistortableImage.Guides.js`, let's go through the process of creating one step-by-step.
-
-- Define a `dom_string` (variable name can differ), that'll hold the the basic `HTML` layout of our guide.
-- Append this variable to the `guide_strings` for rendering.
-- Finally specify a `addToolbar(<map>,<position>,<parent el>,<class>,<guide>)` (see example below) method in `DistortableImage.Edit.js`'s guides collection.
-
-```js
-addToolbar(overlay._map, "topright", "div", "l-container", L.DistortableImage.Guides[i])
-```  
-```js
-			/* define guides here */
-
-			// keymapper guide
-			addToolbar(overlay._map, "topright", "div", "l-container", L.DistortableImage.Guides[0]);
-
-      /* ------------------ */
 ```
 ***
 

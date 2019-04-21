@@ -44,7 +44,7 @@ describe("L.DistortableCollection", function () {
 
   });
 
-  describe("_deselectAll", function () {
+  describe("#_deselectAll", function () {
     it("Should deselect all images on map click", function() {
       L.DomUtil.addClass(overlay.getElement(), "selected");
       L.DomUtil.addClass(overlay2.getElement(), "selected");
@@ -59,7 +59,7 @@ describe("L.DistortableCollection", function () {
     });
   });
 
-  describe("_toggleMultiSelect", function () {
+  describe("#_toggleMultiSelect", function () {
     it("Should allow selection of multiple images on command + click", function() {
       chai.simulateCommandMousedown(overlay.getElement());
       chai.simulateCommandMousedown(overlay2.getElement());

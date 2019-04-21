@@ -16,8 +16,6 @@ L.RotateAndScaleHandle = L.EditHandle.extend({
 			angle = this._calculateAngle(formerLatLng, newLatLng),
 			scale = this._calculateScalingFactor(formerLatLng, newLatLng);
 
-		overlay.editing._hideToolbar();
-
 		overlay.editing._rotateBy(angle);
 
 		/* 
@@ -34,6 +32,8 @@ L.RotateAndScaleHandle = L.EditHandle.extend({
 		} 
 
 		overlay.fire('update');
+
+		this._handled.editing._showToolbar();
 
 	},
 
