@@ -36,6 +36,7 @@ L.DistortableImage.Edit = L.Handler.extend({
       L.DistortableImage.Edit.prototype.instances ? L.DistortableImage.Edit.prototype.instances + 1 : 1;
   },
 
+<<<<<<< HEAD
   /* Run on image selection. */
   addHooks: function() {
     var overlay = this._overlay,
@@ -47,13 +48,48 @@ L.DistortableImage.Edit = L.Handler.extend({
       keymapper_position = overlay.options.keymapper_position || 'topright';
       map.addControl(new L.DistortableImage.Keymapper({ position: keymapper_position }));
     }
+=======
+		/* Interaction modes. */
+		this._mode = this._overlay.options.mode || 'distort';
+		this._transparent = false;
+		this._outlined = false;
+
+		/* Add custom toolbars */
+		this._addToolbar = function(map, position, el, styleClass) {
+			var custom_toolbar = L.control({ position: position });
+
+			custom_toolbar.onAdd = function() {
+				var el_wrapper = L.DomUtil.create(el, styleClass);
+				el_wrapper.innerHTML = "<table><tbody>" +
+"<tr><th>Keymappings</th></tr>" +
+"<tr><td><b>J/K: Order overlay</b></td></tr>" +
+"<tr><td><b>L: Lock overlay</b></td></tr>" +
+"<tr><td><b>O: Outline overlay</b></td></tr>" +
+"<tr><td><b>S: Scale Overlay</b></td></tr>" +
+"<tr><td><b>T: Toggle transparency</b></td></tr>" +
+"<tr><td><b>RR: Distort overlay</b></td></tr>" +
+"<tr><td><b>ESC: Deselect overlay</b></td></tr>" +
+"<tr><td><b>DEL: Remove overlay</b></td></tr>" +
+"<tr><td><b>CAPS: Rotate overlay</b></td></tr>" +
+"</tbody></table>";
+				return el_wrapper;
+			};
+			custom_toolbar.addTo(map);
+		};
+	},
+>>>>>>> removed guides
 
     /* bring the selected image into view */
     overlay.bringToFront();
 
     this._initHandles();
 
+<<<<<<< HEAD
     this._appendHandlesandDragable(this._mode);
+=======
+		// keymapper guide
+		addToolbar(overlay._map, "topright", "div", "l-container");
+>>>>>>> removed guides
 
     if (this._selected) { this._initToolbar(); }
 
