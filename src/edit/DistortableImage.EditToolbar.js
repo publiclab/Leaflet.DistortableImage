@@ -1,22 +1,16 @@
 L.DistortableImage = L.DistortableImage || {};
 
 var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
-    initialize: function(map, overlay, customAction, options) {
+    initialize: function(map, overlay, options) {
         this._map = map;
         this._overlay = overlay;
-        this.customAction = customAction;
         this._image = this._overlay._image;
         this._editing = this._overlay.editing;
 
         LeafletToolbar.ToolbarAction.prototype.initialize.call(this, options);
     },
     addHooks: function() {
-        if (this.customAction) {
-			this.customAction.disable();
-        }
-        else {
-			this.disable();
-        }
+		this.disable();
     }
 });
 
@@ -83,7 +77,7 @@ var ToggleTransparency = EditOverlayAction.extend({
                 tooltip: 'Rotate'
             };
 
-            EditOverlayAction.prototype.initialize.call(this, map, overlay, null, options);
+            EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
         },
 
         addHooks: function() {
