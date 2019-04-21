@@ -7,13 +7,16 @@ L.DistortableImage.Edit = L.Handler.extend({
     keymap: {
       8: "_removeOverlay", // backspace windows / delete mac
       46: "_removeOverlay", // delete windows / delete + fn mac
+      // 20: "_toggleRotate", // CAPS
       27: "_deselect", // esc
-      68: "_toggleRotateDistort", // d
+      68: "_toggleRotateScale", // d
+      // 69: "_toggleIsolate", // e
+      // 73: "_toggleIsolate", // i
       74: "_sendUp", // j
       75: "_sendDown", // k
       76: "_toggleLock", // l
       79: "_toggleOutline", // o
-      82: "_toggleRotateDistort", // r
+      82: "_toggleRotateScale", // r
       83: "_toggleScale", // s
       84: "_toggleTransparency" // t
     }
@@ -47,9 +50,9 @@ L.DistortableImage.Edit = L.Handler.extend({
       this._distortHandles.addLayer(new L.DistortHandle(overlay, i));
     }
 
-    this._rotateHandles = new L.LayerGroup(); // handle includes rotate AND scale
+    this._rotateScaleHandles = new L.LayerGroup(); // handle includes rotate AND scale
     for (i = 0; i < 4; i++) {
-      this._rotateHandles.addLayer(new L.RotateAndScaleHandle(overlay, i));
+      this._rotateScaleHandles.addLayer(new L.RotateAndScaleHandle(overlay, i));
     }
 
     this._scaleHandles = new L.LayerGroup();
@@ -57,77 +60,49 @@ L.DistortableImage.Edit = L.Handler.extend({
       this._scaleHandles.addLayer(new L.ScaleHandle(overlay, i));
     }
 
-		/* bring the selected image into view */
-		overlay.bringToFront();
+    this._handles = {
+      'lock': this._lockHandles,
+      'distort': this._distortHandles,
+      'rotateScale': this._rotateScaleHandles,
+      'scale': this._scaleHandles,
+      // 'rotateStandalone': this.__rotateHandles
+    };
 
-		this._lockHandles = new L.LayerGroup();
-		for (i = 0; i < 4; i++) {
-			this._lockHandles.addLayer(new L.LockHandle(overlay, i, { draggable: false }));
-		}
-
-		this._distortHandles = new L.LayerGroup();
-		for (i = 0; i < 4; i++) {
-			this._distortHandles.addLayer(new L.DistortHandle(overlay, i));
-		}
-
-		this._rotateHandles = new L.LayerGroup(); // handle includes rotate AND scale
-		for (i = 0; i < 4; i++) {
-			this._rotateHandles.addLayer(new L.RotateAndScaleHandle(overlay, i));
-		}
-
-		this._scaleHandles = new L.LayerGroup();
-		for (i = 0; i < 4; i++) {
-			this._scaleHandles.addLayer(new L.ScaleHandle(overlay, i));
-		}
-
-		this.__rotateHandles = new L.LayerGroup(); // individual rotate
-		for (i = 0; i < 4; i++) {
-			this.__rotateHandles.addLayer(new L.RotateHandle(overlay, i));
-		}
-
-		this._handles = {
-			'lock':		 this._lockHandles,
-			'distort': this._distortHandles,
-			'rotate':	this._rotateHandles,
-			'scale': this._scaleHandles,
-			'rotateStandalone': this.__rotateHandles
-		};
 
     if (this._mode === 'lock') {
-			map.addLayer(this._lockHandles);
-		} else {
-			this._mode = 'distort';
-			map.addLayer(this._distortHandles);
-			this._distortHandles.eachLayer(function (layer) {
-				layer.setOpacity(0);
-				layer.dragging.disable();
-				layer.options.draggable = false;
-			});
-			this._enableDragging();
+      map.addLayer(this._lockHandles);
+    } else {
+      this._mode = 'distort';
+      map.addLayer(this._distortHandles);
+      this._distortHandles.eachLayer(function (layer) {
+        layer.setOpacity(0);
+        layer.dragging.disable();
+        layer.options.draggable = false;
+      });
+      this._enableDragging();
     }
 
     this._initToolbar();
 
-		this._overlay._dragStartPoints = {
-			0: new L.point(0, 0),
-			1: new L.point(0, 0),
-			2: new L.point(0, 0),
-			3: new L.point(0, 0)
-		};
+    this._overlay._dragStartPoints = {
+      0: new L.point(0, 0),
+      1: new L.point(0, 0),
+      2: new L.point(0, 0),
+      3: new L.point(0, 0)
+    };
 
-		L.DomEvent.on(map, "click", this._deselect, this);
-		L.DomEvent.on(overlay._image, 'click', this._select, this);
+    L.DomEvent.on(map, "click", this._deselect, this);
+    L.DomEvent.on(overlay._image, 'click', this._select, this);
 
-		/* Enable hotkeys. */
-		L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
+    /* Enable hotkeys. */
+    L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
 
-		overlay.fire('select');
-	},
+    overlay.fire('select');
+  },
 
-	/* Run on image deselection. */
-	removeHooks: function() {
-		var overlay = this._overlay,
-			map = overlay._map;
+  removeHooks: function () {
+    var overlay = this._overlay,
+      map = overlay._map;
 
 		L.DomEvent.off(map, "click", this._deselect, this);
 		L.DomEvent.off(overlay._image, 'click', this._select, this);
@@ -147,13 +122,13 @@ L.DistortableImage.Edit = L.Handler.extend({
     overlay.fire("deselect");
   },
 
-  _initToolbar: function() {
+  _initToolbar: function () {
     this._showToolbar();
     try {
       this.toolbar._hide();
       this.toolbar._tip.style.opacity = 0;
     }
-    catch (e) {}
+    catch (e) { }
   },
 
   confirmDelete: function() {
@@ -248,14 +223,14 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
   },
 
-  _toggleRotateDistort: function() {
+  _toggleRotateScale: function() {
     var map = this._overlay._map;
 
     map.removeLayer(this._handles[this._mode]);
 
     /* Switch mode. */
-		if (this._mode === "rotate") { this._mode = "distort"; }
-		else { this._mode = "rotate"; }
+		if (this._mode === "rotateScale") { this._mode = "distort"; } 
+		else { this._mode = "rotateScale"; }
 
     this._showToolbar();
 
@@ -277,18 +252,18 @@ L.DistortableImage.Edit = L.Handler.extend({
     map.addLayer(this._handles[this._mode]);
   },
 
-  _toggleRotate: function() {
-		var map = this._overlay._map;
+  // _toggleRotate: function() {
+	// 	var map = this._overlay._map;
+		
+	// 	if (this._mode === "lock") { return; }
 
-		if (this._mode === "lock") { return; }
+  //   map.removeLayer(this._handles[this._mode]);
+  //   this._mode = "rotateStandalone";
 
-    map.removeLayer(this._handles[this._mode]);
-    this._mode = "rotateStandalone";
-
-		this._showToolbar();
-
-    map.addLayer(this._handles[this._mode]);
-  },
+	// 	this._showToolbar();
+		
+  //   map.addLayer(this._handles[this._mode]);
+  // },
 
   _toggleTransparency: function() {
     var image = this._overlay._image,

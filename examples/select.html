@@ -54,9 +54,6 @@
               L.latLng(51.50,-0.14)
             ],
             mode: 'lock',
-            // HARDCODED: we should find the img w/h dynamically so that it fits the image each time.
-            edgeMinWidth: 521,
-            edgeMinHeight: 348,
           }).addTo(map);
 
         // create a second image
@@ -68,9 +65,6 @@
               L.latLng(51.49,-0.11),
               L.latLng(51.49,-0.15)
             ],
-            // HARDCODED: we should find the img w/h dynamically so that it fits the image each time. (initImageDimensions?)
-            edgeMinWidth: 521,
-            edgeMinHeight: 348
           }).addTo(map);
 
         img3 = L.distortableImageOverlay(
@@ -81,9 +75,6 @@
               L.latLng(51.49,-0.11),
               L.latLng(51.49,-0.15)
             ],
-            // HARDCODED: we should find the img w/h dynamically so that it fits the image each time. (initImageDimensions?)
-            edgeMinWidth: 521,
-            edgeMinHeight: 348
           }).addTo(map);
 
         img4 = L.distortableImageOverlay(
@@ -94,9 +85,6 @@
               L.latLng(51.49,-0.11),
               L.latLng(51.49,-0.15)
             ],
-            // HARDCODED: we should find the img w/h dynamically so that it fits the image each time. (initImageDimensions?)
-            edgeMinWidth: 521,
-            edgeMinHeight: 348
           }).addTo(map);
 
           L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
