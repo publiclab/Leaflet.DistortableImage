@@ -1317,27 +1317,27 @@ L.DistortableImage.Edit = L.Handler.extend({
 		this._transparent = false;
 		this._outlined = false;
 
-		/* Add custom toolbars */
-		this._addToolbar = function(map, position, el, styleClass) {
+		/* initialize keymapper */
+		this.keymapper = function(position) {
 			var custom_toolbar = L.control({ position: position });
 
 			custom_toolbar.onAdd = function() {
-				var el_wrapper = L.DomUtil.create(el, styleClass);
+				var el_wrapper = L.DomUtil.create("div", "l-container");
 				el_wrapper.innerHTML = "<table><tbody>" +
-"<tr><th>Keymappings</th></tr>" +
-"<tr><td><b>J/K: Order overlay</b></td></tr>" +
-"<tr><td><b>L: Lock overlay</b></td></tr>" +
-"<tr><td><b>O: Outline overlay</b></td></tr>" +
-"<tr><td><b>S: Scale Overlay</b></td></tr>" +
-"<tr><td><b>T: Toggle transparency</b></td></tr>" +
-"<tr><td><b>RR: Distort overlay</b></td></tr>" +
-"<tr><td><b>ESC: Deselect overlay</b></td></tr>" +
-"<tr><td><b>DEL: Remove overlay</b></td></tr>" +
-"<tr><td><b>CAPS: Rotate overlay</b></td></tr>" +
-"</tbody></table>";
+				"<tr><th>Keymappings</th></tr>" +
+				"<tr><td><b>J/K: Order overlay</b></td></tr>" +
+				"<tr><td><b>L: Lock overlay</b></td></tr>" +
+				"<tr><td><b>O: Outline overlay</b></td></tr>" +
+				"<tr><td><b>S: Scale Overlay</b></td></tr>" +
+				"<tr><td><b>T: Toggle transparency</b></td></tr>" +
+				"<tr><td><b>RR: Distort overlay</b></td></tr>" +
+				"<tr><td><b>ESC: Deselect overlay</b></td></tr>" +
+				"<tr><td><b>DEL: Remove overlay</b></td></tr>" +
+				"<tr><td><b>CAPS: Rotate overlay</b></td></tr>" +
+				"</tbody></table>";
 				return el_wrapper;
 			};
-			custom_toolbar.addTo(map);
+			custom_toolbar.addTo(overlay._map);
 		};
 	},
 
@@ -1345,15 +1345,10 @@ L.DistortableImage.Edit = L.Handler.extend({
 	addHooks: function() {
 		var overlay = this._overlay,
 			map = overlay._map,
-			addToolbar = this._addToolbar,
 			i;
 
-		/* define guides here */
-
-		// keymapper guide
-		addToolbar(overlay._map, "topright", "div", "l-container");
-
-		/* ------------------ */
+		/* initiate keymapper */
+		this.keymapper("topright");
 
 		/* bring the selected image into view */
 		overlay.bringToFront();
