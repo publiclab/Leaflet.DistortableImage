@@ -1,23 +1,3 @@
-L.DistortableImage = L.DistortableImage || {};
-
-var dom_string = 
-"<table><tbody>" +
-"<tr><th>Keymappings</th></tr>" +
-"<tr><td><b>J/K: Order overlay</b></td></tr>" +
-"<tr><td><b>L: Lock overlay</b></td></tr>" +
-"<tr><td><b>O: Outline overlay</b></td></tr>" +
-"<tr><td><b>S: Scale Overlay</b></td></tr>" +
-"<tr><td><b>T: Toggle transparency</b></td></tr>" +
-"<tr><td><b>RR: Distort overlay</b></td></tr>" +
-"<tr><td><b>ESC: Deselect overlay</b></td></tr>" +
-"<tr><td><b>DEL: Remove overlay</b></td></tr>" +
-"<tr><td><b>CAPS: Rotate overlay</b></td></tr>" +
-"</tbody></table>";
-
-var guide_strings = [dom_string];
-
-L.DistortableImage.Guides = guide_strings;
-
 L.DomUtil = L.extend(L.DomUtil, {
 	getMatrixString: function(m) {
 		var is3d = L.Browser.webkit3d || L.Browser.gecko3d || L.Browser.ie3d,
@@ -152,6 +132,7 @@ L.MatrixUtil = {
 		return L.MatrixUtil.multsm(1/m[8], m);
 	}
 };
+<<<<<<< HEAD
 L.TrigUtil = {
 
   calcAngleDegrees: function(x, y) {
@@ -540,10 +521,508 @@ L.DistortableCollection = L.FeatureGroup.extend({
         this._toggleMultiSelect(event, edit);
       }
     }, this);
+=======
+L.DistortableImageOverlay = L.ImageOverlay.extend({
+	include: L.Mixin.Events,
+
+	options: {
+		alt: '',
+		height: 200,
+		crossOrigin: true,
+		edgeMinWidth: 500,
+	},
+
+	initialize: function(url, options) {
+		this._toolArray = L.DistortableImage.EditToolbarDefaults;
+		this._url = url;
+		this._rotation = this.options.rotation;
+		L.DistortableImage._options = options;
+		
+		L.setOptions(this, options);
+	},
+
+	onAdd: function(map) {
+		/* Copied from L.ImageOverlay */
+		this._map = map;
+
+		if (!this._image) { this._initImage(); }
+		if (!this._events) { this._initEvents(); }
+
+		map._panes.overlayPane.appendChild(this._image);
+
+		map.on('viewreset', this._reset, this);
+		/* End copied from L.ImageOverlay */
+
+		/* Use provided corners if available */
+		if (this.options.corners) {
+			this._corners = this.options.corners;
+			if (map.options.zoomAnimation && L.Browser.any3d) {
+				map.on('zoomanim', this._animateZoom, this);
+			}
+
+			/* This reset happens before image load; it allows
+			 * us to place the image on the map earlier with
+			 * "guessed" dimensions. */
+			this._reset();
+		}
+
+		/* Have to wait for the image to load because
+		 * we need to access its width and height. */
+		L.DomEvent.on(this._image, 'load', function() {
+			this._initImageDimensions();
+			this._reset();
+			/* Initialize default corners if not already set */
+			if (!this._corners) {
+				if (map.options.zoomAnimation && L.Browser.any3d) {
+					map.on('zoomanim', this._animateZoom, this);
+				}
+			}
+		}, this);
+
+		this.fire('add');
+	},
+
+	onRemove: function(map) {
+		this.fire('remove');
+
+		L.ImageOverlay.prototype.onRemove.call(this, map);
+	},
+
+	_initImage: function () {
+		L.ImageOverlay.prototype._initImage.call(this);
+
+		L.extend(this._image, {
+			alt: this.options.alt
+		});
+	},
+
+	_addTool: function(tool) {
+		this._toolArray.push(tool);
+		L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
+			options: {
+				actions: this._toolArray
+			}
+		});
+	},
+
+	_initImageDimensions: function() {
+		var map = this._map,
+
+			originalImageWidth = L.DomUtil.getStyle(this._image, 'width'),
+			originalImageHeight = L.DomUtil.getStyle(this._image, 'height'),
+
+			aspectRatio = parseInt(originalImageWidth) / parseInt(originalImageHeight),
+
+			imageHeight = this.options.height,
+			imageWidth = parseInt(aspectRatio*imageHeight),
+
+			center = map.latLngToContainerPoint(map.getCenter()),
+			offset = new L.Point(imageWidth, imageHeight).divideBy(2);
+
+		if (this.options.corners) { this._corners = this.options.corners; }
+		else {
+			this._corners = [
+				map.containerPointToLatLng(center.subtract(offset)),
+				map.containerPointToLatLng(center.add(new L.Point(offset.x, - offset.y))),
+				map.containerPointToLatLng(center.add(new L.Point(- offset.x, offset.y))),
+				map.containerPointToLatLng(center.add(offset))
+			];
+		}
+	},
+
+ 	_initEvents: function() {
+ 		this._events = [ 'click' ];
+
+ 		for (var i = 0, l = this._events.length; i < l; i++) {
+	 		L.DomEvent.on(this._image, this._events[i], this._fireMouseEvent, this);
+ 		}
+ 	},
+
+ 	/* See src/layer/vector/Path.SVG.js in the Leaflet source. */
+ 	_fireMouseEvent: function(event) {
+ 		if (!this.hasEventListeners(event.type)) { return; }
+
+		var map = this._map,
+			containerPoint = map.mouseEventToContainerPoint(event),
+			layerPoint = map.containerPointToLayerPoint(containerPoint),
+			latlng = map.layerPointToLatLng(layerPoint);
+
+		this.fire(event.type, {
+			latlng: latlng,
+			layerPoint: layerPoint,
+			containerPoint: containerPoint,
+			originalEvent: event
+		});
+ 	},
+
+	_updateCorner: function(corner, latlng) {
+		this._corners[corner] = latlng;
+		this._reset();
+	},
+
+	// fires a reset after all corner positions are updated instead of after each one (above). Use for translating
+	_updateCorners: function (latlngObj) {
+		var i = 0;
+		for (var k in latlngObj) {
+			this._corners[i] = latlngObj[k];
+			i += 1;
+		}
+
+		this._reset();
+	},
+
+	_updateCornersFromPoints: function (pointsObj) {
+		var map = this._map;
+		var i = 0;
+		for (var k in pointsObj) {
+			this._corners[i] = map.layerPointToLatLng(pointsObj[k]);
+			i += 1;
+		}
+
+		this._reset();
+	},
+
+	/* Copied from Leaflet v0.7 https://github.com/Leaflet/Leaflet/blob/66282f14bcb180ec87d9818d9f3c9f75afd01b30/src/dom/DomUtil.js#L189-L199 */
+	/* since L.DomUtil.getTranslateString() is deprecated in Leaflet v1.0 */
+	_getTranslateString: function (point) {
+		// on WebKit browsers (Chrome/Safari/iOS Safari/Android) using translate3d instead of translate
+		// makes animation smoother as it ensures HW accel is used. Firefox 13 doesn't care
+		// (same speed either way), Opera 12 doesn't support translate3d
+
+		var is3d = L.Browser.webkit3d,
+		    open = 'translate' + (is3d ? '3d' : '') + '(',
+		    close = (is3d ? ',0' : '') + ')';
+
+		return open + point.x + 'px,' + point.y + 'px' + close;
+	},
+
+	_reset: function() {
+		var map = this._map,
+			image = this._image,
+			latLngToLayerPoint = L.bind(map.latLngToLayerPoint, map),
+
+			transformMatrix = this._calculateProjectiveTransform(latLngToLayerPoint),
+			topLeft = latLngToLayerPoint(this._corners[0]),
+
+			warp = L.DomUtil.getMatrixString(transformMatrix),
+			translation = this._getTranslateString(topLeft);
+
+		/* See L.DomUtil.setPosition. Mainly for the purposes of L.Draggable. */
+		image._leaflet_pos = topLeft;
+
+		image.style[L.DomUtil.TRANSFORM] = [translation, warp].join(' ');
+
+		/* Set origin to the upper-left corner rather than the center of the image, which is the default. */
+		image.style[L.DomUtil.TRANSFORM + '-origin'] = "0 0 0";
+	},
+
+	/*
+	 * Calculates the transform string that will be correct *at the end* of zooming.
+	 * Leaflet then generates a CSS3 animation between the current transform and
+	 *		 future transform which makes the transition appear smooth.
+	 */
+	_animateZoom: function(event) {
+		var map = this._map,
+			image = this._image,
+			latLngToNewLayerPoint = function(latlng) {
+				return map._latLngToNewLayerPoint(latlng, event.zoom, event.center);
+			},
+
+			transformMatrix = this._calculateProjectiveTransform(latLngToNewLayerPoint),
+			topLeft = latLngToNewLayerPoint(this._corners[0]),
+
+			warp = L.DomUtil.getMatrixString(transformMatrix),
+			translation = this._getTranslateString(topLeft);
+
+		/* See L.DomUtil.setPosition. Mainly for the purposes of L.Draggable. */
+		image._leaflet_pos = topLeft;
+
+		if (!L.Browser.gecko) {
+			image.style[L.DomUtil.TRANSFORM] = [translation, warp].join(' ');
+		}
+	},
+
+	getCorners: function() {
+		return this._corners;
+	},
+
+	/*
+	 * Calculates the centroid of the image.
+	 *		 See http://stackoverflow.com/questions/6149175/logical-question-given-corners-find-center-of-quadrilateral
+	 */
+	getCenter: function(ll2c, c2ll) {
+		var map = this._map,
+			latLngToCartesian = ll2c ? ll2c : map.latLngToLayerPoint,
+			cartesianToLatLng = c2ll ? c2ll: map.layerPointToLatLng,
+			nw = latLngToCartesian.call(map, this._corners[0]),
+			ne = latLngToCartesian.call(map, this._corners[1]),
+			se = latLngToCartesian.call(map, this._corners[2]),
+			sw = latLngToCartesian.call(map, this._corners[3]),
+
+			nmid = nw.add(ne.subtract(nw).divideBy(2)),
+			smid = sw.add(se.subtract(sw).divideBy(2));
+
+		return cartesianToLatLng.call(map, nmid.add(smid.subtract(nmid).divideBy(2)));
+	},
+
+	// Use for translation calculations - for translation the delta for 1 corner applies to all 4
+	_calcCornerPointDelta: function () {
+		return this._dragStartPoints[0].subtract(this._dragPoints[0]);
+	},
+
+	_calculateProjectiveTransform: function(latLngToCartesian) {
+		/* Setting reasonable but made-up image defaults
+		 * allow us to place images on the map before
+		 * they've finished downloading. */
+		var offset = latLngToCartesian(this._corners[0]),
+			w = this._image.offsetWidth || 500,
+			h = this._image.offsetHeight || 375,
+			c = [],
+			j;
+		/* Convert corners to container points (i.e. cartesian coordinates). */
+		for (j = 0; j < this._corners.length; j++) {
+			c.push(latLngToCartesian(this._corners[j])._subtract(offset));
+		}
+
+		/*
+		 * This matrix describes the action of the CSS transform on each corner of the image.
+		 * It maps from the coordinate system centered at the upper left corner of the image
+		 *		 to the region bounded by the latlngs in this._corners.
+		 * For example:
+		 *		 0, 0, c[0].x, c[0].y
+		 *		 says that the upper-left corner of the image maps to the first latlng in this._corners.
+		 */
+		return L.MatrixUtil.general2DProjection(
+			0, 0, c[0].x, c[0].y,
+			w, 0, c[1].x, c[1].y,
+			0, h, c[2].x, c[2].y,
+			w, h, c[3].x, c[3].y
+		);
+	}
+});
+
+L.distortableImageOverlay = function(id, options) {
+	return new L.DistortableImageOverlay(id, options);
+};
+
+
+
+
+L.EXIF = function getEXIFdata(img) {
+  if (Object.keys(EXIF.getAllTags(img)).length !== 0) {
+    console.log(EXIF.getAllTags(img));
+    var GPS = EXIF.getAllTags(img),
+      altitude;
+
+    /* If the lat/lng is available. */
+    if (
+      typeof GPS.GPSLatitude !== "undefined" &&
+      typeof GPS.GPSLongitude !== "undefined"
+    ) {
+      // sadly, encoded in [degrees,minutes,seconds]
+      // primitive value = GPS.GPSLatitude[x].numerator
+      var lat =
+        GPS.GPSLatitude[0] +
+        GPS.GPSLatitude[1] / 60 +
+        GPS.GPSLatitude[2] / 3600;
+      var lng =
+        GPS.GPSLongitude[0] +
+        GPS.GPSLongitude[1] / 60 +
+        GPS.GPSLongitude[2] / 3600;
+
+      if (GPS.GPSLatitudeRef !== "N") {
+        lat = lat * -1;
+      }
+      if (GPS.GPSLongitudeRef === "W") {
+        lng = lng * -1;
+      }
+    }
+
+    // Attempt to use GPS compass heading; will require
+    // some trig to calc corner points, which you can find below:
+
+    var angle = 0;
+    // "T" refers to "True north", so -90.
+    if (GPS.GPSImgDirectionRef === "T") {
+      angle =
+        (Math.PI / 180) *
+        (GPS.GPSImgDirection.numerator / GPS.GPSImgDirection.denominator - 90);
+    }
+    // "M" refers to "Magnetic north"
+    else if (GPS.GPSImgDirectionRef === "M") {
+      angle =
+        (Math.PI / 180) *
+        (GPS.GPSImgDirection.numerator / GPS.GPSImgDirection.denominator - 90);
+    } else {
+      console.log("No compass data found");
+    }
+
+    console.log("Orientation:", GPS.Orientation);
+
+    /* If there is orientation data -- i.e. landscape/portrait etc */
+    if (GPS.Orientation === 6) {
+      //CCW
+      angle += (Math.PI / 180) * -90;
+    } else if (GPS.Orientation === 8) {
+      //CW
+      angle += (Math.PI / 180) * 90;
+    } else if (GPS.Orientation === 3) {
+      //180
+      angle += (Math.PI / 180) * 180;
+    }
+
+    /* If there is altitude data */
+    if (
+      typeof GPS.GPSAltitude !== "undefined" &&
+      typeof GPS.GPSAltitudeRef !== "undefined"
+    ) {
+      // Attempt to use GPS altitude:
+      // (may eventually need to find EXIF field of view for correction)
+      if (
+        typeof GPS.GPSAltitude !== "undefined" &&
+        typeof GPS.GPSAltitudeRef !== "undefined"
+      ) {
+        altitude =
+          GPS.GPSAltitude.numerator / GPS.GPSAltitude.denominator +
+          GPS.GPSAltitudeRef;
+      } else {
+        altitude = 0; // none
+      }
+    }
+  } else {
+    alert("EXIF initialized. Press again to view data in console.");
+  }
+};
+
+L.EditHandle = L.Marker.extend({
+
+	initialize: function(overlay, corner, options) {
+		var markerOptions,
+			latlng = overlay._corners[corner];
+
+		L.setOptions(this, options);
+
+		this._handled = overlay;
+		this._corner = corner;
+
+		markerOptions = {
+			draggable: true,
+			zIndexOffset: 10
+		};
+
+		if (options && options.hasOwnProperty('draggable')) {
+			markerOptions.draggable = options.draggable;
+		}
+
+		L.Marker.prototype.initialize.call(this, latlng, markerOptions);
+	},
+
+	onAdd: function(map) {
+		L.Marker.prototype.onAdd.call(this, map);
+		this._bindListeners();
+
+		this.updateHandle();
+	},
+
+	onRemove: function(map) {
+		this._unbindListeners();
+		L.Marker.prototype.onRemove.call(this, map);
+	},
+
+	_onHandleDragStart: function() {
+		this._handled.fire('editstart');
+	},
+
+	_onHandleDragEnd: function() {
+		this._fireEdit();
+	},
+
+	_fireEdit: function() {
+		this._handled.edited = true;
+		this._handled.fire('edit');
+	},
+
+	_bindListeners: function() {
+		this.on({
+			'dragstart': this._onHandleDragStart,
+			'drag': this._onHandleDrag,
+			'dragend': this._onHandleDragEnd
+		}, this);
+
+		this._handled._map.on('zoomend', this.updateHandle, this);
+
+		this._handled.on('update', this.updateHandle, this);
+	},
+
+	_unbindListeners: function() {
+		this.off({
+			'dragstart': this._onHandleDragStart,
+			'drag': this._onHandleDrag,
+			'dragend': this._onHandleDragEnd
+		}, this);
+
+		this._handled._map.off('zoomend', this.updateHandle, this);
+		this._handled.off('update', this.updateHandle, this);
+	}
+});
+
+L.LockHandle = L.EditHandle.extend({
+	options: {
+		TYPE: 'lock',
+		icon: new L.Icon({ 
+			iconUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAD8SURBVO3BPU7CYAAA0AdfjIcQlRCQBG7C3gk2uIPG2RC3Dk16Gz0FTO1WZs/gwGCMP/2+xsSl7+n1er1Iz9LtRQjaPeMeO+TinLDCJV78YqjdA04YodKuxhUaPGoRxMmxwRQZSt87Yo4KExGCeAUyLLFB4bMacxywEClIU2KDKXbInTUYo8JCgoFuGoxQO5uiwY1EA91VmDqrcKeDoX8WdNNgjApvmGGLXKIgXY0xGkxQYItrrFFIEKQ5Yo4KEx9yrDFDhlKkIF6NOQ5Y+KpAhiXWKEQI4pxwiwoLPyuxwQw75FoE7fZYocFEuwI7jHCBV39gL92TXq/Xi/AOcmczZmaIMScAAAAASUVORK5CYII=',
+			iconSize: [32, 32],
+			iconAnchor: [16, 16]}
+		)
+	},
+
+	/* cannot be dragged */
+	_onHandleDrag: function() {
+	},
+
+	updateHandle: function() {
+		this.setLatLng(this._handled._corners[this._corner]);
+		L.DomUtil.removeClass(this._handled.getElement(), 'selected');
+	}
+
+});
+
+L.DistortHandle = L.EditHandle.extend({
+	options: {
+		TYPE: 'distort',
+		icon: new L.Icon({
+			iconUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAChSURBVO3BIU4DURgGwNkvL2B6AkQTLBqP4QCoSm7DDXoBLBZHDbfgICAIZjEV3YTn9uVHdMZZtcnCfI13bIzxg0emg6Nm6QVbYz3jylEsXRrvwommb49X67jFkz80fR9Mb1YxTzqiWBSLYlEsikWxKBbFolgUi2JRLIpFsSgWxaJY03fHHOu40dH07bAzWCx9Ge/TiWbpHgdsjPGNB2f/yS+7xRCyiiZPJQAAAABJRU5ErkJggg==',
+			iconSize: [32, 32],
+			iconAnchor: [16, 16]}
+		)
+	},
+
+	updateHandle: function() {
+		this.setLatLng(this._handled._corners[this._corner]);
+	},
+
+	_onHandleDrag: function() {
+		this._handled._updateCorner(this._corner, this.getLatLng());
+
+		this._handled.fire('update');
+	}
+});
+
+L.RotateAndScaleHandle = L.EditHandle.extend({
+	options: {
+		TYPE: 'rotate',
+		icon: new L.Icon({
+			iconUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAHiSURBVMXBa3HbShgA0PMp/1sCCo8oCEpgTaCXgIXAJiDzyCJoAUTm4UVQAns1Y8+snWnTvJyeE16hkjDgDrfoNTMKcpC9UPiLSo8JyetkjEHxjPCMyoS199kFoz8Iv1HpMaN3qWDCHoegOKkkRwnJpRmroHgiPFEZ8IBekzEGxQtUEhKSS/fB7Ew4U+lxcGkVZG9QWWPSFAxBcdK59KApuA+yNwp2uEdx1GN25sZJZULSfAtm77SlbNjju6MvG75u+WHRWVR6rDVjMPsgwYyVZl3pLTpHkyYHOx8syMiayaJzlDTZ9YyaZNFVkiYH2ZUEBcVJJXVImuz6Js3Qofe59pq7DoOTILu+g+a288mCouk7/1iH4qTS+2QdDppbV1ZJmrnDXnPnc5UOs2Z0fUmTuyBr+krvSioJyUmQO0dZM7mepMkWnaNRkyrJB6uskTSjxY3Fll8bvmJwlDb83FJ8gMqAB80uyBY3Trb82PAfvjj6vuHnluIdKgMeNXOwctK5NKBoHitrb1RJeHRp5Ux4ojLg0aWMHGQvUOkxIWkKVsHsTPiNSo8HDC5lZIsgO6n0uMUdRvQuFQxB8UR4RmXC2vvsgtEfhL+o9JiQvE7GGBTPCK9QSUjoMWgKDthjDrIX+h/k0I7gth6N5gAAAABJRU5ErkJggg==',
+			iconSize: [32, 32],
+			iconAnchor: [16, 16]}
+		)
+	},
+>>>>>>> all tests passing
 
     L.DomEvent.stopPropagation(event);
   },
 
+<<<<<<< HEAD
   _addSelections: function(e) {
     var box = e.boxZoomBounds,
       i = 0;
@@ -821,16 +1300,99 @@ L.EditHandle = L.Marker.extend({
   onRemove: function(map) {
     this._unbindListeners();
     L.Marker.prototype.onRemove.call(this, map);
+=======
+			angle = this._calculateAngle(formerLatLng, newLatLng),
+			scale = this._calculateScalingFactor(formerLatLng, newLatLng);
+
+		overlay.editing._hideToolbar();
+
+		overlay.editing._rotateBy(angle);
+
+		/* 
+		  checks whether the "edgeMinWidth" property is set and tracks the minimum edge length;
+		  this enables preventing scaling to zero, but we might also add an overall scale limit
+		*/		
+		if (this._handled.options.hasOwnProperty('edgeMinWidth')){
+			var edgeMinWidth = this._handled.options.edgeMinWidth,
+			    w = L.latLng(overlay._corners[0]).distanceTo(overlay._corners[1]),
+			    h = L.latLng(overlay._corners[1]).distanceTo(overlay._corners[2]);
+			if ((w > edgeMinWidth && h > edgeMinWidth) || scale > 1) {
+				overlay.editing._scaleBy(scale);
+			}
+		} 
+
+		overlay.fire('update');
+
+	},
+
+	updateHandle: function() {
+		this.setLatLng(this._handled._corners[this._corner]);
+	},
+
+	/* Takes two latlngs and calculates the angle between them. */
+	_calculateAngle: function(latlngA, latlngB) {
+		var map = this._handled._map,
+
+			centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
+			formerPoint = map.latLngToLayerPoint(latlngA),
+			newPoint = map.latLngToLayerPoint(latlngB),
+
+			initialAngle = Math.atan2(centerPoint.y - formerPoint.y, centerPoint.x - formerPoint.x),
+			newAngle = Math.atan2(centerPoint.y - newPoint.y, centerPoint.x - newPoint.x);
+
+		return newAngle - initialAngle;
+	},
+
+	/* Takes two latlngs and calculates the scaling difference. */
+	_calculateScalingFactor: function(latlngA, latlngB) {
+		var map = this._handled._map,
+
+			centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
+			formerPoint = map.latLngToLayerPoint(latlngA),
+			newPoint = map.latLngToLayerPoint(latlngB),
+
+			formerRadiusSquared = this._d2(centerPoint, formerPoint),
+			newRadiusSquared = this._d2(centerPoint, newPoint);
+
+		return Math.sqrt(newRadiusSquared / formerRadiusSquared);
+>>>>>>> all tests passing
 	},
 	
   _onHandleDragStart: function() {
 		this._handled.fire("editstart");
   },
 
+<<<<<<< HEAD
   _onHandleDragEnd: function() {
     this._fireEdit();
-	},
+=======
+	/* Distance between two points in cartesian space, squared (distance formula). */
+	_d2: function(a, b) {
+		var dx = a.x - b.x,
+			dy = a.y - b.y;
 
+		return Math.pow(dx, 2) + Math.pow(dy, 2);
+	}
+});
+
+L.RotateHandle = L.EditHandle.extend({
+	options: {
+		TYPE: 'rotate',
+		icon: new L.Icon({
+			iconUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAHiSURBVMXBa3HbShgA0PMp/1sCCo8oCEpgTaCXgIXAJiDzyCJoAUTm4UVQAns1Y8+snWnTvJyeE16hkjDgDrfoNTMKcpC9UPiLSo8JyetkjEHxjPCMyoS199kFoz8Iv1HpMaN3qWDCHoegOKkkRwnJpRmroHgiPFEZ8IBekzEGxQtUEhKSS/fB7Ew4U+lxcGkVZG9QWWPSFAxBcdK59KApuA+yNwp2uEdx1GN25sZJZULSfAtm77SlbNjju6MvG75u+WHRWVR6rDVjMPsgwYyVZl3pLTpHkyYHOx8syMiayaJzlDTZ9YyaZNFVkiYH2ZUEBcVJJXVImuz6Js3Qofe59pq7DoOTILu+g+a288mCouk7/1iH4qTS+2QdDppbV1ZJmrnDXnPnc5UOs2Z0fUmTuyBr+krvSioJyUmQO0dZM7mepMkWnaNRkyrJB6uskTSjxY3Fll8bvmJwlDb83FJ8gMqAB80uyBY3Trb82PAfvjj6vuHnluIdKgMeNXOwctK5NKBoHitrb1RJeHRp5Ux4ojLg0aWMHGQvUOkxIWkKVsHsTPiNSo8HDC5lZIsgO6n0uMUdRvQuFQxB8UR4RmXC2vvsgtEfhL+o9JiQvE7GGBTPCK9QSUjoMWgKDthjDrIX+h/k0I7gth6N5gAAAABJRU5ErkJggg==',
+			iconSize: [32, 32],
+			iconAnchor: [16, 16]}
+		)
+>>>>>>> all tests passing
+	},
+	
+	_onHandleDrag: function() {
+		var overlay = this._handled,
+			formerLatLng = this._handled._corners[this._corner],
+			newLatLng = this.getLatLng(),
+			angle = this._calculateAngle(formerLatLng, newLatLng);
+
+<<<<<<< HEAD
   _fireEdit: function() {
     this._handled.edited = true;
     this._handled.fire("edit");
@@ -910,6 +1472,121 @@ L.LockHandle = L.EditHandle.extend({
 			iconAnchor: [16, 16]}
 		)
 	},
+=======
+		overlay.editing._hideToolbar();
+
+		overlay.editing._rotateBy(angle);
+
+		overlay.fire('update');
+	},
+
+	updateHandle: function() {
+		this.setLatLng(this._handled._corners[this._corner]);
+	},
+
+	/* Takes two latlngs and calculates the angle between them. */
+	_calculateAngle: function(latlngA, latlngB) {
+		var map = this._handled._map,
+
+			centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
+			formerPoint = map.latLngToLayerPoint(latlngA),
+			newPoint = map.latLngToLayerPoint(latlngB),
+
+			initialAngle = Math.atan2(centerPoint.y - formerPoint.y, centerPoint.x - formerPoint.x),
+			newAngle = Math.atan2(centerPoint.y - newPoint.y, centerPoint.x - newPoint.x);
+
+		return newAngle - initialAngle;
+	},
+
+	/* Takes two latlngs and calculates the scaling difference. */
+	_calculateScalingFactor: function(latlngA, latlngB) {
+		var map = this._handled._map,
+
+			centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
+			formerPoint = map.latLngToLayerPoint(latlngA),
+			newPoint = map.latLngToLayerPoint(latlngB),
+
+			formerRadiusSquared = this._d2(centerPoint, formerPoint),
+			newRadiusSquared = this._d2(centerPoint, newPoint);
+
+		return Math.sqrt(newRadiusSquared / formerRadiusSquared);
+	},
+
+	/* Distance between two points in cartesian space, squared (distance formula). */
+	_d2: function(a, b) {
+		var dx = a.x - b.x,
+			dy = a.y - b.y;
+
+		return Math.pow(dx, 2) + Math.pow(dy, 2);
+	}
+});
+
+L.ScaleHandle = L.EditHandle.extend({
+	options: {
+		TYPE: 'rotate',
+		icon: new L.Icon({
+			iconUrl:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIHdpZHRoPSI0NTkiIGhlaWdodD0iNDY0IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA1MTIgNTEyIiB4bWw6c3BhY2U9InByZXNlcnZlIiBzdHlsZT0iIj48cmVjdCBpZD0iYmFja2dyb3VuZHJlY3QiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHg9IjAiIHk9IjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0ibm9uZSIgY2xhc3M9IiIgc3R5bGU9IiIvPjxnIGNsYXNzPSJjdXJyZW50TGF5ZXIiIHN0eWxlPSIiPjx0aXRsZT5MYXllciAxPC90aXRsZT48cGF0aCBkPSJNNDU5LjA0OTE1OTUzMDQ3MTM0LDg2LjkyNjIzNDUxMjU1MDAyIFYwIGgtODUuNzE0NTczMzU2MzEyMDkgdjI3LjA0MzcxNzQwMzkwNDQ1MiBIODUuNzE0NTczMzU2MzEyMDMgVjAgSDAgdjg2LjkyNjIzNDUxMjU1MDAyIGgyNS43MTQzNzIwMDY4OTM2MjYgdjI4OS43NTQxMTUwNDE4MzM0IEgwIHY4Ni45MjYyMzQ1MTI1NTAwMiBoODUuNzE0NTczMzU2MzEyMDkgdi0yNy4wNDM3MTc0MDM5MDQ0NTIgaDI4NS43MTUyNDQ1MjEwNDAzIHYyNy4wNDM3MTc0MDM5MDQ0NTIgaDg1LjcxNDU3MzM1NjMxMjA5IHYtODYuOTI2MjM0NTEyNTUwMDIgaC0yMy44MDk2MDM3MTAwODY2OSBWODYuOTI2MjM0NTEyNTUwMDIgSDQ1OS4wNDkxNTk1MzA0NzEzNCB6TTM4NC43NjMxOTU5NTUwMDA5LDEyLjU1NjAxMTY1MTgxMjc4MSBoNjEuOTA0OTY5NjQ2MjI1Mzk2IHY2Mi43ODAwNTgyNTkwNjM5MSBoLTYxLjkwNDk2OTY0NjIyNTM5NiBWMTIuNTU2MDExNjUxODEyNzgxIHpNMTIuMzgwOTkzOTI5MjQ1MDUsMTIuNTU2MDExNjUxODEyNzgxIGg2MS45MDQ5Njk2NDYyMjUzOTYgdjYyLjc4MDA1ODI1OTA2MzkxIEgxMi4zODA5OTM5MjkyNDUwNSBWMTIuNTU2MDExNjUxODEyNzgxIHpNNzQuMjg1OTYzNTc1NDcwNTMsNDUxLjA1MDU3MjQxNTEyMDY2IEgxMi4zODA5OTM5MjkyNDUwNSB2LTYyLjc4MDA1ODI1OTA2MzkxIGg2MS45MDQ5Njk2NDYyMjUzOTYgVjQ1MS4wNTA1NzI0MTUxMjA2NiB6TTQ0NS43MTU3ODE0NTI4MjI3NCw0NTEuMDUwNTcyNDE1MTIwNjYgaC02Mi44NTczNTM3OTQ2Mjg4NjQgdi02Mi43ODAwNTgyNTkwNjM5MSBoNjIuODU3MzUzNzk0NjI4ODY0IFY0NTEuMDUwNTcyNDE1MTIwNjYgek00MDcuNjIwNDE1NTE2Njg0MjYsMzc2LjY4MDM0OTU1NDM4MzQ0IGgtMzYuMTkwNTk3NjM5MzMxNzcgdjMyLjgzODc5OTcwNDc0MTEyIEg4NS43MTQ1NzMzNTYzMTIwMyB2LTMyLjgzODc5OTcwNDc0MTEyIEg0OS41MjM5NzU3MTY5ODAzMiBWODYuOTI2MjM0NTEyNTUwMDIgaDM2LjE5MDU5NzYzOTMzMTc3IFY1MC4yMjQwNDY2MDcyNTExMjUgaDI4Ny42MjAwMTI4MTc4NDcyIHYzNi43MDIxODc5MDUyOTg5IGgzNC4yODU4MjkzNDI1MjQ4MzUgVjM3Ni42ODAzNDk1NTQzODM0NCB6IiBpZD0ic3ZnXzIiIGNsYXNzPSIiIGZpbGw9IiMxYTFhZWIiIGZpbGwtb3BhY2l0eT0iMSIvPjwvZz48L3N2Zz4=',
+			iconSize: [32, 32],
+			iconAnchor: [16, 16]}
+		)
+	},
+
+	_onHandleDrag: function() {
+		var overlay = this._handled,
+			formerLatLng = this._handled._corners[this._corner],
+			newLatLng = this.getLatLng(),
+
+			scale = this._calculateScalingFactor(formerLatLng, newLatLng);
+
+		overlay.editing._scaleBy(scale);
+
+		overlay.fire('update');
+	},
+
+	updateHandle: function() {
+		this.setLatLng(this._handled._corners[this._corner]);
+	},
+
+	/* Takes two latlngs and calculates the angle between them. */
+	_calculateAngle: function(latlngA, latlngB) {
+		var map = this._handled._map,
+
+			centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
+			formerPoint = map.latLngToLayerPoint(latlngA),
+			newPoint = map.latLngToLayerPoint(latlngB),
+
+			initialAngle = Math.atan2(centerPoint.y - formerPoint.y, centerPoint.x - formerPoint.x),
+			newAngle = Math.atan2(centerPoint.y - newPoint.y, centerPoint.x - newPoint.x);
+
+		return newAngle - initialAngle;
+	},
+
+	/* Takes two latlngs and calculates the scaling difference. */
+	_calculateScalingFactor: function(latlngA, latlngB) {
+		var map = this._handled._map,
+
+			centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
+			formerPoint = map.latLngToLayerPoint(latlngA),
+			newPoint = map.latLngToLayerPoint(latlngB),
+
+			formerRadiusSquared = this._d2(centerPoint, formerPoint),
+			newRadiusSquared = this._d2(centerPoint, newPoint);
+
+		return Math.sqrt(newRadiusSquared / formerRadiusSquared);
+	},
+
+	/* Distance between two points in cartesian space, squared (distance formula). */
+	_d2: function(a, b) {
+		var dx = a.x - b.x,
+			dy = a.y - b.y;
+
+		return Math.pow(dx, 2) + Math.pow(dy, 2);
+	}
+});
+
+L.DistortableCollection = L.FeatureGroup.extend({
+  include: L.Mixin.Events,
+>>>>>>> all tests passing
 
 	/* cannot be dragged */
 	_onHandleDrag: function() {
@@ -1050,54 +1727,48 @@ L.ScaleHandle = L.EditHandle.extend({
 
 });
 
+<<<<<<< HEAD
 L.DistortableImage = L.DistortableImage || {};
+=======
+L.distortableCollection = function(id, options) {
+  return new L.DistortableCollection(id, options);
+};
+L.Map.mergeOptions({ boxSelector: true, boxZoom: false });
+>>>>>>> all tests passing
 
-var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
-		initialize: function(map, overlay, options) {
-			this._overlay = overlay;
-			this._map = map;
+// used for multiple image select. Temporarily disabled until click
+// propagation issue is fixed
 
-			LeafletToolbar.ToolbarAction.prototype.initialize.call(this, options);
-		}
-	}),
+L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
 
-	ToggleTransparency = EditOverlayAction.extend({
-		options: { toolbarIcon: {
-			html: '<span class="fa fa-adjust"></span>',
-			tooltip: 'Toggle Image Transparency',
-			title: 'Toggle Image Transparency'
-		}},
+  initialize: function (map) {
+    this._map = map;
+    this._container = map._container;
+    this._pane = map._panes.overlayPane;
+  },
 
-		addHooks: function() {
-			var editing = this._overlay.editing;
+  addHooks: function () {
+    L.DomEvent.on(this._container, 'mousedown', this._onMouseDown, this);
+  },
 
-			editing._toggleTransparency();
-			this.disable();
-		}
-	}),
+  removeHooks: function () {
+    L.DomEvent.off(this._container, 'mousedown', this._onMouseDown, this);
+  },
 
-	ToggleOutline = EditOverlayAction.extend({
-		options: { toolbarIcon: {
-			html: '<span class="fa fa-square-o"></span>',
-			tooltip: 'Toggle Image Outline',
-			title: 'Toggle Image Outline'
-		}},
+  _onMouseDown: function (e) {
+    if (!e.shiftKey || ((e.which !== 1) && (e.button !== 1))) { return false; }
 
-		addHooks: function() {
-			var editing = this._overlay.editing;
+    L.DomUtil.disableTextSelection();
+    L.DomUtil.disableImageDrag();
 
-			editing._toggleOutline();
-			this.disable();
-		}
-	}),
+    this._startLayerPoint = this._map.mouseEventToLayerPoint(e);
 
-	RemoveOverlay = EditOverlayAction.extend({
-		options: { toolbarIcon: {
-			html: '<span class="fa fa-trash"></span>',
-			tooltip: 'Delete image',
-			title: 'Delete image'
-		}},
+    this._box = L.DomUtil.create('div', 'leaflet-zoom-box', this._pane);
+    L.DomUtil.setPosition(this._box, this._startLayerPoint);
 
+    this._container.style.cursor = 'crosshair';
+
+<<<<<<< HEAD
 		addHooks: function() {
 			var editing = this._overlay.editing;
 	
@@ -1105,22 +1776,28 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 			this.disable();
 		}
 	}),
+=======
+    L.DomEvent
+      .on(document, 'mousemove', this._onMouseMove, this)
+      .on(document, 'mouseup', this._onMouseUp, this)
+      .preventDefault(e);
 
-	ToggleEditable = EditOverlayAction.extend({
-		options: { toolbarIcon: {
-			html: '<span class="fa fa-lock"></span>',
-			tooltip: 'Lock / Unlock editing',
-			title: 'Lock / Unlock editing'
-		}},
+    this._map.fire('boxzoomstart');
+  },
+>>>>>>> all tests passing
 
-		addHooks: function() {
-			var editing = this._overlay.editing;
+  _onMouseMove: function (e) {
+    var startPoint = this._startLayerPoint,
+      box = this._box,
 
-			editing._toggleLock();
-			this.disable();
-		}
-	}),
+      layerPoint = this._map.mouseEventToLayerPoint(e),
+      offset = layerPoint.subtract(startPoint),
 
+      newPos = new L.Point(
+        Math.min(layerPoint.x, startPoint.x),
+        Math.min(layerPoint.y, startPoint.y));
+
+<<<<<<< HEAD
 	ToggleRotateScale = EditOverlayAction.extend({
 		initialize: function(map, overlay, options) {
 			var icon = overlay.editing._mode === 'rotateScale' ? 'image' : 'rotate-left';
@@ -1131,71 +1808,72 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 				tooltip: 'RotateScale',
 				title: 'RotateScale'
 			};
+=======
+    L.DomUtil.setPosition(box, newPos);
 
-			EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
-		},
+    box.style.width = (Math.max(0, Math.abs(offset.x) - 4)) + 'px';
+    box.style.height = (Math.max(0, Math.abs(offset.y) - 4)) + 'px';
+  },
+>>>>>>> all tests passing
 
-		addHooks: function() {
-			var editing = this._overlay.editing;
+  _onMouseUp: function (e) {
+    var map = this._map,
+      layerPoint = map.mouseEventToLayerPoint(e);
 
+    if (this._startLayerPoint.equals(layerPoint)) { return; }
+
+<<<<<<< HEAD
 			editing._toggleRotateScale();
 			editing._showToolbar();
 			this.disable();
 		}
 	}),
+=======
+    this._boxBounds = new L.LatLngBounds(
+      map.layerPointToLatLng(this._startLayerPoint),
+      map.layerPointToLatLng(layerPoint));
+>>>>>>> all tests passing
 
+    this._finish();
 
-	ToggleExport = EditOverlayAction.extend({
-		options: {
-			toolbarIcon: {
-				html: '<span class="fa fa-download"></span>',
-				tooltip: 'Export Image',
-				title: 'Export Image'
-			}
-		},
+    map.fire('boxzoomend', { boxZoomBounds: this._boxBounds });
 
-		addHooks: function ()
-		{
-			var editing = this._overlay.editing;
-
-			editing._toggleExport();
-			this.disable();
-		}
-	}),
-
-	ToggleOrder = EditOverlayAction.extend({
-		options: {
-			toolbarIcon: {
-				html: '<span class="fa fa-sort"></span>',
-				tooltip: 'Change order',
-				title: 'Toggle order'
-			}
-		},
-
-		addHooks: function ()
-		{
-			var editing = this._overlay.editing;
-
-			editing._toggleOrder();
-			this.disable();
-		}
-	}),
-
-  EnableEXIF = EditOverlayAction.extend({
-  options: {
-    toolbarIcon: {
-      html: '<span class="fa fa-compass"></span>',
-      tooltip: "Enable EXIF",
-      title: "Geocode Image"
-    }
+    // this._finish();
   },
 
-  addHooks: function() {
-    var image = this._overlay._image;
-    EXIF.getData(image, L.EXIF(image));
-  }
-  });
+  _finish: function () {
+    $(this._map.boxSelector._box).remove();
+    // L.DomUtil.remove(this._box);
+    // L.DomUtil.remove(this._map.boxSelector);
+    this._container.style.cursor = '';
 
+    L.DomUtil.enableTextSelection();
+    L.DomUtil.enableImageDrag();
+
+    L.DomEvent
+      .off(document, 'mousemove', this._onMouseMove)
+      .off(document, 'mouseup', this._onMouseUp);
+  },
+});
+
+L.Map.addInitHook('addHandler', 'boxSelector', L.Map.BoxSelectHandle);
+L.DistortableImage = L.DistortableImage || {};
+
+var dom_string = 
+"<table><tbody>" +
+"<tr><th>Keymappings</th></tr>" +
+"<tr><td><b>J/K: Order overlay</b></td></tr>" +
+"<tr><td><b>L: Lock overlay</b></td></tr>" +
+"<tr><td><b>O: Outline overlay</b></td></tr>" +
+"<tr><td><b>S: Scale Overlay</b></td></tr>" +
+"<tr><td><b>T: Toggle transparency</b></td></tr>" +
+"<tr><td><b>RR: Distort overlay</b></td></tr>" +
+"<tr><td><b>ESC: Deselect overlay</b></td></tr>" +
+"<tr><td><b>DEL: Remove overlay</b></td></tr>" +
+"<tr><td><b>CAPS: Rotate overlay</b></td></tr>" +
+"</tbody></table>";
+
+<<<<<<< HEAD
 <<<<<<< HEAD
 L.DistortableImage.EditToolbar = LeafletToolbar.Control.extend({
 	options: {
@@ -1254,7 +1932,199 @@ L.DistortableImage.EditToolbar = LeafletToolbar.Control.extend({
 		});
 	},1000); // prevent asynchronity during toolbar construction
 >>>>>>> force build dist
+=======
+var guide_strings = [dom_string];
 
+L.DistortableImage.Guides = guide_strings;
+
+L.DistortableImage = L.DistortableImage || {};
+
+var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
+        initialize: function(map, overlay, options) {
+            this._overlay = overlay;
+            this._map = map;
+
+            LeafletToolbar.ToolbarAction.prototype.initialize.call(this, options);
+        }
+    }),
+
+    ToggleTransparency = EditOverlayAction.extend({
+        options: {
+            toolbarIcon: {
+                html: '<span class="fa fa-adjust"></span>',
+                tooltip: 'Toggle Image Transparency',
+                title: 'Toggle Image Transparency'
+            }
+        },
+
+        addHooks: function() {
+            var editing = this._overlay.editing;
+
+            editing._toggleTransparency();
+            this.disable();
+        }
+    }),
+
+    ToggleOutline = EditOverlayAction.extend({
+        options: {
+            toolbarIcon: {
+                html: '<span class="fa fa-square-o"></span>',
+                tooltip: 'Toggle Image Outline',
+                title: 'Toggle Image Outline'
+            }
+        },
+
+        addHooks: function() {
+            var editing = this._overlay.editing;
+
+            editing._toggleOutline();
+            this.disable();
+        }
+    }),
+
+    RemoveOverlay = EditOverlayAction.extend({
+        options: {
+            toolbarIcon: {
+                html: '<span class="fa fa-trash"></span>',
+                tooltip: 'Delete image',
+                title: 'Delete image'
+            }
+        },
+
+        addHooks: function() {
+            var map = this._map;
+
+            map.removeLayer(this._overlay);
+            this._overlay.fire('delete');
+            this.disable();
+        }
+    }),
+
+    ToggleEditable = EditOverlayAction.extend({
+        options: {
+            toolbarIcon: {
+                html: '<span class="fa fa-lock"></span>',
+                tooltip: 'Lock / Unlock editing',
+                title: 'Lock / Unlock editing'
+            }
+        },
+
+        addHooks: function() {
+            var editing = this._overlay.editing;
+
+            editing._toggleLock();
+            this.disable();
+        }
+    }),
+
+    ToggleRotateDistort = EditOverlayAction.extend({
+        initialize: function(map, overlay, options) {
+            var icon = overlay.editing._mode === 'rotate' ? 'image' : 'rotate-left';
+
+            options = options || {};
+            options.toolbarIcon = {
+                html: '<span class="fa fa-' + icon + '"></span>',
+                tooltip: 'Rotate',
+                title: 'Rotate'
+            };
+
+            EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
+        },
+
+        addHooks: function() {
+            var editing = this._overlay.editing;
+
+            editing._toggleRotateDistort();
+            editing._hideToolbar();
+            editing._showToolbar();
+            this.disable();
+        }
+    }),
+
+
+    ToggleExport = EditOverlayAction.extend({
+        options: {
+            toolbarIcon: {
+                html: '<span class="fa fa-download"></span>',
+                tooltip: 'Export Image',
+                title: 'Export Image'
+            }
+        },
+
+        addHooks: function() {
+            var editing = this._overlay.editing;
+
+            editing._toggleExport();
+            this.disable();
+        }
+    }),
+
+    ToggleOrder = EditOverlayAction.extend({
+        options: {
+            toolbarIcon: {
+                html: '<span class="fa fa-sort"></span>',
+                tooltip: 'Change order',
+                title: 'Toggle order'
+            }
+        },
+
+        addHooks: function() {
+            var editing = this._overlay.editing;
+
+            editing._toggleOrder();
+            this.disable();
+        }
+    }),
+
+    EnableEXIF = EditOverlayAction.extend({
+        options: {
+            toolbarIcon: {
+                html: '<span class="fa fa-compass"></span>',
+                tooltip: "Enable EXIF",
+                title: "Geocode Image"
+            }
+        },
+
+        addHooks: function() {
+            var image = this._overlay._image;
+            EXIF.getData(image, L.EXIF(image));
+        }
+    });
+
+// implement a promise polyfill here
+window.addEventListener('load', function() {
+
+    var lazy_interval = setInterval(function() {
+
+        if (typeof L.DistortableImage._options !== 'undefined') {
+
+            var toolbarType = L.DistortableImage._options.toolbarType === "Control" ? "Control" : "Popup";
+
+            L.DistortableImage.EditToolbar = LeafletToolbar[toolbarType].extend({
+                options: {
+                    position: 'topleft',
+                    actions: [
+                        ToggleTransparency,
+                        RemoveOverlay,
+                        ToggleOutline,
+                        ToggleEditable,
+                        ToggleRotateDistort,
+                        ToggleExport,
+                        ToggleOrder,
+                        EnableEXIF
+                    ]
+
+                }
+
+            });
+>>>>>>> all tests passing
+
+            clearInterval(lazy_interval);
+        }
+
+    }, 100);
+
+});
 L.DistortableImage = L.DistortableImage || {};
 // L.DistortableImage.Guides = L.DistortableImage.Guides || {};
 
@@ -1827,6 +2697,7 @@ L.DistortableImageOverlay.addInitHook(function() {
 		if (this.editing) { this.editing.disable(); }
 	});
 });
+<<<<<<< HEAD
 
 L.DomUtil = L.DomUtil || {};
 L.DistortableImage = L.DistortableImage || {};
@@ -1944,3 +2815,5 @@ L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
 });
 
 L.Map.addInitHook('addHandler', 'boxSelector', L.Map.BoxSelectHandle);
+=======
+>>>>>>> all tests passing
