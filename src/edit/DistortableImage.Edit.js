@@ -128,8 +128,6 @@ L.DistortableImage.Edit = L.Handler.extend({
   _initToolbar: function () {
     this._showToolbar();
     try {
-      // this.toolbar._hide();
-      // this.toolbar._tip.style.opacity = 0;
       this.toolbar._container.style.opacity = 0;
     }
     catch (e) { }
