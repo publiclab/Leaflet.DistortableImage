@@ -2179,34 +2179,40 @@ L.DistortableImage.Edit = L.Handler.extend({
       map.addControl(new L.DistortableImage.Keymapper({ position: keymapper_position }));
     }
 
+<<<<<<< HEAD
     /* bring the selected image into view */
     overlay.bringToFront();
 =======
 		/* Add custom toolbars */
 		this._addToolbar = function(map, position, el, styleClass) {
+=======
+		/* initialize keymapper */
+		this.keymapper = function(position) {
+>>>>>>> addToolbar -> keymapper
 			var custom_toolbar = L.control({ position: position });
 
 			custom_toolbar.onAdd = function() {
-				var el_wrapper = L.DomUtil.create(el, styleClass);
+				var el_wrapper = L.DomUtil.create("div", "l-container");
 				el_wrapper.innerHTML = "<table><tbody>" +
-"<tr><th>Keymappings</th></tr>" +
-"<tr><td><b>J/K: Order overlay</b></td></tr>" +
-"<tr><td><b>L: Lock overlay</b></td></tr>" +
-"<tr><td><b>O: Outline overlay</b></td></tr>" +
-"<tr><td><b>S: Scale Overlay</b></td></tr>" +
-"<tr><td><b>T: Toggle transparency</b></td></tr>" +
-"<tr><td><b>RR: Distort overlay</b></td></tr>" +
-"<tr><td><b>ESC: Deselect overlay</b></td></tr>" +
-"<tr><td><b>DEL: Remove overlay</b></td></tr>" +
-"<tr><td><b>CAPS: Rotate overlay</b></td></tr>" +
-"</tbody></table>";
+				"<tr><th>Keymappings</th></tr>" +
+				"<tr><td><b>J/K: Order overlay</b></td></tr>" +
+				"<tr><td><b>L: Lock overlay</b></td></tr>" +
+				"<tr><td><b>O: Outline overlay</b></td></tr>" +
+				"<tr><td><b>S: Scale Overlay</b></td></tr>" +
+				"<tr><td><b>T: Toggle transparency</b></td></tr>" +
+				"<tr><td><b>RR: Distort overlay</b></td></tr>" +
+				"<tr><td><b>ESC: Deselect overlay</b></td></tr>" +
+				"<tr><td><b>DEL: Remove overlay</b></td></tr>" +
+				"<tr><td><b>CAPS: Rotate overlay</b></td></tr>" +
+				"</tbody></table>";
 				return el_wrapper;
 			};
-			custom_toolbar.addTo(map);
+			custom_toolbar.addTo(overlay._map);
 		};
 	},
 >>>>>>> removed guides
 
+<<<<<<< HEAD
     this._initHandles();
 
     this._appendHandlesandDragable(this._mode);
@@ -2224,6 +2230,16 @@ L.DistortableImage.Edit = L.Handler.extend({
       2: new L.point(0, 0),
       3: new L.point(0, 0)
     };
+=======
+	/* Run on image selection. */
+	addHooks: function() {
+		var overlay = this._overlay,
+			map = overlay._map,
+			i;
+
+		/* initiate keymapper */
+		this.keymapper("topright");
+>>>>>>> addToolbar -> keymapper
 
     L.DomEvent.on(map, "click", this._deselect, this);
     L.DomEvent.on(overlay._image, "click", this._select, this);
