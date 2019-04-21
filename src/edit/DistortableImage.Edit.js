@@ -1,51 +1,60 @@
 L.DistortableImage = L.DistortableImage || {};
 
 L.DistortableImage.Edit = L.Handler.extend({
-	options: {
-		opacity: 0.7,
-		outline: '1px solid red',
-		keymap: {
-			8: '_removeOverlay', // backspace windows / delete mac
-			46: '_removeOverlay', // delete windows / delete + fn mac
-			20: '_toggleRotate', // CAPS
-			27: '_deselect', // esc
-			68: '_toggleRotateDistort', // d
-			69: '_toggleIsolate', // e
-			73: '_toggleIsolate', // i
-			74: '_sendUp', // j
-			75: '_sendDown', // k
-			76: '_toggleLock', // l
-			79: '_toggleOutline', // o
-			82: '_toggleRotateDistort', // r
-			83: '_toggleScale', // s
-			84: '_toggleTransparency', // t
-		}
-	},
+  options: {
+    opacity: 0.7,
+    outline: "1px solid red",
+    keymap: {
+      8: "_removeOverlay", // backspace windows / delete mac
+      46: "_removeOverlay", // delete windows / delete + fn mac
+      27: "_deselect", // esc
+      68: "_toggleRotateDistort", // d
+      74: "_sendUp", // j
+      75: "_sendDown", // k
+      76: "_toggleLock", // l
+      79: "_toggleOutline", // o
+      82: "_toggleRotateDistort", // r
+      83: "_toggleScale", // s
+      84: "_toggleTransparency" // t
+    }
+  },
 
-	initialize: function(overlay) {
-		this._overlay = overlay;
-		this._toggledImage = false;
+  initialize: function(overlay) {
+    this._overlay = overlay;
+    this._toggledImage = false;
 
-		/* Interaction modes. */
-		this._mode = this._overlay.options.mode || 'distort';
-		this._transparent = false;
-		this._outlined = false;
+    /* Interaction modes. */
+    this._mode = this._overlay.options.mode || "distort";
+    this._transparent = false;
+    this._outlined = false;
+  },
 
-    /* generate instance counts */
-    this.instance_count = L.DistortableImage.Edit.prototype.instances =
-    L.DistortableImage.Edit.prototype.instances ? L.DistortableImage.Edit.prototype.instances + 1 : 1;
-	},
+  /* Run on image selection. */
+  addHooks: function() {
+    var overlay = this._overlay,
+      map = overlay._map,
+      i;
 
-	/* Run on image selection. */
-	addHooks: function() {
-		var overlay = this._overlay,
-			map = overlay._map,
-			keymapper_position,i;
+    this._lockHandles = new L.LayerGroup();
+    for (i = 0; i < 4; i++) {
+      this._lockHandles.addLayer(
+        new L.LockHandle(overlay, i, { draggable: false })
+      );
+    }
 
-    /* instantiate and render keymapper for one instance only*/
-    if (this.instance_count === 1 && overlay.options.keymapper !== false) {
-      keymapper_position = overlay.options.keymapper_position || 'topright';
-      map.addControl(new L.DistortableImage.Keymapper({position: keymapper_position}));
+    this._distortHandles = new L.LayerGroup();
+    for (i = 0; i < 4; i++) {
+      this._distortHandles.addLayer(new L.DistortHandle(overlay, i));
+    }
+
+    this._rotateHandles = new L.LayerGroup(); // handle includes rotate AND scale
+    for (i = 0; i < 4; i++) {
+      this._rotateHandles.addLayer(new L.RotateAndScaleHandle(overlay, i));
+    }
+
+    this._scaleHandles = new L.LayerGroup();
+    for (i = 0; i < 4; i++) {
+      this._scaleHandles.addLayer(new L.ScaleHandle(overlay, i));
     }
 
 		/* bring the selected image into view */
