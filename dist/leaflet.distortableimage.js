@@ -942,6 +942,16 @@ L.DistortableCollection = L.FeatureGroup.extend({
   _onKeyDown: function(e) {
     if (e.key === "Escape") {
       this._deselectAll(e);
+    } 
+    if (e.key === "Backspace") {
+      this.eachLayer(function(layer) {
+        var edit = layer.editing;
+        if (edit._selected) {
+          var choice = edit.confirmDelete();
+          if (choice) { this.removeLayer(layer); }
+          return;
+        }
+      }, this);
     }
   },
 
@@ -952,10 +962,10 @@ L.DistortableCollection = L.FeatureGroup.extend({
     if (!this.isSelected(overlay)) { return; }
 
     this.eachLayer(function(layer) {
+      var edit = layer.editing;
+      edit._deselect();
+
       for (i = 0; i < 4; i++) {
-        if (layer !== overlay && layer.editing._mode !== "lock") {
-          layer.editing._hideToolbar();
-        }
         layer._dragStartPoints[i] = layer._map.latLngToLayerPoint(
           layer.getCorner(i)
         );
