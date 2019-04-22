@@ -114,6 +114,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 			this._enableDragging();
 		}
 
+		this._initToolbar();
+
 		this._overlay._dragStartPoints = {
 			0: new L.point(0, 0),
 			1: new L.point(0, 0),
@@ -162,8 +164,11 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _initToolbar: function() {
     this._showToolbar();
-    this.toolbar._hide();
-    this.toolbar._tip.style.opacity = 0;
+    try {
+      this.toolbar._hide();
+      this.toolbar._tip.style.opacity = 0;
+    }
+    catch (e) {}
   },
 
   confirmDelete: function() {
@@ -419,12 +424,12 @@ L.DistortableImage.Edit = L.Handler.extend({
     raised_point.lat = maxLat;
 
     if (this._overlay.options.suppressToolbar !== true) {
-      this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(
-        map,
-        overlay
-      );
-      overlay.fire("toolbar:created");
-    }
+			try {
+        this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(map, overlay);
+        overlay.fire('toolbar:created');
+      }
+      catch (e) {}
+		}
   },
 
   _removeOverlay: function() {
