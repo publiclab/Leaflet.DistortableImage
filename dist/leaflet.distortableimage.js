@@ -911,7 +911,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
   _deselectOthers: function(event) {
     this.eachLayer(function(layer) {
       var edit = layer.editing;
-      if (edit._mode === "lock") { return; }
       if (layer._image !== event.target) {
         edit._deselect();
       } else {
@@ -943,8 +942,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
   _onKeyDown: function(e) {
     if (e.key === "Escape") {
       this._deselectAll(e);
-    } else {
-      L.DomEvent.stopPropagation(e);
     }
   },
 
@@ -952,9 +949,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var overlay = event.target,
       i;
 
-    if (!this.isSelected(overlay)) {
-      return;
-    }
+    if (!this.isSelected(overlay)) { return; }
 
     this.eachLayer(function(layer) {
       for (i = 0; i < 4; i++) {
@@ -973,9 +968,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
       map = this._map,
       i;
 
-    if (!this.isSelected(overlay)) {
-      return;
-    }
+    if (!this.isSelected(overlay)) { return; }
 
     overlay._dragPoints = {};
 
@@ -991,12 +984,8 @@ L.DistortableCollection = L.FeatureGroup.extend({
   _deselectAll: function(event) {
     this.eachLayer(function(layer) {
       var edit = layer.editing;
-      if (edit._mode === "lock") { return; }
       L.DomUtil.removeClass(layer.getElement(), "selected");
-      if (edit.toolbar) {
-        edit._hideToolbar();
-      }
-      edit._hideMarkers();
+      edit._deselect();
     });
 
     L.DomEvent.stopPropagation(event);
@@ -1260,6 +1249,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._mode = this._overlay.options.mode || "distort";
     this._transparent = false;
     this._outlined = false;
+    this._selected = false;
   },
 
   /* Run on image selection. */
@@ -1453,7 +1443,9 @@ L.DistortableImage.Edit = L.Handler.extend({
       handlerName = keymap[event.which];
 
     if (this[handlerName] !== undefined && this._overlay.options.suppressToolbar !== true) {
-      this[handlerName].call(this);
+       if (this._selected) {
+        this[handlerName].call(this);
+       }
     }
   }, 
 
@@ -1465,8 +1457,8 @@ L.DistortableImage.Edit = L.Handler.extend({
     map.removeLayer(this._handles[this._mode]);
 
     /* Switch mode. */
-		if (this._mode === "rotateScale") { this._mode = "distort"; } 
-		else { this._mode = "rotateScale"; }
+    if (this._mode === "rotateScale") { this._mode = "distort"; } 
+    else { this._mode = "rotateScale"; }
 
     map.addLayer(this._handles[this._mode]);
 
@@ -1551,6 +1543,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _select: function(event) {
+    this._selected = true;
     this._showToolbar();
     this._showMarkers();
 
@@ -1558,8 +1551,9 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _deselect: function() {
-    if (this._mode === "lock") { return; }
+    this._selected = false;
     this._hideToolbar();
+    if (this._mode === "lock") { return; }
     this._hideMarkers();
   },
 

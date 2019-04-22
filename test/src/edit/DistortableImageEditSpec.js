@@ -27,6 +27,8 @@ describe("L.DistortableImage.Edit", function() {
 
 		overlay.editing.enable();
 
+		overlay.editing._selected = true;
+
 		overlay._updateCorner(0, new L.LatLng(41.7934, -87.6252));
 		overlay.fire('update');
 		
