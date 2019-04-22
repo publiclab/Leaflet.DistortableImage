@@ -1305,7 +1305,6 @@ window.addEventListener('load', function() {
                         ToggleOrder,
                         EnableEXIF
                     ]
-
                 },
 
                 // todo: move to some sort of util class, these methods could be useful in future
@@ -1339,6 +1338,7 @@ window.addEventListener('load', function() {
 });
 
 L.DistortableImage = L.DistortableImage || {};
+// L.DistortableImage.Guides = L.DistortableImage.Guides || {};
 
 L.DistortableImage.Edit = L.Handler.extend({
 	options: {

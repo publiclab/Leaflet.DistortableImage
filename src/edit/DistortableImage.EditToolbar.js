@@ -173,7 +173,6 @@ window.addEventListener('load', function() {
                         ToggleOrder,
                         EnableEXIF
                     ]
-
                 },
 
                 // todo: move to some sort of util class, these methods could be useful in future
