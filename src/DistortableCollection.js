@@ -85,14 +85,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
       this._deselectAll(e);
     } 
     if (e.key === "Backspace") {
-      this.eachLayer(function(layer) {
-        var edit = layer.editing;
-        if (edit._selected) {
-          var choice = edit.confirmDelete();
-          if (choice) { this.removeLayer(layer); }
-          return;
-        }
-      }, this);
+      this._removeFromGroup(e);
     }
   },
 
@@ -142,6 +135,21 @@ L.DistortableCollection = L.FeatureGroup.extend({
     L.DomEvent.stopPropagation(event);
   },
 
+  _removeFromGroup: function(e) {
+    this.eachLayer(function(layer) {
+      var edit = layer.editing;
+      if (edit._selected && edit._mode !== "lock") {
+        var choice = edit.confirmDelete();
+        if (choice) { 
+          edit._selected = false;
+          this.removeLayer(layer); 
+        } else {
+          L.DomEvent.stopPropagation(e);
+          return;
+        }
+      }
+    }, this);
+  },
   /**
    * images in 'lock' mode are included in this feature group collection for functionalities
    * such as export, but are filtered out for editing / dragging here
