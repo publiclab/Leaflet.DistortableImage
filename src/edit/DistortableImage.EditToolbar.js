@@ -96,7 +96,6 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
             var editing = this._overlay.editing;
 
             editing._toggleRotateDistort();
-            editing._hideToolbar();
             editing._showToolbar();
             this.disable();
         }
@@ -174,8 +173,28 @@ window.addEventListener('load', function() {
                         ToggleOrder,
                         EnableEXIF
                     ]
+                },
 
-                }
+                // todo: move to some sort of util class, these methods could be useful in future
+                _rotateToolbarAngleDeg: function(angle) {
+                    var div = this._container,
+                        divStyle = div.style;
+
+                    var oldTransform = divStyle.transform;
+
+                    divStyle.transform = oldTransform + "rotate(" + angle + "deg)";
+                divStyle.transformOrigin = "1080% 650%";
+
+                    this._rotateToolbarIcons(angle);
+                },
+
+                _rotateToolbarIcons: function(angle) {
+                    var icons = document.querySelectorAll(".fa");
+
+                    for (var i = 0; i < icons.length; i++) {
+                        icons.item(i).style.transform = "rotate(" + -angle + "deg)";
+                    }
+                },
 
             });
 
