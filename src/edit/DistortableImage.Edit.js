@@ -43,7 +43,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 			keymapper_position,i;
 
     /* instantiate and render keymapper for one instance only*/
-    if (this.instance_count === 1) {
+    if (this.instance_count === 1 && overlay.options.keymapper !== false) {
       keymapper_position = overlay.options.keymapper_position || 'topright';
       map.addControl(new L.DistortableImage.Keymapper({position: keymapper_position}));
     }
