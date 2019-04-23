@@ -93,6 +93,8 @@
         fullResolutionSrc: "large.jpg"
       }).addTo(map);
 
+      keymapper = new L.DistortableImage.Keymapper(map, img._image);
+
       /* add custom icon functionality */
       // refer this snippet below inorder to add a custom functionality
 
@@ -115,6 +117,8 @@
       // img._addTool(tool);
 
       L.DomEvent.on(img._image, "load", img.editing.enable, img.editing);
+      L.Map.addInitHook('addHandler', 'keymapper', keymapper);
+      keymapper.enable();
     })();
   </script>
 </html>

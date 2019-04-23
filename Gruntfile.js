@@ -78,7 +78,6 @@ module.exports = function(grunt) {
         concat: {
             dist: {
               src: [
-                  'src/edit/tools/DistortableImage.Guides.js',
                   'src/util/*.js',
                   'src/DistortableImageOverlay.js',
                   'src/DistortableCollection.js',
@@ -91,7 +90,7 @@ module.exports = function(grunt) {
                   'src/edit/ScaleHandle.js',
                   'src/edit/DistortableImage.EditToolbar.js',
                   'src/edit/DistortableImage.Edit.js',
-                  'src/edit/tools/DistortableImage.Keymapper.js',
+                  'src/edit/DistortableImage.Keymapper.js',
                   'src/edit/BoxSelectHandle.js'
               ],
                 dest: 'dist/leaflet.distortableimage.js',
