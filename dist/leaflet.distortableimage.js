@@ -1130,6 +1130,30 @@ L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
 });
 
 L.Map.addInitHook('addHandler', 'boxSelector', L.Map.BoxSelectHandle);
+L.DomUtil = L.DomUtil || {};
+L.DistortableImage = L.DistortableImage || {};
+
+L.DistortableImage.Keymapper = L.Control.extend({
+    initialize: function(options) {
+        L.Control.prototype.initialize.call(this, options);
+    },
+    onAdd: function() {
+        var el_wrapper = L.DomUtil.create("div", "l-container");
+        el_wrapper.innerHTML = "<table><tbody>" +
+            "<tr><th>Keymappings</th></tr>" +
+            "<tr><td><kbd>j</kbd>, <kbd>k</kbd>: <span>Send up / down (stacking order)</span></td></tr>" +
+            "<tr><td><kbd>l</kbd>: <span>Lock</span></td></tr>" +
+            "<tr><td><kbd>o</kbd>: <span>Outline</span></td></tr>" +
+            "<tr><td><kbd>s</kbd>: <span>Scale</span></td></tr>" +
+            "<tr><td><kbd>t</kbd>: <span>Transparency</span></td></tr>" +
+            "<tr><td><kbd>d</kbd> , <kbd>r</kbd>: <span>RotateScale</span> </td></tr>" +
+            "<tr><td><kbd>esc</kbd>: <span>Deselect All</span></td></tr>" +
+            "<tr><td><kbd>delete</kbd> , <kbd>backspace</kbd>: <span>Delete</span></td></tr>" +
+            "<tr><td><kbd>caps</kbd>: <span>Rotate</span></td></tr>" +
+            "</tbody></table>";
+        return el_wrapper;
+    }
+});
 L.DistortableImage = L.DistortableImage || {};
 
 var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
@@ -1338,7 +1362,6 @@ window.addEventListener('load', function() {
 });
 
 L.DistortableImage = L.DistortableImage || {};
-// L.DistortableImage.Guides = L.DistortableImage.Guides || {};
 
 L.DistortableImage.Edit = L.Handler.extend({
 	options: {
@@ -1371,43 +1394,22 @@ L.DistortableImage.Edit = L.Handler.extend({
 		this._transparent = false;
 		this._outlined = false;
 
-    /* render keymapper only once */
-    var instance_count = L.DistortableImage.Edit.prototype.instances =
+    /* generate instance counts */
+    this.instance_count = L.DistortableImage.Edit.prototype.instances =
     L.DistortableImage.Edit.prototype.instances ? L.DistortableImage.Edit.prototype.instances + 1 : 1;
-    /* initialize keymapper */
-    
-		this._keymapper = function(position) {
-      if (instance_count === 1) {
-        var __keymapper = L.control({ position: position });
-      __keymapper.onAdd = function() {
-        var el_wrapper = L.DomUtil.create("div", "l-container");
-        el_wrapper.innerHTML = "<table><tbody>" +
-       "<tr><th>Keymappings</th></tr>" +
-				"<tr><td><kbd>j</kbd>, <kbd>k</kbd>: <span>Send up / down (stacking order)</span></td></tr>" +
-				"<tr><td><kbd>l</kbd>: <span>Lock</span></td></tr>" +
-				"<tr><td><kbd>o</kbd>: <span>Outline</span></td></tr>" +
-				"<tr><td><kbd>s</kbd>: <span>Scale</span></td></tr>" +
-				"<tr><td><kbd>t</kbd>: <span>Transparency</span></td></tr>" +
-				"<tr><td><kbd>d</kbd> , <kbd>r</kbd>: <span>RotateScale</span> </td></tr>" +
-				"<tr><td><kbd>esc</kbd>: <span>Deselect All</span></td></tr>" +
-				"<tr><td><kbd>delete</kbd> , <kbd>backspace</kbd>: <span>Delete</span></td></tr>" +
-				"<tr><td><kbd>caps</kbd>: <span>Rotate</span></td></tr>" +
-				"</tbody></table>";
-        return el_wrapper;
-      };
-      __keymapper.addTo(overlay._map);
-      }
-		};
 	},
 
 	/* Run on image selection. */
 	addHooks: function() {
 		var overlay = this._overlay,
 			map = overlay._map,
-			i;
+			keymapper_position,i;
 
-		/* initiate keymapper */
-    this._keymapper("topright");
+    /* instantiate and render keymapper for one instance only*/
+    if (this.instance_count === 1) {
+      keymapper_position = overlay.options.keymapper_position || 'topright';
+      map.addControl(new L.DistortableImage.Keymapper({position: keymapper_position}));
+    }
 
 		/* bring the selected image into view */
 		overlay.bringToFront();
