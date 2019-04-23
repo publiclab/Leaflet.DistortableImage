@@ -1389,9 +1389,9 @@ L.DistortableImage.Edit = L.Handler.extend({
 				"<tr><td><kbd>s</kbd>: <span>Scale</span></td></tr>" +
 				"<tr><td><kbd>t</kbd>: <span>Transparency</span></td></tr>" +
 				"<tr><td><kbd>d</kbd> , <kbd>r</kbd>: <span>RotateScale</span> </td></tr>" +
-				"<tr><td><kbd>ESC</kbd>: <span>Deselect All</span></td></tr>" +
-				"<tr><td><kbd>DEL</kbd>: <span>Delete</span></td></tr>" +
-				"<tr><td><kbd>CAPS</kbd>: <span>Rotate</span></td></tr>" +
+				"<tr><td><kbd>esc</kbd>: <span>Deselect All</span></td></tr>" +
+				"<tr><td><kbd>delete</kbd> , <kbd>backspace</kbd>: <span>Delete</span></td></tr>" +
+				"<tr><td><kbd>caps</kbd>: <span>Rotate</span></td></tr>" +
 				"</tbody></table>";
         return el_wrapper;
       };
