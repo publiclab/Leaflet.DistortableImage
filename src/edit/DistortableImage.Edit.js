@@ -383,16 +383,18 @@ L.DistortableImage.Edit = L.Handler.extend({
   _hideMarkers: function() {
     if (!this._handles) { this._initHandles(); }  // workaround for race condition w/ feature group
 
-    var currentHandle = this._handles[this._mode];
-
-    currentHandle.eachLayer(function(layer) {
+    var currentHandle = this._handles[this._mode], mode = this._mode;
+    
+		currentHandle.eachLayer(function (layer) {
       var drag = layer.dragging,
-        opts = layer.options;
+				opts = layer.options;
 
-      layer.setOpacity(0);
-      if (drag) { drag.disable(); }
-      if (opts.draggable) { opts.draggable = false; }
-    });
+      if (mode !== 'lock') {
+        layer.setOpacity(0);
+      }
+			if (drag) { drag.disable(); }
+			if (opts.draggable) { opts.draggable = false; }
+		});
   },
 
   // TODO: toolbar for multiple image selection
