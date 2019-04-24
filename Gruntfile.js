@@ -31,6 +31,7 @@ module.exports = function(grunt) {
                     warpWebGl: false,
                     EXIF: false,
                     alert: false,
+                    confirm: false,
 
                     // Mocha
 
@@ -109,6 +110,7 @@ module.exports = function(grunt) {
         'concat:dist'
     ]);
 
+    // disable for now?
     grunt.registerTask('coverage', 'Custom commmand-line reporter for karma-coverage', function() {
         var coverageReports = grunt.file.expand('coverage/*/coverage.txt'),
             reports = {},
