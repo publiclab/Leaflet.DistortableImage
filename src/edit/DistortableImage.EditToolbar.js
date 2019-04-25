@@ -136,12 +136,16 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
     },
 
     addHooks: function() {
-      var overlay = this._overlay;
-      var image = overlay._image;
+        var overlay = this._overlay;
+        var image = overlay._image;
 
-      EXIF.getData(image, L.EXIF(overlay,image));
+        EXIF.getData(image, function() {
+            if (confirm('Geolocate this image and move it to the location found?')) {
+                L.EXIF(this, overlay);
+            }
+        });
     }
-  });
+});
 
 L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
   options: {
