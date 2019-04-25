@@ -29,7 +29,7 @@ describe("L.DistortableCollection", function () {
     L.DomEvent.on(overlay._image, 'load', function () { 
       overlay.editing.enable();
       overlay2.editing.enable();
-      imageFeatureGroup = new L.DistortableCollection([overlay, overlay2]).addTo(map);
+      imageFeatureGroup = L.distortableCollection([overlay, overlay2]).addTo(map);
       done(); 
     });
 
