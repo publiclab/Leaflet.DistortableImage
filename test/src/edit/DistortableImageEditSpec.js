@@ -7,10 +7,10 @@ describe("L.DistortableImage.Edit", function() {
 
 		overlay = L.distortableImageOverlay('/examples/example.png', {
 			corners: [
-				L.LatLng(41.7934, -87.6052),
-				L.LatLng(41.7934, -87.5852),
-				L.LatLng(41.7834, -87.5852),
-				L.LatLng(41.7834, -87.6052)
+				new L.LatLng(41.7934, -87.6052),
+				new L.LatLng(41.7934, -87.5852),
+				new L.LatLng(41.7834, -87.5852),
+				new L.LatLng(41.7834, -87.6052)
 			]
 		}).addTo(map);
 
