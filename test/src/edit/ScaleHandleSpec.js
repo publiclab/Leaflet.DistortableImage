@@ -4,8 +4,8 @@ describe("L.ScaleHandle", function() {
 		scaleHandle;
 
 	beforeEach(function(done) {
-		map = new L.Map(L.DomUtil.create('div', '', document.body)).setView([41.7896,-87.5996], 15);
-		distortable = new L.DistortableImageOverlay('/examples/example.jpg', {
+		map = L.map(L.DomUtil.create('div', '', document.body)).setView([41.7896,-87.5996], 15);
+		distortable = L.distortableImageOverlay('/examples/example.jpg', {
 			corners: [
 				new L.LatLng(41.7934, -87.6052),
 				new L.LatLng(41.7934, -87.5852),

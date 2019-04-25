@@ -81,7 +81,7 @@ module.exports = function(grunt) {
             dist: {
               src: [
                   'src/util/*.js',
-                  'src/edit/tools/getEXIFdata.js',
+                  'src/edit/tools/L.tools.EXIF.js',
                   'src/edit/EditHandle.js',
                   'src/edit/LockHandle.js',
                   'src/edit/DistortHandle.js',
@@ -89,8 +89,10 @@ module.exports = function(grunt) {
                   'src/edit/RotateHandle.js',
                   'src/edit/ScaleHandle.js',
                   'src/DistortableImageOverlay.js',
+                  'src/DistortableCollection.js',
                   'src/edit/DistortableImage.EditToolbar.js',
                   'src/edit/DistortableImage.Edit.js',
+                  'src/edit/BoxSelectHandle.js'
               ],
                 dest: 'dist/leaflet.distortableimage.js',
             }

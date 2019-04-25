@@ -30,7 +30,13 @@ L.DomUtil = L.extend(L.DomUtil, {
 			rotateString = (is3d ? '0, 0, 1, ' : '') + angle + units;
 			
 		return open + rotateString + ')';
+	},
+
+	toggleClass: function(el, className) {
+		var c = className;
+		return this.hasClass(el, c) ? this.removeClass(el, c) : this.addClass(el, c);
 	}
+
 });
 
 L.Map.include({
@@ -126,7 +132,16 @@ L.MatrixUtil = {
 		return L.MatrixUtil.multsm(1/m[8], m);
 	}
 };
-L.EXIF = function getEXIFdata(ref,overlay) {
+L.TrigUtil = {
+
+  calcAngleDegrees: function(x, y) {
+    return Math.atan2(y, x) * 180 / Math.PI;
+  }
+
+};
+L.tools = L.tools || {};
+
+L.tools.EXIF = function getEXIFdata(ref, overlay) {
     var GPS = ref.exifdata,
         altitude, lat, lng;
 
@@ -221,74 +236,80 @@ L.EXIF = function getEXIFdata(ref,overlay) {
     overlay._map.setView(panTo, 14);
 };
 L.EditHandle = L.Marker.extend({
-	initialize: function(overlay, corner, options) {
-		var markerOptions,
-			latlng = overlay._corners[corner];
+  initialize: function(overlay, corner, options) {
+    var markerOptions,
+      latlng = overlay._corners[corner];
 
-		L.setOptions(this, options);
+    L.setOptions(this, options);
 
-		this._handled = overlay;
-		this._corner = corner;
+    this._handled = overlay;
+    this._corner = corner;
 
-		markerOptions = {
-			draggable: true,
-			zIndexOffset: 10
-		};
+    markerOptions = {
+      draggable: true,
+      zIndexOffset: 10
+    };
 
-		if (options && options.hasOwnProperty('draggable')) {
-			markerOptions.draggable = options.draggable;
-		}
+    if (options && options.hasOwnProperty("draggable")) {
+      markerOptions.draggable = options.draggable;
+    }
 
-		L.Marker.prototype.initialize.call(this, latlng, markerOptions);
+    L.Marker.prototype.initialize.call(this, latlng, markerOptions);
+  },
+
+  onAdd: function(map) {
+    L.Marker.prototype.onAdd.call(this, map);
+    this._bindListeners();
+
+    this.updateHandle();
+  },
+
+  onRemove: function(map) {
+    this._unbindListeners();
+    L.Marker.prototype.onRemove.call(this, map);
+	},
+	
+  _onHandleDragStart: function() {
+		this._handled.fire("editstart");
+  },
+
+  _onHandleDragEnd: function() {
+    this._fireEdit();
 	},
 
-	onAdd: function(map) {
-		L.Marker.prototype.onAdd.call(this, map);
-		this._bindListeners();
+  _fireEdit: function() {
+    this._handled.edited = true;
+    this._handled.fire("edit");
+  },
 
-		this.updateHandle();
-	},
+  _bindListeners: function() {
+    this.on(
+      {
+        dragstart: this._onHandleDragStart,
+        drag: this._onHandleDrag,
+        dragend: this._onHandleDragEnd
+      },
+      this
+    );
 
-	onRemove: function(map) {
-		this._unbindListeners();
-		L.Marker.prototype.onRemove.call(this, map);
-	},
+    this._handled._map.on("zoomend", this.updateHandle, this);
 
-	_onHandleDragStart: function() {
-		this._handled.fire('editstart');
-	},
+    this._handled.on("update", this.updateHandle, this);
+  },
 
-	_onHandleDragEnd: function() {
-		this._fireEdit();
-	},
+  _unbindListeners: function() {
+    this.off(
+      {
+        dragstart: this._onHandleDragStart,
+        drag: this._onHandleDrag,
+        dragend: this._onHandleDragEnd
+      },
+      this
+    );
 
-	_fireEdit: function() {
-		this._handled.edited = true;
-		this._handled.fire('edit');
-	},
-
-	_bindListeners: function() {
-		this.on({
-			'dragstart': this._onHandleDragStart,
-			'drag': this._onHandleDrag,
-			'dragend': this._onHandleDragEnd
-		}, this);
-
-		this._handled._map.on('zoomend', this.updateHandle, this);
-
-		this._handled.on('update', this.updateHandle, this);
-	},
-
-	_unbindListeners: function() {
-		this.off({
-			'dragstart': this._onHandleDragStart,
-			'drag': this._onHandleDrag,
-			'dragend': this._onHandleDragEnd
-		}, this);
-
-		this._handled._map.off('zoomend', this.updateHandle, this);
-		this._handled.off('update', this.updateHandle, this);
-	}
+    this._handled._map.off("zoomend", this.updateHandle, this);
+    this._handled.off("update", this.updateHandle, this);
+  }
 });
 
 L.LockHandle = L.EditHandle.extend({
@@ -307,29 +328,32 @@ L.LockHandle = L.EditHandle.extend({
 
 	updateHandle: function() {
 		this.setLatLng(this._handled._corners[this._corner]);
+		L.DomUtil.removeClass(this._handled.getElement(), 'selected');
 	}
 
 });
 
 L.DistortHandle = L.EditHandle.extend({
-	options: {
-		TYPE: 'distort',
-		icon: new L.Icon({
-			iconUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAChSURBVO3BIU4DURgGwNkvL2B6AkQTLBqP4QCoSm7DDXoBLBZHDbfgICAIZjEV3YTn9uVHdMZZtcnCfI13bIzxg0emg6Nm6QVbYz3jylEsXRrvwommb49X67jFkz80fR9Mb1YxTzqiWBSLYlEsikWxKBbFolgUi2JRLIpFsSgWxaJY03fHHOu40dH07bAzWCx9Ge/TiWbpHgdsjPGNB2f/yS+7xRCyiiZPJQAAAABJRU5ErkJggg==',
-			iconSize: [32, 32],
-			iconAnchor: [16, 16]}
-		)
+  options: {
+    TYPE: "distort",
+    icon: new L.Icon({
+      iconUrl:
+        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAChSURBVO3BIU4DURgGwNkvL2B6AkQTLBqP4QCoSm7DDXoBLBZHDbfgICAIZjEV3YTn9uVHdMZZtcnCfI13bIzxg0emg6Nm6QVbYz3jylEsXRrvwommb49X67jFkz80fR9Mb1YxTzqiWBSLYlEsikWxKBbFolgUi2JRLIpFsSgWxaJY03fHHOu40dH07bAzWCx9Ge/TiWbpHgdsjPGNB2f/yS+7xRCyiiZPJQAAAABJRU5ErkJggg==",
+      iconSize: [32, 32],
+      iconAnchor: [16, 16]
+    })
+  },
+
+  updateHandle: function() {
+    this.setLatLng(this._handled._corners[this._corner]);
 	},
 
-	updateHandle: function() {
-		this.setLatLng(this._handled._corners[this._corner]);
-	},
+  _onHandleDrag: function() {
+    this._handled._updateCorner(this._corner, this.getLatLng());
 
-	_onHandleDrag: function() {
-		this._handled._updateCorner(this._corner, this.getLatLng());
-
-		this._handled.fire('update');
-	}
+    this._handled.fire("update");
+    this._handled.editing._showToolbar();
+  }
 });
 
 L.RotateAndScaleHandle = L.EditHandle.extend({
@@ -351,7 +375,6 @@ L.RotateAndScaleHandle = L.EditHandle.extend({
 			scale = this._calculateScalingFactor(formerLatLng, newLatLng);
 
 		overlay.editing._rotateBy(angle);
-		overlay.editing._scaleBy(scale);
 
 		/* 
 		  checks whether the "edgeMinWidth" property is set and tracks the minimum edge length;
@@ -364,11 +387,12 @@ L.RotateAndScaleHandle = L.EditHandle.extend({
 			if ((w > edgeMinWidth && h > edgeMinWidth) || scale > 1) {
 				overlay.editing._scaleBy(scale);
 			}
-		} else {
-			overlay.editing._scaleBy(scale);
-		}
+		} 
 
 		overlay.fire('update');
+
+		this._handled.editing._showToolbar();
+
 	},
 
 	updateHandle: function() {
@@ -421,17 +445,18 @@ L.RotateHandle = L.EditHandle.extend({
 			iconAnchor: [16, 16]}
 		)
 	},
-
+	
 	_onHandleDrag: function() {
 		var overlay = this._handled,
 			formerLatLng = this._handled._corners[this._corner],
 			newLatLng = this.getLatLng(),
-
 			angle = this._calculateAngle(formerLatLng, newLatLng);
 
-		overlay.editing._rotateBy(angle);
+	 	overlay.editing._rotateBy(angle);
 
 		overlay.fire('update');
+
+		this._handled.editing._showToolbar();
 	},
 
 	updateHandle: function() {
@@ -495,6 +520,8 @@ L.ScaleHandle = L.EditHandle.extend({
 		overlay.editing._scaleBy(scale);
 
 		overlay.fire('update');
+
+		this._handled.editing._showToolbar();
 	},
 
 	updateHandle: function() {
@@ -544,7 +571,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 	options: {
 		alt: '',
 		height: 200,
-		crossOrigin: true
+		crossOrigin: true,
+		edgeMinWidth: 500,
 	},
 
 	initialize: function(url, options) {
@@ -674,6 +702,27 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		this._reset();
 	},
 
+	// fires a reset after all corner positions are updated instead of after each one (above). Use for translating
+	_updateCorners: function (latlngObj) {
+		var i = 0;
+		for (var k in latlngObj) {
+			this._corners[i] = latlngObj[k];
+			i += 1;
+		}
+
+		this._reset();
+	},
+
+	_updateCornersFromPoints: function (pointsObj) {
+		var map = this._map;
+		var i = 0;
+		for (var k in pointsObj) {
+			this._corners[i] = map.layerPointToLatLng(pointsObj[k]);
+			i += 1;
+		}
+
+		this._reset();
+	},
 
 	/* Copied from Leaflet v0.7 https://github.com/Leaflet/Leaflet/blob/66282f14bcb180ec87d9818d9f3c9f75afd01b30/src/dom/DomUtil.js#L189-L199 */
 	/* since L.DomUtil.getTranslateString() is deprecated in Leaflet v1.0 */
@@ -739,6 +788,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		return this._corners;
 	},
 
+	getCorner: function(i) {
+		return this._corners[i];
+	},
+
 	/*
 	 * Calculates the centroid of the image.
 	 *		 See http://stackoverflow.com/questions/6149175/logical-question-given-corners-find-center-of-quadrilateral
@@ -756,6 +809,20 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 			smid = sw.add(se.subtract(sw).divideBy(2));
 
 		return cartesianToLatLng.call(map, nmid.add(smid.subtract(nmid).divideBy(2)));
+	},
+
+	// Use for translation calculations - for translation the delta for 1 corner applies to all 4
+	_calcCornerPointDelta: function () {
+		return this._dragStartPoints[0].subtract(this._dragPoints[0]);
+	},
+
+	_calcCenterTwoCornerPoints: function (topLeft, topRight) {
+			var toolPoint = { x: "", y: "" };
+
+      toolPoint.x = topRight.x + (topLeft.x - topRight.x) / 2;
+			toolPoint.y = topRight.y + (topLeft.y - topRight.y) / 2;
+			
+			return toolPoint;
 	},
 
 	_calculateProjectiveTransform: function(latLngToCartesian) {
@@ -789,7 +856,199 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 	}
 });
 
+L.distortableImageOverlay = function(id, options) {
+	return new L.DistortableImageOverlay(id, options);
+};
+
+
+
+
+L.DistortableCollection = L.FeatureGroup.extend({
+  include: L.Mixin.Events,
+
+  onAdd: function(map) {
+    L.FeatureGroup.prototype.onAdd.call(this, map);
+
+    this._map = map;
+
+    L.DomEvent.on(document, "keydown", this._onKeyDown, this);
+    L.DomEvent.on(map, "click", this._deselectAll, this);
+
+    /**
+     * the box zoom override works, but there is a bug involving click event propogation.
+     * keeping uncommented for now so that it isn't used as a multi-select mechanism
+     */
+
+    // L.DomEvent.on(map, "boxzoomend", this._addSelections, this);
+
+    this.eachLayer(function(layer) {
+      L.DomEvent.on(layer._image, "mousedown", this._deselectOthers, this);
+      L.DomEvent.on(layer, "dragstart", this._dragStartMultiple, this);
+      L.DomEvent.on(layer, "drag", this._dragMultiple, this);
+    }, this);
+  },
+
+  onRemove: function() {
+    var map = this._map;
+
+    L.DomEvent.off(document, "keydown", this._onKeyDown, this);
+    L.DomEvent.off(map, "click", this._deselectAll, this);
+    // L.DomEvent.off(map, "boxzoomend", this._addSelections, this);
+
+    this.eachLayer(function(layer) {
+      L.DomEvent.off(layer._image, "mousedown", this._deselectOthers, this);
+      L.DomEvent.off(layer, "dragstart", this._dragStartMultiple, this);
+      L.DomEvent.off(layer, "drag", this._dragMultiple, this);
+    }, this);
+  },
+
+  isSelected: function(overlay) {
+    return L.DomUtil.hasClass(overlay.getElement(), "selected");
+  },
+
+  _toggleMultiSelect: function(event, edit) {
+    if (edit._mode === "lock") { return; }
+
+    if (event.metaKey || event.ctrlKey) {
+      L.DomUtil.toggleClass(event.target, "selected");
+    }
+  },
+
+  _deselectOthers: function(event) {
+    this.eachLayer(function(layer) {
+      var edit = layer.editing;
+      if (layer._image !== event.target) {
+        edit._hideMarkers();
+      } else {
+        this._toggleMultiSelect(event, edit);
+      }
+    }, this);
+
+    L.DomEvent.stopPropagation(event);
+  },
+
+  _addSelections: function(e) {
+    var box = e.boxZoomBounds,
+      i = 0;
+
+    this.eachLayer(function(layer) {
+      var edit = layer.editing;
+      if (edit.toolbar) {
+        edit._hideToolbar();
+      }
+      for (i = 0; i < 4; i++) {
+        if (box.contains(layer.getCorner(i)) && edit._mode !== "lock") {
+          L.DomUtil.addClass(layer.getElement(), "selected");
+          break;
+        }
+      }
+    });
+  },
+
+  _onKeyDown: function(e) {
+    if (e.key === "Escape") {
+      this._deselectAll();
+    }
+  },
+
+  _dragStartMultiple: function(event) {
+    var overlay = event.target,
+      i;
+
+    if (!this.isSelected(overlay)) {
+      return;
+    }
+
+    this.eachLayer(function(layer) {
+      for (i = 0; i < 4; i++) {
+        if (layer !== overlay) {
+          layer.editing._hideToolbar();
+        }
+        layer._dragStartPoints[i] = layer._map.latLngToLayerPoint(
+          layer.getCorner(i)
+        );
+      }
+    });
+  },
+
+  _dragMultiple: function(event) {
+    var overlay = event.target,
+      map = this._map,
+      i;
+
+    if (!this.isSelected(overlay)) {
+      return;
+    }
+
+    overlay._dragPoints = {};
+
+    for (i = 0; i < 4; i++) {
+      overlay._dragPoints[i] = map.latLngToLayerPoint(overlay.getCorner(i));
+    }
+
+    var cpd = overlay._calcCornerPointDelta();
+
+    this._updateCollectionFromPoints(cpd, overlay);
+  },
+
+  _deselectAll: function() {
+    this.eachLayer(function(layer) {
+      var edit = layer.editing;
+
+      L.DomUtil.removeClass(layer.getElement(), "selected");
+      if (edit.toolbar) {
+        edit._hideToolbar();
+      }
+      edit._hideMarkers();
+    });
+  },
+
+  /**
+   * images in 'lock' mode are included in this feature group collection for functionalities
+   * such as export, but are filtered out for editing / dragging here
+   */
+  _calcCollectionFromPoints: function(cpd, overlay) {
+    var layersToMove = [],
+      p = new L.Transformation(1, -cpd.x, 1, -cpd.y);
+
+    this.eachLayer(function(layer) {
+      if (
+        layer !== overlay &&
+        layer.editing._mode !== "lock" &&
+        this.isSelected(layer)
+      ) {
+        layer._cpd = {};
+
+        layer._cpd.val0 = p.transform(layer._dragStartPoints[0]);
+        layer._cpd.val1 = p.transform(layer._dragStartPoints[1]);
+        layer._cpd.val2 = p.transform(layer._dragStartPoints[2]);
+        layer._cpd.val3 = p.transform(layer._dragStartPoints[3]);
+
+        layersToMove.push(layer);
+      }
+    }, this);
+
+    return layersToMove;
+  },
+
+  /**
+   * cpd === cornerPointDelta
+   */
+  _updateCollectionFromPoints: function(cpd, overlay) {
+    var layersToMove = this._calcCollectionFromPoints(cpd, overlay);
+
+    layersToMove.forEach(function(layer) {
+      layer._updateCornersFromPoints(layer._cpd);
+      layer.fire("update");
+    }, this);
+  }
+});
+
+L.distortableCollection = function(id, options) {
+  return new L.DistortableCollection(id, options);
+};
 L.DistortableImage = L.DistortableImage || {};
+L.tools = L.tools || {};
 
 var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
     initialize: function(map, overlay, options) {
@@ -931,8 +1190,8 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
         var image = overlay._image;
 
         EXIF.getData(image, function() {
-            if (confirm('Geolocate this image and move it to the location found?')) {
-                L.EXIF(this, overlay);
+            if (confirm('Press OK to view EXIF metadata in console and geolocate the image.')) {
+                L.tools.EXIF(this, overlay);
             }
         });
     }
@@ -950,420 +1209,625 @@ L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
       EnableEXIF,
       ToggleOrder
     ]
-  }
+	},
+
+	// todo: move to some sort of util class, these methods could be useful in future
+  _rotateToolbarAngleDeg: function(angle) {
+		var div = this._container,
+			divStyle = div.style;
+
+		var oldTransform = divStyle.transform;
+
+		divStyle.transform = oldTransform + "rotate(" + angle + "deg)";
+    divStyle.transformOrigin = "1080% 650%";
+
+		this._rotateToolbarIcons(angle);
+	},
+
+	_rotateToolbarIcons: function(angle) {
+		var icons = document.querySelectorAll(".fa");
+
+		for (var i = 0; i < icons.length; i++) {
+			icons.item(i).style.transform = "rotate(" + -angle + "deg)";
+		}
+	},
+
 });
 
 L.DistortableImage = L.DistortableImage || {};
 
 L.DistortableImage.Edit = L.Handler.extend({
-	options: {
-		opacity: 0.7,
-		outline: '1px solid red',
-		keymap: {
-			68: '_toggleRotateDistort', // d
-			69: '_toggleIsolate', // e
-			73: '_toggleIsolate', // i
-			76: '_toggleLock', // l
-			79: '_toggleOutline', // o
-			82: '_toggleRotateDistort', // r
-			74: '_sendUp', // j
-			75:	'_sendDown', // k
+  options: {
+    opacity: 0.7,
+    outline: "1px solid red",
+    keymap: {
+      8: "_removeOverlay", // backspace windows / delete mac
       46: "_removeOverlay", // delete windows / delete + fn mac
-      8:  "_removeOverlay", // backspace windows / delete mac
-			83: '_toggleScale', // s
-			84: '_toggleTransparency', // t
-			20:	'_toggleRotate' // CAPS
-		}
-	},
-
-	initialize: function(overlay) {
-		this._overlay = overlay;
-		this._toggledImage = false;
-
-		/* Interaction modes. */
-		this._mode = this._overlay.options.mode || 'distort';
-		this._transparent = false;
-		this._outlined = false;
-	},
-
-	/* Run on image selection. */
-	addHooks: function() {
-		var overlay = this._overlay,
-			map = overlay._map,
-			i;
-
-		this._lockHandles = new L.LayerGroup();
-		for (i = 0; i < 4; i++) {
-			this._lockHandles.addLayer(new L.LockHandle(overlay, i, { draggable: false }));
-		}
-
-		this._distortHandles = new L.LayerGroup();
-		for (i = 0; i < 4; i++) {
-			this._distortHandles.addLayer(new L.DistortHandle(overlay, i));
-		}
-
-		this._rotateHandles = new L.LayerGroup(); // handle includes rotate AND scale
-		for (i = 0; i < 4; i++) {
-			this._rotateHandles.addLayer(new L.RotateAndScaleHandle(overlay, i));
-		}
-
-		this._scaleHandles = new L.LayerGroup();
-		for (i = 0; i < 4; i++) {
-			this._scaleHandles.addLayer(new L.ScaleHandle(overlay, i));
-		}
-
-		this.__rotateHandles = new L.LayerGroup(); // individual rotate
-		for (i = 0; i < 4; i++) {
-			this.__rotateHandles.addLayer(new L.RotateHandle(overlay, i));
-		}
-
-		this._handles = {
-			'lock':		 this._lockHandles,
-			'distort': this._distortHandles,
-			'rotate':	this._rotateHandles,
-			'scale': this._scaleHandles,
-			'rotateStandalone': this.__rotateHandles
-		};
-
-    if (this._mode === 'lock') {
-			map.addLayer(this._lockHandles);
-		} else {
-			this._mode = 'distort';
-			map.addLayer(this._distortHandles);
-			this._enableDragging();
-		}
-
-		//overlay.on('click', this._showToolbar, this);
-		L.DomEvent.on(overlay._image, 'click', this._showToolbar, this);
-
-		/* Enable hotkeys. */
-		L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
-
-		overlay.fire('select');
-
-	},
-
-	/* Run on image deselection. */
-	removeHooks: function() {
-		var overlay = this._overlay,
-			map = overlay._map;
-
-		// L.DomEvent.off(window, 'keydown', this._onKeyDown, this);
-
-		L.DomEvent.off(overlay._image, 'click', this._showToolbar, this);
-
-		// First, check if dragging exists;
-		// it may be off due to locking
-		if (this.dragging) { this.dragging.disable(); }
-		delete this.dragging;
-
-		map.removeLayer(this._handles[this._mode]);
-
- 		/* Disable hotkeys. */
-		L.DomEvent.off(window, 'keydown', this._onKeyDown, this);
-
-		overlay.fire('deselect');
+      20: "_toggleRotate", // CAPS
+      27: "_deselect", // esc
+      68: "_toggleRotateDistort", // d
+      69: "_toggleIsolate", // e
+      73: "_toggleIsolate", // i
+      74: "_sendUp", // j
+      75: "_sendDown", // k
+      76: "_toggleLock", // l
+      79: "_toggleOutline", // o
+      82: "_toggleRotateDistort", // r
+      83: "_toggleScale", // s
+      84: "_toggleTransparency" // t
+    }
   },
 
-  confirmDelete: function () {
+  initialize: function(overlay) {
+    this._overlay = overlay;
+    this._toggledImage = false;
+
+    /* Interaction modes. */
+    this._mode = this._overlay.options.mode || "distort";
+    this._transparent = false;
+    this._outlined = false;
+  },
+
+  /* Run on image selection. */
+  addHooks: function() {
+    var overlay = this._overlay,
+      map = overlay._map,
+      i;
+
+    this._lockHandles = new L.LayerGroup();
+    for (i = 0; i < 4; i++) {
+      this._lockHandles.addLayer(
+        new L.LockHandle(overlay, i, { draggable: false })
+      );
+    }
+
+    this._distortHandles = new L.LayerGroup();
+    for (i = 0; i < 4; i++) {
+      this._distortHandles.addLayer(new L.DistortHandle(overlay, i));
+    }
+
+    this._rotateHandles = new L.LayerGroup(); // handle includes rotate AND scale
+    for (i = 0; i < 4; i++) {
+      this._rotateHandles.addLayer(new L.RotateAndScaleHandle(overlay, i));
+    }
+
+    this._scaleHandles = new L.LayerGroup();
+    for (i = 0; i < 4; i++) {
+      this._scaleHandles.addLayer(new L.ScaleHandle(overlay, i));
+    }
+
+    this.__rotateHandles = new L.LayerGroup(); // individual rotate
+    for (i = 0; i < 4; i++) {
+      this.__rotateHandles.addLayer(new L.RotateHandle(overlay, i));
+    }
+
+    this._handles = {
+      lock: this._lockHandles,
+      distort: this._distortHandles,
+      rotate: this._rotateHandles,
+      scale: this._scaleHandles,
+      rotateStandalone: this.__rotateHandles
+    };
+
+    if (this._mode === "lock") {
+      map.addLayer(this._lockHandles);
+    } else {
+      this._mode = "distort";
+      map.addLayer(this._distortHandles);
+      this._distortHandles.eachLayer(function(layer) {
+        layer.setOpacity(0);
+        layer.dragging.disable();
+        layer.options.draggable = false;
+      });
+      this._enableDragging();
+    }
+
+    this._initToolbar();
+
+    this._overlay._dragStartPoints = {
+      0: new L.point(0, 0),
+      1: new L.point(0, 0),
+      2: new L.point(0, 0),
+      3: new L.point(0, 0)
+    };
+
+    L.DomEvent.on(map, "click", this._deselect, this);
+    L.DomEvent.on(overlay._image, "click", this._select, this);
+
+    /* Enable hotkeys. */
+    L.DomEvent.on(window, "keydown", this._onKeyDown, this);
+
+    overlay.fire("select");
+  },
+
+  /* Run on image deselection. */
+  removeHooks: function() {
+    var overlay = this._overlay,
+      map = overlay._map;
+
+    L.DomEvent.off(map, "click", this._deselect, this);
+    L.DomEvent.off(overlay._image, "click", this._select, this);
+
+    // First, check if dragging exists - it may be off due to locking
+    if (this.dragging) { this.dragging.disable(); }
+    delete this.dragging;
+
+    if (this.toolbar) { this._hideToolbar(); }
+    if (this.editing) { this.editing.disable(); }
+
+    map.removeLayer(this._handles[this._mode]);
+
+    /* Disable hotkeys. */
+    L.DomEvent.off(window, "keydown", this._onKeyDown, this);
+
+    overlay.fire("deselect");
+  },
+
+  _initToolbar: function() {
+    this._showToolbar();
+    this.toolbar._hide();
+    this.toolbar._tip.style.opacity = 0;
+  },
+
+  confirmDelete: function() {
     return window.confirm("Are you sure you want to delete?");
   },
 
+  _rotateBy: function(angle) {
+    var overlay = this._overlay,
+      map = overlay._map,
+      center = map.latLngToLayerPoint(overlay.getCenter()),
+      i,
+      p,
+      q;
 
-	_rotateBy: function(angle) {
-		var overlay = this._overlay,
-			map = overlay._map,
-			center = map.latLngToLayerPoint(overlay.getCenter()),
-			i, p, q;
+    for (i = 0; i < 4; i++) {
+      p = map.latLngToLayerPoint(overlay._corners[i]).subtract(center);
+      q = new L.Point(
+        Math.cos(angle) * p.x - Math.sin(angle) * p.y,
+        Math.sin(angle) * p.x + Math.cos(angle) * p.y
+      );
+      overlay._corners[i] = map.layerPointToLatLng(q.add(center));
+    }
 
-		for (i = 0; i < 4; i++) {
-			p = map.latLngToLayerPoint(overlay._corners[i]).subtract(center);
-			q = new L.Point(
-				Math.cos(angle)*p.x - Math.sin(angle)*p.y,
-				Math.sin(angle)*p.x + Math.cos(angle)*p.y
-			);
-			overlay._corners[i] = map.layerPointToLatLng(q.add(center));
-		}
-
-		overlay._reset();
-	},
-
-	_scaleBy: function(scale) {
-		var overlay = this._overlay,
-			map = overlay._map,
-			center = map.latLngToLayerPoint(overlay.getCenter()),
-			i, p;
-
-		for (i = 0; i < 4; i++) {
-			p = map.latLngToLayerPoint(overlay._corners[i])
-				.subtract(center)
-				.multiplyBy(scale)
-				.add(center);
-			overlay._corners[i] = map.layerPointToLatLng(p);
-		}
-
-		overlay._reset();
-	},
-
-	_enableDragging: function() {
-		var overlay = this._overlay,
-			map = overlay._map;
-
-		this.dragging = new L.Draggable(overlay._image);
-		this.dragging.enable();
-
-		/* Hide toolbars while dragging; click will re-show it */
-		this.dragging.on('dragstart', this._hideToolbar, this);
-
-		/*
-		 * Adjust default behavior of L.Draggable.
-		 * By default, L.Draggable overwrites the CSS3 distort transform
-		 * that we want when it calls L.DomUtil.setPosition.
-		 */
-		this.dragging._updatePosition = function() {
-			var delta = this._newPos.subtract(map.latLngToLayerPoint(overlay._corners[0])),
-				currentPoint, i;
-
-			this.fire('predrag');
-
-			for (i = 0; i < 4; i++) {
-				currentPoint = map.latLngToLayerPoint(overlay._corners[i]);
-				overlay._corners[i] = map.layerPointToLatLng(currentPoint.add(delta));
-			}
-			overlay._reset();
-			overlay.fire('update');
-
-			this.fire('drag');
-		};
-	},
-
-	_onKeyDown: function(event) {
-		var keymap = this.options.keymap,
-			handlerName = keymap[event.which];
-
-		if (handlerName !== undefined && this._overlay.options.suppressToolbar !== true) {
-			this[handlerName].call(this);
-		}
-	},
-
-	_toggleRotateDistort: function() {
-		var map = this._overlay._map;
-
-		map.removeLayer(this._handles[this._mode]);
-
-		/* Switch mode. */
-		if (this._mode === 'rotate') { this._mode = 'distort'; }
-		else { this._mode = 'rotate'; }
-
-		map.addLayer(this._handles[this._mode]);
-	},
-
-	_toggleScale: function() {
-		var map = this._overlay._map;
-
-		map.removeLayer(this._handles[this._mode]);
-
-		this._mode = 'scale';
-
-		map.addLayer(this._handles[this._mode]);
-	},
-
-	_toggleRotate: function() {
-		var map = this._overlay._map;
-
-		map.removeLayer(this._handles[this._mode]);
-
-		this._mode = 'rotateStandalone';
-
-		map.addLayer(this._handles[this._mode]);
-	},
-
-	_toggleTransparency: function() {
-		var image = this._overlay._image,
-			opacity;
-
-		this._transparent = !this._transparent;
-		opacity = this._transparent ? this.options.opacity : 1;
-
-		L.DomUtil.setOpacity(image, opacity);
-		image.setAttribute('opacity', opacity);
-	},
-
-	_toggleOutline: function() {
-		var image = this._overlay._image,
-			opacity, outline;
-
-		this._outlined = !this._outlined;
-		opacity = this._outlined ? this.options.opacity / 2 : 1;
-		outline = this._outlined ? this.options.outline : 'none';
-
-		L.DomUtil.setOpacity(image, opacity);
-		image.setAttribute('opacity', opacity);
-
-		image.style.outline = outline;
-	},
-
-	_sendUp: function() {
-		this._overlay.bringToFront();
-	},
-
-	_sendDown: function() {
-		this._overlay.bringToBack();
-	},
-
-	_toggleLock: function() {
-		var map = this._overlay._map;
-
-		map.removeLayer(this._handles[this._mode]);
-		/* Switch mode. */
-		if (this._mode === 'lock') {
-			this._mode = 'distort';
-			this._enableDragging();
-		} else {
-			this._mode = 'lock';
-			if (this.dragging) { this.dragging.disable(); }
-			delete this.dragging;
-		}
-
-		map.addLayer(this._handles[this._mode]);
-	},
-
-	_hideToolbar: function() {
-		var map = this._overlay._map;
-		if (this.toolbar) {
-			map.removeLayer(this.toolbar);
-			this.toolbar = false;
-		}
-	},
-
-	_showToolbar: function(event) {
-		var overlay = this._overlay,
-                     target = event.target,
-			map = overlay._map;
-
-		/* Ensure that there is only ever one toolbar attached to each image. */
-		this._hideToolbar();
-		var point;
-		if (event.containerPoint) { point = event.containerPoint; }
-		else { point = target._leaflet_pos; }
-		var raised_point = map.containerPointToLatLng(new L.Point(point.x,point.y-20));
-		raised_point.lng = overlay.getCenter().lng;
-		if (this._overlay.options.suppressToolbar !== true) {
-		this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(map, overlay);
-		overlay.fire('toolbar:created');
-		}
-
-		L.DomEvent.stopPropagation(event);
+    overlay._reset();
   },
 
-  _removeOverlay: function () {
+  _scaleBy: function(scale) {
+    var overlay = this._overlay,
+      map = overlay._map,
+      center = map.latLngToLayerPoint(overlay.getCenter()),
+      i,
+      p;
+
+    for (i = 0; i < 4; i++) {
+      p = map
+        .latLngToLayerPoint(overlay._corners[i])
+        .subtract(center)
+        .multiplyBy(scale)
+        .add(center);
+      overlay._corners[i] = map.layerPointToLatLng(p);
+    }
+
+    overlay._reset();
+  },
+
+  _enableDragging: function() {
+    var overlay = this._overlay,
+      map = overlay._map;
+
+    this.dragging = new L.Draggable(overlay._image);
+    this.dragging.enable();
+
+    /* Hide toolbars and markers while dragging; click will re-show it */
+    this.dragging.on("dragstart", function() {
+      overlay.fire("dragstart");
+      this._hideToolbar();
+    },this);
+
+    /*
+     * Adjust default behavior of L.Draggable.
+     * By default, L.Draggable overwrites the CSS3 distort transform
+     * that we want when it calls L.DomUtil.setPosition.
+     */
+    this.dragging._updatePosition = function() {
+      var delta = this._newPos.subtract(
+          map.latLngToLayerPoint(overlay._corners[0])
+        ),
+        currentPoint,
+        i;
+
+      this.fire("predrag");
+
+      for (i = 0; i < 4; i++) {
+        currentPoint = map.latLngToLayerPoint(overlay._corners[i]);
+        overlay._corners[i] = map.layerPointToLatLng(currentPoint.add(delta));
+			}
+			
+      overlay._reset();
+      overlay.fire("update");
+      overlay.fire("drag");
+
+      this.fire("drag");
+    };
+  },
+
+  _onKeyDown: function(event) {
+    var keymap = this.options.keymap,
+      handlerName = keymap[event.which];
+
+    if (handlerName !== undefined && this._overlay.options.suppressToolbar !== true) {
+      this[handlerName].call(this);
+    }
+  },
+
+  _toggleRotateDistort: function() {
+    var map = this._overlay._map;
+
+    map.removeLayer(this._handles[this._mode]);
+
+    /* Switch mode. */
+		if (this._mode === "rotate") { this._mode = "distort"; } 
+		else { this._mode = "rotate"; }
+
+    this._showToolbar();
+
+    map.addLayer(this._handles[this._mode]);
+  },
+
+  _toggleScale: function() {
+		var map = this._overlay._map;
+		
+    if (this._mode === "lock") { return; }
+
+    map.removeLayer(this._handles[this._mode]);
+
+		if (this._mode === "scale") { this._mode = "distort"; } 
+		else { this._mode = "scale"; }
+
+    this._showToolbar();
+
+    map.addLayer(this._handles[this._mode]);
+  },
+
+  _toggleRotate: function() {
+		var map = this._overlay._map;
+		
+		if (this._mode === "lock") { return; }
+
+    map.removeLayer(this._handles[this._mode]);
+    this._mode = "rotateStandalone";
+
+		this._showToolbar();
+		
+    map.addLayer(this._handles[this._mode]);
+  },
+
+  _toggleTransparency: function() {
+    var image = this._overlay._image,
+      opacity;
+
+    this._transparent = !this._transparent;
+    opacity = this._transparent ? this.options.opacity : 1;
+
+    L.DomUtil.setOpacity(image, opacity);
+    image.setAttribute("opacity", opacity);
+  },
+
+  _toggleOutline: function() {
+    var image = this._overlay._image,
+      opacity,
+      outline;
+
+    this._outlined = !this._outlined;
+    opacity = this._outlined ? this.options.opacity / 2 : 1;
+    outline = this._outlined ? this.options.outline : "none";
+
+    L.DomUtil.setOpacity(image, opacity);
+    image.setAttribute("opacity", opacity);
+
+    image.style.outline = outline;
+  },
+
+  _sendUp: function() {
+    this._overlay.bringToFront();
+  },
+
+  _sendDown: function() {
+    this._overlay.bringToBack();
+  },
+
+  _toggleLock: function() {
+    var map = this._overlay._map;
+
+    map.removeLayer(this._handles[this._mode]);
+    /* Switch mode. */
+    if (this._mode === "lock") {
+      this._mode = "distort";
+      this._enableDragging();
+    } else {
+      this._mode = "lock";
+      if (this.dragging) { this.dragging.disable(); }
+      delete this.dragging;
+    }
+
+    map.addLayer(this._handles[this._mode]);
+  },
+
+  _select: function(event) {
+    this._showToolbar(event);
+    this._showMarkers();
+
+    L.DomEvent.stopPropagation(event);
+  },
+
+  _deselect: function(event) {
+    this._hideToolbar(event);
+    this._hideMarkers();
+  },
+
+  _hideToolbar: function() {
+    var map = this._overlay._map;
+    if (this.toolbar) {
+      map.removeLayer(this.toolbar);
+      this.toolbar = false;
+    }
+  },
+
+  _showMarkers: function() {
+    if (this._mode === "lock") { return; }
+    var currentHandle = this._handles[this._mode];
+    currentHandle.eachLayer(function(layer) {
+      layer.setOpacity(1);
+      layer.dragging.enable();
+      layer.options.draggable = true;
+    });
+  },
+
+  _hideMarkers: function() {
+    var currentHandle = this._handles[this._mode];
+    currentHandle.eachLayer(function(layer) {
+      var drag = layer.dragging,
+        opts = layer.options;
+
+      layer.setOpacity(0);
+      if (drag) {
+        drag.disable();
+      }
+      if (opts.draggable) {
+        opts.draggable = false;
+      }
+    });
+  },
+
+  // TODO: toolbar for multiple image selection
+  _showToolbar: function() {
+    var overlay = this._overlay,
+      map = overlay._map;
+
+    /* Ensure that there is only ever one toolbar attached to each image. */
+    this._hideToolbar();
+
+    //Find the topmost point on the image.
+    var corners = overlay.getCorners();
+    var maxLat = -Infinity;
+    for (var i = 0; i < corners.length; i++) {
+      if (corners[i].lat > maxLat) {
+        maxLat = corners[i].lat;
+      }
+    }
+
+    //Longitude is based on the centroid of the image.
+    var raised_point = overlay.getCenter();
+    raised_point.lat = maxLat;
+
+    if (this._overlay.options.suppressToolbar !== true) {
+      this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(
+        map,
+        overlay
+      );
+      overlay.fire("toolbar:created");
+    }
+  },
+
+  _removeOverlay: function() {
     var overlay = this._overlay;
     if (this._mode !== "lock") {
       var choice = this.confirmDelete();
       if (choice) {
+        this._hideToolbar();
         overlay._map.removeLayer(overlay);
-        overlay.fire('delete');
+        overlay.fire("delete");
         this.disable();
       }
     }
   },
 
-	_toggleOrder: function () {
-	if (this._toggledImage) {
-		this._overlay.bringToFront();
-		this._toggledImage = false;
-		}
-	else {
-		this._overlay.bringToBack();
-		this._toggledImage = true;
-		}
-	},
+  // compare this to using overlay zIndex
+  _toggleOrder: function() {
+    if (this._toggledImage) {
+      this._overlay.bringToFront();
+      this._toggledImage = false;
+    } else {
+      this._overlay.bringToBack();
+      this._toggledImage = true;
+    }
+  },
 
-	// Based on https://github.com/publiclab/mapknitter/blob/8d94132c81b3040ae0d0b4627e685ff75275b416/app/assets/javascripts/mapknitter/Map.js#L47-L82
-	_toggleExport: function (){
-		var map = this._overlay._map;
-		var overlay = this._overlay;
+  // Based on https://github.com/publiclab/mapknitter/blob/8d94132c81b3040ae0d0b4627e685ff75275b416/app/assets/javascripts/mapknitter/Map.js#L47-L82
+  _toggleExport: function() {
+    var map = this._overlay._map;
+    var overlay = this._overlay;
 
-		// make a new image
-		var downloadable = new Image();
+    // make a new image
+    var downloadable = new Image();
 
-		downloadable.id = downloadable.id || "tempId12345";
-		$('body').append(downloadable);
+    downloadable.id = downloadable.id || "tempId12345";
+    $("body").append(downloadable);
 
-		downloadable.onload = function onLoadDownloadableImage() {
+    downloadable.onload = function onLoadDownloadableImage() {
+      var height = downloadable.height,
+        width = downloadable.width,
+        nw = map.latLngToLayerPoint(overlay._corners[0]),
+        ne = map.latLngToLayerPoint(overlay._corners[1]),
+        sw = map.latLngToLayerPoint(overlay._corners[2]),
+        se = map.latLngToLayerPoint(overlay._corners[3]);
 
-			var height = downloadable.height,
-				width = downloadable.width,
-				nw = map.latLngToLayerPoint(overlay._corners[0]),
-				ne = map.latLngToLayerPoint(overlay._corners[1]),
-				sw = map.latLngToLayerPoint(overlay._corners[2]),
-				se = map.latLngToLayerPoint(overlay._corners[3]);
+      // I think this is to move the image to the upper left corner,
+      // jywarren: i think we may need these or the image goes off the edge of the canvas
+      // jywarren: but these seem to break the distortion math...
 
-			// I think this is to move the image to the upper left corner,
-			// jywarren: i think we may need these or the image goes off the edge of the canvas
-                        // jywarren: but these seem to break the distortion math...
+      // jywarren: i think it should be rejiggered so it
+      // finds the most negative values of x and y and then
+      // adds those to all coordinates
 
-			// jywarren: i think it should be rejiggered so it
-			// finds the most negative values of x and y and then
-			// adds those to all coordinates
+      //nw.x -= nw.x;
+      //ne.x -= nw.x;
+      //se.x -= nw.x;
+      //sw.x -= nw.x;
 
-			//nw.x -= nw.x;
-			//ne.x -= nw.x;
-			//se.x -= nw.x;
-			//sw.x -= nw.x;
+      //nw.y -= nw.y;
+      //ne.y -= nw.y;
+      //se.y -= nw.y;
+      //sw.y -= nw.y;
 
-			//nw.y -= nw.y;
-			//ne.y -= nw.y;
-			//se.y -= nw.y;
-			//sw.y -= nw.y;
+      // run once warping is complete
+      downloadable.onload = function() {
+        $(downloadable).remove();
+      };
 
-			// run once warping is complete
-       			downloadable.onload = function() {
-				$(downloadable).remove();
-			};
+      if (window && window.hasOwnProperty("warpWebGl")) {
+        warpWebGl(
+          downloadable.id,
+          [0, 0, width, 0, width, height, 0, height],
+          [nw.x, nw.y, ne.x, ne.y, se.x, se.y, sw.x, sw.y],
+          true // trigger download
+        );
+      }
+    };
 
-			if (window && window.hasOwnProperty('warpWebGl')) {
-				warpWebGl(
-					downloadable.id,
-					[0, 0, width, 0, width, height, 0, height],
-					[nw.x, nw.y, ne.x, ne.y, se.x, se.y, sw.x, sw.y],
-					true // trigger download
-				);
-			}
+    downloadable.src = overlay.options.fullResolutionSrc || overlay._image.src;
+  },
 
-		};
-
-		downloadable.src = overlay.options.fullResolutionSrc || overlay._image.src;
-
-	},
-
-	toggleIsolate: function() {
-		// this.isolated = !this.isolated;
-		// if (this.isolated) {
-		// 	$.each($L.images,function(i,img) {
-		// 		img.hidden = false;
-		// 		img.setOpacity(1);
-		// 	});
-		// } else {
-		// 	$.each($L.images,function(i,img) {
-		// 		img.hidden = true;
-		// 		img.setOpacity(0);
-		// 	});
-		// }
-		// this.hidden = false;
-		// this.setOpacity(1);
-	}
-
+  toggleIsolate: function() {
+    // this.isolated = !this.isolated;
+    // if (this.isolated) {
+    // 	$.each($L.images,function(i,img) {
+    // 		img.hidden = false;
+    // 		img.setOpacity(1);
+    // 	});
+    // } else {
+    // 	$.each($L.images,function(i,img) {
+    // 		img.hidden = true;
+    // 		img.setOpacity(0);
+    // 	});
+    // }
+    // this.hidden = false;
+    // this.setOpacity(1);
+  }
 });
 
 L.DistortableImageOverlay.addInitHook(function() {
-	this.editing = new L.DistortableImage.Edit(this);
+  this.editing = new L.DistortableImage.Edit(this);
 
-	if (this.options.editable) {
-		L.DomEvent.on(this._image, 'load', this.editing.enable, this.editing);
-	}
+  if (this.options.editable) {
+    L.DomEvent.on(this._image, "load", this.editing.enable, this.editing);
+  }
 
 	this.on('remove', function () {
 		if (this.editing) { this.editing.disable(); }
 	});
 });
+
+L.Map.mergeOptions({ boxSelector: true, boxZoom: false });
+
+// used for multiple image select. Temporarily disabled until click
+// propagation issue is fixed
+
+L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
+
+  initialize: function (map) {
+    this._map = map;
+    this._container = map._container;
+    this._pane = map._panes.overlayPane;
+  },
+
+  addHooks: function () {
+    L.DomEvent.on(this._container, 'mousedown', this._onMouseDown, this);
+  },
+
+  removeHooks: function () {
+    L.DomEvent.off(this._container, 'mousedown', this._onMouseDown, this);
+  },
+
+  _onMouseDown: function (e) {
+    if (!e.shiftKey || ((e.which !== 1) && (e.button !== 1))) { return false; }
+
+    L.DomUtil.disableTextSelection();
+    L.DomUtil.disableImageDrag();
+
+    this._startLayerPoint = this._map.mouseEventToLayerPoint(e);
+
+    this._box = L.DomUtil.create('div', 'leaflet-zoom-box', this._pane);
+    L.DomUtil.setPosition(this._box, this._startLayerPoint);
+
+    this._container.style.cursor = 'crosshair';
+
+    L.DomEvent
+      .on(document, 'mousemove', this._onMouseMove, this)
+      .on(document, 'mouseup', this._onMouseUp, this)
+      .preventDefault(e);
+
+    this._map.fire('boxzoomstart');
+  },
+
+  _onMouseMove: function (e) {
+    var startPoint = this._startLayerPoint,
+      box = this._box,
+
+      layerPoint = this._map.mouseEventToLayerPoint(e),
+      offset = layerPoint.subtract(startPoint),
+
+      newPos = new L.Point(
+        Math.min(layerPoint.x, startPoint.x),
+        Math.min(layerPoint.y, startPoint.y));
+
+    L.DomUtil.setPosition(box, newPos);
+
+    box.style.width = (Math.max(0, Math.abs(offset.x) - 4)) + 'px';
+    box.style.height = (Math.max(0, Math.abs(offset.y) - 4)) + 'px';
+  },
+
+  _onMouseUp: function (e) {
+    var map = this._map,
+      layerPoint = map.mouseEventToLayerPoint(e);
+
+    if (this._startLayerPoint.equals(layerPoint)) { return; }
+
+    this._boxBounds = new L.LatLngBounds(
+      map.layerPointToLatLng(this._startLayerPoint),
+      map.layerPointToLatLng(layerPoint));
+
+    this._finish();
+
+    map.fire('boxzoomend', { boxZoomBounds: this._boxBounds });
+
+    // this._finish();
+  },
+
+  _finish: function () {
+    $(this._map.boxSelector._box).remove();
+    // L.DomUtil.remove(this._box);
+    // L.DomUtil.remove(this._map.boxSelector);
+    this._container.style.cursor = '';
+
+    L.DomUtil.enableTextSelection();
+    L.DomUtil.enableImageDrag();
+
+    L.DomEvent
+      .off(document, 'mousemove', this._onMouseMove)
+      .off(document, 'mouseup', this._onMouseUp);
+  },
+});
+
+L.Map.addInitHook('addHandler', 'boxSelector', L.Map.BoxSelectHandle);

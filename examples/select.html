@@ -35,7 +35,7 @@
     (function(){
 
       // basic Leaflet map setup
-      map = new L.map('map').setView([51.505, -0.09], 13);
+      map = L.map('map').setView([51.505, -0.09], 13);
       L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.png', {
         maxZoom: 18,
         attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
@@ -44,70 +44,71 @@
         id: 'examples.map-i86knfo3'
       }).addTo(map);
 
-      images = []
-      select = function(e){
-        for (var i in images) {
-          img = this
-          if (img._leaflet_id != images[i]._leaflet_id) {
-            /* Deselect (disable) other images */
-            images[i].editing.disable()
-            /* Ensure that other toolbars are removed */
-            if (images[i].editing.toolbar) {
-              map.removeLayer(images[i].editing.toolbar);
-            }
-          }
-        }
-        /* Ensure this is enabled */
-        this.editing.enable()
-        /* If it's locked, allow event to propagate on to map below */
-        if (this.editing._mode != "lock") e.stopPropagation()
-      }
+      map.whenReady(function() {
+        img = L.distortableImageOverlay(
+          'example.png', {
+            corners: [
+              new L.latLng(51.52,-0.10),
+              new L.latLng(51.52,-0.14),
+              new L.latLng(51.50,-0.10),
+              new L.latLng(51.50,-0.14)
+            ],
+            mode: 'lock',
+            // HARDCODED: we should find the img w/h dynamically so that it fits the image each time.
+            edgeMinWidth: 521,
+            edgeMinHeight: 348,
+          }).addTo(map);
 
-      // create an image
-      img = new L.DistortableImageOverlay(
-        'example.png', {
-          corners: [
-            new L.latLng(51.52,-0.10),
-            new L.latLng(51.52,-0.14),
-            new L.latLng(51.50,-0.10),
-            new L.latLng(51.50,-0.14)
-          ],
-          mode: 'lock'
-        }
-      ).addTo(map);
-      images.push(img)
-      L.DomEvent.on(img._image, 'click', select, img);
+        // create a second image
+        img2 = L.distortableImageOverlay(
+          'example.png', {
+            corners: [
+              new L.latLng(51.51,-0.10),
+              new L.latLng(51.51,-0.14),
+              new L.latLng(51.49,-0.11),
+              new L.latLng(51.49,-0.15)
+            ],
+            // HARDCODED: we should find the img w/h dynamically so that it fits the image each time. (initImageDimensions?)
+            edgeMinWidth: 521,
+            edgeMinHeight: 348
+          }).addTo(map);
 
-      // create a second image
-      img = new L.DistortableImageOverlay(
-        'example.png', {
-          corners: [
-            new L.latLng(51.51,-0.10),
-            new L.latLng(51.51,-0.14),
-            new L.latLng(51.49,-0.11),
-            new L.latLng(51.49,-0.15)
-          ]
-        }
-      ).addTo(map);
-      images.push(img)
+        img3 = L.distortableImageOverlay(
+          'example.png', {
+            corners: [
+              new L.latLng(51.51,-0.10),
+              new L.latLng(51.51,-0.14),
+              new L.latLng(51.49,-0.11),
+              new L.latLng(51.49,-0.15)
+            ],
+            // HARDCODED: we should find the img w/h dynamically so that it fits the image each time. (initImageDimensions?)
+            edgeMinWidth: 521,
+            edgeMinHeight: 348
+          }).addTo(map);
 
-      L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
-      L.DomEvent.on(img._image, 'click', select, img);
+        img4 = L.distortableImageOverlay(
+          'example.png', {
+            corners: [
+              new L.latLng(51.51,-0.10),
+              new L.latLng(51.51,-0.14),
+              new L.latLng(51.49,-0.11),
+              new L.latLng(51.49,-0.15)
+            ],
+            // HARDCODED: we should find the img w/h dynamically so that it fits the image each time. (initImageDimensions?)
+            edgeMinWidth: 521,
+            edgeMinHeight: 348
+          }).addTo(map);
 
-      // this doesn't work -- it triggers when clicking toolbar
-      // can we stopPropagation of toolbar clicks? is that impolite.
-      map.on('mousedown', function() {
-        for (var i in images) {
-          /* Deselect (disable) all images */
-          //images[i].editing.disable()
-          /* Remove toolbars */
-          if (images[i].editing.toolbar) {
-            //map.removeLayer(images[i].editing.toolbar);
-          }
-        }
-      });
+          L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
+          L.DomEvent.on(img2._image, 'load', img2.editing.enable, img2.editing);
+          L.DomEvent.on(img3._image, 'load', img3.editing.enable, img3.editing);
+          L.DomEvent.on(img4._image, 'load', img4.editing.enable, img4.editing);
 
+          L.distortableCollection([img, img2, img3, img4]).addTo(map);
+
+      }, this);
     })();
+
   </script>
 
 </html>

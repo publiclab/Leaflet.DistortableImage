@@ -1,4 +1,5 @@
 L.DistortableImage = L.DistortableImage || {};
+L.tools = L.tools || {};
 
 var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
     initialize: function(map, overlay, options) {
@@ -140,8 +141,8 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
         var image = overlay._image;
 
         EXIF.getData(image, function() {
-            if (confirm('Geolocate this image and move it to the location found?')) {
-                L.EXIF(this, overlay);
+            if (confirm('Press OK to view EXIF metadata in console and geolocate the image.')) {
+                L.tools.EXIF(this, overlay);
             }
         });
     }
@@ -159,5 +160,27 @@ L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
       EnableEXIF,
       ToggleOrder
     ]
-  }
+	},
+
+	// todo: move to some sort of util class, these methods could be useful in future
+  _rotateToolbarAngleDeg: function(angle) {
+		var div = this._container,
+			divStyle = div.style;
+
+		var oldTransform = divStyle.transform;
+
+		divStyle.transform = oldTransform + "rotate(" + angle + "deg)";
+    divStyle.transformOrigin = "1080% 650%";
+
+		this._rotateToolbarIcons(angle);
+	},
+
+	_rotateToolbarIcons: function(angle) {
+		var icons = document.querySelectorAll(".fa");
+
+		for (var i = 0; i < icons.length; i++) {
+			icons.item(i).style.transform = "rotate(" + -angle + "deg)";
+		}
+	},
+
 });

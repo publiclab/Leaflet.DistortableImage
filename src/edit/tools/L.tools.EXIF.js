@@ -1,4 +1,6 @@
-L.EXIF = function getEXIFdata(ref, overlay) {
+L.tools = L.tools || {};
+
+L.tools.EXIF = function getEXIFdata(ref, overlay) {
     var GPS = ref.exifdata,
         altitude, lat, lng;
 

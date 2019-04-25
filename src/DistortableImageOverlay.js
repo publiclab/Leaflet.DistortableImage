@@ -4,7 +4,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 	options: {
 		alt: '',
 		height: 200,
-		crossOrigin: true
+		crossOrigin: true,
+		edgeMinWidth: 500,
 	},
 
 	initialize: function(url, options) {
@@ -134,6 +135,27 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		this._reset();
 	},
 
+	// fires a reset after all corner positions are updated instead of after each one (above). Use for translating
+	_updateCorners: function (latlngObj) {
+		var i = 0;
+		for (var k in latlngObj) {
+			this._corners[i] = latlngObj[k];
+			i += 1;
+		}
+
+		this._reset();
+	},
+
+	_updateCornersFromPoints: function (pointsObj) {
+		var map = this._map;
+		var i = 0;
+		for (var k in pointsObj) {
+			this._corners[i] = map.layerPointToLatLng(pointsObj[k]);
+			i += 1;
+		}
+
+		this._reset();
+	},
 
 	/* Copied from Leaflet v0.7 https://github.com/Leaflet/Leaflet/blob/66282f14bcb180ec87d9818d9f3c9f75afd01b30/src/dom/DomUtil.js#L189-L199 */
 	/* since L.DomUtil.getTranslateString() is deprecated in Leaflet v1.0 */
@@ -199,6 +221,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		return this._corners;
 	},
 
+	getCorner: function(i) {
+		return this._corners[i];
+	},
+
 	/*
 	 * Calculates the centroid of the image.
 	 *		 See http://stackoverflow.com/questions/6149175/logical-question-given-corners-find-center-of-quadrilateral
@@ -216,6 +242,20 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 			smid = sw.add(se.subtract(sw).divideBy(2));
 
 		return cartesianToLatLng.call(map, nmid.add(smid.subtract(nmid).divideBy(2)));
+	},
+
+	// Use for translation calculations - for translation the delta for 1 corner applies to all 4
+	_calcCornerPointDelta: function () {
+		return this._dragStartPoints[0].subtract(this._dragPoints[0]);
+	},
+
+	_calcCenterTwoCornerPoints: function (topLeft, topRight) {
+			var toolPoint = { x: "", y: "" };
+
+      toolPoint.x = topRight.x + (topLeft.x - topRight.x) / 2;
+			toolPoint.y = topRight.y + (topLeft.y - topRight.y) / 2;
+			
+			return toolPoint;
 	},
 
 	_calculateProjectiveTransform: function(latLngToCartesian) {
@@ -248,3 +288,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 		);
 	}
 });
+
+L.distortableImageOverlay = function(id, options) {
+	return new L.DistortableImageOverlay(id, options);
+};
+
+
+

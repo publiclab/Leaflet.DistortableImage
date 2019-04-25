@@ -7,17 +7,18 @@ L.RotateHandle = L.EditHandle.extend({
 			iconAnchor: [16, 16]}
 		)
 	},
-
+	
 	_onHandleDrag: function() {
 		var overlay = this._handled,
 			formerLatLng = this._handled._corners[this._corner],
 			newLatLng = this.getLatLng(),
-
 			angle = this._calculateAngle(formerLatLng, newLatLng);
 
-		overlay.editing._rotateBy(angle);
+	 	overlay.editing._rotateBy(angle);
 
 		overlay.fire('update');
+
+		this._handled.editing._showToolbar();
 	},
 
 	updateHandle: function() {
