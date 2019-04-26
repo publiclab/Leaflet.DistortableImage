@@ -1430,7 +1430,7 @@ L.DistortableImage.Edit = L.Handler.extend({
         currentPoint = map.latLngToLayerPoint(overlay._corners[i]);
         overlay._corners[i] = map.layerPointToLatLng(currentPoint.add(delta));
 			}
-			
+
       overlay._reset();
       overlay.fire("update");
       overlay.fire("drag");
@@ -1443,7 +1443,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     var keymap = this.options.keymap,
       handlerName = keymap[event.which];
 
-    if (handlerName !== undefined && this._overlay.options.suppressToolbar !== true) {
+    if (this[handlerName] !== undefined && this._overlay.options.suppressToolbar !== true) {
       this[handlerName].call(this);
     }
   },
@@ -1454,7 +1454,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     map.removeLayer(this._handles[this._mode]);
 
     /* Switch mode. */
-		if (this._mode === "rotate") { this._mode = "distort"; } 
+		if (this._mode === "rotate") { this._mode = "distort"; }
 		else { this._mode = "rotate"; }
 
     this._showToolbar();
@@ -1464,12 +1464,12 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _toggleScale: function() {
 		var map = this._overlay._map;
-		
+
     if (this._mode === "lock") { return; }
 
     map.removeLayer(this._handles[this._mode]);
 
-		if (this._mode === "scale") { this._mode = "distort"; } 
+		if (this._mode === "scale") { this._mode = "distort"; }
 		else { this._mode = "scale"; }
 
     this._showToolbar();
@@ -1479,14 +1479,14 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _toggleRotate: function() {
 		var map = this._overlay._map;
-		
+
 		if (this._mode === "lock") { return; }
 
     map.removeLayer(this._handles[this._mode]);
     this._mode = "rotateStandalone";
 
 		this._showToolbar();
-		
+
     map.addLayer(this._handles[this._mode]);
   },
 
