@@ -76,7 +76,7 @@ Options available to pass during `L.DistortableImageOverlay` initialization:
 
 - [selected](#selection)
 
-- mode
+- [mode](#mode)
 
 - [fullResolutionSrc](#Full-resolution%20download)
 
@@ -86,16 +86,48 @@ Options available to pass during `L.DistortableImageOverlay` initialization:
 
 
 ## Selected
-(*optional*, default: false, value: *boolean*)
+
+`selected` (*optional*, default: false, value: *boolean*)
 
 By default, your image will initially appear on the screen as "unselected", meaning its toolbar and editing handles will not be visible. Interacting with the image, such as by clicking it, will make these components visible.
 
 Some developers prefer that an image initially appears as "selected" instead of "unselected". In this case, we provide an option to pass `selected: true`.
 
-## Keymapper
-(_optional_, default: true, value: _boolean_)
+## Mode
 
-By default, an image loads with a keymapper legend showing the available key bindings for different editing / interaction options. To suppress the keymapper, pass `keymapper: false` as an additional option to the image. 
+`mode` (*optional*, default: "distort", value: *string*)
+
+Each editing mode corresponds to a separate editing tool.
+
+This option determines the editing mode the image loads in initially, meaning that corresponding editing tool will always appear first when you interact with the image.
+
+values available to pass to `mode` are: 
+- "distort" (the default)
+- "lock"
+- "rotate"
+- "scale"
+- "rotateScale"
+
+In the below example, the image will be initialiazed with "rotate" handles:
+
+```js
+// create an image
+  img = L.distortableImageOverlay("example.png", {
+    corners: [
+      L.latLng(51.52, -0.1),
+      L.latLng(51.52, -0.14),
+      L.latLng(51.5, -0.1),
+      L.latLng(51.5, -0.14)
+    ],
+    mode: "rotate",
+  }).addTo(map);
+```
+
+## Keymapper
+
+`keymapper` (*optional*, default: true, value: *boolean*)
+
+By default, an image loads with a keymapper legend showing the available key bindings for different editing / interaction options. To suppress the keymapper, pass `keymapper: false` as an additional option to the image.
 
 ## Full-resolution download
 
@@ -131,7 +163,8 @@ L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
 ```
 
 ## suppressToolbar
-(*optional*, default: false, value: *boolean*)
+
+`suppressToolbar` (*optional*, default: false, value: *boolean*)
 
 To initialize an image without its toolbar, pass it `suppressToolbar: true`. 
 
