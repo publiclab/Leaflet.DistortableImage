@@ -43,7 +43,7 @@ module.exports = function(config) {
       "src/edit/ScaleHandle.js",
       "src/DistortableCollection.js",
       "src/DistortableImageOverlay.js",
-      "src/edit/tools/DistortableImage.Keymapper.js",
+      "src/edit/DistortableImage.Keymapper.js",
       "src/edit/DistortableImage.EditToolbar.js",
       "src/edit/DistortableImage.Edit.js",
       "test/SpecHelper.js",
