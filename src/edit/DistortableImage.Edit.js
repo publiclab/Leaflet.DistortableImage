@@ -234,7 +234,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     var keymap = this.options.keymap,
       handlerName = keymap[event.which];
 
-    if (handlerName !== undefined && this._overlay.options.suppressToolbar !== true) {
+    if (this[handlerName] !== undefined && this._overlay.options.suppressToolbar !== true) {
       this[handlerName].call(this);
     }
   },
