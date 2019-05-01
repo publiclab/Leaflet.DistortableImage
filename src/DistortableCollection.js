@@ -16,11 +16,21 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     // L.DomEvent.on(map, "boxzoomend", this._addSelections, this);
 
+    var lastSelected;
+
     this.eachLayer(function(layer) {
       L.DomEvent.on(layer._image, "mousedown", this._deselectOthers, this);
       L.DomEvent.on(layer, "dragstart", this._dragStartMultiple, this);
       L.DomEvent.on(layer, "drag", this._dragMultiple, this);
+
+      if (layer.options.selected) { 
+        layer.editing._deselect();
+        lastSelected = layer.editing;
+     }
     }, this);
+
+    if (lastSelected) { lastSelected._select(); }
+
   },
 
   onRemove: function() {
