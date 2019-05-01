@@ -24,6 +24,11 @@ Here's a screenshot:
 
 ![screenshot](example.png)
 
+## Setup
+
+1. From the root directory, run `npm install` or `sudo npm install`
+2. Open examples/index.html in a browser
+
 ## Demo
 
 Check out this [simple demo](https://publiclab.github.io/Leaflet.DistortableImage/examples/index.html).
@@ -62,21 +67,24 @@ img = L.distortableImageOverlay(
 ).addTo(map);
 
 // enable editing
-L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing); 
-
+L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
 ```
+
+## Keymapper
+(_optional_, default: true, value: _boolean_)
+
+By default, an image loads with a keymapper legend showing the available key bindings for different editing / interaction options. To suppress the keymapper, pass `keymapper: false` as an additional option to the image. 
 
 ## Full-resolution download
 
 We've added a GPU-accelerated means to generate a full resolution version of the distorted image; it requires two additional dependencies to enable; see how we've included them in the demo:
-
 
 ```
 <script src="../node_modules/webgl-distort/dist/webgl-distort.js"></script>
 <script src="../node_modules/glfx/glfx.js"></script>
 ```
 
-When instantiating a Distortable Image, pass in a `fullResolutionSrc` option set to the url of the higher resolution image. This image will be used in full-res exporting. 
+When instantiating a Distortable Image, pass in a `fullResolutionSrc` option set to the url of the higher resolution image. This image will be used in full-res exporting.
 
 
 
@@ -84,7 +92,7 @@ When instantiating a Distortable Image, pass in a `fullResolutionSrc` option set
 
 // create basic map setup from above
 
-// create an image - note the optional 
+// create an image - note the optional
 // fullResolutionSrc option is now passed in
 img = L.distortableImageOverlay(
   'example.png', {
@@ -108,14 +116,14 @@ To test the multi-image interface, open `select.html`. Currently it supports mul
 
   - Multiple images can be selected using <kbd>cmd</kbd> + `click` to toggle individual image selection.
   - Click on the map or hit the <kbd>esc</kbd> key to quickly deselect all images.
-   
+
 Our `DistortableCollection` class allows working with multiple images simultaneously. Say we instantiated 3 images, saved them to the variables `img`, `img2`, and `img3`, and enabled editing on all of them. To access the UI and functionalities available in the multiple image interface, pass them to the collection class:
 
 ```js
 // OPTION 1: Pass in images immediately
 L.distortableCollection([img, img2, img3]).addTo(map);
 
-// OPTION 2: Instantiate an empty collection and pass in images later 
+// OPTION 2: Instantiate an empty collection and pass in images later
 var imageFeatureGroup = L.distortableCollection().addTo(map);
 
 imageFeatureGroup.addLayer(img);
@@ -126,7 +134,7 @@ imageFeatureGroup.addLayer(img3);
 
 ## Image-ordering
 
-For multiple images, we've also added a `ToggleOrder` action, that switches overlapping images back and forth into view by employing [`bringToFront()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtoback) from the Leaflet API. 
+For multiple images, we've also added a `ToggleOrder` action, that switches overlapping images back and forth into view by employing [`bringToFront()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtoback) from the Leaflet API.
 
 ```js
 ToggleOrder = EditOverlayAction.extend({
@@ -154,7 +162,7 @@ ToggleOrder = EditOverlayAction.extend({
 The corners are stored as `L.latLng` objects
 on the image, and can be accessed using our `getCorners()` method after the image is instantiated and added to the map.
 
-Useful usage example: 
+Useful usage example:
 
 ```js
 // instantiate and add to map
@@ -174,15 +182,7 @@ JSON.stringify(img.getCorners())
 // note there is an added level of precision after dragging the image for debugging purposes
 
 ```
-
-### Corner
-
 We further added a `getCorner(idx)` method used the same way as its plural counterpart but with an index passed to it.
-
-## Setup
-
-1. From the root directory, run `npm install` or `sudo npm install`
-2. Open examples/index.html in a browser
 
 ## Contributing
 
