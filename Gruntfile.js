@@ -3,7 +3,6 @@ module.exports = function(grunt) {
     require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
     grunt.initConfig({
-<<<<<<< HEAD
       pkg: grunt.file.readJSON('package.json'),
 
       jshint: {
@@ -43,55 +42,6 @@ module.exports = function(grunt) {
             expect: false,
             sinon: false
           }
-=======
-        pkg: grunt.file.readJSON('package.json'),
-
-        jshint: {
-            options: {
-                node: true,
-                browser: true,
-                esnext: true,
-                bitwise: true,
-                curly: true,
-                eqeqeq: true,
-                immed: true,
-                indent: 4,
-                latedef: true,
-                newcap: true,
-                noarg: true,
-                regexp: true,
-                undef: true,
-                unused: 'strict',
-                trailing: true,
-                smarttabs: true,
-                globals: {
-                    L: false,
-                    $: false,
-                    LeafletToolbar: false,
-                    warpWebGl: false,
-                    EXIF: false,
-                    alert: false,
-
-                    // Mocha
-
-                    describe: false,
-                    it: false,
-                    before: false,
-                    after: false,
-                    beforeEach: false,
-                    afterEach: false,
-                    chai: false,
-                    expect: false,
-                    sinon: false
-                }
-            },
-            source: {
-                src: [ 'src/**/*.js', 'package.json' ]
-            },
-            grunt: {
-                src: [ 'Gruntfile.js' ]
-            }
->>>>>>> force build dist
         },
         source: {
           src: ['src/**/*.js', 'package.json']
