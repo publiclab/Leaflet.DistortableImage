@@ -64,7 +64,7 @@
     var map;
 
     (function() {
-      // basic Leaflet map setup
+      
       map = L.map("map").setView([51.505, -0.09], 13);
       L.tileLayer(
         "https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.png",
@@ -78,7 +78,6 @@
         }
       ).addTo(map);
 
-      // create an image
       img = L.distortableImageOverlay("example.png", {
         // (WIP) add a toolbarType field with values 'popup' (default) or 'control'
         // add a suppressToolbar: 'true' here to disable toolbars
@@ -97,10 +96,9 @@
 
       /* add custom icon functionality */
       // refer this snippet below inorder to add a custom functionality
-
       //  var tool = EditOverlayAction.extend({
-      //    options: {
-      //      toolbarIcon: {
+        //    options: {
+          //      toolbarIcon: {
       //        html: '<span class="fa fa-plus-circle"></span>',
       //        tooltip: "Print a console message!",
       //        title: "Console logger"

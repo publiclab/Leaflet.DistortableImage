@@ -107,7 +107,7 @@ module.exports = function(grunt) {
     grunt.registerTask('build', [
         'jshint',
         'karma:development:start',
-        'coverage',
+        // 'coverage',
         'concat:dist'
     ]);
 

@@ -96,6 +96,12 @@
           L.distortableCollection([img, img2, img3, img4]).addTo(map);
 
       }, this);
+
+      /* instantiate and enable keymapper */
+      keymapper = new L.DistortableImage.Keymapper(map,img._image);
+      L.Map.addInitHook('addHandler', 'keymapper', keymapper);
+      keymapper.enable();
+      // can be disabled using keymapper.disable();      
     })();
 
   </script>
