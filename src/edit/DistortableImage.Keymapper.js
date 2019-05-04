@@ -6,7 +6,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
         this._map = map;
         this._image = image;
         this._params = params || {};
-        this._position = this._params.position || '';
+        this._position = this._params.position || 'topright';
     },
     addHooks: function() {
         L.DomEvent.on(this._image, "load", this._setMapper, this);
