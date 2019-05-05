@@ -86,7 +86,7 @@ describe("L.DistortableImage.Edit", function() {
 			expect(edit.toolbar).to.exist
 		});
 
-		it("It should show an image's handles by updating their opacity", function () {
+		it("It should show an unlocked image's handles by updating their opacity", function () {
 			var edit = overlay.editing,
 				img = overlay.getElement();
 
@@ -98,7 +98,6 @@ describe("L.DistortableImage.Edit", function() {
 				handleState.push(handle._icon.style.opacity)
 			});
 
-			// opacity for lockHandles is unset because we never altered it to hide it as part of deselection
 			expect(handleState).to.deep.equal(["1", "1", "1", "1"]); 
 		});
 	});
@@ -116,7 +115,6 @@ describe("L.DistortableImage.Edit", function() {
 				handleState.push(handle._icon.style.opacity)
 			});
 
-			// opacity for lockHandles is unset because we never altered it to hide it as part of deselection
 			expect(handleState).to.deep.equal(["0", "0", "0", "0"]);
 		});
 
