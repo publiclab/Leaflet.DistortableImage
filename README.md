@@ -58,10 +58,10 @@ L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.p
 img = L.distortableImageOverlay(
   'example.png', {
     corners: [
-      new L.latLng(51.52,-0.10),
-      new L.latLng(51.52,-0.14),
-      new L.latLng(51.50,-0.10),
-      new L.latLng(51.50,-0.14)
+      L.latLng(51.52,-0.10),
+      L.latLng(51.52,-0.14),
+      L.latLng(51.50,-0.10),
+      L.latLng(51.50,-0.14)
     ],
   }
 ).addTo(map);
@@ -97,10 +97,10 @@ When instantiating a Distortable Image, pass in a `fullResolutionSrc` option set
 img = L.distortableImageOverlay(
   'example.png', {
     corners: [
-      new L.latLng(51.52,-0.10),
-      new L.latLng(51.52,-0.14),
-      new L.latLng(51.50,-0.10),
-      new L.latLng(51.50,-0.14)
+      L.latLng(51.52,-0.10),
+      L.latLng(51.52,-0.14),
+      L.latLng(51.50,-0.10),
+      L.latLng(51.50,-0.14)
     ],
     fullResolutionSrc: 'large.jpg'
   }
