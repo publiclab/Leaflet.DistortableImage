@@ -9,11 +9,12 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 	},
 
 	initialize: function(url, options) {
-			this._toolArray = L.DistortableImage.EditToolbarDefaults;
-			this._url = url;
-			this._rotation = this.options.rotation;
-
-			L.setOptions(this, options);
+		this._toolArray = L.DistortableImage.EditToolbarDefaults;
+		this._url = url;
+		this._rotation = this.options.rotation;
+		L.DistortableImage._options = options;
+		
+		L.setOptions(this, options);
 	},
 
 	onAdd: function(map) {
