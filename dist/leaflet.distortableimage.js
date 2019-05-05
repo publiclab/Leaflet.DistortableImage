@@ -155,6 +155,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this.edgeMinWidth = this.options.edgeMinWidth;
     this._url = url;
     this._rotation = this.options.rotation;
+    L.DistortableImage._options = options;
 
     L.Util.setOptions(this, options);
   },
@@ -1219,25 +1220,25 @@ L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
 			ToggleEditable,
 			ToggleRotateScale,
 			ToggleExport,
-      EnableEXIF,
-      ToggleOrder
-    ]
+			EnableEXIF,
+			ToggleOrder
+		]
 	},
-	
+
 	// todo: move to some sort of util class, these methods could be useful in future
-  _rotateToolbarAngleDeg: function(angle) {
+	_rotateToolbarAngleDeg: function (angle) {
 		var div = this._container,
 			divStyle = div.style;
 
 		var oldTransform = divStyle.transform;
-		
+
 		divStyle.transform = oldTransform + "rotate(" + angle + "deg)";
-    divStyle.transformOrigin = "1080% 650%";
+		divStyle.transformOrigin = "1080% 650%";
 
 		this._rotateToolbarIcons(angle);
 	},
-	
-	_rotateToolbarIcons: function(angle) {
+
+	_rotateToolbarIcons: function (angle) {
 		var icons = document.querySelectorAll(".fa");
 
 		for (var i = 0; i < icons.length; i++) {
@@ -1277,12 +1278,26 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._selected = this._overlay.options.selected || false;
     this._transparent = false;
     this._outlined = false;
+
+    /* generate instance counts */
+    this.instance_count = L.DistortableImage.Edit.prototype.instances =
+      L.DistortableImage.Edit.prototype.instances ? L.DistortableImage.Edit.prototype.instances + 1 : 1;
   },
 
   /* Run on image selection. */
   addHooks: function() {
     var overlay = this._overlay,
-      map = overlay._map;
+      map = overlay._map,
+      keymapper_position;
+
+    /* instantiate and render keymapper for one instance only*/
+    if (this.instance_count === 1 && overlay.options.keymapper !== false) {
+      keymapper_position = overlay.options.keymapper_position || 'topright';
+      map.addControl(new L.DistortableImage.Keymapper({ position: keymapper_position }));
+    }
+
+    /* bring the selected image into view */
+    overlay.bringToFront();
 
     this._initHandles();
 
@@ -1302,8 +1317,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     /* Enable hotkeys. */
     L.DomEvent.on(window, "keydown", this._onKeyDown, this);
-
-    // overlay.fire("select");
   },
 
   /* Run on image deselection. */
@@ -1325,8 +1338,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     /* Disable hotkeys. */
     L.DomEvent.off(window, "keydown", this._onKeyDown, this);
-
-    overlay.fire("deselect");
   },
 
   _initHandles: function() {
@@ -1373,7 +1384,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     var overlay = this._overlay,
       map = overlay._map;
 
-
     if (this._mode === 'lock') {
       map.addLayer(this._lockHandles);
     } else {
@@ -1393,12 +1403,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _initToolbar: function () {
     this._showToolbar();
-    if (!this._selected) {
-      try {
-        this.toolbar._container.style.opacity = 0;
-      }
-      catch (e) { }
-    }
   },
 
   confirmDelete: function() {

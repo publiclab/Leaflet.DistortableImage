@@ -28,12 +28,26 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._selected = this._overlay.options.selected || false;
     this._transparent = false;
     this._outlined = false;
+
+    /* generate instance counts */
+    this.instance_count = L.DistortableImage.Edit.prototype.instances =
+      L.DistortableImage.Edit.prototype.instances ? L.DistortableImage.Edit.prototype.instances + 1 : 1;
   },
 
   /* Run on image selection. */
   addHooks: function() {
     var overlay = this._overlay,
-      map = overlay._map;
+      map = overlay._map,
+      keymapper_position;
+
+    /* instantiate and render keymapper for one instance only*/
+    if (this.instance_count === 1 && overlay.options.keymapper !== false) {
+      keymapper_position = overlay.options.keymapper_position || 'topright';
+      map.addControl(new L.DistortableImage.Keymapper({ position: keymapper_position }));
+    }
+
+    /* bring the selected image into view */
+    overlay.bringToFront();
 
     this._initHandles();
 
@@ -53,8 +67,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     /* Enable hotkeys. */
     L.DomEvent.on(window, "keydown", this._onKeyDown, this);
-
-    // overlay.fire("select");
   },
 
   /* Run on image deselection. */
@@ -76,8 +88,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     /* Disable hotkeys. */
     L.DomEvent.off(window, "keydown", this._onKeyDown, this);
-
-    overlay.fire("deselect");
   },
 
   _initHandles: function() {
@@ -124,7 +134,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     var overlay = this._overlay,
       map = overlay._map;
 
-
     if (this._mode === 'lock') {
       map.addLayer(this._lockHandles);
     } else {
@@ -144,12 +153,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _initToolbar: function () {
     this._showToolbar();
-    if (!this._selected) {
-      try {
-        this.toolbar._container.style.opacity = 0;
-      }
-      catch (e) { }
-    }
   },
 
   confirmDelete: function() {
