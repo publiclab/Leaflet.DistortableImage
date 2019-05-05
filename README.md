@@ -57,6 +57,7 @@ L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.p
 // create an image
 img = L.distortableImageOverlay(
   'example.png', {
+    // 'corners' is the only required option for this class
     corners: [
       L.latLng(51.52,-0.10),
       L.latLng(51.52,-0.14),
@@ -69,6 +70,27 @@ img = L.distortableImageOverlay(
 // enable editing
 L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
 ```
+
+Options available to pass during `L.DistortableImageOverlay` initialization:
+- corners
+
+- [selected](#selection)
+
+- mode
+
+- [fullResolutionSrc](#Full-resolution%20download)
+
+- [keymapper](#keymapper)
+
+- [suppressToolbar](#suppressToolbar)
+
+
+## Selected
+(*optional*, default: false, value: *boolean*)
+
+By default, your image will initially appear on the screen as "unselected", meaning its toolbar and editing handles will not be visible. Interacting with the image, such as by clicking it, will make these components visible.
+
+Some developers prefer that an image initially appears as "selected" instead of "unselected". In this case, we provide an option to pass `selected: true`.
 
 ## Keymapper
 (_optional_, default: true, value: _boolean_)
@@ -85,8 +107,6 @@ We've added a GPU-accelerated means to generate a full resolution version of the
 ```
 
 When instantiating a Distortable Image, pass in a `fullResolutionSrc` option set to the url of the higher resolution image. This image will be used in full-res exporting.
-
-
 
 ```js
 
@@ -109,6 +129,15 @@ img = L.distortableImageOverlay(
 L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
 
 ```
+
+## suppressToolbar
+(*optional*, default: false, value: *boolean*)
+
+To initialize an image without its toolbar, pass it `suppressToolbar: true`. 
+
+Typically, editing actions are triggered through our toolbar interface or our predefined keybindings. If disabling the toolbar, the developer will need to implement their own toolbar UI or just use the keybindings.
+
+This option will override other options related to the toolbar, such as [`selected: true`](#Selected)
 
 ## Multiple Images
 
