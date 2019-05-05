@@ -23,35 +23,35 @@ describe("L.DistortableImage.Edit", function() {
 	});
 
 	it("Should keep handles on the map in sync with the corners of the image.", function() {
-		var corners = overlay._corners;
+		var corners = overlay.getCorners(),
+			edit = overlay.editing;
 
-		overlay.editing.enable();
-
-		overlay.editing._selected = true;
-
+		edit.enable();
+		edit._selected = true;
 		overlay._updateCorner(0, new L.LatLng(41.7934, -87.6252));
+
 		overlay.fire('update');
 		
 		/* Warp handles are currently on the map; they should have been updated. */
-		overlay.editing._distortHandles.eachLayer(function(handle) {
+		edit._distortHandles.eachLayer(function(handle) {
 			expect(handle.getLatLng()).to.be.closeToLatLng(corners[handle._corner]);
 		});
 
-		overlay.editing._toggleRotateScale();
+		edit._toggleRotateScale();
 
-		/* After we toggle modes, the rotateHandles are on the map and should be synced. */
-		overlay.editing._rotateScaleHandles.eachLayer(function(handle) {
+		/* After we toggle modes, the rotateScaleHandles are on the map and should be synced. */
+		edit._rotateScaleHandles.eachLayer(function(handle) {
 			expect(handle.getLatLng()).to.be.closeToLatLng(corners[handle._corner]);
 		});
 	});
 
 	it.skip("Should keep image in sync with the map while dragging.", function() {
-		var corners = overlay._corners,
+		var edit = overlay.editing,
 			dragging;
 
-		overlay.editing.enable();
+		edit.enable();
 
-		dragging = overlay.editing.dragging;
+		dragging = edit.dragging;
 
 		/* _reset is not called by #onAdd, for some reason... */
 		overlay._reset();

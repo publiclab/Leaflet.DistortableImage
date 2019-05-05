@@ -1628,7 +1628,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _hideMarkers: function() {
-    if (!this._handles) { this._initHandles(); }  // workaround for race condition w feature group
+    if (!this._handles) { this._initHandles(); }  // workaround for race condition w/ feature group
 
     var currentHandle = this._handles[this._mode];
 

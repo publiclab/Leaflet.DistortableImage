@@ -59,6 +59,33 @@ describe("L.DistortableCollection", function () {
     });
   });
 
+  describe("#_deselectAll", function () {
+    it("Should hide all images' handles unless they're lock handles", function() {
+      var edit1 = overlay.editing,
+        edit2 = overlay2.editing;
+
+      // turn on lock handles for one of the DistortableImages
+      edit2._toggleLock();
+
+      // then trigger _deselectAll
+      map.fire('click');
+
+      var distortHandleState = [];
+      edit1._handles["distort"].eachLayer(function (handle) {
+        distortHandleState.push(handle._icon.style.opacity)
+      });
+
+      var lockHandleState = [];
+      edit2._handles["lock"].eachLayer(function (handle) {
+        lockHandleState.push(handle._icon.style.opacity)
+      });
+
+      expect(distortHandleState).to.deep.equal(["0", "0", "0", "0"]);
+      // opacity for lockHandles is unset because we never altered it to hide it as part of deselection
+      expect(lockHandleState).to.deep.equal(["", "", "", ""]); 
+    });
+  });
+
   describe("#_toggleMultiSelect", function () {
     it("Should allow selection of multiple images on command + click", function() {
       chai.simulateCommandMousedown(overlay.getElement());
