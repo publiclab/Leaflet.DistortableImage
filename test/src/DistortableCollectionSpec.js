@@ -45,23 +45,24 @@ describe("L.DistortableCollection", function () {
   });
 
   describe("#_deselectAll", function () {
-    it("Should deselect all images on map click", function() {
-      L.DomUtil.addClass(overlay.getElement(), "selected");
-      L.DomUtil.addClass(overlay2.getElement(), "selected");
+    it("Should remove the 'selected' class from all images", function() {
+      var img = overlay.getElement(),
+        img2 = overlay2.getElement();
+
+      L.DomUtil.addClass(img, "selected");
+      L.DomUtil.addClass(img2, "selected");
 
       map.fire('click');
 
-      var classStr = L.DomUtil.getClass(overlay.getElement());
-      var classStr2 = L.DomUtil.getClass(overlay2.getElement());
-
+      var classStr = L.DomUtil.getClass(img);
       expect(classStr).to.not.include("selected");
+
+      var classStr2 = L.DomUtil.getClass(img2);
       expect(classStr2).to.not.include("selected");
     });
-  });
 
-  describe("#_deselectAll", function () {
     it("Should hide all images' handles unless they're lock handles", function() {
-      var edit1 = overlay.editing,
+      var edit = overlay.editing,
         edit2 = overlay2.editing;
 
       // turn on lock handles for one of the DistortableImages
@@ -71,7 +72,7 @@ describe("L.DistortableCollection", function () {
       map.fire('click');
 
       var distortHandleState = [];
-      edit1._handles["distort"].eachLayer(function (handle) {
+      edit._handles["distort"].eachLayer(function (handle) {
         distortHandleState.push(handle._icon.style.opacity)
       });
 
@@ -84,27 +85,53 @@ describe("L.DistortableCollection", function () {
       // opacity for lockHandles is unset because we never altered it to hide it as part of deselection
       expect(lockHandleState).to.deep.equal(["", "", "", ""]); 
     });
+
+    it("Should remove all images' individual toolbar instances regardless of lock handles", function() {
+      var edit = overlay.editing,
+        edit2 = overlay2.editing,
+        img = overlay.getElement(),
+        img2 = overlay2.getElement();
+
+      // turn on lock handles for one of the DistortableImages
+      edit2._toggleLock();
+
+      // select both images to initially create individual toolbar instances
+      chai.simulateClick(img);
+      chai.simulateClick(img2);
+
+      expect(edit.toolbar).to.not.be.false
+      expect(edit2.toolbar).to.not.be.false
+
+      // then trigger _deselectAll
+      map.fire('click');
+
+      expect(edit.toolbar).to.be.false
+      expect(edit2.toolbar).to.be.false
+    });
   });
 
   describe("#_toggleMultiSelect", function () {
-    it("Should allow selection of multiple images on command + click", function() {
-      chai.simulateCommandMousedown(overlay.getElement());
-      chai.simulateCommandMousedown(overlay2.getElement());
+    it("Should allow multiple image selection on command + click", function() {
+      var img = overlay.getElement(),
+        img2 = overlay2.getElement();
 
-      var classStr = L.DomUtil.getClass(overlay.getElement());
-      var classStr2 = L.DomUtil.getClass(overlay2.getElement());
+      chai.simulateCommandMousedown(img);
+      chai.simulateCommandMousedown(img2);
 
+      var classStr = L.DomUtil.getClass(img);
       expect(classStr).to.include("selected");
+
+      var classStr2 = L.DomUtil.getClass(img2);
       expect(classStr2).to.include("selected");
     });
 
-    it("But it should not allow selection of a locked image", function() {
-      L.DomUtil.removeClass(overlay.getElement(), "selected");
-      overlay.editing._mode = "lock";
+    it("But it should not allow a locked image to be part of multiple image selection", function() {
+        var img = overlay.getElement();
 
-      chai.simulateCommandMousedown(overlay.getElement());
-      var classStr = L.DomUtil.getClass(overlay.getElement());
+      overlay.editing._toggleLock();
+      chai.simulateCommandMousedown(img);
 
+      var classStr = L.DomUtil.getClass(img);
       expect(classStr).to.not.include("selected");
     });
   });
