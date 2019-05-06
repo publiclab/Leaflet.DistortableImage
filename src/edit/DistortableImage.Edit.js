@@ -22,9 +22,10 @@ L.DistortableImage.Edit = L.Handler.extend({
   initialize: function(overlay) {
     this._overlay = overlay;
     this._toggledImage = false;
-
+    /* Different actions. */
+    var actions = ["lock", "rotate", "scale", "rotateScale"];
     /* Interaction modes. */
-    this._mode = this._overlay.options.mode || "distort";
+    this._mode = actions[actions.indexOf(this._overlay.options.mode)] || 'distort';
     this._selected = this._overlay.options.selected || false;
     this._transparent = false;
     this._outlined = false;
