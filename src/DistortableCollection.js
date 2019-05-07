@@ -16,11 +16,21 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     // L.DomEvent.on(map, "boxzoomend", this._addSelections, this);
 
+    var lastSelected;
+
     this.eachLayer(function(layer) {
       L.DomEvent.on(layer._image, "mousedown", this._deselectOthers, this);
       L.DomEvent.on(layer, "dragstart", this._dragStartMultiple, this);
       L.DomEvent.on(layer, "drag", this._dragMultiple, this);
+
+      if (layer.options.selected) { 
+        layer.editing._deselect();
+        lastSelected = layer.editing;
+     }
     }, this);
+
+    if (lastSelected) { lastSelected._select(); }
+
   },
 
   onRemove: function() {
@@ -53,7 +63,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     this.eachLayer(function(layer) {
       var edit = layer.editing;
       if (layer._image !== event.target) {
-        edit._hideMarkers();
+        edit._deselect();
       } else {
         this._toggleMultiSelect(event, edit);
       }
@@ -82,7 +92,10 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
   _onKeyDown: function(e) {
     if (e.key === "Escape") {
-      this._deselectAll();
+      this._deselectAll(e);
+    } 
+    if (e.key === "Backspace") {
+      this._removeFromGroup(e);
     }
   },
 
@@ -90,15 +103,13 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var overlay = event.target,
       i;
 
-    if (!this.isSelected(overlay)) {
-      return;
-    }
+    if (!this.isSelected(overlay)) { return; }
 
     this.eachLayer(function(layer) {
+      var edit = layer.editing;
+      edit._deselect();
+
       for (i = 0; i < 4; i++) {
-        if (layer !== overlay) {
-          layer.editing._hideToolbar();
-        }
         layer._dragStartPoints[i] = layer._map.latLngToLayerPoint(
           layer.getCorner(i)
         );
@@ -111,9 +122,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
       map = this._map,
       i;
 
-    if (!this.isSelected(overlay)) {
-      return;
-    }
+    if (!this.isSelected(overlay)) { return; }
 
     overlay._dragPoints = {};
 
@@ -126,18 +135,31 @@ L.DistortableCollection = L.FeatureGroup.extend({
     this._updateCollectionFromPoints(cpd, overlay);
   },
 
-  _deselectAll: function() {
+  _deselectAll: function(event) {
     this.eachLayer(function(layer) {
       var edit = layer.editing;
-
       L.DomUtil.removeClass(layer.getElement(), "selected");
-      if (edit.toolbar) {
-        edit._hideToolbar();
-      }
-      edit._hideMarkers();
+      edit._deselect();
     });
+
+    L.DomEvent.stopPropagation(event);
   },
 
+  _removeFromGroup: function(e) {
+    this.eachLayer(function(layer) {
+      var edit = layer.editing;
+      if (edit._selected && edit._mode !== "lock") {
+        var choice = edit.confirmDelete();
+        if (choice) { 
+          edit._selected = false;
+          this.removeLayer(layer); 
+        } else {
+          L.DomEvent.stopPropagation(e);
+          return;
+        }
+      }
+    }, this);
+  },
   /**
    * images in 'lock' mode are included in this feature group collection for functionalities
    * such as export, but are filtered out for editing / dragging here
