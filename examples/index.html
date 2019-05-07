@@ -80,10 +80,10 @@
 
       // create an image
       img = L.distortableImageOverlay("example.png", {
-        // add a suppressToolbar: 'true' here to disable toolbars
         // add a toolbarType field with values 'popup' (default) or 'control'
         // add a keymapper: false <== hides the keymapper
         // add a keymapper_position field with combinations of 'top', 'bottom', 'left' or 'right'
+        selected: true,
         corners: [
           L.latLng(51.52, -0.1),
           L.latLng(51.52, -0.14),

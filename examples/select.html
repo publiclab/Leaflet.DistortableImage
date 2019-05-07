@@ -54,49 +54,37 @@
               L.latLng(51.50,-0.14)
             ],
             mode: 'lock',
-            // HARDCODED: we should find the img w/h dynamically so that it fits the image each time.
-            edgeMinWidth: 521,
-            edgeMinHeight: 348,
           }).addTo(map);
 
         // create a second image
         img2 = L.distortableImageOverlay(
           'example.png', {
             corners: [
-              L.latLng(51.51,-0.10),
-              L.latLng(51.51,-0.14),
-              L.latLng(51.49,-0.11),
-              L.latLng(51.49,-0.15)
+              L.latLng(51.51,-0.16),
+              L.latLng(51.51,-0.20),
+              L.latLng(51.49,-0.17),
+              L.latLng(51.49,-0.21)
             ],
-            // HARDCODED: we should find the img w/h dynamically so that it fits the image each time. (initImageDimensions?)
-            edgeMinWidth: 521,
-            edgeMinHeight: 348
           }).addTo(map);
 
         img3 = L.distortableImageOverlay(
           'example.png', {
             corners: [
-              L.latLng(51.51,-0.10),
-              L.latLng(51.51,-0.14),
-              L.latLng(51.49,-0.11),
-              L.latLng(51.49,-0.15)
+              L.latLng(51.50,-0.09),
+              L.latLng(51.50,-0.13),
+              L.latLng(51.48,-0.10),
+              L.latLng(51.48,-0.14)
             ],
-            // HARDCODED: we should find the img w/h dynamically so that it fits the image each time. (initImageDimensions?)
-            edgeMinWidth: 521,
-            edgeMinHeight: 348
           }).addTo(map);
 
         img4 = L.distortableImageOverlay(
           'example.png', {
             corners: [
-              L.latLng(51.51,-0.10),
-              L.latLng(51.51,-0.14),
-              L.latLng(51.49,-0.11),
-              L.latLng(51.49,-0.15)
+              L.latLng(51.51,-0.03),
+              L.latLng(51.51,-0.07),
+              L.latLng(51.49,-0.04),
+              L.latLng(51.49,-0.08)
             ],
-            // HARDCODED: we should find the img w/h dynamically so that it fits the image each time. (initImageDimensions?)
-            edgeMinWidth: 521,
-            edgeMinHeight: 348
           }).addTo(map);
 
           L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
