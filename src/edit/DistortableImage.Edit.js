@@ -6,7 +6,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     outline: "1px solid red",
     keymap: {
      'Backspace': '_removeOverlay', // backspace windows / delete mac
-    //  'CapsLock': '_toggleRotate',
+     'CapsLock': '_toggleRotate',
      'Escape': '_deselect',
      'd': '_toggleRotateScale',
      'r': '_toggleRotateScale',
@@ -14,7 +14,7 @@ L.DistortableImage.Edit = L.Handler.extend({
      'k': '_sendDown',
      'l': '_toggleLock',
      'o': '_toggleOutline',
-    //  's': '_toggleScale',
+     's': '_toggleScale',
 		 't': '_toggleTransparency',
     }
   },
@@ -23,9 +23,9 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._overlay = overlay;
     this._toggledImage = false;
     /* Different actions. */
-    var actions = ["lock", "rotate", "scale", "rotateScale"];
+    var actions = ["distort", "lock", "rotate", "scale", "rotateScale"];
     /* Interaction modes. */
-    this._mode = actions[actions.indexOf(this._overlay.options.mode)] || 'distort';
+    this._mode = actions[actions.indexOf(this._overlay.options.mode)] || "distort";
     this._selected = this._overlay.options.selected || false;
     this._transparent = false;
     this._outlined = false;
@@ -52,7 +52,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this._initHandles();
 
-    this.appendHandlesandDragable(this._mode);
+    this._appendHandlesandDragable(this._mode);
 
     if (this._selected) { this._initToolbar(); }
 
@@ -353,8 +353,9 @@ L.DistortableImage.Edit = L.Handler.extend({
   _deselect: function() {
     this._selected = false;
     this._hideToolbar();
-    if (this._mode === "lock") { return; }
-    this._hideMarkers();
+    if (this._mode !== "lock") { 
+      this._hideMarkers(); 
+    }
   },
 
   _hideToolbar: function() {
@@ -384,7 +385,8 @@ L.DistortableImage.Edit = L.Handler.extend({
   _hideMarkers: function() {
     if (!this._handles) { this._initHandles(); }  // workaround for race condition w/ feature group
 
-    var currentHandle = this._handles[this._mode], mode = this._mode;
+    var mode = this._mode,
+      currentHandle = this._handles[mode];
     
 		currentHandle.eachLayer(function (layer) {
       var drag = layer.dragging,

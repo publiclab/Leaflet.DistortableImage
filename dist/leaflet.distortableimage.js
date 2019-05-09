@@ -1256,7 +1256,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     outline: "1px solid red",
     keymap: {
      'Backspace': '_removeOverlay', // backspace windows / delete mac
-    //  'CapsLock': '_toggleRotate',
+     'CapsLock': '_toggleRotate',
      'Escape': '_deselect',
      'd': '_toggleRotateScale',
      'r': '_toggleRotateScale',
@@ -1264,7 +1264,7 @@ L.DistortableImage.Edit = L.Handler.extend({
      'k': '_sendDown',
      'l': '_toggleLock',
      'o': '_toggleOutline',
-    //  's': '_toggleScale',
+     's': '_toggleScale',
 		 't': '_toggleTransparency',
     }
   },
@@ -1273,9 +1273,9 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._overlay = overlay;
     this._toggledImage = false;
     /* Different actions. */
-    var actions = ["lock", "rotate", "scale", "rotateScale"];
+    var actions = ["distort", "lock", "rotate", "scale", "rotateScale"];
     /* Interaction modes. */
-    this._mode = actions[actions.indexOf(this._overlay.options.mode)] || 'distort';
+    this._mode = actions[actions.indexOf(this._overlay.options.mode)] || "distort";
     this._selected = this._overlay.options.selected || false;
     this._transparent = false;
     this._outlined = false;
@@ -1302,10 +1302,10 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this._initHandles();
 
-    this.appendHandlesandDragable(this._mode);
+    this._appendHandlesandDragable(this._mode);
 
     if (this._selected) { this._initToolbar(); }
-    
+
     this._overlay._dragStartPoints = {
       0: new L.point(0, 0),
       1: new L.point(0, 0),
@@ -1399,6 +1399,7 @@ L.DistortableImage.Edit = L.Handler.extend({
       this._enableDragging();
     }
   },
+
 
   _initToolbar: function () {
     this._showToolbar();
@@ -1602,8 +1603,9 @@ L.DistortableImage.Edit = L.Handler.extend({
   _deselect: function() {
     this._selected = false;
     this._hideToolbar();
-    if (this._mode === "lock") { return; }
-    this._hideMarkers();
+    if (this._mode !== "lock") { 
+      this._hideMarkers(); 
+    }
   },
 
   _hideToolbar: function() {
@@ -1630,21 +1632,22 @@ L.DistortableImage.Edit = L.Handler.extend({
     });
   },
 
-  _hideMarkers: function () {
+  _hideMarkers: function() {
     if (!this._handles) { this._initHandles(); }  // workaround for race condition w/ feature group
 
-    var currentHandle = this._handles[this._mode], mode = this._mode;
-
-    currentHandle.eachLayer(function (layer) {
+    var mode = this._mode,
+      currentHandle = this._handles[mode];
+    
+		currentHandle.eachLayer(function (layer) {
       var drag = layer.dragging,
-        opts = layer.options;
+				opts = layer.options;
 
       if (mode !== 'lock') {
         layer.setOpacity(0);
       }
-      if (drag) { drag.disable(); }
-      if (opts.draggable) { opts.draggable = false; }
-    });
+			if (drag) { drag.disable(); }
+			if (opts.draggable) { opts.draggable = false; }
+		});
   },
 
   // TODO: toolbar for multiple image selection
@@ -1795,7 +1798,7 @@ L.DistortableImage.Keymapper = L.Control.extend({
         var el_wrapper = L.DomUtil.create("div", "l-container");
         el_wrapper.innerHTML = "<table><tbody>" +
             "<tr><th>Keymappings</th></tr>" +
-            "<tr><td><kbd>j</kbd>, <kbd>k</kbd>: <span>Send up / down (stacking order)</span></td></tr>" +
+            "<tr><td><kbd>j</kbd>, <kbd>k</kbd>: <span>Send up / down</span></td></tr>" +
             "<tr><td><kbd>l</kbd>: <span>Lock</span></td></tr>" +
             "<tr><td><kbd>o</kbd>: <span>Outline</span></td></tr>" +
             "<tr><td><kbd>s</kbd>: <span>Scale</span></td></tr>" +

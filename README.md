@@ -97,9 +97,9 @@ Some developers prefer that an image initially appears as "selected" instead of 
 
 `mode` (*optional*, default: "distort", value: *string*)
 
-Each editing mode corresponds to a separate editing tool.
+Each primary editing mode corresponds to a separate editing tool.
 
-This option determines the editing mode the image loads in initially, meaning that corresponding editing tool will always appear first when you interact with the image.
+This option sets the image's initial editing mode, meaning the corresponding editing tool will always appear first when you interact with the image.
 
 values available to pass to `mode` are: 
 - "distort" (the default)
@@ -108,7 +108,7 @@ values available to pass to `mode` are:
 - "scale"
 - "rotateScale"
 
-In the below example, the image will be initialiazed with "rotate" handles:
+In the below example, the image will be initialiazed with "rotateScale" handles:
 
 ```js
 // create an image
@@ -119,7 +119,7 @@ In the below example, the image will be initialiazed with "rotate" handles:
       L.latLng(51.5, -0.1),
       L.latLng(51.5, -0.14)
     ],
-    mode: "rotate",
+    mode: "rotateScale",
   }).addTo(map);
 ```
 
