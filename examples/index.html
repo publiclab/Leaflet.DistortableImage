@@ -93,6 +93,8 @@
         fullResolutionSrc: "large.jpg"
       }).addTo(map);
 
+     
+
       /* add custom icon functionality */
       // refer this snippet below inorder to add a custom functionality
 
@@ -115,6 +117,69 @@
       // img._addTool(tool);
 
       L.DomEvent.on(img._image, "load", img.editing.enable, img.editing);
+      
+      var pos = img._image.getBoundingClientRect();
+      var centerX = pos.left + pos.width / 2;
+      var centerY = pos.top + pos.height / 2;
+      var centerRadius = pos.width / 10;
+      window.centerX = centerX;
+      window.centerY = centerY;
+
+      var touchInfo = { alpha: 0, radius: 0, down: false };
+
+      var lastTouchAlpha = 0;
+
+      function getXYFromTouchOrPointer(e) {
+        window.ec = e;
+
+        var x = e.clientX;
+        var y = e.clientY;
+        console.log({ x: x - centerX, y: y - centerY });
+        return { x: x - centerX, y: y - centerY };
+      }
+
+      function onTouchStart(e) {
+        console.log("made it");
+
+        var { x, y } = getXYFromTouchOrPointer(e);
+        console.log(x);
+        console.log(y);
+        // onTouchMove(e);
+        touchInfo.down = true;
+        // touchInfo.radius = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+        var initialAngle = Math.atan2(centerY - y, centerX - x);
+        window.initialAngle = initialAngle;
+        onTouchMove(e);
+        // lastTouchAlpha = touchInfo.alpha;
+      }
+
+      function onTouchMove(e) {
+        console.log("made it2");
+
+        var { x, y } = getXYFromTouchOrPointer(e);
+
+        var newAngle = Math.atan2(centerY - y, centerX - x);
+        window.newAngle = newAngle;
+        var angle = window.newAngle - window.initialAngle;
+
+        window.angle2 = angle;
+        
+        touchInfo.alpha = (Math.atan2(centerY - y, centerX - x) - initialAngle);
+        window.f = touchInfo.alpha;
+        e.preventDefault();
+        img.editing._rotateBy(touchInfo.alpha);
+
+        img.fire('update');
+      }
+
+      function touchEnd() {
+        touchInfo.down = false;
+      }
+
+      L.DomEvent.on(img._image, "pointerdown", onTouchStart, img._image);
+      L.DomEvent.on(img._image, "pointermove", onTouchMove, img._image);
+      L.DomEvent.on(img._image, "pointerup touchend", touchEnd, img._image);
+      L.DomEvent.on(img._image, "pointercancel touchcancel", touchEnd, img._image);
     })();
   </script>
 </html>
