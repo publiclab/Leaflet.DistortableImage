@@ -557,7 +557,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
       }
     }, this);
 
-    window.jass = json;
+    return JSON.stringify(json);
 
   },
 
