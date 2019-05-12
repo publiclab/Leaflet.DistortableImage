@@ -431,7 +431,17 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       0, h, c[2].x, c[2].y,
       w, h, c[3].x, c[3].y
     );
+  },
+
+  _getCmPerPixel: function() {
+    var map = this._map;
+
+    var dist = map.latLngToLayerPoint(this.getCorner(0))
+      .distanceTo(map.latLngToLayerPoint(this.getCorner(1)));
+    
+    return (dist * 100) / this._image.width;
   }
+
 });
 
 L.distortableImageOverlay = function(id, options) {
@@ -530,6 +540,25 @@ L.DistortableCollection = L.FeatureGroup.extend({
         }
       }
     });
+  },
+
+  _generateExportJson: function() {
+    var json = {};
+    json.images = [];
+
+    this.eachLayer(function(layer) {
+      if (this.isSelected(layer)) {
+        json.images.push({ 
+          id: this.getLayerId(layer),
+          src: layer._image.src,
+          nodes: layer.getCorners(),
+          cm_per_pixel: layer._getCmPerPixel()
+        });
+      }
+    }, this);
+
+    window.jass = json;
+
   },
 
   _onKeyDown: function(e) {
