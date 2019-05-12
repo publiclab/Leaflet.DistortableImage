@@ -1103,12 +1103,13 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 
 	ToggleRotateScale = EditOverlayAction.extend({
 		initialize: function(map, overlay, options) {
-			var icon = overlay.editing._mode === 'rotateScale' ? 'image' : 'rotate-left';
+			var edit = overlay.editing,
+				icon = edit._mode === 'rotateScale' ? 'image' : 'rotate-left';
 
 			options = options || {};
 			options.toolbarIcon = {
 				html: '<span class="fa fa-' + icon + '"></span>',
-				tooltip: 'RotateScale',
+				tooltip: edit._mode === 'rotateScale' ? 'RotateScale' : 'Distort',
 				title: 'RotateScale'
 			};
 
