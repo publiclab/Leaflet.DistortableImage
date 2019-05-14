@@ -5,12 +5,12 @@ describe("L.DistortableImage.Edit", function() {
 	beforeEach(function(done) {
 		map = L.map(L.DomUtil.create('div', '', document.body)).setView([41.7896,-87.5996], 15);
 
-		overlay = new L.DistortableImageOverlay('/examples/example.png', {
+		overlay = L.distortableImageOverlay('/examples/example.png', {
 			corners: [
-				new L.LatLng(41.7934, -87.6052),
-				new L.LatLng(41.7934, -87.5852),
-				new L.LatLng(41.7834, -87.5852),
-				new L.LatLng(41.7834, -87.6052)
+				L.latLng(41.7934, -87.6052),
+				L.latLng(41.7934, -87.5852),
+				L.latLng(41.7834, -87.5852),
+				L.latLng(41.7834, -87.6052)
 			]
 		}).addTo(map);
 
@@ -36,7 +36,7 @@ describe("L.DistortableImage.Edit", function() {
 		// this test applies to a selected image
 		chai.simulateClick(img);
 
-		overlay._updateCorner(0, new L.LatLng(41.7934, -87.6252));
+		overlay._updateCorner(0, L.latLng(41.7934, -87.6252));
 		overlay.fire('update');
 		
 		/* Warp handles are currently on the map; they should have been updated. */
