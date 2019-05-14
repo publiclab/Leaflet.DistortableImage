@@ -16,10 +16,10 @@ describe("L.DistortableImageOverlay", function() {
 
 		distortable = L.distortableImageOverlay('/examples/example.png', {
 			corners: [
-				new L.LatLng(41.7934, -87.6052),
-				new L.LatLng(41.7934, -87.5852),
-				new L.LatLng(41.7834, -87.5852),
-				new L.LatLng(41.7834, -87.6052)
+				L.latLng(41.7934, -87.6052),
+				L.latLng(41.7934, -87.5852),
+				L.latLng(41.7834, -87.5852),
+				L.latLng(41.7834, -87.6052)
 			]
 		});
 	});
@@ -44,7 +44,7 @@ describe("L.DistortableImageOverlay", function() {
 			L.DomEvent.on(distortable._image, 'load', function() {
 				var center = distortable.getCenter();
 
-				expect(center).to.be.closeToLatLng(new L.LatLng(41.7884, -87.5952));
+				expect(center).to.be.closeToLatLng(L.latLng(41.7884, -87.5952));
 				done();
 			});
 		});

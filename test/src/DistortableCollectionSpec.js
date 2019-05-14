@@ -9,19 +9,19 @@ describe("L.DistortableCollection", function () {
 
     overlay = L.distortableImageOverlay('/examples/example.png', {
       corners: [
-        new L.LatLng(41.7934, -87.6052),
-        new L.LatLng(41.7934, -87.5852),
-        new L.LatLng(41.7834, -87.5852),
-        new L.LatLng(41.7834, -87.6052)
+        L.latLng(41.7934, -87.6052),
+        L.latLng(41.7934, -87.5852),
+        L.latLng(41.7834, -87.5852),
+        L.latLng(41.7834, -87.6052)
       ]
     }).addTo(map);
 
     overlay2 = L.distortableImageOverlay('/examples/example.png', {
       corners: [
-        new L.LatLng(41.7934, -87.6050),
-        new L.LatLng(41.7934, -87.5850),
-        new L.LatLng(41.7834, -87.5850),
-        new L.LatLng(41.7834, -87.6050)
+        L.latLng(41.7934, -87.6050),
+        L.latLng(41.7934, -87.5850),
+        L.latLng(41.7834, -87.5850),
+        L.latLng(41.7834, -87.6050)
       ]
     }).addTo(map);
 
