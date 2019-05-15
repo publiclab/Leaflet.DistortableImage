@@ -1,5 +1,4 @@
 L.DistortableCollection = L.FeatureGroup.extend({
-  include: L.Mixin.Events,
 
   onAdd: function(map) {
     L.FeatureGroup.prototype.onAdd.call(this, map);

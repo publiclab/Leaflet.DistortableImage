@@ -1,5 +1,4 @@
 L.DistortableImageOverlay = L.ImageOverlay.extend({
-  include: L.Mixin.Events,
 
   options: {
     alt: "",

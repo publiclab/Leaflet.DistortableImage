@@ -140,7 +140,6 @@ L.TrigUtil = {
 
 };
 L.DistortableImageOverlay = L.ImageOverlay.extend({
-  include: L.Mixin.Events,
 
   options: {
     alt: "",
@@ -443,7 +442,6 @@ L.distortableImageOverlay = function(id, options) {
 
 
 L.DistortableCollection = L.FeatureGroup.extend({
-  include: L.Mixin.Events,
 
   onAdd: function(map) {
     L.FeatureGroup.prototype.onAdd.call(this, map);
