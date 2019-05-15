@@ -44,7 +44,7 @@ describe("L.DistortableImageOverlay", function() {
 			L.DomEvent.on(distortable._image, 'load', function() {
 				var center = distortable.getCenter();
 
-				expect(center).to.be.closeToLatLng(new L.LatLng(41.7884, -87.5952));
+				expect(center).to.be.closeToLatLng(L.latLng(41.7884, -87.5952));
 				done();
 			});
 		});
