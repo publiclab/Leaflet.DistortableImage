@@ -32,7 +32,7 @@ beforeEach(function() {
 /* 
  * Asserts that two latlngs are close. 
  * For example: 
- *     > expect(new L.LatLng(0, 0.00005)).to.be.closeToLatLng(new L.LatLng(0, 0))
+ *     > expect(L.latLng(0, 0.00005)).to.be.closeToLatLng(L.latLng(0, 0))
  *     > true
  */
 chai.use(function(chai, utils) {
