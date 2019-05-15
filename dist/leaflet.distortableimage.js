@@ -514,7 +514,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
   _deselectOthers: function(event) {
     this.eachLayer(function(layer) {
       var edit = layer.editing;
-      if (layer._image !== event.target) {
+      if (layer.getElement() !== event.target) {
         edit._deselect();
       } else {
         this._toggleMultiSelect(event, edit);
