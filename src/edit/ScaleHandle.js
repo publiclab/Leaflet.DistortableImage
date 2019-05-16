@@ -40,20 +40,7 @@ L.ScaleHandle = L.EditHandle.extend({
 		return newAngle - initialAngle;
 	},
 
-	/* Takes two latlngs and calculates the scaling difference. */
-	_calculateScalingFactor: function(latlngA, latlngB) {
-		var map = this._handled._map,
-
-			centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
-			formerPoint = map.latLngToLayerPoint(latlngA),
-			newPoint = map.latLngToLayerPoint(latlngB),
-
-			formerRadiusSquared = this._d2(centerPoint, formerPoint),
-			newRadiusSquared = this._d2(centerPoint, newPoint);
-
-		return Math.sqrt(newRadiusSquared / formerRadiusSquared);
-	},
-
+	
 	/* Distance between two points in cartesian space, squared (distance formula). */
 	_d2: function(a, b) {
 		var dx = a.x - b.x,
