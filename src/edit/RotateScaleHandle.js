@@ -55,7 +55,6 @@ L.RotateScaleHandle = L.EditHandle.extend({
 		return newAngle - initialAngle;
 	},
 
-	
 	/* Distance between two points in cartesian space, squared (distance formula). */
 	_d2: function(a, b) {
 		var dx = a.x - b.x,
