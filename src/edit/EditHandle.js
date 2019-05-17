@@ -73,4 +73,18 @@ L.EditHandle = L.Marker.extend({
     this._handled._map.off("zoomend", this.updateHandle, this);
     this._handled.off("update", this.updateHandle, this);
   }
+
+/* Takes two latlngs and calculates the scaling difference. */
+  _calculateScalingFactor: function(latlngA, latlngB) {
+	var map = this._handled._map,
+		centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
+		formerPoint = map.latLngToLayerPoint(latlngA),
+		newPoint = map.latLngToLayerPoint(latlngB),
+
+		formerRadiusSquared = this._d2(centerPoint, formerPoint),
+		newRadiusSquared = this._d2(centerPoint, newPoint);
+
+	return Math.sqrt(newRadiusSquared / formerRadiusSquared);
+  },
+
 });
