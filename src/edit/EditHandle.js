@@ -87,4 +87,10 @@ L.EditHandle = L.Marker.extend({
     return Math.sqrt(newRadiusSquared / formerRadiusSquared);
   },
 
+  _d2: function(a, b) {
+      var dx = a.x - b.x,
+          dy = a.y - b.y;
+
+      return Math.pow(dx, 2) + Math.pow(dy, 2);
+  }
 });
