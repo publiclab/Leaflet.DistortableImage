@@ -26,18 +26,5 @@ L.ScaleHandle = L.EditHandle.extend({
 		this.setLatLng(this._handled._corners[this._corner]);
 	},
 
-	/* Takes two latlngs and calculates the angle between them. */
-	_calculateAngle: function(latlngA, latlngB) {
-		var map = this._handled._map,
-
-			centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
-			formerPoint = map.latLngToLayerPoint(latlngA),
-			newPoint = map.latLngToLayerPoint(latlngB),
-
-			initialAngle = Math.atan2(centerPoint.y - formerPoint.y, centerPoint.x - formerPoint.x),
-			newAngle = Math.atan2(centerPoint.y - newPoint.y, centerPoint.x - newPoint.x);
-
-		return newAngle - initialAngle;
-	},
 
 });

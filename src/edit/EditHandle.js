@@ -74,7 +74,7 @@ L.EditHandle = L.Marker.extend({
     this._handled.off("update", this.updateHandle, this);
   },
 
-/* Takes two latlngs and calculates the scaling difference. */
+ /* Takes two latlngs and calculates the scaling difference. */
   _calculateScalingFactor: function(latlngA, latlngB) {
     var map = this._handled._map,
       centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
@@ -87,10 +87,25 @@ L.EditHandle = L.Marker.extend({
     return Math.sqrt(newRadiusSquared / formerRadiusSquared);
   },
 
+ /* Distance between two points in cartesian space, squared (distance formula). */
   _d2: function(a, b) {
       var dx = a.x - b.x,
           dy = a.y - b.y;
 
       return Math.pow(dx, 2) + Math.pow(dy, 2);
-  }
+  },
+
+ /* Takes two latlngs and calculates the angle between them. */
+	_calculateAngle: function(latlngA, latlngB) {
+		var map = this._handled._map,
+
+			centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
+			formerPoint = map.latLngToLayerPoint(latlngA),
+			newPoint = map.latLngToLayerPoint(latlngB),
+
+			initialAngle = Math.atan2(centerPoint.y - formerPoint.y, centerPoint.x - formerPoint.x),
+			newAngle = Math.atan2(centerPoint.y - newPoint.y, centerPoint.x - newPoint.x);
+
+		return newAngle - initialAngle;
+	}
 });
