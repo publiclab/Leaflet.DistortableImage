@@ -47,10 +47,9 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 		}},
 
 		addHooks: function() {
-			var map = this._map;
-
-			map.removeLayer(this._overlay);
-			this._overlay.fire('delete');
+			var editing = this._overlay.editing;
+	
+			editing._removeOverlay();
 			this.disable();
 		}
 	}),

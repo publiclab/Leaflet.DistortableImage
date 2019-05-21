@@ -806,7 +806,42 @@ L.EditHandle = L.Marker.extend({
 
     this._handled._map.off("zoomend", this.updateHandle, this);
     this._handled.off("update", this.updateHandle, this);
-  }
+  },
+
+ /* Takes two latlngs and calculates the scaling difference. */
+  _calculateScalingFactor: function(latlngA, latlngB) {
+    var map = this._handled._map,
+      centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
+      formerPoint = map.latLngToLayerPoint(latlngA),
+      newPoint = map.latLngToLayerPoint(latlngB),
+
+      formerRadiusSquared = this._d2(centerPoint, formerPoint),
+      newRadiusSquared = this._d2(centerPoint, newPoint);
+
+    return Math.sqrt(newRadiusSquared / formerRadiusSquared);
+  },
+
+ /* Distance between two points in cartesian space, squared (distance formula). */
+  _d2: function(a, b) {
+      var dx = a.x - b.x,
+          dy = a.y - b.y;
+
+      return Math.pow(dx, 2) + Math.pow(dy, 2);
+  },
+
+ /* Takes two latlngs and calculates the angle between them. */
+	_calculateAngle: function(latlngA, latlngB) {
+		var map = this._handled._map,
+
+			centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
+			formerPoint = map.latLngToLayerPoint(latlngA),
+			newPoint = map.latLngToLayerPoint(latlngB),
+
+			initialAngle = Math.atan2(centerPoint.y - formerPoint.y, centerPoint.x - formerPoint.x),
+			newAngle = Math.atan2(centerPoint.y - newPoint.y, centerPoint.x - newPoint.x);
+
+		return newAngle - initialAngle;
+	}
 });
 
 L.LockHandle = L.EditHandle.extend({
@@ -896,41 +931,6 @@ L.RotateScaleHandle = L.EditHandle.extend({
 		this.setLatLng(this._handled._corners[this._corner]);
 	},
 
-	/* Takes two latlngs and calculates the angle between them. */
-	_calculateAngle: function(latlngA, latlngB) {
-		var map = this._handled._map,
-
-			centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
-			formerPoint = map.latLngToLayerPoint(latlngA),
-			newPoint = map.latLngToLayerPoint(latlngB),
-
-			initialAngle = Math.atan2(centerPoint.y - formerPoint.y, centerPoint.x - formerPoint.x),
-			newAngle = Math.atan2(centerPoint.y - newPoint.y, centerPoint.x - newPoint.x);
-
-		return newAngle - initialAngle;
-	},
-
-	/* Takes two latlngs and calculates the scaling difference. */
-	_calculateScalingFactor: function(latlngA, latlngB) {
-		var map = this._handled._map,
-
-			centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
-			formerPoint = map.latLngToLayerPoint(latlngA),
-			newPoint = map.latLngToLayerPoint(latlngB),
-
-			formerRadiusSquared = this._d2(centerPoint, formerPoint),
-			newRadiusSquared = this._d2(centerPoint, newPoint);
-
-		return Math.sqrt(newRadiusSquared / formerRadiusSquared);
-	},
-
-	/* Distance between two points in cartesian space, squared (distance formula). */
-	_d2: function(a, b) {
-		var dx = a.x - b.x,
-			dy = a.y - b.y;
-
-		return Math.pow(dx, 2) + Math.pow(dy, 2);
-	}
 });
 
 L.RotateHandle = L.EditHandle.extend({
@@ -958,43 +958,8 @@ L.RotateHandle = L.EditHandle.extend({
 
 	updateHandle: function() {
 		this.setLatLng(this._handled._corners[this._corner]);
-	},
-
-	/* Takes two latlngs and calculates the angle between them. */
-	_calculateAngle: function(latlngA, latlngB) {
-		var map = this._handled._map,
-
-			centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
-			formerPoint = map.latLngToLayerPoint(latlngA),
-			newPoint = map.latLngToLayerPoint(latlngB),
-
-			initialAngle = Math.atan2(centerPoint.y - formerPoint.y, centerPoint.x - formerPoint.x),
-			newAngle = Math.atan2(centerPoint.y - newPoint.y, centerPoint.x - newPoint.x);
-
-		return newAngle - initialAngle;
-	},
-
-	/* Takes two latlngs and calculates the scaling difference. */
-	_calculateScalingFactor: function(latlngA, latlngB) {
-		var map = this._handled._map,
-
-			centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
-			formerPoint = map.latLngToLayerPoint(latlngA),
-			newPoint = map.latLngToLayerPoint(latlngB),
-
-			formerRadiusSquared = this._d2(centerPoint, formerPoint),
-			newRadiusSquared = this._d2(centerPoint, newPoint);
-
-		return Math.sqrt(newRadiusSquared / formerRadiusSquared);
-	},
-
-	/* Distance between two points in cartesian space, squared (distance formula). */
-	_d2: function(a, b) {
-		var dx = a.x - b.x,
-			dy = a.y - b.y;
-
-		return Math.pow(dx, 2) + Math.pow(dy, 2);
 	}
+	
 });
 
 L.ScaleHandle = L.EditHandle.extend({
@@ -1025,41 +990,7 @@ L.ScaleHandle = L.EditHandle.extend({
 		this.setLatLng(this._handled._corners[this._corner]);
 	},
 
-	/* Takes two latlngs and calculates the angle between them. */
-	_calculateAngle: function(latlngA, latlngB) {
-		var map = this._handled._map,
 
-			centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
-			formerPoint = map.latLngToLayerPoint(latlngA),
-			newPoint = map.latLngToLayerPoint(latlngB),
-
-			initialAngle = Math.atan2(centerPoint.y - formerPoint.y, centerPoint.x - formerPoint.x),
-			newAngle = Math.atan2(centerPoint.y - newPoint.y, centerPoint.x - newPoint.x);
-
-		return newAngle - initialAngle;
-	},
-
-	/* Takes two latlngs and calculates the scaling difference. */
-	_calculateScalingFactor: function(latlngA, latlngB) {
-		var map = this._handled._map,
-
-			centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
-			formerPoint = map.latLngToLayerPoint(latlngA),
-			newPoint = map.latLngToLayerPoint(latlngB),
-
-			formerRadiusSquared = this._d2(centerPoint, formerPoint),
-			newRadiusSquared = this._d2(centerPoint, newPoint);
-
-		return Math.sqrt(newRadiusSquared / formerRadiusSquared);
-	},
-
-	/* Distance between two points in cartesian space, squared (distance formula). */
-	_d2: function(a, b) {
-		var dx = a.x - b.x,
-			dy = a.y - b.y;
-
-		return Math.pow(dx, 2) + Math.pow(dy, 2);
-	}
 });
 
 L.DistortableImage = L.DistortableImage || {};
@@ -1111,10 +1042,9 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 		}},
 
 		addHooks: function() {
-			var map = this._map;
-
-			map.removeLayer(this._overlay);
-			this._overlay.fire('delete');
+			var editing = this._overlay.editing;
+	
+			editing._removeOverlay();
 			this.disable();
 		}
 	}),
@@ -1676,15 +1606,20 @@ L.DistortableImage.Edit = L.Handler.extend({
 	},
 
   _removeOverlay: function () {
-    var overlay = this._overlay;
-    if (this._mode !== "lock") {
-      var choice = this.confirmDelete();
-      if (choice) {
-        this._hideToolbar();
-        overlay._map.removeLayer(overlay);
-        overlay.fire("delete");
-        this.disable();
-      }
+    var overlay = this._overlay,
+      eventParents = overlay._eventParents;
+
+    if (this._mode === "lock") { return; }
+
+    var choice = this.confirmDelete();
+    if (!choice) { return; }
+
+    this._hideToolbar();
+    if (eventParents) {
+      var eP = eventParents[Object.keys(eventParents)[0]];
+      eP.removeLayer(overlay);
+    } else {
+      overlay._map.removeLayer(overlay);
     }
 	},
 
