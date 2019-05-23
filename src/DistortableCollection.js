@@ -89,6 +89,25 @@ L.DistortableCollection = L.FeatureGroup.extend({
     });
   },
 
+  _generateExportJson: function() {
+    var json = {};
+    json.images = [];
+
+    this.eachLayer(function(layer) {
+      if (this.isSelected(layer)) {
+        json.images.push({ 
+          id: this.getLayerId(layer),
+          src: layer._image.src,
+          nodes: layer.getCorners(),
+          cm_per_pixel: layer._getCmPerPixel()
+        });
+      }
+    }, this);
+
+    return JSON.stringify(json);
+
+  },
+
   _onKeyDown: function(e) {
     if (e.key === "Escape") {
       this._deselectAll(e);

@@ -290,7 +290,17 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       0, h, c[2].x, c[2].y,
       w, h, c[3].x, c[3].y
     );
+  },
+
+  _getCmPerPixel: function() {
+    var map = this._map;
+
+    var dist = map.latLngToLayerPoint(this.getCorner(0))
+      .distanceTo(map.latLngToLayerPoint(this.getCorner(1)));
+    
+    return (dist * 100) / this._image.width;
   }
+
 });
 
 L.distortableImageOverlay = function(id, options) {
