@@ -89,6 +89,13 @@ L.DistortableCollection = L.FeatureGroup.extend({
     });
   },
 
+  _getAvgCmPerPixel: function(imgs) {
+    var reduce = imgs.reduce(function(sum, img) {
+      return sum + img.cm_per_pixel;
+    }, 0);
+    return reduce / imgs.length;
+  },
+
   _generateExportJson: function() {
     var json = {};
     json.images = [];
@@ -104,8 +111,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
       }
     }, this);
 
-    return JSON.stringify(json);
+    json.avg_cm_per_pixel = this._getAvgCmPerPixel(json.images);
 
+    return JSON.stringify(json);
   },
 
   _onKeyDown: function(e) {
