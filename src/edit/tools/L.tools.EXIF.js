@@ -92,5 +92,5 @@ L.tools.EXIF = function getEXIFdata(ref, overlay) {
 
     overlay.editing._rotateBy(angle);
 
-    overlay._map.setView(panTo, 14);
+    overlay._map.setView(panTo, 13);
 };
