@@ -18,6 +18,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
         var keymapper = L.control({position: this._position});
         keymapper.onAdd = function() {
             var el_wrapper = L.DomUtil.create("div", "l-container");
+            el_wrapper.setAttribute('id', 'keymapper-wrapper');
             el_wrapper.innerHTML = "<table><tbody>" +
             "<tr><th>Keymappings</th></tr>" +
             "<tr><td><kbd>j</kbd>, <kbd>k</kbd>: <span>Send up / down</span></td></tr>" +
@@ -29,9 +30,18 @@ L.DistortableImage.Keymapper = L.Handler.extend({
             "<tr><td><kbd>esc</kbd>: <span>Deselect All</span></td></tr>" +
             "<tr><td><kbd>delete</kbd> , <kbd>backspace</kbd>: <span>Delete</span></td></tr>" +
             "<tr><td><kbd>caps</kbd>: <span>Rotate</span></td></tr>" +
+            "<tr><td><center><button id='close-keymapper-button'>" + 
+            "<kbd id='close-keymapper-kbd'>Disable keymapper</kbd>" +
+            "</button></center></td></tr>" +
             "</tbody></table>";
             return el_wrapper;
         };
         keymapper.addTo(this._map);
     }
 });
+
+window.onload = function() {
+    document.getElementById('close-keymapper-button').addEventListener('click', function() {
+        document.getElementById('keymapper-wrapper').style.display = 'none';
+    });
+};
