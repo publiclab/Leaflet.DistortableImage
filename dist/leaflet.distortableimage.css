@@ -56,7 +56,7 @@ img.leaflet-image-layer.selected {
 .l-container {
   background-color: rgb(255, 255, 255, 0.75);
   color: black;
-  padding: 0px 10px 6px 10px;
+  padding: 10px 10px 6px 10px;
   font-size: 14px;
   font-weight: 400;
   letter-spacing: 0.5px;
@@ -105,9 +105,22 @@ span {
   border: none;
   background-color: rgba(0,0,0,0);
   outline: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 20px;
 }
 
 #close-keymapper-kbd {
-  background-color: #ff00009e;
-  color: white;
+  background-color: #fff;
+  color: #333;
+}
+
+#keymapper-heading {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+#keymapper-hr {
+  padding-top: 0px;
 }
