@@ -428,15 +428,20 @@ L.DistortableImage.Edit = L.Handler.extend({
 	},
 
   _removeOverlay: function () {
-    var overlay = this._overlay;
-    if (this._mode !== "lock") {
-      var choice = this.confirmDelete();
-      if (choice) {
-        this._hideToolbar();
-        overlay._map.removeLayer(overlay);
-        overlay.fire("delete");
-        this.disable();
-      }
+    var overlay = this._overlay,
+      eventParents = overlay._eventParents;
+
+    if (this._mode === "lock") { return; }
+
+    var choice = this.confirmDelete();
+    if (!choice) { return; }
+
+    this._hideToolbar();
+    if (eventParents) {
+      var eP = eventParents[Object.keys(eventParents)[0]];
+      eP.removeLayer(overlay);
+    } else {
+      overlay._map.removeLayer(overlay);
     }
 	},
 
