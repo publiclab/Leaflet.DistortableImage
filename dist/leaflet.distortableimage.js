@@ -135,7 +135,16 @@ L.MatrixUtil = {
 L.TrigUtil = {
 
   calcAngleDegrees: function(x, y) {
-    return Math.atan2(y, x) * 180 / Math.PI;
+    var pointAngle = Math.atan2(y, x);
+    return this.radiansToDegrees(pointAngle);
+  },
+
+  radiansToDegrees: function(angle) {
+    return angle * 180 / Math.PI;
+  },
+
+  degreesToRadians: function(angle) {
+    return angle * Math.PI / 180;
   }
 
 };
@@ -153,7 +162,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this._toolArray = L.DistortableImage.EditToolbarDefaults;
     this.edgeMinWidth = this.options.edgeMinWidth;
     this._url = url;
-    this._rotation = this.options.rotation;
+    this.rotation = 0;
+    window.rotation = this.rotation;
     L.DistortableImage._options = options;
 
     L.Util.setOptions(this, options);
@@ -248,6 +258,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
         map.containerPointToLatLng(center.add(offset))
       ];
     }
+    this._initialDimensions = { 'height': imageHeight, 'width': imageWidth, 'offset': offset };
   },
 
   _initEvents: function() {
@@ -965,8 +976,8 @@ L.RotateScaleHandle = L.EditHandle.extend({
 
 			angle = this._calculateAngle(formerLatLng, newLatLng),
 			scale = this._calculateScalingFactor(formerLatLng, newLatLng);
-
-		overlay.editing._rotateBy(angle);
+		
+		if (angle !== 0) { overlay.editing._rotateBy(angle); }
 
 		/* 
 		  checks whether the "edgeMinWidth" property is set and tracks the minimum edge length;
@@ -1456,7 +1467,38 @@ L.DistortableImage.Edit = L.Handler.extend({
       overlay._corners[i] = map.layerPointToLatLng(q.add(center));
     }
 
+    window.angle = L.TrigUtil.radiansToDegrees(angle);
+
+    this._overlay.rotation -= L.TrigUtil.radiansToDegrees(angle);
+
     overlay._reset();
+  },
+
+  _restore: function() {
+    var overlay = this._overlay;
+    var angle = overlay.rotation;
+    var map = overlay._map;
+    var center = map.latLngToContainerPoint(overlay.getCenter());
+    var offset = overlay._initialDimensions.offset;
+
+    var corners = { 
+      0: map.containerPointToLatLng(center.subtract(offset)),
+      1: map.containerPointToLatLng(center.add(new L.Point(offset.x, -offset.y))),
+      2: map.containerPointToLatLng(center.add(new L.Point(-offset.x, offset.y))),
+      3: map.containerPointToLatLng(center.add(offset))
+    };
+
+    map.removeLayer(this._handles[this._mode]);
+
+    overlay._updateCorners(corners);
+
+    if (angle !== 0) { this._rotateBy(L.TrigUtil.degreesToRadians(360 - angle)); }
+
+    map.addLayer(this._handles[this._mode]);
+
+    this._showToolbar();
+
+    this._overlay.rotation = angle;
   },
 
   _scaleBy: function(scale) {
