@@ -63,6 +63,8 @@ L.DistortableImage.Edit = L.Handler.extend({
       3: L.point(0, 0)
     };
 
+    // this._restore();
+
     L.DomEvent.on(map, "click", this._deselect, this);
     L.DomEvent.on(overlay._image, "click", this._select, this);
 
@@ -173,7 +175,7 @@ L.DistortableImage.Edit = L.Handler.extend({
         Math.cos(angle) * p.x - Math.sin(angle) * p.y,
         Math.sin(angle) * p.x + Math.cos(angle) * p.y
       );
-      overlay._corners[i] = map.layerPointToLatLng(q.add(center));
+      overlay._updateCorner(i, map.layerPointToLatLng(q.add(center)));
     }
 
     window.angle = L.TrigUtil.radiansToDegrees(angle);
@@ -187,7 +189,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     var overlay = this._overlay;
     var angle = overlay.rotation;
     var map = overlay._map;
-    var center = map.latLngToContainerPoint(overlay.getCenter());
+    var center = map.latLngToLayerPoint(overlay.getCenter());
     var offset = overlay._initialDimensions.offset;
 
     var corners = { 
@@ -219,11 +221,11 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     for (i = 0; i < 4; i++) {
       p = map
-        .latLngToLayerPoint(overlay._corners[i])
+        .latLngToLayerPoint(overlay.getCorner(i))
         .subtract(center)
         .multiplyBy(scale)
         .add(center);
-      overlay._corners[i] = map.layerPointToLatLng(p);
+      overlay._updateCorner(i, map.layerPointToLatLng(p));
     }
 
     overlay._reset();
@@ -569,7 +571,10 @@ L.DistortableImageOverlay.addInitHook(function() {
   this.editing = new L.DistortableImage.Edit(this);
 
   if (this.options.editable) {
-    L.DomEvent.on(this._image, "load", this.editing.enable, this.editing);
+    L.DomEvent.on(this._image, "load", function() {
+      this.editing.enable();
+      this.editing._restore();
+    }, this.editing);
   }
 
 	this.on('remove', function () {

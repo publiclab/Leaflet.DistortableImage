@@ -39,6 +39,19 @@ L.DomUtil = L.extend(L.DomUtil, {
 
 });
 
+L.ImageUtil = {
+
+  getCmPerPixel: function(overlay) {
+    var map = overlay._map;
+
+    var dist = map
+      .latLngToLayerPoint(overlay.getCorner(0))
+      .distanceTo(map.latLngToLayerPoint(overlay.getCorner(1)));
+
+    return (dist * 100) / overlay._image.width;
+  }
+
+};
 L.Map.include({
 	_newLayerPointToLatLng: function(point, newZoom, newCenter) {
 		var topLeft = L.Map.prototype._getNewTopLeftPoint.call(this, newCenter, newZoom)
@@ -442,15 +455,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       0, h, c[2].x, c[2].y,
       w, h, c[3].x, c[3].y
     );
-  },
-
-  _getCmPerPixel: function() {
-    var map = this._map;
-
-    var dist = map.latLngToLayerPoint(this.getCorner(0))
-      .distanceTo(map.latLngToLayerPoint(this.getCorner(1)));
-    
-    return (dist * 100) / this._image.width;
   }
 
 });
@@ -570,7 +574,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
           id: this.getLayerId(layer),
           src: layer._image.src,
           nodes: layer.getCorners(),
-          cm_per_pixel: layer._getCmPerPixel()
+          cm_per_pixel: L.ImageUtil.getCmPerPixel(layer)
         });
       }
     }, this);
@@ -1354,6 +1358,8 @@ L.DistortableImage.Edit = L.Handler.extend({
       3: L.point(0, 0)
     };
 
+    // this._restore();
+
     L.DomEvent.on(map, "click", this._deselect, this);
     L.DomEvent.on(overlay._image, "click", this._select, this);
 
@@ -1464,7 +1470,7 @@ L.DistortableImage.Edit = L.Handler.extend({
         Math.cos(angle) * p.x - Math.sin(angle) * p.y,
         Math.sin(angle) * p.x + Math.cos(angle) * p.y
       );
-      overlay._corners[i] = map.layerPointToLatLng(q.add(center));
+      overlay._updateCorner(i, map.layerPointToLatLng(q.add(center)));
     }
 
     window.angle = L.TrigUtil.radiansToDegrees(angle);
@@ -1478,7 +1484,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     var overlay = this._overlay;
     var angle = overlay.rotation;
     var map = overlay._map;
-    var center = map.latLngToContainerPoint(overlay.getCenter());
+    var center = map.latLngToLayerPoint(overlay.getCenter());
     var offset = overlay._initialDimensions.offset;
 
     var corners = { 
@@ -1510,11 +1516,11 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     for (i = 0; i < 4; i++) {
       p = map
-        .latLngToLayerPoint(overlay._corners[i])
+        .latLngToLayerPoint(overlay.getCorner(i))
         .subtract(center)
         .multiplyBy(scale)
         .add(center);
-      overlay._corners[i] = map.layerPointToLatLng(p);
+      overlay._updateCorner(i, map.layerPointToLatLng(p));
     }
 
     overlay._reset();
@@ -1860,7 +1866,10 @@ L.DistortableImageOverlay.addInitHook(function() {
   this.editing = new L.DistortableImage.Edit(this);
 
   if (this.options.editable) {
-    L.DomEvent.on(this._image, "load", this.editing.enable, this.editing);
+    L.DomEvent.on(this._image, "load", function() {
+      this.editing.enable();
+      this.editing._restore();
+    }, this.editing);
   }
 
 	this.on('remove', function () {

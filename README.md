@@ -233,6 +233,12 @@ For multiple images, the `ToggleOrder` action switches overlapping images back a
 
 - `getCenter()` - Calculates the centroid of the image
 
+## Quick API Reference
+
+- [`getCorners()`](corners) and [`getCorner(idx)`](corners)
+
+- `getCenter()` - Calculates the centroid of the image
+
 ## Corners
 
 The corners are stored as `L.latLng` objects
