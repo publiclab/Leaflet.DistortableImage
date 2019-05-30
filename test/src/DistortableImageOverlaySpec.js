@@ -16,10 +16,10 @@ describe("L.DistortableImageOverlay", function() {
 
 		distortable = new L.DistortableImageOverlay('/examples/example.jpg', {
 			corners: [
-				new L.LatLng(41.7934, -87.6052),
-				new L.LatLng(41.7934, -87.5852),
-				new L.LatLng(41.7834, -87.5852),
-				new L.LatLng(41.7834, -87.6052)
+				L.latLng(41.7934, -87.6052),
+				L.latLng(41.7934, -87.5852),
+				L.latLng(41.7834, -87.5852),
+				L.latLng(41.7834, -87.6052)
 			]
 		});
 	});
