@@ -885,13 +885,14 @@ L.EditHandle = L.Marker.extend({
 
  /* Takes two latlngs and calculates the scaling difference. */
   _calculateScalingFactor: function(latlngA, latlngB) {
-    var map = this._handled._map,
-      centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
-      formerPoint = map.latLngToLayerPoint(latlngA),
-      newPoint = map.latLngToLayerPoint(latlngB),
+     var overlay = this._handled,
+       map = overlay._map,
 
-      formerRadiusSquared = this._d2(centerPoint, formerPoint),
-      newRadiusSquared = this._d2(centerPoint, newPoint);
+       centerPoint = map.latLngToLayerPoint(overlay.getCenter()),
+       formerPoint = map.latLngToLayerPoint(latlngA),
+       newPoint = map.latLngToLayerPoint(latlngB),
+       formerRadiusSquared = this._d2(centerPoint, formerPoint),
+       newRadiusSquared = this._d2(centerPoint, newPoint);
 
     return Math.sqrt(newRadiusSquared / formerRadiusSquared);
   },
@@ -905,10 +906,11 @@ L.EditHandle = L.Marker.extend({
   },
 
  /* Takes two latlngs and calculates the angle between them. */
-	_calculateAngle: function(latlngA, latlngB) {
-		var map = this._handled._map,
+	calculateAngleDelta: function(latlngA, latlngB) {
+    var overlay = this._handled,
+      map = overlay._map,
 
-			centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
+			centerPoint = map.latLngToLayerPoint(overlay.getCenter()),
 			formerPoint = map.latLngToLayerPoint(latlngA),
 			newPoint = map.latLngToLayerPoint(latlngB),
 
@@ -975,10 +977,10 @@ L.RotateScaleHandle = L.EditHandle.extend({
 
 	_onHandleDrag: function() {
 		var overlay = this._handled,
-			formerLatLng = this._handled._corners[this._corner],
+			formerLatLng = overlay._corners[this._corner],
 			newLatLng = this.getLatLng(),
 
-			angle = this._calculateAngle(formerLatLng, newLatLng),
+			angle = this.calculateAngleDelta(formerLatLng, newLatLng),
 			scale = this._calculateScalingFactor(formerLatLng, newLatLng);
 		
 		if (angle !== 0) { overlay.editing._rotateBy(angle); }
@@ -998,7 +1000,7 @@ L.RotateScaleHandle = L.EditHandle.extend({
 
 		overlay.fire('update');
 
-		this._handled.editing._showToolbar();
+		overlay.editing._showToolbar();
 
 	},
 
@@ -1020,15 +1022,15 @@ L.RotateHandle = L.EditHandle.extend({
 	
 	_onHandleDrag: function() {
 		var overlay = this._handled,
-			formerLatLng = this._handled._corners[this._corner],
+			formerLatLng = overlay._corners[this._corner],
 			newLatLng = this.getLatLng(),
-			angle = this._calculateAngle(formerLatLng, newLatLng);
+			angle = this.calculateAngleDelta(formerLatLng, newLatLng);
 
 	 	if (angle !== 0) { overlay.editing._rotateBy(angle); }
 
 		overlay.fire('update');
 
-		this._handled.editing._showToolbar();
+		overlay.editing._showToolbar();
 	},
 
 	updateHandle: function() {
@@ -1049,7 +1051,7 @@ L.ScaleHandle = L.EditHandle.extend({
 
 	_onHandleDrag: function() {
 		var overlay = this._handled,
-			formerLatLng = this._handled._corners[this._corner],
+			formerLatLng = overlay._corners[this._corner],
 			newLatLng = this.getLatLng(),
 
 			scale = this._calculateScalingFactor(formerLatLng, newLatLng);
@@ -1058,7 +1060,7 @@ L.ScaleHandle = L.EditHandle.extend({
 
 		overlay.fire('update');
 
-		this._handled.editing._showToolbar();
+		overlay.editing._showToolbar();
 	},
 
 	updateHandle: function() {

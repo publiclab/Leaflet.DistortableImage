@@ -22,7 +22,7 @@ describe("L.ScaleHandle", function() {
 
 	describe("_calculateScalingFactor", function() {
 		it("Should return 1 when given the same latlng twice.", function() {
-			var latlng = distortable._corners[0],
+			var latlng = distortable.getCorner(0),
 				scale = scaleHandle._calculateScalingFactor(latlng, latlng);
 
 			expect(scale).to.equal(1);
