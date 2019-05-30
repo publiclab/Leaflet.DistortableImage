@@ -7,19 +7,18 @@ assignees: ''
 
 ---
 
-<!--
-After this comment box, please fill in as much of the below template as you can. 
-
-*Suggested prompts to describe the issue*:
-> What happened vs. what did you expect to happen?
-> Steps to reproduce the behavior (ex. 1. Go to... 2. Click on... 3. See error...).
-> Please consider providing any applicable: code, screenshots, or gifs.
+<!-- 
+Please fill out as much of the below template as you can.
+Consider providing any applicable: code, screenshots, or gifs.
 -->
+
 <!-- Start below this comment. -->
 
 **Describe the bug:**
+What happened vs. what did you expect to happen?
 
-
+**Reproduce the behavior:**
+ Steps to reproduce the behavior. (ex. 1. Go to... 2. Click on... 3. See error...)
 
 **Browser, version, and operating system:**
 
@@ -28,6 +27,7 @@ After this comment box, please fill in as much of the below template as you can.
  - Platform: [e.g. iOS, windows] - 
 
 <!-- End. -->
+
 <!--
 Thank you! Your help makes Public Lab better. We *deeply* appreciate your helping refine and improve Leaflet.DistortableImage.
 

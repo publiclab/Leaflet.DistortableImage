@@ -8,6 +8,7 @@ assignees: ''
 ---
 
 <!-- Please fill out as much of the template as you can -->
+
 <!-- Start below this comment. -->
 
 **Scope**:
@@ -19,6 +20,7 @@ Feel free to include any applicable: code, screenshots, or gifs.
 
 
 <!-- End. -->
+
 <!--
 Thank you! Your help makes Public Lab better. We *deeply* appreciate your helping refine and improve Leaflet.DistortableImage.
 
