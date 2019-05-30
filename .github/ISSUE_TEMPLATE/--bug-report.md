@@ -16,7 +16,7 @@ After this comment box, please fill in as much of the template below as you can.
 
 > Steps to reproduce the behavior (ex. 1. Go to... 2. Click on... 3. Scroll down to... 4. See error...)
 > If possible, please provide code that demonstrates the problem
-> If applicable, add screenshots
+> If applicable, add screenshots / gifs
 -->
 
 <!-- Start below this comment. -->
