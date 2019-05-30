@@ -7,31 +7,21 @@ assignees: ''
 
 ---
 
-<!--
-After this comment box, please describe the feature. 
-
-*Suggested prompts*:
-> What do you want to happen? (ex. I'd love to see [...])
-> Is your feature request related to a problem? (ex. I'm always frustrated when [...])
-> Any implementation ideas, or alternative solutions / features you've considered.
--->
-
+<!-- Please fill out as much of the template as you can -->
 <!-- Start below this comment. -->
 
-**Describe the idea:**
+**Please describe the desired behavior.**
+Describe the solution you'd like.
 
 
-**Additional context (optional):**
-
+**Additional context (optional)**
 Feel free to include any applicable: code, screenshots, or gifs.
 
 
 <!-- End. -->
-
-## Thank you!
-
-Your help makes Public Lab better! We *deeply* appreciate your helping refine and improve this site. 
+<!--
+Thank you! Your help makes Public Lab better. We *deeply* appreciate your helping refine and improve Leaflet.DistortableImage.
 
 To learn how to write really great issues, which increases the chances they'll be resolved, see:
-
 https://publiclab.org/wiki/developers#Contributing+for+non-coders
+-->
