@@ -27,9 +27,9 @@ After this comment box, please fill in as much of the template below as you can.
 
 **Browser, version, and operating system:**
 
- - Platform: [e.g. iOS] - 
  - Browser [e.g. chrome, safari] -
  - Version [e.g. 22] -
+ - Platform: [e.g. iOS, windows] - 
 
 <!-- End. -->
 
