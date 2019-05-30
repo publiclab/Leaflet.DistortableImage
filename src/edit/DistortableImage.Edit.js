@@ -193,10 +193,10 @@ L.DistortableImage.Edit = L.Handler.extend({
     var offset = overlay._initialDimensions.offset;
 
     var corners = { 
-      0: map.containerPointToLatLng(center.subtract(offset)),
-      1: map.containerPointToLatLng(center.add(new L.Point(offset.x, -offset.y))),
-      2: map.containerPointToLatLng(center.add(new L.Point(-offset.x, offset.y))),
-      3: map.containerPointToLatLng(center.add(offset))
+      0: map.layerPointToLatLng(center.subtract(offset)),
+      1: map.layerPointToLatLng(center.add(new L.Point(offset.x, -offset.y))),
+      2: map.layerPointToLatLng(center.add(new L.Point(-offset.x, offset.y))),
+      3: map.layerPointToLatLng(center.add(offset))
     };
 
     map.removeLayer(this._handles[this._mode]);
