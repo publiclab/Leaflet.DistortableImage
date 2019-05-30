@@ -8,12 +8,12 @@ assignees: ''
 ---
 
 <!--
-After this comment box, please fill in as much of the template below as you can. 
+After this comment box, please fill in as much of the below template as you can. 
 
 *Suggested prompts to describe the issue*:
 > What happened vs. what did you expect to happen?
-> Steps to reproduce the behavior (ex. 1. Go to... 2. Click on... 3. See error...)
-> Please consider providing any applicable: code, screenshots, or gifs
+> Steps to reproduce the behavior (ex. 1. Go to... 2. Click on... 3. See error...).
+> Please consider providing any applicable: code, screenshots, or gifs.
 -->
 
 <!-- Start below this comment. -->
