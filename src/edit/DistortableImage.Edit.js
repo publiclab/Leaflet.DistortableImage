@@ -63,8 +63,6 @@ L.DistortableImage.Edit = L.Handler.extend({
       3: L.point(0, 0)
     };
 
-    // this._restore();
-
     L.DomEvent.on(map, "click", this._deselect, this);
     L.DomEvent.on(overlay._image, "click", this._select, this);
 
@@ -178,7 +176,7 @@ L.DistortableImage.Edit = L.Handler.extend({
       overlay._updateCorner(i, map.layerPointToLatLng(q.add(center)));
     }
 
-    window.angle = L.TrigUtil.radiansToDegrees(angle);
+    // window.angle = L.TrigUtil.radiansToDegrees(angle);
 
     this._overlay.rotation -= L.TrigUtil.radiansToDegrees(angle);
 
@@ -508,10 +506,10 @@ L.DistortableImage.Edit = L.Handler.extend({
     downloadable.onload = function onLoadDownloadableImage() {
       var height = downloadable.height,
         width = downloadable.width,
-        nw = map.latLngToLayerPoint(overlay._corners[0]),
-        ne = map.latLngToLayerPoint(overlay._corners[1]),
-        sw = map.latLngToLayerPoint(overlay._corners[2]),
-        se = map.latLngToLayerPoint(overlay._corners[3]);
+        nw = map.latLngToLayerPoint(overlay.getCorner(0)),
+        ne = map.latLngToLayerPoint(overlay.getCorner(1)),
+        sw = map.latLngToLayerPoint(overlay.getCorner(2)),
+        se = map.latLngToLayerPoint(overlay.getCorner(3));
 
       // I think this is to move the image to the upper left corner,
       // jywarren: i think we may need these or the image goes off the edge of the canvas
@@ -571,10 +569,7 @@ L.DistortableImageOverlay.addInitHook(function() {
   this.editing = new L.DistortableImage.Edit(this);
 
   if (this.options.editable) {
-    L.DomEvent.on(this._image, "load", function() {
-      this.editing.enable();
-      this.editing._restore();
-    }, this.editing);
+    L.DomEvent.on(this._image, "load", this.editing.enable, this.editing);
   }
 
 	this.on('remove', function () {
