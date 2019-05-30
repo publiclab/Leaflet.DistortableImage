@@ -176,10 +176,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this.edgeMinWidth = this.options.edgeMinWidth;
     this._url = url;
     this.rotation = 0;
-    window.rotation = this.rotation;
+    // window.rotation = this.rotation;
     L.DistortableImage._options = options;
 
-    L.Util.setOptions(this, options);
+    L.setOptions(this, options);
   },
 
   onAdd: function(map) {
