@@ -1310,29 +1310,29 @@ L.DistortableImage.Edit = L.Handler.extend({
     var overlay = this._overlay,
     i;
 
-    this._lockHandles = new L.LayerGroup();
+    this._lockHandles = L.layerGroup();
     for (i = 0; i < 4; i++) {
       this._lockHandles.addLayer(
         new L.LockHandle(overlay, i, { draggable: false })
       );
     }
 
-    this._distortHandles = new L.LayerGroup();
+    this._distortHandles = L.layerGroup();
     for (i = 0; i < 4; i++) {
       this._distortHandles.addLayer(new L.DistortHandle(overlay, i));
     }
 
-    this._rotateHandles = new L.LayerGroup(); // individual rotate
+    this._rotateHandles = L.layerGroup(); // individual rotate
     for (i = 0; i < 4; i++) {
       this._rotateHandles.addLayer(new L.RotateHandle(overlay, i));
     }
 
-    this._scaleHandles = new L.LayerGroup();
+    this._scaleHandles = L.layerGroup();
     for (i = 0; i < 4; i++) {
       this._scaleHandles.addLayer(new L.ScaleHandle(overlay, i));
     }
 
-    this._rotateScaleHandles = new L.LayerGroup(); // handle includes rotate AND scale
+    this._rotateScaleHandles = L.layerGroup(); // handle includes rotate AND scale
     for (i = 0; i < 4; i++) {
       this._rotateScaleHandles.addLayer(new L.RotateScaleHandle(overlay, i));
     }
