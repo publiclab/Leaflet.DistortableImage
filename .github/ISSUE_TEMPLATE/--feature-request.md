@@ -21,7 +21,8 @@ After this comment box, please describe the feature.
 **Describe the idea:**
 
 
-**Additional context (optional)**
+**Additional context (optional):**
+
 Feel free to include any applicable: code, screenshots, or gifs.
 
 
