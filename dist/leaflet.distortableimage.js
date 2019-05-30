@@ -606,6 +606,15 @@ L.DistortableCollection = L.FeatureGroup.extend({
     });
   },
 
+  _startExport: function () {
+    $.ajax({
+      url: "http://export.mapknitter.org/export?url=https://mapknitter.org/maps/ceres--2/warpables.json&scale=30",
+      crossDomain: true
+    }).done(function(data) {
+      console.log(data);
+    });
+  },
+
   _onKeyDown: function(e) {
     if (e.key === "Escape") {
       this._deselectAll(e);
