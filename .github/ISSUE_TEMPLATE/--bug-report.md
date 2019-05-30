@@ -21,11 +21,11 @@ After this comment box, please fill in as much of the template below as you can.
 
 <!-- Start below this comment. -->
 
-**Describe the bug**
+**Describe the bug:**
 
 
 
-**Browser, version, and operating system**
+**Browser, version, and operating system:**
 
  - Platform: [e.g. iOS] - 
  - Browser [e.g. chrome, safari] -
