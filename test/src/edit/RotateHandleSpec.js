@@ -22,7 +22,7 @@ describe("L.RotateHandle", function() {
 
 	describe("_calculateRotation", function() {
 		it("Should return 0 when given the same latlng twice.", function() {
-			var latlng = distortable._corners[0],
+			var latlng = distortable.getCorner(0),
 				angle = rotateHandle.calculateAngleDelta(latlng, latlng);
 
 			expect(angle).to.equal(0);

@@ -35,7 +35,7 @@ describe("L.RotateScaleHandle", function() {
 
 	describe("_calculateScalingFactor", function() {
 		it("Should return 1 when given the same latlng twice.", function() {
-			var latlng = distortable._corners[0],
+			var latlng = distortable.getCorner(0),
 				scale = rotateHandle._calculateScalingFactor(latlng, latlng);
 
 			expect(scale).to.equal(1);
