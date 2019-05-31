@@ -1,8 +1,8 @@
 ---
-name: "\U0001F4D6Help with Leaflet.DistortableImage"
+name: "\U0001F4D6 Help with Leaflet.DistortableImage"
 about: File a question
 title: ''
-labels: documentation
+labels: discussion, help-wanted
 assignees: ''
 
 ---
@@ -10,6 +10,7 @@ assignees: ''
 <!-- Please fill out as much of the template as you can -->
 
 <!-- Start below this comment. -->
+
 
 **Scope**:
 API, documentation, installation, code, meta, other?
