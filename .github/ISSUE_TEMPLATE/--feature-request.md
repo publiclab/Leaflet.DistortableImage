@@ -1,8 +1,8 @@
 ---
-name: "\U0001F9E8Feature request"
+name: "\U0001F9E8 Feature request"
 about: Suggest an idea for this project
 title: ''
-labels: discussion
+labels: feature
 assignees: ''
 
 ---
@@ -10,6 +10,7 @@ assignees: ''
 <!-- Please fill out as much of the template as you can -->
 
 <!-- Start below this comment. -->
+
 
 **Please describe the desired behavior.**
 Describe the solution you'd like.
