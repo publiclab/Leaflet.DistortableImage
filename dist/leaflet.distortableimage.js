@@ -578,6 +578,19 @@ L.DistortableCollection = L.FeatureGroup.extend({
     });
   },
 
+  _startExport2: function () {
+    $.ajax("http://export.mapknitter.org/export", {
+      type: 'POST',
+      data: { 
+        collections: this._generateExportJson(),
+        scale: 30
+      },
+      crossDomain: true
+    }).done(function(data) {
+      console.log(data);
+    });
+  },
+
   _onKeyDown: function(e) {
     if (e.key === "Escape") {
       this._deselectAll(e);
