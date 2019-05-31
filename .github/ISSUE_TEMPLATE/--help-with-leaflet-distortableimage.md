@@ -2,7 +2,6 @@
 name: "\U0001F4D6 Help with Leaflet.DistortableImage"
 about: File a question
 title: ''
-labels: discussion, help-wanted
 assignees: ''
 
 ---
