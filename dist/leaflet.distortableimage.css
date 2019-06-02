@@ -89,3 +89,13 @@ span {
   letter-spacing: 1.2px;
 }
 
+.material-icons.md-dark { color: rgba(0, 0, 0, 0.54); }
+.material-icons.red { color: #c10d0d; }
+
+.material-icons.md-18, .material-icons-outlined.md-18  { 
+  font-size: 18px; 
+  line-height: inherit;
+}
+
+
+
