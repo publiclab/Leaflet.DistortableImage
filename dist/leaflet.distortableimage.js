@@ -1109,8 +1109,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 			options = options || {};
 			options.toolbarIcon = {
 				html: '<span class="fa fa-' + icon + '"></span>',
-				tooltip: edit._mode === 'rotateScale' ? 'RotateScale' : 'Distort',
-				title: 'RotateScale'
+				tooltip: edit._mode === 'rotateScale' ? 'Rotate+Scale' : 'Distort',
 			};
 
 			EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
@@ -1778,8 +1777,8 @@ L.DistortableImage.Keymapper = L.Control.extend({
                 "<tr><td><kbd>s</kbd>: <span>Scale</span></td></tr>" +
                 "<tr><td><kbd>d</kbd>: <span>Distort</span> </td></tr>" +
                 "<tr><td><kbd>r</kbd>: <span>Rotate+Scale</span> </td></tr>" +
-                "<tr><td><kbd>esc</kbd>: <span>Deselect All</span></td></tr>" +
                 "<tr><td><kbd>j</kbd>, <kbd>k</kbd>: <span>Send up / down</span></td></tr>" +
+                "<tr><td><kbd>esc</kbd>: <span>Deselect All</span></td></tr>" +
             "</tbody></table>";
         return el_wrapper;
     }

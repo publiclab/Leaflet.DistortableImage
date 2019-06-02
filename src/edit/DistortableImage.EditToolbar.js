@@ -77,8 +77,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 			options = options || {};
 			options.toolbarIcon = {
 				html: '<span class="fa fa-' + icon + '"></span>',
-				tooltip: edit._mode === 'rotateScale' ? 'RotateScale' : 'Distort',
-				title: 'RotateScale'
+				tooltip: edit._mode === 'rotateScale' ? 'Rotate+Scale' : 'Distort',
 			};
 
 			EditOverlayAction.prototype.initialize.call(this, map, overlay, options);

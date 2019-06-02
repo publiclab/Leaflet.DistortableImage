@@ -18,8 +18,8 @@ L.DistortableImage.Keymapper = L.Control.extend({
                 "<tr><td><kbd>s</kbd>: <span>Scale</span></td></tr>" +
                 "<tr><td><kbd>d</kbd>: <span>Distort</span> </td></tr>" +
                 "<tr><td><kbd>r</kbd>: <span>Rotate+Scale</span> </td></tr>" +
-                "<tr><td><kbd>esc</kbd>: <span>Deselect All</span></td></tr>" +
                 "<tr><td><kbd>j</kbd>, <kbd>k</kbd>: <span>Send up / down</span></td></tr>" +
+                "<tr><td><kbd>esc</kbd>: <span>Deselect All</span></td></tr>" +
             "</tbody></table>";
         return el_wrapper;
     }
