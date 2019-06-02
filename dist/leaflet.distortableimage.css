@@ -84,11 +84,6 @@ kbd {
   text-shadow: 0 0.5px 0 #fff;
 }
 
-span {
-  margin-left: 2px;
-  letter-spacing: 1.2px;
-}
-
 .material-icons.md-dark { color: rgba(0, 0, 0, 0.54); }
 .material-icons.red { color: #c10d0d; }
 
@@ -96,6 +91,3 @@ span {
   font-size: 18px; 
   line-height: inherit;
 }
-
-
-
