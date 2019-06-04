@@ -1,5 +1,4 @@
 L.DistortableCollection = L.FeatureGroup.extend({
-
   onAdd: function(map) {
     L.FeatureGroup.prototype.onAdd.call(this, map);
 
@@ -22,14 +21,15 @@ L.DistortableCollection = L.FeatureGroup.extend({
       L.DomEvent.on(layer, "dragstart", this._dragStartMultiple, this);
       L.DomEvent.on(layer, "drag", this._dragMultiple, this);
 
-      if (layer.options.selected) { 
+      if (layer.options.selected) {
         layer.editing._deselect();
         lastSelected = layer.editing;
-     }
+      }
     }, this);
 
-    if (lastSelected) { lastSelected._select(); }
-
+    if (lastSelected) {
+      lastSelected._select();
+    }
   },
 
   onRemove: function() {
@@ -51,7 +51,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   _toggleMultiSelect: function(event, edit) {
-    if (edit._mode === "lock") { return; }
+    if (edit._mode === "lock") {
+      return;
+    }
 
     if (event.metaKey || event.ctrlKey) {
       L.DomUtil.toggleClass(event.target, "selected");
@@ -102,7 +104,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     this.eachLayer(function(layer) {
       if (this.isSelected(layer)) {
-        json.images.push({ 
+        json.images.push({
           id: this.getLayerId(layer),
           src: layer._image.src,
           nodes: layer.getCorners(),
@@ -113,35 +115,39 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     json.avg_cm_per_pixel = this._getAvgCmPerPixel(json.images);
 
+    // var collection = JSON.stringify(json);
+
+    // this._getExportUrl(collection);
+
     return JSON.stringify(json);
   },
 
-  _startExport: function () {
+  _getExportUrl: function() {
+    // var collection = this._generateExportJson();
     $.ajax({
-      url: "https://storage.googleapis.com/mapknitter-exports-warps/1559178763/status.json",
-      crossDomain: true
-    }).done(function(data) {
-      console.log(data);
-    });
-  },
-
-  _startExport2: function () {
-    $.ajax("http://export.mapknitter.org/export", {
-      type: 'POST',
-      data: { 
-        collections: this._generateExportJson(),
-        scale: 30
-      },
-      crossDomain: true
-    }).done(function(data) {
-      console.log(data);
+      url:
+        "http://export.mapknitter.org/export?url=https://mapknitter.org/maps/ceres--2/warpables.json&scale=30",
+      crossDomain: true,
+      success: function _startExport(data) {
+        console.log(data);
+        $.ajax("http://export.mapknitter.org" + data, {
+          type: "GET",
+          // data: {
+          //   collections: collection,
+          //   scale: 30
+          // },
+          crossDomain: true
+        }).done(function(data) {
+          console.log(data);
+        });
+      }, 
     });
   },
 
   _onKeyDown: function(e) {
     if (e.key === "Escape") {
       this._deselectAll(e);
-    } 
+    }
     if (e.key === "Backspace") {
       this._removeFromGroup(e);
     }
@@ -151,7 +157,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var overlay = event.target,
       i;
 
-    if (!this.isSelected(overlay)) { return; }
+    if (!this.isSelected(overlay)) {
+      return;
+    }
 
     this.eachLayer(function(layer) {
       var edit = layer.editing;
@@ -170,7 +178,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
       map = this._map,
       i;
 
-    if (!this.isSelected(overlay)) { return; }
+    if (!this.isSelected(overlay)) {
+      return;
+    }
 
     overlay._dragPoints = {};
 
@@ -198,9 +208,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
       var edit = layer.editing;
       if (edit._selected && edit._mode !== "lock") {
         var choice = edit.confirmDelete();
-        if (choice) { 
+        if (choice) {
           edit._selected = false;
-          this.removeLayer(layer); 
+          this.removeLayer(layer);
         } else {
           L.DomEvent.stopPropagation(e);
           return;
