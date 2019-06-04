@@ -176,7 +176,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
     options: {
       toolbarIcon: {
         html: '<i class="material-icons-outlined md-18">explore</i>',
-        tooltip: 'Geocode Image'
+        tooltip: 'Geolocate Image'
       }
     },
 
