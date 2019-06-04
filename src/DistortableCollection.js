@@ -51,7 +51,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   _toggleMultiSelect: function(event, edit) {
-    if (edit._mode === "lock") { return; }
+    if (edit._mode === "lock") {
+      return;
+    }
 
     if (event.metaKey || event.ctrlKey) {
       L.DomUtil.toggleClass(event.target, "selected");
@@ -113,50 +115,32 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     json.avg_cm_per_pixel = this._getAvgCmPerPixel(json.images);
 
-    return json;
+    // var collection = JSON.stringify(json);
+
+    // this._getExportUrl(collection);
+
+    return JSON.stringify(json);
   },
 
-  _runExport: function(collection) {
-    collection = collection || this._generateExportJson();
+  _getExportUrl: function() {
+    // var collection = this._generateExportJson();
     $.ajax({
-      url: "http://export.mapknitter.org/export",
+      url:
+        "http://export.mapknitter.org/export?url=https://mapknitter.org/maps/ceres--2/warpables.json&scale=30",
       crossDomain: true,
-      type: "POST",
-      data: {
-        collection: JSON.stringify(collection.images),
-        scale: 30
-      },
-      success: function _getStatusJson(data) {
+      success: function _startExport(data) {
         console.log(data);
         $.ajax("http://export.mapknitter.org" + data, {
           type: "GET",
+          // data: {
+          //   collections: collection,
+          //   scale: 30
+          // },
           crossDomain: true
         }).done(function(data) {
           console.log(data);
         });
-      }
-    });
-  },
-
-  _startExport: function () {
-    $.ajax({
-      url: "https://storage.googleapis.com/mapknitter-exports-warps/1559178763/status.json",
-      crossDomain: true
-    }).done(function(data) {
-      console.log(data);
-    });
-  },
-
-  _startExport2: function () {
-    $.ajax("http://export.mapknitter.org/export", {
-      type: 'POST',
-      data: { 
-        collections: this._generateExportJson(),
-        scale: 30
-      },
-      crossDomain: true
-    }).done(function(data) {
-      console.log(data);
+      }, 
     });
   },
 
@@ -173,7 +157,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var overlay = event.target,
       i;
 
-    if (!this.isSelected(overlay)) { return; }
+    if (!this.isSelected(overlay)) {
+      return;
+    }
 
     this.eachLayer(function(layer) {
       var edit = layer.editing;
@@ -192,7 +178,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
       map = this._map,
       i;
 
-    if (!this.isSelected(overlay)) { return; }
+    if (!this.isSelected(overlay)) {
+      return;
+    }
 
     overlay._dragPoints = {};
 
