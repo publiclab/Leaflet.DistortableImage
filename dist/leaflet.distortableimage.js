@@ -1176,12 +1176,21 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
   ToggleOrder = EditOverlayAction.extend({
     initialize: function(map, overlay, options) {
       var edit = overlay.editing,
-        icon = edit._toggledImage ? 'flip_to_front' : 'flip_to_back';
+        icon,
+        tooltip;
+
+        if (edit._toggledImage) {
+          icon = 'flip_to_front';
+          tooltip = 'Stack to front';
+        } else {
+          icon = 'flip_to_back';
+          tooltip = 'Stack to back';
+        }
 
       options = options || {};
       options.toolbarIcon = {
         html: '<i class="material-icons md-18">' + icon + '</i>',
-        tooltip: 'Toggle Stacking Order'
+        tooltip: tooltip
       };
 
       EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
