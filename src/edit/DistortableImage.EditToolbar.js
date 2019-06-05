@@ -144,9 +144,8 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
   }
   });
 
-L.DistortableImage.EditToolbar = LeafletToolbar.Control.extend({
+L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
 	options: {
-		position:'topleft',
 		actions: [
 			ToggleTransparency,
 			RemoveOverlay,
