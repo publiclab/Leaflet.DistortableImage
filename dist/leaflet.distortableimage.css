@@ -5,18 +5,6 @@
   overflow: clip;
 }
 
-.l-container {
-  background-color: rgb(255, 255, 255, 0.75);
-  color: black;
-  padding: 0px 10px 6px 10px;
-  font-size: 14px;
-}
-
-.l-container table th{
-  font-size: 16px;
-  padding-top: 8px;
-}
-
 #imgdistort {
   position: absolute;
   top: 0px;
