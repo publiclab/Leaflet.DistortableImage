@@ -579,7 +579,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     // var collection = this._generateExportJson();
     $.ajax({
       url:
-        "http://export.mapknitter.org/export?url=https://mapknitter.org/maps/ceres--2/warpables.json&scale=30",
+        "http://export.mapknitter.org/export?url=https://mapknitter.org/maps/pvdtest/warpables.json&scale=30",
       crossDomain: true,
       success: function _startExport(data) {
         console.log(data);
