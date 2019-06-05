@@ -20,12 +20,7 @@ describe("L.DistortableImage.Edit", function() {
 		afterEach(function () {
 			L.DomUtil.remove(overlay);
 		});
-		
 	});
-
-	afterEach(function () {
-      L.DomUtil.remove(overlay);
-    });
 
 	it("Should be initialized along with each instance of L.DistortableImageOverlay.", function() {
 		expect(overlay.editing).to.be.an.instanceOf(L.DistortableImage.Edit);

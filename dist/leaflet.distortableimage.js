@@ -1267,7 +1267,6 @@ L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
 });
 
 L.DistortableImage = L.DistortableImage || {};
-// L.DistortableImage.Guides = L.DistortableImage.Guides || {};
 
 L.DistortableImage.Edit = L.Handler.extend({
   options: {
