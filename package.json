@@ -48,7 +48,7 @@
     "karma-mocha-reporter": "^2.2.5",
     "karma-phantomjs-launcher": "^1.0.4",
     "leaflet": "^1.0.0",
-    "leaflet-toolbar": "^0.3.0",
+    "leaflet-toolbar": "git+https://github.com/Leaflet/Leaflet.toolbar.git",
     "matchdep": "^2.0.0",
     "mocha": "^6.0.0",
     "phantomjs-prebuilt": "^2.1.16",
