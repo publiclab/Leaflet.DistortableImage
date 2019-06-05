@@ -1,11 +1,11 @@
 L.DistortableImage = L.DistortableImage || {};
 
-var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
+var EditOverlayAction = L.Toolbar2.Action.extend({
 		initialize: function(map, overlay, options) {
 			this._overlay = overlay;
 			this._map = map;
 
-			LeafletToolbar.ToolbarAction.prototype.initialize.call(this, options);
+			L.Toolbar2.Action.prototype.initialize.call(this, options);
 		}
 	}),
 
@@ -144,39 +144,38 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
   }
   });
 
-L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
-	options: {
-		actions: [
-			ToggleTransparency,
-			RemoveOverlay,
-			ToggleOutline,
-			ToggleEditable,
-			ToggleRotateScale,
-			ToggleExport,
-			EnableEXIF,
-			ToggleOrder
-		]
-	},
+L.DistortableImage.EditToolbar = L.Toolbar2.Popup.extend({
+  options: {
+    actions: [
+      ToggleTransparency,
+      RemoveOverlay,
+      ToggleOutline,
+      ToggleEditable,
+      ToggleRotateScale,
+      ToggleExport,
+      EnableEXIF,
+      ToggleOrder
+    ]
+  },
 
-	// todo: move to some sort of util class, these methods could be useful in future
-	_rotateToolbarAngleDeg: function (angle) {
-		var div = this._container,
-			divStyle = div.style;
+  // todo: move to some sort of util class, these methods could be useful in future
+  _rotateToolbarAngleDeg: function(angle) {
+    var div = this._container,
+      divStyle = div.style;
 
-		var oldTransform = divStyle.transform;
+    var oldTransform = divStyle.transform;
 
-		divStyle.transform = oldTransform + "rotate(" + angle + "deg)";
-		divStyle.transformOrigin = "1080% 650%";
+    divStyle.transform = oldTransform + "rotate(" + angle + "deg)";
+    divStyle.transformOrigin = "1080% 650%";
 
-		this._rotateToolbarIcons(angle);
-	},
+    this._rotateToolbarIcons(angle);
+  },
 
-	_rotateToolbarIcons: function (angle) {
-		var icons = document.querySelectorAll(".fa");
+  _rotateToolbarIcons: function(angle) {
+    var icons = document.querySelectorAll(".fa");
 
-		for (var i = 0; i < icons.length; i++) {
-			icons.item(i).style.transform = "rotate(" + -angle + "deg)";
-		}
-	},
-
+    for (var i = 0; i < icons.length; i++) {
+      icons.item(i).style.transform = "rotate(" + -angle + "deg)";
+    }
+  }
 });
