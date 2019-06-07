@@ -232,7 +232,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       imageHeight = this.options.height,
       imageWidth = parseInt(aspectRatio * imageHeight),
       center = map.latLngToContainerPoint(map.getCenter()),
-      offset = new L.Point(imageWidth, imageHeight).divideBy(2);
+      offset = L.point(imageWidth, imageHeight).divideBy(2);
 
     if (this.options.corners) {
       this._corners = this.options.corners;
@@ -240,10 +240,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       this._corners = [
         map.containerPointToLatLng(center.subtract(offset)),
         map.containerPointToLatLng(
-          center.add(new L.Point(offset.x, -offset.y))
+          center.add(L.point(offset.x, -offset.y))
         ),
         map.containerPointToLatLng(
-          center.add(new L.Point(-offset.x, offset.y))
+          center.add(L.point(-offset.x, offset.y))
         ),
         map.containerPointToLatLng(center.add(offset))
       ];
@@ -1272,10 +1272,10 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (this._selected) { this._initToolbar(); }
 
     this._overlay._dragStartPoints = {
-      0: new L.point(0, 0),
-      1: new L.point(0, 0),
-      2: new L.point(0, 0),
-      3: new L.point(0, 0)
+      0: L.point(0, 0),
+      1: L.point(0, 0),
+      2: L.point(0, 0),
+      3: L.point(0, 0)
     };
 
     L.DomEvent.on(map, "click", this._deselect, this);
@@ -1310,29 +1310,29 @@ L.DistortableImage.Edit = L.Handler.extend({
     var overlay = this._overlay,
     i;
 
-    this._lockHandles = new L.LayerGroup();
+    this._lockHandles = L.layerGroup();
     for (i = 0; i < 4; i++) {
       this._lockHandles.addLayer(
         new L.LockHandle(overlay, i, { draggable: false })
       );
     }
 
-    this._distortHandles = new L.LayerGroup();
+    this._distortHandles = L.layerGroup();
     for (i = 0; i < 4; i++) {
       this._distortHandles.addLayer(new L.DistortHandle(overlay, i));
     }
 
-    this._rotateHandles = new L.LayerGroup(); // individual rotate
+    this._rotateHandles = L.layerGroup(); // individual rotate
     for (i = 0; i < 4; i++) {
       this._rotateHandles.addLayer(new L.RotateHandle(overlay, i));
     }
 
-    this._scaleHandles = new L.LayerGroup();
+    this._scaleHandles = L.layerGroup();
     for (i = 0; i < 4; i++) {
       this._scaleHandles.addLayer(new L.ScaleHandle(overlay, i));
     }
 
-    this._rotateScaleHandles = new L.LayerGroup(); // handle includes rotate AND scale
+    this._rotateScaleHandles = L.layerGroup(); // handle includes rotate AND scale
     for (i = 0; i < 4; i++) {
       this._rotateScaleHandles.addLayer(new L.RotateScaleHandle(overlay, i));
     }
@@ -1384,7 +1384,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     for (i = 0; i < 4; i++) {
       p = map.latLngToLayerPoint(overlay._corners[i]).subtract(center);
-      q = new L.Point(
+      q = L.point(
         Math.cos(angle) * p.x - Math.sin(angle) * p.y,
         Math.sin(angle) * p.x + Math.cos(angle) * p.y
       );
@@ -1830,7 +1830,7 @@ L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
       layerPoint = this._map.mouseEventToLayerPoint(e),
       offset = layerPoint.subtract(startPoint),
 
-      newPos = new L.Point(
+      newPos = L.point(
         Math.min(layerPoint.x, startPoint.x),
         Math.min(layerPoint.y, startPoint.y));
 

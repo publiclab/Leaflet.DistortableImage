@@ -57,10 +57,10 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (this._selected) { this._initToolbar(); }
 
     this._overlay._dragStartPoints = {
-      0: new L.point(0, 0),
-      1: new L.point(0, 0),
-      2: new L.point(0, 0),
-      3: new L.point(0, 0)
+      0: L.point(0, 0),
+      1: L.point(0, 0),
+      2: L.point(0, 0),
+      3: L.point(0, 0)
     };
 
     L.DomEvent.on(map, "click", this._deselect, this);
@@ -169,7 +169,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     for (i = 0; i < 4; i++) {
       p = map.latLngToLayerPoint(overlay._corners[i]).subtract(center);
-      q = new L.Point(
+      q = L.point(
         Math.cos(angle) * p.x - Math.sin(angle) * p.y,
         Math.sin(angle) * p.x + Math.cos(angle) * p.y
       );

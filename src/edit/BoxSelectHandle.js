@@ -47,7 +47,7 @@ L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
       layerPoint = this._map.mouseEventToLayerPoint(e),
       offset = layerPoint.subtract(startPoint),
 
-      newPos = new L.Point(
+      newPos = L.point(
         Math.min(layerPoint.x, startPoint.x),
         Math.min(layerPoint.y, startPoint.y));
 
