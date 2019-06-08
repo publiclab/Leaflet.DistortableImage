@@ -29,7 +29,8 @@
   },
   "homepage": "https://github.com/publiclab/Leaflet.DistortableImage",
   "dependencies": {
-    "grunt-cli": "^1.2.0"
+    "grunt-cli": "^1.2.0",
+    "matcher-core": "https://github.com/rexagod/matcher-core#main"
   },
   "devDependencies": {
     "chai": "^4.1.2",

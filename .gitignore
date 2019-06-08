@@ -5,3 +5,4 @@ todo.txt
 *.swo
 package-lock.json
 bower_components
+.vscode
