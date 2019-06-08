@@ -1,3 +1,48 @@
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://fonts.gstatic.com/s/materialicons/v47/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2) format('woff2');
+}
+
+@font-face {
+  font-family: 'Material Icons Outlined';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://fonts.gstatic.com/s/materialiconsoutlined/v8/gok-H7zzDkdnRel8-DQ6KAXJ69wP1tGnf4ZGhUcel5euIg.woff2) format('woff2');
+}
+
+.material-icons {
+  font-family: 'Material Icons';
+}
+
+.material-icons-outlined {
+  font-family: 'Material Icons Outlined';
+}
+
+.material-icons, .material-icons-outlined {
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+
+.material-icons.red { color: #c10d0d; }
+
+.material-icons.md-18, .material-icons-outlined.md-18  { 
+  font-size: 18px; 
+  line-height: inherit;
+}
+
 #imgcontainer {
   position:relative;
   width: 100%;
@@ -82,10 +127,5 @@ kbd {
   -webkit-box-shadow: 0 1px 0px rgba(0, 0, 0, 0.2), 0 0 0 2px #ffffff inset;
   box-shadow: 0 1px 1px rgba(0, 0, 0, .2), 0 2px 0 0 rgba(255, 255, 255, .7) inset;
   text-shadow: 0 0.5px 0 #fff;
-}
-
-span {
-  margin-left: 2px;
-  letter-spacing: 1.2px;
 }
 

@@ -10,8 +10,8 @@ L.DistortableImage.Edit = L.Handler.extend({
      'Escape': '_deselect',
      'd': '_toggleRotateScale',
      'r': '_toggleRotateScale',
-     'j': '_sendUp',
-     'k': '_sendDown',
+     'j': '_toggleOrder',
+     'k': '_toggleOrder',
      'l': '_toggleLock',
      'o': '_toggleOutline',
      's': '_toggleScale',
@@ -308,13 +308,14 @@ L.DistortableImage.Edit = L.Handler.extend({
       outline;
 
     this._outlined = !this._outlined;
-    opacity = this._outlined ? this.options.opacity / 2 : 1;
     outline = this._outlined ? this.options.outline : "none";
 
     L.DomUtil.setOpacity(image, opacity);
     image.setAttribute("opacity", opacity);
 
     image.style.outline = outline;
+
+    this._showToolbar();
   },
 
   _sendUp: function() {
@@ -340,6 +341,8 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
 
     map.addLayer(this._handles[this._mode]);
+
+    this._showToolbar();
   },
 
   _select: function(event) {
@@ -447,14 +450,15 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 	// compare this to using overlay zIndex
 	_toggleOrder: function () {
-	if (this._toggledImage) {
-		this._overlay.bringToFront();
-		this._toggledImage = false;
-		}
-	else {
-		this._overlay.bringToBack();
-		this._toggledImage = true;
-		}
+    if (this._toggledImage) {
+      this._toggledImage = false;
+      this._overlay.bringToFront();
+    } else {
+      this._toggledImage = true;
+      this._overlay.bringToBack();
+    }
+
+    this._showToolbar();
   },
 
   // Based on https://github.com/publiclab/mapknitter/blob/8d94132c81b3040ae0d0b4627e685ff75275b416/app/assets/javascripts/mapknitter/Map.js#L47-L82
