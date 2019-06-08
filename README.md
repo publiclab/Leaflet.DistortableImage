@@ -59,10 +59,10 @@ img = L.distortableImageOverlay(
   'example.png', {
     // 'corners' is the only required option for this class
     corners: [
-      L.latLng(51.52,-0.10),
       L.latLng(51.52,-0.14),
-      L.latLng(51.50,-0.10),
-      L.latLng(51.50,-0.14)
+      L.latLng(51.52,-0.10),
+      L.latLng(51.50,-0.14),
+      L.latLng(51.50,-0.10)
     ],
   }
 ).addTo(map);
@@ -82,7 +82,7 @@ Options available to pass during `L.DistortableImageOverlay` initialization:
 
 - [keymapper](#keymapper)
 
-- [suppressToolbar](#suppressToolbar)
+- [suppressToolbar](#Suppress-Toolbar)
 
 
 ## Selected
@@ -101,7 +101,7 @@ Each primary editing mode corresponds to a separate editing tool.
 
 This option sets the image's initial editing mode, meaning the corresponding editing tool will always appear first when you interact with the image.
 
-values available to pass to `mode` are: 
+Values available to pass to `mode` are: 
 - "distort" (the default)
 - "lock"
 - "rotate"
@@ -114,13 +114,16 @@ In the below example, the image will be initialiazed with "rotateScale" handles:
 // create an image
   img = L.distortableImageOverlay("example.png", {
     corners: [
-      L.latLng(51.52, -0.1),
       L.latLng(51.52, -0.14),
-      L.latLng(51.5, -0.1),
-      L.latLng(51.5, -0.14)
+      L.latLng(51.52, -0.10),
+      L.latLng(51.50, -0.14),
+      L.latLng(51.50, -0.10)
     ],
     mode: "rotateScale",
   }).addTo(map);
+
+L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
+
 ```
 
 ## Keymapper
@@ -149,10 +152,10 @@ When instantiating a Distortable Image, pass in a `fullResolutionSrc` option set
 img = L.distortableImageOverlay(
   'example.png', {
     corners: [
-      L.latLng(51.52,-0.10),
       L.latLng(51.52,-0.14),
-      L.latLng(51.50,-0.10),
-      L.latLng(51.50,-0.14)
+      L.latLng(51.52,-0.10),
+      L.latLng(51.50,-0.14),
+      L.latLng(51.50,-0.10)
     ],
     fullResolutionSrc: 'large.jpg'
   }
@@ -162,7 +165,7 @@ L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
 
 ```
 
-## suppressToolbar
+## Suppress Toolbar
 
 `suppressToolbar` (*optional*, default: false, value: *boolean*)
 
@@ -193,31 +196,42 @@ imageFeatureGroup.addLayer(img2);
 imageFeatureGroup.addLayer(img3);
 
 ```
+<hr>
 
-## Image-ordering
+## Default Toolbar Actions
 
-For multiple images, we've also added a `ToggleOrder` action, that switches overlapping images back and forth into view by employing [`bringToFront()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtoback) from the Leaflet API.
+- "ToggleLock"
 
-```js
-ToggleOrder = EditOverlayAction.extend({
-  options: {
-    toolbarIcon: {
-      html: '<span class="fa fa-sort"></span>',
-      tooltip: 'Change order',
-      title: 'Toggle order'
-    }
-  },
+- "ToggleOrder"
 
-  addHooks: function ()
-  {
-    var editing = this._overlay.editing;
+- "ToggleOutline"
 
-    editing._toggleOrder(); // toggles images into view
-    this.disable();
-  }
-});
+- "ToggleTransparency"
 
-```
+- "ToggleRotateScale"
+
+- "EnableEXIF"
+
+- "Export"
+
+- "Delete"
+
+## Addons
+
+- "ToggleRotate"
+
+- "ToggleScale"
+
+### Image-ordering
+
+For multiple images, the `ToggleOrder` action switches overlapping images back and forth into view by employing [`bringToFront()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtoback) from the Leaflet API.
+
+
+## Quick API Reference
+
+- [`getCorners()`](corners) and [`getCorner(idx)`](corners)
+
+- `getCenter()` - Calculates the centroid of the image
 
 ## Corners
 
@@ -227,19 +241,20 @@ on the image, and can be accessed using our `getCorners()` method after the imag
 Useful usage example:
 
 ```js
-// instantiate and add to map
+// instantiate, add to map and enable
 img = L.distortableImageOverlay(...);
 img.addTo(map);
+L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
 
 // grab the initial corner positions
 JSON.stringify(img.getCorners())
-=> "[{"lat":51.52,"lng":-0.1},{"lat":51.52,"lng":-0.14},{"lat":51.5,"lng":-0.1},{"lat":51.5,"lng":-0.14}]"
+=> "[{"lat":51.52,"lng":-0.14},{"lat":51.52,"lng":-0.1},{"lat":51.5,"lng":-0.14},{"lat":51.5,"lng":-0.1}]"
 
 // ...move the image around...
 
 // check the new corner positions.
 JSON.stringify(img.getCorners())
-=> "[{"lat":51.51091971397745,"lng":-0.015994012355804447},{"lat":51.51091971397745,"lng":-0.05599111318588257},{"lat":51.49093697986642,"lng":-0.015994012355804447},{"lat":51.49093697986642,"lng":-0.05599111318588257}]"
+=> "[{"lat":51.50685099607552,"lng":-0.06058305501937867},{"lat":51.50685099607552,"lng":-0.02058595418930054},{"lat":51.486652692081925,"lng":-0.06058305501937867},{"lat":51.486652692081925,"lng":-0.02058595418930054}]"
 
 // note there is an added level of precision after dragging the image for debugging purposes
 

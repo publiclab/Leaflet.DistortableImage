@@ -47,7 +47,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
     }
 	}),
 	
-  RemoveOverlay = EditOverlayAction.extend({
+  Delete = EditOverlayAction.extend({
     options: {
       toolbarIcon: {
         html: '<i class="material-icons md-18 red">delete_forever</i>',
@@ -63,7 +63,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
     }
 	}),
 	
-  ToggleEditable = EditOverlayAction.extend({
+  ToggleLock = EditOverlayAction.extend({
     initialize: function(map, overlay, options) {
       var edit = overlay.editing,
         icon,
@@ -125,7 +125,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
     }
 	}),
 	
-  ToggleExport = EditOverlayAction.extend({
+  Export = EditOverlayAction.extend({
     options: {
       toolbarIcon: {
         html: '<i class="material-icons md-18">get_app</i>',
@@ -192,12 +192,12 @@ L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
     actions: [
       ToggleTransparency,
       ToggleOutline,
-      ToggleEditable,
+      ToggleLock,
       ToggleRotateScale,
       ToggleOrder,
       EnableEXIF,
-      ToggleExport,
-      RemoveOverlay
+      Export,
+      Delete
     ]
   },
 
