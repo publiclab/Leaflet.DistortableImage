@@ -80,17 +80,6 @@
 
       var imgState = { imgReady: false }
 
-
-      //  L.DomEvent.on(img._image, 'touchstart', function (e) {
-      //    e.preventDefault();
-      //    onTouchStart(e);
-      // }, false);
-
-      // L.DomEvent.on(img._image, 'touchend', function () {
-      //   // e.preventDefault();
-      //   onTouchEnd();
-      // }, false);
-
       function onTouchStart(e) {
         if (imgState.imgReady) {
           return;
@@ -116,7 +105,6 @@
         if (imgState.imgReady) {
           return;
         }
-
         
         img.editing._deselect();
         img.editing.dragging.disable();
@@ -173,21 +161,21 @@
 
       (function async () {
         alert("calling");
-        // tick();
-        L.DomEvent.on(img._image, 'touchstart pointerdown', function (e) {
+
+        L.DomEvent.on(img._image, 'touchstart mousedown', function (e) {
           e.preventDefault();
-          // tick();
+
           onTouchStart(e);
         }, false);
 
-        L.DomEvent.on(img._image, 'touchmove pointermove', function (e) {
+        L.DomEvent.on(img._image, 'touchmove', function (e) {
           e.preventDefault();
           tick();
           onTouchMove(e);
         }, false);
 
-        L.DomEvent.on(img._image, 'touchend pointerup', function () {
-          // e.preventDefault();
+        L.DomEvent.on(img._image, 'touchend', function () {
+          e.preventDefault();
           onTouchEnd();
         }, false);
 
