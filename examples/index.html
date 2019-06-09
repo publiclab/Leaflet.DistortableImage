@@ -59,19 +59,18 @@
     if (array.length >= 2) {
       array = array.slice(-2);
       // client
-      var idx = 1;
       var A = array[0];
       var B = array[1];
       // L objects
       for (i in L_img_array) {
         if (L_img_array[i]._image == A) {
           array[0] = L_img_array[i];
-          idx = 2;
         }
         if (L_img_array[i]._image == B) {
           array[1] = L_img_array[i];
         }
       }
+      var idx = 2;
       for (i in L_img_array) {
         var wA = A.clientWidth, hA = A.clientHeight;
         var rwA = Math.abs(map.latLngToContainerPoint(array[i].getCorner(0)).x - map.latLngToContainerPoint(array[i].getCorner(1)).x) / wA;
@@ -82,6 +81,7 @@
           // inverse
           var t1 = eval(`m.x${idx}`);
           var t2 = eval(`m.y${idx}`);
+          var confidence = eval(`m.confidence.c${idx}`);
           var x_off = t1 * rwA;
           var y_off = t2 * rhA;
           var x_plot = map.latLngToContainerPoint(array[i].getCorner(0)).x - x_off;
@@ -90,10 +90,11 @@
         }
         for (n in temp) {
           var k = map.containerPointToLatLng(temp[n]);
-          dot(k.lat, k.lng, null);
+          dot(k.lat, k.lng, confidence);
         }
         // swap for second iteration
         A = B;
+        idx--;
       }
     }
   }
