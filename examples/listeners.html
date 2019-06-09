@@ -161,7 +161,8 @@
 
       (function async () {
         alert("calling");
-
+        //  Leaflet kindly extends `L.DomEvent` for us under the hood to provide touch support for Internet Explorer and Windows - based devices.
+        // this means they take care of `MSPointer` events and `Pointer` events for us. See `DomEvent.Pointer.js` in their source code.
         L.DomEvent.on(img._image, 'touchstart mousedown', function (e) {
           e.preventDefault();
 
