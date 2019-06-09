@@ -1040,6 +1040,63 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 			LeafletToolbar.ToolbarAction.prototype.initialize.call(this, options);
 		}
 	}),
+// make one for matcher too
+// enabled only when matcher enabled
+	Stitcher = EditOverlayAction.extend({
+		options: {
+			toolbarIcon: {
+				html: '<span class="fa fa-puzzle-piece"><span>',
+				tooltip: 'Enable stitcher'
+			}
+		},
+
+		addHooks: function() {
+			var map = this._map;
+			var overlay = this._overlay;
+			var center, corners;
+			var sectors = {s00: [], s01: [], s10: [], s11: []};
+			try {
+				// var d01 = [image.getCorner(0).lat, center.y];
+				// var d12 = [center.x, image.getCorner(1).lng];
+				// var d23 = [image.getCorner(2).lat, center.y];
+				// var d30 = [center.x, image.getCorner(3).lng];
+				for(var i in processedPoints.points) {
+					sectors.s00[i]=[];
+					sectors.s01[i]=[];
+					sectors.s10[i]=[];
+					sectors.s11[i]=[];
+					center = processedPoints.images[i].getCenter();
+					corners = processedPoints.images[i].getCorners();
+					for(var j in processedPoints.points[i]) {
+						if(processedPoints.points[i][j].lng > corners[1].lng && processedPoints.points[i][j].lng < center.lng) {
+							if(processedPoints.points[i][j].lat > corners[3].lat && processedPoints.points[i][j].lat < center.lat) {
+								sectors.s10[i].push(processedPoints.points[i][j]);
+							} else {
+								sectors.s00[i].push(processedPoints.points[i][j]);								
+							}
+						} else {
+							if(processedPoints.points[i][j].lat > corners[2].lat && processedPoints.points[i][j].lat < center.lat) {
+								sectors.s11[i].push(processedPoints.points[i][j]);								
+							} else {
+								sectors.s01[i].push(processedPoints.points[i][j]);								
+							}
+						}
+					}
+				}
+				console.log(sectors);
+				// getCorners - no need to find ind. sector points
+				// compare - find sectors (xxxx) in both with max density
+				// translate and join if adj
+			} catch(err) {
+				console.error('err: matcher error! \n', err);
+			}
+			for(var k in corners) {
+				map.project(corners[k]);
+			}
+			map.setView(overlay.getCorner(0), 12);
+			this.disable();
+		}
+	}),
 
 	ToggleTransparency = EditOverlayAction.extend({
 		options: { toolbarIcon: {
@@ -1186,7 +1243,8 @@ L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
 			ToggleRotateScale,
 			ToggleExport,
 			EnableEXIF,
-			ToggleOrder
+			ToggleOrder,
+			Stitcher
 		]
 	},
 
@@ -1310,29 +1368,29 @@ L.DistortableImage.Edit = L.Handler.extend({
     var overlay = this._overlay,
     i;
 
-    this._lockHandles = new L.LayerGroup();
+    this._lockHandles = L.layerGroup();
     for (i = 0; i < 4; i++) {
       this._lockHandles.addLayer(
         new L.LockHandle(overlay, i, { draggable: false })
       );
     }
 
-    this._distortHandles = new L.LayerGroup();
+    this._distortHandles = L.layerGroup();
     for (i = 0; i < 4; i++) {
       this._distortHandles.addLayer(new L.DistortHandle(overlay, i));
     }
 
-    this._rotateHandles = new L.LayerGroup(); // individual rotate
+    this._rotateHandles = L.layerGroup(); // individual rotate
     for (i = 0; i < 4; i++) {
       this._rotateHandles.addLayer(new L.RotateHandle(overlay, i));
     }
 
-    this._scaleHandles = new L.LayerGroup();
+    this._scaleHandles = L.layerGroup();
     for (i = 0; i < 4; i++) {
       this._scaleHandles.addLayer(new L.ScaleHandle(overlay, i));
     }
 
-    this._rotateScaleHandles = new L.LayerGroup(); // handle includes rotate AND scale
+    this._rotateScaleHandles = L.layerGroup(); // handle includes rotate AND scale
     for (i = 0; i < 4; i++) {
       this._rotateScaleHandles.addLayer(new L.RotateScaleHandle(overlay, i));
     }

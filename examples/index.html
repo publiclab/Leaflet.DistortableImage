@@ -39,10 +39,10 @@
 <script>
 
   var map;
-  // get from img / e.target
-  var img1path = '../node_modules/matcher-core/assets/resources/small.jpg';
-  var img2path = '../node_modules/matcher-core/assets/resources/big.jpg';
+  var img2path = '../node_modules/matcher-core/assets/resources/small.jpg';
+  var img1path = '../node_modules/matcher-core/assets/resources/big.jpg';
 
+  // respective to origin
   function projector(utils, e, array, L_img_array, map) {
     document.querySelector("#map > div.leaflet-pane.leaflet-map-pane > div.leaflet-pane.leaflet-marker-pane").innerHTML = "";
     var match_points = utils.matches;
@@ -53,9 +53,7 @@
       popupAnchor: [2, 2]
     });
     var dot = (x, y, c) => L.marker([x, y], { icon: icon }).addTo(map).bindPopup(JSON.stringify(c));
-    if (array.indexOf(e.target) === -1) {
-      array.push(e.target);
-    }
+    array.push(e.target);
     if (array.length >= 2) {
       array = array.slice(-2);
       // client
@@ -71,14 +69,15 @@
         }
       }
       var idx = 2;
-      for (i in L_img_array) {
+      var processedPoints = {points: [], images: []};
+      for (i in array) {
         var wA = A.clientWidth, hA = A.clientHeight;
-        var rwA = Math.abs(map.latLngToContainerPoint(array[i].getCorner(0)).x - map.latLngToContainerPoint(array[i].getCorner(1)).x) / wA;
-        var rhA = Math.abs(map.latLngToContainerPoint(array[i].getCorner(0)).y - map.latLngToContainerPoint(array[i].getCorner(2)).y) / hA;
+        var h_diff = Math.abs(map.latLngToContainerPoint(array[i].getCorner(0)).x - map.latLngToContainerPoint(array[i].getCorner(1)).x);
+        var rwA = h_diff / wA;
+        var v_diff = Math.abs(map.latLngToContainerPoint(array[i].getCorner(0)).y - map.latLngToContainerPoint(array[i].getCorner(2)).y);
+        var rhA = v_diff / hA;
         var temp = [];
         for (m of match_points) {
-          // x,y,1,2 dependant on orbify
-          // inverse
           var t1 = eval(`m.x${idx}`);
           var t2 = eval(`m.y${idx}`);
           var confidence = eval(`m.confidence.c${idx}`);
@@ -88,14 +87,18 @@
           var y_plot = map.latLngToContainerPoint(array[i].getCorner(0)).y + y_off;
           temp.push([x_plot, y_plot]);
         }
+        processedPoints.images.push(array[i]);
+        processedPoints.points[i] = [];
         for (n in temp) {
           var k = map.containerPointToLatLng(temp[n]);
+          processedPoints.points[i].push(k);
           dot(k.lat, k.lng, confidence);
         }
         // swap for second iteration
         A = B;
         idx--;
       }
+      window.processedPoints = processedPoints;
     }
   }
 
@@ -136,14 +139,26 @@
       ],
       fullResolutionSrc: "large.jpg"
     }).addTo(map);
+    
+    img3 = L.distortableImageOverlay(img1path, {
+      selected: true,
+      corners: [
+        L.latLng(51.52, -0.14),
+        L.latLng(51.52, -0.18),
+        L.latLng(51.5, -0.14),
+        L.latLng(51.5, -0.18)
+      ],
+      fullResolutionSrc: "large.jpg"
+    }).addTo(map);
 
     L.DomEvent.on(img1._image, "load", img1.editing.enable, img1.editing);
     L.DomEvent.on(img2._image, "load", img2.editing.enable, img2.editing);
+    L.DomEvent.on(img3._image, "load", img3.editing.enable, img3.editing);
 
     var images = document.getElementsByClassName('leaflet-image-layer leaflet-zoom-animated');
     var array = [];
     // x1 x2
-    var L_img_array = [img1, img2];
+    var L_img_array = [img1, img2, img3];
     for (i of images) {
       i.addEventListener('click', function (e) {
         // define orb inside this

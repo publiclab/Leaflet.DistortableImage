@@ -30,6 +30,7 @@ module.exports = function(grunt) {
                     warpWebGl: false,
                     EXIF: false,
                     alert: false,
+                    processedPoints: false,
 
                     // Mocha
 
