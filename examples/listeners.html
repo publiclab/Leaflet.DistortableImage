@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Leaflet.DistortableImage Example</title>
-  <meta charset="utf-8" />
-
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leaflet.DistortableImage Example</title>
 
   <script src="../node_modules/leaflet/dist/leaflet-src.js" type="text/javascript" charset="utf-8"></script>
   <link rel="stylesheet" href="../node_modules/leaflet/dist/leaflet.css" media="screen" title="no title">
@@ -13,8 +12,8 @@
 
   <!-- for full-res export -->
   <script src="../node_modules/jquery/dist/jquery.js"></script>
-  <script src="../node_modules/webgl-distort/dist/webgl-distort.js"></script>
-  <script src="../node_modules/glfx/glfx.js"></script>
+  <script defer src="../node_modules/webgl-distort/dist/webgl-distort.js"></script>
+  <script defer src="../node_modules/glfx/glfx.js"></script>
 
   <link rel="stylesheet" href="../dist/leaflet.distortableimage.css" media="screen" title="no title">
   <script src="../dist/leaflet.distortableimage.js"></script>
@@ -26,6 +25,7 @@
   </form>
 
   <div id="map" style="width:100%; height:100%; position:absolute; top:0;"></div>
+</body>
 
   <script>
 
@@ -78,7 +78,7 @@
       var touchSpeed = 0;
       var lastTouchAlpha = 0;
 
-      var appState = { pickerOpen: false }
+      var imgState = { imgReady: false }
 
 
       //  L.DomEvent.on(img._image, 'touchstart', function (e) {
@@ -92,7 +92,7 @@
       // }, false);
 
       function onTouchStart(e) {
-        if (appState.pickerOpen) {
+        if (imgState.imgReady) {
           return;
         }
 
@@ -113,7 +113,7 @@
       }
 
       function onTouchMove(e) {
-        if (appState.pickerOpen) {
+        if (imgState.imgReady) {
           return;
         }
 
@@ -128,12 +128,15 @@
       }
 
       function onTouchEnd() {
-        if (appState.pickerOpen) {
+        if (imgState.imgReady) {
           return;
         }
 
         touchInfo.down = false;
+        spinAlpha = 0;
         img.editing._select();
+        
+        img.fire("update");
         // alert("touchend");
       }
 
@@ -156,6 +159,7 @@
           spinAlpha -= spinSpeed;
 
           // alert(spinAlpha);
+          window.spinAlpha = spinAlpha;
           if (spinAlpha) { img.editing._rotateBy(-spinAlpha); }
 
           spinSpeed = spinSpeed * 0.99;
@@ -170,37 +174,35 @@
       (function async () {
         alert("calling");
         // tick();
-        L.DomEvent.on(img._image, 'touchstart', function (e) {
+        L.DomEvent.on(img._image, 'touchstart pointerdown', function (e) {
           e.preventDefault();
           // tick();
           onTouchStart(e);
         }, false);
 
-        L.DomEvent.on(img._image, 'touchmove', function (e) {
+        L.DomEvent.on(img._image, 'touchmove pointermove', function (e) {
           e.preventDefault();
           tick();
           onTouchMove(e);
         }, false);
 
-        L.DomEvent.on(img._image, 'touchend', function () {
+        L.DomEvent.on(img._image, 'touchend pointerup', function () {
           // e.preventDefault();
           onTouchEnd();
         }, false);
 
         L.DomEvent.on(window, 'onpopstate', function (e) {
-        // Assume if state is not set here picker is going to need to close.
           if (e.state === null) {
-            appState.pickerOpen = false;
-            // domElements.pickerPane.classList.add('hidden');
-            // Assume if state is set here picker is going to need to open.
+            imgState.imgReady = false;
+
           } else if (e.state !== null) {
-            appState.pickerOpen = true;
-            // showPicker();
+            imgState.imgReady = true;
           }
         });
       })();
       }, img);
     })();
+    
   </script>
 
 </html>

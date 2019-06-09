@@ -1459,7 +1459,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     var overlay = this._overlay,
       map = overlay._map;
 
-    this.dragging = new L.Draggable(overlay._image);
+    this.dragging = new L.Draggable(overlay.getElement());
     this.dragging.enable();
 
     /* Hide toolbars and markers while dragging; click will re-show it */
@@ -1475,7 +1475,7 @@ L.DistortableImage.Edit = L.Handler.extend({
      */
     this.dragging._updatePosition = function() {
       var delta = this._newPos.subtract(
-          map.latLngToLayerPoint(overlay._corners[0])
+          map.latLngToLayerPoint(overlay.getCorner(0))
         ),
         currentPoint,
         i;
@@ -1483,8 +1483,8 @@ L.DistortableImage.Edit = L.Handler.extend({
       this.fire("predrag");
 
       for (i = 0; i < 4; i++) {
-        currentPoint = map.latLngToLayerPoint(overlay._corners[i]);
-        overlay._corners[i] = map.layerPointToLatLng(currentPoint.add(delta));
+        currentPoint = map.latLngToLayerPoint(overlay.getCorner(i));
+        overlay._updateCorner(i, map.layerPointToLatLng(currentPoint.add(delta)));
 			}
 
       overlay._reset();
