@@ -1041,7 +1041,6 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 		}
 	}),
 // make one for matcher too
-// enabled only when matcher enabled
 	Stitcher = EditOverlayAction.extend({
 		options: {
 			toolbarIcon: {
@@ -1054,12 +1053,8 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 			var map = this._map;
 			var overlay = this._overlay;
 			var center, corners;
-			var sectors = {s00: [], s01: [], s10: [], s11: []};
+			var sectors = {s00: [], s01: [], s10: [], s11: [], population: []};
 			try {
-				// var d01 = [image.getCorner(0).lat, center.y];
-				// var d12 = [center.x, image.getCorner(1).lng];
-				// var d23 = [image.getCorner(2).lat, center.y];
-				// var d30 = [center.x, image.getCorner(3).lng];
 				for(var i in processedPoints.points) {
 					sectors.s00[i]=[];
 					sectors.s01[i]=[];
@@ -1083,12 +1078,38 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 						}
 					}
 				}
-				console.log(sectors);
-				// getCorners - no need to find ind. sector points
-				// compare - find sectors (xxxx) in both with max density
-				// translate and join if adj
+				for(i in processedPoints.points) {
+					sectors.population[i] = [];
+					sectors.population[i].push([
+						sectors.s00[i].length,
+						sectors.s01[i].length,
+						sectors.s10[i].length,
+						sectors.s11[i].length
+					]);
+				}
+				var max = 0, min = 10, max_ = 0, max_idx;
+				for(i in sectors.population[0][0]) {
+					if(sectors.population[0][0][i]>max) {max=sectors.population[0][0][i]; max_idx=i;}
+					if(sectors.population[0][0][i]<min) {min=sectors.population[0][0][i];}
+				}
+				if(max !== min) {
+					var coordinates = sectors[Object.keys(sectors)[max_idx]][0];
+					for(var u in processedPoints.points[0]) {
+						for(var v in coordinates) {
+							if(processedPoints.points[0][u] === coordinates[v]) {
+								if(processedPoints.confidences[0][u]>max_) {
+									max_ = processedPoints.confidences[0][u];
+								}
+							}
+						}
+					}
+					var best_point = processedPoints.points[0][processedPoints.confidences[0].indexOf(max_)];
+					var corresponding_best_point = processedPoints.points[1][processedPoints.confidences[0].indexOf(max_)];
+					// stitching left
+					console.log(best_point, corresponding_best_point);
+				}
 			} catch(err) {
-				console.error('err: matcher error! \n', err);
+				console.error('err: check if matcher is initialized properly and correct parameters are supplied! \n', err);
 			}
 			for(var k in corners) {
 				map.project(corners[k]);
