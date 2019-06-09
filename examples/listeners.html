@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Leaflet.DistortableImage Example</title>
-  <meta charset="utf-8" />
-
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leaflet.DistortableImage Example</title>
 
   <script src="../node_modules/leaflet/dist/leaflet-src.js" type="text/javascript" charset="utf-8"></script>
   <link rel="stylesheet" href="../node_modules/leaflet/dist/leaflet.css" media="screen" title="no title">
@@ -13,8 +12,8 @@
 
   <!-- for full-res export -->
   <script src="../node_modules/jquery/dist/jquery.js"></script>
-  <script src="../node_modules/webgl-distort/dist/webgl-distort.js"></script>
-  <script src="../node_modules/glfx/glfx.js"></script>
+  <script defer src="../node_modules/webgl-distort/dist/webgl-distort.js"></script>
+  <script defer src="../node_modules/glfx/glfx.js"></script>
 
   <link rel="stylesheet" href="../dist/leaflet.distortableimage.css" media="screen" title="no title">
   <script src="../dist/leaflet.distortableimage.js"></script>
@@ -26,6 +25,7 @@
   </form>
 
   <div id="map" style="width:100%; height:100%; position:absolute; top:0;"></div>
+</body>
 
   <script>
 
@@ -62,10 +62,136 @@
       L.DomEvent.on(img._image, 'load', function() {
         var img = this
         img.on('edit', function() {alert('edited')}, img);
-        L.DomEvent.on(img._image, 'mouseup', function() {alert('edited')}, img);
-        L.DomEvent.on(img._image, 'touchend', function() {alert('edited')}, img);
+        // L.DomEvent.on(img._image, 'mouseup', function() {alert('edited')}, img);
+        // L.DomEvent.on(img._image, 'touchend', function() {alert('edited')}, img);
+      // }, img);
+
+      var imagePos = img._image.getBoundingClientRect();
+      var centerX = imagePos.left + imagePos.width / 2;
+      var centerY = imagePos.top + imagePos.height / 2;
+      var centerRadius = imagePos.width / 10;
+      var touchInfo = { alpha: 0, radius: 0, down: false };
+
+      var spinAlpha = 0;
+      var spinSpeed = 0;
+
+      var touchSpeed = 0;
+      var lastTouchAlpha = 0;
+
+      var imgState = { imgReady: false }
+
+      function onTouchStart(e) {
+        if (imgState.imgReady) {
+          return;
+        }
+
+        var {x, y} = getXYFromTouchOrPointer(e);
+        onTouchMove(e);
+        touchInfo.down = true;
+        touchInfo.radius = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+        lastTouchAlpha = touchInfo.alpha;
+
+      }
+
+      function getXYFromTouchOrPointer(e) {
+        window.e = e;
+        var x = e.touches ? e.touches[0].clientX : e.clientX;
+        var y = e.touches ? e.touches[0].clientY : e.clientY;
+        // alert(x);
+        return { x: x - centerX, y: y - centerY };
+      }
+
+      function onTouchMove(e) {
+        if (imgState.imgReady) {
+          return;
+        }
+        
+        img.editing._deselect();
+        img.editing.dragging.disable();
+        map.dragging.disable();
+        // alert(e);
+        var { x, y } = getXYFromTouchOrPointer(e);
+        touchInfo.alpha = Math.atan2(x, y);
+        e.preventDefault();
+      }
+
+      function onTouchEnd() {
+        if (imgState.imgReady) {
+          return;
+        }
+
+        touchInfo.down = false;
+        spinAlpha = 0;
+        img.editing._select();
+        
+        img.fire("update");
+        // alert("touchend");
+      }
+
+      function tick() {
+        requestAnimationFrame(function() {
+          if (touchInfo.down) {
+            if (touchInfo.radius > centerRadius) {
+              var touchSpeed = touchInfo.alpha - lastTouchAlpha;
+              if (touchSpeed < -Math.PI) { touchSpeed += 2 * Math.PI; }
+              if (touchSpeed > Math.PI) { touchSpeed -= 2 * Math.PI; }
+
+              var spinSpeed = touchSpeed;
+              lastTouchAlpha = touchInfo.alpha;
+            }
+          } else if (touchSpeed) {
+            spinSpeed = touchSpeed * touchInfo.radius / centerRadius;
+            touchSpeed = 0;
+          }
+
+          spinAlpha -= spinSpeed;
+
+          // alert(spinAlpha);
+          window.spinAlpha = spinAlpha;
+          if (spinAlpha) { img.editing._rotateBy(-spinAlpha); }
+
+          spinSpeed = spinSpeed * 0.99;
+          spinSpeed =
+            Math.sign(spinSpeed) * Math.max(0, Math.abs(spinSpeed) - 2e-4);
+
+          // tick();
+
+        });
+      }
+
+      (function async () {
+        alert("calling");
+        //  Leaflet kindly extends `L.DomEvent` for us under the hood to provide touch support for Internet Explorer and Windows - based devices.
+        // this means they take care of `MSPointer` events and `Pointer` events for us. See `DomEvent.Pointer.js` in their source code.
+        L.DomEvent.on(img._image, 'touchstart mousedown', function (e) {
+          e.preventDefault();
+
+          onTouchStart(e);
+        }, false);
+
+        L.DomEvent.on(img._image, 'touchmove', function (e) {
+          e.preventDefault();
+          tick();
+          onTouchMove(e);
+        }, false);
+
+        L.DomEvent.on(img._image, 'touchend', function () {
+          e.preventDefault();
+          onTouchEnd();
+        }, false);
+
+        L.DomEvent.on(window, 'onpopstate', function (e) {
+          if (e.state === null) {
+            imgState.imgReady = false;
+
+          } else if (e.state !== null) {
+            imgState.imgReady = true;
+          }
+        });
+      })();
       }, img);
     })();
+    
   </script>
 
 </html>

@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Leaflet.DistortableImage Example</title>
-  <meta charset="utf-8" />
-
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leaflet.DistortableImage Example</title>
 
   <script src="../node_modules/leaflet/dist/leaflet-src.js" type="text/javascript" charset="utf-8"></script>
   <link rel="stylesheet" href="../node_modules/leaflet/dist/leaflet.css" media="screen" title="no title">
@@ -13,90 +12,90 @@
 
   <!-- for full-res export -->
   <script src="../node_modules/jquery/dist/jquery.js"></script>
-  <script src="../node_modules/webgl-distort/dist/webgl-distort.js"></script>
-  <script src="../node_modules/glfx/glfx.js"></script>
+  <script defer src="../node_modules/webgl-distort/dist/webgl-distort.js"></script>
+  <script defer src="../node_modules/glfx/glfx.js"></script>
 
   <link rel="stylesheet" href="../dist/leaflet.distortableimage.css" media="screen" title="no title">
   <script src="../dist/leaflet.distortableimage.js"></script>
 </head>
 <body style="margin:0;">
-
   <form id="test_form" >
     <input type="file" id="inputimage" accept="image/*">
   </form>
 
   <div id="map" style="width:100%; height:100%; position:absolute; top:0;"></div>
+</body>
 
-  <script>
+<script>
 
-    var map
+  var map
 
-    (function(){
+  (function(){
 
-      // basic Leaflet map setup
-      map = L.map('map').setView([51.505, -0.09], 13);
-      L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.png', {
-        maxZoom: 18,
-        attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-          '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-          'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-        id: 'examples.map-i86knfo3'
-      }).addTo(map);
+    // basic Leaflet map setup
+    map = L.map('map').setView([51.505, -0.09], 13);
+    L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+        '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+        'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+      id: 'examples.map-i86knfo3'
+    }).addTo(map);
 
-      map.whenReady(function() {
-        img = L.distortableImageOverlay(
-          'example.png', {
-            corners: [
-              L.latLng(51.52,-0.10),
-              L.latLng(51.52,-0.14),
-              L.latLng(51.50,-0.10),
-              L.latLng(51.50,-0.14)
-            ],
-            mode: 'lock'
-          }).addTo(map);
+    map.whenReady(function() {
+      img = L.distortableImageOverlay(
+        'example.png', {
+          corners: [
+            L.latLng(51.52,-0.10),
+            L.latLng(51.52,-0.14),
+            L.latLng(51.50,-0.10),
+            L.latLng(51.50,-0.14)
+          ],
+          mode: 'lock'
+        }).addTo(map);
 
-        // create a second image
-        img2 = L.distortableImageOverlay(
-          'example.png', {
-            corners: [
-              L.latLng(51.51,-0.16),
-              L.latLng(51.51,-0.20),
-              L.latLng(51.49,-0.17),
-              L.latLng(51.49,-0.21)
-            ],
-            mode: 'rotateScale'
-          }).addTo(map);
+      // create a second image
+      img2 = L.distortableImageOverlay(
+        'example.png', {
+          corners: [
+            L.latLng(51.51,-0.16),
+            L.latLng(51.51,-0.20),
+            L.latLng(51.49,-0.17),
+            L.latLng(51.49,-0.21)
+          ],
+          mode: 'rotateScale'
+        }).addTo(map);
 
-        img3 = L.distortableImageOverlay(
-          'example.png', {
-            corners: [
-              L.latLng(51.50,-0.09),
-              L.latLng(51.50,-0.13),
-              L.latLng(51.48,-0.10),
-              L.latLng(51.48,-0.14)
-            ],
-          }).addTo(map);
+      img3 = L.distortableImageOverlay(
+        'example.png', {
+          corners: [
+            L.latLng(51.50,-0.09),
+            L.latLng(51.50,-0.13),
+            L.latLng(51.48,-0.10),
+            L.latLng(51.48,-0.14)
+          ],
+        }).addTo(map);
 
-        img4 = L.distortableImageOverlay(
-          'example.png', {
-            corners: [
-              L.latLng(51.51,-0.03),
-              L.latLng(51.51,-0.07),
-              L.latLng(51.49,-0.04),
-              L.latLng(51.49,-0.08)
-            ],
-          }).addTo(map);
+      img4 = L.distortableImageOverlay(
+        'example.png', {
+          corners: [
+            L.latLng(51.51,-0.03),
+            L.latLng(51.51,-0.07),
+            L.latLng(51.49,-0.04),
+            L.latLng(51.49,-0.08)
+          ],
+        }).addTo(map);
 
-          L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
-          L.DomEvent.on(img2._image, 'load', img2.editing.enable, img2.editing);
-          L.DomEvent.on(img3._image, 'load', img3.editing.enable, img3.editing);
-          L.DomEvent.on(img4._image, 'load', img4.editing.enable, img4.editing);
+        L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
+        L.DomEvent.on(img2._image, 'load', img2.editing.enable, img2.editing);
+        L.DomEvent.on(img3._image, 'load', img3.editing.enable, img3.editing);
+        L.DomEvent.on(img4._image, 'load', img4.editing.enable, img4.editing);
 
-          L.distortableCollection([img, img2, img3, img4]).addTo(map);
+        L.distortableCollection([img, img2, img3, img4]).addTo(map);
 
-      }, this);
-    })();
-
+    }, this);
+  })();
+  
   </script>
 
 </html>
