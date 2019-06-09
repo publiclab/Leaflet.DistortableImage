@@ -1323,7 +1323,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     L.DomEvent.on(map, "click", this._deselect, this);
     L.DomEvent.on(overlay._image, "click", this._select, this);
 
-     /* Enable longpress */
+     /* Enable longpress. */
     L.DomEvent.on(overlay._image, 'contextmenu', function (e) { 
       e.preventDefault();
       if (this._mode === "lock") { this._toggleLock(); }
@@ -1350,7 +1350,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     map.removeLayer(this._handles[this._mode]);
 
-     /* Enable longpress */
+     /* Disable longpress. */
     L.DomEvent.off(overlay._image, 'contextmenu', function (e) { 
       e.preventDefault();
       if (this._mode === "lock") { this._toggleLock(); }
