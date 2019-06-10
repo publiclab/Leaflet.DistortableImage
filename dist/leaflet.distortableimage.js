@@ -1103,18 +1103,24 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 							}
 						}
 					}
-					var best_point = processedPoints.points[0][processedPoints.confidences[0].indexOf(max_)];
+					var best_point = processedPoints.points[0][processedPoints.confidences[0].indexOf(max_)];	//	alternate overlay
 					var corresponding_best_point = processedPoints.points[1][processedPoints.confidences[0].indexOf(max_)];
-					// stitching left
-					console.log(best_point, corresponding_best_point);
+			    document.querySelector("#map > div.leaflet-pane.leaflet-map-pane > div.leaflet-pane.leaflet-marker-pane").innerHTML = "";
+					var lat_offset = - best_point.lat + corresponding_best_point.lat;
+					var lng_offset = - best_point.lng + corresponding_best_point.lng;
+					overlay._corners[0] = [processedPoints.images[1].getCorner(0).lat - lat_offset, processedPoints.images[1].getCorner(0).lng - lng_offset];
+					overlay._corners[1] = [processedPoints.images[1].getCorner(1).lat - lat_offset, processedPoints.images[1].getCorner(1).lng - lng_offset];
+					overlay._corners[2] = [processedPoints.images[1].getCorner(2).lat - lat_offset, processedPoints.images[1].getCorner(2).lng - lng_offset];
+					overlay._corners[3] = [processedPoints.images[1].getCorner(3).lat - lat_offset, processedPoints.images[1].getCorner(3).lng - lng_offset];
+					
 				}
 			} catch(err) {
-				console.error('err: check if matcher is initialized properly and correct parameters are supplied! \n', err);
+				console.error('err: check if matcher is initialized properly and correct parameters are supplied \n', err);
 			}
 			for(var k in corners) {
 				map.project(corners[k]);
 			}
-			map.setView(overlay.getCorner(0), 12);
+			map.setView(overlay.getCorner(2), 13);
 			this.disable();
 		}
 	}),

@@ -141,26 +141,14 @@
       ],
       fullResolutionSrc: "large.jpg"
     }).addTo(map);
-    
-    img3 = L.distortableImageOverlay(img1path, {
-      selected: true,
-      corners: [
-        L.latLng(51.52, -0.14),
-        L.latLng(51.52, -0.18),
-        L.latLng(51.5, -0.14),
-        L.latLng(51.5, -0.18)
-      ],
-      fullResolutionSrc: "large.jpg"
-    }).addTo(map);
 
     L.DomEvent.on(img1._image, "load", img1.editing.enable, img1.editing);
     L.DomEvent.on(img2._image, "load", img2.editing.enable, img2.editing);
-    L.DomEvent.on(img3._image, "load", img3.editing.enable, img3.editing);
 
     var images = document.getElementsByClassName('leaflet-image-layer leaflet-zoom-animated');
     var array = [];
     // x1 x2
-    var L_img_array = [img1, img2, img3];
+    var L_img_array = [img1, img2];
     for (i of images) {
       i.addEventListener('click', function (e) {
         // define orb inside this
