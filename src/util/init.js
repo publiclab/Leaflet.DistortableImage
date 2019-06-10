@@ -1,6 +1,6 @@
 
-  function init(utils, init_, projector, paths) { // jshint ignore:line
-    var obj = init_(paths);
+  function init(add, utils, init_, projector) { // jshint ignore:line
+    var obj = init_(add);
     var images = document.getElementsByClassName('leaflet-image-layer leaflet-zoom-animated');
     var array = [];
     for (var i =0; i<images.length; i++) {

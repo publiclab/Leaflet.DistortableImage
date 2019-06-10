@@ -39,57 +39,24 @@ L.DomUtil = L.extend(L.DomUtil, {
 
 });
 
-function init_(paths) { // jshint ignore:line
-    var map = L.map("map").setView([51.505, -0.09], 12);
-    L.tileLayer(
-      "https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.png",
-      {
-        maxZoom: 18,
-        id: "examples.map-i86knfo3"
-      }
-    ).addTo(map);
-    
-    var img1 = L.distortableImageOverlay(paths[0], {
-      selected: true,
-      corners: [
-        L.latLng(51.52, -0.1),
-        L.latLng(51.52, -0.14),
-        L.latLng(51.5, -0.1),
-        L.latLng(51.5, -0.14)
-      ],
-      fullResolutionSrc: "large.jpg"
-    }).addTo(map);
-    
-    var img2 = L.distortableImageOverlay(paths[1], {
-      selected: true,
-      corners: [
-        L.latLng(51.52, -0.14),
-        L.latLng(51.52, -0.18),
-        L.latLng(51.5, -0.14),
-        L.latLng(51.5, -0.18)
-      ],
-      fullResolutionSrc: "large.jpg"
-    }).addTo(map);
-    // dyn!
-    L.DomEvent.on(img1._image, "load", img1.editing.enable, img1.editing);
-    L.DomEvent.on(img2._image, "load", img2.editing.enable, img2.editing);
-    var L_img_array = [img1, img2];
-    return {map: map, L_images: L_img_array};
+function init_(add) { // jshint ignore:line
+    var x = add();
+    return {map: x.map, L_images: x.L_img_array};
   }
 
 /* jshint ignore:start */
-function init_with_matcher(paths) {
+function init_with_matcher(add, paths) {
     Promise.resolve(new orbify(paths[0], paths[1], {
       browser: true
     }).utils).then(function (utils) {
-      init(utils, init_, projector, paths);
+      init(add, utils, init_, projector);
     });
   }
 /* jshint ignore:end */
 
 
-  function init(utils, init_, projector, paths) { // jshint ignore:line
-    var obj = init_(paths);
+  function init(add, utils, init_, projector) { // jshint ignore:line
+    var obj = init_(add);
     var images = document.getElementsByClassName('leaflet-image-layer leaflet-zoom-animated');
     var array = [];
     for (var i =0; i<images.length; i++) {

@@ -1,9 +1,9 @@
 /* jshint ignore:start */
-function init_with_matcher(paths) {
+function init_with_matcher(add, paths) {
     Promise.resolve(new orbify(paths[0], paths[1], {
       browser: true
     }).utils).then(function (utils) {
-      init(utils, init_, projector, paths);
+      init(add, utils, init_, projector);
     });
   }
 /* jshint ignore:end */
