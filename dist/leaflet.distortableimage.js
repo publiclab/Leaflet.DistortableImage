@@ -77,6 +77,16 @@ function init_(paths) { // jshint ignore:line
     return {map: map, L_images: L_img_array};
   }
 
+/* jshint ignore:start */
+function init_with_matcher(paths) {
+    Promise.resolve(new orbify(paths[0], paths[1], {
+      browser: true
+    }).utils).then(function (utils) {
+      init(utils, init_, projector, paths);
+    });
+  }
+/* jshint ignore:end */
+
 
   function init(utils, init_, projector, paths) { // jshint ignore:line
     var obj = init_(paths);
@@ -2025,10 +2035,12 @@ L.DistortableImage.Keymapper = L.Control.extend({
             "<tr><td><kbd>esc</kbd>: <span>Deselect All</span></td></tr>" +
             "<tr><td><kbd>delete</kbd> , <kbd>backspace</kbd>: <span>Delete</span></td></tr>" +
             "<tr><td><kbd>caps</kbd>: <span>Rotate</span></td></tr>" +
+            "<tr><td><kbd>Ctrl</kbd>/<kbd>Cmd</kbd>+<kbd>R</kbd>: <span>(Re)Enable/Disable Matcher</span></td></tr>" +
             "</tbody></table>";
         return el_wrapper;
     }
 });
+
 L.Map.mergeOptions({ boxSelector: true, boxZoom: false });
 
 // used for multiple image select. Temporarily disabled until click

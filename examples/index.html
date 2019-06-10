@@ -15,7 +15,7 @@
   <link href="../node_modules/leaflet-toolbar/dist/leaflet.toolbar.css" rel="stylesheet" />
   <!-- for pattern-mining utility -->
   <script src="../node_modules/matcher-core/orb.core.com.js"></script>
-  <!-- for UI projection -->
+  <script src="../src/util/init_with_matcher.js"></script>
   <script src="../src/util/projector.js"></script>
   <script src="../src/util/stitcher.js"></script>
   <script src="../src/util/init_.js"></script>
@@ -47,17 +47,15 @@
 
 <script>
 
+  // only this should be changed
   paths = ['../node_modules/matcher-core/assets/resources/big.jpg', '../node_modules/matcher-core/assets/resources/small.jpg'];
-  
-  // normal
-  // init_(paths);
 
-  // normal + matcher
-  Promise.resolve(new orbify(paths[0], paths[1], { // refactor this when we are ready to shift to es6 (spread operator)
-    browser: true
-  }).utils).then(function (utils) {
-    init(utils, init_, projector, paths);
-  });
+  if(confirm('Initialize Leaflet.DistortableImage with matcher.js?')){
+    init_with_matcher(paths);
+  } else {
+    init_(paths);
+  }
+
 </script>
 
 </html>
