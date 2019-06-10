@@ -15,7 +15,11 @@
   <link href="../node_modules/leaflet-toolbar/dist/leaflet.toolbar.css" rel="stylesheet" />
   <!-- for pattern-mining utility -->
   <script src="../node_modules/matcher-core/orb.core.com.js"></script>
-
+  <!-- for UI projection -->
+  <script src="../src/util/projector.js"></script>
+  <script src="../src/util/stitcher.js"></script>
+  <script src="../src/util/init_.js"></script>
+  <script src="../src/util/init.js"></script>
   <!-- for full-res export -->
   <script src="../node_modules/jquery/dist/jquery.js"></script>
   <script src="../node_modules/webgl-distort/dist/webgl-distort.js"></script>
@@ -29,134 +33,31 @@
   <script src="../dist/leaflet.distortableimage.js"></script>
 </head>
 
-<body style="margin:0;">
+<body>
+  <center>
+    <div class="loader-container">
+      <img width="100" src="leaflet.gif">
+    </div>
+  </center>
   <form id="test_form">
     <input type="file" id="inputimage" accept="image/*" />
   </form>
-
   <div id="map" style="width:100%; height:100%; position:absolute; top:0;"></div>
 </body>
+
 <script>
 
-  var map;
-  var img2path = '../node_modules/matcher-core/assets/resources/small.jpg';
-  var img1path = '../node_modules/matcher-core/assets/resources/big.jpg';
+  paths = ['../node_modules/matcher-core/assets/resources/big.jpg', '../node_modules/matcher-core/assets/resources/small.jpg'];
+  
+  // normal
+  // init_(paths);
 
-  // respective to origin
-  function projector(utils, e, array, L_img_array, map) {
-    document.querySelector("#map > div.leaflet-pane.leaflet-map-pane > div.leaflet-pane.leaflet-marker-pane").innerHTML = "";
-    var match_points = utils.matches;
-    var icon = L.icon({
-      iconUrl: "dot.png",
-      iconSize: [4, 4],
-      iconAnchor: [2, 2],
-      popupAnchor: [2, 2]
-    });
-    var dot = (x, y, c) => L.marker([x, y], { icon: icon }).addTo(map).bindPopup(JSON.stringify(c));
-    array.push(e.target);
-    if (array.length >= 2) {
-      array = array.slice(-2);
-      // client
-      var A = array[0];
-      var B = array[1];
-      // L objects
-      for (i in L_img_array) {
-        if (L_img_array[i]._image == A) {
-          array[0] = L_img_array[i];
-        }
-        if (L_img_array[i]._image == B) {
-          array[1] = L_img_array[i];
-        }
-      }
-      var idx = 2;
-      var processedPoints = {points: [], images: [], confidences: []};
-      for (i in array) {
-        var wA = A.clientWidth, hA = A.clientHeight;
-        var h_diff = Math.abs(map.latLngToContainerPoint(array[i].getCorner(0)).x - map.latLngToContainerPoint(array[i].getCorner(1)).x);
-        var rwA = h_diff / wA;
-        var v_diff = Math.abs(map.latLngToContainerPoint(array[i].getCorner(0)).y - map.latLngToContainerPoint(array[i].getCorner(2)).y);
-        var rhA = v_diff / hA;
-        var temp = [];
-        processedPoints.confidences[i] = [];
-        for (m of match_points) {
-          var t1 = eval(`m.x${idx}`);
-          var t2 = eval(`m.y${idx}`);
-          var confidence = eval(`m.confidence.c${idx}`);
-          var x_off = t1 * rwA;
-          var y_off = t2 * rhA;
-          var x_plot = map.latLngToContainerPoint(array[i].getCorner(0)).x - x_off;
-          var y_plot = map.latLngToContainerPoint(array[i].getCorner(0)).y + y_off;
-          temp.push([x_plot, y_plot]);
-          processedPoints.confidences[i].push(confidence);
-        }
-        processedPoints.points[i] = [];
-        processedPoints.images.push(array[i]);
-        for (n in temp) {
-          var k = map.containerPointToLatLng(temp[n]);
-          processedPoints.points[i].push(k);
-          dot(k.lat, k.lng, processedPoints.confidences[i][n]);
-        }
-        // swap for second iteration
-        A = B;
-        idx--;
-      }
-      window.processedPoints = processedPoints;
-    }
-  }
-
-  Promise.resolve(new orbify(img1path, img2path, {
+  // normal + matcher
+  Promise.resolve(new orbify(paths[0], paths[1], { // refactor this when we are ready to shift to es6 (spread operator)
     browser: true
   }).utils).then(function (utils) {
-    init(utils);
-  })
-
-  function init(utils) {
-    map = L.map("map").setView([51.505, -0.09], 12);
-    L.tileLayer(
-      "https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.png",
-      {
-        maxZoom: 18,
-        id: "examples.map-i86knfo3"
-      }
-    ).addTo(map);
-
-    img1 = L.distortableImageOverlay(img1path, {
-      selected: true,
-      corners: [
-        L.latLng(51.52, -0.1),
-        L.latLng(51.52, -0.14),
-        L.latLng(51.5, -0.1),
-        L.latLng(51.5, -0.14)
-      ],
-      fullResolutionSrc: "large.jpg"
-    }).addTo(map);
-
-    img2 = L.distortableImageOverlay(img2path, {
-      selected: true,
-      corners: [
-        L.latLng(51.52, -0.14),
-        L.latLng(51.52, -0.18),
-        L.latLng(51.5, -0.14),
-        L.latLng(51.5, -0.18)
-      ],
-      fullResolutionSrc: "large.jpg"
-    }).addTo(map);
-
-    L.DomEvent.on(img1._image, "load", img1.editing.enable, img1.editing);
-    L.DomEvent.on(img2._image, "load", img2.editing.enable, img2.editing);
-
-    var images = document.getElementsByClassName('leaflet-image-layer leaflet-zoom-animated');
-    var array = [];
-    // x1 x2
-    var L_img_array = [img1, img2];
-    for (i of images) {
-      i.addEventListener('click', function (e) {
-        // define orb inside this
-        projector(utils, e, array, L_img_array, map);
-      })
-    }
-  }
-
+    init(utils, init_, projector, paths);
+  });
 </script>
 
 </html>

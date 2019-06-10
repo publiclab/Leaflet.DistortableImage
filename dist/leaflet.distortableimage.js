@@ -39,6 +39,66 @@ L.DomUtil = L.extend(L.DomUtil, {
 
 });
 
+function init_(paths) { // jshint ignore:line
+    var map = L.map("map").setView([51.505, -0.09], 12);
+    L.tileLayer(
+      "https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.png",
+      {
+        maxZoom: 18,
+        id: "examples.map-i86knfo3"
+      }
+    ).addTo(map);
+    
+    var img1 = L.distortableImageOverlay(paths[0], {
+      selected: true,
+      corners: [
+        L.latLng(51.52, -0.1),
+        L.latLng(51.52, -0.14),
+        L.latLng(51.5, -0.1),
+        L.latLng(51.5, -0.14)
+      ],
+      fullResolutionSrc: "large.jpg"
+    }).addTo(map);
+    
+    var img2 = L.distortableImageOverlay(paths[1], {
+      selected: true,
+      corners: [
+        L.latLng(51.52, -0.14),
+        L.latLng(51.52, -0.18),
+        L.latLng(51.5, -0.14),
+        L.latLng(51.5, -0.18)
+      ],
+      fullResolutionSrc: "large.jpg"
+    }).addTo(map);
+    // dyn!
+    L.DomEvent.on(img1._image, "load", img1.editing.enable, img1.editing);
+    L.DomEvent.on(img2._image, "load", img2.editing.enable, img2.editing);
+    var L_img_array = [img1, img2];
+    return {map: map, L_images: L_img_array};
+  }
+
+
+  function init(utils, init_, projector, paths) { // jshint ignore:line
+    var obj = init_(paths);
+    var images = document.getElementsByClassName('leaflet-image-layer leaflet-zoom-animated');
+    var array = [];
+    for (var i =0; i<images.length; i++) {
+        images[i].addEventListener('click', function (e) { // jshint ignore:line
+          projector(utils, e, array, obj.L_images, obj.map);
+        });
+    }
+  }
+
+  function initMatcher(utils, projector, L_img_array, map) { // jshint ignore:line
+    var images = document.getElementsByClassName('leaflet-image-layer leaflet-zoom-animated');
+    var array = [];
+    for (var i in images) {
+      images[i].addEventListener('click', function (e) { // jshint ignore:line
+        projector(utils, e, array, L_img_array, map);
+      });
+    }
+  }
+
 L.Map.include({
 	_newLayerPointToLatLng: function(point, newZoom, newCenter) {
 		var topLeft = L.Map.prototype._getNewTopLeftPoint.call(this, newCenter, newZoom)
@@ -132,6 +192,167 @@ L.MatrixUtil = {
 		return L.MatrixUtil.multsm(1/m[8], m);
 	}
 };
+function projector(utils, e, array, L_img_array, map) { // jshint ignore:line
+    document.querySelector("#map > div.leaflet-pane.leaflet-map-pane > div.leaflet-pane.leaflet-marker-pane").innerHTML = "";
+    var match_points = utils.matches;
+    var icon = L.icon({
+      iconUrl: "dot.png",
+      iconSize: [5, 5],
+      iconAnchor: [0, 0],
+      popupAnchor: [2, 2]
+    });
+    var dot = function(x, y, c){
+      return L.marker([x, y], { icon: icon }).addTo(map).bindPopup(JSON.stringify(c));
+    };
+    array.push(e.target);
+    if (array.length >= 2) {
+      array = array.slice(-2);
+      var A = array[0];
+      var B = array[1];
+      for (var p in L_img_array) {
+        if (L_img_array[p]._image === A) {
+          array[0] = L_img_array[p];
+        }
+        if (L_img_array[p]._image === B) {
+          array[1] = L_img_array[p];
+        }
+      }
+      var idx = 2;
+      var processedPoints = {points: [], images: [], confidences: []};
+      for (var i in array) {
+        var wA = A.clientWidth, hA = A.clientHeight;
+        var h_diff = Math.abs(map.latLngToContainerPoint(array[i].getCorner(0)).x - map.latLngToContainerPoint(array[i].getCorner(1)).x);
+        var rwA = h_diff / wA;
+        var v_diff = Math.abs(map.latLngToContainerPoint(array[i].getCorner(0)).y - map.latLngToContainerPoint(array[i].getCorner(2)).y);
+        var rhA = v_diff / hA;
+        var temp = [];
+        processedPoints.confidences[i] = [];
+        for (var m in match_points) {
+          var t1, t2, confidence;
+          if(idx === 2){
+            t1 = match_points[m].x2;
+            t2 = match_points[m].y2;
+            confidence = match_points[m].confidence.c2;
+          } else {
+            t1 = match_points[m].x1;
+            t2 = match_points[m].y1;
+            confidence = match_points[m].confidence.c1;
+          }
+          var x_off = t1 * rwA;
+          var y_off = t2 * rhA;
+          var x_plot = map.latLngToContainerPoint(array[i].getCorner(0)).x - x_off;
+          var y_plot = map.latLngToContainerPoint(array[i].getCorner(0)).y + y_off;
+          temp.push([x_plot, y_plot]);
+          processedPoints.confidences[i].push(confidence);
+        }
+        processedPoints.points[i] = [];
+        processedPoints.images.push(array[i]);
+        for (var n in temp) {
+          var k = map.containerPointToLatLng(temp[n]);
+          processedPoints.points[i].push(k);
+          dot(k.lat, k.lng, processedPoints.confidences[i][n]);
+        }
+        A = B;
+        idx--;
+      }
+      window.processedPoints = processedPoints;
+    }
+  }
+
+function stitcher(processedPoints, center, corners, sectors, overlay) { // jshint ignore:line
+  for (var i in processedPoints.points) {
+    sectors.s00[i] = [];
+    sectors.s01[i] = [];
+    sectors.s10[i] = [];
+    sectors.s11[i] = [];
+    center = processedPoints.images[i].getCenter();
+    corners = processedPoints.images[i].getCorners();
+    for (var j in processedPoints.points[i]) {
+      if (
+        processedPoints.points[i][j].lng > corners[1].lng &&
+        processedPoints.points[i][j].lng < center.lng
+      ) {
+        if (
+          processedPoints.points[i][j].lat > corners[3].lat &&
+          processedPoints.points[i][j].lat < center.lat
+        ) {
+          sectors.s10[i].push(processedPoints.points[i][j]);
+        } else {
+          sectors.s00[i].push(processedPoints.points[i][j]);
+        }
+      } else {
+        if (
+          processedPoints.points[i][j].lat > corners[2].lat &&
+          processedPoints.points[i][j].lat < center.lat
+        ) {
+          sectors.s11[i].push(processedPoints.points[i][j]);
+        } else {
+          sectors.s01[i].push(processedPoints.points[i][j]);
+        }
+      }
+    }
+  }
+  for (i in processedPoints.points) {
+    sectors.population[i] = [];
+    sectors.population[i].push([
+      sectors.s00[i].length,
+      sectors.s01[i].length,
+      sectors.s10[i].length,
+      sectors.s11[i].length
+    ]);
+  }
+  var max = 0,
+    min = 10,
+    max_ = 0,
+    max_idx;
+  for (i in sectors.population[0][0]) {
+    if (sectors.population[0][0][i] > max) {
+      max = sectors.population[0][0][i];
+      max_idx = i;
+    }
+    if (sectors.population[0][0][i] < min) {
+      min = sectors.population[0][0][i];
+    }
+  }
+  if (max !== min) {
+    var coordinates = sectors[Object.keys(sectors)[max_idx]][0];
+    for (var u in processedPoints.points[0]) {
+      for (var v in coordinates) {
+        if (processedPoints.points[0][u] === coordinates[v]) {
+          if (processedPoints.confidences[0][u] > max_) {
+            max_ = processedPoints.confidences[0][u];
+          }
+        }
+      }
+    }
+    var best_point =
+      processedPoints.points[0][processedPoints.confidences[0].indexOf(max_)]; //	alternate overlay
+    var corresponding_best_point =
+      processedPoints.points[1][processedPoints.confidences[0].indexOf(max_)];
+    document.querySelector(
+      "#map > div.leaflet-pane.leaflet-map-pane > div.leaflet-pane.leaflet-marker-pane"
+    ).innerHTML = "";
+    var lat_offset = -best_point.lat + corresponding_best_point.lat;
+    var lng_offset = -best_point.lng + corresponding_best_point.lng;
+    overlay._corners[0] = [
+      processedPoints.images[1].getCorner(0).lat - lat_offset,
+      processedPoints.images[1].getCorner(0).lng - lng_offset
+    ];
+    overlay._corners[1] = [
+      processedPoints.images[1].getCorner(1).lat - lat_offset,
+      processedPoints.images[1].getCorner(1).lng - lng_offset
+    ];
+    overlay._corners[2] = [
+      processedPoints.images[1].getCorner(2).lat - lat_offset,
+      processedPoints.images[1].getCorner(2).lng - lng_offset
+    ];
+    overlay._corners[3] = [
+      processedPoints.images[1].getCorner(3).lat - lat_offset,
+      processedPoints.images[1].getCorner(3).lng - lng_offset
+    ];
+  }
+}
+
 L.TrigUtil = {
 
   calcAngleDegrees: function(x, y) {
@@ -1055,65 +1276,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 			var center, corners;
 			var sectors = {s00: [], s01: [], s10: [], s11: [], population: []};
 			try {
-				for(var i in processedPoints.points) {
-					sectors.s00[i]=[];
-					sectors.s01[i]=[];
-					sectors.s10[i]=[];
-					sectors.s11[i]=[];
-					center = processedPoints.images[i].getCenter();
-					corners = processedPoints.images[i].getCorners();
-					for(var j in processedPoints.points[i]) {
-						if(processedPoints.points[i][j].lng > corners[1].lng && processedPoints.points[i][j].lng < center.lng) {
-							if(processedPoints.points[i][j].lat > corners[3].lat && processedPoints.points[i][j].lat < center.lat) {
-								sectors.s10[i].push(processedPoints.points[i][j]);
-							} else {
-								sectors.s00[i].push(processedPoints.points[i][j]);								
-							}
-						} else {
-							if(processedPoints.points[i][j].lat > corners[2].lat && processedPoints.points[i][j].lat < center.lat) {
-								sectors.s11[i].push(processedPoints.points[i][j]);								
-							} else {
-								sectors.s01[i].push(processedPoints.points[i][j]);								
-							}
-						}
-					}
-				}
-				for(i in processedPoints.points) {
-					sectors.population[i] = [];
-					sectors.population[i].push([
-						sectors.s00[i].length,
-						sectors.s01[i].length,
-						sectors.s10[i].length,
-						sectors.s11[i].length
-					]);
-				}
-				var max = 0, min = 10, max_ = 0, max_idx;
-				for(i in sectors.population[0][0]) {
-					if(sectors.population[0][0][i]>max) {max=sectors.population[0][0][i]; max_idx=i;}
-					if(sectors.population[0][0][i]<min) {min=sectors.population[0][0][i];}
-				}
-				if(max !== min) {
-					var coordinates = sectors[Object.keys(sectors)[max_idx]][0];
-					for(var u in processedPoints.points[0]) {
-						for(var v in coordinates) {
-							if(processedPoints.points[0][u] === coordinates[v]) {
-								if(processedPoints.confidences[0][u]>max_) {
-									max_ = processedPoints.confidences[0][u];
-								}
-							}
-						}
-					}
-					var best_point = processedPoints.points[0][processedPoints.confidences[0].indexOf(max_)];	//	alternate overlay
-					var corresponding_best_point = processedPoints.points[1][processedPoints.confidences[0].indexOf(max_)];
-			    document.querySelector("#map > div.leaflet-pane.leaflet-map-pane > div.leaflet-pane.leaflet-marker-pane").innerHTML = "";
-					var lat_offset = - best_point.lat + corresponding_best_point.lat;
-					var lng_offset = - best_point.lng + corresponding_best_point.lng;
-					overlay._corners[0] = [processedPoints.images[1].getCorner(0).lat - lat_offset, processedPoints.images[1].getCorner(0).lng - lng_offset];
-					overlay._corners[1] = [processedPoints.images[1].getCorner(1).lat - lat_offset, processedPoints.images[1].getCorner(1).lng - lng_offset];
-					overlay._corners[2] = [processedPoints.images[1].getCorner(2).lat - lat_offset, processedPoints.images[1].getCorner(2).lng - lng_offset];
-					overlay._corners[3] = [processedPoints.images[1].getCorner(3).lat - lat_offset, processedPoints.images[1].getCorner(3).lng - lng_offset];
-					
-				}
+				stitcher(processedPoints, center, corners, sectors, overlay); // jshint ignore:line
 			} catch(err) {
 				console.error('err: check if matcher is initialized properly and correct parameters are supplied \n', err);
 			}

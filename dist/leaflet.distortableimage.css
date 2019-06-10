@@ -1,3 +1,9 @@
+body {
+  margin:0;
+  background-color: darkgreen;
+  overflow: hidden;
+}
+
 #imgcontainer {
   position:relative;
   width: 100%;
@@ -87,5 +93,11 @@ kbd {
 span {
   margin-left: 2px;
   letter-spacing: 1.2px;
+}
+
+.loader-container {
+  width: 100px;
+  height: 100vh;
+  margin-top:30vh;
 }
 
