@@ -579,7 +579,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
         collection: JSON.stringify(collection.images),
         scale: 30
       },
-      success: function _getStatusjson(data) {
+      success: function _getStatusJson(data) {
         console.log(data);
         $.ajax("http://export.mapknitter.org" + data, {
           type: "GET",
