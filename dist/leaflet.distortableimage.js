@@ -452,7 +452,6 @@ L.distortableImageOverlay = function(id, options) {
 
 
 L.DistortableCollection = L.FeatureGroup.extend({
-
   onAdd: function(map) {
     L.FeatureGroup.prototype.onAdd.call(this, map);
 
@@ -475,14 +474,15 @@ L.DistortableCollection = L.FeatureGroup.extend({
       L.DomEvent.on(layer, "dragstart", this._dragStartMultiple, this);
       L.DomEvent.on(layer, "drag", this._dragMultiple, this);
 
-      if (layer.options.selected) { 
+      if (layer.options.selected) {
         layer.editing._deselect();
         lastSelected = layer.editing;
-     }
+      }
     }, this);
 
-    if (lastSelected) { lastSelected._select(); }
-
+    if (lastSelected) {
+      lastSelected._select();
+    }
   },
 
   onRemove: function() {
@@ -530,9 +530,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     this.eachLayer(function(layer) {
       var edit = layer.editing;
-      if (edit.toolbar) {
-        edit._hideToolbar();
-      }
+
+      if (edit.toolbar) { edit._hideToolbar(); }
+
       for (i = 0; i < 4; i++) {
         if (box.contains(layer.getCorner(i)) && edit._mode !== "lock") {
           L.DomUtil.addClass(layer.getElement(), "selected");
@@ -555,7 +555,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     this.eachLayer(function(layer) {
       if (this.isSelected(layer)) {
-        json.images.push({ 
+        json.images.push({
           id: this.getLayerId(layer),
           src: layer._image.src,
           nodes: layer.getCorners(),
@@ -566,13 +566,35 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     json.avg_cm_per_pixel = this._getAvgCmPerPixel(json.images);
 
-    return JSON.stringify(json);
+    return json;
+  },
+
+  _runExport: function(collection) {
+    collection = collection || this._generateExportJson();
+    $.ajax({
+      url: "http://export.mapknitter.org/export",
+      crossDomain: true,
+      type: "POST",
+      data: {
+        collection: JSON.stringify(collection.images),
+        scale: 30
+      },
+      success: function _getStatusjson(data) {
+        console.log(data);
+        $.ajax("http://export.mapknitter.org" + data, {
+          type: "GET",
+          crossDomain: true
+        }).done(function(data) {
+          console.log(data);
+        });
+      }
+    });
   },
 
   _onKeyDown: function(e) {
     if (e.key === "Escape") {
       this._deselectAll(e);
-    } 
+    }
     if (e.key === "Backspace") {
       this._removeFromGroup(e);
     }
@@ -629,9 +651,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
       var edit = layer.editing;
       if (edit._selected && edit._mode !== "lock") {
         var choice = edit.confirmDelete();
-        if (choice) { 
+        if (choice) {
           edit._selected = false;
-          this.removeLayer(layer); 
+          this.removeLayer(layer);
         } else {
           L.DomEvent.stopPropagation(e);
           return;
