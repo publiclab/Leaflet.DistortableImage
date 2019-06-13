@@ -119,28 +119,28 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     // this._getExportUrl(collection);
 
-    return JSON.stringify(json);
+    return json;
   },
 
-  _getExportUrl: function() {
-    // var collection = this._generateExportJson();
+  _runExport: function() {
+    var collection = this._generateExportJson();
     $.ajax({
-      url:
-        "http://export.mapknitter.org/export?url=https://mapknitter.org/maps/pvdtest/warpables.json&scale=30",
+      url: "http://export.mapknitter.org/export",
       crossDomain: true,
+      type: "POST",
+      data: {
+        collection: JSON.stringify(collection),
+        scale: 30
+      },
       success: function _startExport(data) {
         console.log(data);
         $.ajax("http://export.mapknitter.org" + data, {
-          type: "POST",
-          // data: {
-          //   collections: collection,
-          //   scale: 30
-          // },
+          type: "GET",
           crossDomain: true
         }).done(function(data) {
           console.log(data);
         });
-      }, 
+      }
     });
   },
 
