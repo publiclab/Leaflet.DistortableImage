@@ -115,24 +115,20 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     json.avg_cm_per_pixel = this._getAvgCmPerPixel(json.images);
 
-    // var collection = JSON.stringify(json);
-
-    // this._getExportUrl(collection);
-
     return json;
   },
 
-  _runExport: function() {
-    var collection = this._generateExportJson();
+  _runExport: function(collection) {
+    collection = collection || this._generateExportJson();
     $.ajax({
       url: "http://export.mapknitter.org/export",
       crossDomain: true,
       type: "POST",
       data: {
-        collection: JSON.stringify(collection),
+        collection: JSON.stringify(collection.images),
         scale: 30
       },
-      success: function _startExport(data) {
+      success: function _getStatusjson(data) {
         console.log(data);
         $.ajax("http://export.mapknitter.org" + data, {
           type: "GET",
