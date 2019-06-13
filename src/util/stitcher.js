@@ -1,4 +1,6 @@
-function stitcher(processedPoints, center, corners, sectors, overlay) { // jshint ignore:line
+function stitcher(processedPoints, overlay, map) { // jshint ignore:line
+  var center, corners;
+  var sectors = {s00: [], s01: [], s10: [], s11: [], population: []};
   for (var i in processedPoints.points) {
     sectors.s00[i] = [];
     sectors.s01[i] = [];
@@ -31,7 +33,7 @@ function stitcher(processedPoints, center, corners, sectors, overlay) { // jshin
       }
     }
   }
-  for (i in processedPoints.points) {
+  for (i=0; i<processedPoints.points.length; i++) {
     sectors.population[i] = [];
     sectors.population[i].push([
       sectors.s00[i].length,
@@ -73,6 +75,7 @@ function stitcher(processedPoints, center, corners, sectors, overlay) { // jshin
     ).innerHTML = "";
     var lat_offset = -best_point.lat + corresponding_best_point.lat;
     var lng_offset = -best_point.lng + corresponding_best_point.lng;
+    // revert this effect completely
     overlay._corners[0] = [
       processedPoints.images[1].getCorner(0).lat - lat_offset,
       processedPoints.images[1].getCorner(0).lng - lng_offset
@@ -89,5 +92,10 @@ function stitcher(processedPoints, center, corners, sectors, overlay) { // jshin
       processedPoints.images[1].getCorner(3).lat - lat_offset,
       processedPoints.images[1].getCorner(3).lng - lng_offset
     ];
+    var zoom_level = map.getZoom();
+    window.alt = window.alt+1||1;
+    map.setView(overlay.getCenter(), (zoom_level%2?zoom_level+1:zoom_level-1));
+    // enable editing after image displacement
+    L.DomEvent.on(overlay._image, 'mousedrag', overlay.editing.enable, overlay.editing);
   }
 }

@@ -1,5 +1,5 @@
 function projector(utils, e, array, L_img_array, map) { // jshint ignore:line
-    document.querySelector("#map > div.leaflet-pane.leaflet-map-pane > div.leaflet-pane.leaflet-marker-pane").innerHTML = "";
+    document.querySelector("#map > div.leaflet-pane.leaflet-map-pane > div.leaflet-pane.leaflet-marker-pane").innerHTML = ""; // part of this is the toolbar
     var match_points = utils.matches;
     var icon = L.icon({
       iconUrl: "dot.png",

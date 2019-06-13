@@ -170,7 +170,7 @@ L.MatrixUtil = {
 	}
 };
 function projector(utils, e, array, L_img_array, map) { // jshint ignore:line
-    document.querySelector("#map > div.leaflet-pane.leaflet-map-pane > div.leaflet-pane.leaflet-marker-pane").innerHTML = "";
+    document.querySelector("#map > div.leaflet-pane.leaflet-map-pane > div.leaflet-pane.leaflet-marker-pane").innerHTML = ""; // part of this is the toolbar
     var match_points = utils.matches;
     var icon = L.icon({
       iconUrl: "dot.png",
@@ -236,7 +236,9 @@ function projector(utils, e, array, L_img_array, map) { // jshint ignore:line
     }
   }
 
-function stitcher(processedPoints, center, corners, sectors, overlay) { // jshint ignore:line
+function stitcher(processedPoints, overlay, map) { // jshint ignore:line
+  var center, corners;
+  var sectors = {s00: [], s01: [], s10: [], s11: [], population: []};
   for (var i in processedPoints.points) {
     sectors.s00[i] = [];
     sectors.s01[i] = [];
@@ -269,7 +271,7 @@ function stitcher(processedPoints, center, corners, sectors, overlay) { // jshin
       }
     }
   }
-  for (i in processedPoints.points) {
+  for (i=0; i<processedPoints.points.length; i++) {
     sectors.population[i] = [];
     sectors.population[i].push([
       sectors.s00[i].length,
@@ -311,6 +313,7 @@ function stitcher(processedPoints, center, corners, sectors, overlay) { // jshin
     ).innerHTML = "";
     var lat_offset = -best_point.lat + corresponding_best_point.lat;
     var lng_offset = -best_point.lng + corresponding_best_point.lng;
+    // revert this effect completely
     overlay._corners[0] = [
       processedPoints.images[1].getCorner(0).lat - lat_offset,
       processedPoints.images[1].getCorner(0).lng - lng_offset
@@ -327,6 +330,11 @@ function stitcher(processedPoints, center, corners, sectors, overlay) { // jshin
       processedPoints.images[1].getCorner(3).lat - lat_offset,
       processedPoints.images[1].getCorner(3).lng - lng_offset
     ];
+    var zoom_level = map.getZoom();
+    window.alt = window.alt+1||1;
+    map.setView(overlay.getCenter(), (zoom_level%2?zoom_level+1:zoom_level-1));
+    // enable editing after image displacement
+    L.DomEvent.on(overlay._image, 'mousedrag', overlay.editing.enable, overlay.editing);
   }
 }
 
@@ -1238,7 +1246,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 			LeafletToolbar.ToolbarAction.prototype.initialize.call(this, options);
 		}
 	}),
-// make one for matcher too
+// make one for initializing matcher also
 	Stitcher = EditOverlayAction.extend({
 		options: {
 			toolbarIcon: {
@@ -1250,15 +1258,10 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 		addHooks: function() {
 			var map = this._map;
 			var overlay = this._overlay;
-			var center, corners;
-			var sectors = {s00: [], s01: [], s10: [], s11: [], population: []};
 			try {
-				stitcher(processedPoints, center, corners, sectors, overlay); // jshint ignore:line
+				stitcher(processedPoints, overlay, map); // jshint ignore:line
 			} catch(err) {
 				console.error('err: check if matcher is initialized properly and correct parameters are supplied \n', err);
-			}
-			for(var k in corners) {
-				map.project(corners[k]);
 			}
 			map.setView(overlay.getCorner(2), 13);
 			this.disable();

@@ -8,7 +8,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 			LeafletToolbar.ToolbarAction.prototype.initialize.call(this, options);
 		}
 	}),
-// make one for matcher too
+// make one for initializing matcher also
 	Stitcher = EditOverlayAction.extend({
 		options: {
 			toolbarIcon: {
@@ -20,15 +20,10 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 		addHooks: function() {
 			var map = this._map;
 			var overlay = this._overlay;
-			var center, corners;
-			var sectors = {s00: [], s01: [], s10: [], s11: [], population: []};
 			try {
-				stitcher(processedPoints, center, corners, sectors, overlay); // jshint ignore:line
+				stitcher(processedPoints, overlay, map); // jshint ignore:line
 			} catch(err) {
 				console.error('err: check if matcher is initialized properly and correct parameters are supplied \n', err);
-			}
-			for(var k in corners) {
-				map.project(corners[k]);
 			}
 			map.setView(overlay.getCorner(2), 13);
 			this.disable();
