@@ -98,9 +98,7 @@ function stitcher(processedPoints, overlay, map) { // jshint ignore:line
       processedPoints.images[1].getCorner(3).lng - lng_offset
     ];
     var zoom_level = map.getZoom();
-    window.alt = window.alt+1||1;
     map.setView(overlay.getCenter(), (zoom_level%2?zoom_level+1:zoom_level-1));
-    // enable editing after image displacement
     L.DomEvent.on(overlay._image, 'mousedrag', overlay.editing.enable, overlay.editing);
   }
 }

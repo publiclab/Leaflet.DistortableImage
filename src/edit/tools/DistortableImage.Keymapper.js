@@ -18,7 +18,6 @@ L.DistortableImage.Keymapper = L.Control.extend({
             "<tr><td><kbd>esc</kbd>: <span>Deselect All</span></td></tr>" +
             "<tr><td><kbd>delete</kbd> , <kbd>backspace</kbd>: <span>Delete</span></td></tr>" +
             "<tr><td><kbd>caps</kbd>: <span>Rotate</span></td></tr>" +
-            "<tr><td><kbd>Ctrl</kbd>/<kbd>Cmd</kbd>+<kbd>R</kbd>: <span>(Re)Enable/Disable Matcher</span></td></tr>" +
             "</tbody></table>";
         return el_wrapper;
     }

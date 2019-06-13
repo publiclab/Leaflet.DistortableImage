@@ -55,6 +55,7 @@ img.leaflet-image-layer.selected {
   font-weight: 400;
   letter-spacing: 0.5px;
   line-height: 1.2;
+  border-radius: 5px;
 }
 
 .l-container table th{
@@ -101,3 +102,17 @@ span {
   margin-top:30vh;
 }
 
+#matcher-button {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background-color: rgba(255, 255, 255, .6);
+  border: none;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  color: black;
+  cursor: pointer;
+  z-index: 500;
+  border-radius: 5px;
+  padding: 5px;
+  font-weight: bold;
+}

@@ -43,6 +43,7 @@
     <input type="file" id="inputimage" accept="image/*" />
   </form>
   <div id="map" style="width:100%; height:100%; position:absolute; top:0;"></div>
+  <button id="matcher-button">Toggle matcher.js</button>
 </body>
 
 <script>
@@ -50,7 +51,7 @@
   // only this should be changed
   paths = ['../node_modules/matcher-core/assets/resources/big.jpg', '../node_modules/matcher-core/assets/resources/small.jpg'];
 
-  function add(){
+  function add() {
     var map = L.map("map").setView([51.505, -0.09], 12);
     L.tileLayer(
       "https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.png",
@@ -59,7 +60,7 @@
         id: "examples.map-i86knfo3"
       }
     ).addTo(map);
-    
+
     var img1 = L.distortableImageOverlay(paths[0], {
       selected: true,
       corners: [
@@ -70,7 +71,7 @@
       ],
       fullResolutionSrc: "large.jpg"
     }).addTo(map);
-    
+
     var img2 = L.distortableImageOverlay(paths[1], {
       selected: true,
       corners: [
@@ -82,16 +83,36 @@
       fullResolutionSrc: "large.jpg"
     }).addTo(map);
     var L_img_array = [img1, img2];
-    for(var y=0; y<L_img_array.length; y++) {
+    for (var y = 0; y < L_img_array.length; y++) {
       L.DomEvent.on(L_img_array[y]._image, "load", L_img_array[y].editing.enable, L_img_array[y].editing);
     }
-    return {L_img_array: L_img_array, map: map};
+    return { L_img_array: L_img_array, map: map };
   }
 
-  if(confirm('Initialize Leaflet.DistortableImage with matcher.js?')){
-    init_with_matcher(add, paths);
-  } else {
-    init_(add);
+  (function start() {
+    if (sessionStorage.getItem('flag')==='true') {
+      init_with_matcher(add, paths);
+    } else {
+      sessionStorage.setItem('flag', 'false');
+      init_(add);
+    }
+  })();
+
+  document.getElementById('matcher-button').addEventListener('click', setter);
+  document.getElementById('matcher-button').addEventListener('mouseover', function(e) {
+    if(sessionStorage.getItem('flag')==='true') {
+      e.target.innerHTML = "current state: running";
+    } else {
+      e.target.innerHTML = "current state: not initialized";
+    }
+  });
+  document.getElementById('matcher-button').addEventListener('mouseleave', function(e) {
+      e.target.innerHTML = "Toggle matcher.js";
+  });
+  
+  function setter() {
+    sessionStorage.setItem('flag', (sessionStorage.getItem('flag')==='true'?'false':'true'));
+    location.reload();
   }
 
 </script>
