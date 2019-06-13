@@ -73,6 +73,11 @@ function stitcher(processedPoints, overlay, map) { // jshint ignore:line
     document.querySelector(
       "#map > div.leaflet-pane.leaflet-map-pane > div.leaflet-pane.leaflet-marker-pane"
     ).innerHTML = "";
+    if(document.querySelectorAll("#map > div.leaflet-pane.leaflet-map-pane > div.leaflet-pane.leaflet-overlay-pane > svg > g > path").length) {
+      [].slice.call(document.querySelectorAll("#map > div.leaflet-pane.leaflet-map-pane > div.leaflet-pane.leaflet-overlay-pane > svg > g > path")).slice(0,3).map(function(x) {
+        x.parentNode.removeChild(x);
+      });
+    }
     var lat_offset = -best_point.lat + corresponding_best_point.lat;
     var lng_offset = -best_point.lng + corresponding_best_point.lng;
     // revert this effect completely

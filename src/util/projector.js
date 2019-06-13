@@ -1,5 +1,13 @@
 function projector(utils, e, array, L_img_array, map) { // jshint ignore:line
-    document.querySelector("#map > div.leaflet-pane.leaflet-map-pane > div.leaflet-pane.leaflet-marker-pane").innerHTML = ""; // part of this is the toolbar
+  document.querySelector("#map > div.leaflet-pane.leaflet-map-pane > div.leaflet-pane.leaflet-marker-pane").innerHTML = ""; // part of this is the toolbar
+  if(document.querySelectorAll("#map > div.leaflet-pane.leaflet-map-pane > div.leaflet-pane.leaflet-overlay-pane > svg > g > path").length) {
+    [].slice.call(document.querySelectorAll("#map > div.leaflet-pane.leaflet-map-pane > div.leaflet-pane.leaflet-overlay-pane > svg > g > path")).slice(0,3).map(function(x) {
+      x.parentNode.removeChild(x);
+    });
+  }
+    function addLine(line_coordinates, map) {
+      return L.polyline(line_coordinates).addTo(map);
+    }
     var match_points = utils.matches;
     var icon = L.icon({
       iconUrl: "dot.png",
@@ -25,7 +33,7 @@ function projector(utils, e, array, L_img_array, map) { // jshint ignore:line
       }
       var idx = 2;
       var processedPoints = {points: [], images: [], confidences: []};
-      for (var i in array) {
+      for (var i=0; i<array.length; i++) {
         var wA = A.clientWidth, hA = A.clientHeight;
         var h_diff = Math.abs(map.latLngToContainerPoint(array[i].getCorner(0)).x - map.latLngToContainerPoint(array[i].getCorner(1)).x);
         var rwA = h_diff / wA;
@@ -58,6 +66,16 @@ function projector(utils, e, array, L_img_array, map) { // jshint ignore:line
           processedPoints.points[i].push(k);
           dot(k.lat, k.lng, processedPoints.confidences[i][n]);
         }
+        processedPoints.confidences[0].sort(function(a,b) {
+          return b-a;
+        }).slice(0,3).map(function(r) { // jshint ignore:line
+          if(processedPoints.points[1]) {
+            if(processedPoints.images[0]!==processedPoints.images[1]) {
+              var line_coordinates = [processedPoints.points[0][processedPoints.confidences[0].indexOf(r)], processedPoints.points[1][processedPoints.confidences[0].indexOf(r)]];
+              addLine(line_coordinates, map); 
+            }
+          }
+        });
         A = B;
         idx--;
       }
