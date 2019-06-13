@@ -597,7 +597,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
       crossDomain: true,
       type: "POST",
       data: {
-        collection: JSON.stringify(collection),
+        collection: JSON.stringify(collection.images),
         scale: 30
       },
       success: function _startExport(data) {
