@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for src/Toolbar.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../index.html">all files</a> / <a href="index.html">src/</a> Toolbar.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">87.76% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>43/49</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">58.33% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>7/12</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">85.71% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>12/14</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">91.49% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>43/47</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line high'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">30×</span>
+<span class="cline-any cline-yes">30×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-yes">11×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-yes">60×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">26×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">26×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">26×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">20×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// L.Layer was introduced in Leaflet 1.0 and is not present in earlier releases.
+window.LeafletToolbar = (L.Layer || L.Class).extend({
+	statics: {
+		baseClass: 'leaflet-toolbar'
+	},
+&nbsp;
+	options: {
+		className: '',
+		filter: <span class="fstat-no" title="function not covered" >function() {</span> <span class="cstat-no" title="statement not covered" >return true; </span>},
+		actions: []
+	},
+&nbsp;
+	initialize: function(options) {
+		L.setOptions(this, options);
+		this._toolbar_type = this.constructor._toolbar_class_id;
+	},
+&nbsp;
+	addTo: function(map) {
+		this._arguments = [].slice.call(arguments);
+&nbsp;
+		map.addLayer(this);
+&nbsp;
+		return this;
+	},
+&nbsp;
+	onAdd: function(map) {
+		var currentToolbar = map._toolbars[this._toolbar_type];
+&nbsp;
+		if (this._calculateDepth() === 0) {
+			<span class="missing-if-branch" title="if path not taken" >I</span>if (currentToolbar) { <span class="cstat-no" title="statement not covered" >map.removeLayer(currentToolbar); </span>}
+			map._toolbars[this._toolbar_type] = this;
+		}
+	},
+&nbsp;
+	onRemove: function(map) {
+		/* 
+		 * TODO: Cleanup event listeners. 
+		 * For some reason, this throws:
+		 * "Uncaught TypeError: Cannot read property 'dragging' of null"
+		 * on this._marker when a toolbar icon is clicked.
+		 */
+		// for (var i = 0, l = this._disabledEvents.length; i &lt; l; i++) {
+		// 	L.DomEvent.off(this._ul, this._disabledEvents[i], L.DomEvent.stopPropagation);
+		// }
+&nbsp;
+		<span class="missing-if-branch" title="else path not taken" >E</span>if (this._calculateDepth() === 0) {
+			delete map._toolbars[this._toolbar_type];
+		}
+	},
+&nbsp;
+	appendToContainer: function(container) {
+		var baseClass = this.constructor.baseClass + '-' + this._calculateDepth(),
+			className = baseClass + ' ' + this.options.className,
+			Action, action,
+			i, j, l, m;
+&nbsp;
+		this._container = container;
+		this._ul = L.DomUtil.create('ul', className, container);
+&nbsp;
+		// Ensure that clicks, drags, etc. don't bubble up to the map.
+		// These are the map events that the L.Draw.Polyline handler listens for.
+		// Note that L.Draw.Polyline listens to 'mouseup', not 'mousedown', but
+		// if only 'mouseup' is silenced, then the map gets stuck in a halfway
+		// state because it receives a 'mousedown' event and is waiting for the
+		// corresponding 'mouseup' event.
+		this._disabledEvents = [
+			'click', 'mousemove', 'dblclick',
+			'mousedown', 'mouseup', 'touchstart'
+		];
+&nbsp;
+		for (j = 0, m = this._disabledEvents.length; j &lt; m; j++) {
+			L.DomEvent.on(this._ul, this._disabledEvents[j], L.DomEvent.stopPropagation);
+		}
+&nbsp;
+		/* Instantiate each toolbar action and add its corresponding toolbar icon. */
+		for (i = 0, l = this.options.actions.length; i &lt; l; i++) {
+			Action = this._getActionConstructor(this.options.actions[i]);
+&nbsp;
+			action = new Action();
+			action._createIcon(this, this._ul, this._arguments);
+		}
+	},
+&nbsp;
+	_getActionConstructor: function(Action) {
+		var args = this._arguments,
+			toolbar = this;
+&nbsp;
+		return Action.extend({
+			initialize: function() {
+				Action.prototype.initialize.apply(this, args);
+			},
+			enable: <span class="fstat-no" title="function not covered" >function(e) {</span>
+				/* Ensure that only one action in a toolbar will be active at a time. */
+<span class="cstat-no" title="statement not covered" >				if (toolbar._active) { <span class="cstat-no" title="statement not covered" >toolbar._active.disable(); </span>}</span>
+<span class="cstat-no" title="statement not covered" >				toolbar._active = this;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >				Action.prototype.enable.call(this, e);</span>
+			}
+		});
+	},
+&nbsp;
+	/* Used to hide subToolbars without removing them from the map. */
+	_hide: function() {
+		this._ul.style.display = 'none';
+	},
+&nbsp;
+	/* Used to show subToolbars without removing them from the map. */
+	_show: function() {
+		this._ul.style.display = 'block';
+	},
+&nbsp;
+	_calculateDepth: function() {
+		var depth = 0,
+			toolbar = this.parentToolbar;
+&nbsp;
+		while (toolbar) {
+			depth += 1;
+			toolbar = toolbar.parentToolbar;
+		}
+&nbsp;
+		return depth;
+	}
+});
+&nbsp;
+// L.Mixin.Events is replaced by L.Evented in Leaflet 1.0. L.Layer (also
+// introduced in Leaflet 1.0) inherits from L.Evented, so if L.Layer is
+// present, then LeafletToolbar will already support events.
+<span class="missing-if-branch" title="else path not taken" >E</span>if (!L.Evented) {
+    LeafletToolbar.include(L.Mixin.Events);
+}
+&nbsp;
+L.toolbar = {};
+&nbsp;
+var toolbar_class_id = 0;
+&nbsp;
+LeafletToolbar.extend = function extend(props) {
+	var statics = L.extend({}, props.statics, {
+		"_toolbar_class_id": toolbar_class_id
+	});
+&nbsp;
+	toolbar_class_id += 1;
+	L.extend(props, { statics: statics });
+&nbsp;
+	return L.Class.extend.call(this, props);
+};
+&nbsp;
+L.Map.addInitHook(function() {
+	this._toolbars = {};
+});
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Tue Sep 26 2017 21:39:26 GMT-0700 (PDT)
+</div>
+</div>
+<script src="../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../sorter.js"></script>
+</body>
+</html>

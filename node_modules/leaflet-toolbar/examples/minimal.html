@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="../node_modules/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="../dist/leaflet.toolbar.css"/>
+    <script src="../node_modules/leaflet/dist/leaflet-src.js"></script>
+    <script src="../dist/leaflet.toolbar-src.js"></script>
+    <style>
+        html, body, #map { margin: 0; height: 100%; width: 100%; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script>
+        var map = L.map('map').setView([41.7896, -87.5996], 15);
+
+        L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: '<a href="http://openstreetmap.org/copyright">OpenStreetMap Contributors</a>'
+        }).addTo(map);
+
+        var MyCustomAction = L.ToolbarAction.extend({
+
+            options: {
+                toolbarIcon: {
+                    html: '&#9873;',
+                    tooltip: 'Go to the Eiffel Tower'
+                }
+            },
+
+            addHooks: function () {
+                map.setView([48.85815, 2.29420], 19);
+            }
+
+        });
+
+        new L.Toolbar.Control({
+            actions: [MyCustomAction]
+        }).addTo(map);
+    </script>
+</body>
+</html>

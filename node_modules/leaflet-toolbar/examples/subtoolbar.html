@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
+
+    <link rel="stylesheet" type="text/css" href="../node_modules/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="../dist/leaflet.toolbar.css"/>
+    <script src="../node_modules/leaflet/dist/leaflet-src.js"></script>
+    <script src="../dist/leaflet.toolbar-src.js"></script>
+    <style>
+        html, body, #map { 
+            margin: 0; 
+            height: 100%; 
+            width: 100%; 
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script>
+        var map = L.map('map').setView([41.7896, -87.5996], 15);
+        L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: '<a href="http://openstreetmap.org/copyright">OpenStreetMap Contributors</a>'
+        }).addTo(map);
+        /* A sub-action which completes as soon as it is activated.
+         * Sub-actions receive their parent action as an argument to
+         * their `initialize` function. We save a reference to this
+         * parent action so we can disable it as soon as the sub-action
+         * completes.
+         */
+        var ImmediateSubAction = LeafletToolbar.ToolbarAction.extend({
+            initialize: function(map, myAction) {
+                this.map = map;
+                this.myAction = myAction;
+                LeafletToolbar.ToolbarAction.prototype.initialize.call(this);                
+            },
+            addHooks: function() {
+                this.myAction.disable();
+            }
+        });
+        var World = ImmediateSubAction.extend({
+            options: {
+                toolbarIcon: {
+                    html: 'World',
+                    tooltip: 'See the whole world'
+                }
+            },
+            addHooks: function () {
+                this.map.setView([0, 0], 0);
+                ImmediateSubAction.prototype.addHooks.call(this);
+            }
+        });
+        var Eiffel = ImmediateSubAction.extend({
+            options: {
+                toolbarIcon: {
+                    html: 'Eiffel Tower',
+                    tooltip: 'Go to the Eiffel Tower'
+                }
+            },
+            addHooks: function () {
+                this.map.setView([48.85815, 2.29420], 19);
+                ImmediateSubAction.prototype.addHooks.call(this);
+            }
+        });
+        var Cancel = ImmediateSubAction.extend({
+            options: {
+                toolbarIcon: {
+                    html: '<i class="fa fa-times"></i>',
+                    tooltip: 'Cancel'
+                }   
+            }
+        });
+        var MyCustomAction = LeafletToolbar.ToolbarAction.extend({
+            options: {
+                toolbarIcon: {
+                    className: 'fa fa-eye',
+                },
+                /* Use LeafletToolbar for sub-toolbars. A sub-toolbar is,
+                 * by definition, contained inside another toolbar, so it
+                 * doesn't need the additional styling and behavior of a
+                 * LeafletToolbar.Control or LeafletToolbar.Popup.
+                 */
+                subToolbar: new LeafletToolbar({ 
+                    actions: [World, Eiffel, Cancel]
+                })
+            }
+        });
+        new LeafletToolbar.Control({
+            position: 'topleft',
+            actions: [MyCustomAction]
+        }).addTo(map);
+    </script>
+</body>
+</html>

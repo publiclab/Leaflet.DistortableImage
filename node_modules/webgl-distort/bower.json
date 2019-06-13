@@ -1,0 +1,27 @@
+{
+  "name": "webgl-distort",
+  "version": "0.0.1",
+  "description": "A demo project for perspective transformations on a given image at full resolution",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jywarren/webgl-distort.git"
+  },
+  "main": "dist/webgl-distort.js",
+  "ignore": [
+    "example.jpg",
+    "node_modules",
+    "bower.json",
+    "README.md"
+  ],
+  "keywords": [
+    "rubbersheeting",
+    "distortion",
+    "webgl",
+    "images"
+  ],
+  "author": "Jeff Warren",
+  "license": "MIT",
+  "dependencies": {
+    "glfx-js": "git+https://github.com/jywarren/glfx.js.git"
+  }
+}
