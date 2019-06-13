@@ -323,7 +323,7 @@ function stitcher(processedPoints, overlay, map) { // jshint ignore:line
       }
     }
     var best_point =
-      processedPoints.points[0][processedPoints.confidences[0].indexOf(max_)]; //	alternate overlay
+      processedPoints.points[0][processedPoints.confidences[0].indexOf(max_)];
     var corresponding_best_point =
       processedPoints.points[1][processedPoints.confidences[0].indexOf(max_)];
     document.querySelector(
