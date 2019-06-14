@@ -1,4 +1,3 @@
-node_modules
 coverage
 todo.txt
 *.swp
@@ -6,3 +5,4 @@ todo.txt
 package-lock.json
 bower_components
 .vscode
+node_modules
