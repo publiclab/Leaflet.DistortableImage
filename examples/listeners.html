@@ -46,6 +46,7 @@
       // create an image
       img = L.distortableImageOverlay(
         'example.png', {
+          keymapper: false,
           corners: [
             L.latLng(51.52,-0.10),
             L.latLng(51.52,-0.14),
@@ -67,10 +68,14 @@
       // }, img);
 
       var imagePos = img._image.getBoundingClientRect();
+      window.imagePos = imagePos;
       var centerX = imagePos.left + imagePos.width / 2;
       var centerY = imagePos.top + imagePos.height / 2;
+      window.centerX = centerX;
+      window.centerY = centerY;
       var centerRadius = imagePos.width / 10;
-      var touchInfo = { alpha: 0, radius: 0, down: false };
+      var touchInfo = { alpha: 0, radius: 0, down: false, angle: 0 };
+      var touchInfo2 = { alpha: 0, radius: 0, down: false, angle: 0 };
 
       var spinAlpha = 0;
       var spinSpeed = 0;
@@ -85,20 +90,48 @@
           return;
         }
 
-        var {x, y} = getXYFromTouchOrPointer(e);
+        if (e.touches.length !== 2) { return; }
+
+        // for (var i = 0; i < touches.length; i++) {
+
+
+        touchInfo.angle  = getXYFromTouchOrPointer(e);
         onTouchMove(e);
         touchInfo.down = true;
-        touchInfo.radius = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
-        lastTouchAlpha = touchInfo.alpha;
+        window.anglet = touchInfo.angle;
+        // touchInfo.radius = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+        // touchInfo2.radius = Math.sqrt(Math.pow(x2, 2) + Math.pow(y2, 2));
+        // lastTouchAlpha = touchInfo.alpha;
 
+        // console.log(touchInfo.radius);
+        // console.log(touchInfo2.radius);
+        // window.toucher = touchInfo.radius;
+        // window.toucher2 = touchInfo2.radius;
+        // console.log(touchInfo.angle);
+        //  alert("ontouchstart");
       }
 
       function getXYFromTouchOrPointer(e) {
         window.e = e;
         var x = e.touches ? e.touches[0].clientX : e.clientX;
         var y = e.touches ? e.touches[0].clientY : e.clientY;
+        var x2 = e.touches ? e.touches[1].clientX : e.clientX;
+        var y2 = e.touches ? e.touches[1].clientY : e.clientY;
         // alert(x);
-        return { x: x - centerX, y: y - centerY };
+        // if (x2 === x || y2 === y) { 
+        //   angle = 90 * Math.sign(y2-y) 
+        //   return angle;
+        // }
+        var angle = Math.atan((y2-y)/(x2-x));
+        window.y2 = y2;
+        window.x2 = x2;
+        window.y = y;
+        window.x = x;
+        window.angle = angle;
+        console.log(angle);
+
+        return angle;
+        // return { x: x - centerX, y: y - centerY, x2: x2 - centerX, y2: y2 - centerY};
       }
 
       function onTouchMove(e) {
@@ -109,10 +142,23 @@
         img.editing._deselect();
         img.editing.dragging.disable();
         map.dragging.disable();
-        // alert(e);
-        var { x, y } = getXYFromTouchOrPointer(e);
-        touchInfo.alpha = Math.atan2(x, y);
-        e.preventDefault();
+        // alert("ontouchmove");
+
+        if (e.touches.length !== 2) { return; }
+
+        touchInfo2.angle = getXYFromTouchOrPointer(e);
+        // touchInfo.alpha = Math.atan2(x, y);
+        // e.preventDefault();
+        var rotateAngle = ((touchInfo2.angle - touchInfo.angle) * Math.PI) / 180;
+        if (rotateAngle > Math.PI) {
+          rotateAngle -= (Math.PI);
+        } else if (rotateAngle < -Math.PI) {
+          rotateAngle += (Math.PI);
+        }
+        window.rotateAngle = rotateAngle;
+        // console.log(rotateAngle);
+        if (rotateAngle !== 0) { img.editing._rotateBy(rotateAngle); }
+
       }
 
       function onTouchEnd() {
@@ -123,6 +169,8 @@
         touchInfo.down = false;
         spinAlpha = 0;
         img.editing._select();
+        img.editing.dragging.enable();
+        map.dragging.enable();
         
         img.fire("update");
         // alert("touchend");
@@ -130,32 +178,32 @@
 
       function tick() {
         requestAnimationFrame(function() {
-          if (touchInfo.down) {
-            if (touchInfo.radius > centerRadius) {
-              var touchSpeed = touchInfo.alpha - lastTouchAlpha;
-              if (touchSpeed < -Math.PI) { touchSpeed += 2 * Math.PI; }
-              if (touchSpeed > Math.PI) { touchSpeed -= 2 * Math.PI; }
+          // if (touchInfo.down) {
+          //   if (touchInfo.radius > centerRadius) {
+          //     var touchSpeed = touchInfo.alpha - lastTouchAlpha;
+          //     if (touchSpeed < -Math.PI) { touchSpeed += 2 * Math.PI; }
+          //     if (touchSpeed > Math.PI) { touchSpeed -= 2 * Math.PI; }
 
-              var spinSpeed = touchSpeed;
-              lastTouchAlpha = touchInfo.alpha;
-            }
-          } else if (touchSpeed) {
-            spinSpeed = touchSpeed * touchInfo.radius / centerRadius;
-            touchSpeed = 0;
-          }
+          //     var spinSpeed = touchSpeed;
+          //     lastTouchAlpha = touchInfo.alpha;
+          //   }
+          // } else if (touchSpeed) {
+          //   spinSpeed = touchSpeed * touchInfo.radius / centerRadius;
+          //   touchSpeed = 0;
+          // }
 
-          spinAlpha -= spinSpeed;
+          // spinAlpha -= spinSpeed;
 
           // alert(spinAlpha);
-          window.spinAlpha = spinAlpha;
-          if (spinAlpha) { img.editing._rotateBy(-spinAlpha); }
+          // window.spinAlpha = spinAlpha;
+          // if (rotateAngle) { img.editing._rotateBy(-spinAlpha); }
 
-          spinSpeed = spinSpeed * 0.99;
-          spinSpeed =
-            Math.sign(spinSpeed) * Math.max(0, Math.abs(spinSpeed) - 2e-4);
+          // spinSpeed = spinSpeed * 0.99;
+          // spinSpeed =
+          //   Math.sign(spinSpeed) * Math.max(0, Math.abs(spinSpeed) - 2e-4);
 
           // tick();
-
+          // }
         });
       }
 
@@ -163,7 +211,7 @@
         alert("calling");
         //  Leaflet kindly extends `L.DomEvent` for us under the hood to provide touch support for Internet Explorer and Windows - based devices.
         // this means they take care of `MSPointer` events and `Pointer` events for us. See `DomEvent.Pointer.js` in their source code.
-        L.DomEvent.on(img._image, 'touchstart mousedown', function (e) {
+        L.DomEvent.on(img._image, 'touchstart', function (e) {
           e.preventDefault();
 
           onTouchStart(e);
@@ -175,7 +223,7 @@
           onTouchMove(e);
         }, false);
 
-        L.DomEvent.on(img._image, 'touchend', function () {
+        L.DomEvent.on(img._image, 'touchend', function (e) {
           e.preventDefault();
           onTouchEnd();
         }, false);
