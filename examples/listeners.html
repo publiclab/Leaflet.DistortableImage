@@ -9,6 +9,8 @@
   <link rel="stylesheet" href="../node_modules/leaflet/dist/leaflet.css" media="screen" title="no title">
   <script src="../node_modules/leaflet-toolbar/dist/leaflet.toolbar.js"></script>
   <link href="../node_modules/leaflet-toolbar/dist/leaflet.toolbar.css" rel="stylesheet"/>
+  <script src='./path/to/zingtouch.min.js'></script>
+  <script src= "../node_modules/hammerjs/hammer.js"></script>
 
   <!-- for full-res export -->
   <script src="../node_modules/jquery/dist/jquery.js"></script>
@@ -128,7 +130,7 @@
         window.y = y;
         window.x = x;
         window.angle = angle;
-        console.log(angle);
+        // console.log(angle);
 
         return angle;
         // return { x: x - centerX, y: y - centerY, x2: x2 - centerX, y2: y2 - centerY};
