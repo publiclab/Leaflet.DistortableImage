@@ -133,16 +133,17 @@ L.MatrixUtil = {
 	}
 };
 L.TrigUtil = {
-
   calcAngleDegrees: function(x, y) {
-    return Math.atan2(y, x) * 180 / Math.PI;
+    return (Math.atan2(y, x) * 180) / Math.PI;
   },
 
-  // Converts from degrees to radians.
- radians: function(degrees) {
-  return degrees * Math.PI / 180;
-}
+  radiansToDegrees: function(angle) {
+    return (angle * 180) / Math.PI;
+  },
 
+  degreesToRadians: function(angle) {
+    return (angle * Math.PI) / 180;
+  }
 };
 L.DistortableImageOverlay = L.ImageOverlay.extend({
 
@@ -158,7 +159,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this._toolArray = L.DistortableImage.EditToolbarDefaults;
     this.edgeMinWidth = this.options.edgeMinWidth;
     this._url = url;
-    this._rotation = this.options.rotation;
+    // this._rotation = this.options.rotation;
+      this.rotation = 0;
+    // window.rotation = this.rotation;
     L.DistortableImage._options = options;
 
     L.Util.setOptions(this, options);

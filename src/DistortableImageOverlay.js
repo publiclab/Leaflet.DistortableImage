@@ -12,7 +12,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this._toolArray = L.DistortableImage.EditToolbarDefaults;
     this.edgeMinWidth = this.options.edgeMinWidth;
     this._url = url;
-    this._rotation = this.options.rotation;
+    // this._rotation = this.options.rotation;
+      this.rotation = 0;
+    // window.rotation = this.rotation;
     L.DistortableImage._options = options;
 
     L.Util.setOptions(this, options);

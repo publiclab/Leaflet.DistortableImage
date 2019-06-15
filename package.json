@@ -30,7 +30,7 @@
   "homepage": "https://github.com/publiclab/Leaflet.DistortableImage",
   "dependencies": {
     "grunt-cli": "^1.2.0",
-    "zingtouch": "^1.0.6"
+    "hammerjs": "^2.0.8"
   },
   "devDependencies": {
     "chai": "^4.1.2",

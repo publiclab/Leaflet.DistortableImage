@@ -74,32 +74,13 @@
         fullResolutionSrc: "large.jpg"
       }).addTo(map);
 
-      /* add custom icon functionality */
-      // refer this snippet below inorder to add a custom functionality
+      L.DomEvent.on(img._image, "load", img.editing.enable, img.editing);
 
-      //  var tool = EditOverlayAction.extend({
-      //    options: {
-      //      toolbarIcon: {
-      //        html: '<span class="fa fa-plus-circle"></span>',
-      //        tooltip: "Print a console message!",
-      //        title: "Console logger"
-      //      }
-      //    },
-      //
-      //    addHooks: function() {
-      //      var editing = this._overlay.editing;
-      //      editing._demonstrator();
-      //      this.disable();
-      //    }
-      //  });
-      //
-      // img._addTool(tool);
 
-      L.DomEvent.on(img._image, "load", function() {
-        img.editing.enable();
-        img.editing.dragging.disable();
-        map.dragging.disable();
-      }, img.editing);
+      // L.DomEvent.on(img._image, 'touchstart', function (e) {
+      //   e.preventDefault();
+      //   onTouchStart(e);
+      // }, false);
       
 
       // L.DomEvent.on(img._image, 'load', function () {
@@ -116,16 +97,38 @@
 
       mc.set({ enable: true });
 
-      var Rotate = new Hammer.Rotate();
+      var Rotate = new Hammer.Rotate({threshold: 0.3});
       mc.add(Rotate);
-      mc.on('rotate', function (e) {
-        // do something cool
-        console.log("hi");
-        var rotation = Math.round(e.rotation);
-        rotation = L.TrigUtil.radians(rotation);
-        img.editing._rotateBy(rotation);
-        // img._image.style.transform = 'rotate(' + rotation + 'deg)';
-      });
+
+      (function async() {
+        alert("calling");
+        // Recognized when two or more pointer are moving in a circular motion.
+        mc.on('rotate', function (e) {
+          e.preventDefault();
+          img.editing._deselect();
+          img.editing.dragging.disable();
+          map.dragging.disable();
+          map.touchZoom.disable();
+
+          // do something cool
+          // console.log("hi");
+          var rotationCache = e.rotation;
+          var rotation = rotationCache / 40;
+          console.log(rotation);
+
+          // img.editing.
+          img.editing._rotateBy(L.TrigUtil.degreesToRadians(360 - rotation));
+
+          window.rotation = rotation;
+          // img.editing._rotateBy(-rotation);
+
+           img.rotation -= L.TrigUtil.radiansToDegrees(rotation);
+
+          // img.rotation = rotationCache;
+          // img._image.style.transform = 'rotate(' + rotation + 'deg)';
+        });
+
+      })();
     })();
 
   </script>
