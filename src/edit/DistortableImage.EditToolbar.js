@@ -185,6 +185,22 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 
       EXIF.getData(image, L.EXIF(image));
     }
+  }),
+
+  Restore = EditOverlayAction.extend({
+    options: {
+      toolbarIcon: {
+        html: '<span class="fa fa-fast-backward"></span>',
+        tooltip: "Restore"
+      }
+    },
+
+    addHooks: function() {
+      var editing = this._overlay.editing;
+
+      editing._restore();
+      this.disable();
+    }
   });
 
 L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
@@ -196,6 +212,7 @@ L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
       ToggleRotateScale,
       ToggleOrder,
       EnableEXIF,
+      Restore,
       Export,
       Delete
     ]
