@@ -705,6 +705,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 L.distortableCollection = function(id, options) {
   return new L.DistortableCollection(id, options);
 };
+
 L.EXIF = function getEXIFdata(img) {
   if (Object.keys(EXIF.getAllTags(img)).length !== 0) {
     console.log(EXIF.getAllTags(img));
