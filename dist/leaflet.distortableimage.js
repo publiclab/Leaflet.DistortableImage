@@ -953,19 +953,19 @@ L.DistortHandle = L.EditHandle.extend({
     })
   },
 
-  updateHandle: function() {
-    this.setLatLng(this._handled._corners[this._corner]);
-	},
-
   _onHandleDrag: function() {
     var overlay = this._handled;
 
     overlay._updateCorner(this._corner, this.getLatLng());
+    
     overlay.fire("update");
-    overlay.editing._updateTools();
+    overlay.editing._updateToolbarPos();
+  },
 
-    // this._handled.editing._showToolbar();
-  }
+  updateHandle: function() {
+    this.setLatLng(this._handled._corners[this._corner]);
+	},
+
 });
 
 L.RotateScaleHandle = L.EditHandle.extend({
@@ -980,32 +980,30 @@ L.RotateScaleHandle = L.EditHandle.extend({
 
 	_onHandleDrag: function() {
 		var overlay = this._handled,
-			formerLatLng = overlay._corners[this._corner],
+			edit = overlay.editing,
+			formerLatLng = overlay.getCorner(this._corner),
 			newLatLng = this.getLatLng(),
 
 			angle = this.calculateAngleDelta(formerLatLng, newLatLng),
 			scale = this._calculateScalingFactor(formerLatLng, newLatLng);
 		
-		if (angle !== 0) { overlay.editing._rotateBy(angle); }
+		if (angle !== 0) { edit._rotateBy(angle); }
 
 		/* 
 		  checks whether the "edgeMinWidth" property is set and tracks the minimum edge length;
 		  this enables preventing scaling to zero, but we might also add an overall scale limit
 		*/		
-		if (this._handled.hasOwnProperty('edgeMinWidth')){
-			var edgeMinWidth = this._handled.edgeMinWidth,
-			    w = L.latLng(overlay._corners[0]).distanceTo(overlay._corners[1]),
-					h = L.latLng(overlay._corners[1]).distanceTo(overlay._corners[2]);
+		if (overlay.hasOwnProperty('edgeMinWidth')){
+			var edgeMinWidth = overlay.edgeMinWidth,
+			    w = L.latLng(overlay.getCorner(0)).distanceTo(overlay.getCorner(1)),
+					h = L.latLng(overlay.getCorner(1)).distanceTo(overlay.getCorner(2));
 			if ((w > edgeMinWidth && h > edgeMinWidth) || scale > 1) {
-				overlay.editing._scaleBy(scale);
+				edit._scaleBy(scale);
 			}
 		} 
 
 		overlay.fire('update');
-
-		overlay.editing._updateTools();
-		// overlay.editing._showToolbar();
-
+		edit._updateToolbarPos();
 	},
 
 	updateHandle: function() {
@@ -1026,16 +1024,14 @@ L.RotateHandle = L.EditHandle.extend({
 	
 	_onHandleDrag: function() {
 		var overlay = this._handled,
-			formerLatLng = overlay._corners[this._corner],
+			formerLatLng = overlay.getCorner(this._corner),
 			newLatLng = this.getLatLng(),
 			angle = this.calculateAngleDelta(formerLatLng, newLatLng);
 
 	 	if (angle !== 0) { overlay.editing._rotateBy(angle); }
 
 		overlay.fire('update');
-
-		// overlay.editing._showToolbar();
-		overlay.editing._updateTools();
+		overlay.editing._updateToolbarPos();
 	},
 
 	updateHandle: function() {
@@ -1056,7 +1052,7 @@ L.ScaleHandle = L.EditHandle.extend({
 
 	_onHandleDrag: function() {
 		var overlay = this._handled,
-			formerLatLng = overlay._corners[this._corner],
+			formerLatLng = overlay.getCorner(this._corner),
 			newLatLng = this.getLatLng(),
 
 			scale = this._calculateScalingFactor(formerLatLng, newLatLng);
@@ -1064,17 +1060,12 @@ L.ScaleHandle = L.EditHandle.extend({
 		overlay.editing._scaleBy(scale);
 
 		overlay.fire('update');
-
-		
-		overlay.editing._updateTools();
-		// overlay.editing._showToolbar();
+		overlay.editing._updateToolbarPos();
 	},
 
 	updateHandle: function() {
 		this.setLatLng(this._handled._corners[this._corner]);
 	},
-
-
 });
 
 L.DistortableImage = L.DistortableImage || {};
@@ -1808,11 +1799,11 @@ L.DistortableImage.Edit = L.Handler.extend({
   // TODO: toolbar for multiple image selection
   _showToolbar: function() {
     var overlay = this._overlay,
-      map = overlay._map;
+      map = overlay._map,
+      //Find the topmost point on the image.
+      corners = overlay.getCorners(),
+      maxLat = -Infinity;
 
-    //Find the topmost point on the image.
-    var corners = overlay.getCorners();
-    var maxLat = -Infinity;
     for (var i = 0; i < corners.length; i++) {
       if (corners[i].lat > maxLat) {
         maxLat = corners[i].lat;
@@ -1823,7 +1814,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		var raised_point = overlay.getCenter();
 		raised_point.lat = maxLat;
 
-		if (this._overlay.options.suppressToolbar !== true) {
+		if (overlay.options.suppressToolbar !== true) {
 			try {
         this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(map, overlay);
         overlay.fire('toolbar:created');
@@ -1832,13 +1823,12 @@ L.DistortableImage.Edit = L.Handler.extend({
 		}
   },
   
-  _updateTools: function() {
-    var overlay = this._overlay;
-      // map = overlay._map;
+  _updateToolbarPos: function() {
+    var overlay = this._overlay,
+      //Find the topmost point on the image.
+      corners = overlay.getCorners(),
+      maxLat = -Infinity;
 
-    //Find the topmost point on the image.
-    var corners = overlay.getCorners();
-    var maxLat = -Infinity;
     for (var i = 0; i < corners.length; i++) {
       if (corners[i].lat > maxLat) {
         maxLat = corners[i].lat;
@@ -1849,14 +1839,8 @@ L.DistortableImage.Edit = L.Handler.extend({
     var raised_point = overlay.getCenter();
     raised_point.lat = maxLat;
 
-    if (this._overlay.options.suppressToolbar !== true) {
+    if (overlay.options.suppressToolbar !== true) {
       this.toolbar.setLatLng(raised_point);
-      // try {
-      //   this.toolbar = new L.DistortableImage.EditToolbar(
-      //     raised_point
-      //   ).addTo(map, overlay);
-      //   overlay.fire("toolbar:created");
-      // } catch (e) {}
     }
 
   },

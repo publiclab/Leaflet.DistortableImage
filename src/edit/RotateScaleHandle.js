@@ -10,32 +10,30 @@ L.RotateScaleHandle = L.EditHandle.extend({
 
 	_onHandleDrag: function() {
 		var overlay = this._handled,
-			formerLatLng = overlay._corners[this._corner],
+			edit = overlay.editing,
+			formerLatLng = overlay.getCorner(this._corner),
 			newLatLng = this.getLatLng(),
 
 			angle = this.calculateAngleDelta(formerLatLng, newLatLng),
 			scale = this._calculateScalingFactor(formerLatLng, newLatLng);
 		
-		if (angle !== 0) { overlay.editing._rotateBy(angle); }
+		if (angle !== 0) { edit._rotateBy(angle); }
 
 		/* 
 		  checks whether the "edgeMinWidth" property is set and tracks the minimum edge length;
 		  this enables preventing scaling to zero, but we might also add an overall scale limit
 		*/		
-		if (this._handled.hasOwnProperty('edgeMinWidth')){
-			var edgeMinWidth = this._handled.edgeMinWidth,
-			    w = L.latLng(overlay._corners[0]).distanceTo(overlay._corners[1]),
-					h = L.latLng(overlay._corners[1]).distanceTo(overlay._corners[2]);
+		if (overlay.hasOwnProperty('edgeMinWidth')){
+			var edgeMinWidth = overlay.edgeMinWidth,
+			    w = L.latLng(overlay.getCorner(0)).distanceTo(overlay.getCorner(1)),
+					h = L.latLng(overlay.getCorner(1)).distanceTo(overlay.getCorner(2));
 			if ((w > edgeMinWidth && h > edgeMinWidth) || scale > 1) {
-				overlay.editing._scaleBy(scale);
+				edit._scaleBy(scale);
 			}
 		} 
 
 		overlay.fire('update');
-
-		overlay.editing._updateTools();
-		// overlay.editing._showToolbar();
-
+		edit._updateToolbarPos();
 	},
 
 	updateHandle: function() {

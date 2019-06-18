@@ -439,11 +439,11 @@ L.DistortableImage.Edit = L.Handler.extend({
   // TODO: toolbar for multiple image selection
   _showToolbar: function() {
     var overlay = this._overlay,
-      map = overlay._map;
+      map = overlay._map,
+      //Find the topmost point on the image.
+      corners = overlay.getCorners(),
+      maxLat = -Infinity;
 
-    //Find the topmost point on the image.
-    var corners = overlay.getCorners();
-    var maxLat = -Infinity;
     for (var i = 0; i < corners.length; i++) {
       if (corners[i].lat > maxLat) {
         maxLat = corners[i].lat;
@@ -454,7 +454,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		var raised_point = overlay.getCenter();
 		raised_point.lat = maxLat;
 
-		if (this._overlay.options.suppressToolbar !== true) {
+		if (overlay.options.suppressToolbar !== true) {
 			try {
         this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(map, overlay);
         overlay.fire('toolbar:created');
@@ -463,13 +463,12 @@ L.DistortableImage.Edit = L.Handler.extend({
 		}
   },
   
-  _updateTools: function() {
-    var overlay = this._overlay;
-      // map = overlay._map;
+  _updateToolbarPos: function() {
+    var overlay = this._overlay,
+      //Find the topmost point on the image.
+      corners = overlay.getCorners(),
+      maxLat = -Infinity;
 
-    //Find the topmost point on the image.
-    var corners = overlay.getCorners();
-    var maxLat = -Infinity;
     for (var i = 0; i < corners.length; i++) {
       if (corners[i].lat > maxLat) {
         maxLat = corners[i].lat;
@@ -480,14 +479,8 @@ L.DistortableImage.Edit = L.Handler.extend({
     var raised_point = overlay.getCenter();
     raised_point.lat = maxLat;
 
-    if (this._overlay.options.suppressToolbar !== true) {
+    if (overlay.options.suppressToolbar !== true) {
       this.toolbar.setLatLng(raised_point);
-      // try {
-      //   this.toolbar = new L.DistortableImage.EditToolbar(
-      //     raised_point
-      //   ).addTo(map, overlay);
-      //   overlay.fire("toolbar:created");
-      // } catch (e) {}
     }
 
   },
