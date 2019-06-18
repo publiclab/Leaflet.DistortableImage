@@ -810,7 +810,7 @@ L.EXIF = function getEXIFdata(img) {
 L.EditHandle = L.Marker.extend({
   initialize: function(overlay, corner, options) {
     var markerOptions,
-      latlng = overlay._corners[corner];
+      latlng = overlay.getCorner(corner);
 
     L.setOptions(this, options);
 
@@ -1550,8 +1550,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     var corners = { 
       0: map.layerPointToLatLng(center.subtract(offset)),
-      1: map.layerPointToLatLng(center.add(new L.Point(offset.x, -offset.y))),
-      2: map.layerPointToLatLng(center.add(new L.Point(-offset.x, offset.y))),
+      1: map.layerPointToLatLng(center.add(L.point(offset.x, -offset.y))),
+      2: map.layerPointToLatLng(center.add(L.point(-offset.x, offset.y))),
       3: map.layerPointToLatLng(center.add(offset))
     };
 
