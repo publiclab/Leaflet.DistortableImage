@@ -71,53 +71,22 @@ module.exports = function(grunt) {
           src: ["icons/*.svg"],
           dest: "assets/icons/",
           options: {
-            dest: "assets/icons/",
-            log: "debug",
-            svg: {
-              dimensionAttributes: false
-            },
+            log: "info",
             shape: {
               dimension: {
-                  maxWidth: 18,
-                  maxHeight: 18,
-                  attributes: true
-              },
-            //   viewBox: "0 0 18 18",
-            //   dest: "svg-sprite"
+                maxWidth: 18,
+                maxHeight: 18
+              }
             },
             mode: {
-              render: {
-                  css: true
-              },
               symbol: {
                 sprite: "sprite.symbol.svg",
-                // viewBox: "0 0 18 18",
-                // inline: true,
                 example: true
               }
             }
           }
         }
       },
-
-      //   svgstore: {
-      //     options: {
-      //       prefix: "icon-", // This will prefix each ID
-      //       svg: {
-      //         // will add and overide the the default xmlns="http://www.w3.org/2000/svg" attribute to the resulting SVG
-      //         viewBox: "0 0 18 18",
-      //         xmlns: "http://www.w3.org/2000/svg"
-      //       }
-      //     },
-      //     your_target: {
-      //       symbol: true,
-      //       inline: true,
-      //       formatting: {
-      //         indent_size: 2
-      //       }
-      //       // Target-specific file lists and/or options go here.
-      //     }
-      //   },
 
       watch: {
         options: {
