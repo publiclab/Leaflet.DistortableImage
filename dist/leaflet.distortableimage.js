@@ -936,7 +936,7 @@ L.LockHandle = L.EditHandle.extend({
 	},
 
 	updateHandle: function() {
-		this.setLatLng(this._handled._corners[this._corner]);
+		this.setLatLng(this._handled.getCorner(this._corner));
 		L.DomUtil.removeClass(this._handled.getElement(), 'selected');
 	}
 
@@ -957,13 +957,13 @@ L.DistortHandle = L.EditHandle.extend({
     var overlay = this._handled;
 
     overlay._updateCorner(this._corner, this.getLatLng());
-    
+
     overlay.fire("update");
     overlay.editing._updateToolbarPos();
   },
 
   updateHandle: function() {
-    this.setLatLng(this._handled._corners[this._corner]);
+    this.setLatLng(this._handled.getCorner(this._corner));
 	},
 
 });
@@ -1007,9 +1007,8 @@ L.RotateScaleHandle = L.EditHandle.extend({
 	},
 
 	updateHandle: function() {
-		this.setLatLng(this._handled._corners[this._corner]);
+		this.setLatLng(this._handled.getCorner(this._corner));
 	},
-
 });
 
 L.RotateHandle = L.EditHandle.extend({
@@ -1035,7 +1034,7 @@ L.RotateHandle = L.EditHandle.extend({
 	},
 
 	updateHandle: function() {
-		this.setLatLng(this._handled._corners[this._corner]);
+		this.setLatLng(this._handled.getCorner(this._corner));
 	}
 	
 });
@@ -1064,7 +1063,7 @@ L.ScaleHandle = L.EditHandle.extend({
 	},
 
 	updateHandle: function() {
-		this.setLatLng(this._handled._corners[this._corner]);
+		this.setLatLng(this._handled.getCorner(this._corner));
 	},
 });
 
@@ -1106,7 +1105,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       var editing = this._overlay.editing;
 
       editing._toggleTransparency();
-      // this.disable();
+      this.disable();
     }
   }),
 
@@ -1137,7 +1136,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       var editing = this._overlay.editing;
 
       editing._toggleOutline();
-      // this.disable();
+      this.disable();
     }
   }),
 
@@ -1158,7 +1157,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       var editing = this._overlay.editing;
 
       editing._removeOverlay();
-      // this.disable();
+      this.disable();
     }
   }),
 
@@ -1189,7 +1188,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       var editing = this._overlay.editing;
 
       editing._toggleLock();
-      // this.disable();
+      this.disable();
     }
   }),
 
@@ -1220,7 +1219,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       var editing = this._overlay.editing;
 
       editing._toggleRotateScale();
-      // this.disable();
+      this.disable();
     }
   }),
 
@@ -1241,7 +1240,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       var editing = this._overlay.editing;
 
       editing._toggleExport();
-      // this.disable();
+      this.disable();
     }
   }),
 
@@ -1272,7 +1271,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       var editing = this._overlay.editing;
 
       editing._toggleOrder();
-      // this.disable();
+      this.disable();
     }
   }),
 
@@ -1313,7 +1312,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       var editing = this._overlay.editing;
 
       editing._restore();
-      // this.disable();
+      this.disable();
     }
   });
 
@@ -1351,11 +1350,7 @@ L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
     for (var i = 0; i < icons.length; i++) {
       icons.item(i).style.transform = "rotate(" + -angle + "deg)";
     }
-  },
-
-  // _updatePos: function() {
-  //   this.setLatLang()
-  // }
+  }
 });
 
 L.DistortableImage = L.DistortableImage || {};

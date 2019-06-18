@@ -13,13 +13,13 @@ L.DistortHandle = L.EditHandle.extend({
     var overlay = this._handled;
 
     overlay._updateCorner(this._corner, this.getLatLng());
-    
+
     overlay.fire("update");
     overlay.editing._updateToolbarPos();
   },
 
   updateHandle: function() {
-    this.setLatLng(this._handled._corners[this._corner]);
+    this.setLatLng(this._handled.getCorner(this._corner));
 	},
 
 });

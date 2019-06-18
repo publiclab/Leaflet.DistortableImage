@@ -37,7 +37,6 @@ L.RotateScaleHandle = L.EditHandle.extend({
 	},
 
 	updateHandle: function() {
-		this.setLatLng(this._handled._corners[this._corner]);
+		this.setLatLng(this._handled.getCorner(this._corner));
 	},
-
 });
