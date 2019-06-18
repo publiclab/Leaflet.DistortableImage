@@ -237,6 +237,8 @@ imageFeatureGroup.addLayer(img3);
 
 - "EnableEXIF"
 
+- "Restore"
+
 - "Export"
 
 - "Delete"
