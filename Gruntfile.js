@@ -3,112 +3,167 @@ module.exports = function(grunt) {
     require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
     grunt.initConfig({
-        pkg: grunt.file.readJSON('package.json'),
+      pkg: grunt.file.readJSON("package.json"),
 
-        jshint: {
-            options: {
-                node: true,
-                browser: true,
-                esnext: true,
-                bitwise: true,
-                curly: true,
-                eqeqeq: true,
-                immed: true,
-                indent: 4,
-                latedef: true,
-                newcap: true,
-                noarg: true,
-                regexp: true,
-                undef: true,
-                unused: 'strict',
-                trailing: true,
-                smarttabs: true,
-                globals: {
-                    L: false,
-                    $: false,
-                    LeafletToolbar: false,
-                    warpWebGl: false,
-                    EXIF: false,
-                    alert: false,
+      jshint: {
+        options: {
+          node: true,
+          browser: true,
+          esnext: true,
+          bitwise: true,
+          curly: true,
+          eqeqeq: true,
+          immed: true,
+          indent: 4,
+          latedef: true,
+          newcap: true,
+          noarg: true,
+          regexp: true,
+          undef: true,
+          unused: "strict",
+          trailing: true,
+          smarttabs: true,
+          globals: {
+            L: false,
+            $: false,
+            LeafletToolbar: false,
+            warpWebGl: false,
+            EXIF: false,
+            alert: false,
 
-                    // Mocha
+            // Mocha
 
-                    describe: false,
-                    it: false,
-                    before: false,
-                    after: false,
-                    beforeEach: false,
-                    afterEach: false,
-                    chai: false,
-                    expect: false,
-                    sinon: false
-                }
-            },
-            source: {
-                src: [ 'src/**/*.js', 'package.json' ]
-            },
-            grunt: {
-                src: [ 'Gruntfile.js' ]
-            }
+            describe: false,
+            it: false,
+            before: false,
+            after: false,
+            beforeEach: false,
+            afterEach: false,
+            chai: false,
+            expect: false,
+            sinon: false
+          }
         },
-
-        karma: {
-            development: {
-                configFile: 'test/karma.conf.js',
-            },
-            test: {
-                configFile: 'test/karma.conf.js',
-            }
+        source: {
+          src: ["src/**/*.js", "package.json"]
         },
-
-        watch: {
-            options : {
-                livereload: true
-            },
-            source: {
-                files: [
-                    'src/**/*.js',
-                    'test/**/*.js',
-                    'Gruntfile.js'
-                ],
-                tasks: [ 'build:js' ]
-            }
-        },
-
-        concat: {
-            dist: {
-              src: [
-                  'src/util/*.js',
-                  'src/DistortableImageOverlay.js',
-                  'src/DistortableCollection.js',
-                  'src/edit/getEXIFdata.js',
-                  'src/edit/EditHandle.js',
-                  'src/edit/LockHandle.js',
-                  'src/edit/DistortHandle.js',
-                  'src/edit/RotateScaleHandle.js',
-                  'src/edit/RotateHandle.js',
-                  'src/edit/ScaleHandle.js',
-                  'src/edit/DistortableImage.EditToolbar.js',
-                  'src/edit/DistortableImage.Edit.js',
-                  'src/edit/tools/DistortableImage.Keymapper.js',
-                  'src/edit/BoxSelectHandle.js'
-              ],
-                dest: 'dist/leaflet.distortableimage.js',
-            }
+        grunt: {
+          src: ["Gruntfile.js"]
         }
+      },
+
+      karma: {
+        development: {
+          configFile: "test/karma.conf.js"
+        },
+        test: {
+          configFile: "test/karma.conf.js"
+        }
+      },
+
+      svg_sprite: {
+        options: {
+          // Task-specific options go here.
+        },
+        dist: {
+          expand: true,
+          cwd: "assets/",
+          src: ["icons/*.svg"],
+          dest: "assets/icons/",
+          options: {
+            dest: "assets/icons/",
+            log: "debug",
+            svg: {
+              dimensionAttributes: false
+            },
+            shape: {
+              dimension: {
+                  maxWidth: 18,
+                  maxHeight: 18,
+                  attributes: true
+              },
+            //   viewBox: "0 0 18 18",
+            //   dest: "svg-sprite"
+            },
+            mode: {
+              render: {
+                  css: true
+              },
+              symbol: {
+                sprite: "sprite.symbol.svg",
+                // viewBox: "0 0 18 18",
+                // inline: true,
+                example: true
+              }
+            }
+          }
+        }
+      },
+
+      //   svgstore: {
+      //     options: {
+      //       prefix: "icon-", // This will prefix each ID
+      //       svg: {
+      //         // will add and overide the the default xmlns="http://www.w3.org/2000/svg" attribute to the resulting SVG
+      //         viewBox: "0 0 18 18",
+      //         xmlns: "http://www.w3.org/2000/svg"
+      //       }
+      //     },
+      //     your_target: {
+      //       symbol: true,
+      //       inline: true,
+      //       formatting: {
+      //         indent_size: 2
+      //       }
+      //       // Target-specific file lists and/or options go here.
+      //     }
+      //   },
+
+      watch: {
+        options: {
+          livereload: true
+        },
+        source: {
+          files: ["src/**/*.js", "test/**/*.js", "Gruntfile.js"],
+          tasks: ["build:js"]
+        }
+      },
+
+      concat: {
+        dist: {
+          src: [
+            "src/util/*.js",
+            "src/DistortableImageOverlay.js",
+            "src/DistortableCollection.js",
+            "src/edit/getEXIFdata.js",
+            "src/edit/EditHandle.js",
+            "src/edit/LockHandle.js",
+            "src/edit/DistortHandle.js",
+            "src/edit/RotateScaleHandle.js",
+            "src/edit/RotateHandle.js",
+            "src/edit/ScaleHandle.js",
+            "src/edit/DistortableImage.EditToolbar.js",
+            "src/edit/DistortableImage.Edit.js",
+            "src/edit/tools/DistortableImage.Keymapper.js",
+            "src/edit/BoxSelectHandle.js"
+          ],
+          dest: "dist/leaflet.distortableimage.js"
+        }
+      }
     });
 
     /* Run tests once. */
     grunt.registerTask('test', [ 'jshint', 'karma:test' ]);
 
     /* Default (development): Watch files and lint, test, and build on change. */
-    grunt.registerTask('default', ['karma:development:start', 'watch']);
+    grunt.registerTask('default', ['svg_sprite', 'karma:development:start', 'watch',]);
 
     grunt.registerTask('build', [
         'jshint',
         'karma:development:start',
+        'svg_sprite',
         'coverage',
-        'concat:dist'
+        'concat:dist',
     ]);
 
     grunt.registerTask('coverage', 'Custom commmand-line reporter for karma-coverage', function() {

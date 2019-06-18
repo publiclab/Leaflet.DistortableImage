@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta charset="utf-8"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+		<script src="https://rawgit.com/jonathantneal/svg4everybody/master/dist/svg4everybody.js"></script>
+		<script>svg4everybody();</script>
+		<title>SVG &lt;symbol&gt; sprite preview | svg-sprite</title>
+		<style>@charset "UTF-8";body{padding:0;margin:0;color:#666;background:#fafafa;font-family:Arial,Helvetica,sans-serif;font-size:1em;line-height:1.4}header{display:block;padding:3em 3em 2em 3em;background-color:#fff}header p{margin:2em 0 0 0}section{border-top:1px solid #eee;padding:2em 3em 0 3em}section ul{margin:0;padding:0}section li{display:inline;display:inline-block;background-color:#fff;position:relative;margin:0 2em 2em 0;vertical-align:top;border:1px solid #ccc;padding:1em 1em 3em 1em;cursor:default}.icon-box{margin:0;width:144px;height:144px;position:relative;background:#ccc url("data:image/gif;base64,R0lGODlhDAAMAIAAAMzMzP///yH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS4wLWMwNjEgNjQuMTQwOTQ5LCAyMDEwLzEyLzA3LTEwOjU3OjAxICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1LjEgV2luZG93cyIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozQjk4OTI0MUY5NTIxMUUyQkJDMEI5NEFEM0Y1QTYwQyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozQjk4OTI0MkY5NTIxMUUyQkJDMEI5NEFEM0Y1QTYwQyI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjNCOTg5MjNGRjk1MjExRTJCQkMwQjk0QUQzRjVBNjBDIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjNCOTg5MjQwRjk1MjExRTJCQkMwQjk0QUQzRjVBNjBDIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2djX1tXU09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWko6KhoJ+enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0c3JxcG9ubWxramloZ2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVEQ0JBQD8+PTw7Ojk4NzY1NDMyMTAvLi0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUUExIREA8ODQwLCgkIBwYFBAMCAQAAIfkEAAAAAAAsAAAAAAwADAAAAhaEH6mHmmzcgzJAUG/NVGrfOZ8YLlABADs=") top left repeat;border:1px solid #ccc;display:table-cell;vertical-align:middle;text-align:center}.icon{display:inline;display:inline-block}h1{margin-top:0}h2{margin:0;padding:0;font-size:1em;font-weight:normal;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:absolute;left:1em;right:1em;bottom:1em}footer{display:block;margin:0;padding:0 3em 3em 3em}footer p{margin:0;font-size:.7em}footer a{color:#0f7595;margin-left:0}</style>
+		
+<!--
+	
+Sprite shape dimensions
+====================================================================================================
+You will need to set the sprite shape dimensions via CSS when you use them as inline SVG, otherwise
+they would become a huge 100% in size. You may use the following dimension classes for doing so.
+They might well be outsourced to an external stylesheet of course.
+
+-->
+
+<style type="text/css">
+	.svg-icons--border_clear-dims { width: 14px; height: 14px; }
+	.svg-icons--border_outer-dims { width: 14px; height: 14px; }
+	.svg-icons--crop_rotate-dims { width: 18px; height: 18px; }
+	.svg-icons--delete_forever-dims { width: 18px; height: 18px; }
+	.svg-icons--explore-dims { width: 18px; height: 18px; }
+	.svg-icons--flip_to_back-dims { width: 14px; height: 14px; }
+	.svg-icons--flip_to_front-dims { width: 14px; height: 14px; }
+	.svg-icons--get_app-dims { width: 18px; height: 18px; }
+	.svg-icons--lock-dims { width: 12px; height: 17px; }
+	.svg-icons--opacity-dims { width: 12px; height: 16px; }
+	.svg-icons--restore-dims { width: 18px; height: 14px; }
+	.svg-icons--transform-dims { width: 16px; height: 18px; }
+	.svg-icons--unlock-dims { width: 12px; height: 17px; }
+</style>
+<!--
+====================================================================================================
+-->
+
+	</head>
+	<body>
+	
+<!--
+	
+Inline <symbol> SVG sprite
+====================================================================================================
+This is an inlined version of the generated SVG sprite. The single images may be <use>d everywhere
+below within this document. Please see
+
+	https://github.com/jkphl/svg-sprite/blob/master/docs/configuration.md#defs--symbol-mode
+
+for further details on how to create this embeddable sprite variant.
+
+-->
+
+<svg width="0" height="0" style="position:absolute">
+		<symbol viewBox="0 0 14 14" id="icons--border_clear" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M-2-2h18v18H-2z"/><path fill="#0078A8" fill-rule="nonzero" d="M3.25 1.75h1.5V.25h-1.5v1.5zm0 6h1.5v-1.5h-1.5v1.5zm0 6h1.5v-1.5h-1.5v1.5zm3-3h1.5v-1.5h-1.5v1.5zm0 3h1.5v-1.5h-1.5v1.5zm-6 0h1.5v-1.5H.25v1.5zm0-3h1.5v-1.5H.25v1.5zm0-3h1.5v-1.5H.25v1.5zm0-3h1.5v-1.5H.25v1.5zm0-3h1.5V.25H.25v1.5zm6 6h1.5v-1.5h-1.5v1.5zm6 3h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm0 6h1.5v-1.5h-1.5v1.5zm0-9h1.5v-1.5h-1.5v1.5zm-6 0h1.5v-1.5h-1.5v1.5zm6-4.5v1.5h1.5V.25h-1.5zm-6 1.5h1.5V.25h-1.5v1.5zm3 12h1.5v-1.5h-1.5v1.5zm0-6h1.5v-1.5h-1.5v1.5zm0-6h1.5V.25h-1.5v1.5z"/></g></symbol>
+		<symbol viewBox="0 0 14 14" id="icons--border_outer" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M-2-2h18v18H-2z"/><path fill="#0078A8" fill-rule="nonzero" d="M7.75 3.25h-1.5v1.5h1.5v-1.5zm0 3h-1.5v1.5h1.5v-1.5zm3 0h-1.5v1.5h1.5v-1.5zM.25.25v13.5h13.5V.25H.25zm12 12H1.75V1.75h10.5v10.5zm-4.5-3h-1.5v1.5h1.5v-1.5zm-3-3h-1.5v1.5h1.5v-1.5z"/></g></symbol>
+		<symbol viewBox="0 0 18 18" id="icons--crop_rotate" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M0 0h18v18H0z"/><path fill="#0078A8" fill-rule="nonzero" d="M5.603 16.117C3.15 14.947 1.394 12.57 1.125 9.75H0C.383 14.37 4.245 18 8.963 18c.172 0 .33-.015.495-.023L6.6 15.113l-.997 1.005zM9.037 0c-.172 0-.33.015-.495.03L11.4 2.888l.998-.998a7.876 7.876 0 0 1 4.477 6.36H18C17.617 3.63 13.755 0 9.037 0zM12 10.5h1.5V6A1.5 1.5 0 0 0 12 4.5H7.5V6H12v4.5zM6 12V3H4.5v1.5H3V6h1.5v6A1.5 1.5 0 0 0 6 13.5h6V15h1.5v-1.5H15V12H6z"/></g></symbol>
+		<symbol viewBox="0 0 12 14" id="icons--delete_forever" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M-3-2h18v18H-3z"/><path fill="#c10d0d" fill-rule="nonzero" d="M1.5 12.25c0 .825.675 1.5 1.5 1.5h6c.825 0 1.5-.675 1.5-1.5v-9h-9v9zm1.845-5.34l1.057-1.058L6 7.442l1.59-1.59L8.648 6.91 7.058 8.5l1.59 1.59-1.058 1.058L6 9.558l-1.59 1.59-1.058-1.058 1.59-1.59-1.597-1.59zM8.625 1l-.75-.75h-3.75l-.75.75H.75v1.5h10.5V1H8.625z"/><path d="M-3-2h18v18H-3z"/></g></symbol>
+		<symbol viewBox="0 0 16 16" id="icons--explore" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M-1-1h18v18H-1z"/><path fill="#0078A8" fill-rule="nonzero" d="M8 .5C3.86.5.5 3.86.5 8c0 4.14 3.36 7.5 7.5 7.5 4.14 0 7.5-3.36 7.5-7.5C15.5 3.86 12.14.5 8 .5zM8 14c-3.308 0-6-2.693-6-6 0-3.308 2.692-6 6-6 3.307 0 6 2.692 6 6 0 3.307-2.693 6-6 6zm-4.125-1.875l5.633-2.617 2.617-5.633-5.633 2.617-2.617 5.633zM8 7.175c.457 0 .825.368.825.825A.823.823 0 0 1 8 8.825.823.823 0 0 1 7.175 8c0-.457.368-.825.825-.825z"/></g></symbol>
+		<symbol viewBox="0 0 14 14" id="icons--flip_to_back" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M-2-2h18v18H-2z"/><path fill="#0078A8" fill-rule="nonzero" d="M4.75 3.25h-1.5v1.5h1.5v-1.5zm0 3h-1.5v1.5h1.5v-1.5zm0-6a1.5 1.5 0 0 0-1.5 1.5h1.5V.25zm3 9h-1.5v1.5h1.5v-1.5zm4.5-9v1.5h1.5c0-.825-.675-1.5-1.5-1.5zm-4.5 0h-1.5v1.5h1.5V.25zm-3 10.5v-1.5h-1.5a1.5 1.5 0 0 0 1.5 1.5zm7.5-3h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm0 6c.825 0 1.5-.675 1.5-1.5h-1.5v1.5zm-10.5-7.5H.25v9a1.5 1.5 0 0 0 1.5 1.5h9v-1.5h-9v-9zm7.5-1.5h1.5V.25h-1.5v1.5zm0 9h1.5v-1.5h-1.5v1.5z"/></g></symbol>
+		<symbol viewBox="0 0 14 14" id="icons--flip_to_front" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M-2-2h18v18H-2z"/><path fill="#0078A8" fill-rule="nonzero" d="M.25 7.75h1.5v-1.5H.25v1.5zm0 3h1.5v-1.5H.25v1.5zm1.5 3v-1.5H.25a1.5 1.5 0 0 0 1.5 1.5zm-1.5-9h1.5v-1.5H.25v1.5zm9 9h1.5v-1.5h-1.5v1.5zm3-13.5h-7.5a1.5 1.5 0 0 0-1.5 1.5v7.5a1.5 1.5 0 0 0 1.5 1.5h7.5c.825 0 1.5-.675 1.5-1.5v-7.5c0-.825-.675-1.5-1.5-1.5zm0 9h-7.5v-7.5h7.5v7.5zm-6 4.5h1.5v-1.5h-1.5v1.5zm-3 0h1.5v-1.5h-1.5v1.5z"/></g></symbol>
+		<symbol viewBox="0 0 12 13" id="icons--get_app" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path fill="#0078A8" fill-rule="nonzero" d="M11.25 4.75h-3V.25h-4.5v4.5h-3L6 10l5.25-5.25zM.75 11.5V13h10.5v-1.5H.75z"/><path d="M-3-2h18v18H-3z"/></g></symbol>
+		<symbol viewBox="0 0 12 17" id="icons--lock" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M-3 0h18v18H-3z"/><path opacity=".87" d="M-3 0h18v18H-3z"/><path fill="#0078A8" fill-rule="nonzero" d="M10.5 6h-.75V4.5C9.75 2.43 8.07.75 6 .75 3.93.75 2.25 2.43 2.25 4.5V6H1.5C.675 6 0 6.675 0 7.5V15c0 .825.675 1.5 1.5 1.5h9c.825 0 1.5-.675 1.5-1.5V7.5c0-.825-.675-1.5-1.5-1.5zM3.75 4.5A2.247 2.247 0 0 1 6 2.25 2.247 2.247 0 0 1 8.25 4.5V6h-4.5V4.5zM10.5 15h-9V7.5h9V15zM6 12.75c.825 0 1.5-.675 1.5-1.5s-.675-1.5-1.5-1.5-1.5.675-1.5 1.5.675 1.5 1.5 1.5z"/></g></symbol>
+		<symbol viewBox="0 0 12 16" id="icons--opacity" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M15-1H-3v18h18V-1zm0 0H-3v18h18V-1zM-3 17h18V-1H-3v18z"/><path fill="#0078A8" fill-rule="nonzero" d="M10.245 5L6 .763 1.755 5A6.015 6.015 0 0 0 0 9.23c0 1.5.585 3.082 1.755 4.252a5.993 5.993 0 0 0 8.49 0A6.066 6.066 0 0 0 12 9.23c0-1.5-.585-3.06-1.755-4.23zM1.5 9.5c.008-1.5.465-2.453 1.32-3.3L6 2.952l3.18 3.285c.855.84 1.313 1.763 1.32 3.263h-9z"/></g></symbol>
+		<symbol viewBox="0 0 18 14" id="icons--restore" xmlns="http://www.w3.org/2000/svg"><g fill="none"><path fill="#0078A8" d="M5.25 9.314l3.383 3.918a1.475 1.475 0 0 0 2.11.137c.322-.29.507-.706.507-1.145v-2.91l3.383 3.918a1.475 1.475 0 0 0 2.11.137c.323-.29.507-.706.507-1.145V1.775c0-.842-.67-1.525-1.495-1.525-.432.001-.842.19-1.123.518L11.25 4.686v-2.91C11.25.932 10.58.25 9.755.25c-.432.001-.842.19-1.123.518L5.25 4.686V1.75a1.5 1.5 0 0 0-1.5-1.5h-1.5a1.5 1.5 0 0 0-1.5 1.5v10.5a1.5 1.5 0 0 0 1.5 1.5h1.5a1.5 1.5 0 0 0 1.5-1.5V9.314zm0-2.32l4.505-5.219v10.45L5.25 7.004v-.01zm6 0l4.505-5.219v10.45l-4.505-5.22v-.01zm-9 5.256V1.75h1.5v10.5h-1.5z"/><path d="M0-2h18v18H0z"/></g></symbol>
+		<symbol viewBox="0 0 16 18" id="icons--transform" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M-1 0h18v18H-1z"/><path fill="#0078A8" fill-rule="nonzero" d="M15.5 13.5V12H5V3h1.5L4.25.75 2 3h1.5v1.5h-3V6h3v6c0 .825.675 1.5 1.5 1.5h6V15H9.5l2.25 2.25L14 15h-1.5v-1.5h3zM6.5 6H11v4.5h1.5V6c0-.825-.675-1.5-1.5-1.5H6.5V6z"/></g></symbol>
+		<symbol viewBox="0 0 12 17" id="icons--unlock" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M-3 0h18v18H-3z"/><path fill="#0078A8" fill-rule="nonzero" d="M10.5 6h-.75V4.5C9.75 2.43 8.07.75 6 .75 3.93.75 2.25 2.43 2.25 4.5h1.5A2.247 2.247 0 0 1 6 2.25 2.247 2.247 0 0 1 8.25 4.5V6H1.5C.675 6 0 6.675 0 7.5V15c0 .825.675 1.5 1.5 1.5h9c.825 0 1.5-.675 1.5-1.5V7.5c0-.825-.675-1.5-1.5-1.5zm0 9h-9V7.5h9V15zM6 12.75c.825 0 1.5-.675 1.5-1.5s-.675-1.5-1.5-1.5-1.5.675-1.5 1.5.675 1.5 1.5 1.5z"/></g></symbol>
+</svg>
+
+<!--
+====================================================================================================
+-->
+		
+		<header>
+			<h1>SVG <code>&lt;symbol&gt;</code> sprite preview</h1>
+			<p>This preview features two methods of using the generated sprite in conjunction with inline SVG. Please have a look at the HTML source for further details and be aware of the following constraints:</p>
+			<ul>
+				<li>Your browser has to <a href="http://caniuse.com/#feat=svg-html5" target="_blank">support inline SVG</a> for these techniques to work.</li>
+				<li>The embedded sprite (A) slightly differs from the generated external one. Please <a href="https://github.com/jkphl/svg-sprite/blob/master/docs/configuration.md#defs--symbol-mode" target="_blank">see the documentation</a> for details on how to create such an embeddable sprite.</li>
+				<li>Internet Explorer up to version 11 doesn't support external sprites for use with inline SVG. For IE 9-11, you may polyfill this functionality with <a href="https://github.com/jonathantneal/svg4everybody" target="_blank">SVG for Everybody</a>.</li>
+			</ul>
+		</header>
+		<section>
+
+<!--
+	
+A) Inline SVG with embedded sprite
+====================================================================================================
+These SVG images make use of fragment identifiers (IDs) and are extracted out of the inline sprite
+embedded above. They may be styled via CSS.
+
+-->
+
+			<h3>A) Inline SVG with embedded sprite</h3>
+			<ul>
+
+				<li title="icons--border_clear">
+					<div class="icon-box">
+						
+						<!-- icons--border_clear -->
+						<svg class="svg-icons--border_clear-dims">
+							<use xlink:href="#icons--border_clear"></use>
+						</svg>
+						
+					</div>
+					<h2>icons--border_clear</h2>
+				</li>
+				<li title="icons--border_outer">
+					<div class="icon-box">
+						
+						<!-- icons--border_outer -->
+						<svg class="svg-icons--border_outer-dims">
+							<use xlink:href="#icons--border_outer"></use>
+						</svg>
+						
+					</div>
+					<h2>icons--border_outer</h2>
+				</li>
+				<li title="icons--crop_rotate">
+					<div class="icon-box">
+						
+						<!-- icons--crop_rotate -->
+						<svg class="svg-icons--crop_rotate-dims">
+							<use xlink:href="#icons--crop_rotate"></use>
+						</svg>
+						
+					</div>
+					<h2>icons--crop_rotate</h2>
+				</li>
+				<li title="icons--delete_forever">
+					<div class="icon-box">
+						
+						<!-- icons--delete_forever -->
+						<svg class="svg-icons--delete_forever-dims">
+							<use xlink:href="#icons--delete_forever"></use>
+						</svg>
+						
+					</div>
+					<h2>icons--delete_forever</h2>
+				</li>
+				<li title="icons--explore">
+					<div class="icon-box">
+						
+						<!-- icons--explore -->
+						<svg class="svg-icons--explore-dims">
+							<use xlink:href="#icons--explore"></use>
+						</svg>
+						
+					</div>
+					<h2>icons--explore</h2>
+				</li>
+				<li title="icons--flip_to_back">
+					<div class="icon-box">
+						
+						<!-- icons--flip_to_back -->
+						<svg class="svg-icons--flip_to_back-dims">
+							<use xlink:href="#icons--flip_to_back"></use>
+						</svg>
+						
+					</div>
+					<h2>icons--flip_to_back</h2>
+				</li>
+				<li title="icons--flip_to_front">
+					<div class="icon-box">
+						
+						<!-- icons--flip_to_front -->
+						<svg class="svg-icons--flip_to_front-dims">
+							<use xlink:href="#icons--flip_to_front"></use>
+						</svg>
+						
+					</div>
+					<h2>icons--flip_to_front</h2>
+				</li>
+				<li title="icons--get_app">
+					<div class="icon-box">
+						
+						<!-- icons--get_app -->
+						<svg class="svg-icons--get_app-dims">
+							<use xlink:href="#icons--get_app"></use>
+						</svg>
+						
+					</div>
+					<h2>icons--get_app</h2>
+				</li>
+				<li title="icons--lock">
+					<div class="icon-box">
+						
+						<!-- icons--lock -->
+						<svg class="svg-icons--lock-dims">
+							<use xlink:href="#icons--lock"></use>
+						</svg>
+						
+					</div>
+					<h2>icons--lock</h2>
+				</li>
+				<li title="icons--opacity">
+					<div class="icon-box">
+						
+						<!-- icons--opacity -->
+						<svg class="svg-icons--opacity-dims">
+							<use xlink:href="#icons--opacity"></use>
+						</svg>
+						
+					</div>
+					<h2>icons--opacity</h2>
+				</li>
+				<li title="icons--restore">
+					<div class="icon-box">
+						
+						<!-- icons--restore -->
+						<svg class="svg-icons--restore-dims">
+							<use xlink:href="#icons--restore"></use>
+						</svg>
+						
+					</div>
+					<h2>icons--restore</h2>
+				</li>
+				<li title="icons--transform">
+					<div class="icon-box">
+						
+						<!-- icons--transform -->
+						<svg class="svg-icons--transform-dims">
+							<use xlink:href="#icons--transform"></use>
+						</svg>
+						
+					</div>
+					<h2>icons--transform</h2>
+				</li>
+				<li title="icons--unlock">
+					<div class="icon-box">
+						
+						<!-- icons--unlock -->
+						<svg class="svg-icons--unlock-dims">
+							<use xlink:href="#icons--unlock"></use>
+						</svg>
+						
+					</div>
+					<h2>icons--unlock</h2>
+				</li>
+			</ul>
+
+<!--
+====================================================================================================
+-->
+
+		</section>
+		<section>
+
+<!--
+	
+B) Inline SVG with external sprite (IE 9-11 with polyfill only)
+====================================================================================================
+These SVG images make use of an URL + fragment identifiers (IDs) and refer to the regular external
+SVG sprite. They may be styled via CSS. (IE 9-11 with polyfill only)
+
+-->
+
+			<h3>B) Inline SVG with external sprite (IE 9-11 with polyfill only)</h3>
+			<ul>
+				
+				<li title="icons--border_clear">
+					<div class="icon-box">
+						
+						<!-- icons--border_clear -->
+						<svg class="svg-icons--border_clear-dims">
+							<use xlink:href="sprite.symbol.svg#icons--border_clear"></use>
+						</svg>
+						
+					</div>
+					<h2>icons--border_clear</h2>
+				</li>
+				<li title="icons--border_outer">
+					<div class="icon-box">
+						
+						<!-- icons--border_outer -->
+						<svg class="svg-icons--border_outer-dims">
+							<use xlink:href="sprite.symbol.svg#icons--border_outer"></use>
+						</svg>
+						
+					</div>
+					<h2>icons--border_outer</h2>
+				</li>
+				<li title="icons--crop_rotate">
+					<div class="icon-box">
+						
+						<!-- icons--crop_rotate -->
+						<svg class="svg-icons--crop_rotate-dims">
+							<use xlink:href="sprite.symbol.svg#icons--crop_rotate"></use>
+						</svg>
+						
+					</div>
+					<h2>icons--crop_rotate</h2>
+				</li>
+				<li title="icons--delete_forever">
+					<div class="icon-box">
+						
+						<!-- icons--delete_forever -->
+						<svg class="svg-icons--delete_forever-dims">
+							<use xlink:href="sprite.symbol.svg#icons--delete_forever"></use>
+						</svg>
+						
+					</div>
+					<h2>icons--delete_forever</h2>
+				</li>
+				<li title="icons--explore">
+					<div class="icon-box">
+						
+						<!-- icons--explore -->
+						<svg class="svg-icons--explore-dims">
+							<use xlink:href="sprite.symbol.svg#icons--explore"></use>
+						</svg>
+						
+					</div>
+					<h2>icons--explore</h2>
+				</li>
+				<li title="icons--flip_to_back">
+					<div class="icon-box">
+						
+						<!-- icons--flip_to_back -->
+						<svg class="svg-icons--flip_to_back-dims">
+							<use xlink:href="sprite.symbol.svg#icons--flip_to_back"></use>
+						</svg>
+						
+					</div>
+					<h2>icons--flip_to_back</h2>
+				</li>
+				<li title="icons--flip_to_front">
+					<div class="icon-box">
+						
+						<!-- icons--flip_to_front -->
+						<svg class="svg-icons--flip_to_front-dims">
+							<use xlink:href="sprite.symbol.svg#icons--flip_to_front"></use>
+						</svg>
+						
+					</div>
+					<h2>icons--flip_to_front</h2>
+				</li>
+				<li title="icons--get_app">
+					<div class="icon-box">
+						
+						<!-- icons--get_app -->
+						<svg class="svg-icons--get_app-dims">
+							<use xlink:href="sprite.symbol.svg#icons--get_app"></use>
+						</svg>
+						
+					</div>
+					<h2>icons--get_app</h2>
+				</li>
+				<li title="icons--lock">
+					<div class="icon-box">
+						
+						<!-- icons--lock -->
+						<svg class="svg-icons--lock-dims">
+							<use xlink:href="sprite.symbol.svg#icons--lock"></use>
+						</svg>
+						
+					</div>
+					<h2>icons--lock</h2>
+				</li>
+				<li title="icons--opacity">
+					<div class="icon-box">
+						
+						<!-- icons--opacity -->
+						<svg class="svg-icons--opacity-dims">
+							<use xlink:href="sprite.symbol.svg#icons--opacity"></use>
+						</svg>
+						
+					</div>
+					<h2>icons--opacity</h2>
+				</li>
+				<li title="icons--restore">
+					<div class="icon-box">
+						
+						<!-- icons--restore -->
+						<svg class="svg-icons--restore-dims">
+							<use xlink:href="sprite.symbol.svg#icons--restore"></use>
+						</svg>
+						
+					</div>
+					<h2>icons--restore</h2>
+				</li>
+				<li title="icons--transform">
+					<div class="icon-box">
+						
+						<!-- icons--transform -->
+						<svg class="svg-icons--transform-dims">
+							<use xlink:href="sprite.symbol.svg#icons--transform"></use>
+						</svg>
+						
+					</div>
+					<h2>icons--transform</h2>
+				</li>
+				<li title="icons--unlock">
+					<div class="icon-box">
+						
+						<!-- icons--unlock -->
+						<svg class="svg-icons--unlock-dims">
+							<use xlink:href="sprite.symbol.svg#icons--unlock"></use>
+						</svg>
+						
+					</div>
+					<h2>icons--unlock</h2>
+				</li>
+			</ul>
+
+<!--
+====================================================================================================
+-->
+
+		</section>
+		<footer>
+			<p>Generated at Tue, 18 Jun 2019 03:07:48 GMT by <a href="https://github.com/jkphl/svg-sprite" target="_blank">svg-sprite</a>.</p>
+		</footer>
+	</body>
+</html>

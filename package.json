@@ -40,6 +40,8 @@
     "grunt-contrib-jshint": "^2.0.0",
     "grunt-contrib-watch": "^1.0.0",
     "grunt-karma": "^3.0.1",
+    "grunt-svg-sprite": "^1.5.0",
+    "grunt-svgstore": "^2.0.0",
     "jquery": "~> 3.4.0",
     "karma": "^4.1.0",
     "karma-coverage": "^1.1.1",
