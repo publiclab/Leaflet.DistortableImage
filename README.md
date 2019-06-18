@@ -64,17 +64,16 @@ img = L.distortableImageOverlay(
       L.latLng(51.50,-0.14),
       L.latLng(51.50,-0.10)
     ],
-  }
-).addTo(map);
+  }).addTo(map);
 
 // enable editing
 L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
 ```
 
 Options available to pass during `L.DistortableImageOverlay` initialization:
-- corners
+- [corners](#corners)
 
-- [selected](#selection)
+- [selected](#selected)
 
 - [mode](#mode)
 
@@ -84,6 +83,33 @@ Options available to pass during `L.DistortableImageOverlay` initialization:
 
 - [suppressToolbar](#Suppress-Toolbar)
 
+## Corners
+
+The corners are stored as `L.latLng` objects
+on the image, and can be accessed using our `getCorners()` method after the image is instantiated and added to the map.
+
+Useful usage example:
+
+```js
+// instantiate, add to map and enable
+img = L.distortableImageOverlay(...);
+img.addTo(map);
+L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
+
+// grab the initial corner positions
+JSON.stringify(img.getCorners())
+=> "[{"lat":51.52,"lng":-0.14},{"lat":51.52,"lng":-0.1},{"lat":51.5,"lng":-0.14},{"lat":51.5,"lng":-0.1}]"
+
+// ...move the image around...
+
+// check the new corner positions.
+JSON.stringify(img.getCorners())
+=> "[{"lat":51.50685099607552,"lng":-0.06058305501937867},{"lat":51.50685099607552,"lng":-0.02058595418930054},{"lat":51.486652692081925,"lng":-0.06058305501937867},{"lat":51.486652692081925,"lng":-0.02058595418930054}]"
+
+// note there is an added level of precision after dragging the image for debugging purposes
+
+```
+We further added a `getCorner(idx)` method used the same way as its plural counterpart but with an index passed to it.
 
 ## Selected
 
@@ -158,8 +184,7 @@ img = L.distortableImageOverlay(
       L.latLng(51.50,-0.10)
     ],
     fullResolutionSrc: 'large.jpg'
-  }
-).addTo(map);
+  }).addTo(map);
 
 L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
 
@@ -226,46 +251,11 @@ imageFeatureGroup.addLayer(img3);
 
 For multiple images, the `ToggleOrder` action switches overlapping images back and forth into view by employing [`bringToFront()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtoback) from the Leaflet API.
 
-
 ## Quick API Reference
 
 - [`getCorners()`](corners) and [`getCorner(idx)`](corners)
 
 - `getCenter()` - Calculates the centroid of the image
-
-## Quick API Reference
-
-- [`getCorners()`](corners) and [`getCorner(idx)`](corners)
-
-- `getCenter()` - Calculates the centroid of the image
-
-## Corners
-
-The corners are stored as `L.latLng` objects
-on the image, and can be accessed using our `getCorners()` method after the image is instantiated and added to the map.
-
-Useful usage example:
-
-```js
-// instantiate, add to map and enable
-img = L.distortableImageOverlay(...);
-img.addTo(map);
-L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
-
-// grab the initial corner positions
-JSON.stringify(img.getCorners())
-=> "[{"lat":51.52,"lng":-0.14},{"lat":51.52,"lng":-0.1},{"lat":51.5,"lng":-0.14},{"lat":51.5,"lng":-0.1}]"
-
-// ...move the image around...
-
-// check the new corner positions.
-JSON.stringify(img.getCorners())
-=> "[{"lat":51.50685099607552,"lng":-0.06058305501937867},{"lat":51.50685099607552,"lng":-0.02058595418930054},{"lat":51.486652692081925,"lng":-0.06058305501937867},{"lat":51.486652692081925,"lng":-0.02058595418930054}]"
-
-// note there is an added level of precision after dragging the image for debugging purposes
-
-```
-We further added a `getCorner(idx)` method used the same way as its plural counterpart but with an index passed to it.
 
 ## Contributing
 
