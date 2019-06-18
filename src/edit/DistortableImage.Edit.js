@@ -461,7 +461,36 @@ L.DistortableImage.Edit = L.Handler.extend({
       }
       catch (e) {}
 		}
-	},
+  },
+  
+  _updateTools: function() {
+    var overlay = this._overlay;
+      // map = overlay._map;
+
+    //Find the topmost point on the image.
+    var corners = overlay.getCorners();
+    var maxLat = -Infinity;
+    for (var i = 0; i < corners.length; i++) {
+      if (corners[i].lat > maxLat) {
+        maxLat = corners[i].lat;
+      }
+    }
+
+    //Longitude is based on the centroid of the image.
+    var raised_point = overlay.getCenter();
+    raised_point.lat = maxLat;
+
+    if (this._overlay.options.suppressToolbar !== true) {
+      this.toolbar.setLatLng(raised_point);
+      // try {
+      //   this.toolbar = new L.DistortableImage.EditToolbar(
+      //     raised_point
+      //   ).addTo(map, overlay);
+      //   overlay.fire("toolbar:created");
+      // } catch (e) {}
+    }
+
+  },
 
   _removeOverlay: function () {
     var overlay = this._overlay,

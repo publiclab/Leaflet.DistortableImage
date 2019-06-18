@@ -36,7 +36,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       var editing = this._overlay.editing;
 
       editing._toggleTransparency();
-      this.disable();
+      // this.disable();
     }
   }),
 
@@ -67,7 +67,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       var editing = this._overlay.editing;
 
       editing._toggleOutline();
-      this.disable();
+      // this.disable();
     }
   }),
 
@@ -88,7 +88,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       var editing = this._overlay.editing;
 
       editing._removeOverlay();
-      this.disable();
+      // this.disable();
     }
   }),
 
@@ -119,7 +119,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       var editing = this._overlay.editing;
 
       editing._toggleLock();
-      this.disable();
+      // this.disable();
     }
   }),
 
@@ -150,7 +150,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       var editing = this._overlay.editing;
 
       editing._toggleRotateScale();
-      this.disable();
+      // this.disable();
     }
   }),
 
@@ -171,7 +171,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       var editing = this._overlay.editing;
 
       editing._toggleExport();
-      this.disable();
+      // this.disable();
     }
   }),
 
@@ -202,7 +202,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       var editing = this._overlay.editing;
 
       editing._toggleOrder();
-      this.disable();
+      // this.disable();
     }
   }),
 
@@ -243,7 +243,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       var editing = this._overlay.editing;
 
       editing._restore();
-      this.disable();
+      // this.disable();
     }
   });
 
@@ -281,5 +281,9 @@ L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
     for (var i = 0; i < icons.length; i++) {
       icons.item(i).style.transform = "rotate(" + -angle + "deg)";
     }
-  }
+  },
+
+  // _updatePos: function() {
+  //   this.setLatLang()
+  // }
 });

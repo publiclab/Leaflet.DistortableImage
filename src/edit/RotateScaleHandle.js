@@ -33,7 +33,8 @@ L.RotateScaleHandle = L.EditHandle.extend({
 
 		overlay.fire('update');
 
-		overlay.editing._showToolbar();
+		overlay.editing._updateTools();
+		// overlay.editing._showToolbar();
 
 	},
 

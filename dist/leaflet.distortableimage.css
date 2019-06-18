@@ -2,6 +2,8 @@ svg {
   width: 20px;
   height: 20px;
   vertical-align: middle;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 #imgcontainer {
