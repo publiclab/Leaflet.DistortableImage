@@ -1147,7 +1147,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       options = options || {};
       options.toolbarIcon = {
         html: '<svg>' + href + '</svg>',
-        tooltip: "Delete Image"
+        tooltip: 'Delete Image'
       };
 
       EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
@@ -1167,12 +1167,12 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
         href,
         tooltip;
 
-      if (edit._mode === "lock") {
+      if (edit._mode === 'lock') {
         href = '<use href="../assets/icons/symbol/sprite.symbol.svg#icons--unlock"></use>';
-        tooltip = "Unlock";
+        tooltip = 'Unlock';
       } else {
         href = '<use href="../assets/icons/symbol/sprite.symbol.svg#icons--lock"></use>';
-        tooltip = "Lock";
+        tooltip = 'Lock';
       }
 
       options = options || {};
@@ -1198,12 +1198,12 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
         href,
         tooltip;
 
-      if (edit._mode === "rotateScale") {
+      if (edit._mode === 'rotateScale') {
         href = '<use href="../assets/icons/symbol/sprite.symbol.svg#icons--transform"></use>';
-        tooltip = "Distort";
+        tooltip = 'Distort';
       } else {
         href = '<use href="../assets/icons/symbol/sprite.symbol.svg#icons--crop_rotate"></use>';
-        tooltip = "Rotate+Scale";
+        tooltip = 'Rotate+Scale';
       }
 
       options = options || {};
@@ -1230,7 +1230,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       options = options || {};
       options.toolbarIcon = {
         html: '<svg>' + href + '</svg>',
-        tooltip: "Export Image"
+        tooltip: 'Export Image'
       };
 
       EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
@@ -1281,8 +1281,8 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 
       options = options || {};
       options.toolbarIcon = {
-        html: '<svg class="svg-icons--outline-explore-18px-dims">' + href + '</svg>',
-        tooltip: "Geolocate Image"
+        html: '<svg>' + href + '</svg>',
+        tooltip: 'Geolocate Image'
       };
 
       EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
@@ -1301,8 +1301,8 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 
       options = options || {};
       options.toolbarIcon = {
-        html: '<svg class="svg-icons--restore-dims">' + href + '</svg>',
-        tooltip: "Restore"
+        html: '<svg>' + href + '</svg>',
+        tooltip: 'Restore'
       };
 
       EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
