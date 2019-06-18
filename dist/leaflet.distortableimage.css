@@ -1,25 +1,8 @@
 svg {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   vertical-align: middle;
 }
-
-  .svg-icons--delete_forever { 
-    width: 18px;
-    height: 18px;
-  }
-  /*
-	.svg-icons--get_app-18px-dims { width: 18px; height: 18px; }
-	.svg-icons--outline-border_clear-18px-dims { width: 18px; height: 18px; }
-	.svg-icons--outline-border_outer-18px-dims { width: 18px; height: 18px; }
-	.svg-icons--outline-crop_rotate-18px-dims { width: 18px; height: 18px; }
-	.svg-icons--outline-explore-18px-dims { width: 18px; height: 18px; }
-	.svg-icons--outline-flip_to_back-18px-dims { width: 18px; height: 18px; }
-	.svg-icons--outline-flip_to_front-18px-dims { width: 18px; height: 18px; }
-	.svg-icons--outline-lock-18px-dims { width: 18px; height: 18px; }
-	.svg-icons--outline-opacity-18px-dims { width: 18px; height: 18px; }
-	.svg-icons--outline-transform-18px-dims { width: 18px; height: 18px; }
-	.svg-icons--previous-dims { width: 18px; height: 18px; } */ 
 
 #imgcontainer {
   position:relative;
