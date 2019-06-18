@@ -331,6 +331,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     L.DomUtil.setOpacity(image, opacity);
     image.setAttribute("opacity", opacity);
+
+    this._showToolbar();
   },
 
   _toggleOutline: function() {

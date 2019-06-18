@@ -1083,12 +1083,22 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
   
   ToggleTransparency = EditOverlayAction.extend({
     initialize: function(map, overlay, options) {
-      var href = '<use href="../assets/icons/symbol/sprite.symbol.svg#icons--opacity"></use>';
+      var edit = overlay.editing,
+        href,
+        tooltip;
+      
+      if (edit._transparent) {
+        href = '<use href="../assets/icons/symbol/sprite.symbol.svg#icons--opacity-full"></use>';
+        tooltip = 'Make Image Opaque';
+      } else {
+        href = '<use href="../assets/icons/symbol/sprite.symbol.svg#icons--opacity"></use>';
+        tooltip = 'Make Image Transparent';
+      }
 
       options = options || {};
       options.toolbarIcon = {
         html: '<svg>' + href + '</svg>',
-        tooltip: "Toggle Transparency"
+        tooltip: tooltip
       };
 
       EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
@@ -1679,6 +1689,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     L.DomUtil.setOpacity(image, opacity);
     image.setAttribute("opacity", opacity);
+
+    this._showToolbar();
   },
 
   _toggleOutline: function() {

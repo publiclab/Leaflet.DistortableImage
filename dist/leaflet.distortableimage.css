@@ -1,26 +1,13 @@
-/* @font-face {
-  font-family: 'Material Icons';
-  font-style: normal;
-  font-weight: 400;
-  src: url(https://fonts.gstatic.com/s/materialicons/v47/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2) format('woff2');
-}
-
-@font-face {
-  font-family: 'Material Icons Outlined';
-  font-style: normal;
-  font-weight: 400;
-  src: url(https://fonts.gstatic.com/s/materialiconsoutlined/v8/gok-H7zzDkdnRel8-DQ6KAXJ69wP1tGnf4ZGhUcel5euIg.woff2) format('woff2');
-} */
-
 svg {
   width: 18px;
   height: 18px;
   vertical-align: middle;
 }
 
-  /* .svg-icons--delete_forever-18px-dims { 
-    color: #c10d0d;
-  } */
+  .svg-icons--delete_forever { 
+    width: 18px;
+    height: 18px;
+  }
   /*
 	.svg-icons--get_app-18px-dims { width: 18px; height: 18px; }
 	.svg-icons--outline-border_clear-18px-dims { width: 18px; height: 18px; }
@@ -33,37 +20,6 @@ svg {
 	.svg-icons--outline-opacity-18px-dims { width: 18px; height: 18px; }
 	.svg-icons--outline-transform-18px-dims { width: 18px; height: 18px; }
 	.svg-icons--previous-dims { width: 18px; height: 18px; } */ 
-
-/* .material-icons {
-  font-family: 'Material Icons';
-}
-
-.material-icons-outlined {
-  font-family: 'Material Icons Outlined';
-}
-
-.material-icons, .material-icons-outlined {
-  font-weight: normal;
-  font-style: normal;
-  font-size: 24px;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  display: inline-block;
-  white-space: nowrap;
-  word-wrap: normal;
-  direction: ltr;
-  -webkit-font-feature-settings: 'liga';
-  font-feature-settings: 'liga';
-  -webkit-font-smoothing: antialiased;
-}
-
-.material-icons.red { color: #c10d0d; }
-
-.material-icons.md-18, .material-icons-outlined.md-18  { 
-  font-size: 18px; 
-  line-height: inherit;
-} */
 
 #imgcontainer {
   position:relative;
