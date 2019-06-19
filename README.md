@@ -129,11 +129,16 @@ Each primary editing mode corresponds to a separate editing tool.
 This option sets the image's initial editing mode, meaning the corresponding editing tool will always appear first when you interact with the image.
 
 Values available to pass to `mode` are: 
-- "distort" (the default)
-- "lock"
-- "rotate"
-- "scale"
-- "rotateScale"
+
+- **distort** (the default)
+
+- **lock**: mode which prevents any image actions (including those triggered from the toolbar, user gestures, and hotkeys) until the toolbar action ToggleLock is explicitly triggereed (or its hotkey <kbd>l</kbd>)
+
+- **rotate**
+
+- **scale**
+
+- **rotateScale**
 
 In the below example, the image will be initialiazed with "rotateScale" handles:
 
@@ -226,37 +231,33 @@ imageFeatureGroup.addLayer(img3);
 
 ## Default Toolbar Actions
 
-- "ToggleLock"
+- **ToggleLock**: Toggles lock mode.
 
-- "ToggleOrder"
+- **ToggleOrder**: For multiple images, switches overlapping images back and forth into view by employing [`bringToFront()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtoback) from the Leaflet API.
 
-- "ToggleOutline"
+- **ToggleOutline**
 
-- "ToggleTransparency"
+- **ToggleTransparency**
 
-- "ToggleRotateScale"
+- **ToggleRotateScale**
 
-- "EnableEXIF"
+- **EnableEXIF** (WIP)
 
-- "Restore"
+- **Restore**: Restores the image to its original proportions and scale, but keeps its current rotation angle and location intact.
 
-- "Export"
+- **Export**
 
-- "Delete"
+- **Delete**: Permanently deletes the image from the map.
 
 ## Addons
 
-- "ToggleRotate"
+- **ToggleRotate**
 
-- "ToggleScale"
-
-### Image-ordering
-
-For multiple images, the `ToggleOrder` action switches overlapping images back and forth into view by employing [`bringToFront()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtoback) from the Leaflet API.
+- **ToggleScale**
 
 ## Quick API Reference
 
-- [`getCorners()`](corners) and [`getCorner(idx)`](corners)
+- [`getCorners()`](#corners) and [`getCorner(idx)`](#corners)
 
 - `getCenter()` - Calculates the centroid of the image
 
