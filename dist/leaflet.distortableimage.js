@@ -1085,10 +1085,10 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
         tooltip;
       
       if (edit._transparent) {
-        href = '<use href="../assets/icons/symbol/sprite.symbol.svg#icons--opacity-full"></use>';
+        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#icons--opacity-full"></use>';
         tooltip = 'Make Image Opaque';
       } else {
-        href = '<use href="../assets/icons/symbol/sprite.symbol.svg#icons--opacity"></use>';
+        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#icons--opacity"></use>';
         tooltip = 'Make Image Transparent';
       }
 
@@ -1116,10 +1116,10 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
         tooltip;
       
       if (edit._outlined) {
-        href = '<use href="../assets/icons/symbol/sprite.symbol.svg#icons--border_clear"></use>';
+        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#icons--border_clear"></use>';
         tooltip = 'Remove Border';
       } else {
-        href = '<use href="../assets/icons/symbol/sprite.symbol.svg#icons--border_outer"></use>';
+        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#icons--border_outer"></use>';
         tooltip = 'Add Border';
       }
 
@@ -1142,7 +1142,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 
   Delete = EditOverlayAction.extend({
     initialize: function(map, overlay, options) {
-      var href = '<use href="../assets/icons/symbol/sprite.symbol.svg#icons--delete_forever"></use>';
+      var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#icons--delete_forever"></use>';
 
       options = options || {};
       options.toolbarIcon = {
@@ -1168,10 +1168,10 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
         tooltip;
 
       if (edit._mode === 'lock') {
-        href = '<use href="../assets/icons/symbol/sprite.symbol.svg#icons--unlock"></use>';
+        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#icons--unlock"></use>';
         tooltip = 'Unlock';
       } else {
-        href = '<use href="../assets/icons/symbol/sprite.symbol.svg#icons--lock"></use>';
+        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#icons--lock"></use>';
         tooltip = 'Lock';
       }
 
@@ -1199,10 +1199,10 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
         tooltip;
 
       if (edit._mode === 'rotateScale') {
-        href = '<use href="../assets/icons/symbol/sprite.symbol.svg#icons--transform"></use>';
+        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#icons--transform"></use>';
         tooltip = 'Distort';
       } else {
-        href = '<use href="../assets/icons/symbol/sprite.symbol.svg#icons--crop_rotate"></use>';
+        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#icons--crop_rotate"></use>';
         tooltip = 'Rotate+Scale';
       }
 
@@ -1225,7 +1225,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 
   Export = EditOverlayAction.extend({
     initialize: function(map, overlay, options) {
-      var  href = '<use href="../assets/icons/symbol/sprite.symbol.svg#icons--get_app"></use>';
+      var  href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#icons--get_app"></use>';
 
       options = options || {};
       options.toolbarIcon = {
@@ -1251,10 +1251,10 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
         tooltip;
 
       if (edit._toggledImage) {
-        href = '<use href="../assets/icons/symbol/sprite.symbol.svg#icons--flip_to_front"></use>';
+        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#icons--flip_to_front"></use>';
         tooltip = 'Stack to front';
       } else {
-        href = '<use href="../assets/icons/symbol/sprite.symbol.svg#icons--flip_to_back"></use>';
+        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#icons--flip_to_back"></use>';
         tooltip = 'Stack to back';
       }
 
@@ -1277,7 +1277,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 
   EnableEXIF = EditOverlayAction.extend({
     initialize: function(map, overlay, options) {
-      var href = '<use href="../assets/icons/symbol/sprite.symbol.svg#icons--explore"></use>';
+      var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#icons--explore"></use>';
 
       options = options || {};
       options.toolbarIcon = {
@@ -1297,7 +1297,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 
   Restore = EditOverlayAction.extend({
     initialize: function(map, overlay, options) {
-      var href = '<use href="../assets/icons/symbol/sprite.symbol.svg#icons--restore"></use>';
+      var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#icons--restore"></use>';
 
       options = options || {};
       options.toolbarIcon = {
