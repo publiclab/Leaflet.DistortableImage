@@ -229,17 +229,18 @@ imageFeatureGroup.addLayer(img3);
 ```
 <hr>
 
-## Default Toolbar Actions
+## Default Toolbar Actions (& Keybindings)
 
-- **ToggleLock**: Toggles lock mode.
+- **ToggleLock** (<kbd>l</kbd>):
+Toggles lock mode.
 
-- **ToggleOrder**: For multiple images, switches overlapping images back and forth into view by employing [`bringToFront()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtoback) from the Leaflet API.
+- **ToggleOrder** (<kbd>j</kbd>, <kbd>k</kbd>): For multiple images, switches overlapping images back and forth into view by employing [`bringToFront()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtoback) from the Leaflet API.
 
-- **ToggleOutline**
+- **ToggleOutline** (<kbd>o</kbd>):
 
-- **ToggleTransparency**
+- **ToggleTransparency** (<kbd>t</kbd>):
 
-- **ToggleRotateScale**
+- **ToggleRotateScale** (<kbd>r</kbd>):
 
 - **EnableEXIF** (WIP)
 
@@ -247,13 +248,13 @@ imageFeatureGroup.addLayer(img3);
 
 - **Export**
 
-- **Delete**: Permanently deletes the image from the map.
+- **Delete** (<kbd>delete</kbd>, <kbd>backscpace</kbd>): Permanently deletes the image from the map.
 
 ## Addons
 
-- **ToggleRotate**
+- **ToggleRotate** (<kbd>caps lock</kbd>):
 
-- **ToggleScale**
+- **ToggleScale** (<kbd>s</kbd>):
 
 ## Quick API Reference
 
