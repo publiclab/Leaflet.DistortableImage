@@ -1085,10 +1085,10 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
         tooltip;
       
       if (edit._transparent) {
-        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#icons--opacity-full"></use>';
+        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#icons--opacity"></use>';
         tooltip = 'Make Image Opaque';
       } else {
-        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#icons--opacity"></use>';
+        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#icons--opacity-empty"></use>';
         tooltip = 'Make Image Transparent';
       }
 
