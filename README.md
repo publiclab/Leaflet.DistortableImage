@@ -124,21 +124,23 @@ Some developers prefer that an image initially appears as "selected" instead of 
 
 `mode` (*optional*, default: "distort", value: *string*)
 
-Each primary editing mode corresponds to a separate editing tool.
+Each primary editing mode corresponds to a separate editing handle.
 
-This option sets the image's initial editing mode, meaning the corresponding editing tool will always appear first when you interact with the image.
+This option sets the image's initial editing mode, meaning the corresponding editing handle will always appear first when you interact with the image.
 
 Values available to pass to `mode` are: 
 
-- **distort** (the default)
+- #### distort (_default_)
 
-- **lock**: mode which prevents any image actions (including those triggered from the toolbar, user gestures, and hotkeys) until the toolbar action ToggleLock is explicitly triggereed (or its hotkey <kbd>l</kbd>)
+- #### rotate
 
-- **rotate**
+- #### scale
 
-- **scale**
+- #### rotateScale:
 
-- **rotateScale**
+- #### lock:
+
+  - mode which prevents any image actions (including those triggered from the toolbar, user gestures, and hotkeys) until the toolbar action [ToggleLock](#ToggleLock-(<kbd>l</kbd>)) is explicitly triggered (or its hotkey <kbd>l</kbd>)
 
 In the below example, the image will be initialiazed with "rotateScale" handles:
 
@@ -231,24 +233,32 @@ imageFeatureGroup.addLayer(img3);
 
 ## Default Toolbar Actions (& Keybindings)
 
-- **ToggleLock** (<kbd>l</kbd>):
-Toggles lock mode.
+#### ToggleLock (<kbd>l</kbd>)
 
-- **ToggleOrder** (<kbd>j</kbd>, <kbd>k</kbd>): For multiple images, switches overlapping images back and forth into view by employing [`bringToFront()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtoback) from the Leaflet API.
+- Toggles between [lock mode](#lock) and [distort mode](#distort-(_default_))
 
-- **ToggleOutline** (<kbd>o</kbd>):
+#### ToggleRotateScale (<kbd>r</kbd>)
 
-- **ToggleTransparency** (<kbd>t</kbd>):
 
-- **ToggleRotateScale** (<kbd>r</kbd>):
+#### ToggleOrder (<kbd>j</kbd>, <kbd>k</kbd>)
 
-- **EnableEXIF** (WIP)
+- For multiple images, switches overlapping images back and forth into view by employing [`bringToFront()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtoback) from the Leaflet API.
 
-- **Restore**: Restores the image to its original proportions and scale, but keeps its current rotation angle and location intact.
+#### ToggleOutline (<kbd>o</kbd>)
 
-- **Export**
+#### ToggleTransparency (<kbd>t</kbd>)
 
-- **Delete** (<kbd>delete</kbd>, <kbd>backscpace</kbd>): Permanently deletes the image from the map.
+#### EnableEXIF (WIP)
+
+#### Restore
+
+- Restores the image to its original proportions and scale, but keeps its current rotation angle and location intact.
+
+#### Export
+
+#### Delete (<kbd>delete</kbd>, <kbd>backscpace</kbd>)
+
+- Permanently deletes the image from the map.
 
 ## Addons
 
