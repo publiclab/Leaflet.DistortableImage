@@ -27,7 +27,8 @@ Here's a screenshot:
 ## Setup
 
 1. From the root directory, run `npm install` or `sudo npm install`
-2. Open examples/index.html in a browser
+
+2. Open `examples/index.html` in a browser
 
 ## Demo
 
@@ -261,10 +262,22 @@ For multiple images, the `ToggleOrder` action switches overlapping images back a
 
 ## Contributing
 
-1. This project uses `grunt` to do a lot of things, including concatenate source files from /src/ to /DistortableImageOverlay.js. But you may need to install grunt-cli: `npm install -g grunt-cli` first.
-2. Run `grunt` in the root directory, and it will watch for changes and concatenate them on the fly.
+1) This project uses `grunt` to do a lot of things, including concatenate source files from `/src/` to `/DistortableImageOverlay.js`:
 
-To build all files from `/src/` into the `/dist/` folder, run `grunt concat:dist`.
+```Bash
+#you may need to install grunt-cli first:
+$ npm install -g grunt-cli
+
+#run in root dir, and it'll watch for changes and concatenate them on the fly
+$ grunt
+```
+
+
+2) To build all files from `/src/` into the `/dist/` folder, run:
+
+```Bash
+$ grunt concat:dist
+```
 
 ****
 
