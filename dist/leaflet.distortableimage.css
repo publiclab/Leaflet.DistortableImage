@@ -4,12 +4,6 @@ svg {
   vertical-align: middle;
 }
 
-svg.svg-icons--restore-dims {
-  width: 5px;
-  height: 5px;
-}
-.svg-icons--restore-dims { width: 5px; height: 30px; }
-
 #imgcontainer {
   position:relative;
   width: 100%;
