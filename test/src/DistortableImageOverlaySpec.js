@@ -18,7 +18,7 @@ describe("L.DistortableImageOverlay", function() {
 			corners: [
 				L.latLng(41.7934, -87.6052),
 				L.latLng(41.7934, -87.5852),
-			  L.latLng(41.7834, -87.6052),
+			    L.latLng(41.7834, -87.6052),
 				L.latLng(41.7834, -87.5852)
 			]
 		});
