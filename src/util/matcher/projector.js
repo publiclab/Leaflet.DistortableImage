@@ -1,4 +1,6 @@
-function projector(utils, e, array, L_img_array, map) { // jshint ignore:line
+function projector(utils, e, array, obj) { // jshint ignore:line
+  var L_img_array = obj.L_images;
+  var map = obj.map;
   document.querySelector("#map > div.leaflet-pane.leaflet-map-pane > div.leaflet-pane.leaflet-marker-pane").innerHTML = ""; // part of this is the toolbar
   if(document.querySelectorAll("#map > div.leaflet-pane.leaflet-map-pane > div.leaflet-pane.leaflet-overlay-pane > svg > g > path").length) {
     [].slice.call(document.querySelectorAll("#map > div.leaflet-pane.leaflet-map-pane > div.leaflet-pane.leaflet-overlay-pane > svg > g > path")).slice(0,3).map(function(x) {
