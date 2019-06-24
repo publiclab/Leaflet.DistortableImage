@@ -116,7 +116,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return json;
   },
 
-  _runExport: function(collection) {
+  runExport: function(collection) {
     collection = collection || this._generateExportJson();
     var that = this;
     $.ajax({
@@ -128,12 +128,12 @@ L.DistortableCollection = L.FeatureGroup.extend({
         scale: 30
       },
       success: function(data) {
-        that._getStatusJson(data);
+        that.getStatusJson(data);
       }
     });
   },
 
-  _getStatusJson: function(data) {
+  getStatusJson: function(data) {
     console.log(data);
     $.ajax("http://export.mapknitter.org" + data, {
       type: "GET",
