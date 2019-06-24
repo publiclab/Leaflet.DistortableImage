@@ -569,9 +569,8 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return json;
   },
 
-runExport: function(collection) {
+  _runExport: function(collection) {
     collection = collection || this._generateExportJson();
-    var that = this;
     $.ajax({
       url: "http://export.mapknitter.org/export",
       crossDomain: true,
@@ -580,19 +579,15 @@ runExport: function(collection) {
         collection: JSON.stringify(collection.images),
         scale: 30
       },
-      success: function(data) {
-        that.getStatusJson(data);
+      success: function _getStatusJson(data) {
+        console.log(data);
+        $.ajax("http://export.mapknitter.org" + data, {
+          type: "GET",
+          crossDomain: true
+        }).done(function(data) {
+          console.log(data);
+        });
       }
-    });
-  },
-
-  getStatusJson: function(data) {
-    console.log(data);
-    $.ajax("http://export.mapknitter.org" + data, {
-      type: "GET",
-      crossDomain: true
-    }).done(function(data) {
-      console.log(data);
     });
   },
 
@@ -710,7 +705,6 @@ runExport: function(collection) {
 L.distortableCollection = function(id, options) {
   return new L.DistortableCollection(id, options);
 };
-
 L.EXIF = function getEXIFdata(img) {
   if (Object.keys(EXIF.getAllTags(img)).length !== 0) {
     console.log(EXIF.getAllTags(img));
