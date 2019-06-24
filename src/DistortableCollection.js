@@ -51,9 +51,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   _toggleMultiSelect: function(event, edit) {
-    if (edit._mode === "lock") {
-      return;
-    }
+    if (edit._mode === "lock") { return; }
 
     if (event.metaKey || event.ctrlKey) {
       L.DomUtil.toggleClass(event.target, "selected");
@@ -128,16 +126,26 @@ L.DistortableCollection = L.FeatureGroup.extend({
         collection: JSON.stringify(collection.images),
         scale: 30
       },
-      success: function _getStatusjson() {
-        var data2 = "/id/1560202769/status.json";
-        console.log(data2);
-        $.ajax("http://export.mapknitter.org" + data2, {
-          type: "GET",
-          crossDomain: true
-        }).done(function(data) {
-          console.log(data);
-        });
+      success: function(data) {
+        console.log(data);
+        this._getStatusJson(data);
+        // $.ajax("http://export.mapknitter.org" + data, {
+        //   type: "GET",
+        //   crossDomain: true
+        // }).done(function(data) {
+        //   console.log(data);
+        // });
       }
+    });
+  },
+
+  _getStatusJson: function(data) {
+    console.log(data);
+    $.ajax("http://export.mapknitter.org" + data, {
+      type: "GET",
+      crossDomain: true
+    }).done(function(data) {
+      console.log(data);
     });
   },
 
@@ -154,9 +162,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var overlay = event.target,
       i;
 
-    if (!this.isSelected(overlay)) {
-      return;
-    }
+    if (!this.isSelected(overlay)) { return; }
 
     this.eachLayer(function(layer) {
       var edit = layer.editing;
@@ -175,9 +181,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
       map = this._map,
       i;
 
-    if (!this.isSelected(overlay)) {
-      return;
-    }
+    if (!this.isSelected(overlay)) { return; }
 
     overlay._dragPoints = {};
 
