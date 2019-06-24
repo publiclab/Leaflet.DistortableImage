@@ -504,7 +504,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   _toggleMultiSelect: function(event, edit) {
-    if (edit._mode === "lock") { return; }
+    if (edit._mode === "lock") {
+      return;
+    }
 
     if (event.metaKey || event.ctrlKey) {
       L.DomUtil.toggleClass(event.target, "selected");
@@ -531,7 +533,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
     this.eachLayer(function(layer) {
       var edit = layer.editing;
 
-      if (edit.toolbar) { edit._hideToolbar(); }
+      if (edit.toolbar) {
+        edit._hideToolbar();
+      }
 
       for (i = 0; i < 4; i++) {
         if (box.contains(layer.getCorner(i)) && edit._mode !== "lock") {
@@ -569,8 +573,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return json;
   },
 
-  _runExport: function(collection) {
+  runExport: function(collection) {
     collection = collection || this._generateExportJson();
+    var that = this;
     $.ajax({
       url: "http://export.mapknitter.org/export",
       crossDomain: true,
@@ -579,15 +584,19 @@ L.DistortableCollection = L.FeatureGroup.extend({
         collection: JSON.stringify(collection.images),
         scale: 30
       },
-      success: function _getStatusJson(data) {
-        console.log(data);
-        $.ajax("http://export.mapknitter.org" + data, {
-          type: "GET",
-          crossDomain: true
-        }).done(function(data) {
-          console.log(data);
-        });
+      success: function(data) {
+        that.getStatusJson(data);
       }
+    });
+  },
+
+  getStatusJson: function(data) {
+    console.log(data);
+    $.ajax("http://export.mapknitter.org" + data, {
+      type: "GET",
+      crossDomain: true
+    }).done(function(data) {
+      console.log(data);
     });
   },
 
@@ -604,7 +613,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var overlay = event.target,
       i;
 
-    if (!this.isSelected(overlay)) { return; }
+    if (!this.isSelected(overlay)) {
+      return;
+    }
 
     this.eachLayer(function(layer) {
       var edit = layer.editing;
@@ -623,7 +634,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
       map = this._map,
       i;
 
-    if (!this.isSelected(overlay)) { return; }
+    if (!this.isSelected(overlay)) {
+      return;
+    }
 
     overlay._dragPoints = {};
 
