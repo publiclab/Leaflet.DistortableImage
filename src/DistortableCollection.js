@@ -116,10 +116,17 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return json;
   },
 
-  startExport: function(collection, cb) {
+  /**
+   * updater: optional cb for MapKnitter integration: to update db
+   * refresher: optional cb for MapKnitter integration: to refresh status ui
+   */
+  startExport: function(collection, updater, refresher) {
     collection = collection || this.generateExportJson();
-    cb = cb || this.stopExport;
+    updater = updater || false;
+    refresher = refresher || this.stopExport;
+
     var that = this;
+
     $.ajax({
       url: "http://export.mapknitter.org/export",
       crossDomain: true,
@@ -129,7 +136,11 @@ L.DistortableCollection = L.FeatureGroup.extend({
         scale: 30
       },
       success: function(data) {
-        that.getStatusJson(data, cb);
+        console.log(data);
+        var exportStatus = that.getStatusJson(data);
+        if (updater) { updater(exportStatus); }
+        var int = setInterval(function() { refresher(exportStatus); }, 3000);
+        window.int = int;
       }
     });
   },
@@ -138,15 +149,13 @@ L.DistortableCollection = L.FeatureGroup.extend({
     clearInterval(window.int);
   },
 
-  getStatusJson: function(data, cb) {
-    console.log(data);
+  getStatusJson: function(data) {
     $.ajax("http://export.mapknitter.org" + data, {
       type: "GET",
       crossDomain: true
-    }).done(function(data2) {
-      console.log(data2);
-      var int = setInterval(function() { cb(data2); }, 3000);
-      window.int = int;
+    }).done(function(exportStatus) {
+      console.log(exportStatus);
+      return exportStatus; 
     });
   },
 
