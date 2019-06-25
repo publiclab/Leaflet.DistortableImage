@@ -125,7 +125,7 @@ module.exports = function(grunt) {
     grunt.registerTask('test', [ 'jshint', 'karma:test' ]);
 
     /* Default (development): Watch files and lint, test, and build on change. */
-    grunt.registerTask('default', ['svg_sprite', 'karma:development:start', 'watch',]);
+    grunt.registerTask('default', ['karma:development:start', 'watch',]);
 
     grunt.registerTask('build', [
         'jshint',
