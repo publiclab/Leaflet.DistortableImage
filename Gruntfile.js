@@ -61,14 +61,37 @@ module.exports = function(grunt) {
         }
       },
 
+      // Minify SVGs from svg directory, output to svg-min
+      svgmin: {
+        dist: {
+          files: [
+            {
+              attrs: "fill",
+              expand: true,
+              cwd: "assets/icons/svg",
+              src: ["*.svg"],
+              dest: "assets/icons/svg-min/",
+              ext: ".svg"
+            }
+          ]
+        },
+        options: {
+          plugins: [
+            { removeViewBox: false },
+            { removeEmptyAttrs: false },
+            { removeTitle: true } // addtitle will add it back in later
+          ]
+        }
+      },
+
       svg_sprite: {
         options: {
           // Task-specific options go here.
         },
         dist: {
           expand: true,
-          cwd: "assets/",
-          src: ["icons/*.svg"],
+          cwd: "assets/icons/svg-min/",
+          src: ["*.svg"],
           dest: "assets/icons/",
           options: {
             log: "info",
@@ -87,6 +110,33 @@ module.exports = function(grunt) {
           }
         }
       },
+
+      // svg_sprite: {
+      //   options: {
+      //     // Task-specific options go here.
+      //   },
+      //   dist: {
+      //     expand: true,
+      //     cwd: "assets/",
+      //     src: ["icons/*.svg"],
+      //     dest: "assets/icons/",
+      //     options: {
+      //       log: "info",
+      //       shape: {
+      //         dimension: {
+      //           maxWidth: 18,
+      //           maxHeight: 18
+      //         }
+      //       },
+      //       mode: {
+      //         symbol: {
+      //           sprite: "sprite.symbol.svg",
+      //           example: true
+      //         }
+      //       }
+      //     }
+      //   }
+      // },
 
       watch: {
         options: {
@@ -130,6 +180,7 @@ module.exports = function(grunt) {
     grunt.registerTask('build', [
         'jshint',
         'karma:development:start',
+        'svgmin',
         'svg_sprite',
         'coverage',
         'concat:dist',
