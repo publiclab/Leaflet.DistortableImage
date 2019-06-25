@@ -569,9 +569,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return json;
   },
 
-  runExport: function(collection, cb) {
-    collection = collection || this._generateExportJson();
-    cb = cb || this.getStatusJson;
+  startExport: function(collection, cb) {
+    collection = collection || this.generateExportJson();
+    cb = cb || this.stopExport;
     var that = this;
     $.ajax({
       url: "http://export.mapknitter.org/export",
@@ -582,9 +582,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
         scale: 30
       },
       success: function(data) {
-        that.getStatusJson(data);
-        var int = setInterval(function() { cb(data); }, 3000);
-        window.int = int;
+        that.getStatusJson(data, cb);
       }
     });
   },
@@ -593,13 +591,15 @@ L.DistortableCollection = L.FeatureGroup.extend({
     clearInterval(window.int);
   },
 
-  getStatusJson: function(data) {
+  getStatusJson: function(data, cb) {
     console.log(data);
     $.ajax("http://export.mapknitter.org" + data, {
       type: "GET",
       crossDomain: true
-    }).done(function(data) {
-      console.log(data);
+    }).done(function(data2) {
+      console.log(data2);
+      var int = setInterval(function() { cb(data2); }, 3000);
+      window.int = int;
     });
   },
 
