@@ -542,76 +542,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
     });
   },
 
-  _getAvgCmPerPixel: function(imgs) {
-    var reduce = imgs.reduce(function(sum, img) {
-      return sum + img.cm_per_pixel;
-    }, 0);
-    return reduce / imgs.length;
-  },
-
-  generateExportJson: function() {
-    var json = {};
-    json.images = [];
-
-    this.eachLayer(function(layer) {
-      if (this.isSelected(layer)) {
-        json.images.push({
-          id: this.getLayerId(layer),
-          src: layer._image.src,
-          nodes: layer.getCorners(),
-          cm_per_pixel: layer._getCmPerPixel()
-        });
-      }
-    }, this);
-
-    json.avg_cm_per_pixel = this._getAvgCmPerPixel(json.images);
-
-    return json;
-  },
-
-  /**
-   * updater: optional cb for MapKnitter integration: to update db
-   * refresher: optional cb for MapKnitter integration: to refresh status ui
-   */
-  startExport: function(collection, updater, refresher) {
-    collection = collection || this.generateExportJson();
-    updater = updater || false;
-    refresher = refresher || this.stopExport;
-
-    var that = this;
-
-    $.ajax({
-      url: "http://export.mapknitter.org/export",
-      crossDomain: true,
-      type: "POST",
-      data: {
-        collection: JSON.stringify(collection.images),
-        scale: 30
-      },
-      success: function(data) {
-        console.log(data);
-        var exportStatus = that.getStatusJson(data);
-        if (updater) { updater(exportStatus); }
-        var int = setInterval(function() { refresher(exportStatus); }, 3000);
-        window.int = int;
-      }
-    });
-  },
-
-  stopExport: function() {
-    clearInterval(window.int);
-  },
-
-  getStatusJson: function(data) {
-    $.ajax("http://export.mapknitter.org" + data, {
-      type: "GET",
-      crossDomain: true
-    }).done(function(exportStatus) {
-      console.log(exportStatus);
-      return exportStatus; 
-    });
-  },
-
   _onKeyDown: function(e) {
     if (e.key === "Escape") {
       this._deselectAll(e);
@@ -720,12 +650,91 @@ L.DistortableCollection = L.FeatureGroup.extend({
       layer._updateCornersFromPoints(layer._cpd);
       layer.fire("update");
     }, this);
+  },
+
+  /**
+   * =====================================================
+   * Exporting integration for Mapknitter - separate out?
+  */
+
+  _getAvgCmPerPixel: function(imgs) {
+    var reduce = imgs.reduce(function(sum, img) {
+      return sum + img.cm_per_pixel;
+    }, 0);
+    return reduce / imgs.length;
+  },
+
+  generateExportJson: function() {
+    var json = {};
+    json.images = [];
+
+    this.eachLayer(function(layer) {
+      if (this.isSelected(layer)) {
+        json.images.push({
+          id: this.getLayerId(layer),
+          src: layer._image.src,
+          nodes: layer.getCorners(),
+          cm_per_pixel: layer._getCmPerPixel()
+        });
+      }
+    }, this);
+
+    json.avg_cm_per_pixel = this._getAvgCmPerPixel(json.images);
+
+    return json;
+  },
+
+  startExport: function(collection, updater, refresher) {
+    collection = collection || this.generateExportJson();
+    updater = updater || false;
+    refresher = refresher || this.stopExport;
+
+    var that = this;
+
+    $.ajax({
+      url: "http://export.mapknitter.org/export",
+      crossDomain: true,
+      type: "POST",
+      data: {
+        collection: JSON.stringify(collection.images),
+        scale: 30
+      },
+      success: function(data) {
+        console.log(data);
+        var exportStatus = that._getStatusJson(data);
+
+        if (updater) { updater(exportStatus); }
+        var int = setInterval(function() { refresher(exportStatus); }, 3000);
+
+        window.int = int;
+      }
+    });
+  },
+
+  stopRefresher: function() {
+    clearInterval(window.int);
+  },
+
+  _getStatusJson: function(data) {
+    $.ajax("http://export.mapknitter.org" + data, {
+      type: "GET",
+      crossDomain: true
+    }).done(function(exportStatus) {
+      console.log(exportStatus);
+      return exportStatus;
+    });
   }
+
+  /** 
+   * =====================================================
+  */
+
 });
 
 L.distortableCollection = function(id, options) {
   return new L.DistortableCollection(id, options);
 };
+
 L.EXIF = function getEXIFdata(img) {
   if (Object.keys(EXIF.getAllTags(img)).length !== 0) {
     console.log(EXIF.getAllTags(img));

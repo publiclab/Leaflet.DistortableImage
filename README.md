@@ -229,9 +229,40 @@ For multiple images, the `ToggleOrder` action switches overlapping images back a
 
 ## Quick API Reference
 
+**`L.DistortableImageOverlay`**
+
 - [`getCorners()`](corners) and [`getCorner(idx)`](corners)
 
 - `getCenter()` - Calculates the centroid of the image
+
+**`L.DistortableCollection`**
+
+- `generateExportJson()` - for Mapknitter integration. Returns the selected images, according to the [multiple image select interface](#Multiple-Images), as a formatted JSON object. Ex:
+
+  ```JSON
+  {
+    "images": [
+      {
+        "id": 77,
+        "src": "http://sasha.mapknitter.org/examples/example.png",
+        "nodes": [{"lat":51.51,"lng":-0.16},{"lat":51.51,"lng":-0.2},{"lat":51.49,"lng":-0.17},{"lat":51.49,"lng":-0.21}],
+        "cm_per_pixel": 18.28125
+      }
+    ],
+    "avg_cm_per_pixel": 18.28125,
+    "scale": 30
+  }
+  ```
+
+- `startExport(collection, updater, refresher)` - for MapKnitter integration. Initiates a collection export.
+
+  - *collection*: a JSON collection of images. Pass it either`imageFeatureGroup.generateExportJson()`, or a custom collection.
+
+  - *updater*: a callback that should be used for database updates. To exclude this, pass false here. 
+
+  - *refresher (optional)*: a callback that should be used to refresh the collection's export progress. It will be passed a `status.json` file fetched on a 3 sec time interval. If nothing is passed, defaults to `stopRefresher`.
+
+- `stopRefresher()` - for Mapknitter Integration. Used to stop refreshing the progress of the currently running collection export.
 
 ## Corners
 
