@@ -291,7 +291,7 @@ $ grunt
 $ grunt concat:dist
 ```
 
-3. _Optional_: We use SVG for our icon system. Please visit our wiki [SVG Icons](https://github.com/publiclab/Leaflet.DistortableImage/wiki/SVG-Icons) if you are interested in making updates to them or just simply learning about our workflow. 
+3. _Optional_: We use SVG for our icon system. Please visit our wiki [SVG Icon System](https://github.com/publiclab/Leaflet.DistortableImage/wiki/SVG-Icon-System) if you are interested in making updates to them or just simply learning about our workflow. 
 ****
 
 ### Contributors
