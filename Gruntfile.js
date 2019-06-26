@@ -111,33 +111,6 @@ module.exports = function(grunt) {
         }
       },
 
-      // svg_sprite: {
-      //   options: {
-      //     // Task-specific options go here.
-      //   },
-      //   dist: {
-      //     expand: true,
-      //     cwd: "assets/",
-      //     src: ["icons/*.svg"],
-      //     dest: "assets/icons/",
-      //     options: {
-      //       log: "info",
-      //       shape: {
-      //         dimension: {
-      //           maxWidth: 18,
-      //           maxHeight: 18
-      //         }
-      //       },
-      //       mode: {
-      //         symbol: {
-      //           sprite: "sprite.symbol.svg",
-      //           example: true
-      //         }
-      //       }
-      //     }
-      //   }
-      // },
-
       watch: {
         options: {
           livereload: true
