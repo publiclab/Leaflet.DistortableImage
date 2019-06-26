@@ -234,7 +234,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
   startExport: function(collection, updater, refresher) {
     collection = collection || this.generateExportJson();
     updater = updater || false;
-    refresher = refresher || this.stopExport;
+    refresher = refresher || this.stopRefresher;
 
     var that = this;
 
