@@ -731,28 +731,22 @@ L.DistortableCollection = L.FeatureGroup.extend({
   startExport: function(opts) {
     opts = opts|| {};
     opts.collection = opts.collection ||  this.generateExportJson();
-    opts.handleStatusUrl = opts.handleStatusUrl || this._defaultHandleStatusUrl;
-    opts.updater = opts.updater || this._defaultUpdater;
     opts.frequency = opts.frequency || 3000;
     opts.scale = opts.scale || 30;
     var statusUrl, updateInterval;
 
-    function _fetchStatusUrl(collection, scale, handleStatusUrl) {
-      $.ajax({
-        url: "http://export.mapknitter.org/export",
-        crossDomain: true,
-        type: "POST",
-        data: {
-          collection: JSON.stringify(collection.images),
-          scale: scale
-        },
-        success: handleStatusUrl() // this handles the initial response
-      });
+      // this may be overridden to update the UI to show export progress or completion
+    function _defaultUpdater(data) {
+      if (data.status === "complete") { clearInterval(updateInterval); }
+      // TODO: update to clearInterval when status == "failed" if we update that in this file:
+      // https://github.com/publiclab/mapknitter-exporter/blob/main/lib/mapknitterExporter.rb
+      console.log(data);
     }
 
     // this may be overridden to update the UI to show export progress or completion
-    this._defaultHandleStatusUrl = function(data) {
+    function _defaultHandleStatusUrl(data) {
       statusUrl = "http://export.mapknitter.org" + data;
+      opts.updater = opts.updater || _defaultUpdater;
 
       $.ajax(statusUrl, {
         type: "GET",
@@ -762,17 +756,24 @@ L.DistortableCollection = L.FeatureGroup.extend({
             opts.updater(data);
           }, opts.frequency);
       });
-    };
+    }
 
-    // this may be overridden to update the UI to show export progress or completion
-    this._defaultUpdater = function(data) {
-      if (data.status === "complete") { clearInterval(updateInterval); }
-      // TODO: update to clearInterval when status == "failed" if we update that in this file:
-      // https://github.com/publiclab/mapknitter-exporter/blob/main/lib/mapknitterExporter.rb
-      console.log(data);
-    };
+    function _fetchStatusUrl(collection, scale) {
+      opts.handleStatusUrl = opts.handleStatusUrl || _defaultHandleStatusUrl;
 
-    _fetchStatusUrl(opts.collection, opts.scale, opts.handleStatusUrl);
+      $.ajax({
+        url: "http://export.mapknitter.org/export",
+        crossDomain: true,
+        type: "POST",
+        data: {
+          collection: JSON.stringify(collection.images),
+          scale: scale
+        },
+        success: opts.handleStatusUrl // this handles the initial response
+      });
+    }
+
+    _fetchStatusUrl(opts.collection, opts.scale);
 
   }
 });
