@@ -518,7 +518,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return L.DomUtil.hasClass(overlay.getElement(), "selected");
   },
 
-  someSelected: function() {
+  anySelected: function() {
     var layerArr = Object.values(this._layers);
 
     return layerArr.some(this.isSelected.bind(this));
@@ -529,6 +529,13 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     if (event.metaKey || event.ctrlKey) {
       L.DomUtil.toggleClass(event.target, "selected");
+    }
+
+    if (this.anySelected()) {
+      console.log("hi");
+      edit._hideToolbar();
+      // edit._deselect();
+      // event.preventDefault();
     }
   },
 
@@ -570,28 +577,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return reduce / imgs.length;
   },
 
-  // _runExport: function(collection) {
-  //   collection = collection || this._generateExportJson();
-  //   $.ajax({
-  //     url: "http://export.mapknitter.org/export",
-  //     crossDomain: true,
-  //     type: "POST",
-  //     data: {
-  //       collection: JSON.stringify(collection.images),
-  //       scale: 30
-  //     },
-  //     success: function(data) {
-  //       console.log(data);
-  //       this._getStatusJson(data);
-  //       // $.ajax("http://export.mapknitter.org" + data, {
-  //       //   type: "GET",
-  //       //   crossDomain: true
-  //       // }).done(function(data) {
-  //       //   console.log(data);
-  //       // });
-  //     }
-  //   });
-  // },
+ 
 
   // _getStatusJson: function(data) {
   //   console.log("here");
@@ -1811,6 +1797,12 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _select: function(event) {
+    // if (event) { L.DomEvent.stopPropagation(event); }
+
+    // if (event && (event.metaKey || event.ctrlKey)) { return; }
+
+    // if (L.DomUtil.hasClass(event.target, "selected")) { return; }
+
     this._selected = true;
     this._showToolbar();
     this._showMarkers();
@@ -1827,7 +1819,14 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _hideToolbar: function() {
-    var map = this._overlay._map;
+    var overlay = this._overlay,
+      map = overlay._map,
+      eventParents = overlay._eventParents;
+
+    if (eventParents) {
+      var eP = eventParents[Object.keys(eventParents)[0]];
+      if (eP.anySelected()) { return; }
+    }
 
     if (this.toolbar) {
       map.removeLayer(this.toolbar);
@@ -1872,9 +1871,25 @@ L.DistortableImage.Edit = L.Handler.extend({
   _showToolbar: function() {
     var overlay = this._overlay,
       map = overlay._map,
+      eventParents = overlay._eventParents,
       //Find the topmost point on the image.
       corners = overlay.getCorners(),
       maxLat = -Infinity;
+
+    if (overlay.options.suppressToolbar) { return; }
+
+    if (eventParents) {
+      var eP = eventParents[Object.keys(eventParents)[0]];
+      if (eP.anySelected()) { 
+        try {
+          console.log("hio");
+          this.toolbar = new L.DistortableImage.EditToolbar2({position: "topleft"}).addTo(map, overlay);
+          overlay.fire("toolbar:created");
+        } catch (e) {}
+
+        return;
+       }
+    }
 
     for (var i = 0; i < corners.length; i++) {
       if (corners[i].lat > maxLat) {
@@ -1884,15 +1899,15 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 		//Longitude is based on the centroid of the image.
 		var raised_point = overlay.getCenter();
-		raised_point.lat = maxLat;
+    raised_point.lat = maxLat;
 
-		if (overlay.options.suppressToolbar !== true) {
-			try {
-        this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(map, overlay);
-        overlay.fire('toolbar:created');
-      }
-      catch (e) {}
-		}
+		// if (overlay.options.suppressToolbar !== true) {
+    try {
+      this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(map, overlay);
+      overlay.fire('toolbar:created');
+    }
+    catch (e) {}
+		// }
   },
   
   _updateToolbarPos: function() {

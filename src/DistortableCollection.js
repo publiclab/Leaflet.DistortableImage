@@ -50,7 +50,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return L.DomUtil.hasClass(overlay.getElement(), "selected");
   },
 
-  someSelected: function() {
+  anySelected: function() {
     var layerArr = Object.values(this._layers);
 
     return layerArr.some(this.isSelected.bind(this));
@@ -61,6 +61,13 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     if (event.metaKey || event.ctrlKey) {
       L.DomUtil.toggleClass(event.target, "selected");
+    }
+
+    if (this.anySelected()) {
+      console.log("hi");
+      edit._hideToolbar();
+      // edit._deselect();
+      // event.preventDefault();
     }
   },
 
@@ -102,28 +109,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return reduce / imgs.length;
   },
 
-  // _runExport: function(collection) {
-  //   collection = collection || this._generateExportJson();
-  //   $.ajax({
-  //     url: "http://export.mapknitter.org/export",
-  //     crossDomain: true,
-  //     type: "POST",
-  //     data: {
-  //       collection: JSON.stringify(collection.images),
-  //       scale: 30
-  //     },
-  //     success: function(data) {
-  //       console.log(data);
-  //       this._getStatusJson(data);
-  //       // $.ajax("http://export.mapknitter.org" + data, {
-  //       //   type: "GET",
-  //       //   crossDomain: true
-  //       // }).done(function(data) {
-  //       //   console.log(data);
-  //       // });
-  //     }
-  //   });
-  // },
+ 
 
   // _getStatusJson: function(data) {
   //   console.log("here");
