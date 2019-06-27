@@ -170,7 +170,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
     addHooks: function() {
       var editing = this._overlay.editing;
 
-      editing._toggleExport();
+      editing._getExport();
       this.disable();
     }
   }),
@@ -282,12 +282,4 @@ L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
       icons.item(i).style.transform = "rotate(" + -angle + "deg)";
     }
   }
-});
-
-L.DistortableImage.EditToolbar2 = LeafletToolbar.Control.extend({
-  options: {
-    actions: [
-      Export
-    ]
-  },
 });

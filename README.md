@@ -120,6 +120,8 @@ By default, your image will initially appear on the screen as "unselected", mean
 
 Some developers prefer that an image initially appears as "selected" instead of "unselected". In this case, we provide an option to pass `selected: true`.
 
+When working with the multi image interface, the feature group will ensure only the last overlay you pass `selected` to will appear initially selected.
+
 ### Mode
 
 `mode` (*optional*, default: "distort", value: *string*)

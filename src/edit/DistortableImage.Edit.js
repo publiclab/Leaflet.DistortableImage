@@ -480,20 +480,12 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     if (eventParents) {
       var eP = eventParents[Object.keys(eventParents)[0]];
-      if (eP.anySelected()) { 
-        try {
-          if (!this.toolbar) {
-            this.toolbar = new L.DistortableImage.EditToolbar2({
-              position: "topleft"
-            }).addTo(map, overlay);
-            overlay.fire("toolbar:created");
-          }
-        } catch (e) {}
-
+      if (eP.anySelected()) {
+        eP._addToolbar();
         return;
-       }
+      }
     }
-
+  
     for (var i = 0; i < corners.length; i++) {
       if (corners[i].lat > maxLat) {
         maxLat = corners[i].lat;
@@ -568,7 +560,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   // Based on https://github.com/publiclab/mapknitter/blob/8d94132c81b3040ae0d0b4627e685ff75275b416/app/assets/javascripts/mapknitter/Map.js#L47-L82
-  _toggleExport: function() {
+  _getExport: function() {
     var map = this._overlay._map;
     var overlay = this._overlay;
 
