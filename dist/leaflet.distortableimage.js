@@ -708,7 +708,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   startExport: function(opts) {
-    opts = opts|| {};
+    opts = opts || {};
     opts.collection = opts.collection || this.generateExportJson();
     opts.frequency = opts.frequency || 3000;
     opts.scale = opts.scale || 30;
@@ -724,6 +724,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     // this may be overridden to update the UI to show export progress or completion
     function _defaultHandleStatusUrl(data) {
+      console.log(data);
       statusUrl = "http://export.mapknitter.org" + data;
       opts.updater = opts.updater || _defaultUpdater;
 
@@ -738,6 +739,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }
 
     function _fetchStatusUrl(collection, scale) {
+      window.scale = scale;
       opts.handleStatusUrl = opts.handleStatusUrl || _defaultHandleStatusUrl;
 
       $.ajax({
