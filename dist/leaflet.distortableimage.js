@@ -1252,10 +1252,10 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 
       if (edit._toggledImage) {
         href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#flip_to_front"></use>';
-        tooltip = 'Stack to front';
+        tooltip = 'Stack to Front';
       } else {
         href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#flip_to_back"></use>';
-        tooltip = 'Stack to back';
+        tooltip = 'Stack to Back';
       }
 
       options = options || {};
