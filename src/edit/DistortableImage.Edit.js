@@ -150,7 +150,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
   },
 
-
   _initToolbar: function () {
     this._showToolbar();
   },
@@ -413,16 +412,6 @@ L.DistortableImage.Edit = L.Handler.extend({
       this.toolbar = false;
     }
   },
-
-  // _hideControlToolbar: function() {
-  //   var overlay = this._overlay,
-  //     map = overlay._map;
-
-  //   if (this.toolbar && this.toolbar instanceof L.DistortableImage.EditToolbar2) {
-  //     map.removeLayer(this.toolbar);
-  //     this.toolbar = false;
-  //   }
-  // },
 
   _showMarkers: function() {
     if (this._mode === "lock") { return; }

@@ -24,7 +24,7 @@ Here's a screenshot:
 
 ![screenshot](example.png)
 
-## Setup
+## Setup - Single Image Interface
 
 1. From the root directory, run `npm install` or `sudo npm install`
 
@@ -140,9 +140,11 @@ Values available to pass to `mode` are:
 
 - #### rotateScale:
 
+  - 
+
 - #### lock:
 
-  - mode which prevents any image actions (including those triggered from the toolbar, user gestures, and hotkeys) until the toolbar action [ToggleLock](#ToggleLock-(<kbd>l</kbd>)) is explicitly triggered (or its hotkey <kbd>l</kbd>)
+  - mode which prevents any image actions (including those triggered from the toolbar, user gestures, and hotkeys) until the toolbar action [ToggleLock](#ToggleLock-(<kbd>l</kbd>)) is explicitly clicked (or its hotkey <kbd>l</kbd>). Denoted by 'X' handles.
 
 In the below example, the image will be initialiazed with "rotateScale" handles:
 
@@ -210,24 +212,54 @@ Typically, editing actions are triggered through our toolbar interface or our pr
 
 This option will override other options related to the toolbar, such as [`selected: true`](#Selected)
 
-## Multiple Image Interface
+## Setup - Multiple Image Interface
 
-Our `DistortableCollection` class allows working with multiple images simultaneously. Say we already instantiated 3 images, saved them to the variables `img`, `img2`, and `img3`, and enabled editing on all of them. To access the UI and functionalities available in the multiple image interface, pass them to the collection class:
+1.  From the root directory, run `npm install` or `sudo npm install`
+
+2.  Open `examples/select.html` in a browser (todo -- add gh pages demo)
+
+
+Our `DistortableCollection` class allows working with multiple images simultaneously. The setup is relatively similar - here is an example with two images:
 
 ```JS
-// OPTION 1: Pass in images immediately
-L.distortableCollection([img, img2, img3]).addTo(map);
+// 1. Instantiate map
 
-// OPTION 2: Instantiate an empty collection and pass in images later
+// 2. Instantiate images but this time *dont* add them directly to the map
+img = L.distortableImageOverlay(
+  'example.png', {
+    keymapper: false,
+    corners: [
+      L.latLng(51.52, -0.14),
+      L.latLng(51.52,-0.10),
+      L.latLng(51.50, -0.14),
+      L.latLng(51.50,-0.10)
+    ],
+  });
+
+img2 = L.distortableImageOverlay(
+  'example.png', {
+    keymapper: false,
+    corners: [
+      L.latLng(51.51, -0.20),
+      L.latLng(51.51,-0.16),
+      L.latLng(51.49, -0.21),
+      L.latLng(51.49,-0.17)
+    ],
+});
+
+// 3. Instantiate an empty `DistortableCollection` group
 var imgGroup = L.distortableCollection().addTo(map);
 
+// 4. Add the images to the group 
 imgGroup.addLayer(img);
 imgGroup.addLayer(img2);
-imgGroup.addLayer(img3);
 
 ```
 
-To test the multi-image interface, open `select.html`. Currently it supports multiple image selection and translations; image distortions still use the single-image interface.
+<blockquote><strong>Important note</strong>: notice how we didn't <code>enable</code> the image editing above as we had done for the single image interface. This is because our <code>DistortableCollection</code> class uses event listeners internally (<code>layeradd</code>) to enable editing on every image as it's added. This event is only triggered if we add the layers to the group dynamically. I.e. you must add the group to the map initially empty.</blockquote>
+
+### UI and functionalities 
+Currently it supports multiple image selection and translations, and WIP we are working on porting editing tools to work for it, such as transparency, etc. Image distortions still use the single-image interface.
 
   - Multiple images can be selected using <kbd>cmd</kbd> + `click` to toggle their inclusion in this interface.
   - A single toolbar instance (using `L.control`) renders the set of tools available to use on collections of images.
@@ -238,34 +270,45 @@ To test the multi-image interface, open `select.html`. Currently it supports mul
 
 ## Default Toolbar Actions (& Keybindings)
 
-#### ToggleLock (<kbd>l</kbd>)
-
-- Toggles between [lock mode](#lock) and [distort mode](#distort-(_default_))
-
-#### ToggleRotateScale (<kbd>r</kbd>)
+<hr>
 
 
-#### ToggleOrder (<kbd>j</kbd>, <kbd>k</kbd>)
+### Single Image Interface:
 
-- For multiple images, switches overlapping images back and forth into view by employing [`bringToFront()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtoback) from the Leaflet API.
+<hr>
 
-#### ToggleOutline (<kbd>o</kbd>)
+Defaults:
 
-#### ToggleTransparency (<kbd>t</kbd>)
+- **ToggleLock (<kbd>l</kbd>)**
 
-#### EnableEXIF (WIP)
+  - Toggles between [lock mode](#lock) and [distort mode](#distort-(_default_))
 
-#### Restore
+- **ToggleRotateScale (<kbd>r</kbd>)**
 
-- Restores the image to its original proportions and scale, but keeps its current rotation angle and location intact.
+  - Toggles between [rotateScale](#rotateScale) and [distort mode](#distort-(_default_))
 
-#### Export
 
-#### Delete (<kbd>delete</kbd>, <kbd>backscpace</kbd>)
+- **ToggleOrder (<kbd>j</kbd>, <kbd>k</kbd>)**
 
-- Permanently deletes the image from the map.
+  - If you have multiple images, use this to switch an individual image's overlap back and forth into view. Employs [`bringToFront()`](https://leafletjs.com/reference-1.5.0.html\#imageoverlay-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.5.0.html#imageoverlay-bringtoback) from the Leaflet API.
 
-## Addons
+- **ToggleOutline (<kbd>o</kbd>)**
+
+- **ToggleTransparency (<kbd>t</kbd>)**
+
+- **EnableEXIF (WIP)**
+
+- **Restore**
+
+  - Restores the image to its original proportions and scale, but keeps its current rotation angle and location intact.
+
+- **Export**
+
+- **Delete (<kbd>delete</kbd>, <kbd>backscpace</kbd>)**
+
+  - Permanently deletes the image from the map.
+
+ Addons:
 
 - **ToggleRotate** (<kbd>caps lock</kbd>):
 
