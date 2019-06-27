@@ -134,7 +134,7 @@ describe("L.DistortableCollection", function () {
       // turn on lock handles for one of the DistortableImages
       edit2._toggleLock();
 
-      // select both images to initially create individual toolbar instances
+      // select both images to initially create individual toolbar instances (single seleection interface)
       chai.simulateClick(img);
       chai.simulateClick(img2);
 
