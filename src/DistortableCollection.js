@@ -282,7 +282,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
   startExport: function(opts) {
     opts = opts|| {};
-    opts.collection = opts.collection ||  this.generateExportJson();
+    opts.collection = opts.collection || this.generateExportJson();
     opts.frequency = opts.frequency || 3000;
     opts.scale = opts.scale || 30;
     var statusUrl, updateInterval;
