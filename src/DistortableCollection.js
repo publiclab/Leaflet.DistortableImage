@@ -260,6 +260,26 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
   },
 
+  generateExportJson: function() {
+    var json = {};
+    json.images = [];
+
+    this.eachLayer(function(layer) {
+      if (this.isSelected(layer)) {
+        json.images.push({
+          id: this.getLayerId(layer),
+          src: layer._image.src,
+          nodes: layer.getCorners(),
+          cm_per_pixel: layer._getCmPerPixel()
+        });
+      }
+    }, this);
+
+    json.avg_cm_per_pixel = this._getAvgCmPerPixel(json.images);
+
+    return json;
+  },
+
   startExport: function(opts) {
     opts = opts|| {};
     opts.collection = opts.collection ||  this.generateExportJson();
