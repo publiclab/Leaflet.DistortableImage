@@ -573,26 +573,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
     });
   },
 
-  _getAvgCmPerPixel: function(imgs) {
-    var reduce = imgs.reduce(function(sum, img) {
-      return sum + img.cm_per_pixel;
-    }, 0);
-    return reduce / imgs.length;
-  },
-
- 
-
-  // _getStatusJson: function(data) {
-  //   console.log("here");
-  //   console.log(data);
-  //   $.ajax("http://export.mapknitter.org" + data, {
-  //     type: "GET",
-  //     crossDomain: true
-  //   }).done(function(data) {
-  //     console.log(data);
-  //   });
-  // },
-
   _onKeyDown: function(e) {
     if (e.key === "Escape") {
       this._deselectAll(e);
@@ -701,6 +681,13 @@ L.DistortableCollection = L.FeatureGroup.extend({
       layer._updateCornersFromPoints(layer._cpd);
       layer.fire("update");
     }, this);
+  },
+
+  _getAvgCmPerPixel: function(imgs) {
+    var reduce = imgs.reduce(function(sum, img) {
+      return sum + img.cm_per_pixel;
+    }, 0);
+    return reduce / imgs.length;
   },
 
   generateExportJson: function() {
@@ -1907,7 +1894,6 @@ L.DistortableImage.Edit = L.Handler.extend({
       var eP = eventParents[Object.keys(eventParents)[0]];
       if (eP.anySelected()) { 
         try {
-          console.log("hio");
           this.toolbar = new L.DistortableImage.EditToolbar2({position: "topleft"}).addTo(map, overlay);
           overlay.fire("toolbar:created");
         } catch (e) {}
@@ -1926,20 +1912,21 @@ L.DistortableImage.Edit = L.Handler.extend({
 		var raised_point = overlay.getCenter();
     raised_point.lat = maxLat;
 
-		// if (overlay.options.suppressToolbar !== true) {
     try {
       this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(map, overlay);
       overlay.fire('toolbar:created');
     }
     catch (e) {}
-		// }
   },
   
   _updateToolbarPos: function() {
     var overlay = this._overlay,
       //Find the topmost point on the image.
       corners = overlay.getCorners(),
+      toolbar = this.toolbar,
       maxLat = -Infinity;
+
+    if (toolbar && toolbar instanceof L.DistortableImage.EditToolbar2) { return; }
 
     for (var i = 0; i < corners.length; i++) {
       if (corners[i].lat > maxLat) {

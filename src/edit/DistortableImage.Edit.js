@@ -486,7 +486,6 @@ L.DistortableImage.Edit = L.Handler.extend({
       var eP = eventParents[Object.keys(eventParents)[0]];
       if (eP.anySelected()) { 
         try {
-          console.log("hio");
           this.toolbar = new L.DistortableImage.EditToolbar2({position: "topleft"}).addTo(map, overlay);
           overlay.fire("toolbar:created");
         } catch (e) {}
@@ -505,20 +504,21 @@ L.DistortableImage.Edit = L.Handler.extend({
 		var raised_point = overlay.getCenter();
     raised_point.lat = maxLat;
 
-		// if (overlay.options.suppressToolbar !== true) {
     try {
       this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(map, overlay);
       overlay.fire('toolbar:created');
     }
     catch (e) {}
-		// }
   },
   
   _updateToolbarPos: function() {
     var overlay = this._overlay,
       //Find the topmost point on the image.
       corners = overlay.getCorners(),
+      toolbar = this.toolbar,
       maxLat = -Infinity;
+
+    if (toolbar && toolbar instanceof L.DistortableImage.EditToolbar2) { return; }
 
     for (var i = 0; i < corners.length; i++) {
       if (corners[i].lat > maxLat) {

@@ -105,26 +105,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
     });
   },
 
-  _getAvgCmPerPixel: function(imgs) {
-    var reduce = imgs.reduce(function(sum, img) {
-      return sum + img.cm_per_pixel;
-    }, 0);
-    return reduce / imgs.length;
-  },
-
- 
-
-  // _getStatusJson: function(data) {
-  //   console.log("here");
-  //   console.log(data);
-  //   $.ajax("http://export.mapknitter.org" + data, {
-  //     type: "GET",
-  //     crossDomain: true
-  //   }).done(function(data) {
-  //     console.log(data);
-  //   });
-  // },
-
   _onKeyDown: function(e) {
     if (e.key === "Escape") {
       this._deselectAll(e);
@@ -233,6 +213,13 @@ L.DistortableCollection = L.FeatureGroup.extend({
       layer._updateCornersFromPoints(layer._cpd);
       layer.fire("update");
     }, this);
+  },
+
+  _getAvgCmPerPixel: function(imgs) {
+    var reduce = imgs.reduce(function(sum, img) {
+      return sum + img.cm_per_pixel;
+    }, 0);
+    return reduce / imgs.length;
   },
 
   generateExportJson: function() {
