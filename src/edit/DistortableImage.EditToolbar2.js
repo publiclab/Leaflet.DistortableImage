@@ -52,9 +52,9 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
 
 L.DistortableImage.EditToolbar2 = LeafletToolbar.Control.extend({
   options: {
-      actions: [
-          Exports,
-          Deletes
-      ]
+    actions: [
+      Exports,
+      Deletes
+    ]
   },
 });

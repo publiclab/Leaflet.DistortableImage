@@ -394,14 +394,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
   },
 
-  _deselectAll: function() {
-    this._selected = false;
-    this._hideToolbar();
-    if (this._mode !== "lock") { 
-      this._hideMarkers(); 
-    }
-  },
-
   _hideToolbar: function() {
     var overlay = this._overlay,
       map = overlay._map;
@@ -422,15 +414,15 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
   },
 
-  _hideControlToolbar: function() {
-    var overlay = this._overlay,
-      map = overlay._map;
+  // _hideControlToolbar: function() {
+  //   var overlay = this._overlay,
+  //     map = overlay._map;
 
-    if (this.toolbar && this.toolbar instanceof L.DistortableImage.EditToolbar2) {
-      map.removeLayer(this.toolbar);
-      this.toolbar = false;
-    }
-  },
+  //   if (this.toolbar && this.toolbar instanceof L.DistortableImage.EditToolbar2) {
+  //     map.removeLayer(this.toolbar);
+  //     this.toolbar = false;
+  //   }
+  // },
 
   _showMarkers: function() {
     if (this._mode === "lock") { return; }
@@ -510,22 +502,21 @@ L.DistortableImage.Edit = L.Handler.extend({
       toolbar = this.toolbar,
       maxLat = -Infinity;
 
-    if (toolbar && toolbar instanceof L.DistortableImage.EditToolbar2) { return; }
+    if (toolbar && toolbar instanceof L.DistortableImage.EditToolbar) { 
+      for (var i = 0; i < corners.length; i++) {
+        if (corners[i].lat > maxLat) {
+          maxLat = corners[i].lat;
+        }
+      }
 
-    for (var i = 0; i < corners.length; i++) {
-      if (corners[i].lat > maxLat) {
-        maxLat = corners[i].lat;
+      //Longitude is based on the centroid of the image.
+      var raised_point = overlay.getCenter();
+      raised_point.lat = maxLat;
+
+      if (overlay.options.suppressToolbar !== true) {
+        this.toolbar.setLatLng(raised_point);
       }
     }
-
-    //Longitude is based on the centroid of the image.
-    var raised_point = overlay.getCenter();
-    raised_point.lat = maxLat;
-
-    if (overlay.options.suppressToolbar !== true) {
-      this.toolbar.setLatLng(raised_point);
-    }
-
   },
 
   _removeOverlay: function () {
@@ -538,7 +529,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (!choice) { return; }
 
     this._hideToolbar();
-    
+
     if (eventParents) {
       var eP = eventParents[Object.keys(eventParents)[0]];
       eP.removeLayer(overlay);
