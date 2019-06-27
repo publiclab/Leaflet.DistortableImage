@@ -746,7 +746,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
           collection: JSON.stringify(collection.images),
           scale: scale
         },
-        success: handleStatusUrl // this handles the initial response
+        success: handleStatusUrl() // this handles the initial response
       });
     }
 
