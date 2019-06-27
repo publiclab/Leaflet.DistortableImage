@@ -532,14 +532,12 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }
 
     if (this.anySelected()) {
-      console.log("hi");
       edit._hidePopupToolbar();
-      // edit._hideMarkers();
-      // edit._deselect();
-      // event.preventDefault();
     } else {
       edit._hideControlToolbar();
     }
+
+    edit._hideMarkers();
   },
 
   _deselectOthers: function(event) {
@@ -1613,7 +1611,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     map.addLayer(this._handles[this._mode]);
 
-    this._showToolbar();
+    this._updateToolbarPos();
 
     this._overlay.rotation = angle;
   },
@@ -1641,7 +1639,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     var overlay = this._overlay,
       map = overlay._map;
 
-    this.dragging = new L.Draggable(overlay._image);
+    this.dragging = new L.Draggable(overlay.getElement());
     this.dragging.enable();
 
     /* Hide toolbars and markers while dragging; click will re-show it */
@@ -1787,12 +1785,6 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _select: function(event) {
-    // if (event) { L.DomEvent.stopPropagation(event); }
-
-    // if (event && (event.metaKey || event.ctrlKey)) { return; }
-
-    // if (L.DomUtil.hasClass(event.target, "selected")) { return; }
-
     this._selected = true;
     this._showToolbar();
     this._showMarkers();
@@ -1848,6 +1840,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _showMarkers: function() {
     if (this._mode === "lock") { return; }
+
+    if (this.toolbar && this.toolbar instanceof L.DistortableImage.EditToolbar2) { return; }
 
     var currentHandle = this._handles[this._mode];
 
