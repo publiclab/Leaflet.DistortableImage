@@ -65,9 +65,12 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     if (this.anySelected()) {
       console.log("hi");
-      edit._hideToolbar();
+      edit._hidePopupToolbar();
+      // edit._hideMarkers();
       // edit._deselect();
       // event.preventDefault();
+    } else {
+      edit._hideControlToolbar();
     }
   },
 

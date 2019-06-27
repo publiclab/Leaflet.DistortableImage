@@ -402,15 +402,29 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _hideToolbar: function() {
     var overlay = this._overlay,
-      map = overlay._map,
-      eventParents = overlay._eventParents;
-
-    if (eventParents) {
-      var eP = eventParents[Object.keys(eventParents)[0]];
-      if (eP.anySelected()) { return; }
-    }
+      map = overlay._map;
 
     if (this.toolbar) {
+      map.removeLayer(this.toolbar);
+      this.toolbar = false;
+    }
+  },
+
+  _hidePopupToolbar: function() {
+    var overlay = this._overlay,
+      map = overlay._map;
+
+    if (this.toolbar && this.toolbar instanceof L.DistortableImage.EditToolbar) {
+      map.removeLayer(this.toolbar);
+      this.toolbar = false;
+    }
+  },
+
+  _hideControlToolbar: function() {
+    var overlay = this._overlay,
+      map = overlay._map;
+
+    if (this.toolbar && this.toolbar instanceof L.DistortableImage.EditToolbar2) {
       map.removeLayer(this.toolbar);
       this.toolbar = false;
     }
