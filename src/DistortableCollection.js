@@ -229,7 +229,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
           id: this.getLayerId(layer),
           src: layer._image.src,
           nodes: layer.getCorners(),
-          cm_per_pixel: layer._getCmPerPixel()
+          cm_per_pixel: L.ImageUtil.getCmPerPixel(layer)
         });
       }
     }, this);
@@ -256,9 +256,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     // this may be overridden to update the UI to show export progress or completion
     function _defaultHandleStatusUrl(data) {
-      window.data = data;
       statusUrl = "http://export.mapknitter.org" + data;
-      // statusUrl = "http://export.mapknitter.org/id/1560464327/status.json";
       opts.updater = opts.updater || _defaultUpdater;
 
       $.ajax(statusUrl, {

@@ -84,7 +84,7 @@ Options available to pass during `L.DistortableImageOverlay` initialization:
 
 - [suppressToolbar](#Suppress-Toolbar)
 
-## Corners
+### Corners
 
 The corners are stored as `L.latLng` objects
 on the image, and can be accessed using our `getCorners()` method after the image is instantiated and added to the map.
@@ -112,7 +112,7 @@ JSON.stringify(img.getCorners())
 ```
 We further added a `getCorner(idx)` method used the same way as its plural counterpart but with an index passed to it.
 
-## Selected
+### Selected
 
 `selected` (*optional*, default: false, value: *boolean*)
 
@@ -120,7 +120,7 @@ By default, your image will initially appear on the screen as "unselected", mean
 
 Some developers prefer that an image initially appears as "selected" instead of "unselected". In this case, we provide an option to pass `selected: true`.
 
-## Mode
+### Mode
 
 `mode` (*optional*, default: "distort", value: *string*)
 
@@ -160,24 +160,24 @@ L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
 
 ```
 
-## Keymapper
+### Keymapper
 
 `keymapper` (*optional*, default: true, value: *boolean*)
 
 By default, an image loads with a keymapper legend showing the available key bindings for different editing / interaction options. To suppress the keymapper, pass `keymapper: false` as an additional option to the image.
 
-## Full-resolution download
+### Full-resolution download
 
 We've added a GPU-accelerated means to generate a full resolution version of the distorted image; it requires two additional dependencies to enable; see how we've included them in the demo:
 
-```
+```HTML
 <script src="../node_modules/webgl-distort/dist/webgl-distort.js"></script>
 <script src="../node_modules/glfx/glfx.js"></script>
 ```
 
 When instantiating a Distortable Image, pass in a `fullResolutionSrc` option set to the url of the higher resolution image. This image will be used in full-res exporting.
 
-```js
+```JS
 
 // create basic map setup from above
 
@@ -198,7 +198,7 @@ L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
 
 ```
 
-## Suppress Toolbar
+### Suppress Toolbar
 
 `suppressToolbar` (*optional*, default: false, value: *boolean*)
 
@@ -208,27 +208,30 @@ Typically, editing actions are triggered through our toolbar interface or our pr
 
 This option will override other options related to the toolbar, such as [`selected: true`](#Selected)
 
-## Multiple Images
+## Multiple Image Interface
 
-To test the multi-image interface, open `select.html`. Currently it supports multiple image selection and translations; image distortions still use the single-image interface.
+Our `DistortableCollection` class allows working with multiple images simultaneously. Say we already instantiated 3 images, saved them to the variables `img`, `img2`, and `img3`, and enabled editing on all of them. To access the UI and functionalities available in the multiple image interface, pass them to the collection class:
 
-  - Multiple images can be selected using <kbd>cmd</kbd> + `click` to toggle individual image selection.
-  - Click on the map or hit the <kbd>esc</kbd> key to quickly deselect all images.
-
-Our `DistortableCollection` class allows working with multiple images simultaneously. Say we instantiated 3 images, saved them to the variables `img`, `img2`, and `img3`, and enabled editing on all of them. To access the UI and functionalities available in the multiple image interface, pass them to the collection class:
-
-```js
+```JS
 // OPTION 1: Pass in images immediately
 L.distortableCollection([img, img2, img3]).addTo(map);
 
 // OPTION 2: Instantiate an empty collection and pass in images later
-var imageFeatureGroup = L.distortableCollection().addTo(map);
+var imgGroup = L.distortableCollection().addTo(map);
 
-imageFeatureGroup.addLayer(img);
-imageFeatureGroup.addLayer(img2);
-imageFeatureGroup.addLayer(img3);
+imgGroup.addLayer(img);
+imgGroup.addLayer(img2);
+imgGroup.addLayer(img3);
 
 ```
+
+To test the multi-image interface, open `select.html`. Currently it supports multiple image selection and translations; image distortions still use the single-image interface.
+
+  - Multiple images can be selected using <kbd>cmd</kbd> + `click` to toggle their inclusion in this interface.
+  - A single toolbar instance (using `L.control`) renders the set of tools available to use on collections of images.
+  - In order to return to the single-image interface, where each `L.popup` toolbar only applies actions on the image it's attached to, you must toggle *all* images out of multi-select or...
+  - ...Click on the map or hit the <kbd>esc</kbd> key to quickly deselect all images.
+
 <hr>
 
 ## Default Toolbar Actions (& Keybindings)
