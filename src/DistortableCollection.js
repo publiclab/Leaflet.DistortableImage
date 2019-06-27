@@ -174,7 +174,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     this.eachLayer(function(layer) {
       var edit = layer.editing;
       L.DomUtil.removeClass(layer.getElement(), "selected");
-      edit._deselect();
+      edit._deselectAll();
     });
 
     L.DomEvent.stopPropagation(event);

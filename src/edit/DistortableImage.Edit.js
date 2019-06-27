@@ -239,7 +239,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     /* Hide toolbars and markers while dragging; click will re-show it */
     this.dragging.on("dragstart", function() {
       overlay.fire("dragstart");
-      this._hideToolbar();
+      this._hidePopupToolbar();
     },this);
 
     /*
@@ -393,6 +393,14 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _deselect: function() {
+    this._selected = false;
+    this._hidePopupToolbar();
+    if (this._mode !== "lock") { 
+      this._hideMarkers(); 
+    }
+  },
+
+  _deselectAll: function() {
     this._selected = false;
     this._hideToolbar();
     if (this._mode !== "lock") { 
