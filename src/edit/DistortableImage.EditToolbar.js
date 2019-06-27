@@ -1,20 +1,35 @@
 L.DistortableImage = L.DistortableImage || {};
 
 var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
-    initialize: function(map, overlay, options) {
-      this._overlay = overlay;
-      this._map = map;
+  initialize: function(map, overlay, options) {
+    this._overlay = overlay;
+    this._map = map;
 
-      LeafletToolbar.ToolbarAction.prototype.initialize.call(this, options);
-    }
-	}),
-	
+    LeafletToolbar.ToolbarAction.prototype.initialize.call(this, options);
+  }
+}),
+  
   ToggleTransparency = EditOverlayAction.extend({
-    options: {
-      toolbarIcon: {
-        html: '<i class="material-icons md-18">opacity</i>',
-        tooltip: 'Toggle Transparency'
+    initialize: function(map, overlay, options) {
+      var edit = overlay.editing,
+        href,
+        tooltip;
+      
+      if (edit._transparent) {
+        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#opacity"></use>';
+        tooltip = 'Make Image Opaque';
+      } else {
+        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#opacity-empty"></use>';
+        tooltip = 'Make Image Transparent';
       }
+
+      options = options || {};
+      options.toolbarIcon = {
+        html: '<svg>' + href + '</svg>',
+        tooltip: tooltip
+      };
+
+      EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
     },
 
     addHooks: function() {
@@ -23,17 +38,26 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       editing._toggleTransparency();
       this.disable();
     }
-	}),
-	
+  }),
+
   ToggleOutline = EditOverlayAction.extend({
     initialize: function(map, overlay, options) {
       var edit = overlay.editing,
-        icon = edit._outlined ? 'border_clear' : 'border_outer';
+        href,
+        tooltip;
+      
+      if (edit._outlined) {
+        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#border_clear"></use>';
+        tooltip = 'Remove Border';
+      } else {
+        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#border_outer"></use>';
+        tooltip = 'Add Border';
+      }
 
       options = options || {};
       options.toolbarIcon = {
-        html: '<i class="material-icons md-18">' + icon + '</i>',
-        tooltip: 'Toggle Outline'
+        html: '<svg>' + href + '</svg>',
+        tooltip: tooltip
       };
 
       EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
@@ -45,14 +69,19 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       editing._toggleOutline();
       this.disable();
     }
-	}),
-	
+  }),
+
   Delete = EditOverlayAction.extend({
-    options: {
-      toolbarIcon: {
-        html: '<i class="material-icons md-18 red">delete_forever</i>',
+    initialize: function(map, overlay, options) {
+      var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#delete_forever"></use>';
+
+      options = options || {};
+      options.toolbarIcon = {
+        html: '<svg>' + href + '</svg>',
         tooltip: 'Delete Image'
-      }
+      };
+
+      EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
     },
 
     addHooks: function() {
@@ -61,25 +90,25 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       editing._removeOverlay();
       this.disable();
     }
-	}),
-	
+  }),
+
   ToggleLock = EditOverlayAction.extend({
     initialize: function(map, overlay, options) {
       var edit = overlay.editing,
-        icon,
+        href,
         tooltip;
 
       if (edit._mode === 'lock') {
-        icon = 'lock_open';
+        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#unlock"></use>';
         tooltip = 'Unlock';
       } else {
-        icon = 'lock';
+        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#lock"></use>';
         tooltip = 'Lock';
       }
 
       options = options || {};
       options.toolbarIcon = {
-        html: '<i class="material-icons-outlined md-18">' + icon + '</i>',
+        html: '<svg>' + href + '</svg>',
         tooltip: tooltip
       };
 
@@ -92,25 +121,25 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       editing._toggleLock();
       this.disable();
     }
-	}),
-	
+  }),
+
   ToggleRotateScale = EditOverlayAction.extend({
     initialize: function(map, overlay, options) {
-			var edit = overlay.editing,
-				icon,
-				tooltip; 
+      var edit = overlay.editing,
+        href,
+        tooltip;
 
-        if (edit._mode === 'rotateScale') {
-					icon = 'transform';
-					tooltip = 'Distort';
-				} else {
-					icon = 'crop_rotate';
-					tooltip = 'Rotate+Scale';
-				}
+      if (edit._mode === 'rotateScale') {
+        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#transform"></use>';
+        tooltip = 'Distort';
+      } else {
+        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#crop_rotate"></use>';
+        tooltip = 'Rotate+Scale';
+      }
 
       options = options || {};
       options.toolbarIcon = {
-        html: '<i class="material-icons md-18">' + icon + '</i>',
+        html: '<svg>' + href + '</svg>',
         tooltip: tooltip
       };
 
@@ -123,14 +152,19 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       editing._toggleRotateScale();
       this.disable();
     }
-	}),
-	
+  }),
+
   Export = EditOverlayAction.extend({
-    options: {
-      toolbarIcon: {
-        html: '<i class="material-icons md-18">get_app</i>',
+    initialize: function(map, overlay, options) {
+      var  href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#get_app"></use>';
+
+      options = options || {};
+      options.toolbarIcon = {
+        html: '<svg>' + href + '</svg>',
         tooltip: 'Export Image'
-      }
+      };
+
+      EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
     },
 
     addHooks: function() {
@@ -139,25 +173,25 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       editing._toggleExport();
       this.disable();
     }
-	}),
-	
+  }),
+
   ToggleOrder = EditOverlayAction.extend({
     initialize: function(map, overlay, options) {
       var edit = overlay.editing,
-        icon,
+        href,
         tooltip;
 
-        if (edit._toggledImage) {
-          icon = 'flip_to_front';
-          tooltip = 'Stack to front';
-        } else {
-          icon = 'flip_to_back';
-          tooltip = 'Stack to back';
-        }
+      if (edit._toggledImage) {
+        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#flip_to_front"></use>';
+        tooltip = 'Stack to Front';
+      } else {
+        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#flip_to_back"></use>';
+        tooltip = 'Stack to Back';
+      }
 
       options = options || {};
       options.toolbarIcon = {
-        html: '<i class="material-icons md-18">' + icon + '</i>',
+        html: '<svg>' + href + '</svg>',
         tooltip: tooltip
       };
 
@@ -170,20 +204,46 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       editing._toggleOrder();
       this.disable();
     }
-	}),
-	
+  }),
+
   EnableEXIF = EditOverlayAction.extend({
-    options: {
-      toolbarIcon: {
-        html: '<i class="material-icons-outlined md-18">explore</i>',
+    initialize: function(map, overlay, options) {
+      var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#explore"></use>';
+
+      options = options || {};
+      options.toolbarIcon = {
+        html: '<svg>' + href + '</svg>',
         tooltip: 'Geolocate Image'
-      }
+      };
+
+      EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
     },
 
     addHooks: function() {
       var image = this._overlay.getElement();
 
       EXIF.getData(image, L.EXIF(image));
+    }
+  }),
+
+  Restore = EditOverlayAction.extend({
+    initialize: function(map, overlay, options) {
+      var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#restore"></use>';
+
+      options = options || {};
+      options.toolbarIcon = {
+        html: '<svg>' + href + '</svg>',
+        tooltip: 'Restore'
+      };
+
+      EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
+    },
+
+    addHooks: function() {
+      var editing = this._overlay.editing;
+
+      editing._restore();
+      this.disable();
     }
   });
 
@@ -196,6 +256,7 @@ L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
       ToggleRotateScale,
       ToggleOrder,
       EnableEXIF,
+      Restore,
       Export,
       Delete
     ]

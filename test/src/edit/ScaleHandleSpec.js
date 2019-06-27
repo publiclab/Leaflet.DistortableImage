@@ -7,10 +7,10 @@ describe("L.ScaleHandle", function() {
 		map = L.map(L.DomUtil.create('div', '', document.body)).setView([41.7896,-87.5996], 15);
 		distortable = L.distortableImageOverlay('/examples/example.jpg', {
 			corners: [
-				new L.LatLng(41.7934, -87.6052),
-				new L.LatLng(41.7934, -87.5852),
-				new L.LatLng(41.7834, -87.5852),
-				new L.LatLng(41.7834, -87.6052)
+				L.latLng(41.7934, -87.6052),
+				L.latLng(41.7934, -87.5852),
+				L.latLng(41.7834, -87.5852),
+				L.latLng(41.7834, -87.6052)
 			]
 		}).addTo(map);
 
@@ -22,7 +22,7 @@ describe("L.ScaleHandle", function() {
 
 	describe("_calculateScalingFactor", function() {
 		it("Should return 1 when given the same latlng twice.", function() {
-			var latlng = distortable._corners[0],
+			var latlng = distortable.getCorner(0),
 				scale = scaleHandle._calculateScalingFactor(latlng, latlng);
 
 			expect(scale).to.equal(1);

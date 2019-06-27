@@ -39,6 +39,19 @@ L.DomUtil = L.extend(L.DomUtil, {
 
 });
 
+L.ImageUtil = {
+
+  getCmPerPixel: function(overlay) {
+    var map = overlay._map;
+
+    var dist = map
+      .latLngToLayerPoint(overlay.getCorner(0))
+      .distanceTo(map.latLngToLayerPoint(overlay.getCorner(1)));
+
+    return (dist * 100) / overlay._image.width;
+  }
+
+};
 L.Map.include({
 	_newLayerPointToLatLng: function(point, newZoom, newCenter) {
 		var topLeft = L.Map.prototype._getNewTopLeftPoint.call(this, newCenter, newZoom)
@@ -135,7 +148,16 @@ L.MatrixUtil = {
 L.TrigUtil = {
 
   calcAngleDegrees: function(x, y) {
-    return Math.atan2(y, x) * 180 / Math.PI;
+    var pointAngle = Math.atan2(y, x);
+    return this.radiansToDegrees(pointAngle);
+  },
+
+  radiansToDegrees: function(angle) {
+    return angle * 180 / Math.PI;
+  },
+
+  degreesToRadians: function(angle) {
+    return angle * Math.PI / 180;
   }
 
 };
@@ -153,10 +175,11 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this._toolArray = L.DistortableImage.EditToolbarDefaults;
     this.edgeMinWidth = this.options.edgeMinWidth;
     this._url = url;
-    this._rotation = this.options.rotation;
+    this.rotation = 0;
+    // window.rotation = this.rotation;
     L.DistortableImage._options = options;
 
-    L.Util.setOptions(this, options);
+    L.setOptions(this, options);
   },
 
   onAdd: function(map) {
@@ -248,6 +271,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
         map.containerPointToLatLng(center.add(offset))
       ];
     }
+    this._initialDimensions = { 'height': imageHeight, 'width': imageWidth, 'offset': offset };
   },
 
   _initEvents: function() {
@@ -431,15 +455,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       0, h, c[2].x, c[2].y,
       w, h, c[3].x, c[3].y
     );
-  },
-
-  _getCmPerPixel: function() {
-    var map = this._map;
-
-    var dist = map.latLngToLayerPoint(this.getCorner(0))
-      .distanceTo(map.latLngToLayerPoint(this.getCorner(1)));
-    
-    return (dist * 100) / this._image.width;
   }
 
 });
@@ -559,7 +574,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
           id: this.getLayerId(layer),
           src: layer._image.src,
           nodes: layer.getCorners(),
-          cm_per_pixel: layer._getCmPerPixel()
+          cm_per_pixel: L.ImageUtil.getCmPerPixel(layer)
         });
       }
     }, this);
@@ -795,7 +810,7 @@ L.EXIF = function getEXIFdata(img) {
 L.EditHandle = L.Marker.extend({
   initialize: function(overlay, corner, options) {
     var markerOptions,
-      latlng = overlay._corners[corner];
+      latlng = overlay.getCorner(corner);
 
     L.setOptions(this, options);
 
@@ -870,13 +885,14 @@ L.EditHandle = L.Marker.extend({
 
  /* Takes two latlngs and calculates the scaling difference. */
   _calculateScalingFactor: function(latlngA, latlngB) {
-    var map = this._handled._map,
-      centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
-      formerPoint = map.latLngToLayerPoint(latlngA),
-      newPoint = map.latLngToLayerPoint(latlngB),
+     var overlay = this._handled,
+       map = overlay._map,
 
-      formerRadiusSquared = this._d2(centerPoint, formerPoint),
-      newRadiusSquared = this._d2(centerPoint, newPoint);
+       centerPoint = map.latLngToLayerPoint(overlay.getCenter()),
+       formerPoint = map.latLngToLayerPoint(latlngA),
+       newPoint = map.latLngToLayerPoint(latlngB),
+       formerRadiusSquared = this._d2(centerPoint, formerPoint),
+       newRadiusSquared = this._d2(centerPoint, newPoint);
 
     return Math.sqrt(newRadiusSquared / formerRadiusSquared);
   },
@@ -890,10 +906,11 @@ L.EditHandle = L.Marker.extend({
   },
 
  /* Takes two latlngs and calculates the angle between them. */
-	_calculateAngle: function(latlngA, latlngB) {
-		var map = this._handled._map,
+	calculateAngleDelta: function(latlngA, latlngB) {
+    var overlay = this._handled,
+      map = overlay._map,
 
-			centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
+			centerPoint = map.latLngToLayerPoint(overlay.getCenter()),
 			formerPoint = map.latLngToLayerPoint(latlngA),
 			newPoint = map.latLngToLayerPoint(latlngB),
 
@@ -919,7 +936,7 @@ L.LockHandle = L.EditHandle.extend({
 	},
 
 	updateHandle: function() {
-		this.setLatLng(this._handled._corners[this._corner]);
+		this.setLatLng(this._handled.getCorner(this._corner));
 		L.DomUtil.removeClass(this._handled.getElement(), 'selected');
 	}
 
@@ -936,16 +953,19 @@ L.DistortHandle = L.EditHandle.extend({
     })
   },
 
+  _onHandleDrag: function() {
+    var overlay = this._handled;
+
+    overlay._updateCorner(this._corner, this.getLatLng());
+
+    overlay.fire("update");
+    overlay.editing._updateToolbarPos();
+  },
+
   updateHandle: function() {
-    this.setLatLng(this._handled._corners[this._corner]);
+    this.setLatLng(this._handled.getCorner(this._corner));
 	},
 
-  _onHandleDrag: function() {
-    this._handled._updateCorner(this._corner, this.getLatLng());
-
-    this._handled.fire("update");
-    this._handled.editing._showToolbar();
-  }
 });
 
 L.RotateScaleHandle = L.EditHandle.extend({
@@ -960,37 +980,35 @@ L.RotateScaleHandle = L.EditHandle.extend({
 
 	_onHandleDrag: function() {
 		var overlay = this._handled,
-			formerLatLng = this._handled._corners[this._corner],
+			edit = overlay.editing,
+			formerLatLng = overlay.getCorner(this._corner),
 			newLatLng = this.getLatLng(),
 
-			angle = this._calculateAngle(formerLatLng, newLatLng),
+			angle = this.calculateAngleDelta(formerLatLng, newLatLng),
 			scale = this._calculateScalingFactor(formerLatLng, newLatLng);
-
-		overlay.editing._rotateBy(angle);
+		
+		if (angle !== 0) { edit._rotateBy(angle); }
 
 		/* 
 		  checks whether the "edgeMinWidth" property is set and tracks the minimum edge length;
 		  this enables preventing scaling to zero, but we might also add an overall scale limit
 		*/		
-		if (this._handled.hasOwnProperty('edgeMinWidth')){
-			var edgeMinWidth = this._handled.edgeMinWidth,
-			    w = L.latLng(overlay._corners[0]).distanceTo(overlay._corners[1]),
-					h = L.latLng(overlay._corners[1]).distanceTo(overlay._corners[2]);
+		if (overlay.hasOwnProperty('edgeMinWidth')){
+			var edgeMinWidth = overlay.edgeMinWidth,
+			    w = L.latLng(overlay.getCorner(0)).distanceTo(overlay.getCorner(1)),
+					h = L.latLng(overlay.getCorner(1)).distanceTo(overlay.getCorner(2));
 			if ((w > edgeMinWidth && h > edgeMinWidth) || scale > 1) {
-				overlay.editing._scaleBy(scale);
+				edit._scaleBy(scale);
 			}
 		} 
 
 		overlay.fire('update');
-
-		this._handled.editing._showToolbar();
-
+		edit._updateToolbarPos();
 	},
 
 	updateHandle: function() {
-		this.setLatLng(this._handled._corners[this._corner]);
+		this.setLatLng(this._handled.getCorner(this._corner));
 	},
-
 });
 
 L.RotateHandle = L.EditHandle.extend({
@@ -1005,19 +1023,18 @@ L.RotateHandle = L.EditHandle.extend({
 	
 	_onHandleDrag: function() {
 		var overlay = this._handled,
-			formerLatLng = this._handled._corners[this._corner],
+			formerLatLng = overlay.getCorner(this._corner),
 			newLatLng = this.getLatLng(),
-			angle = this._calculateAngle(formerLatLng, newLatLng);
+			angle = this.calculateAngleDelta(formerLatLng, newLatLng);
 
-	 	overlay.editing._rotateBy(angle);
+	 	if (angle !== 0) { overlay.editing._rotateBy(angle); }
 
 		overlay.fire('update');
-
-		this._handled.editing._showToolbar();
+		overlay.editing._updateToolbarPos();
 	},
 
 	updateHandle: function() {
-		this.setLatLng(this._handled._corners[this._corner]);
+		this.setLatLng(this._handled.getCorner(this._corner));
 	}
 	
 });
@@ -1034,7 +1051,7 @@ L.ScaleHandle = L.EditHandle.extend({
 
 	_onHandleDrag: function() {
 		var overlay = this._handled,
-			formerLatLng = this._handled._corners[this._corner],
+			formerLatLng = overlay.getCorner(this._corner),
 			newLatLng = this.getLatLng(),
 
 			scale = this._calculateScalingFactor(formerLatLng, newLatLng);
@@ -1042,34 +1059,46 @@ L.ScaleHandle = L.EditHandle.extend({
 		overlay.editing._scaleBy(scale);
 
 		overlay.fire('update');
-
-		this._handled.editing._showToolbar();
+		overlay.editing._updateToolbarPos();
 	},
 
 	updateHandle: function() {
-		this.setLatLng(this._handled._corners[this._corner]);
+		this.setLatLng(this._handled.getCorner(this._corner));
 	},
-
-
 });
 
 L.DistortableImage = L.DistortableImage || {};
 
 var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
-    initialize: function(map, overlay, options) {
-      this._overlay = overlay;
-      this._map = map;
+  initialize: function(map, overlay, options) {
+    this._overlay = overlay;
+    this._map = map;
 
-      LeafletToolbar.ToolbarAction.prototype.initialize.call(this, options);
-    }
-	}),
-	
+    LeafletToolbar.ToolbarAction.prototype.initialize.call(this, options);
+  }
+}),
+  
   ToggleTransparency = EditOverlayAction.extend({
-    options: {
-      toolbarIcon: {
-        html: '<i class="material-icons md-18">opacity</i>',
-        tooltip: 'Toggle Transparency'
+    initialize: function(map, overlay, options) {
+      var edit = overlay.editing,
+        href,
+        tooltip;
+      
+      if (edit._transparent) {
+        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#opacity"></use>';
+        tooltip = 'Make Image Opaque';
+      } else {
+        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#opacity-empty"></use>';
+        tooltip = 'Make Image Transparent';
       }
+
+      options = options || {};
+      options.toolbarIcon = {
+        html: '<svg>' + href + '</svg>',
+        tooltip: tooltip
+      };
+
+      EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
     },
 
     addHooks: function() {
@@ -1078,17 +1107,26 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       editing._toggleTransparency();
       this.disable();
     }
-	}),
-	
+  }),
+
   ToggleOutline = EditOverlayAction.extend({
     initialize: function(map, overlay, options) {
       var edit = overlay.editing,
-        icon = edit._outlined ? 'border_clear' : 'border_outer';
+        href,
+        tooltip;
+      
+      if (edit._outlined) {
+        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#border_clear"></use>';
+        tooltip = 'Remove Border';
+      } else {
+        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#border_outer"></use>';
+        tooltip = 'Add Border';
+      }
 
       options = options || {};
       options.toolbarIcon = {
-        html: '<i class="material-icons md-18">' + icon + '</i>',
-        tooltip: 'Toggle Outline'
+        html: '<svg>' + href + '</svg>',
+        tooltip: tooltip
       };
 
       EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
@@ -1100,14 +1138,19 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       editing._toggleOutline();
       this.disable();
     }
-	}),
-	
+  }),
+
   Delete = EditOverlayAction.extend({
-    options: {
-      toolbarIcon: {
-        html: '<i class="material-icons md-18 red">delete_forever</i>',
+    initialize: function(map, overlay, options) {
+      var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#delete_forever"></use>';
+
+      options = options || {};
+      options.toolbarIcon = {
+        html: '<svg>' + href + '</svg>',
         tooltip: 'Delete Image'
-      }
+      };
+
+      EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
     },
 
     addHooks: function() {
@@ -1116,25 +1159,25 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       editing._removeOverlay();
       this.disable();
     }
-	}),
-	
+  }),
+
   ToggleLock = EditOverlayAction.extend({
     initialize: function(map, overlay, options) {
       var edit = overlay.editing,
-        icon,
+        href,
         tooltip;
 
       if (edit._mode === 'lock') {
-        icon = 'lock_open';
+        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#unlock"></use>';
         tooltip = 'Unlock';
       } else {
-        icon = 'lock';
+        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#lock"></use>';
         tooltip = 'Lock';
       }
 
       options = options || {};
       options.toolbarIcon = {
-        html: '<i class="material-icons-outlined md-18">' + icon + '</i>',
+        html: '<svg>' + href + '</svg>',
         tooltip: tooltip
       };
 
@@ -1147,25 +1190,25 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       editing._toggleLock();
       this.disable();
     }
-	}),
-	
+  }),
+
   ToggleRotateScale = EditOverlayAction.extend({
     initialize: function(map, overlay, options) {
-			var edit = overlay.editing,
-				icon,
-				tooltip; 
+      var edit = overlay.editing,
+        href,
+        tooltip;
 
-        if (edit._mode === 'rotateScale') {
-					icon = 'transform';
-					tooltip = 'Distort';
-				} else {
-					icon = 'crop_rotate';
-					tooltip = 'Rotate+Scale';
-				}
+      if (edit._mode === 'rotateScale') {
+        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#transform"></use>';
+        tooltip = 'Distort';
+      } else {
+        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#crop_rotate"></use>';
+        tooltip = 'Rotate+Scale';
+      }
 
       options = options || {};
       options.toolbarIcon = {
-        html: '<i class="material-icons md-18">' + icon + '</i>',
+        html: '<svg>' + href + '</svg>',
         tooltip: tooltip
       };
 
@@ -1178,14 +1221,19 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       editing._toggleRotateScale();
       this.disable();
     }
-	}),
-	
+  }),
+
   Export = EditOverlayAction.extend({
-    options: {
-      toolbarIcon: {
-        html: '<i class="material-icons md-18">get_app</i>',
+    initialize: function(map, overlay, options) {
+      var  href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#get_app"></use>';
+
+      options = options || {};
+      options.toolbarIcon = {
+        html: '<svg>' + href + '</svg>',
         tooltip: 'Export Image'
-      }
+      };
+
+      EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
     },
 
     addHooks: function() {
@@ -1194,25 +1242,25 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       editing._toggleExport();
       this.disable();
     }
-	}),
-	
+  }),
+
   ToggleOrder = EditOverlayAction.extend({
     initialize: function(map, overlay, options) {
       var edit = overlay.editing,
-        icon,
+        href,
         tooltip;
 
-        if (edit._toggledImage) {
-          icon = 'flip_to_front';
-          tooltip = 'Stack to front';
-        } else {
-          icon = 'flip_to_back';
-          tooltip = 'Stack to back';
-        }
+      if (edit._toggledImage) {
+        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#flip_to_front"></use>';
+        tooltip = 'Stack to Front';
+      } else {
+        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#flip_to_back"></use>';
+        tooltip = 'Stack to Back';
+      }
 
       options = options || {};
       options.toolbarIcon = {
-        html: '<i class="material-icons md-18">' + icon + '</i>',
+        html: '<svg>' + href + '</svg>',
         tooltip: tooltip
       };
 
@@ -1225,20 +1273,46 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
       editing._toggleOrder();
       this.disable();
     }
-	}),
-	
+  }),
+
   EnableEXIF = EditOverlayAction.extend({
-    options: {
-      toolbarIcon: {
-        html: '<i class="material-icons-outlined md-18">explore</i>',
+    initialize: function(map, overlay, options) {
+      var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#explore"></use>';
+
+      options = options || {};
+      options.toolbarIcon = {
+        html: '<svg>' + href + '</svg>',
         tooltip: 'Geolocate Image'
-      }
+      };
+
+      EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
     },
 
     addHooks: function() {
       var image = this._overlay.getElement();
 
       EXIF.getData(image, L.EXIF(image));
+    }
+  }),
+
+  Restore = EditOverlayAction.extend({
+    initialize: function(map, overlay, options) {
+      var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#restore"></use>';
+
+      options = options || {};
+      options.toolbarIcon = {
+        html: '<svg>' + href + '</svg>',
+        tooltip: 'Restore'
+      };
+
+      EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
+    },
+
+    addHooks: function() {
+      var editing = this._overlay.editing;
+
+      editing._restore();
+      this.disable();
     }
   });
 
@@ -1251,6 +1325,7 @@ L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
       ToggleRotateScale,
       ToggleOrder,
       EnableEXIF,
+      Restore,
       Export,
       Delete
     ]
@@ -1453,10 +1528,41 @@ L.DistortableImage.Edit = L.Handler.extend({
         Math.cos(angle) * p.x - Math.sin(angle) * p.y,
         Math.sin(angle) * p.x + Math.cos(angle) * p.y
       );
-      overlay._corners[i] = map.layerPointToLatLng(q.add(center));
+      overlay._updateCorner(i, map.layerPointToLatLng(q.add(center)));
     }
 
+    // window.angle = L.TrigUtil.radiansToDegrees(angle);
+
+    this._overlay.rotation -= L.TrigUtil.radiansToDegrees(angle);
+
     overlay._reset();
+  },
+
+  _restore: function() {
+    var overlay = this._overlay;
+    var angle = overlay.rotation;
+    var map = overlay._map;
+    var center = map.latLngToLayerPoint(overlay.getCenter());
+    var offset = overlay._initialDimensions.offset;
+
+    var corners = { 
+      0: map.layerPointToLatLng(center.subtract(offset)),
+      1: map.layerPointToLatLng(center.add(L.point(offset.x, -offset.y))),
+      2: map.layerPointToLatLng(center.add(L.point(-offset.x, offset.y))),
+      3: map.layerPointToLatLng(center.add(offset))
+    };
+
+    map.removeLayer(this._handles[this._mode]);
+
+    overlay._updateCorners(corners);
+
+    if (angle !== 0) { this._rotateBy(L.TrigUtil.degreesToRadians(360 - angle)); }
+
+    map.addLayer(this._handles[this._mode]);
+
+    this._showToolbar();
+
+    this._overlay.rotation = angle;
   },
 
   _scaleBy: function(scale) {
@@ -1468,11 +1574,11 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     for (i = 0; i < 4; i++) {
       p = map
-        .latLngToLayerPoint(overlay._corners[i])
+        .latLngToLayerPoint(overlay.getCorner(i))
         .subtract(center)
         .multiplyBy(scale)
         .add(center);
-      overlay._corners[i] = map.layerPointToLatLng(p);
+      overlay._updateCorner(i, map.layerPointToLatLng(p));
     }
 
     overlay._reset();
@@ -1580,6 +1686,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     L.DomUtil.setOpacity(image, opacity);
     image.setAttribute("opacity", opacity);
+
+    this._showToolbar();
   },
 
   _toggleOutline: function() {
@@ -1686,11 +1794,11 @@ L.DistortableImage.Edit = L.Handler.extend({
   // TODO: toolbar for multiple image selection
   _showToolbar: function() {
     var overlay = this._overlay,
-      map = overlay._map;
+      map = overlay._map,
+      //Find the topmost point on the image.
+      corners = overlay.getCorners(),
+      maxLat = -Infinity;
 
-    //Find the topmost point on the image.
-    var corners = overlay.getCorners();
-    var maxLat = -Infinity;
     for (var i = 0; i < corners.length; i++) {
       if (corners[i].lat > maxLat) {
         maxLat = corners[i].lat;
@@ -1701,14 +1809,36 @@ L.DistortableImage.Edit = L.Handler.extend({
 		var raised_point = overlay.getCenter();
 		raised_point.lat = maxLat;
 
-		if (this._overlay.options.suppressToolbar !== true) {
+		if (overlay.options.suppressToolbar !== true) {
 			try {
         this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(map, overlay);
         overlay.fire('toolbar:created');
       }
       catch (e) {}
 		}
-	},
+  },
+  
+  _updateToolbarPos: function() {
+    var overlay = this._overlay,
+      //Find the topmost point on the image.
+      corners = overlay.getCorners(),
+      maxLat = -Infinity;
+
+    for (var i = 0; i < corners.length; i++) {
+      if (corners[i].lat > maxLat) {
+        maxLat = corners[i].lat;
+      }
+    }
+
+    //Longitude is based on the centroid of the image.
+    var raised_point = overlay.getCenter();
+    raised_point.lat = maxLat;
+
+    if (overlay.options.suppressToolbar !== true) {
+      this.toolbar.setLatLng(raised_point);
+    }
+
+  },
 
   _removeOverlay: function () {
     var overlay = this._overlay,
@@ -1755,10 +1885,10 @@ L.DistortableImage.Edit = L.Handler.extend({
     downloadable.onload = function onLoadDownloadableImage() {
       var height = downloadable.height,
         width = downloadable.width,
-        nw = map.latLngToLayerPoint(overlay._corners[0]),
-        ne = map.latLngToLayerPoint(overlay._corners[1]),
-        sw = map.latLngToLayerPoint(overlay._corners[2]),
-        se = map.latLngToLayerPoint(overlay._corners[3]);
+        nw = map.latLngToLayerPoint(overlay.getCorner(0)),
+        ne = map.latLngToLayerPoint(overlay.getCorner(1)),
+        sw = map.latLngToLayerPoint(overlay.getCorner(2)),
+        se = map.latLngToLayerPoint(overlay.getCorner(3));
 
       // I think this is to move the image to the upper left corner,
       // jywarren: i think we may need these or the image goes off the edge of the canvas
