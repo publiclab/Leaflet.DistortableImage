@@ -50,6 +50,12 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return L.DomUtil.hasClass(overlay.getElement(), "selected");
   },
 
+  someSelected: function() {
+    var layerArr = Object.values(this._layers);
+
+    return layerArr.some(this.isSelected.bind(this));
+  },
+
   _toggleMultiSelect: function(event, edit) {
     if (edit._mode === "lock") { return; }
 
@@ -95,26 +101,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, 0);
     return reduce / imgs.length;
   },
-
-  // _generateExportJson: function() {
-  //   var json = {};
-  //   json.images = [];
-
-  //   this.eachLayer(function(layer) {
-  //     if (this.isSelected(layer)) {
-  //       json.images.push({
-  //         id: this.getLayerId(layer),
-  //         src: layer._image.src,
-  //         nodes: layer.getCorners(),
-  //         cm_per_pixel: layer._getCmPerPixel()
-  //       });
-  //     }
-  //   }, this);
-
-  //   json.avg_cm_per_pixel = this._getAvgCmPerPixel(json.images);
-
-  //   return json;
-  // },
 
   // _runExport: function(collection) {
   //   collection = collection || this._generateExportJson();

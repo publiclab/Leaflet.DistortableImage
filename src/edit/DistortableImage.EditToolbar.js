@@ -283,3 +283,11 @@ L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
     }
   }
 });
+
+L.DistortableImage.EditToolbar = LeafletToolbar.Control.extend({
+  options: {
+    actions: [
+      ToggleExport,
+    ]
+  },
+});
