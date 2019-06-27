@@ -11,8 +11,8 @@ describe("L.DistortableCollection", function () {
       corners: [
         L.latLng(41.7934, -87.6052),
         L.latLng(41.7934, -87.5852),
-        L.latLng(41.7834, -87.5852),
-        L.latLng(41.7834, -87.6052)
+        L.latLng(41.7834, -87.6052),
+        L.latLng(41.7834, -87.5852)
       ]
     }).addTo(map);
 
@@ -20,8 +20,8 @@ describe("L.DistortableCollection", function () {
       corners: [
         L.latLng(41.7934, -87.6050),
         L.latLng(41.7934, -87.5850),
-        L.latLng(41.7834, -87.5850),
-        L.latLng(41.7834, -87.6050)
+        L.latLng(41.7834, -87.6050),
+        L.latLng(41.7834, -87.5850)
       ]
     }).addTo(map);
 

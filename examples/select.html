@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <title>Leaflet.DistortableImage Example</title>
-  <meta charset="utf-8" />
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta http-equiv="x-ua-compatible" content="ie=edge"/>
 
   <script src="../node_modules/leaflet/dist/leaflet-src.js" type="text/javascript" charset="utf-8"></script>
   <link rel="stylesheet" href="../node_modules/leaflet/dist/leaflet.css" media="screen" title="no title">
@@ -16,8 +16,15 @@
   <script src="../node_modules/webgl-distort/dist/webgl-distort.js"></script>
   <script src="../node_modules/glfx/glfx.js"></script>
 
+  <!-- for EXIF geocode -->
+  <script type="text/javascript" src="../node_modules/exif-js/exif.js"></script>
+
   <link rel="stylesheet" href="../dist/leaflet.distortableimage.css" media="screen" title="no title">
   <script src="../dist/leaflet.distortableimage.js"></script>
+
+  <!-- svg external sprite polyfill for IE 11 -->
+  <script src="https://rawgit.com/jonathantneal/svg4everybody/master/dist/svg4everybody.js"></script>
+  <script>svg4everybody(); // run it now or whenever you are ready</script>
 </head>
 <body style="margin:0;">
 
@@ -47,10 +54,10 @@
         img = L.distortableImageOverlay(
           'example.png', {
             corners: [
+              L.latLng(51.52, -0.14),
               L.latLng(51.52,-0.10),
-              L.latLng(51.52,-0.14),
-              L.latLng(51.50,-0.10),
-              L.latLng(51.50,-0.14)
+              L.latLng(51.50, -0.14),
+              L.latLng(51.50,-0.10)
             ],
             mode: 'lock'
           }).addTo(map);
@@ -59,10 +66,10 @@
         img2 = L.distortableImageOverlay(
           'example.png', {
             corners: [
+              L.latLng(51.51, -0.20),
               L.latLng(51.51,-0.16),
-              L.latLng(51.51,-0.20),
-              L.latLng(51.49,-0.17),
-              L.latLng(51.49,-0.21)
+              L.latLng(51.49, -0.21),
+              L.latLng(51.49,-0.17)
             ],
             mode: 'rotateScale'
           }).addTo(map);
@@ -70,20 +77,20 @@
         img3 = L.distortableImageOverlay(
           'example.png', {
             corners: [
+              L.latLng(51.50, -0.13),
               L.latLng(51.50,-0.09),
-              L.latLng(51.50,-0.13),
+              L.latLng(51.48, -0.14),
               L.latLng(51.48,-0.10),
-              L.latLng(51.48,-0.14)
             ],
           }).addTo(map);
 
         img4 = L.distortableImageOverlay(
           'example.png', {
             corners: [
+              L.latLng(51.51, -0.07),
               L.latLng(51.51,-0.03),
-              L.latLng(51.51,-0.07),
-              L.latLng(51.49,-0.04),
-              L.latLng(51.49,-0.08)
+              L.latLng(51.49, -0.08),
+              L.latLng(51.49,-0.04)
             ],
           }).addTo(map);
 

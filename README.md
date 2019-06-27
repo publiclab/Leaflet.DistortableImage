@@ -27,7 +27,8 @@ Here's a screenshot:
 ## Setup
 
 1. From the root directory, run `npm install` or `sudo npm install`
-2. Open examples/index.html in a browser
+
+2. Open `examples/index.html` in a browser
 
 ## Demo
 
@@ -64,17 +65,16 @@ img = L.distortableImageOverlay(
       L.latLng(51.50,-0.14),
       L.latLng(51.50,-0.10)
     ],
-  }
-).addTo(map);
+  }).addTo(map);
 
 // enable editing
 L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
 ```
 
 Options available to pass during `L.DistortableImageOverlay` initialization:
-- corners
+- [corners](#corners)
 
-- [selected](#selection)
+- [selected](#selected)
 
 - [mode](#mode)
 
@@ -84,6 +84,33 @@ Options available to pass during `L.DistortableImageOverlay` initialization:
 
 - [suppressToolbar](#Suppress-Toolbar)
 
+## Corners
+
+The corners are stored as `L.latLng` objects
+on the image, and can be accessed using our `getCorners()` method after the image is instantiated and added to the map.
+
+Useful usage example:
+
+```js
+// instantiate, add to map and enable
+img = L.distortableImageOverlay(...);
+img.addTo(map);
+L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
+
+// grab the initial corner positions
+JSON.stringify(img.getCorners())
+=> "[{"lat":51.52,"lng":-0.14},{"lat":51.52,"lng":-0.1},{"lat":51.5,"lng":-0.14},{"lat":51.5,"lng":-0.1}]"
+
+// ...move the image around...
+
+// check the new corner positions.
+JSON.stringify(img.getCorners())
+=> "[{"lat":51.50685099607552,"lng":-0.06058305501937867},{"lat":51.50685099607552,"lng":-0.02058595418930054},{"lat":51.486652692081925,"lng":-0.06058305501937867},{"lat":51.486652692081925,"lng":-0.02058595418930054}]"
+
+// note there is an added level of precision after dragging the image for debugging purposes
+
+```
+We further added a `getCorner(idx)` method used the same way as its plural counterpart but with an index passed to it.
 
 ## Selected
 
@@ -97,16 +124,23 @@ Some developers prefer that an image initially appears as "selected" instead of 
 
 `mode` (*optional*, default: "distort", value: *string*)
 
-Each primary editing mode corresponds to a separate editing tool.
+Each primary editing mode corresponds to a separate editing handle.
 
-This option sets the image's initial editing mode, meaning the corresponding editing tool will always appear first when you interact with the image.
+This option sets the image's initial editing mode, meaning the corresponding editing handle will always appear first when you interact with the image.
 
 Values available to pass to `mode` are: 
-- "distort" (the default)
-- "lock"
-- "rotate"
-- "scale"
-- "rotateScale"
+
+- #### distort (_default_)
+
+- #### rotate
+
+- #### scale
+
+- #### rotateScale:
+
+- #### lock:
+
+  - mode which prevents any image actions (including those triggered from the toolbar, user gestures, and hotkeys) until the toolbar action [ToggleLock](#ToggleLock-(<kbd>l</kbd>)) is explicitly triggered (or its hotkey <kbd>l</kbd>)
 
 In the below example, the image will be initialiazed with "rotateScale" handles:
 
@@ -158,8 +192,7 @@ img = L.distortableImageOverlay(
       L.latLng(51.50,-0.10)
     ],
     fullResolutionSrc: 'large.jpg'
-  }
-).addTo(map);
+  }).addTo(map);
 
 L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
 
@@ -198,76 +231,67 @@ imageFeatureGroup.addLayer(img3);
 ```
 <hr>
 
-## Default Toolbar Actions
+## Default Toolbar Actions (& Keybindings)
 
-- "ToggleLock"
+#### ToggleLock (<kbd>l</kbd>)
 
-- "ToggleOrder"
+- Toggles between [lock mode](#lock) and [distort mode](#distort-(_default_))
 
-- "ToggleOutline"
+#### ToggleRotateScale (<kbd>r</kbd>)
 
-- "ToggleTransparency"
 
-- "ToggleRotateScale"
+#### ToggleOrder (<kbd>j</kbd>, <kbd>k</kbd>)
 
-- "EnableEXIF"
+- For multiple images, switches overlapping images back and forth into view by employing [`bringToFront()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtoback) from the Leaflet API.
 
-- "Export"
+#### ToggleOutline (<kbd>o</kbd>)
 
-- "Delete"
+#### ToggleTransparency (<kbd>t</kbd>)
+
+#### EnableEXIF (WIP)
+
+#### Restore
+
+- Restores the image to its original proportions and scale, but keeps its current rotation angle and location intact.
+
+#### Export
+
+#### Delete (<kbd>delete</kbd>, <kbd>backscpace</kbd>)
+
+- Permanently deletes the image from the map.
 
 ## Addons
 
-- "ToggleRotate"
+- **ToggleRotate** (<kbd>caps lock</kbd>):
 
-- "ToggleScale"
-
-### Image-ordering
-
-For multiple images, the `ToggleOrder` action switches overlapping images back and forth into view by employing [`bringToFront()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtoback) from the Leaflet API.
-
+- **ToggleScale** (<kbd>s</kbd>):
 
 ## Quick API Reference
 
-- [`getCorners()`](corners) and [`getCorner(idx)`](corners)
+- [`getCorners()`](#corners) and [`getCorner(idx)`](#corners)
 
 - `getCenter()` - Calculates the centroid of the image
 
-## Corners
-
-The corners are stored as `L.latLng` objects
-on the image, and can be accessed using our `getCorners()` method after the image is instantiated and added to the map.
-
-Useful usage example:
-
-```js
-// instantiate, add to map and enable
-img = L.distortableImageOverlay(...);
-img.addTo(map);
-L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
-
-// grab the initial corner positions
-JSON.stringify(img.getCorners())
-=> "[{"lat":51.52,"lng":-0.14},{"lat":51.52,"lng":-0.1},{"lat":51.5,"lng":-0.14},{"lat":51.5,"lng":-0.1}]"
-
-// ...move the image around...
-
-// check the new corner positions.
-JSON.stringify(img.getCorners())
-=> "[{"lat":51.50685099607552,"lng":-0.06058305501937867},{"lat":51.50685099607552,"lng":-0.02058595418930054},{"lat":51.486652692081925,"lng":-0.06058305501937867},{"lat":51.486652692081925,"lng":-0.02058595418930054}]"
-
-// note there is an added level of precision after dragging the image for debugging purposes
-
-```
-We further added a `getCorner(idx)` method used the same way as its plural counterpart but with an index passed to it.
-
 ## Contributing
 
-1. This project uses `grunt` to do a lot of things, including concatenate source files from /src/ to /DistortableImageOverlay.js. But you may need to install grunt-cli: `npm install -g grunt-cli` first.
-2. Run `grunt` in the root directory, and it will watch for changes and concatenate them on the fly.
+1) This project uses `grunt` to do a lot of things, including concatenate source files from `/src/` to `/DistortableImageOverlay.js`:
 
-To build all files from `/src/` into the `/dist/` folder, run `grunt concat:dist`.
+```Bash
+#you may need to install grunt-cli first:
+$ npm install -g grunt-cli
 
+#run in root dir, and it'll watch for changes and concatenate them on the fly
+$ grunt
+```
+
+
+2) To build all files from `/src/` into the `/dist/` folder, run:
+
+```Bash
+$ grunt concat:dist
+```
+
+3. _Optional_: We use SVG for our icon system. Please visit our wiki [SVG Icon System](https://github.com/publiclab/Leaflet.DistortableImage/wiki/SVG-Icon-System) if you are interested in making updates to them or just simply learning about our workflow. 
 ****
 
 ### Contributors

@@ -173,10 +173,41 @@ L.DistortableImage.Edit = L.Handler.extend({
         Math.cos(angle) * p.x - Math.sin(angle) * p.y,
         Math.sin(angle) * p.x + Math.cos(angle) * p.y
       );
-      overlay._corners[i] = map.layerPointToLatLng(q.add(center));
+      overlay._updateCorner(i, map.layerPointToLatLng(q.add(center)));
     }
 
+    // window.angle = L.TrigUtil.radiansToDegrees(angle);
+
+    this._overlay.rotation -= L.TrigUtil.radiansToDegrees(angle);
+
     overlay._reset();
+  },
+
+  _restore: function() {
+    var overlay = this._overlay;
+    var angle = overlay.rotation;
+    var map = overlay._map;
+    var center = map.latLngToLayerPoint(overlay.getCenter());
+    var offset = overlay._initialDimensions.offset;
+
+    var corners = { 
+      0: map.layerPointToLatLng(center.subtract(offset)),
+      1: map.layerPointToLatLng(center.add(L.point(offset.x, -offset.y))),
+      2: map.layerPointToLatLng(center.add(L.point(-offset.x, offset.y))),
+      3: map.layerPointToLatLng(center.add(offset))
+    };
+
+    map.removeLayer(this._handles[this._mode]);
+
+    overlay._updateCorners(corners);
+
+    if (angle !== 0) { this._rotateBy(L.TrigUtil.degreesToRadians(360 - angle)); }
+
+    map.addLayer(this._handles[this._mode]);
+
+    this._showToolbar();
+
+    this._overlay.rotation = angle;
   },
 
   _scaleBy: function(scale) {
@@ -188,11 +219,11 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     for (i = 0; i < 4; i++) {
       p = map
-        .latLngToLayerPoint(overlay._corners[i])
+        .latLngToLayerPoint(overlay.getCorner(i))
         .subtract(center)
         .multiplyBy(scale)
         .add(center);
-      overlay._corners[i] = map.layerPointToLatLng(p);
+      overlay._updateCorner(i, map.layerPointToLatLng(p));
     }
 
     overlay._reset();
@@ -300,6 +331,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     L.DomUtil.setOpacity(image, opacity);
     image.setAttribute("opacity", opacity);
+
+    this._showToolbar();
   },
 
   _toggleOutline: function() {
@@ -406,11 +439,11 @@ L.DistortableImage.Edit = L.Handler.extend({
   // TODO: toolbar for multiple image selection
   _showToolbar: function() {
     var overlay = this._overlay,
-      map = overlay._map;
+      map = overlay._map,
+      //Find the topmost point on the image.
+      corners = overlay.getCorners(),
+      maxLat = -Infinity;
 
-    //Find the topmost point on the image.
-    var corners = overlay.getCorners();
-    var maxLat = -Infinity;
     for (var i = 0; i < corners.length; i++) {
       if (corners[i].lat > maxLat) {
         maxLat = corners[i].lat;
@@ -421,14 +454,36 @@ L.DistortableImage.Edit = L.Handler.extend({
 		var raised_point = overlay.getCenter();
 		raised_point.lat = maxLat;
 
-		if (this._overlay.options.suppressToolbar !== true) {
+		if (overlay.options.suppressToolbar !== true) {
 			try {
         this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(map, overlay);
         overlay.fire('toolbar:created');
       }
       catch (e) {}
 		}
-	},
+  },
+  
+  _updateToolbarPos: function() {
+    var overlay = this._overlay,
+      //Find the topmost point on the image.
+      corners = overlay.getCorners(),
+      maxLat = -Infinity;
+
+    for (var i = 0; i < corners.length; i++) {
+      if (corners[i].lat > maxLat) {
+        maxLat = corners[i].lat;
+      }
+    }
+
+    //Longitude is based on the centroid of the image.
+    var raised_point = overlay.getCenter();
+    raised_point.lat = maxLat;
+
+    if (overlay.options.suppressToolbar !== true) {
+      this.toolbar.setLatLng(raised_point);
+    }
+
+  },
 
   _removeOverlay: function () {
     var overlay = this._overlay,
@@ -475,10 +530,10 @@ L.DistortableImage.Edit = L.Handler.extend({
     downloadable.onload = function onLoadDownloadableImage() {
       var height = downloadable.height,
         width = downloadable.width,
-        nw = map.latLngToLayerPoint(overlay._corners[0]),
-        ne = map.latLngToLayerPoint(overlay._corners[1]),
-        sw = map.latLngToLayerPoint(overlay._corners[2]),
-        se = map.latLngToLayerPoint(overlay._corners[3]);
+        nw = map.latLngToLayerPoint(overlay.getCorner(0)),
+        ne = map.latLngToLayerPoint(overlay.getCorner(1)),
+        sw = map.latLngToLayerPoint(overlay.getCorner(2)),
+        se = map.latLngToLayerPoint(overlay.getCorner(3));
 
       // I think this is to move the image to the upper left corner,
       // jywarren: i think we may need these or the image goes off the edge of the canvas

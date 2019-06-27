@@ -12,10 +12,11 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this._toolArray = L.DistortableImage.EditToolbarDefaults;
     this.edgeMinWidth = this.options.edgeMinWidth;
     this._url = url;
-    this._rotation = this.options.rotation;
+    this.rotation = 0;
+    // window.rotation = this.rotation;
     L.DistortableImage._options = options;
 
-    L.Util.setOptions(this, options);
+    L.setOptions(this, options);
   },
 
   onAdd: function(map) {
@@ -107,6 +108,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
         map.containerPointToLatLng(center.add(offset))
       ];
     }
+    this._initialDimensions = { 'height': imageHeight, 'width': imageWidth, 'offset': offset };
   },
 
   _initEvents: function() {
@@ -290,15 +292,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       0, h, c[2].x, c[2].y,
       w, h, c[3].x, c[3].y
     );
-  },
-
-  _getCmPerPixel: function() {
-    var map = this._map;
-
-    var dist = map.latLngToLayerPoint(this.getCorner(0))
-      .distanceTo(map.latLngToLayerPoint(this.getCorner(1)));
-    
-    return (dist * 100) / this._image.width;
   }
 
 });

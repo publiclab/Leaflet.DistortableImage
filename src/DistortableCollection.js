@@ -106,7 +106,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
           id: this.getLayerId(layer),
           src: layer._image.src,
           nodes: layer.getCorners(),
-          cm_per_pixel: layer._getCmPerPixel()
+          cm_per_pixel: L.ImageUtil.getCmPerPixel(layer)
         });
       }
     }, this);

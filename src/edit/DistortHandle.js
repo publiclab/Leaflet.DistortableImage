@@ -9,14 +9,17 @@ L.DistortHandle = L.EditHandle.extend({
     })
   },
 
+  _onHandleDrag: function() {
+    var overlay = this._handled;
+
+    overlay._updateCorner(this._corner, this.getLatLng());
+
+    overlay.fire("update");
+    overlay.editing._updateToolbarPos();
+  },
+
   updateHandle: function() {
-    this.setLatLng(this._handled._corners[this._corner]);
+    this.setLatLng(this._handled.getCorner(this._corner));
 	},
 
-  _onHandleDrag: function() {
-    this._handled._updateCorner(this._corner, this.getLatLng());
-
-    this._handled.fire("update");
-    this._handled.editing._showToolbar();
-  }
 });
