@@ -23,16 +23,10 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
     },
 
     addHooks: function () {
-        console.log(this);
-        window.this = this;
-        
+        // console.log(this);
         var group = this._overlay;
 
         group.startExport();
-    //   var editing = this._overlay.editing;
-
-    //   editing._getExport();
-    //   this.disable();
     }
   }),
 
@@ -50,11 +44,9 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
     },
 
     addHooks: function() {
-    //   var editing = this._overlay.editing;
-    //   var eP = this.
+      var group = this._overlay;
 
-    //   editing._removeOverlay();
-    //   this.disable();
+      group._removeFromGroup();
     }
   });
 

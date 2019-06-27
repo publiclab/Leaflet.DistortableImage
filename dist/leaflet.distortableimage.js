@@ -677,30 +677,18 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
   _removeFromGroup: function() {
     var layersToRemove = this._toRemove();
-    var choice = layersToRemove[0]._editing.confirmDelete();
+
+    if (layersToRemove.length === 0) { return; }
+    var choice = layersToRemove[0].editing.confirmDelete();
 
     if (choice) {
       layersToRemove.forEach(function(layer) {
         this.removeLayer(layer);
       }, this);
     }
-  },
-    
 
-    // this.eachLayer(function(layer) {
-    //   var edit = layer.editing;
-    //   if (edit._selected && edit._mode !== "lock") {
-    //     var choice = edit.confirmDelete();
-    //     if (choice) {
-    //       edit._selected = false;
-    //       this.removeLayer(layer);
-    //     } else {
-    //       L.DomEvent.stopPropagation(e);
-    //       return;
-    //     }
-    //   }
-    // }, this);
-  // },
+    this._removeToolbar();
+  },
 
   _toRemove: function() {
     var layerArr = this.getLayers();
@@ -1491,16 +1479,10 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
     },
 
     addHooks: function () {
-        console.log(this);
-        window.this = this;
-        
+        // console.log(this);
         var group = this._overlay;
 
         group.startExport();
-    //   var editing = this._overlay.editing;
-
-    //   editing._getExport();
-    //   this.disable();
     }
   }),
 
@@ -1518,11 +1500,9 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
     },
 
     addHooks: function() {
-    //   var editing = this._overlay.editing;
-    //   var eP = this.
+      var group = this._overlay;
 
-    //   editing._removeOverlay();
-    //   this.disable();
+      group._removeFromGroup();
     }
   });
 
@@ -2074,6 +2054,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (!choice) { return; }
 
     this._hideToolbar();
+    
     if (eventParents) {
       var eP = eventParents[Object.keys(eventParents)[0]];
       eP.removeLayer(overlay);

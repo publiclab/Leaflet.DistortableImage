@@ -538,6 +538,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (!choice) { return; }
 
     this._hideToolbar();
+    
     if (eventParents) {
       var eP = eventParents[Object.keys(eventParents)[0]];
       eP.removeLayer(overlay);
