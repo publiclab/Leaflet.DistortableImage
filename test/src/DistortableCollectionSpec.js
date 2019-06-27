@@ -46,15 +46,40 @@ describe("L.DistortableCollection", function () {
   });
 
   describe("#isSelected", function () {
-    it("Should return true if the image was selected using command + click", function() {
+    it("Should only return true if the image was selected using command + mousedown", function() {
       var layers = imageFeatureGroup.getLayers(),
         layer = layers[0],
+        layer2 = layers[1],
         img = layer.getElement();
+        img2 = layer.getElement();
        
       chai.simulateCommandMousedown(img);
+      chai.simulateMousedown(img2);
         
       var value = imageFeatureGroup.isSelected(layer);
       expect(value).to.be.true;
+
+      var value2 = imageFeatureGroup.isSelected(layer2);
+      expect(value2).to.be.false;
+    });
+  });
+
+  describe("#anySelected", function () {
+    it("Should return false if no selections were made with command + mousedown", function() {
+      var layers = imageFeatureGroup.getLayers(),
+        layer = layers[0],
+        layer2 = layers[1],
+        img = layer.getElement();
+        img2 = layer.getElement();
+       
+      chai.simulateMousedown(img);
+      chai.simulateMousedown(img2);
+        
+      var value = imageFeatureGroup.isSelected(layer);
+      expect(value).to.be.false;
+
+      var value2 = imageFeatureGroup.isSelected(layer2);
+      expect(value2).to.be.false;
     });
   });
 
@@ -124,30 +149,29 @@ describe("L.DistortableCollection", function () {
     });
   });
 
-  // describe("#_toggleMultiSelect", function () {
-    // it("Should allow multiple image selection on command + click", function() {
-    //   var img = overlay.getElement(),
-    //     img2 = overlay2.getElement();
+  describe("#_toggleMultiSelect", function () {
+    it("Should allow multiple image selection on command + click", function() {
+      var img = overlay.getElement(),
+        img2 = overlay2.getElement();
 
-    //   chai.simulateCommandMousedown(img);
-    //   chai.simulateCommandMousedown(img2);
+      chai.simulateCommandMousedown(img);
+      chai.simulateCommandMousedown(img2);
 
-    //   var classStr = L.DomUtil.getClass(img);
-    //   expect(classStr).to.include("selected");
+      var classStr = L.DomUtil.getClass(img);
+      expect(classStr).to.include("selected");
 
-    //   var classStr2 = L.DomUtil.getClass(img2);
-    //   expect(classStr2).to.include("selected");
-    // });
+      var classStr2 = L.DomUtil.getClass(img2);
+      expect(classStr2).to.include("selected");
+    });
 
-    // it("It should not allow a locked image to be part of multiple image selection", function() {
-    //     var img = overlay.getElement();
+    it("It should not allow a locked image to be part of multiple image selection", function() {
+        var img = overlay.getElement();
 
-    //   overlay.editing._toggleLock();
-    //   chai.simulateCommandMousedown(img);
+      overlay.editing._toggleLock();
+      chai.simulateCommandMousedown(img);
 
-    //   var classStr = L.DomUtil.getClass(img);
-    //   expect(classStr).to.not.include("selected");
-    // });
-  // });
-
+      var classStr = L.DomUtil.getClass(img);
+      expect(classStr).to.not.include("selected");
+    });
+  });
 });
