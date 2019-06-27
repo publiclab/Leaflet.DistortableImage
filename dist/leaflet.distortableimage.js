@@ -519,9 +519,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   _toggleMultiSelect: function(event, edit) {
-    if (edit._mode === "lock") {
-      return;
-    }
+    if (edit._mode === "lock") { return; }
 
     if (event.metaKey || event.ctrlKey) {
       L.DomUtil.toggleClass(event.target, "selected");
@@ -566,47 +564,59 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return reduce / imgs.length;
   },
 
-  _generateExportJson: function() {
-    var json = {};
-    json.images = [];
+  // _generateExportJson: function() {
+  //   var json = {};
+  //   json.images = [];
 
-    this.eachLayer(function(layer) {
-      if (this.isSelected(layer)) {
-        json.images.push({
-          id: this.getLayerId(layer),
-          src: layer._image.src,
-          nodes: layer.getCorners(),
-          cm_per_pixel: L.ImageUtil.getCmPerPixel(layer)
-        });
-      }
-    }, this);
+  //   this.eachLayer(function(layer) {
+  //     if (this.isSelected(layer)) {
+  //       json.images.push({
+  //         id: this.getLayerId(layer),
+  //         src: layer._image.src,
+  //         nodes: layer.getCorners(),
+  //         cm_per_pixel: layer._getCmPerPixel()
+  //       });
+  //     }
+  //   }, this);
 
-    json.avg_cm_per_pixel = this._getAvgCmPerPixel(json.images);
+  //   json.avg_cm_per_pixel = this._getAvgCmPerPixel(json.images);
 
-    return json;
-  },
+  //   return json;
+  // },
 
-  _runExport: function(collection) {
-    collection = collection || this._generateExportJson();
-    $.ajax({
-      url: "http://export.mapknitter.org/export",
-      crossDomain: true,
-      type: "POST",
-      data: {
-        collection: JSON.stringify(collection.images),
-        scale: 30
-      },
-      success: function _getStatusjson(data) {
-        console.log(data);
-        $.ajax("http://export.mapknitter.org" + data, {
-          type: "GET",
-          crossDomain: true
-        }).done(function(data) {
-          console.log(data);
-        });
-      }
-    });
-  },
+  // _runExport: function(collection) {
+  //   collection = collection || this._generateExportJson();
+  //   $.ajax({
+  //     url: "http://export.mapknitter.org/export",
+  //     crossDomain: true,
+  //     type: "POST",
+  //     data: {
+  //       collection: JSON.stringify(collection.images),
+  //       scale: 30
+  //     },
+  //     success: function(data) {
+  //       console.log(data);
+  //       this._getStatusJson(data);
+  //       // $.ajax("http://export.mapknitter.org" + data, {
+  //       //   type: "GET",
+  //       //   crossDomain: true
+  //       // }).done(function(data) {
+  //       //   console.log(data);
+  //       // });
+  //     }
+  //   });
+  // },
+
+  // _getStatusJson: function(data) {
+  //   console.log("here");
+  //   console.log(data);
+  //   $.ajax("http://export.mapknitter.org" + data, {
+  //     type: "GET",
+  //     crossDomain: true
+  //   }).done(function(data) {
+  //     console.log(data);
+  //   });
+  // },
 
   _onKeyDown: function(e) {
     if (e.key === "Escape") {
@@ -621,9 +631,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var overlay = event.target,
       i;
 
-    if (!this.isSelected(overlay)) {
-      return;
-    }
+    if (!this.isSelected(overlay)) { return; }
 
     this.eachLayer(function(layer) {
       var edit = layer.editing;
@@ -642,9 +650,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
       map = this._map,
       i;
 
-    if (!this.isSelected(overlay)) {
-      return;
-    }
+    if (!this.isSelected(overlay)) { return; }
 
     overlay._dragPoints = {};
 
@@ -720,6 +726,54 @@ L.DistortableCollection = L.FeatureGroup.extend({
       layer._updateCornersFromPoints(layer._cpd);
       layer.fire("update");
     }, this);
+  },
+
+  startExport: function(opts) {
+    opts = opts|| {};
+    opts.collection = opts.collection ||  this.generateExportJson();
+    opts.handleStatusUrl = opts.handleStatusUrl || this._defaultHandleStatusUrl;
+    opts.updater = opts.updater || this._defaultUpdater;
+    opts.frequency = opts.frequency || 3000;
+    opts.scale = opts.scale || 30;
+    var statusUrl, updateInterval;
+
+    function _fetchStatusUrl(collection, scale, handleStatusUrl) {
+      $.ajax({
+        url: "http://export.mapknitter.org/export",
+        crossDomain: true,
+        type: "POST",
+        data: {
+          collection: JSON.stringify(collection.images),
+          scale: scale
+        },
+        success: handleStatusUrl // this handles the initial response
+      });
+    }
+
+    // this may be overridden to update the UI to show export progress or completion
+    this._defaultHandleStatusUrl = function(data) {
+      statusUrl = "http://export.mapknitter.org" + data;
+
+      $.ajax(statusUrl, {
+        type: "GET",
+        crossDomain: true
+      }).done(function(data) {
+          updateInterval = setInterval(function intervalUpdater() {
+            opts.updater(data);
+          }, opts.frequency);
+      });
+    };
+
+    // this may be overridden to update the UI to show export progress or completion
+    this._defaultUpdater = function(data) {
+      if (data.status === "complete") { clearInterval(updateInterval); }
+      // TODO: update to clearInterval when status == "failed" if we update that in this file:
+      // https://github.com/publiclab/mapknitter-exporter/blob/main/lib/mapknitterExporter.rb
+      console.log(data);
+    };
+
+    _fetchStatusUrl(opts.collection, opts.scale, opts.handleStatusUrl);
+
   }
 });
 
