@@ -482,8 +482,12 @@ L.DistortableImage.Edit = L.Handler.extend({
       var eP = eventParents[Object.keys(eventParents)[0]];
       if (eP.anySelected()) { 
         try {
-          this.toolbar = new L.DistortableImage.EditToolbar2({position: "topleft"}).addTo(map, overlay);
-          overlay.fire("toolbar:created");
+          if (!this.toolbar) {
+            this.toolbar = new L.DistortableImage.EditToolbar2({
+              position: "topleft"
+            }).addTo(map, overlay);
+            overlay.fire("toolbar:created");
+          }
         } catch (e) {}
 
         return;
