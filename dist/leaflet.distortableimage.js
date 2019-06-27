@@ -519,7 +519,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   anySelected: function() {
-    var layerArr = Object.values(this._layers);
+    var layerArr = this.getLayers();
 
     return layerArr.some(this.isSelected.bind(this));
   },
@@ -533,11 +533,10 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     if (this.anySelected()) {
       edit._hidePopupToolbar();
+      edit._hideMarkers();
     } else {
       edit._hideControlToolbar();
     }
-
-    edit._hideMarkers();
   },
 
   _deselectOthers: function(event) {
