@@ -122,6 +122,9 @@ module.exports = function(grunt) {
       },
 
       concat: {
+        options: {
+          sourceMap: true
+        },
         dist: {
           src: [
             "src/util/*.js",
