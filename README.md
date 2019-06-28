@@ -134,17 +134,24 @@ Values available to pass to `mode` are:
 
 - #### distort (_default_)
 
+  - Distortion via individually draggable corners.
+
 - #### rotate
+
+  - Rotation only. Replaced as a default toolbar option by `rotateScale`, but still accessible via its hotkey, `mode`, and (WIP) custom toolbar actions API.
+
 
 - #### scale
 
+  - Proportional resize only. Replaced as a default toolbar action by `rotateScale`, but still accessible via its hotkey, `mode`, and (WIP) custom toolbar actions API
+
 - #### rotateScale:
 
-  - 
+  - Free transform. Combines the `rotate` and `scale` modes into one.
 
 - #### lock:
 
-  - mode which prevents any image actions (including those triggered from the toolbar, user gestures, and hotkeys) until the toolbar action [ToggleLock](#ToggleLock-(<kbd>l</kbd>)) is explicitly clicked (or its hotkey <kbd>l</kbd>). Denoted by 'X' handles.
+  - Prevents any image actions (including those triggered from the toolbar, user gestures, and hotkeys) until the toolbar action [ToggleLock](#ToggleLock-(<kbd>l</kbd>)) is explicitly clicked (or its hotkey <kbd>l</kbd>). Denoted by 'X' handles.
 
 In the below example, the image will be initialiazed with "rotateScale" handles:
 
@@ -272,7 +279,6 @@ Currently it supports multiple image selection and translations, and WIP we are 
 
 <hr>
 
-
 ### Single Image Interface:
 
 <hr>
@@ -281,11 +287,11 @@ Defaults:
 
 - **ToggleLock (<kbd>l</kbd>)**
 
-  - Toggles between [lock mode](#lock) and [distort mode](#distort-(_default_))
+  - Toggles between [lock mode](#lock) and [distort mode](#distort-(_default_)).
 
-- **ToggleRotateScale (<kbd>r</kbd>)**
+- **ToggleRotateScale (<kbd>r</kbd>, <kbd>d</kbd>)**
 
-  - Toggles between [rotateScale](#rotateScale) and [distort mode](#distort-(_default_))
+  - Toggles between [rotateScale](#rotateScale) and [distort mode](#distort-(_default_)).
 
 
 - **ToggleOrder (<kbd>j</kbd>, <kbd>k</kbd>)**
@@ -312,7 +318,26 @@ Defaults:
 
 - **ToggleRotate** (<kbd>caps lock</kbd>):
 
+  - Toggles between [rotate mode](#rotate) and [distort mode](#distort-(_default_)).
+
 - **ToggleScale** (<kbd>s</kbd>):
+
+  - Toggles between [scale mode](#scale) and [distort mode](#distort-(_default_)).
+
+<hr>
+
+### Multiple Image Interface:
+
+<hr>
+
+Defaults:
+
+-   **Export**
+
+
+-   **Delete**
+
+    -   Permanently deletes groups of selected images from the map.
 
 ## Quick API Reference
 
