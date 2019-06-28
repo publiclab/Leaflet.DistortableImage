@@ -120,7 +120,7 @@ By default, your image will initially appear on the screen as "unselected", mean
 
 Some developers prefer that an image initially appears as "selected" instead of "unselected". In this case, we provide an option to pass `selected: true`.
 
-When working with the multi image interface, the feature group will ensure only the last overlay you pass `selected` to will appear initially selected.
+Note: when working with the multi image interface, the collection group will ensure only the last overlay you pass `selected` to will appear initially selected.
 
 ### Mode
 
@@ -151,7 +151,7 @@ Values available to pass to `mode` are:
 
 - #### lock:
 
-  - Prevents any image actions (including those triggered from the toolbar, user gestures, and hotkeys) until the toolbar action [ToggleLock](#ToggleLock-(<kbd>l</kbd>)) is explicitly clicked (or its hotkey <kbd>l</kbd>). Denoted by 'X' handles.
+  - Prevents any image actions (including those triggered from the toolbar, user gestures, and hotkeys) until the toolbar action [ToggleLock](#ToggleLock-(<kbd>l</kbd>)) is explicitly triggered (or its hotkey <kbd>l</kbd>).
 
 In the below example, the image will be initialiazed with "rotateScale" handles:
 
@@ -332,12 +332,12 @@ Defaults:
 
 Defaults:
 
--   **Export**
+-   **Exports**
 
 
--   **Delete**
+-   **Deletes**
 
-    -   Permanently deletes groups of selected images from the map.
+    - Permanently deletes groups of selected images from the map.
 
 ## Quick API Reference
 
