@@ -3,7 +3,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     L.FeatureGroup.prototype.onAdd.call(this, map);
 
     this._map = map;
-    /** enable image editing here now */
+
     this.on("layeradd", function (e) {
       this._turnOnEditing(e.layer);
     }, this);

@@ -238,7 +238,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     /* Hide toolbars and markers while dragging; click will re-show it */
     this.dragging.on("dragstart", function() {
       overlay.fire("dragstart");
-      this._hidePopupToolbar();
+      this._hideToolbar();
     },this);
 
     /*
@@ -395,7 +395,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _deselect: function() {
     this._selected = false;
-    this._hidePopupToolbar();
+    this._hideToolbar();
     if (this._mode !== "lock") { 
       this._hideMarkers(); 
     }
@@ -411,31 +411,21 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
   },
 
-  _hidePopupToolbar: function() {
-    var overlay = this._overlay,
-      map = overlay._map;
-
-    if (this.toolbar && this.toolbar instanceof L.DistortableImage.EditToolbar) {
-      map.removeLayer(this.toolbar);
-      this.toolbar = false;
-    }
-  },
-
   _showMarkers: function() {
     if (this._mode === "lock") { return; }
 
-    if (this.toolbar && this.toolbar instanceof L.DistortableImage.EditToolbar2) { return; }
+    if (this.toolbar && this.toolbar instanceof L.DistortableImage.EditToolbar) {
+      var currentHandle = this._handles[this._mode];
 
-    var currentHandle = this._handles[this._mode];
+      currentHandle.eachLayer(function (layer) {
+        var drag = layer.dragging,
+          opts = layer.options;
 
-    currentHandle.eachLayer(function(layer) {
-      var drag = layer.dragging,
-        opts = layer.options;
-
-      layer.setOpacity(1);
-      if (drag) { drag.enable(); }
-      if (opts.draggable) { opts.draggable = true; }
-    });
+        layer.setOpacity(1);
+        if (drag) { drag.enable(); }
+        if (opts.draggable) { opts.draggable = true; }
+      });
+    }
   },
 
   _hideMarkers: function() {
