@@ -331,7 +331,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }
 
     function _fetchStatusUrl(collection, scale) {
-      window.scale = scale;
       opts.handleStatusUrl = opts.handleStatusUrl || _defaultHandleStatusUrl;
 
       $.ajax({
@@ -339,7 +338,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
         crossDomain: true,
         type: "POST",
         data: {
-          collection: collection.images,
+          collection: JSON.stringify(collection.images),
           scale: scale
         },
         success: opts.handleStatusUrl // this handles the initial response
