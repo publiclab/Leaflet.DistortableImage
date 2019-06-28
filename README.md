@@ -138,12 +138,12 @@ Values available to pass to `mode` are:
 
 - #### rotate
 
-  - Rotation only. Replaced as a default toolbar option by `rotateScale`, but still accessible via its hotkey, `mode`, and (WIP) custom toolbar actions API.
+  - Rotation only. Replaced as a default toolbar tool by `rotateScale`, but still accessible via its hotkey, `mode`, and (WIP) custom toolbar actions API.
 
 
 - #### scale
 
-  - Proportional resize only. Replaced as a default toolbar action by `rotateScale`, but still accessible via its hotkey, `mode`, and (WIP) custom toolbar actions API
+  - Proportional resize only. Replaced as a default toolbar tool by `rotateScale`, but still accessible via its hotkey, `mode`, and (WIP) custom toolbar actions API
 
 - #### rotateScale:
 
@@ -306,7 +306,7 @@ Defaults:
 
 - **Restore**
 
-  - Restores the image to its original proportions and scale, but keeps its current rotation angle and location intact.
+  - Restores the image to its original proportions and scale, but keeps its current rotation angle and location on the map intact.
 
 - **Export**
 
