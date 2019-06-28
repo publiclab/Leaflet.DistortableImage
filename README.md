@@ -225,12 +225,12 @@ This option will override other options related to the toolbar, such as [`select
 
 2.  Open `examples/select.html` in a browser (todo -- add gh pages demo)
 
+Our `DistortableCollection` class allows working with multiple images simultaneously. This interface builds on the single image interface.
 
-Our `DistortableCollection` class allows working with multiple images simultaneously. The setup is relatively similar - here is an example with two images:
+The setup is relatively similar - here is an example with two images:
 
 ```JS
 // 1. Instantiate map
-
 // 2. Instantiate images but this time *dont* add them directly to the map
 img = L.distortableImageOverlay(
   'example.png', {
@@ -264,6 +264,27 @@ imgGroup.addLayer(img2);
 ```
 
 <blockquote><strong>Important note</strong>: notice how we didn't <code>enable</code> the image editing above as we had done for the single image interface. This is because our <code>DistortableCollection</code> class uses event listeners internally (<code>layeradd</code>) to enable editing on every image as it's added. This event is only triggered if we add the layers to the group dynamically. I.e. you must add the group to the map initially empty.</blockquote>
+
+Options available to pass during `L.DistortableCollection` initialization: 
+
+- [actions](#Actions)
+
+### Actions
+
+- `actions` (*optional*, default: [Exports, Deletes], value: *array*)
+
+If you would like to overrwrite the default toolbar actions available for the collection group, pass an array with the names of the actions you want. Reference the available values [here](#Multiple-Image-Interface).
+
+For example, to overrwrite the toolbar to only include the `Deletes` action:
+
+```JS
+
+var imgGroup = L.distortableCollection({
+  actions: [Deletes]
+}).addTo(map);
+
+```
+
 
 ### UI and functionalities 
 Currently it supports multiple image selection and translations, and WIP we are working on porting all editing tools to work for it, such as transparency, etc. Image distortions still use the single-image interface.
