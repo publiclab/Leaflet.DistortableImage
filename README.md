@@ -138,12 +138,12 @@ Values available to pass to `mode` are:
 
 - #### rotate
 
-  - Rotation only. Replaced as a default toolbar tool by `rotateScale`, but still accessible via its hotkey, `mode`, and (WIP) custom toolbar actions API.
+  - Rotation only.
 
 
 - #### scale
 
-  - Proportional resize only. Replaced as a default toolbar tool by `rotateScale`, but still accessible via its hotkey, `mode`, and (WIP) custom toolbar actions API
+  - Resize only. 
 
 - #### rotateScale:
 
@@ -215,7 +215,7 @@ L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
 
 To initialize an image without its toolbar, pass it `suppressToolbar: true`. 
 
-Typically, editing actions are triggered through our toolbar interface or our predefined keybindings. If disabling the toolbar, the developer will need to implement their own toolbar UI or just use the keybindings.
+Typically, editing actions are triggered through our toolbar interface or our predefined keybindings. If disabling the toolbar, the developer will need to implement their own toolbar UI or just use the keybindings. (WIP API for doing this)
 
 This option will override other options related to the toolbar, such as [`selected: true`](#Selected)
 
@@ -266,7 +266,7 @@ imgGroup.addLayer(img2);
 <blockquote><strong>Important note</strong>: notice how we didn't <code>enable</code> the image editing above as we had done for the single image interface. This is because our <code>DistortableCollection</code> class uses event listeners internally (<code>layeradd</code>) to enable editing on every image as it's added. This event is only triggered if we add the layers to the group dynamically. I.e. you must add the group to the map initially empty.</blockquote>
 
 ### UI and functionalities 
-Currently it supports multiple image selection and translations, and WIP we are working on porting editing tools to work for it, such as transparency, etc. Image distortions still use the single-image interface.
+Currently it supports multiple image selection and translations, and WIP we are working on porting all editing tools to work for it, such as transparency, etc. Image distortions still use the single-image interface.
 
   - Multiple images can be selected using <kbd>cmd</kbd> + `click` to toggle their inclusion in this interface.
   - A single toolbar instance (using `L.control`) renders the set of tools available to use on collections of images.
@@ -319,10 +319,14 @@ Defaults:
 - **ToggleRotate** (<kbd>caps lock</kbd>):
 
   - Toggles between [rotate mode](#rotate) and [distort mode](#distort-(_default_)).
+  - Replaced as a default toolbar action by `ToggleRotateScale`, but still accessible via its hotkey, `mode`, and (WIP) custom toolbar actions API.
+
 
 - **ToggleScale** (<kbd>s</kbd>):
 
   - Toggles between [scale mode](#scale) and [distort mode](#distort-(_default_)).
+  - Replaced as a default toolbar action by `ToggleRotateScale`, but still accessible via its hotkey, `mode`, and (WIP) custom toolbar actions API.
+
 
 <hr>
 
