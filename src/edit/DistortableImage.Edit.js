@@ -270,12 +270,20 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _onKeyDown: function(event) {
     var keymap = this.options.keymap,
-      handlerName = keymap[event.key];
+      handlerName = keymap[event.key],
+      eventParents = this._overlay._eventParents;
 
-    if (this[handlerName] !== undefined && this._overlay.options.suppressToolbar !== true) {
-       if (this._selected) {
+    if (eventParents) {
+      var eP = eventParents[Object.keys(eventParents)[0]];
+      if (eP.anySelected()) {
+        return;
+      }
+    }
+
+    if (this[handlerName] !== undefined && !this._overlay.options.suppressToolbar) {
+      if (this._selected) {
         this[handlerName].call(this);
-       }
+      }
     }
   }, 
 

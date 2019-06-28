@@ -578,8 +578,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }
 
     if (this.anySelected()) {
-      edit._hidePopupToolbar();
-      edit._hideMarkers();
+      edit._deselect();
     } else {
       this._removeToolbar();
     }
@@ -675,7 +674,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     L.DomEvent.stopPropagation(event);
   },
 
-  _removeFromGroup: function() {
+  _removeFromGroup: function(event) {
     var layersToRemove = this._toRemove();
 
     if (layersToRemove.length === 0) { return; }
@@ -685,9 +684,11 @@ L.DistortableCollection = L.FeatureGroup.extend({
       layersToRemove.forEach(function(layer) {
         this.removeLayer(layer);
       }, this);
+
+      this._removeToolbar();
     }
 
-    this._removeToolbar();
+    if (event) { L.DomEvent.stopPropagation(event); }
   },
 
   _toRemove: function() {
@@ -1786,12 +1787,20 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _onKeyDown: function(event) {
     var keymap = this.options.keymap,
-      handlerName = keymap[event.key];
+      handlerName = keymap[event.key],
+      eventParents = this._overlay._eventParents;
 
-    if (this[handlerName] !== undefined && this._overlay.options.suppressToolbar !== true) {
-       if (this._selected) {
+    if (eventParents) {
+      var eP = eventParents[Object.keys(eventParents)[0]];
+      if (eP.anySelected()) {
+        return;
+      }
+    }
+
+    if (this[handlerName] !== undefined && !this._overlay.options.suppressToolbar) {
+      if (this._selected) {
         this[handlerName].call(this);
-       }
+      }
     }
   }, 
 

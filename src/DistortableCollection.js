@@ -110,8 +110,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }
 
     if (this.anySelected()) {
-      edit._hidePopupToolbar();
-      edit._hideMarkers();
+      edit._deselect();
     } else {
       this._removeToolbar();
     }
@@ -207,7 +206,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     L.DomEvent.stopPropagation(event);
   },
 
-  _removeFromGroup: function() {
+  _removeFromGroup: function(event) {
     var layersToRemove = this._toRemove();
 
     if (layersToRemove.length === 0) { return; }
@@ -217,9 +216,11 @@ L.DistortableCollection = L.FeatureGroup.extend({
       layersToRemove.forEach(function(layer) {
         this.removeLayer(layer);
       }, this);
+
+      this._removeToolbar();
     }
 
-    this._removeToolbar();
+    if (event) { L.DomEvent.stopPropagation(event); }
   },
 
   _toRemove: function() {
