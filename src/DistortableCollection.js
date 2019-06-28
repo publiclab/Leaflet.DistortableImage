@@ -1,4 +1,17 @@
 L.DistortableCollection = L.FeatureGroup.extend({
+  options: {
+  },
+
+  initialize: function(options) {
+
+    this.actions = options.actions;
+
+    L.setOptions(this, options);
+
+    L.FeatureGroup.prototype.initialize.call(this, options);
+
+  },
+
   onAdd: function(map) {
     L.FeatureGroup.prototype.onAdd.call(this, map);
 
@@ -60,6 +73,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     try {
       if (!this.toolbar) {
         this.toolbar = new L.DistortableImage.EditToolbar2({
+          actions: this.actions,
           position: "topleft"
         }).addTo(this._map, this);
         this.fire("toolbar:created");

@@ -98,7 +98,9 @@
             ],
           });
 
-          var imgGroup = L.distortableCollection().addTo(map);
+          var imgGroup = L.distortableCollection({
+            actions: [Exports]
+          }).addTo(map);
 
           /** TODO: make an addLayers func */
           imgGroup.addLayer(img);
