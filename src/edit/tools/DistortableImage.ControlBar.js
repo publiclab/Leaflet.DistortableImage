@@ -1,16 +1,7 @@
 L.distortableImage = L.DistortableImage || {};
 L.distortableImage = L.DistortableImage;
 
-L.EditOverlayAction = L.Toolbar2.Action.extend({
-  initialize: function (map, overlay, options) {
-    this._overlay = overlay;
-    this._map = map;
-
-    L.Toolbar2.Action.prototype.initialize.call(this, options);
-  }
-});
-
-  var Exports = L.EditOverlayAction.extend({
+  var Exports = L.EditAction.extend({
     initialize: function (map, group, options) {
       var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#get_app"></use>';
   
@@ -20,18 +11,17 @@ L.EditOverlayAction = L.Toolbar2.Action.extend({
         tooltip: 'Export Images'
       };
 
-      L.EditOverlayAction.prototype.initialize.call(this, map, group, options);
+      L.EditAction.prototype.initialize.call(this, map, group, options);
     },
 
     addHooks: function () {
-      // console.log(this);
       var group = this._overlay;
 
       group.startExport();
     }
   });
 
-  var Deletes = L.EditOverlayAction.extend({
+  var Deletes = L.EditAction.extend({
     initialize: function(map, overlay, options) {
       var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#delete_forever"></use>';
 
@@ -41,7 +31,7 @@ L.EditOverlayAction = L.Toolbar2.Action.extend({
         tooltip: 'Delete Images'
       };
 
-      L.EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
+      L.EditAction.prototype.initialize.call(this, map, overlay, options);
     },
 
     addHooks: function() {

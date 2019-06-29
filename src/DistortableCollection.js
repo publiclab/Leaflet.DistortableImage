@@ -1,5 +1,6 @@
 L.DistortableCollection = L.FeatureGroup.extend({
   options: {
+    actions: []
   },
 
   initialize: function(options) {

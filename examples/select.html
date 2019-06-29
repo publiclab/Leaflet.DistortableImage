@@ -98,21 +98,17 @@
             ],
           });
 
-          // var Exports2 = new Leaflet.ToolbarAction.extend({
-
-          // })
-
           var imgGroup = L.distortableCollection({
             actions: [Exports]
           }).addTo(map);
+
+          window.imgGroup = imgGroup; 
 
           /** TODO: make an addLayers func */
           imgGroup.addLayer(img);
           imgGroup.addLayer(img2);
           imgGroup.addLayer(img3);
           imgGroup.addLayer(img4);
-
-          window.imgGroup = imgGroup; 
 
       }, this);
     })();

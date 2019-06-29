@@ -470,6 +470,7 @@ L.distortableImageOverlay = function(id, options) {
 
 L.DistortableCollection = L.FeatureGroup.extend({
   options: {
+    actions: []
   },
 
   initialize: function(options) {
@@ -1183,265 +1184,255 @@ L.ScaleHandle = L.EditHandle.extend({
 	},
 });
 
-// L.DistortableImage = L.DistortableImage || {};
-
-// L.EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
-//   initialize: function (map, overlay, options) {
-//     this._overlay = overlay;
-//     this._map = map;
-
-//      LeafletToolbar.ToolbarAction.prototype.initialize.call(this, options);
-//   }
-// });
-L.DistortableImage = L.DistortableImage || {};
-L.distortableImage = L.DistortableImage;
-
-var EditOverlayAction = L.Toolbar2.Action.extend({
-  initialize: function(map, overlay, options) {
+L.EditAction = L.Toolbar2.Action.extend({
+  initialize: function (map, overlay, options) {
     this._overlay = overlay;
     this._map = map;
 
     L.Toolbar2.Action.prototype.initialize.call(this, options);
   }
-}),
-  
-  ToggleTransparency = EditOverlayAction.extend({
-    initialize: function(map, overlay, options) {
-      var edit = overlay.editing,
-        href,
-        tooltip;
-      
-      if (edit._transparent) {
-        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#opacity"></use>';
-        tooltip = 'Make Image Opaque';
-      } else {
-        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#opacity-empty"></use>';
-        tooltip = 'Make Image Transparent';
-      }
+});
 
-      options = options || {};
-      options.toolbarIcon = {
-        html: '<svg>' + href + '</svg>',
-        tooltip: tooltip
-      };
+L.DistortableImage = L.DistortableImage || {};
+L.distortableImage = L.DistortableImage;
 
-      EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
-    },
-
-    addHooks: function() {
-      var editing = this._overlay.editing;
-
-      editing._toggleTransparency();
-      this.disable();
+var ToggleTransparency = L.EditAction.extend({
+  initialize: function(map, overlay, options) {
+    var edit = overlay.editing,
+      href,
+      tooltip;
+    
+    if (edit._transparent) {
+      href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#opacity"></use>';
+      tooltip = 'Make Image Opaque';
+    } else {
+      href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#opacity-empty"></use>';
+      tooltip = 'Make Image Transparent';
     }
-  }),
 
-  ToggleOutline = EditOverlayAction.extend({
-    initialize: function(map, overlay, options) {
-      var edit = overlay.editing,
-        href,
-        tooltip;
-      
-      if (edit._outlined) {
-        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#border_clear"></use>';
-        tooltip = 'Remove Border';
-      } else {
-        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#border_outer"></use>';
-        tooltip = 'Add Border';
-      }
+    options = options || {};
+    options.toolbarIcon = {
+      html: '<svg>' + href + '</svg>',
+      tooltip: tooltip
+    };
 
-      options = options || {};
-      options.toolbarIcon = {
-        html: '<svg>' + href + '</svg>',
-        tooltip: tooltip
-      };
+    L.EditAction.prototype.initialize.call(this, map, overlay, options);
+  },
 
-      EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
-    },
+  addHooks: function() {
+    var editing = this._overlay.editing;
 
-    addHooks: function() {
-      var editing = this._overlay.editing;
+    editing._toggleTransparency();
+    this.disable();
+  }
+});
 
-      editing._toggleOutline();
-      this.disable();
+var ToggleOutline = L.EditAction.extend({
+  initialize: function(map, overlay, options) {
+    var edit = overlay.editing,
+      href,
+      tooltip;
+    
+    if (edit._outlined) {
+      href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#border_clear"></use>';
+      tooltip = 'Remove Border';
+    } else {
+      href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#border_outer"></use>';
+      tooltip = 'Add Border';
     }
-  }),
 
-  Delete = EditOverlayAction.extend({
-    initialize: function(map, overlay, options) {
-      var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#delete_forever"></use>';
+    options = options || {};
+    options.toolbarIcon = {
+      html: '<svg>' + href + '</svg>',
+      tooltip: tooltip
+    };
 
-      options = options || {};
-      options.toolbarIcon = {
-        html: '<svg>' + href + '</svg>',
-        tooltip: 'Delete Image'
-      };
+    L.EditAction.prototype.initialize.call(this, map, overlay, options);
+  },
 
-      EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
-    },
+  addHooks: function() {
+    var editing = this._overlay.editing;
 
-    addHooks: function() {
-      var editing = this._overlay.editing;
+    editing._toggleOutline();
+    this.disable();
+  }
+});
 
-      editing._removeOverlay();
-      this.disable();
+var Delete = L.EditAction.extend({
+  initialize: function(map, overlay, options) {
+    var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#delete_forever"></use>';
+
+    options = options || {};
+    options.toolbarIcon = {
+      html: '<svg>' + href + '</svg>',
+      tooltip: 'Delete Image'
+    };
+
+    L.EditAction.prototype.initialize.call(this, map, overlay, options);
+  },
+
+  addHooks: function() {
+    var editing = this._overlay.editing;
+
+    editing._removeOverlay();
+    this.disable();
+  }
+});
+
+var ToggleLock = L.EditAction.extend({
+  initialize: function(map, overlay, options) {
+    var edit = overlay.editing,
+      href,
+      tooltip;
+
+    if (edit._mode === 'lock') {
+      href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#unlock"></use>';
+      tooltip = 'Unlock';
+    } else {
+      href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#lock"></use>';
+      tooltip = 'Lock';
     }
-  }),
 
-  ToggleLock = EditOverlayAction.extend({
-    initialize: function(map, overlay, options) {
-      var edit = overlay.editing,
-        href,
-        tooltip;
+    options = options || {};
+    options.toolbarIcon = {
+      html: '<svg>' + href + '</svg>',
+      tooltip: tooltip
+    };
 
-      if (edit._mode === 'lock') {
-        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#unlock"></use>';
-        tooltip = 'Unlock';
-      } else {
-        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#lock"></use>';
-        tooltip = 'Lock';
-      }
+    L.EditAction.prototype.initialize.call(this, map, overlay, options);
+  },
 
-      options = options || {};
-      options.toolbarIcon = {
-        html: '<svg>' + href + '</svg>',
-        tooltip: tooltip
-      };
+  addHooks: function() {
+    var editing = this._overlay.editing;
 
-      EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
-    },
+    editing._toggleLock();
+    this.disable();
+  }
+});
 
-    addHooks: function() {
-      var editing = this._overlay.editing;
+var ToggleRotateScale = L.EditAction.extend({
+  initialize: function(map, overlay, options) {
+    var edit = overlay.editing,
+      href,
+      tooltip;
 
-      editing._toggleLock();
-      this.disable();
+    if (edit._mode === 'rotateScale') {
+      href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#transform"></use>';
+      tooltip = 'Distort';
+    } else {
+      href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#crop_rotate"></use>';
+      tooltip = 'Rotate+Scale';
     }
-  }),
 
-  ToggleRotateScale = EditOverlayAction.extend({
-    initialize: function(map, overlay, options) {
-      var edit = overlay.editing,
-        href,
-        tooltip;
+    options = options || {};
+    options.toolbarIcon = {
+      html: '<svg>' + href + '</svg>',
+      tooltip: tooltip
+    };
 
-      if (edit._mode === 'rotateScale') {
-        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#transform"></use>';
-        tooltip = 'Distort';
-      } else {
-        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#crop_rotate"></use>';
-        tooltip = 'Rotate+Scale';
-      }
+    L.EditAction.prototype.initialize.call(this, map, overlay, options);
+  },
 
-      options = options || {};
-      options.toolbarIcon = {
-        html: '<svg>' + href + '</svg>',
-        tooltip: tooltip
-      };
+  addHooks: function() {
+    var editing = this._overlay.editing;
 
-      EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
-    },
+    editing._toggleRotateScale();
+    this.disable();
+  }
+});
 
-    addHooks: function() {
-      var editing = this._overlay.editing;
+var Export = L.EditAction.extend({
+  initialize: function(map, overlay, options) {
+    var  href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#get_app"></use>';
 
-      editing._toggleRotateScale();
-      this.disable();
+    options = options || {};
+    options.toolbarIcon = {
+      html: '<svg>' + href + '</svg>',
+      tooltip: 'Export Image'
+    };
+
+    L.EditAction.prototype.initialize.call(this, map, overlay, options);
+  },
+
+  addHooks: function() {
+    var editing = this._overlay.editing;
+
+    editing._getExport();
+    this.disable();
+  }
+});
+
+var ToggleOrder = L.EditAction.extend({
+  initialize: function(map, overlay, options) {
+    var edit = overlay.editing,
+      href,
+      tooltip;
+
+    if (edit._toggledImage) {
+      href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#flip_to_front"></use>';
+      tooltip = 'Stack to Front';
+    } else {
+      href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#flip_to_back"></use>';
+      tooltip = 'Stack to Back';
     }
-  }),
 
-  Export = EditOverlayAction.extend({
-    initialize: function(map, overlay, options) {
-      var  href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#get_app"></use>';
+    options = options || {};
+    options.toolbarIcon = {
+      html: '<svg>' + href + '</svg>',
+      tooltip: tooltip
+    };
 
-      options = options || {};
-      options.toolbarIcon = {
-        html: '<svg>' + href + '</svg>',
-        tooltip: 'Export Image'
-      };
+    L.EditAction.prototype.initialize.call(this, map, overlay, options);
+  },
 
-      EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
-    },
+  addHooks: function() {
+    var editing = this._overlay.editing;
 
-    addHooks: function() {
-      var editing = this._overlay.editing;
+    editing._toggleOrder();
+    this.disable();
+  }
+});
 
-      editing._getExport();
-      this.disable();
-    }
-  }),
+var EnableEXIF = L.EditAction.extend({
+  initialize: function(map, overlay, options) {
+    var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#explore"></use>';
 
-  ToggleOrder = EditOverlayAction.extend({
-    initialize: function(map, overlay, options) {
-      var edit = overlay.editing,
-        href,
-        tooltip;
+    options = options || {};
+    options.toolbarIcon = {
+      html: '<svg>' + href + '</svg>',
+      tooltip: 'Geolocate Image'
+    };
 
-      if (edit._toggledImage) {
-        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#flip_to_front"></use>';
-        tooltip = 'Stack to Front';
-      } else {
-        href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#flip_to_back"></use>';
-        tooltip = 'Stack to Back';
-      }
+    L.EditAction.prototype.initialize.call(this, map, overlay, options);
+  },
 
-      options = options || {};
-      options.toolbarIcon = {
-        html: '<svg>' + href + '</svg>',
-        tooltip: tooltip
-      };
+  addHooks: function() {
+    var image = this._overlay.getElement();
 
-      EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
-    },
+    EXIF.getData(image, L.EXIF(image));
+  }
+});
 
-    addHooks: function() {
-      var editing = this._overlay.editing;
+var Restore = L.EditAction.extend({
+  initialize: function(map, overlay, options) {
+    var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#restore"></use>';
 
-      editing._toggleOrder();
-      this.disable();
-    }
-  }),
+    options = options || {};
+    options.toolbarIcon = {
+      html: '<svg>' + href + '</svg>',
+      tooltip: 'Restore'
+    };
 
-  EnableEXIF = EditOverlayAction.extend({
-    initialize: function(map, overlay, options) {
-      var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#explore"></use>';
+    L.EditAction.prototype.initialize.call(this, map, overlay, options);
+  },
 
-      options = options || {};
-      options.toolbarIcon = {
-        html: '<svg>' + href + '</svg>',
-        tooltip: 'Geolocate Image'
-      };
+  addHooks: function() {
+    var editing = this._overlay.editing;
 
-      EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
-    },
-
-    addHooks: function() {
-      var image = this._overlay.getElement();
-
-      EXIF.getData(image, L.EXIF(image));
-    }
-  }),
-
-  Restore = EditOverlayAction.extend({
-    initialize: function(map, overlay, options) {
-      var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#restore"></use>';
-
-      options = options || {};
-      options.toolbarIcon = {
-        html: '<svg>' + href + '</svg>',
-        tooltip: 'Restore'
-      };
-
-      EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
-    },
-
-    addHooks: function() {
-      var editing = this._overlay.editing;
-
-      editing._restore();
-      this.disable();
-    }
-  });
+    editing._restore();
+    this.disable();
+  }
+});
 
 L.DistortableImage.PopupBar = L.Toolbar2.Popup.extend({
   options: {
@@ -1487,16 +1478,7 @@ L.distortableImage.popupBar = function (options) {
 L.distortableImage = L.DistortableImage || {};
 L.distortableImage = L.DistortableImage;
 
-L.EditOverlayAction = L.Toolbar2.Action.extend({
-  initialize: function (map, overlay, options) {
-    this._overlay = overlay;
-    this._map = map;
-
-    L.Toolbar2.Action.prototype.initialize.call(this, options);
-  }
-});
-
-  var Exports = L.EditOverlayAction.extend({
+  var Exports = L.EditAction.extend({
     initialize: function (map, group, options) {
       var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#get_app"></use>';
   
@@ -1506,18 +1488,17 @@ L.EditOverlayAction = L.Toolbar2.Action.extend({
         tooltip: 'Export Images'
       };
 
-      L.EditOverlayAction.prototype.initialize.call(this, map, group, options);
+      L.EditAction.prototype.initialize.call(this, map, group, options);
     },
 
     addHooks: function () {
-      // console.log(this);
       var group = this._overlay;
 
       group.startExport();
     }
   });
 
-  var Deletes = L.EditOverlayAction.extend({
+  var Deletes = L.EditAction.extend({
     initialize: function(map, overlay, options) {
       var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#delete_forever"></use>';
 
@@ -1527,7 +1508,7 @@ L.EditOverlayAction = L.Toolbar2.Action.extend({
         tooltip: 'Delete Images'
       };
 
-      L.EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
+      L.EditAction.prototype.initialize.call(this, map, overlay, options);
     },
 
     addHooks: function() {
