@@ -469,18 +469,10 @@ L.distortableImageOverlay = function(id, options) {
 
 
 L.DistortableCollection = L.FeatureGroup.extend({
-  options: {
-    actions: []
-  },
 
   initialize: function(options) {
-
-    this.actions = options.actions;
-
     L.setOptions(this, options);
-
     L.FeatureGroup.prototype.initialize.call(this, options);
-
   },
 
   onAdd: function(map) {
@@ -544,7 +536,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     try {
       if (!this.toolbar) {
         this.toolbar = L.distortableImage.controlBar({
-          actions: this.actions,
+          actions: this.editActions,
           position: "topleft"
         }).addTo(this._map, this);
         this.fire("toolbar:created");
@@ -559,6 +551,16 @@ L.DistortableCollection = L.FeatureGroup.extend({
       map.removeLayer(this.toolbar);
       this.toolbar = false;
     }
+  },
+
+  removeTool: function(value) {
+    this._removeToolbar();
+
+    this.editActions = this.editActions.filter(function (action) {
+      return action !== value;
+    });
+
+    this._addToolbar();
   },
 
   _lastInitialSelected: function() {
@@ -716,10 +718,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
   },
 
-  /**
-   * images in 'lock' mode are included in this feature group collection for functionalities
-   * such as export, but are filtered out for editing / dragging here
-   */
   _calcCollectionFromPoints: function(cpd, overlay) {
     var layersToMove = [],
       p = new L.Transformation(1, -cpd.x, 1, -cpd.y);
@@ -1530,6 +1528,16 @@ L.DistortableImage.ControlBar = L.Toolbar2.Control.extend({
 L.distortableImage.controlBar = function (options) {
   return new L.DistortableImage.ControlBar(options);
 };
+
+L.DistortableCollection.addInitHook(function () {
+  this.ACTIONS = [Exports, Deletes];
+
+  if (this.options.actions) {
+    this.editActions = this.options.actions;
+  } else {
+    this.editActions = this.ACTIONS;
+  }
+});
 L.DistortableImage = L.DistortableImage || {};
 
 L.DistortableImage.Edit = L.Handler.extend({

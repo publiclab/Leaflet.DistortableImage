@@ -53,3 +53,13 @@ L.DistortableImage.ControlBar = L.Toolbar2.Control.extend({
 L.distortableImage.controlBar = function (options) {
   return new L.DistortableImage.ControlBar(options);
 };
+
+L.DistortableCollection.addInitHook(function () {
+  this.ACTIONS = [Exports, Deletes];
+
+  if (this.options.actions) {
+    this.editActions = this.options.actions;
+  } else {
+    this.editActions = this.ACTIONS;
+  }
+});

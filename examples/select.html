@@ -98,17 +98,15 @@
             ],
           });
 
-          var imgGroup = L.distortableCollection({
-            actions: [Exports]
-          }).addTo(map);
+        imgGroup = L.distortableCollection().addTo(map);
 
-          window.imgGroup = imgGroup; 
+        window.imgGroup = imgGroup; 
 
-          /** TODO: make an addLayers func */
-          imgGroup.addLayer(img);
-          imgGroup.addLayer(img2);
-          imgGroup.addLayer(img3);
-          imgGroup.addLayer(img4);
+        /** TODO: make an addLayers func */
+        imgGroup.addLayer(img);
+        imgGroup.addLayer(img2);
+        imgGroup.addLayer(img3);
+        imgGroup.addLayer(img4);
 
       }, this);
     })();
