@@ -131,7 +131,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   _deselectOthers: function(event) {
-    console.log(event);
     this.eachLayer(function(layer) {
 
       var edit = layer.editing;

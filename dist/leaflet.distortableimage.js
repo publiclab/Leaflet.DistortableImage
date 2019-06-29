@@ -599,7 +599,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   _deselectOthers: function(event) {
-    console.log(event);
     this.eachLayer(function(layer) {
 
       var edit = layer.editing;
@@ -1182,14 +1181,24 @@ L.ScaleHandle = L.EditHandle.extend({
 	},
 });
 
+// L.DistortableImage = L.DistortableImage || {};
+
+// L.EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
+//   initialize: function (map, overlay, options) {
+//     this._overlay = overlay;
+//     this._map = map;
+
+//      LeafletToolbar.ToolbarAction.prototype.initialize.call(this, options);
+//   }
+// });
 L.DistortableImage = L.DistortableImage || {};
 
-var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
+var EditOverlayAction = L.Toolbar2.Action.extend({
   initialize: function(map, overlay, options) {
     this._overlay = overlay;
     this._map = map;
 
-    LeafletToolbar.ToolbarAction.prototype.initialize.call(this, options);
+    L.Toolbar2.Action.prototype.initialize.call(this, options);
   }
 }),
   
@@ -1431,7 +1440,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
     }
   });
 
-L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
+L.DistortableImage.EditToolbar = L.Toolbar2.Popup.extend({
   options: {
     actions: [
       ToggleTransparency,
@@ -1469,17 +1478,18 @@ L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
 });
 
 L.DistortableImage = L.DistortableImage || {};
+// L.EditOverlayAction = L.EditOverlayAction || {};
 
-var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
+L.EditOverlayAction = L.Toolbar2.Action.extend({
   initialize: function (map, overlay, options) {
     this._overlay = overlay;
     this._map = map;
 
-    LeafletToolbar.ToolbarAction.prototype.initialize.call(this, options);
+    L.Toolbar2.Action.prototype.initialize.call(this, options);
   }
-}),
+});
 
-  Exports = EditOverlayAction.extend({
+  var Exports = L.EditOverlayAction.extend({
     initialize: function (map, group, options) {
       var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#get_app"></use>';
   
@@ -1489,18 +1499,18 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
         tooltip: 'Export Images'
       };
 
-      EditOverlayAction.prototype.initialize.call(this, map, group, options);
+      L.EditOverlayAction.prototype.initialize.call(this, map, group, options);
     },
 
     addHooks: function () {
-        // console.log(this);
-        var group = this._overlay;
+      // console.log(this);
+      var group = this._overlay;
 
-        group.startExport();
+      group.startExport();
     }
-  }),
+  });
 
-  Deletes = EditOverlayAction.extend({
+  var Deletes = L.EditOverlayAction.extend({
     initialize: function(map, overlay, options) {
       var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#delete_forever"></use>';
 
@@ -1510,7 +1520,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
         tooltip: 'Delete Images'
       };
 
-      EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
+      L.EditOverlayAction.prototype.initialize.call(this, map, overlay, options);
     },
 
     addHooks: function() {
@@ -1520,7 +1530,7 @@ var EditOverlayAction = LeafletToolbar.ToolbarAction.extend({
     }
   });
 
-L.DistortableImage.EditToolbar2 = LeafletToolbar.Control.extend({
+L.DistortableImage.EditToolbar2 = L.Toolbar2.Control.extend({
   options: {
     actions: [
       Exports,

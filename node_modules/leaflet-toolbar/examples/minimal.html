@@ -18,7 +18,7 @@
             attribution: '<a href="http://openstreetmap.org/copyright">OpenStreetMap Contributors</a>'
         }).addTo(map);
 
-        var MyCustomAction = L.ToolbarAction.extend({
+        var MyCustomAction = L.Toolbar2.Action.extend({
 
             options: {
                 toolbarIcon: {
@@ -33,7 +33,7 @@
 
         });
 
-        new L.Toolbar.Control({
+        new L.Toolbar2.Control({
             actions: [MyCustomAction]
         }).addTo(map);
     </script>

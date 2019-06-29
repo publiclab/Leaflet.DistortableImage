@@ -3,7 +3,7 @@
 "use strict";
 
 // L.Layer was introduced in Leaflet 1.0 and is not present in earlier releases.
-window.LeafletToolbar = (L.Layer || L.Class).extend({
+window.L.Toolbar2 = (L.Layer || L.Class).extend({
 	statics: {
 		baseClass: 'leaflet-toolbar'
 	},
@@ -128,16 +128,16 @@ window.LeafletToolbar = (L.Layer || L.Class).extend({
 
 // L.Mixin.Events is replaced by L.Evented in Leaflet 1.0. L.Layer (also
 // introduced in Leaflet 1.0) inherits from L.Evented, so if L.Layer is
-// present, then LeafletToolbar will already support events.
+// present, then L.Toolbar2 will already support events.
 if (!L.Evented) {
-    LeafletToolbar.include(L.Mixin.Events);
+    L.Toolbar2.include(L.Mixin.Events);
 }
 
 L.toolbar = {};
 
 var toolbar_class_id = 0;
 
-LeafletToolbar.extend = function extend(props) {
+L.Toolbar2.extend = function extend(props) {
 	var statics = L.extend({}, props.statics, {
 		"_toolbar_class_id": toolbar_class_id
 	});
@@ -152,7 +152,7 @@ L.Map.addInitHook(function() {
 	this._toolbars = {};
 });
 
-LeafletToolbar.ToolbarAction = L.Handler.extend({
+L.Toolbar2.Action = L.Handler.extend({
 	statics: {
 		baseClass: 'leaflet-toolbar-icon'
 	},
@@ -163,11 +163,11 @@ LeafletToolbar.ToolbarAction = L.Handler.extend({
 			className: '',
 			tooltip: ''
 		},
-		subToolbar: new LeafletToolbar()
+		subToolbar: new L.Toolbar2()
 	},
 
 	initialize: function(options) {
-		var defaultIconOptions = LeafletToolbar.ToolbarAction.prototype.options.toolbarIcon;
+		var defaultIconOptions = L.Toolbar2.Action.prototype.options.toolbarIcon;
 
 		L.setOptions(this, options);
 		this.options.toolbarIcon = L.extend({}, defaultIconOptions, this.options.toolbarIcon);
@@ -240,20 +240,20 @@ LeafletToolbar.ToolbarAction = L.Handler.extend({
 });
 
 L.toolbarAction = function toolbarAction(options) {
-	return new LeafletToolbar.ToolbarAction(options);
+	return new L.Toolbar2.Action(options);
 };
 
-LeafletToolbar.ToolbarAction.extendOptions = function(options) {
+L.Toolbar2.Action.extendOptions = function(options) {
 	return this.extend({ options: options });
 };
 
-LeafletToolbar.Control = LeafletToolbar.extend({
+L.Toolbar2.Control = L.Toolbar2.extend({
 	statics: {
-		baseClass: 'leaflet-control-toolbar ' + LeafletToolbar.baseClass
+		baseClass: 'leaflet-control-toolbar ' + L.Toolbar2.baseClass
 	},
 
 	initialize: function(options) {
-		LeafletToolbar.prototype.initialize.call(this, options);
+		L.Toolbar2.prototype.initialize.call(this, options);
 
 		this._control = new L.Control.Toolbar(this.options);
 	},
@@ -261,13 +261,13 @@ LeafletToolbar.Control = LeafletToolbar.extend({
 	onAdd: function(map) {
 		this._control.addTo(map);
 
-		LeafletToolbar.prototype.onAdd.call(this, map);
+		L.Toolbar2.prototype.onAdd.call(this, map);
 
 		this.appendToContainer(this._control.getContainer());
 	},
 
 	onRemove: function(map) {
-		LeafletToolbar.prototype.onRemove.call(this, map);
+		L.Toolbar2.prototype.onRemove.call(this, map);
 		if (this._control.remove) {this._control.remove();}  // Leaflet 1.0
 		else {this._control.removeFrom(map);}
 	}
@@ -280,14 +280,14 @@ L.Control.Toolbar = L.Control.extend({
 });
 
 L.toolbar.control = function(options) {
-    return new LeafletToolbar.Control(options);
+    return new L.Toolbar2.Control(options);
 };
 
 // A convenience class for built-in popup toolbars.
 
-LeafletToolbar.Popup = LeafletToolbar.extend({
+L.Toolbar2.Popup = L.Toolbar2.extend({
 	statics: {
-		baseClass: 'leaflet-popup-toolbar ' + LeafletToolbar.baseClass
+		baseClass: 'leaflet-popup-toolbar ' + L.Toolbar2.baseClass
 	},
 
 	options: {
@@ -295,10 +295,10 @@ LeafletToolbar.Popup = LeafletToolbar.extend({
 	},
 
 	initialize: function(latlng, options) {
-		LeafletToolbar.prototype.initialize.call(this, options);
+		L.Toolbar2.prototype.initialize.call(this, options);
 
 		/* 
-		 * Developers can't pass a DivIcon in the options for LeafletToolbar.Popup
+		 * Developers can't pass a DivIcon in the options for L.Toolbar2.Popup
 		 * (the use of DivIcons is an implementation detail which may change).
 		 */
 		this._marker = new L.Marker(latlng, {
@@ -313,7 +313,7 @@ LeafletToolbar.Popup = LeafletToolbar.extend({
 		this._map = map;
 		this._marker.addTo(map);
 
-		LeafletToolbar.prototype.onAdd.call(this, map);
+		L.Toolbar2.prototype.onAdd.call(this, map);
 
 		this.appendToContainer(this._marker._icon);
 
@@ -323,7 +323,7 @@ LeafletToolbar.Popup = LeafletToolbar.extend({
 	onRemove: function(map) {
 		map.removeLayer(this._marker);
 
-		LeafletToolbar.prototype.onRemove.call(this, map);
+		L.Toolbar2.prototype.onRemove.call(this, map);
 
 		delete this._map;
 	},
@@ -377,7 +377,7 @@ LeafletToolbar.Popup = LeafletToolbar.extend({
 });
 
 L.toolbar.popup = function(options) {
-    return new LeafletToolbar.Popup(options);
+    return new L.Toolbar2.Popup(options);
 };
 
 

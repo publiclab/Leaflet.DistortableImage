@@ -1,5 +1,5 @@
 // L.Layer was introduced in Leaflet 1.0 and is not present in earlier releases.
-window.LeafletToolbar = (L.Layer || L.Class).extend({
+window.L.Toolbar2 = (L.Layer || L.Class).extend({
 	statics: {
 		baseClass: 'leaflet-toolbar'
 	},
@@ -124,16 +124,16 @@ window.LeafletToolbar = (L.Layer || L.Class).extend({
 
 // L.Mixin.Events is replaced by L.Evented in Leaflet 1.0. L.Layer (also
 // introduced in Leaflet 1.0) inherits from L.Evented, so if L.Layer is
-// present, then LeafletToolbar will already support events.
+// present, then L.Toolbar2 will already support events.
 if (!L.Evented) {
-    LeafletToolbar.include(L.Mixin.Events);
+    L.Toolbar2.include(L.Mixin.Events);
 }
 
 L.toolbar = {};
 
 var toolbar_class_id = 0;
 
-LeafletToolbar.extend = function extend(props) {
+L.Toolbar2.extend = function extend(props) {
 	var statics = L.extend({}, props.statics, {
 		"_toolbar_class_id": toolbar_class_id
 	});

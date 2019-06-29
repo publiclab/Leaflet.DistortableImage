@@ -137,6 +137,7 @@ module.exports = function(grunt) {
             "src/edit/RotateScaleHandle.js",
             "src/edit/RotateHandle.js",
             "src/edit/ScaleHandle.js",
+            "src/edit/EditOverlayAction.js",
             "src/edit/DistortableImage.EditToolbar.js",
             "src/edit/DistortableImage.EditToolbar2.js",
             "src/edit/DistortableImage.Edit.js",

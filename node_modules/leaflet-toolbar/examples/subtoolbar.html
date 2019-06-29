@@ -28,11 +28,11 @@
          * parent action so we can disable it as soon as the sub-action
          * completes.
          */
-        var ImmediateSubAction = LeafletToolbar.ToolbarAction.extend({
+        var ImmediateSubAction = L.Toolbar2.Action.extend({
             initialize: function(map, myAction) {
                 this.map = map;
                 this.myAction = myAction;
-                LeafletToolbar.ToolbarAction.prototype.initialize.call(this);                
+                L.Toolbar2.Action.prototype.initialize.call(this);                
             },
             addHooks: function() {
                 this.myAction.disable();
@@ -70,22 +70,22 @@
                 }   
             }
         });
-        var MyCustomAction = LeafletToolbar.ToolbarAction.extend({
+        var MyCustomAction = L.Toolbar2.Action.extend({
             options: {
                 toolbarIcon: {
                     className: 'fa fa-eye',
                 },
-                /* Use LeafletToolbar for sub-toolbars. A sub-toolbar is,
+                /* Use L.Toolbar2 for sub-toolbars. A sub-toolbar is,
                  * by definition, contained inside another toolbar, so it
                  * doesn't need the additional styling and behavior of a
-                 * LeafletToolbar.Control or LeafletToolbar.Popup.
+                 * L.Toolbar2.Control or L.Toolbar2.Popup.
                  */
-                subToolbar: new LeafletToolbar({ 
+                subToolbar: new L.Toolbar2({ 
                     actions: [World, Eiffel, Cancel]
                 })
             }
         });
-        new LeafletToolbar.Control({
+        new L.Toolbar2.Control({
             position: 'topleft',
             actions: [MyCustomAction]
         }).addTo(map);
