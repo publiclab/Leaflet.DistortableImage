@@ -72,7 +72,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
   _addToolbar: function() {
     try {
       if (!this.toolbar) {
-        this.toolbar = new L.DistortableImage.EditToolbar2({
+        this.toolbar = L.distortableImage.controlBar({
           actions: this.actions,
           position: "topleft"
         }).addTo(this._map, this);

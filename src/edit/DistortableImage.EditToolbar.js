@@ -1,4 +1,5 @@
 L.DistortableImage = L.DistortableImage || {};
+L.distortableImage = L.DistortableImage;
 
 var EditOverlayAction = L.Toolbar2.Action.extend({
   initialize: function(map, overlay, options) {
@@ -247,7 +248,7 @@ var EditOverlayAction = L.Toolbar2.Action.extend({
     }
   });
 
-L.DistortableImage.EditToolbar = L.Toolbar2.Popup.extend({
+L.DistortableImage.PopupBar = L.Toolbar2.Popup.extend({
   options: {
     actions: [
       ToggleTransparency,
@@ -283,3 +284,7 @@ L.DistortableImage.EditToolbar = L.Toolbar2.Popup.extend({
     }
   }
 });
+
+L.distortableImage.popupBar = function (options) {
+  return new L.DistortableImage.PopupBar(options);
+};

@@ -172,7 +172,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   initialize: function(url, options) {
-    this._toolArray = L.DistortableImage.EditToolbarDefaults;
+    // this._toolArray = L.DistortableImage.EditToolbarDefaults;
     this.edgeMinWidth = this.options.edgeMinWidth;
     this._url = url;
     this.rotation = 0;
@@ -237,14 +237,16 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     });
   },
 
-  _addTool: function(tool) {
-    this._toolArray.push(tool);
-    L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
-      options: {
-        actions: this._toolArray
-      }
-    });
-  },
+  /** this is never used but leaving here for now */
+
+  // _addTool: function(tool) {
+  //   this._toolArray.push(tool);
+  //   L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
+  //     options: {
+  //       actions: this._toolArray
+  //     }
+  //   });
+  // },
 
   _initImageDimensions: function() {
     var map = this._map,
@@ -540,7 +542,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
   _addToolbar: function() {
     try {
       if (!this.toolbar) {
-        this.toolbar = new L.DistortableImage.EditToolbar2({
+        this.toolbar = L.distortableImage.controlBar({
           actions: this.actions,
           position: "topleft"
         }).addTo(this._map, this);
@@ -1192,6 +1194,7 @@ L.ScaleHandle = L.EditHandle.extend({
 //   }
 // });
 L.DistortableImage = L.DistortableImage || {};
+L.distortableImage = L.DistortableImage;
 
 var EditOverlayAction = L.Toolbar2.Action.extend({
   initialize: function(map, overlay, options) {
@@ -1440,7 +1443,7 @@ var EditOverlayAction = L.Toolbar2.Action.extend({
     }
   });
 
-L.DistortableImage.EditToolbar = L.Toolbar2.Popup.extend({
+L.DistortableImage.PopupBar = L.Toolbar2.Popup.extend({
   options: {
     actions: [
       ToggleTransparency,
@@ -1477,8 +1480,12 @@ L.DistortableImage.EditToolbar = L.Toolbar2.Popup.extend({
   }
 });
 
-L.DistortableImage = L.DistortableImage || {};
-// L.EditOverlayAction = L.EditOverlayAction || {};
+L.distortableImage.popupBar = function (options) {
+  return new L.DistortableImage.PopupBar(options);
+};
+
+L.distortableImage = L.DistortableImage || {};
+L.distortableImage = L.DistortableImage;
 
 L.EditOverlayAction = L.Toolbar2.Action.extend({
   initialize: function (map, overlay, options) {
@@ -1530,7 +1537,7 @@ L.EditOverlayAction = L.Toolbar2.Action.extend({
     }
   });
 
-L.DistortableImage.EditToolbar2 = L.Toolbar2.Control.extend({
+L.DistortableImage.ControlBar = L.Toolbar2.Control.extend({
   options: {
     actions: [
       Exports,
@@ -1538,6 +1545,10 @@ L.DistortableImage.EditToolbar2 = L.Toolbar2.Control.extend({
     ]
   },
 });
+
+L.distortableImage.controlBar = function (options) {
+  return new L.DistortableImage.ControlBar(options);
+};
 L.DistortableImage = L.DistortableImage || {};
 
 L.DistortableImage.Edit = L.Handler.extend({
@@ -1954,7 +1965,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   _showMarkers: function() {
     if (this._mode === "lock") { return; }
 
-    if (this.toolbar && this.toolbar instanceof L.DistortableImage.EditToolbar) {
+    if (this.toolbar && this.toolbar instanceof L.DistortableImage.PopupBar) {
       var currentHandle = this._handles[this._mode];
 
       currentHandle.eachLayer(function (layer) {
@@ -2016,7 +2027,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     raised_point.lat = maxLat;
 
     try {
-      this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(map, overlay);
+      this.toolbar = L.distortableImage.popupBar(raised_point).addTo(map, overlay);
       overlay.fire('toolbar:created');
     }
     catch (e) {}
@@ -2029,7 +2040,7 @@ L.DistortableImage.Edit = L.Handler.extend({
       toolbar = this.toolbar,
       maxLat = -Infinity;
 
-    if (toolbar && toolbar instanceof L.DistortableImage.EditToolbar) { 
+    if (toolbar && toolbar instanceof L.DistortableImage.PopupBar) { 
       for (var i = 0; i < corners.length; i++) {
         if (corners[i].lat > maxLat) {
           maxLat = corners[i].lat;

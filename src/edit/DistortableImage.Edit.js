@@ -414,7 +414,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   _showMarkers: function() {
     if (this._mode === "lock") { return; }
 
-    if (this.toolbar && this.toolbar instanceof L.DistortableImage.EditToolbar) {
+    if (this.toolbar && this.toolbar instanceof L.DistortableImage.PopupBar) {
       var currentHandle = this._handles[this._mode];
 
       currentHandle.eachLayer(function (layer) {
@@ -476,7 +476,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     raised_point.lat = maxLat;
 
     try {
-      this.toolbar = new L.DistortableImage.EditToolbar(raised_point).addTo(map, overlay);
+      this.toolbar = L.distortableImage.popupBar(raised_point).addTo(map, overlay);
       overlay.fire('toolbar:created');
     }
     catch (e) {}
@@ -489,7 +489,7 @@ L.DistortableImage.Edit = L.Handler.extend({
       toolbar = this.toolbar,
       maxLat = -Infinity;
 
-    if (toolbar && toolbar instanceof L.DistortableImage.EditToolbar) { 
+    if (toolbar && toolbar instanceof L.DistortableImage.PopupBar) { 
       for (var i = 0; i < corners.length; i++) {
         if (corners[i].lat > maxLat) {
           maxLat = corners[i].lat;

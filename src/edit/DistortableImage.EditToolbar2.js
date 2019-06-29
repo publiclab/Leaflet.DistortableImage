@@ -1,5 +1,5 @@
-L.DistortableImage = L.DistortableImage || {};
-// L.EditOverlayAction = L.EditOverlayAction || {};
+L.distortableImage = L.DistortableImage || {};
+L.distortableImage = L.DistortableImage;
 
 L.EditOverlayAction = L.Toolbar2.Action.extend({
   initialize: function (map, overlay, options) {
@@ -51,7 +51,7 @@ L.EditOverlayAction = L.Toolbar2.Action.extend({
     }
   });
 
-L.DistortableImage.EditToolbar2 = L.Toolbar2.Control.extend({
+L.DistortableImage.ControlBar = L.Toolbar2.Control.extend({
   options: {
     actions: [
       Exports,
@@ -59,3 +59,7 @@ L.DistortableImage.EditToolbar2 = L.Toolbar2.Control.extend({
     ]
   },
 });
+
+L.distortableImage.controlBar = function (options) {
+  return new L.DistortableImage.ControlBar(options);
+};
