@@ -273,7 +273,7 @@ Options available to pass during `L.DistortableCollection` initialization:
 
 - `actions` (*optional*, default: [Exports, Deletes], value: *array*)
 
-If you would like to overrwrite the default toolbar actions available for the collection group, pass an array with the names of the actions you want. Reference the available values [here](#Multiple-Image-Interface).
+If you would like to overrwrite the default toolbar actions available for the collection group, pass an array with the actions you want. Reference the available values [here](#Multiple-Image-Interface).
 
 For example, to overrwrite the toolbar to only include the `Deletes` action:
 
@@ -285,6 +285,7 @@ var imgGroup = L.distortableCollection({
 
 ```
 
+To remove a tool from the toolbar at runtime, we have also added the method `removeTool(action)`. 
 
 ### UI and functionalities 
 Currently it supports multiple image selection and translations, and WIP we are working on porting all editing tools to work for it, such as transparency, etc. Image distortions still use the single-image interface.
@@ -366,9 +367,26 @@ Defaults:
 
 ## Quick API Reference
 
+<hr>
+
+`L.DistortableImageOverlay`
+
+<hr>
+
 - [`getCorners()`](#corners) and [`getCorner(idx)`](#corners)
 
 - `getCenter()` - Calculates the centroid of the image
+
+<hr>
+
+`L.DistortableCollection`
+
+<hr>
+
+- [`removeTool(action)`](#actions) - Removes the passed tool from the control toolbar in runtime.
+
+  - Ex: `imgGroup.removeTool(Deletes)`
+
 
 ## Contributing
 
