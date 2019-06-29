@@ -83,14 +83,33 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }
   },
 
-  removeTool: function(value) {
-    this._removeToolbar();
-
-    this.editActions = this.editActions.filter(function (action) {
-      return action !== value;
+  hasTool: function(value) {
+    return this.editActions.some(function(action) {
+      return action === value;
     });
+  },
 
-    this._addToolbar();
+  addTool: function(value) {
+    if (value.baseClass === "leaflet-toolbar-icon" && !this.hasTool(value)) {
+      this._removeToolbar();
+      this.editActions.push(value);
+      this._addToolbar();
+    } else {
+      return false; 
+    }
+  },
+
+  removeTool: function(value) {
+    this.editActions.some(function (item, idx) {
+      if (this.editActions[idx] === value) {
+        this._removeToolbar();
+        this.editActions.splice(idx, 1);
+        this._addToolbar();
+        return true;
+      } else {
+        return false;
+      }
+    }, this);
   },
 
   _lastInitialSelected: function() {
@@ -223,10 +242,11 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   _removeFromGroup: function(event) {
-    var layersToRemove = this._toRemove();
+    var layersToRemove = this._toRemove(),
+      n = layersToRemove.length;
 
-    if (layersToRemove.length === 0) { return; }
-    var choice = layersToRemove[0].editing.confirmDelete();
+    if (n === 0) { return; }
+    var choice = L.DomUtil.confirmDeletes(n);
 
     if (choice) {
       layersToRemove.forEach(function(layer) {

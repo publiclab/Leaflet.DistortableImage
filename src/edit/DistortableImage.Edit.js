@@ -154,10 +154,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._showToolbar();
   },
 
-  confirmDelete: function() {
-    return window.confirm("Are you sure you want to delete?");
-  },
-
   _rotateBy: function(angle) {
     var overlay = this._overlay,
       map = overlay._map,
@@ -512,7 +508,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     if (this._mode === "lock") { return; }
 
-    var choice = this.confirmDelete();
+    var choice = L.DomUtil.confirmDelete();
     if (!choice) { return; }
 
     this._hideToolbar();

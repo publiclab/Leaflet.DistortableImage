@@ -285,7 +285,7 @@ var imgGroup = L.distortableCollection({
 
 ```
 
-To remove a tool from the toolbar at runtime, we have also added the method `removeTool(action)`. 
+To add / remove a tool from the toolbar at runtime, we have also added the methods `addTool(action)` and `removeTool(action)`.
 
 ### UI and functionalities 
 Currently it supports multiple image selection and translations, and WIP we are working on porting all editing tools to work for it, such as transparency, etc. Image distortions still use the single-image interface.
@@ -387,6 +387,9 @@ Defaults:
 
   - Ex: `imgGroup.removeTool(Deletes)`
 
+- [`addTool(action)`](#actions) - Adds the passed tool to the control toolbar in runtime. Returns false if the tool is not available or is already present.
+
+- `hasTool(action)` - Checks if the tool is already present in the currently rendered control toolbar.
 
 ## Contributing
 

@@ -7,7 +7,6 @@ L.ImageUtil = {
       .latLngToLayerPoint(overlay.getCorner(0))
       .distanceTo(map.latLngToLayerPoint(overlay.getCorner(1)));
 
-    return (dist * 100) / overlay._image.width;
+    return (dist * 100) / overlay.getElement().width;
   }
-
 };

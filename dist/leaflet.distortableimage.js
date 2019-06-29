@@ -35,7 +35,19 @@ L.DomUtil = L.extend(L.DomUtil, {
 	toggleClass: function(el, className) {
 		var c = className;
 		return this.hasClass(el, c) ? this.removeClass(el, c) : this.addClass(el, c);
-	}
+	},
+
+	confirmDelete: function () {
+		return window.confirm("Are you sure? This image will be permanently deleted from the map.");
+	},
+
+	confirmDeletes: function (n) {
+		var humanized = n === 1 ? "image" : "images";
+
+		return window.confirm("Are you sure? " + n + " " + humanized + " will be permanently deleted from the map.");
+	},
+
+
 
 });
 
@@ -48,9 +60,8 @@ L.ImageUtil = {
       .latLngToLayerPoint(overlay.getCorner(0))
       .distanceTo(map.latLngToLayerPoint(overlay.getCorner(1)));
 
-    return (dist * 100) / overlay._image.width;
+    return (dist * 100) / overlay.getElement().width;
   }
-
 };
 L.Map.include({
 	_newLayerPointToLatLng: function(point, newZoom, newCenter) {
@@ -553,14 +564,33 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }
   },
 
-  removeTool: function(value) {
-    this._removeToolbar();
-
-    this.editActions = this.editActions.filter(function (action) {
-      return action !== value;
+  hasTool: function(value) {
+    return this.editActions.some(function(action) {
+      return action === value;
     });
+  },
 
-    this._addToolbar();
+  addTool: function(value) {
+    if (value.baseClass === "leaflet-toolbar-icon" && !this.hasTool(value)) {
+      this._removeToolbar();
+      this.editActions.push(value);
+      this._addToolbar();
+    } else {
+      return false; 
+    }
+  },
+
+  removeTool: function(value) {
+    this.editActions.some(function (item, idx) {
+      if (this.editActions[idx] === value) {
+        this._removeToolbar();
+        this.editActions.splice(idx, 1);
+        this._addToolbar();
+        return true;
+      } else {
+        return false;
+      }
+    }, this);
   },
 
   _lastInitialSelected: function() {
@@ -693,10 +723,11 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   _removeFromGroup: function(event) {
-    var layersToRemove = this._toRemove();
+    var layersToRemove = this._toRemove(),
+      n = layersToRemove.length;
 
-    if (layersToRemove.length === 0) { return; }
-    var choice = layersToRemove[0].editing.confirmDelete();
+    if (n === 0) { return; }
+    var choice = L.DomUtil.confirmDeletes(n);
 
     if (choice) {
       layersToRemove.forEach(function(layer) {
@@ -1694,10 +1725,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._showToolbar();
   },
 
-  confirmDelete: function() {
-    return window.confirm("Are you sure you want to delete?");
-  },
-
   _rotateBy: function(angle) {
     var overlay = this._overlay,
       map = overlay._map,
@@ -2052,7 +2079,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     if (this._mode === "lock") { return; }
 
-    var choice = this.confirmDelete();
+    var choice = L.DomUtil.confirmDelete();
     if (!choice) { return; }
 
     this._hideToolbar();
