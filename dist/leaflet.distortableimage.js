@@ -2309,4 +2309,3 @@ L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
 });
 
 L.Map.addInitHook('addHandler', 'boxSelector', L.Map.BoxSelectHandle);
-//# sourceMappingURL=leaflet.distortableimage.js.map
