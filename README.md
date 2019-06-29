@@ -16,8 +16,6 @@ Advantages include:
 
 [Download as zip](https://github.com/publiclab/Leaflet.DistortableImage/releases) or clone the repo to get a local copy.
 
-This plugin has basic functionality, and is in production as part of MapKnitter, but there are [plenty of outstanding issues to resolve](https://github.com/publiclab/Leaflet.DistortableImage/issues). Please consider helping out!
-
 The recommended Google satellite base layer can be integrated using this Leaflet plugin: https://gitlab.com/IvanSanchez/Leaflet.GridLayer.GoogleMutant
 
 Here's a screenshot:
@@ -255,7 +253,7 @@ img2 = L.distortableImageOverlay(
 });
 
 // 3. Instantiate an empty `DistortableCollection` group
-var imgGroup = L.distortableCollection().addTo(map);
+imgGroup = L.distortableCollection().addTo(map);
 
 // 4. Add the images to the group 
 imgGroup.addLayer(img);
@@ -263,7 +261,7 @@ imgGroup.addLayer(img2);
 
 ```
 
-<blockquote><strong>Important note</strong>: notice how we didn't <code>enable</code> the image editing above as we had done for the single image interface. This is because our <code>DistortableCollection</code> class uses event listeners internally (<code>layeradd</code>) to enable editing on every image as it's added. This event is only triggered if we add the layers to the group dynamically. I.e. you must add the group to the map initially empty.</blockquote>
+<blockquote><strong>Note</strong>: notice how we didn't <code>enable</code> the image editing above as we had done for the single image interface. This is because our <code>DistortableCollection</code> class uses event listeners internally (<code>layeradd</code>) to enable editing on every image as it's added. This event is only triggered if we add the layers to the group dynamically. I.e. you must add the group to the map initially empty.</blockquote>
 
 Options available to pass during `L.DistortableCollection` initialization: 
 
@@ -297,7 +295,7 @@ Currently it supports multiple image selection and translations, and WIP we are 
 
 <hr>
 
-## Default Toolbar Actions (& Keybindings)
+## Toolbar Actions (& Keybindings)
 
 <hr>
 
@@ -349,7 +347,6 @@ Defaults:
   - Toggles between [scale mode](#scale) and [distort mode](#distort-(_default_)).
   - Replaced as a default toolbar action by `ToggleRotateScale`, but still accessible via its hotkey, `mode`, and (WIP) custom toolbar actions API.
 
-
 <hr>
 
 ### Multiple Image Interface:
@@ -360,8 +357,7 @@ Defaults:
 
 -   **Exports**
 
-
--   **Deletes**
+-   **Deletes (<kbd>delete</kbd>, <kbd>backscpace</kbd>)**
 
     - Permanently deletes groups of selected images from the map.
 
@@ -375,7 +371,9 @@ Defaults:
 
 - [`getCorners()`](#corners) and [`getCorner(idx)`](#corners)
 
-- `getCenter()` - Calculates the centroid of the image
+- `setCorner(idx, latlng)` and `setCorners(latlngObj)`
+
+- `getCenter()` - Calculates the centroid of the image.
 
 <hr>
 
@@ -393,6 +391,8 @@ Defaults:
 
 ## Contributing
 
+This plugin has basic functionality, and is in production as part of MapKnitter, but there are [plenty of outstanding issues to resolve](https://github.com/publiclab/Leaflet.DistortableImage/issues). Please consider helping out!
+
 1) This project uses `grunt` to do a lot of things, including concatenate source files from `/src/` to `/DistortableImageOverlay.js`:
 
 ```Bash
@@ -402,7 +402,6 @@ $ npm install -g grunt-cli
 #run in root dir, and it'll watch for changes and concatenate them on the fly
 $ grunt
 ```
-
 
 2) To build all files from `/src/` into the `/dist/` folder, run:
 

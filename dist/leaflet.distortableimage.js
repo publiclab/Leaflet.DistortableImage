@@ -312,13 +312,13 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     });
   },
 
-  _updateCorner: function(corner, latlng) {
+  setCorner: function(corner, latlng) {
     this._corners[corner] = latlng;
     this._reset();
   },
 
   // fires a reset after all corner positions are updated instead of after each one (above). Use for translating
-  _updateCorners: function(latlngObj) {
+  setCorners: function(latlngObj) {
     var i = 0;
     for (var k in latlngObj) {
       this._corners[i] = latlngObj[k];
@@ -328,7 +328,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this._reset();
   },
 
-  _updateCornersFromPoints: function(pointsObj) {
+  _setCornersFromPoints: function(pointsObj) {
     var map = this._map;
     var i = 0;
     for (var k in pointsObj) {
@@ -385,7 +385,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       transformMatrix = this._calculateProjectiveTransform(
         latLngToNewLayerPoint
       ),
-      topLeft = latLngToNewLayerPoint(this._corners[0]),
+      topLeft = latLngToNewLayerPoint(this.getCorner(0)),
       warp = L.DomUtil.getMatrixString(transformMatrix),
       translation = this._getTranslateString(topLeft);
 
@@ -413,10 +413,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     var map = this._map,
       latLngToCartesian = ll2c ? ll2c : map.latLngToLayerPoint,
       cartesianToLatLng = c2ll ? c2ll : map.layerPointToLatLng,
-      nw = latLngToCartesian.call(map, this._corners[0]),
-      ne = latLngToCartesian.call(map, this._corners[1]),
-      se = latLngToCartesian.call(map, this._corners[2]),
-      sw = latLngToCartesian.call(map, this._corners[3]),
+      nw = latLngToCartesian.call(map, this.getCorner(0)),
+      ne = latLngToCartesian.call(map, this.getCorner(1)),
+      se = latLngToCartesian.call(map, this.getCorner(2)),
+      sw = latLngToCartesian.call(map, this.getCorner(3)),
       nmid = nw.add(ne.subtract(nw).divideBy(2)),
       smid = sw.add(se.subtract(sw).divideBy(2));
 
@@ -780,7 +780,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var layersToMove = this._calcCollectionFromPoints(cpd, overlay);
 
     layersToMove.forEach(function(layer) {
-      layer._updateCornersFromPoints(layer._cpd);
+      layer._setCornersFromPoints(layer._cpd);
       layer.fire("update");
     }, this);
   },
@@ -1102,7 +1102,7 @@ L.DistortHandle = L.EditHandle.extend({
   _onHandleDrag: function() {
     var overlay = this._handled;
 
-    overlay._updateCorner(this._corner, this.getLatLng());
+    overlay.setCorner(this._corner, this.getLatLng());
 
     overlay.fire("update");
     overlay.editing._updateToolbarPos();
@@ -1734,12 +1734,12 @@ L.DistortableImage.Edit = L.Handler.extend({
       q;
 
     for (i = 0; i < 4; i++) {
-      p = map.latLngToLayerPoint(overlay._corners[i]).subtract(center);
+      p = map.latLngToLayerPoint(overlay.getCorner(i)).subtract(center);
       q = L.point(
         Math.cos(angle) * p.x - Math.sin(angle) * p.y,
         Math.sin(angle) * p.x + Math.cos(angle) * p.y
       );
-      overlay._updateCorner(i, map.layerPointToLatLng(q.add(center)));
+      overlay.setCorner(i, map.layerPointToLatLng(q.add(center)));
     }
 
     // window.angle = L.TrigUtil.radiansToDegrees(angle);
@@ -1765,7 +1765,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     map.removeLayer(this._handles[this._mode]);
 
-    overlay._updateCorners(corners);
+    overlay.setCorners(corners);
 
     if (angle !== 0) { this._rotateBy(L.TrigUtil.degreesToRadians(360 - angle)); }
 
@@ -1789,7 +1789,7 @@ L.DistortableImage.Edit = L.Handler.extend({
         .subtract(center)
         .multiplyBy(scale)
         .add(center);
-      overlay._updateCorner(i, map.layerPointToLatLng(p));
+      overlay.setCorner(i, map.layerPointToLatLng(p));
     }
 
     overlay._reset();

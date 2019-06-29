@@ -299,7 +299,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var layersToMove = this._calcCollectionFromPoints(cpd, overlay);
 
     layersToMove.forEach(function(layer) {
-      layer._updateCornersFromPoints(layer._cpd);
+      layer._setCornersFromPoints(layer._cpd);
       layer.fire("update");
     }, this);
   },

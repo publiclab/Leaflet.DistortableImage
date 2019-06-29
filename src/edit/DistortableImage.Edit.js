@@ -163,12 +163,12 @@ L.DistortableImage.Edit = L.Handler.extend({
       q;
 
     for (i = 0; i < 4; i++) {
-      p = map.latLngToLayerPoint(overlay._corners[i]).subtract(center);
+      p = map.latLngToLayerPoint(overlay.getCorner(i)).subtract(center);
       q = L.point(
         Math.cos(angle) * p.x - Math.sin(angle) * p.y,
         Math.sin(angle) * p.x + Math.cos(angle) * p.y
       );
-      overlay._updateCorner(i, map.layerPointToLatLng(q.add(center)));
+      overlay.setCorner(i, map.layerPointToLatLng(q.add(center)));
     }
 
     // window.angle = L.TrigUtil.radiansToDegrees(angle);
@@ -194,7 +194,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     map.removeLayer(this._handles[this._mode]);
 
-    overlay._updateCorners(corners);
+    overlay.setCorners(corners);
 
     if (angle !== 0) { this._rotateBy(L.TrigUtil.degreesToRadians(360 - angle)); }
 
@@ -218,7 +218,7 @@ L.DistortableImage.Edit = L.Handler.extend({
         .subtract(center)
         .multiplyBy(scale)
         .add(center);
-      overlay._updateCorner(i, map.layerPointToLatLng(p));
+      overlay.setCorner(i, map.layerPointToLatLng(p));
     }
 
     overlay._reset();

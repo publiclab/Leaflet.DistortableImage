@@ -138,13 +138,13 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     });
   },
 
-  _updateCorner: function(corner, latlng) {
+  setCorner: function(corner, latlng) {
     this._corners[corner] = latlng;
     this._reset();
   },
 
   // fires a reset after all corner positions are updated instead of after each one (above). Use for translating
-  _updateCorners: function(latlngObj) {
+  setCorners: function(latlngObj) {
     var i = 0;
     for (var k in latlngObj) {
       this._corners[i] = latlngObj[k];
@@ -154,7 +154,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this._reset();
   },
 
-  _updateCornersFromPoints: function(pointsObj) {
+  _setCornersFromPoints: function(pointsObj) {
     var map = this._map;
     var i = 0;
     for (var k in pointsObj) {
@@ -211,7 +211,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       transformMatrix = this._calculateProjectiveTransform(
         latLngToNewLayerPoint
       ),
-      topLeft = latLngToNewLayerPoint(this._corners[0]),
+      topLeft = latLngToNewLayerPoint(this.getCorner(0)),
       warp = L.DomUtil.getMatrixString(transformMatrix),
       translation = this._getTranslateString(topLeft);
 
@@ -239,10 +239,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     var map = this._map,
       latLngToCartesian = ll2c ? ll2c : map.latLngToLayerPoint,
       cartesianToLatLng = c2ll ? c2ll : map.layerPointToLatLng,
-      nw = latLngToCartesian.call(map, this._corners[0]),
-      ne = latLngToCartesian.call(map, this._corners[1]),
-      se = latLngToCartesian.call(map, this._corners[2]),
-      sw = latLngToCartesian.call(map, this._corners[3]),
+      nw = latLngToCartesian.call(map, this.getCorner(0)),
+      ne = latLngToCartesian.call(map, this.getCorner(1)),
+      se = latLngToCartesian.call(map, this.getCorner(2)),
+      sw = latLngToCartesian.call(map, this.getCorner(3)),
       nmid = nw.add(ne.subtract(nw).divideBy(2)),
       smid = sw.add(se.subtract(sw).divideBy(2));
 
