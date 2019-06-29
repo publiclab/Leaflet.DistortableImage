@@ -19,13 +19,18 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
   },
 
-  initialize: function(overlay) {
+  initialize: function(overlay, options) {
     this._overlay = overlay;
     this._toggledImage = false;
     /* Different actions. */
-    var actions = ["distort", "lock", "rotate", "scale", "rotateScale"];
+    // var actions = ["distort", "lock", "rotate", "scale", "rotateScale"];
+
+  //  L.setOptions(this, options); 
+
+    // this.ACTIONS = this.optionsACTIONS;
+   
     /* Interaction modes. */
-    this._mode = actions[actions.indexOf(this._overlay.options.mode)] || "distort";
+    this._mode = overlay.ACTIONS[overlay.ACTIONS.indexOf(overlay.options.mode)] || "distort";
     this._selected = this._overlay.options.selected || false;
     this._transparent = false;
     this._outlined = false;
@@ -33,6 +38,8 @@ L.DistortableImage.Edit = L.Handler.extend({
     /* generate instance counts */
     this.instance_count = L.DistortableImage.Edit.prototype.instances =
       L.DistortableImage.Edit.prototype.instances ? L.DistortableImage.Edit.prototype.instances + 1 : 1;
+
+    L.setOptions(this, options); 
   },
 
   /* Run on image selection. */
@@ -54,7 +61,9 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this._appendHandlesandDragable(this._mode);
 
-    if (this._selected) { this._initToolbar(); }
+    this.editActions = this.options.actions;
+
+    if (this._selected && !overlay.options.suppressToolbar) { this._addToolbar(); }
 
     this._overlay._dragStartPoints = {
       0: L.point(0, 0),
@@ -150,9 +159,9 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
   },
 
-  _initToolbar: function () {
-    this._showToolbar();
-  },
+  // _initToolbar: function () {
+  //   this._showToolbar();
+  // },
 
   _rotateBy: function(angle) {
     var overlay = this._overlay,
@@ -339,7 +348,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _toggleOutline: function() {
-    var image = this._overlay._image,
+    var image = this._overlay.getElement(),
       opacity,
       outline;
 
@@ -442,14 +451,38 @@ L.DistortableImage.Edit = L.Handler.extend({
 		});
   },
 
-  // TODO: toolbar for multiple image selection
-  _showToolbar: function() {
+  _addToolbar: function() {
     var overlay = this._overlay,
       map = overlay._map,
-      eventParents = overlay._eventParents,
       //Find the topmost point on the image.
       corners = overlay.getCorners(),
       maxLat = -Infinity;
+
+    for (var i = 0; i < corners.length; i++) {
+      if (corners[i].lat > maxLat) {
+        maxLat = corners[i].lat;
+      }
+    }
+
+    //Longitude is based on the centroid of the image.
+    var raised_point = overlay.getCenter();
+    raised_point.lat = maxLat;
+
+    try {
+      this.toolbar = L.distortableImage.popupBar(raised_point, {
+        anchor: [5, 5],
+        actions: this.editActions
+      }).addTo(map, overlay);
+      overlay.fire('toolbar:created');
+    }
+    catch (e) { }
+
+  },
+
+  // TODO: toolbar for multiple image selection
+  _showToolbar: function() {
+    var overlay = this._overlay,
+      eventParents = overlay._eventParents;
 
     if (overlay.options.suppressToolbar) { return; }
 
@@ -459,23 +492,9 @@ L.DistortableImage.Edit = L.Handler.extend({
         eP._addToolbar();
         return;
       }
-    }
-  
-    for (var i = 0; i < corners.length; i++) {
-      if (corners[i].lat > maxLat) {
-        maxLat = corners[i].lat;
-      }
-    }
+    } 
 
-		//Longitude is based on the centroid of the image.
-		var raised_point = overlay.getCenter();
-    raised_point.lat = maxLat;
-
-    try {
-      this.toolbar = L.distortableImage.popupBar(raised_point).addTo(map, overlay);
-      overlay.fire('toolbar:created');
-    }
-    catch (e) {}
+    this._addToolbar();
   },
   
   _updateToolbarPos: function() {
@@ -607,14 +626,14 @@ L.DistortableImage.Edit = L.Handler.extend({
   }
 });
 
-L.DistortableImageOverlay.addInitHook(function() {
-  this.editing = new L.DistortableImage.Edit(this);
+// L.DistortableImageOverlay.addInitHook(function() {
+//   this.editing = new L.DistortableImage.Edit(this);
 
-  if (this.options.editable) {
-    L.DomEvent.on(this._image, "load", this.editing.enable, this.editing);
-  }
+//   if (this.options.editable) {
+//     L.DomEvent.on(this._image, "load", this.editing.enable, this.editing);
+//   }
 
-	this.on('remove', function () {
-		if (this.editing) { this.editing.disable(); }
-	});
-});
+// 	this.on('remove', function () {
+// 		if (this.editing) { this.editing.disable(); }
+// 	});
+// });
