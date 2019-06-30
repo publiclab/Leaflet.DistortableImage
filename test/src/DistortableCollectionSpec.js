@@ -218,4 +218,36 @@ describe("L.DistortableCollection", function () {
             expect(mapLayers).to.include.all.keys(id2);
         });
     });
+
+    describe('#_addToolbar', function () {
+        it('it adds a control toolbar to the map', function () {
+            expect(map._toolbars).to.be.empty;
+            imgGroup._addToolbar();
+
+            var barArr = Object.keys(map._toolbars);
+            expect(barArr).to.have.lengthOf(1);
+
+            var toolbar = barArr[0];
+            expect(toolbar._container).className = "leaflet-control";
+        });
+        
+        it('it does not add a control toolbar as a layer in the group', function () {
+            expect(map._toolbars).to.be.empty;
+
+            var layers = imgGroup.getLayers();
+            expect(layers).to.have.lengthOf(3);
+
+            imgGroup._addToolbar();
+
+            expect(Object.keys(map._toolbars)).to.have.lengthOf(1);
+            expect(layers).to.have.lengthOf(3);
+        });
+
+        it('does not duplicate instances of a control toolbar', function () {
+            expect(map._toolbars).to.be.empty;
+            imgGroup._addToolbar();
+            imgGroup._addToolbar();
+            expect(Object.keys(map._toolbars)).to.have.lengthOf(1);
+        });
+    });
 });
