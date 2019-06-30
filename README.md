@@ -70,6 +70,9 @@ L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
 ```
 
 Options available to pass during `L.DistortableImageOverlay` initialization:
+
+- [actions](#Actions)
+
 - [corners](#corners)
 
 - [selected](#selected)
@@ -81,6 +84,29 @@ Options available to pass during `L.DistortableImageOverlay` initialization:
 - [keymapper](#keymapper)
 
 - [suppressToolbar](#Suppress-Toolbar)
+
+
+### Actions 
+
+- `actions` (*optional*, default: [ToggleTransparency, ToggleOutline, ToggleLock, ToggleRotateScale, ToggleOrder, EnableEXIF, Restore, Export, Delete], value: *array*)
+
+If you would like to overrwrite the default toolbar actions available for an individual image's `L.Popup` toolbar, pass an array with the actions you want. Reference the available values [here](#Single-Image-Interface).
+
+For example, to overrwrite the toolbar to only include the `ToggleTransparency` and `Delete` actions:
+
+``` JS
+img = L.distortableImageOverlay(
+  'example.png', {
+    // 'corners' is the only required option for this class
+    corners: [
+      L.latLng(51.52,-0.14),
+      L.latLng(51.52,-0.10),
+      L.latLng(51.50,-0.14),
+      L.latLng(51.50,-0.10)
+    ],
+    actions: [ToggleTransparency, Delete]
+  }).addTo(map);
+```
 
 ### Corners
 
@@ -258,29 +284,26 @@ imgGroup = L.distortableCollection().addTo(map);
 // 4. Add the images to the group 
 imgGroup.addLayer(img);
 imgGroup.addLayer(img2);
-
 ```
 
 <blockquote><strong>Note</strong>: notice how we didn't <code>enable</code> the image editing above as we had done for the single image interface. This is because our <code>DistortableCollection</code> class uses event listeners internally (<code>layeradd</code>) to enable editing on every image as it's added. This event is only triggered if we add the layers to the group dynamically. I.e. you must add the group to the map initially empty.</blockquote>
 
 Options available to pass during `L.DistortableCollection` initialization: 
 
-- [actions](#Actions)
+- [actions](#✤-Actions)
 
-### Actions
+### ✤ Actions
 
 - `actions` (*optional*, default: [Exports, Deletes], value: *array*)
 
-If you would like to overrwrite the default toolbar actions available for the collection group, pass an array with the actions you want. Reference the available values [here](#Multiple-Image-Interface).
+Overrwrite the default toolbar actions for an image collection's `L.Control` toolbar. Reference the available values [here](#Multiple-Image-Interface).
 
 For example, to overrwrite the toolbar to only include the `Deletes` action:
 
 ```JS
-
-var imgGroup = L.distortableCollection({
+imgGroup = L.distortableCollection({
   actions: [Deletes]
 }).addTo(map);
-
 ```
 
 To add / remove a tool from the toolbar at runtime, we have also added the methods `addTool(action)` and `removeTool(action)`.

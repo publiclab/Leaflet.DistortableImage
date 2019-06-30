@@ -1746,9 +1746,34 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
   },
 
-  // _initToolbar: function () {
-  //   this._showToolbar();
-  // },
+  addTool: function (value) {
+    if (value.baseClass === "leaflet-toolbar-icon" && !this.hasTool(value)) {
+      this._removeToolbar();
+      this.editActions.push(value);
+      this._addToolbar();
+    } else {
+      return false;
+    }
+  },
+
+  hasTool: function (value) {
+    return this.editActions.some(function (action) {
+      return action === value;
+    });
+  },
+
+  removeTool: function (value) {
+    this.editActions.some(function (item, idx) {
+      if (this.editActions[idx] === value) {
+        this._removeToolbar();
+        this.editActions.splice(idx, 1);
+        this._addToolbar();
+        return true;
+      } else {
+        return false;
+      }
+    }, this);
+  },
 
   _rotateBy: function(angle) {
     var overlay = this._overlay,
