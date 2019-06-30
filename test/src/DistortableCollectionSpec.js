@@ -242,18 +242,18 @@ describe("L.DistortableCollection", function () {
         
         it('is invoked on map click', function () {
             map.fire("click");
-            expect(Object.keys(map._toolbars)).to.have.lengthOf(0);
+            expect(map._toolbars).to.be.empty;
         });
 
         it('is invoked on command + mousedown when it toggles the image *out* of multi-select', function () {
             // deselecting the image removes the control toolbar
             chai.simulateCommandMousedown(overlay.getElement());
-            expect(Object.keys(map._toolbars)).to.have.lengthOf(0);
+            expect(map._toolbars).to.be.empty;
         });
 
         it('it removes a control toolbar from the map', function () {
             imgGroup._removeToolbar();
-            expect(Object.keys(map._toolbars)).to.have.lengthOf(0);
+            expect(map._toolbars).to.be.empty;
         });
 
         it('it returns false if there was no control toolbar to remove', function () {
