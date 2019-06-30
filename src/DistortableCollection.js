@@ -80,6 +80,8 @@ L.DistortableCollection = L.FeatureGroup.extend({
     if (this.toolbar) {
       map.removeLayer(this.toolbar);
       this.toolbar = false;
+    } else {
+      return false;
     }
   },
 

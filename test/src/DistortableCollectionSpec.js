@@ -68,12 +68,9 @@ describe("L.DistortableCollection", function () {
             
             chai.simulateCommandMousedown(img);
             chai.simulateMousedown(img2);
-              
-            var value = imgGroup.isSelected(overlay);
-            expect(value).to.be.true;
-
-            var value2 = imgGroup.isSelected(overlay2);
-            expect(value2).to.be.false;
+        
+            expect(imgGroup.isSelected(overlay)).to.be.true;
+            expect(imgGroup.isSelected(overlay2)).to.be.false;
         });
     });
 
@@ -85,11 +82,8 @@ describe("L.DistortableCollection", function () {
             chai.simulateMousedown(img);
             chai.simulateMousedown(img2);
               
-            var value = imgGroup.isSelected(overlay);
-            expect(value).to.be.false;
-
-            var value2 = imgGroup.isSelected(overlay2);
-            expect(value2).to.be.false;
+            expect(imgGroup.isSelected(overlay)).to.be.false;
+            expect(imgGroup.isSelected(overlay2)).to.be.false;
         });
     });
 
@@ -103,11 +97,8 @@ describe("L.DistortableCollection", function () {
 
             map.fire("click");
 
-            var classStr = L.DomUtil.getClass(img);
-            expect(classStr).to.not.include("selected");
-
-            var classStr2 = L.DomUtil.getClass(img2);
-            expect(classStr2).to.not.include("selected");
+            expect(L.DomUtil.getClass(img)).to.not.include("selected");
+            expect(L.DomUtil.getClass(img2)).to.not.include("selected");
         });
 
         it("Should hide all images' handles unless they're lock handles", function() {
@@ -137,16 +128,14 @@ describe("L.DistortableCollection", function () {
   
         it("Should remove all images' individual toolbar instances regardless of lock handles", function() {
             var edit = overlay.editing,
-                edit2 = overlay2.editing,
-                img = overlay.getElement(),
-                img2 = overlay2.getElement();
+                edit2 = overlay2.editing;
 
             // turn on lock handles for one of the DistortableImages
             edit2._toggleLock();
 
             // select both images to initially create individual toolbar instances (single seleection interface)
-            chai.simulateClick(img);
-            chai.simulateClick(img2);
+            chai.simulateClick(overlay.getElement());
+            chai.simulateClick(overlay2.getElement());
 
             expect(edit.toolbar).to.not.be.false
             expect(edit2.toolbar).to.not.be.false
@@ -167,11 +156,8 @@ describe("L.DistortableCollection", function () {
             chai.simulateCommandMousedown(img);
             chai.simulateCommandMousedown(img2);
 
-            var classStr = L.DomUtil.getClass(img);
-            expect(classStr).to.include("selected");
-
-            var classStr2 = L.DomUtil.getClass(img2);
-            expect(classStr2).to.include("selected");
+            expect(L.DomUtil.getClass(img)).to.include("selected");
+            expect(L.DomUtil.getClass(img2)).to.include("selected");
         });
 
         it("It should not allow a locked image to be part of multiple image selection", function() {
@@ -180,74 +166,99 @@ describe("L.DistortableCollection", function () {
             overlay.editing._toggleLock();
             chai.simulateCommandMousedown(img);
 
-            var classStr = L.DomUtil.getClass(img);
-            expect(classStr).to.not.include("selected");
+            expect(L.DomUtil.getClass(img)).to.not.include("selected");
         });
     });
 
     describe('#_removeFromGroup', function () {
+        
+        beforeEach(function() { // multi-selects the images to add them to the feature group
+            chai.simulateCommandMousedown(overlay.getElement());
+            chai.simulateCommandMousedown(overlay3.getElement());
+        });
+
         it('removes a collection of layers that are multi-selected', function () {
             var layers = imgGroup.getLayers();
             expect(layers).to.include.members([overlay, overlay2, overlay3]);
-            expect(map.hasLayer(overlay)).to.be.true;
-
-            chai.simulateCommandMousedown(overlay.getElement());
-            chai.simulateCommandMousedown(overlay3.getElement());
 
             imgGroup._removeFromGroup();
-
-            layers = imgGroup.getLayers();
+            
             expect(layers).to.not.have.members([overlay, overlay3]);
             expect(layers).to.include.members([overlay2]);
         });
 
         it('removes the layers from the map on removal from group', function () {
-            var id = imgGroup.getLayerId(overlay);
-            var id2 = imgGroup.getLayerId(overlay2);
-            var id3 = imgGroup.getLayerId(overlay3);
+            var id = imgGroup.getLayerId(overlay),
+                id2 = imgGroup.getLayerId(overlay2),
+                id3 = imgGroup.getLayerId(overlay3);
 
-            var mapLayers = map._layers;
-            expect(mapLayers).to.include.all.keys(id, id2, id3);
-
-            chai.simulateCommandMousedown(overlay.getElement());
-            chai.simulateCommandMousedown(overlay3.getElement());
+            expect(map._layers).to.include.all.keys(id, id2, id3);
 
             imgGroup._removeFromGroup();
 
-            expect(mapLayers).to.not.have.all.keys(id, id3);
-            expect(mapLayers).to.include.all.keys(id2);
+            expect(map._layers).to.not.have.all.keys(id, id3);
+            expect(map._layers).to.include.all.keys(id2);
         });
     });
 
     describe('#_addToolbar', function () {
+        it('is invoked on the click event that follows mousedown multi-select', function () {
+            expect(map._toolbars).to.be.empty;
+
+            // need both bc simulated `mousedown`s don't fire `click` events afterwards like regular user generated `mousedown`s.
+            chai.simulateCommandMousedown(overlay.getElement());
+            chai.simulateClick(overlay.getElement());
+
+            expect(Object.keys(map._toolbars)).to.have.lengthOf(1);
+        });
+
         it('it adds a control toolbar to the map', function () {
             expect(map._toolbars).to.be.empty;
+
             imgGroup._addToolbar();
 
-            var barArr = Object.keys(map._toolbars);
-            expect(barArr).to.have.lengthOf(1);
+            expect(Object.keys(map._toolbars)).to.have.lengthOf(1);
+            expect(Object.keys(map._toolbars)[0]._container).className = "leaflet-control";
+        });
 
-            var toolbar = barArr[0];
-            expect(toolbar._container).className = "leaflet-control";
+        it('does not add multiple instances of a control toolbar', function () {
+            expect(map._toolbars).to.be.empty;
+
+            imgGroup._addToolbar();
+            imgGroup._addToolbar();
+
+            expect(Object.keys(map._toolbars)).to.have.lengthOf(1);
+        });
+    });
+
+    describe('#_removeToolbar', function () {
+
+        beforeEach(function () { // multi-select the image and add the toolbar
+            chai.simulateCommandMousedown(overlay.getElement());
+            imgGroup._addToolbar();
+
+            expect(Object.keys(map._toolbars)).to.have.lengthOf(1);
         });
         
-        it('it does not add a control toolbar as a layer in the group', function () {
-            expect(map._toolbars).to.be.empty;
-
-            var layers = imgGroup.getLayers();
-            expect(layers).to.have.lengthOf(3);
-
-            imgGroup._addToolbar();
-
-            expect(Object.keys(map._toolbars)).to.have.lengthOf(1);
-            expect(layers).to.have.lengthOf(3);
+        it('is invoked on map click', function () {
+            map.fire("click");
+            expect(Object.keys(map._toolbars)).to.have.lengthOf(0);
         });
 
-        it('does not duplicate instances of a control toolbar', function () {
-            expect(map._toolbars).to.be.empty;
-            imgGroup._addToolbar();
-            imgGroup._addToolbar();
-            expect(Object.keys(map._toolbars)).to.have.lengthOf(1);
+        it('is invoked on command + mousedown when it toggles the image *out* of multi-select', function () {
+            // deselecting the image removes the control toolbar
+            chai.simulateCommandMousedown(overlay.getElement());
+            expect(Object.keys(map._toolbars)).to.have.lengthOf(0);
+        });
+
+        it('it removes a control toolbar from the map', function () {
+            imgGroup._removeToolbar();
+            expect(Object.keys(map._toolbars)).to.have.lengthOf(0);
+        });
+
+        it('it returns false if there was no control toolbar to remove', function () {
+            expect(imgGroup._removeToolbar()).to.not.be.false;
+            expect(imgGroup._removeToolbar()).to.be.false;
         });
     });
 });
