@@ -241,6 +241,7 @@ var Restore = L.EditAction.extend({
 
 L.DistortableImage.PopupBar = L.Toolbar2.Popup.extend({
   options: {
+    anchor: [0, -10],
     actions: [
       ToggleTransparency,
       ToggleOutline,
@@ -255,21 +256,25 @@ L.DistortableImage.PopupBar = L.Toolbar2.Popup.extend({
   },
 
   initialize: function(latlng, options) {
-    L.Toolbar2.prototype.initialize.call(this, options);
+    window.latlng = latlng;
     window.options = options;
+    console.log("here");
+    // L.Toolbar2.prototype.initialize.call(this, latlng, options);
+    // window.options = options;
 
-    // if (options.actions) { this.options.actions = options.actions; }
-    // L.setOptions(this, options);
+    // // if (options.actions) { this.options.actions = options.actions; }
+    // // L.setOptions(this, options);
     
-    this._marker = new L.Marker(latlng, {
-      icon: new L.DivIcon({
-        className: this.options.className,
-        iconAnchor: [0, 0]
-      })
-    });
+    // this._marker = new L.Marker(latlng, {
+    //   icon: new L.DivIcon({
+    //     className: this.options.className,
+    //     iconAnchor: [0, 0]
+    //   })
+    // });
 
-    this._popup = new L.Control.Popup(latlng, this.options);
-    // L.Toolbar2.Popup.prototype.initialize.call(this, raised_point, options);
+    // this._popup = new L.Control.Popup(latlng, this.options);
+    L.setOptions(this, options);
+    L.Toolbar2.Popup.prototype.initialize.call(this, latlng, options);
   },
 
   // todo: move to some sort of util class, these methods could be useful in future
@@ -294,8 +299,8 @@ L.DistortableImage.PopupBar = L.Toolbar2.Popup.extend({
   }
 });
 
-L.distortableImage.popupBar = function (options) {
-  return new L.DistortableImage.PopupBar(options);
+L.distortableImage.popupBar = function (latlng, options) {
+  return new L.DistortableImage.PopupBar(latlng, options);
 };
 
 L.DistortableImageOverlay.addInitHook(function () {
