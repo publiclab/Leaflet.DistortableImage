@@ -25,23 +25,40 @@ describe("L.DistortableCollection", function () {
             ]
         });
 
-        imgGroup = L.distortableCollection({ actions: [Exports] }).addTo(map);
+        overlay3 = L.distortableImageOverlay('/examples/example.png', {
+            corners: [
+                L.latLng(41.7934, -87.6054),
+                L.latLng(41.7934, -87.5854),
+                L.latLng(41.7834, -87.6054),
+                L.latLng(41.7834, -87.5854)
+            ]
+        });
+
+        imgGroup = L.distortableCollection().addTo(map);
    
         imgGroup.addLayer(overlay);
         imgGroup.addLayer(overlay2);
+        imgGroup.addLayer(overlay3);
 
         /* Forces the images to load before any tests are run. */
-        L.DomEvent.on(overlay2, 'load', function () { done(); });
+        L.DomEvent.on(overlay3, 'load', function () { done(); });
 
     });
 
     afterEach(function () {
         imgGroup.removeLayer(overlay);
         imgGroup.removeLayer(overlay2);
+        imgGroup.removeLayer(overlay3);
     });
 
     it.skip("Should keep selected images in sync with eachother during translation", function () {
 
+    });
+
+    it("Adds the layers to the map when they are added to the group", function () {
+        expect(map.hasLayer(overlay)).to.be.true;
+        expect(map.hasLayer(overlay2)).to.be.true;
+        expect(map.hasLayer(overlay3)).to.be.true;
     });
 
     describe("#isSelected", function () {
@@ -165,6 +182,40 @@ describe("L.DistortableCollection", function () {
 
             var classStr = L.DomUtil.getClass(img);
             expect(classStr).to.not.include("selected");
+        });
+    });
+
+    describe('#_removeFromGroup', function () {
+        it('removes a collection of layers that are multi-selected', function () {
+            var layers = imgGroup.getLayers();
+            expect(layers).to.include.members([overlay, overlay2, overlay3]);
+            expect(map.hasLayer(overlay)).to.be.true;
+
+            chai.simulateCommandMousedown(overlay.getElement());
+            chai.simulateCommandMousedown(overlay3.getElement());
+
+            imgGroup._removeFromGroup();
+
+            layers = imgGroup.getLayers();
+            expect(layers).to.not.have.members([overlay, overlay3]);
+            expect(layers).to.include.members([overlay2]);
+        });
+
+        it('removes the layers from the map on removal from group', function () {
+            var id = imgGroup.getLayerId(overlay);
+            var id2 = imgGroup.getLayerId(overlay2);
+            var id3 = imgGroup.getLayerId(overlay3);
+
+            var mapLayers = map._layers;
+            expect(mapLayers).to.include.all.keys(id, id2, id3);
+
+            chai.simulateCommandMousedown(overlay.getElement());
+            chai.simulateCommandMousedown(overlay3.getElement());
+
+            imgGroup._removeFromGroup();
+
+            expect(mapLayers).to.not.have.all.keys(id, id3);
+            expect(mapLayers).to.include.all.keys(id2);
         });
     });
 });
