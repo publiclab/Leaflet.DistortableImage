@@ -389,8 +389,6 @@ Defaults:
 
 - [`getCorners()`](#corners) and [`getCorner(idx)`](#corners)
 
-- `setCorner(idx, latlng)` and `setCorners(latlngObj)`
-
 - `getCenter()` - Calculates the centroid of the image.
 
 <hr>
