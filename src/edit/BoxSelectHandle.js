@@ -12,33 +12,33 @@ L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
   },
 
   addHooks: function () {
-    // L.DomEvent.on(this._container, 'mousedown', this._onMouseDown, this);
+    L.DomEvent.on(this._container, 'mousedown', this._onMouseDown, this);
   },
 
   removeHooks: function () {
     L.DomEvent.off(this._container, 'mousedown', this._onMouseDown, this);
   },
 
-  // _onMouseDown: function (e) {
-  //   if (!e.shiftKey || ((e.which !== 1) && (e.button !== 1))) { return false; }
+  _onMouseDown: function (e) {
+    if (!e.shiftKey || ((e.which !== 1) && (e.button !== 1))) { return false; }
 
-  //   L.DomUtil.disableTextSelection();
-  //   L.DomUtil.disableImageDrag();
+    L.DomUtil.disableTextSelection();
+    L.DomUtil.disableImageDrag();
 
-  //   this._startLayerPoint = this._map.mouseEventToLayerPoint(e);
+    this._startLayerPoint = this._map.mouseEventToLayerPoint(e);
 
-  //   this._box = L.DomUtil.create('div', 'leaflet-zoom-box', this._pane);
-  //   L.DomUtil.setPosition(this._box, this._startLayerPoint);
+    this._box = L.DomUtil.create('div', 'leaflet-zoom-box', this._pane);
+    L.DomUtil.setPosition(this._box, this._startLayerPoint);
 
-  //   this._container.style.cursor = 'crosshair';
+    this._container.style.cursor = 'crosshair';
 
-  //   L.DomEvent
-  //     .on(document, 'mousemove', this._onMouseMove, this)
-  //     .on(document, 'mouseup', this._onMouseUp, this)
-  //     .preventDefault(e);
+    L.DomEvent
+      .on(document, 'mousemove', this._onMouseMove, this)
+      .on(document, 'mouseup', this._onMouseUp, this)
+      .preventDefault(e);
 
-  //   this._map.fire('boxzoomstart');
-  // },
+    this._map.fire('boxzoomstart');
+  },
 
   _onMouseMove: function (e) {
     var startPoint = this._startLayerPoint,
