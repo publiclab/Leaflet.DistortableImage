@@ -132,7 +132,6 @@ JSON.stringify(img.getCorners())
 => "[{"lat":51.50685099607552,"lng":-0.06058305501937867},{"lat":51.50685099607552,"lng":-0.02058595418930054},{"lat":51.486652692081925,"lng":-0.06058305501937867},{"lat":51.486652692081925,"lng":-0.02058595418930054}]"
 
 // note there is an added level of precision after dragging the image for debugging purposes
-
 ```
 We further added a `getCorner(idx)` method used the same way as its plural counterpart but with an index passed to it.
 
@@ -164,7 +163,6 @@ Values available to pass to `mode` are:
 
   - Rotation only.
 
-
 - #### scale
 
   - Resize only. 
@@ -192,7 +190,6 @@ In the below example, the image will be initialiazed with "rotateScale" handles:
   }).addTo(map);
 
 L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
-
 ```
 
 ### Keymapper
@@ -213,7 +210,6 @@ We've added a GPU-accelerated means to generate a full resolution version of the
 When instantiating a Distortable Image, pass in a `fullResolutionSrc` option set to the url of the higher resolution image. This image will be used in full-res exporting.
 
 ```JS
-
 // create basic map setup from above
 
 // create an image - note the optional
@@ -230,7 +226,6 @@ img = L.distortableImageOverlay(
   }).addTo(map);
 
 L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
-
 ```
 
 ### Suppress Toolbar
