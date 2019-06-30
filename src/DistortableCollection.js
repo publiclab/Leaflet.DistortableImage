@@ -173,7 +173,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     this.eachLayer(function(layer) {
       var edit = layer.editing;
 
-      if (edit.toolbar) { edit._hideToolbar(); }
+      if (edit.toolbar) { edit.removeToolbar(); }
 
       for (i = 0; i < 4; i++) {
         if (box.contains(layer.getCorner(i)) && edit._mode !== "lock") {

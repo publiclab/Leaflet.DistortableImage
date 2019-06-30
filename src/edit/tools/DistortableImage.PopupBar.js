@@ -28,7 +28,6 @@ var ToggleTransparency = L.EditAction.extend({
     var editing = this._overlay.editing;
 
     editing._toggleTransparency();
-    // this.disable();
   }
 });
 
@@ -59,7 +58,6 @@ var ToggleOutline = L.EditAction.extend({
     var editing = this._overlay.editing;
 
     editing._toggleOutline();
-    // this.disable();
   }
 });
 
@@ -80,7 +78,6 @@ var Delete = L.EditAction.extend({
     var editing = this._overlay.editing;
 
     editing._removeOverlay();
-    // this.disable();
   }
 });
 
@@ -111,7 +108,6 @@ var ToggleLock = L.EditAction.extend({
     var editing = this._overlay.editing;
 
     editing._toggleLock();
-    // this.disable();
   }
 });
 
@@ -142,7 +138,6 @@ var ToggleRotateScale = L.EditAction.extend({
     var editing = this._overlay.editing;
 
     editing._toggleRotateScale();
-    // this.disable();
   }
 });
 
@@ -163,7 +158,6 @@ var Export = L.EditAction.extend({
     var editing = this._overlay.editing;
 
     editing._getExport();
-    // this.disable();
   }
 });
 
@@ -194,7 +188,6 @@ var ToggleOrder = L.EditAction.extend({
     var editing = this._overlay.editing;
 
     editing._toggleOrder();
-    // this.disable();
   }
 });
 
@@ -235,7 +228,6 @@ var Restore = L.EditAction.extend({
     var editing = this._overlay.editing;
 
     editing._restore();
-    // this.disable();
   }
 });
 
@@ -253,28 +245,6 @@ L.DistortableImage.PopupBar = L.Toolbar2.Popup.extend({
       Export,
       Delete
     ]
-  },
-
-  initialize: function(latlng, options) {
-    window.latlng = latlng;
-    window.options = options;
-    console.log("here");
-    // L.Toolbar2.prototype.initialize.call(this, latlng, options);
-    // window.options = options;
-
-    // // if (options.actions) { this.options.actions = options.actions; }
-    // // L.setOptions(this, options);
-    
-    // this._marker = new L.Marker(latlng, {
-    //   icon: new L.DivIcon({
-    //     className: this.options.className,
-    //     iconAnchor: [0, 0]
-    //   })
-    // });
-
-    // this._popup = new L.Control.Popup(latlng, this.options);
-    L.setOptions(this, options);
-    L.Toolbar2.Popup.prototype.initialize.call(this, latlng, options);
   },
 
   // todo: move to some sort of util class, these methods could be useful in future

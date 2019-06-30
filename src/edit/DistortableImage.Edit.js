@@ -22,12 +22,6 @@ L.DistortableImage.Edit = L.Handler.extend({
   initialize: function(overlay, options) {
     this._overlay = overlay;
     this._toggledImage = false;
-    /* Different actions. */
-    // var actions = ["distort", "lock", "rotate", "scale", "rotateScale"];
-
-  //  L.setOptions(this, options); 
-
-    // this.ACTIONS = this.optionsACTIONS;
    
     /* Interaction modes. */
     this._mode = overlay.ACTIONS[overlay.ACTIONS.indexOf(overlay.options.mode)] || "distort";
@@ -91,7 +85,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (this.dragging) { this.dragging.disable(); }
     delete this.dragging;
 
-    if (this.toolbar) { this._hideToolbar(); }
+    if (this.toolbar) { this._removeToolbar(); }
     if (this.editing) { this.editing.disable(); }
 
     map.removeLayer(this._handles[this._mode]);
@@ -243,7 +237,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     /* Hide toolbars and markers while dragging; click will re-show it */
     this.dragging.on("dragstart", function() {
       overlay.fire("dragstart");
-      this._hideToolbar();
+      this._removeToolbar();
     },this);
 
     /*
@@ -400,13 +394,13 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _deselect: function() {
     this._selected = false;
-    this._hideToolbar();
+    this._removeToolbar();
     if (this._mode !== "lock") { 
       this._hideMarkers(); 
     }
   },
 
-  _hideToolbar: function() {
+  _removeToolbar: function() {
     var overlay = this._overlay,
       map = overlay._map;
 
@@ -529,7 +523,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     var choice = L.DomUtil.confirmDelete();
     if (!choice) { return; }
 
-    this._hideToolbar();
+    this._removeToolbar();
 
     if (eventParents) {
       var eP = eventParents[Object.keys(eventParents)[0]];
@@ -624,15 +618,3 @@ L.DistortableImage.Edit = L.Handler.extend({
     // this.setOpacity(1);
   }
 });
-
-// L.DistortableImageOverlay.addInitHook(function() {
-//   this.editing = new L.DistortableImage.Edit(this);
-
-//   if (this.options.editable) {
-//     L.DomEvent.on(this._image, "load", this.editing.enable, this.editing);
-//   }
-
-// 	this.on('remove', function () {
-// 		if (this.editing) { this.editing.disable(); }
-// 	});
-// });
