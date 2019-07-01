@@ -317,8 +317,8 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     this.eachLayer(function(layer) {
       if (this.isSelected(layer)) {
-        var sections = layer._image.src.split('.');
-        var filename = sections[sections.length-2] + '.' + sections[sections.length-1];
+        var sections = layer._image.src.split('/');
+        var filename = sections[sections.length-1];
         json.images.push({
           id: this.getLayerId(layer),
           src: layer._image.src,
