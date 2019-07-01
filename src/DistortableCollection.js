@@ -346,27 +346,30 @@ L.DistortableCollection = L.FeatureGroup.extend({
       console.log(data);
     }
 
-    // this may be overridden to update the UI to show export progress or completion
+
+    // receives the URL of status.json, and starts running the updater to repeatedly fetch from status.json; 
+    // this may be overridden to integrate with any UI
     function _defaultHandleStatusUrl(data) {
       console.log(data);
-      statusUrl = "http://export.mapknitter.org" + data;
+      statusUrl = "//export.mapknitter.org" + data;
       opts.updater = opts.updater || _defaultUpdater;
 
-      $.ajax(statusUrl, {
-        type: "GET",
-        crossDomain: true
-      }).done(function(data) {
-          updateInterval = setInterval(function intervalUpdater() {
+      // repeatedly fetch the status.json
+      updateInterval = setInterval(function intervalUpdater() {
+        $.ajax(statusUrl, {
+          type: "GET",
+          crossDomain: true
+        }).done(function(data) {
             opts.updater(data);
-          }, opts.frequency);
-      });
+        });
+      }, opts.frequency);
     }
 
     function _fetchStatusUrl(collection, scale) {
       opts.handleStatusUrl = opts.handleStatusUrl || _defaultHandleStatusUrl;
 
       $.ajax({
-        url: "http://export.mapknitter.org/export",
+        url: "//export.mapknitter.org/export",
         crossDomain: true,
         type: "POST",
         data: {
