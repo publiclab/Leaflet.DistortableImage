@@ -138,7 +138,7 @@ module.exports = function(grunt) {
             "src/edit/tools/DistortableImage.ControlBar.js",
             "src/edit/DistortableImage.Edit.js",
             "src/edit/DistortableImage.Keymapper.js",
-            "src/edit/BoxSelectHandle.js"
+            "src/edit/BoxSelector.js"
           ],
           dest: "dist/leaflet.distortableimage.js"
         }

@@ -23,11 +23,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     this._lastInitialSelected();
 
-    /**
-     * the box zoom override works, but there is a bug involving click event propogation.
-     * keeping uncommented for now so that it isn't used as a multi-select mechanism
-     */
-    // L.DomEvent.on(map, "boxzoomend", this._addSelections, this);
+    L.DomEvent.on(map, "boxzoomend", this._addSelections, this);
   },
 
   onRemove: function() {
@@ -43,7 +39,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     L.DomEvent.off(document, "keydown", this._onKeyDown, this);
     L.DomEvent.off(map, "click", this._deselectAll, this);
-    // L.DomEvent.off(map, "boxzoomend", this._addSelections, this);
+    L.DomEvent.off(map, "boxzoomend", this._addSelections, this);
   },
 
   _turnOnEditing: function(layer) {
@@ -175,15 +171,15 @@ L.DistortableCollection = L.FeatureGroup.extend({
     this.eachLayer(function(layer) {
       var edit = layer.editing;
 
-      if (edit.toolbar) { edit._removeToolbar(); }
-
       for (i = 0; i < 4; i++) {
         if (box.contains(layer.getCorner(i)) && edit._mode !== "lock") {
+          edit._deselect();
           L.DomUtil.addClass(layer.getElement(), "selected");
+          if (!this.toolbar) { this._addToolbar(); }
           break;
         }
       }
-    });
+    }, this);
   },
 
   _onKeyDown: function(e) {

@@ -505,11 +505,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     this._lastInitialSelected();
 
-    /**
-     * the box zoom override works, but there is a bug involving click event propogation.
-     * keeping uncommented for now so that it isn't used as a multi-select mechanism
-     */
-    // L.DomEvent.on(map, "boxzoomend", this._addSelections, this);
+    L.DomEvent.on(map, "boxzoomend", this._addSelections, this);
   },
 
   onRemove: function() {
@@ -525,7 +521,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     L.DomEvent.off(document, "keydown", this._onKeyDown, this);
     L.DomEvent.off(map, "click", this._deselectAll, this);
-    // L.DomEvent.off(map, "boxzoomend", this._addSelections, this);
+    L.DomEvent.off(map, "boxzoomend", this._addSelections, this);
   },
 
   _turnOnEditing: function(layer) {
@@ -657,15 +653,15 @@ L.DistortableCollection = L.FeatureGroup.extend({
     this.eachLayer(function(layer) {
       var edit = layer.editing;
 
-      if (edit.toolbar) { edit._removeToolbar(); }
-
       for (i = 0; i < 4; i++) {
         if (box.contains(layer.getCorner(i)) && edit._mode !== "lock") {
+          edit._deselect();
           L.DomUtil.addClass(layer.getElement(), "selected");
+          if (!this.toolbar) { this._addToolbar(); }
           break;
         }
       }
-    });
+    }, this);
   },
 
   _onKeyDown: function(e) {
@@ -2272,15 +2268,19 @@ L.DistortableImage.Keymapper = L.Control.extend({
 });
 L.Map.mergeOptions({ boxSelector: true, boxZoom: false });
 
-// used for multiple image select. Temporarily disabled until click
-// propagation issue is fixed
+/** 
+ * pretty much all Leaflet 1.5.1 source code. Overriden so that its a selection box with our `L.DistortableCollection` class 
+ * instead of a zoom box. 
+ * */
 
-L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
+L.Map.BoxSelector = L.Map.BoxZoom.extend({
 
   initialize: function (map) {
     this._map = map;
     this._container = map._container;
     this._pane = map._panes.overlayPane;
+    this._resetStateTimeout = 0;
+    map.on('unload', this._destroy, this);
   },
 
   addHooks: function () {
@@ -2291,74 +2291,110 @@ L.Map.BoxSelectHandle = L.Map.BoxZoom.extend({
     L.DomEvent.off(this._container, 'mousedown', this._onMouseDown, this);
   },
 
+  moved: function () {
+    return this._moved;
+  },
+
+  _destroy: function () {
+    L.DomUtil.remove(this._pane);
+    delete this._pane;
+  },
+
+  _resetState: function () {
+    this._resetStateTimeout = 0;
+    this._moved = false;
+  },
+
+  _clearDeferredResetState: function () {
+    if (this._resetStateTimeout !== 0) {
+      clearTimeout(this._resetStateTimeout);
+      this._resetStateTimeout = 0;
+    }
+  },
+
   _onMouseDown: function (e) {
     if (!e.shiftKey || ((e.which !== 1) && (e.button !== 1))) { return false; }
+
+    // Clear the deferred resetState if it hasn't executed yet, otherwise it
+    // will interrupt the interaction and orphan a box element in the container.
+    this._clearDeferredResetState();
+    this._resetState();
 
     L.DomUtil.disableTextSelection();
     L.DomUtil.disableImageDrag();
 
-    this._startLayerPoint = this._map.mouseEventToLayerPoint(e);
+    this._startPoint = this._map.mouseEventToContainerPoint(e);
 
-    this._box = L.DomUtil.create('div', 'leaflet-zoom-box', this._pane);
-    L.DomUtil.setPosition(this._box, this._startLayerPoint);
-
-    this._container.style.cursor = 'crosshair';
-
-    L.DomEvent
-      .on(document, 'mousemove', this._onMouseMove, this)
-      .on(document, 'mouseup', this._onMouseUp, this)
-      .preventDefault(e);
-
-    this._map.fire('boxzoomstart');
+    L.DomEvent.on(document, {
+      contextmenu: L.DomEvent.stop,
+      mousemove: this._onMouseMove,
+      mouseup: this._onMouseUp,
+      keydown: this._onKeyDown
+    }, this);
   },
 
   _onMouseMove: function (e) {
-    var startPoint = this._startLayerPoint,
-      box = this._box,
+    if (!this._moved) {
+      this._moved = true;
 
-      layerPoint = this._map.mouseEventToLayerPoint(e),
-      offset = layerPoint.subtract(startPoint),
+      this._box = L.DomUtil.create('div', 'leaflet-zoom-box', this._container);
+      L.DomUtil.addClass(this._container, 'leaflet-crosshair');
 
-      newPos = L.point(
-        Math.min(layerPoint.x, startPoint.x),
-        Math.min(layerPoint.y, startPoint.y));
+      this._map.fire('boxzoomstart');
+    }
 
-    L.DomUtil.setPosition(box, newPos);
+    this._point = this._map.mouseEventToContainerPoint(e);
 
-    box.style.width = (Math.max(0, Math.abs(offset.x) - 4)) + 'px';
-    box.style.height = (Math.max(0, Math.abs(offset.y) - 4)) + 'px';
-  },
+    var bounds = L.bounds(this._point, this._startPoint),
+      size = bounds.getSize();
 
-  _onMouseUp: function (e) {
-    var map = this._map,
-      layerPoint = map.mouseEventToLayerPoint(e);
+    L.DomUtil.setPosition(this._box, bounds.min);
 
-    if (this._startLayerPoint.equals(layerPoint)) { return; }
-
-    this._boxBounds = new L.LatLngBounds(
-      map.layerPointToLatLng(this._startLayerPoint),
-      map.layerPointToLatLng(layerPoint));
-
-    this._finish();
-
-    map.fire('boxzoomend', { boxZoomBounds: this._boxBounds });
-
-    // this._finish();
+    this._box.style.width = size.x + 'px';
+    this._box.style.height = size.y + 'px';
   },
 
   _finish: function () {
-    $(this._map.boxSelector._box).remove();
-    // L.DomUtil.remove(this._box);
-    // L.DomUtil.remove(this._map.boxSelector);
-    this._container.style.cursor = '';
+    if (this._moved) {
+      L.DomUtil.remove(this._box);
+      L.DomUtil.removeClass(this._container, 'leaflet-crosshair');
+    }
 
     L.DomUtil.enableTextSelection();
     L.DomUtil.enableImageDrag();
 
-    L.DomEvent
-      .off(document, 'mousemove', this._onMouseMove)
-      .off(document, 'mouseup', this._onMouseUp);
+    L.DomEvent.off(document, {
+      contextmenu: L.DomEvent.stop,
+      mousemove: this._onMouseMove,
+      mouseup: this._onMouseUp,
+      keydown: this._onKeyDown
+    }, this);
   },
+
+  _onMouseUp: function (e) {
+    if ((e.which !== 1) && (e.button !== 1)) { return; }
+
+    this._finish();
+
+    if (!this._moved) { return; }
+    // Postpone to next JS tick so internal click event handling
+    // still see it as "moved".
+    this._clearDeferredResetState();
+    this._resetStateTimeout = setTimeout(L.Util.bind(this._resetState, this), 0);
+
+    var bounds = new L.latLngBounds(
+      this._map.containerPointToLatLng(this._startPoint),
+      this._map.containerPointToLatLng(this._point));
+
+    this._map
+      .fire('boxzoomend', { boxZoomBounds: bounds });
+  },
+
+  _onKeyDown: function (e) {
+    if (e.keyCode === 27) {
+      this._finish();
+    }
+  }
 });
 
-L.Map.addInitHook('addHandler', 'boxSelector', L.Map.BoxSelectHandle);
+L.Map.addInitHook('addHandler', 'boxSelector', L.Map.BoxSelector);
