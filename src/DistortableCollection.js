@@ -10,13 +10,8 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     this._map = map;
 
-    this.on("layeradd", function (e) {
-      this._turnOnEditing(e.layer);
-    }, this);
-
-    this.on("layerremove", function (e) {
-      this._turnOffEditing(e.layer);
-    }, this);
+    this.on("layeradd", this._turnOnEditing, this);
+    this.on("layerremove", this._turnOffEditing, this);
 
     L.DomEvent.on(document, "keydown", this._onKeyDown, this);
 
@@ -31,13 +26,8 @@ L.DistortableCollection = L.FeatureGroup.extend({
   onRemove: function() {
     var map = this._map;
 
-    this.off("layeradd", function (e) {
-      this._turnOnEditing(e.layer);
-    }, this);
-
-    this.off("layerremove", function (e) {
-      this._turnOffEditing(e.layer);
-    }, this);
+    this.off("layeradd", this._turnOnEditing, this);
+    this.off("layerremove", this._turnOffEditing, this);
 
     L.DomEvent.off(document, "keydown", this._onKeyDown, this);
 
@@ -47,11 +37,11 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
   },
 
-  _turnOnEditing: function(layer) {
-    layer.editing.enable();
-
-    L.DomEvent.on(layer._image, "mousedown", this._deselectOthers, this);
+  _turnOnEditing: function(e) {
+    var layer = e.layer; 
     
+    layer.editing.enable();
+    L.DomEvent.on(layer._image, "mousedown", this._deselectOthers, this);
     L.DomEvent.on(layer, {
       dragstart: this._dragStartMultiple, 
       drag: this._dragMultiple
@@ -59,11 +49,11 @@ L.DistortableCollection = L.FeatureGroup.extend({
  
   },
 
-  _turnOffEditing: function(layer) {
+  _turnOffEditing: function(e) {
+    var layer = e.layer; 
+
     layer.editing.disable();
-
     L.DomEvent.off(layer._image, "mousedown", this._deselectOthers, this);
-
     L.DomEvent.off(layer, {
       dragstart: this._dragStartMultiple,
       drag: this._dragMultiple
