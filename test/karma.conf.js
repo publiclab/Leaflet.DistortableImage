@@ -34,7 +34,7 @@ module.exports = function(config) {
       "node_modules/sinon/pkg/sinon.js",
       "src/util/*.js",
       "src/edit/getEXIFdata.js",
-      "src/edit/BoxSelectHandle.js",
+      "src/edit/BoxSelector.js",
       "src/edit/EditHandle.js",
       "src/edit/LockHandle.js",
       "src/edit/DistortHandle.js",
