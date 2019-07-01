@@ -317,9 +317,12 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     this.eachLayer(function(layer) {
       if (this.isSelected(layer)) {
+        var sections = layer._image.src.split('.');
+        var filename = sections[sections.length-1];
         json.images.push({
           id: this.getLayerId(layer),
           src: layer._image.src,
+          image_file_name: filename,
           nodes: layer.getCorners(),
           cm_per_pixel: L.ImageUtil.getCmPerPixel(layer)
         });
@@ -335,11 +338,13 @@ L.DistortableCollection = L.FeatureGroup.extend({
     opts = opts || {};
     opts.collection = opts.collection || this.generateExportJson();
     opts.frequency = opts.frequency || 3000;
-    opts.scale = opts.scale || 100;
+    opts.scale = opts.scale || 100; // switch it to _getAvgCmPerPixel !
     var statusUrl, updateInterval;
 
-      // this may be overridden to update the UI to show export progress or completion
+    // this may be overridden to update the UI to show export progress or completion
     function _defaultUpdater(data) {
+      // optimization: fetch status directly from google storage:
+      if (statusUrl !== data.status_url) statusUrl = data.status_url;
       if (data.status === "complete") {
         clearInterval(updateInterval);
         alert("Export complete. " + data.jpg);
@@ -348,7 +353,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
       // https://github.com/publiclab/mapknitter-exporter/blob/main/lib/mapknitterExporter.rb
       console.log(data);
     }
-
 
     // receives the URL of status.json, and starts running the updater to repeatedly fetch from status.json; 
     // this may be overridden to integrate with any UI
