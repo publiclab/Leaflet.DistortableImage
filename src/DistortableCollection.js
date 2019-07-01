@@ -340,7 +340,10 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
       // this may be overridden to update the UI to show export progress or completion
     function _defaultUpdater(data) {
-      if (data.status === "complete") { clearInterval(updateInterval); }
+      if (data.status === "complete") {
+        clearInterval(updateInterval);
+        alert("Export complete. " + data.jpg);
+      }
       // TODO: update to clearInterval when status == "failed" if we update that in this file:
       // https://github.com/publiclab/mapknitter-exporter/blob/main/lib/mapknitterExporter.rb
       console.log(data);
