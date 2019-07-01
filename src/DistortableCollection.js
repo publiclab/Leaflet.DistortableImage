@@ -19,11 +19,13 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
 
     L.DomEvent.on(document, "keydown", this._onKeyDown, this);
-    L.DomEvent.on(map, "click", this._deselectAll, this);
+
+    L.DomEvent.on(map, { 
+      click: this._deselectAll, 
+      boxzoomend: this._addSelections 
+    }, this);
 
     this._lastInitialSelected();
-
-    L.DomEvent.on(map, "boxzoomend", this._addSelections, this);
   },
 
   onRemove: function() {
@@ -38,24 +40,34 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
 
     L.DomEvent.off(document, "keydown", this._onKeyDown, this);
-    L.DomEvent.off(map, "click", this._deselectAll, this);
-    L.DomEvent.off(map, "boxzoomend", this._addSelections, this);
+
+    L.DomEvent.off(map, {
+      click: this._deselectAll,
+      boxzoomend: this._addSelections
+    }, this);
   },
 
   _turnOnEditing: function(layer) {
     layer.editing.enable();
 
     L.DomEvent.on(layer._image, "mousedown", this._deselectOthers, this);
-    L.DomEvent.on(layer, "dragstart", this._dragStartMultiple, this);
-    L.DomEvent.on(layer, "drag", this._dragMultiple, this);
+    
+    L.DomEvent.on(layer, {
+      dragstart: this._dragStartMultiple, 
+      drag: this._dragMultiple
+    }, this);
+ 
   },
 
   _turnOffEditing: function(layer) {
     layer.editing.disable();
 
     L.DomEvent.off(layer._image, "mousedown", this._deselectOthers, this);
-    L.DomEvent.off(layer, "dragstart", this._dragStartMultiple, this);
-    L.DomEvent.off(layer, "drag", this._dragMultiple, this);
+
+    L.DomEvent.off(layer, {
+      dragstart: this._dragStartMultiple,
+      drag: this._dragMultiple
+    }, this);
   },
 
   _addToolbar: function() {
