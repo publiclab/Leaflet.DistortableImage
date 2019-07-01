@@ -322,6 +322,8 @@ L.DistortableCollection = L.FeatureGroup.extend({
         json.images.push({
           id: this.getLayerId(layer),
           src: layer._image.src,
+          width: layer._image.width,
+          height: layer._image.height,
           image_file_name: filename,
           nodes: layer.getCorners(),
           cm_per_pixel: L.ImageUtil.getCmPerPixel(layer)
