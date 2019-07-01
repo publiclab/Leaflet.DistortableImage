@@ -63,6 +63,7 @@ L.ImageUtil = {
     return (dist * 100) / overlay.getElement().width;
   }
 };
+
 L.Map.include({
 	_newLayerPointToLatLng: function(point, newZoom, newCenter) {
 		var topLeft = L.Map.prototype._getNewTopLeftPoint.call(this, newCenter, newZoom)
@@ -1528,6 +1529,7 @@ L.DistortableImageOverlay.addInitHook(function () {
     if (this.editing) { this.editing.disable(); }
   });
 });
+
 L.distortableImage = L.DistortableImage || {};
 L.distortableImage = L.DistortableImage;
 
@@ -1593,6 +1595,7 @@ L.DistortableCollection.addInitHook(function () {
     this.editActions = this.ACTIONS;
   }
 });
+
 L.DistortableImage = L.DistortableImage || {};
 
 L.DistortableImage.Edit = L.Handler.extend({
