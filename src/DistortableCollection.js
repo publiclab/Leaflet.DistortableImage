@@ -317,9 +317,14 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     this.eachLayer(function(layer) {
       if (this.isSelected(layer)) {
+        var sections = layer._image.src.split('/');
+        var filename = sections[sections.length-1];
         json.images.push({
           id: this.getLayerId(layer),
           src: layer._image.src,
+          width: layer._image.width,
+          height: layer._image.height,
+          image_file_name: filename,
           nodes: layer.getCorners(),
           cm_per_pixel: L.ImageUtil.getCmPerPixel(layer)
         });
@@ -335,38 +340,45 @@ L.DistortableCollection = L.FeatureGroup.extend({
     opts = opts || {};
     opts.collection = opts.collection || this.generateExportJson();
     opts.frequency = opts.frequency || 3000;
-    opts.scale = opts.scale || 30;
+    opts.scale = opts.scale || 100; // switch it to _getAvgCmPerPixel !
     var statusUrl, updateInterval;
 
-      // this may be overridden to update the UI to show export progress or completion
+    // this may be overridden to update the UI to show export progress or completion
     function _defaultUpdater(data) {
-      if (data.status === "complete") { clearInterval(updateInterval); }
+      // optimization: fetch status directly from google storage:
+      if (data.hasOwnProperty('status_url') && statusUrl !== data.status_url && data.status_url.match('.json')) statusUrl = data.status_url;
+      if (data.status === "complete") {
+        clearInterval(updateInterval);
+        alert("Export complete. " + data.jpg);
+      }
       // TODO: update to clearInterval when status == "failed" if we update that in this file:
       // https://github.com/publiclab/mapknitter-exporter/blob/main/lib/mapknitterExporter.rb
       console.log(data);
     }
 
-    // this may be overridden to update the UI to show export progress or completion
+    // receives the URL of status.json, and starts running the updater to repeatedly fetch from status.json; 
+    // this may be overridden to integrate with any UI
     function _defaultHandleStatusUrl(data) {
       console.log(data);
-      statusUrl = "http://export.mapknitter.org" + data;
+      statusUrl = "//export.mapknitter.org" + data;
       opts.updater = opts.updater || _defaultUpdater;
 
-      $.ajax(statusUrl, {
-        type: "GET",
-        crossDomain: true
-      }).done(function(data) {
-          updateInterval = setInterval(function intervalUpdater() {
+      // repeatedly fetch the status.json
+      updateInterval = setInterval(function intervalUpdater() {
+        $.ajax(statusUrl, {
+          type: "GET",
+          crossDomain: true
+        }).done(function(data) {
             opts.updater(data);
-          }, opts.frequency);
-      });
+        });
+      }, opts.frequency);
     }
 
     function _fetchStatusUrl(collection, scale) {
       opts.handleStatusUrl = opts.handleStatusUrl || _defaultHandleStatusUrl;
 
       $.ajax({
-        url: "http://export.mapknitter.org/export",
+        url: "//export.mapknitter.org/export",
         crossDomain: true,
         type: "POST",
         data: {
