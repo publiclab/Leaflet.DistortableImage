@@ -848,7 +848,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     // this may be overridden to integrate with any UI
     function _defaultHandleStatusUrl(data) {
       console.log(data);
-      statusUrl = "//export.mapknitter.org" + data;
+      statusUrl = "//export.mapknitter.org" + data + "?" + Date.now(); // bust cache with timestamp
       opts.updater = opts.updater || _defaultUpdater;
 
       // repeatedly fetch the status.json
