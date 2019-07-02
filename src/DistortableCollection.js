@@ -366,12 +366,12 @@ L.DistortableCollection = L.FeatureGroup.extend({
     // this may be overridden to integrate with any UI
     function _defaultHandleStatusUrl(data) {
       console.log(data);
-      statusUrl = "//export.mapknitter.org" + data; // bust cache with timestamp
+      statusUrl = "//export.mapknitter.org" + data;
       opts.updater = opts.updater || _defaultUpdater;
 
       // repeatedly fetch the status.json
       updateInterval = setInterval(function intervalUpdater() {
-        $.ajax(statusUrl + "?" + Date.now(), {
+        $.ajax(statusUrl + "?" + Date.now(), { // bust cache with timestamp
           type: "GET",
           crossDomain: true
         }).done(function(data) {
