@@ -57,6 +57,7 @@ L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.p
 img = L.distortableImageOverlay(
   'example.png', {
     // 'corners' is the only required option for this class
+    // and is in NW, NE, SW, SE order
     corners: [
       L.latLng(51.52,-0.14),
       L.latLng(51.52,-0.10),
@@ -98,6 +99,7 @@ For example, to overrwrite the toolbar to only include the `ToggleTransparency` 
 img = L.distortableImageOverlay(
   'example.png', {
     // 'corners' is the only required option for this class
+    // and is in NW, NE, SW, SE order
     corners: [
       L.latLng(51.52,-0.14),
       L.latLng(51.52,-0.10),
@@ -110,8 +112,9 @@ img = L.distortableImageOverlay(
 
 ### Corners
 
-The corners are stored as `L.latLng` objects
-on the image, and can be accessed using our `getCorners()` method after the image is instantiated and added to the map.
+The corners are stored as `L.latLng` objects on the image, and can be accessed using 
+our `getCorners()` method after the image is instantiated and added to the map. 
+They are provided in `NW, NE, SW, SE` order (in a `Z` shape).
 
 Useful usage example:
 
