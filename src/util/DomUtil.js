@@ -35,6 +35,18 @@ L.DomUtil = L.extend(L.DomUtil, {
 	toggleClass: function(el, className) {
 		var c = className;
 		return this.hasClass(el, c) ? this.removeClass(el, c) : this.addClass(el, c);
-	}
+	},
+
+	confirmDelete: function () {
+		return window.confirm("Are you sure? This image will be permanently deleted from the map.");
+	},
+
+	confirmDeletes: function (n) {
+		var humanized = n === 1 ? "image" : "images";
+
+		return window.confirm("Are you sure? " + n + " " + humanized + " will be permanently deleted from the map.");
+	},
+
+
 
 });
