@@ -853,7 +853,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
       // repeatedly fetch the status.json
       updateInterval = setInterval(function intervalUpdater() {
-        $.ajax(statusUrl, {
+        $.ajax(statusUrl + "?" + Date.now(), { // bust cache with timestamp
           type: "GET",
           crossDomain: true
         }).done(function(data) {
