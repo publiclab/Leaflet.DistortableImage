@@ -41,11 +41,53 @@ L.distortableImage = L.DistortableImage;
     }
   });
 
+var lockGroup = L.EditAction.extend({
+  initialize: function (map, overlay, options) {
+    var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#lock"></use>';
+
+    options = options || {};
+    options.toolbarIcon = {
+      html: '<svg>' + href + '</svg>',
+      tooltip: 'lock'
+    };
+
+    L.EditAction.prototype.initialize.call(this, map, overlay, options);
+  },
+
+  addHooks: function () {
+    var group = this._overlay;
+
+    group._lockGroup();
+  }
+});
+
+var unlockGroup = L.EditAction.extend({
+  initialize: function (map, overlay, options) {
+    var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#unlock"></use>';
+
+    options = options || {};
+    options.toolbarIcon = {
+      html: '<svg>' + href + '</svg>',
+      tooltip: 'unlock'
+    };
+
+    L.EditAction.prototype.initialize.call(this, map, overlay, options);
+  },
+
+  addHooks: function () {
+    var group = this._overlay;
+
+    group._unlockGroup();
+  }
+});
+
 L.DistortableImage.ControlBar = L.Toolbar2.Control.extend({
   options: {
     actions: [
       Exports,
-      Deletes
+      Deletes,
+      lockGroup,
+      unlockGroup
     ]
   },
 });
@@ -55,7 +97,7 @@ L.distortableImage.controlBar = function (options) {
 };
 
 L.DistortableCollection.addInitHook(function () {
-  this.ACTIONS = [Exports, Deletes];
+  this.ACTIONS = [Exports, Deletes, lockGroup, unlockGroup];
 
   if (this.options.actions) {
     this.editActions = this.options.actions;

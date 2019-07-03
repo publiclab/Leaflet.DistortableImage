@@ -174,7 +174,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
       var edit = layer.editing;
 
       for (i = 0; i < 4; i++) {
-        if (box.contains(layer.getCorner(i)) && edit._mode !== "lock") {
+        if (box.contains(layer.getCorner(i))) {
           edit._deselect();
           L.DomUtil.addClass(layer.getElement(), "selected");
           if (!this.toolbar) { this._addToolbar(); }
@@ -232,13 +232,42 @@ L.DistortableCollection = L.FeatureGroup.extend({
   _deselectAll: function(event) {
     this.eachLayer(function(layer) {
       var edit = layer.editing;
-      L.DomUtil.removeClass(layer.getElement(), "selected");
+      L.DomUtil.removeClass(layer.getElement(), 'selected');
       edit._deselect();
     });
 
     this._removeToolbar();
 
     L.DomEvent.stopPropagation(event);
+  },
+
+  _unlockGroup: function() {
+    var map = this._map;
+
+    this.eachLayer(function (layer) {
+      if (this.isSelected(layer)) {
+        var edit = layer.editing;
+        if (edit._mode === 'lock') { map.removeLayer(edit._handles[edit._mode]); }
+        edit._unlock();
+        edit._addToolbar();
+        edit._removeToolbar();
+      }
+    }, this);
+  },
+
+  _lockGroup: function() {
+    var map = this._map;
+
+    this.eachLayer(function (layer) {
+      if (this.isSelected(layer)) {
+        var edit = layer.editing;
+        map.removeLayer(edit._handles[edit._mode]);
+        edit._lock();
+        map.addLayer(edit._handles[edit._mode]);
+        edit._addToolbar();
+        edit._removeToolbar();
+      }
+    }, this);
   },
 
   _removeFromGroup: function(event) {

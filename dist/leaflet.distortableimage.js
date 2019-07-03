@@ -656,7 +656,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
       var edit = layer.editing;
 
       for (i = 0; i < 4; i++) {
-        if (box.contains(layer.getCorner(i)) && edit._mode !== "lock") {
+        if (box.contains(layer.getCorner(i))) {
           edit._deselect();
           L.DomUtil.addClass(layer.getElement(), "selected");
           if (!this.toolbar) { this._addToolbar(); }
@@ -714,13 +714,42 @@ L.DistortableCollection = L.FeatureGroup.extend({
   _deselectAll: function(event) {
     this.eachLayer(function(layer) {
       var edit = layer.editing;
-      L.DomUtil.removeClass(layer.getElement(), "selected");
+      L.DomUtil.removeClass(layer.getElement(), 'selected');
       edit._deselect();
     });
 
     this._removeToolbar();
 
     L.DomEvent.stopPropagation(event);
+  },
+
+  _unlockGroup: function() {
+    var map = this._map;
+
+    this.eachLayer(function (layer) {
+      if (this.isSelected(layer)) {
+        var edit = layer.editing;
+        if (edit._mode === 'lock') { map.removeLayer(edit._handles[edit._mode]); }
+        edit._unlock();
+        edit._addToolbar();
+        edit._removeToolbar();
+      }
+    }, this);
+  },
+
+  _lockGroup: function() {
+    var map = this._map;
+
+    this.eachLayer(function (layer) {
+      if (this.isSelected(layer)) {
+        var edit = layer.editing;
+        map.removeLayer(edit._handles[edit._mode]);
+        edit._lock();
+        map.addLayer(edit._handles[edit._mode]);
+        edit._addToolbar();
+        edit._removeToolbar();
+      }
+    }, this);
   },
 
   _removeFromGroup: function(event) {
@@ -1590,11 +1619,53 @@ L.distortableImage = L.DistortableImage;
     }
   });
 
+var lockGroup = L.EditAction.extend({
+  initialize: function (map, overlay, options) {
+    var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#lock"></use>';
+
+    options = options || {};
+    options.toolbarIcon = {
+      html: '<svg>' + href + '</svg>',
+      tooltip: 'lock'
+    };
+
+    L.EditAction.prototype.initialize.call(this, map, overlay, options);
+  },
+
+  addHooks: function () {
+    var group = this._overlay;
+
+    group._lockGroup();
+  }
+});
+
+var unlockGroup = L.EditAction.extend({
+  initialize: function (map, overlay, options) {
+    var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#unlock"></use>';
+
+    options = options || {};
+    options.toolbarIcon = {
+      html: '<svg>' + href + '</svg>',
+      tooltip: 'unlock'
+    };
+
+    L.EditAction.prototype.initialize.call(this, map, overlay, options);
+  },
+
+  addHooks: function () {
+    var group = this._overlay;
+
+    group._unlockGroup();
+  }
+});
+
 L.DistortableImage.ControlBar = L.Toolbar2.Control.extend({
   options: {
     actions: [
       Exports,
-      Deletes
+      Deletes,
+      lockGroup,
+      unlockGroup
     ]
   },
 });
@@ -1604,7 +1675,7 @@ L.distortableImage.controlBar = function (options) {
 };
 
 L.DistortableCollection.addInitHook(function () {
-  this.ACTIONS = [Exports, Deletes];
+  this.ACTIONS = [Exports, Deletes, lockGroup, unlockGroup];
 
   if (this.options.actions) {
     this.editActions = this.options.actions;
@@ -2006,18 +2077,26 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._overlay.bringToBack();
   },
 
+  _unlock: function() {
+    this._mode = "distort";
+    this._enableDragging();
+  },
+
+  _lock: function() {
+    this._mode = "lock";
+    if (this.dragging) { this.dragging.disable(); }
+    delete this.dragging;
+  },
+
   _toggleLock: function() {
     var map = this._overlay._map;
 
     map.removeLayer(this._handles[this._mode]);
     /* Switch mode. */
     if (this._mode === "lock") {
-      this._mode = "distort";
-      this._enableDragging();
+      this._unlock();
     } else {
-      this._mode = "lock";
-      if (this.dragging) { this.dragging.disable(); }
-      delete this.dragging;
+      this._lock();
     }
 
     map.addLayer(this._handles[this._mode]);
