@@ -48,7 +48,7 @@ var lockGroup = L.EditAction.extend({
     options = options || {};
     options.toolbarIcon = {
       html: '<svg>' + href + '</svg>',
-      tooltip: 'lock'
+      tooltip: 'Lock Images'
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -68,7 +68,7 @@ var unlockGroup = L.EditAction.extend({
     options = options || {};
     options.toolbarIcon = {
       html: '<svg>' + href + '</svg>',
-      tooltip: 'unlock'
+      tooltip: 'Unlock Images'
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);

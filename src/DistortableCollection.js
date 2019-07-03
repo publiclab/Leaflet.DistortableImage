@@ -257,13 +257,14 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var map = this._map;
 
     this.eachLayer(function (layer) {
-      if (this.isSelected(layer)) {
+      if (this.isSelected(layer) ) {
         var edit = layer.editing;
-        map.removeLayer(edit._handles[edit._mode]);
         edit._lock();
         map.addLayer(edit._handles[edit._mode]);
         edit._addToolbar();
         edit._removeToolbar();
+        // map.addLayer also deselects the image, so we reselect here
+        L.DomUtil.addClass(layer.getElement(), "selected");
       }
     }, this);
   },

@@ -739,13 +739,14 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var map = this._map;
 
     this.eachLayer(function (layer) {
-      if (this.isSelected(layer)) {
+      if (this.isSelected(layer) ) {
         var edit = layer.editing;
-        map.removeLayer(edit._handles[edit._mode]);
         edit._lock();
         map.addLayer(edit._handles[edit._mode]);
         edit._addToolbar();
         edit._removeToolbar();
+        // map.addLayer also deselects the image, so we reselect here
+        L.DomUtil.addClass(layer.getElement(), "selected");
       }
     }, this);
   },
@@ -1624,7 +1625,7 @@ var lockGroup = L.EditAction.extend({
     options = options || {};
     options.toolbarIcon = {
       html: '<svg>' + href + '</svg>',
-      tooltip: 'lock'
+      tooltip: 'Lock Images'
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -1644,7 +1645,7 @@ var unlockGroup = L.EditAction.extend({
     options = options || {};
     options.toolbarIcon = {
       html: '<svg>' + href + '</svg>',
-      tooltip: 'unlock'
+      tooltip: 'Unlock Images'
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
