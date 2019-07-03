@@ -835,7 +835,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     // this may be overridden to update the UI to show export progress or completion
     function _defaultUpdater(data) {
-      data = JSON.parse(data)
+      data = JSON.parse(data);
       // optimization: fetch status directly from google storage:
       if (statusUrl !== data.status_url && data.status_url.match('.json')) { statusUrl = data.status_url; }
       if (data.status === "complete") {
