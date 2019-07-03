@@ -837,7 +837,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     function _defaultUpdater(data) {
       data = JSON.parse(data)
       // optimization: fetch status directly from google storage:
-      if (data.status_url !== null) && statusUrl !== data.status_url && data.status_url.match('.json')) { statusUrl = data.status_url; }
+      if (statusUrl !== data.status_url && data.status_url.match('.json')) { statusUrl = data.status_url; }
       if (data.status === "complete") {
         clearInterval(updateInterval);
       }
