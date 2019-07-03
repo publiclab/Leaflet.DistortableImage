@@ -160,13 +160,13 @@ describe("L.DistortableCollection", function () {
             expect(L.DomUtil.getClass(img2)).to.include("selected");
         });
 
-        it("It should not allow a locked image to be part of multiple image selection", function() {
+        it("It should allow a locked image to be part of multiple image selection", function() {
             var img = overlay.getElement();
 
             overlay.editing._toggleLock();
             chai.simulateCommandMousedown(img);
 
-            expect(L.DomUtil.getClass(img)).to.not.include("selected");
+            expect(L.DomUtil.getClass(img)).to.include("selected");
         });
     });
 
