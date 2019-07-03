@@ -803,10 +803,10 @@ L.DistortableCollection = L.FeatureGroup.extend({
         var filename = sections[sections.length-1];
         var zc = layer.getCorners();
         var corners = [
-          { lat: zc[2].lat, lon: zc[2].lng },
           { lat: zc[0].lat, lon: zc[0].lng },
           { lat: zc[1].lat, lon: zc[1].lng },
-          { lat: zc[3].lat, lon: zc[3].lng }
+          { lat: zc[3].lat, lon: zc[3].lng },
+          { lat: zc[2].lat, lon: zc[2].lng }
         ];
         json.images.push({
           id: this.getLayerId(layer),
@@ -820,6 +820,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
       }
     }, this);
 
+    json.images = json.images.reverse();
     json.avg_cm_per_pixel = this._getAvgCmPerPixel(json.images);
 
     return json;
@@ -853,7 +854,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
       // repeatedly fetch the status.json
       updateInterval = setInterval(function intervalUpdater() {
-        $.ajax(statusUrl, {
+        $.ajax(statusUrl + "?" + Date.now(), { // bust cache with timestamp
           type: "GET",
           crossDomain: true
         }).done(function(data) {
