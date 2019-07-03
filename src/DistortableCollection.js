@@ -353,10 +353,14 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     // this may be overridden to update the UI to show export progress or completion
     function _defaultUpdater(data) {
+      data = JSON.parse(data);
       // optimization: fetch status directly from google storage:
-      if (data.hasOwnProperty('status_url') && statusUrl !== data.status_url && data.status_url.match('.json')) { statusUrl = data.status_url; }      if (data.status === "complete") {
+      if (statusUrl !== data.status_url && data.status_url.match('.json')) { statusUrl = data.status_url; }
+      if (data.status === "complete") {
         clearInterval(updateInterval);
-        alert("Export complete. " + data.jpg);
+      }
+      if (data.status === 'complete' && data.jpg !== null) {
+        alert("Export succeeded. http://export.mapknitter.org/" + data.jpg);
       }
       // TODO: update to clearInterval when status == "failed" if we update that in this file:
       // https://github.com/publiclab/mapknitter-exporter/blob/main/lib/mapknitterExporter.rb
