@@ -170,7 +170,7 @@ describe("L.DistortableCollection", function () {
         });
     });
 
-    describe('#_removeFromGroup', function () {
+    describe('#_removeGroup', function () {
         
         beforeEach(function() { // multi-selects the images to add them to the feature group
             chai.simulateCommandMousedown(overlay.getElement());
@@ -181,7 +181,7 @@ describe("L.DistortableCollection", function () {
             var layers = imgGroup.getLayers();
             expect(layers).to.include.members([overlay, overlay2, overlay3]);
 
-            imgGroup._removeFromGroup();
+            imgGroup._removeGroup();
             
             expect(layers).to.not.have.members([overlay, overlay3]);
             expect(layers).to.include.members([overlay2]);
@@ -194,7 +194,7 @@ describe("L.DistortableCollection", function () {
 
             expect(map._layers).to.include.all.keys(id, id2, id3);
 
-            imgGroup._removeFromGroup();
+            imgGroup._removeGroup();
 
             expect(map._layers).to.not.have.all.keys(id, id3);
             expect(map._layers).to.include.all.keys(id2);

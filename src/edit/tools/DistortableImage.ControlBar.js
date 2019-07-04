@@ -37,7 +37,7 @@ L.distortableImage = L.DistortableImage;
     addHooks: function() {
       var group = this._overlay;
 
-      group._removeFromGroup();
+      group._removeGroup();
     }
   });
 

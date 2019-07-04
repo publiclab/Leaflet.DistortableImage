@@ -187,7 +187,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
       this._deselectAll(e);
     }
     if (e.key === "Backspace") {
-      this._removeFromGroup(e);
+      this._removeGroup(e);
     }
     if (e.key === "l") {
       this._lockGroup(e);
@@ -277,7 +277,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
   },
 
-  _removeFromGroup: function(event) {
+  _removeGroup: function(event) {
     var layersToRemove = this._toRemove(),
       n = layersToRemove.length;
 
