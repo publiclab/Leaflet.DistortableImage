@@ -1622,7 +1622,7 @@ L.distortableImage = L.DistortableImage;
     }
   });
 
-var lockGroup = L.EditAction.extend({
+var Locks = L.EditAction.extend({
   initialize: function (map, overlay, options) {
     var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#lock"></use>';
 
@@ -1642,7 +1642,7 @@ var lockGroup = L.EditAction.extend({
   }
 });
 
-var unlockGroup = L.EditAction.extend({
+var Unlocks = L.EditAction.extend({
   initialize: function (map, overlay, options) {
     var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#unlock"></use>';
 
@@ -1667,8 +1667,8 @@ L.DistortableImage.ControlBar = L.Toolbar2.Control.extend({
     actions: [
       Exports,
       Deletes,
-      lockGroup,
-      unlockGroup
+      Locks,
+      Unlocks
     ]
   },
 });
@@ -1678,7 +1678,7 @@ L.distortableImage.controlBar = function (options) {
 };
 
 L.DistortableCollection.addInitHook(function () {
-  this.ACTIONS = [Exports, Deletes, lockGroup, unlockGroup];
+  this.ACTIONS = [Exports, Deletes, Locks, Unlocks];
 
   if (this.options.actions) {
     this.editActions = this.options.actions;
