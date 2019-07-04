@@ -261,4 +261,56 @@ describe("L.DistortableCollection", function () {
             expect(imgGroup._removeToolbar()).to.be.false;
         });
     });
+
+    describe('#_lockGroup', function() {
+
+        beforeEach(function () {
+            chai.simulateCommandMousedown(overlay.getElement());
+            chai.simulateCommandMousedown(overlay3.getElement());
+            
+            imgGroup._lockGroup();
+        });
+
+        it('it only puts the multi-selected images in lock mode', function () {
+            expect(overlay.editing._mode).to.equal('lock');
+            expect(overlay3.editing._mode).to.equal('lock');
+
+            expect(overlay2.editing._mode).to.not.equal('lock');
+        });
+
+        it('does not toggle lock mode', function () {
+            imgGroup._lockGroup();
+            expect(overlay.editing._mode).to.equal('lock');
+        });
+
+        it('prevents images in that group from being dragged', function () {
+            expect(overlay.editing.dragging).to.be.undefined;
+            expect(overlay3.editing.dragging).to.be.undefined;
+
+            expect(overlay2.editing.dragging).to.be.an.instanceOf(L.Draggable);
+        });
+    });
+
+    describe('#_unlockGroup', function() {
+
+        beforeEach(function () {
+            chai.simulateCommandMousedown(overlay.getElement());
+            chai.simulateCommandMousedown(overlay2.getElement());
+            chai.simulateCommandMousedown(overlay3.getElement());
+
+            imgGroup._lockGroup();
+            expect(overlay.editing._mode).to.equal('lock');
+        });
+
+        it('it removes the multi-selected images from lock mode', function () {
+            imgGroup._unlockGroup();
+            expect(overlay.editing._mode).to.not.equal('lock');
+        });
+
+        it('does not toggle lock mode', function () {
+            imgGroup._unlockGroup();
+            imgGroup._unlockGroup();
+            expect(overlay.editing._mode).to.not.equal('lock');
+        });
+    });
 });
