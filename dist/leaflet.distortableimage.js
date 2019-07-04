@@ -671,6 +671,12 @@ L.DistortableCollection = L.FeatureGroup.extend({
     if (e.key === "Backspace") {
       this._removeFromGroup(e);
     }
+    if (e.key === "l") {
+      this._lockGroup(e);
+    }
+    if (e.key === "u") {
+      this._unlockGroup(e);
+    }
   },
 
   _dragStartMultiple: function(event) {
