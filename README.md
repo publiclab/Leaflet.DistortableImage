@@ -383,9 +383,9 @@ Defaults:
 
     - Permanently deletes groups of selected images from the map.
 
-- **Locks**
+- **Locks** (<kbd>l</kbd>)
 
-- **Unlocks**
+- **Unlocks** (<kbd>u</kbd>)
 
 ## Quick API Reference
 
