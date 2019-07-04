@@ -523,6 +523,11 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this._addToolbar();
   },
+
+  _refreshPopupIcons: function() {
+    this._addToolbar();
+    this._removeToolbar();
+  },
   
   _updateToolbarPos: function() {
     var overlay = this._overlay,
