@@ -292,7 +292,7 @@ Options available to pass during `L.DistortableCollection` initialization:
 
 ### ✤ Actions
 
-- `actions` (*optional*, default: [Exports, Deletes], value: *array*)
+- `actions` (*optional*, default: [Exports, Deletes, Locks, Unlocks], value: *array*)
 
 Overrwrite the default toolbar actions for an image collection's `L.Control` toolbar. Reference the available values [here](#Multiple-Image-Interface).
 
@@ -382,6 +382,10 @@ Defaults:
 -   **Deletes (<kbd>delete</kbd>, <kbd>backscpace</kbd>)**
 
     - Permanently deletes groups of selected images from the map.
+
+- **Locks** (<kbd>l</kbd>)
+
+- **Unlocks** (<kbd>u</kbd>)
 
 ## Quick API Reference
 

@@ -391,18 +391,26 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._overlay.bringToBack();
   },
 
+  _unlock: function() {
+    this._mode = "distort";
+    this._enableDragging();
+  },
+
+  _lock: function() {
+    this._mode = "lock";
+    if (this.dragging) { this.dragging.disable(); }
+    delete this.dragging;
+  },
+
   _toggleLock: function() {
     var map = this._overlay._map;
 
     map.removeLayer(this._handles[this._mode]);
     /* Switch mode. */
     if (this._mode === "lock") {
-      this._mode = "distort";
-      this._enableDragging();
+      this._unlock();
     } else {
-      this._mode = "lock";
-      if (this.dragging) { this.dragging.disable(); }
-      delete this.dragging;
+      this._lock();
     }
 
     map.addLayer(this._handles[this._mode]);
@@ -514,6 +522,11 @@ L.DistortableImage.Edit = L.Handler.extend({
     } 
 
     this._addToolbar();
+  },
+
+  _refreshPopupIcons: function() {
+    this._addToolbar();
+    this._removeToolbar();
   },
   
   _updateToolbarPos: function() {

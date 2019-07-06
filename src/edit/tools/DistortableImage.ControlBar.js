@@ -37,15 +37,57 @@ L.distortableImage = L.DistortableImage;
     addHooks: function() {
       var group = this._overlay;
 
-      group._removeFromGroup();
+      group._removeGroup();
     }
   });
+
+var Locks = L.EditAction.extend({
+  initialize: function (map, overlay, options) {
+    var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#lock"></use>';
+
+    options = options || {};
+    options.toolbarIcon = {
+      html: '<svg>' + href + '</svg>',
+      tooltip: 'Lock Images'
+    };
+
+    L.EditAction.prototype.initialize.call(this, map, overlay, options);
+  },
+
+  addHooks: function () {
+    var group = this._overlay;
+
+    group._lockGroup();
+  }
+});
+
+var Unlocks = L.EditAction.extend({
+  initialize: function (map, overlay, options) {
+    var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#unlock"></use>';
+
+    options = options || {};
+    options.toolbarIcon = {
+      html: '<svg>' + href + '</svg>',
+      tooltip: 'Unlock Images'
+    };
+
+    L.EditAction.prototype.initialize.call(this, map, overlay, options);
+  },
+
+  addHooks: function () {
+    var group = this._overlay;
+
+    group._unlockGroup();
+  }
+});
 
 L.DistortableImage.ControlBar = L.Toolbar2.Control.extend({
   options: {
     actions: [
       Exports,
-      Deletes
+      Deletes,
+      Locks,
+      Unlocks
     ]
   },
 });
@@ -55,7 +97,7 @@ L.distortableImage.controlBar = function (options) {
 };
 
 L.DistortableCollection.addInitHook(function () {
-  this.ACTIONS = [Exports, Deletes];
+  this.ACTIONS = [Exports, Deletes, Locks, Unlocks];
 
   if (this.options.actions) {
     this.editActions = this.options.actions;

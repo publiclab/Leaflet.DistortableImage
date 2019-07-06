@@ -160,17 +160,17 @@ describe("L.DistortableCollection", function () {
             expect(L.DomUtil.getClass(img2)).to.include("selected");
         });
 
-        it("It should not allow a locked image to be part of multiple image selection", function() {
+        it("It should allow a locked image to be part of multiple image selection", function() {
             var img = overlay.getElement();
 
             overlay.editing._toggleLock();
             chai.simulateCommandMousedown(img);
 
-            expect(L.DomUtil.getClass(img)).to.not.include("selected");
+            expect(L.DomUtil.getClass(img)).to.include("selected");
         });
     });
 
-    describe('#_removeFromGroup', function () {
+    describe('#_removeGroup', function () {
         
         beforeEach(function() { // multi-selects the images to add them to the feature group
             chai.simulateCommandMousedown(overlay.getElement());
@@ -181,7 +181,7 @@ describe("L.DistortableCollection", function () {
             var layers = imgGroup.getLayers();
             expect(layers).to.include.members([overlay, overlay2, overlay3]);
 
-            imgGroup._removeFromGroup();
+            imgGroup._removeGroup();
             
             expect(layers).to.not.have.members([overlay, overlay3]);
             expect(layers).to.include.members([overlay2]);
@@ -194,7 +194,7 @@ describe("L.DistortableCollection", function () {
 
             expect(map._layers).to.include.all.keys(id, id2, id3);
 
-            imgGroup._removeFromGroup();
+            imgGroup._removeGroup();
 
             expect(map._layers).to.not.have.all.keys(id, id3);
             expect(map._layers).to.include.all.keys(id2);
@@ -259,6 +259,58 @@ describe("L.DistortableCollection", function () {
         it('it returns false if there was no control toolbar to remove', function () {
             expect(imgGroup._removeToolbar()).to.not.be.false;
             expect(imgGroup._removeToolbar()).to.be.false;
+        });
+    });
+
+    describe('#_lockGroup', function() {
+
+        beforeEach(function () {
+            chai.simulateCommandMousedown(overlay.getElement());
+            chai.simulateCommandMousedown(overlay3.getElement());
+            
+            imgGroup._lockGroup();
+        });
+
+        it('it only puts the multi-selected images in lock mode', function () {
+            expect(overlay.editing._mode).to.equal('lock');
+            expect(overlay3.editing._mode).to.equal('lock');
+
+            expect(overlay2.editing._mode).to.not.equal('lock');
+        });
+
+        it('does not toggle lock mode', function () {
+            imgGroup._lockGroup();
+            expect(overlay.editing._mode).to.equal('lock');
+        });
+
+        it('prevents images in that group from being dragged', function () {
+            expect(overlay.editing.dragging).to.be.undefined;
+            expect(overlay3.editing.dragging).to.be.undefined;
+
+            expect(overlay2.editing.dragging).to.be.an.instanceOf(L.Draggable);
+        });
+    });
+
+    describe('#_unlockGroup', function() {
+
+        beforeEach(function () {
+            chai.simulateCommandMousedown(overlay.getElement());
+            chai.simulateCommandMousedown(overlay2.getElement());
+            chai.simulateCommandMousedown(overlay3.getElement());
+
+            imgGroup._lockGroup();
+            expect(overlay.editing._mode).to.equal('lock');
+        });
+
+        it('it removes the multi-selected images from lock mode', function () {
+            imgGroup._unlockGroup();
+            expect(overlay.editing._mode).to.not.equal('lock');
+        });
+
+        it('does not toggle lock mode', function () {
+            imgGroup._unlockGroup();
+            imgGroup._unlockGroup();
+            expect(overlay.editing._mode).to.not.equal('lock');
         });
     });
 });

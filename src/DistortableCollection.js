@@ -65,7 +65,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
       if (!this.toolbar) {
         this.toolbar = L.distortableImage.controlBar({
           actions: this.editActions,
-          position: "topleft"
+          position: 'topleft'
         }).addTo(this._map, this);
         this.fire("toolbar:created");
       }
@@ -90,7 +90,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   addTool: function(value) {
-    if (value.baseClass === "leaflet-toolbar-icon" && !this.hasTool(value)) {
+    if (value.baseClass === 'leaflet-toolbar-icon' && !this.hasTool(value)) {
       this._removeToolbar();
       this.editActions.push(value);
       this._addToolbar();
@@ -129,7 +129,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   isSelected: function (overlay) {
-    return L.DomUtil.hasClass(overlay.getElement(), "selected");
+    return L.DomUtil.hasClass(overlay.getElement(), 'selected');
   },
 
   anySelected: function() {
@@ -139,10 +139,8 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   _toggleMultiSelect: function(event, edit) {
-    if (edit._mode === "lock") { return; }
-
     if (event.metaKey || event.ctrlKey) {
-      L.DomUtil.toggleClass(event.target, "selected");
+      L.DomUtil.toggleClass(event.target, 'selected');
     }
 
     if (this.anySelected()) {
@@ -174,9 +172,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
       var edit = layer.editing;
 
       for (i = 0; i < 4; i++) {
-        if (box.contains(layer.getCorner(i)) && edit._mode !== "lock") {
+        if (box.contains(layer.getCorner(i))) {
           edit._deselect();
-          L.DomUtil.addClass(layer.getElement(), "selected");
+          L.DomUtil.addClass(layer.getElement(), 'selected');
           if (!this.toolbar) { this._addToolbar(); }
           break;
         }
@@ -185,11 +183,17 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   _onKeyDown: function(e) {
-    if (e.key === "Escape") {
+    if (e.key === 'Escape') {
       this._deselectAll(e);
     }
-    if (e.key === "Backspace") {
-      this._removeFromGroup(e);
+    if (e.key === 'Backspace') {
+      this._removeGroup(e);
+    }
+    if (e.key === 'l') {
+      this._lockGroup(e);
+    }
+    if (e.key === 'u') {
+      this._unlockGroup(e);
     }
   },
 
@@ -232,7 +236,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
   _deselectAll: function(event) {
     this.eachLayer(function(layer) {
       var edit = layer.editing;
-      L.DomUtil.removeClass(layer.getElement(), "selected");
+      L.DomUtil.removeClass(layer.getElement(), 'selected');
       edit._deselect();
     });
 
@@ -241,7 +245,39 @@ L.DistortableCollection = L.FeatureGroup.extend({
     L.DomEvent.stopPropagation(event);
   },
 
-  _removeFromGroup: function(event) {
+  _unlockGroup: function() {
+    var map = this._map;
+
+    this.eachLayer(function (layer) {
+      if (this.isSelected(layer)) {
+        var edit = layer.editing;
+        if (edit._mode === 'lock') { 
+          map.removeLayer(edit._handles[edit._mode]); 
+          edit._unlock();
+          edit._refreshPopupIcons();
+        }
+      }
+    }, this);
+  },
+
+  _lockGroup: function() {
+    var map = this._map;
+
+    this.eachLayer(function (layer) {
+      if (this.isSelected(layer) ) {
+        var edit = layer.editing;
+        if (edit._mode !== 'lock') {
+          edit._lock();
+          map.addLayer(edit._handles[edit._mode]);
+          edit._refreshPopupIcons();
+          // map.addLayer also deselects the image, so we reselect here
+          L.DomUtil.addClass(layer.getElement(), 'selected');
+        }
+      }
+    }, this);
+  },
+
+  _removeGroup: function(event) {
     var layersToRemove = this._toRemove(),
       n = layersToRemove.length;
 
@@ -264,7 +300,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     return layerArr.filter(function(layer) {
       var edit = layer.editing;
-      return (this.isSelected(layer) && edit._mode !== "lock");
+      return (this.isSelected(layer) && edit._mode !== 'lock');
     }, this);
   },
 
@@ -275,7 +311,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     this.eachLayer(function(layer) {
       if (
         layer !== overlay &&
-        layer.editing._mode !== "lock" &&
+        layer.editing._mode !== 'lock' &&
         this.isSelected(layer)
       ) {
         layer._cpd = {};
@@ -300,7 +336,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     layersToMove.forEach(function(layer) {
       layer._setCornersFromPoints(layer._cpd);
-      layer.fire("update");
+      layer.fire('update');
     }, this);
   },
 
@@ -353,10 +389,14 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     // this may be overridden to update the UI to show export progress or completion
     function _defaultUpdater(data) {
+      data = JSON.parse(data);
       // optimization: fetch status directly from google storage:
-      if (data.hasOwnProperty('status_url') && statusUrl !== data.status_url && data.status_url.match('.json')) { statusUrl = data.status_url; }      if (data.status === "complete") {
+      if (statusUrl !== data.status_url && data.status_url.match('.json')) { statusUrl = data.status_url; }
+      if (data.status === "complete") {
         clearInterval(updateInterval);
-        alert("Export complete. " + data.jpg);
+      }
+      if (data.status === 'complete' && data.jpg !== null) {
+        alert("Export succeeded. http://export.mapknitter.org/" + data.jpg);
       }
       // TODO: update to clearInterval when status == "failed" if we update that in this file:
       // https://github.com/publiclab/mapknitter-exporter/blob/main/lib/mapknitterExporter.rb
