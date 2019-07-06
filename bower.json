@@ -1,0 +1,43 @@
+{
+  "name": "Leaflet.DistortableImage",
+  "description": "Leaflet plugin enabling image overlays to be distorted, stretched, and warped (built for Public Lab's MapKnitter: http://publiclab.org).",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/publiclab/Leaflet.DistortableImage.git"
+  },
+  "main": "dist/leaflet.distortableimage.js",
+  "ignore": [
+    "node_modules",
+    "src",
+    "test",
+    "Gruntfile.js"
+  ],
+  "keywords": [
+    "leaflet",
+    "mapknitter",
+    "rubbersheeting",
+    "maps"
+  ],
+  "author": "Anish Shah, Jeff Warren, Justin Manley",
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "^1.10.0",
+    "grunt": "^0.4.5",
+    "grunt-contrib-concat": "^0.5.0",
+    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-karma": "^0.9.0",
+    "karma": "git+https://github.com/karma-runner/karma#^0.12.28",
+    "karma-coverage": "git+https://github.com/karma-runner/karma-coverage#^0.2.7",
+    "karma-mocha": "git+https://github.com/karma-runner/karma-mocha#^0.1.10",
+    "karma-mocha-reporter": "git+https://github.com/litixsoft/karma-mocha-reporter#^0.3.1",
+    "karma-phantomjs-launcher": "git+https://github.com/karma-runner/karma-phantomjs-launcher#^0.1.4",
+    "matchdep": "^0.3.0",
+    "mocha": "^2.0.1",
+    "sinon": "^1.12.2"
+  },
+  "dependencies": {
+    "jquery": "^2.1.3",
+    "leaflet": "^1.0.0"
+  }
+}

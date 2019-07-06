@@ -7,10 +7,10 @@ describe("L.RotateHandle", function() {
 		map = L.map(L.DomUtil.create('div', '', document.body)).setView([41.7896,-87.5996], 15);
 		distortable = L.distortableImageOverlay('/examples/example.jpg', {
 			corners: [
-				new L.LatLng(41.7934, -87.6052),
-				new L.LatLng(41.7934, -87.5852),
-				new L.LatLng(41.7834, -87.5852),
-				new L.LatLng(41.7834, -87.6052)
+				L.latLng(41.7934, -87.6052),
+				L.latLng(41.7934, -87.5852),
+				L.latLng(41.7834, -87.5852),
+				L.latLng(41.7834, -87.6052)
 			]
 		}).addTo(map);
 
@@ -22,8 +22,8 @@ describe("L.RotateHandle", function() {
 
 	describe("_calculateRotation", function() {
 		it("Should return 0 when given the same latlng twice.", function() {
-			var latlng = distortable._corners[0],
-				angle = rotateHandle._calculateAngle(latlng, latlng);
+			var latlng = distortable.getCorner(0),
+				angle = rotateHandle.calculateAngleDelta(latlng, latlng);
 
 			expect(angle).to.equal(0);
 		});
