@@ -1,3 +1,9 @@
+svg {
+  width: 18px;
+  height: 18px;
+  vertical-align: middle;
+}
+
 #imgcontainer {
   position:relative;
   width: 100%;
@@ -82,10 +88,5 @@ kbd {
   -webkit-box-shadow: 0 1px 0px rgba(0, 0, 0, 0.2), 0 0 0 2px #ffffff inset;
   box-shadow: 0 1px 1px rgba(0, 0, 0, .2), 0 2px 0 0 rgba(255, 255, 255, .7) inset;
   text-shadow: 0 0.5px 0 #fff;
-}
-
-span {
-  margin-left: 2px;
-  letter-spacing: 1.2px;
 }
 

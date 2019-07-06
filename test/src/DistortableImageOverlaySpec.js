@@ -16,10 +16,10 @@ describe("L.DistortableImageOverlay", function() {
 
 		distortable = L.distortableImageOverlay('/examples/example.png', {
 			corners: [
-				new L.LatLng(41.7934, -87.6052),
-				new L.LatLng(41.7934, -87.5852),
-				new L.LatLng(41.7834, -87.5852),
-				new L.LatLng(41.7834, -87.6052)
+				L.latLng(41.7934, -87.6052),
+				L.latLng(41.7934, -87.5852),
+			    L.latLng(41.7834, -87.6052),
+				L.latLng(41.7834, -87.5852)
 			]
 		});
 	});
@@ -37,14 +37,14 @@ describe("L.DistortableImageOverlay", function() {
 		});
 	});
 
-	describe("#_getCenter", function() {
+	describe("#getCenter", function() {
 		it("Should return the center when the outline of the image is a rectangle.", function(done) {
 			distortable.addTo(map);
 			
 			L.DomEvent.on(distortable._image, 'load', function() {
 				var center = distortable.getCenter();
 
-				expect(center).to.be.closeToLatLng(new L.LatLng(41.7884, -87.5952));
+				expect(center).to.be.closeToLatLng(L.latLng(41.7884, -87.5952));
 				done();
 			});
 		});
