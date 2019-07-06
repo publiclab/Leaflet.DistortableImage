@@ -502,7 +502,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
       boxzoomend: this._addSelections 
     }, this);
 
-    this._lastInitialSelected();
+    // this._lastInitialSelected();
   },
 
   onRemove: function() {
@@ -594,21 +594,21 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
   },
 
-  _lastInitialSelected: function() {
-    var layerArr = this.getLayers();
+  // _lastInitialSelected: function() {
+  //   var layerArr = this.getLayers();
 
-    var initialSelected = layerArr.filter(function(layer) {
-      return layer.options.selected;
-    });
+  //   var initialSelected = layerArr.filter(function(layer) {
+  //     return layer.options.selected;
+  //   });
     
-    if (initialSelected.length !== 0) {
-      this.eachLayer(function(layer) {
-        if (!initialSelected[-1]) {
-          layer._deselect();
-        }
-      });
-    }
-  },
+  //   if (initialSelected.length !== 0) {
+  //     this.eachLayer(function(layer) {
+  //       if (!initialSelected[-1]) {
+  //         layer._deselect();
+  //       }
+  //     });
+  //   }
+  // },
 
   isSelected: function (overlay) {
     return L.DomUtil.hasClass(overlay.getElement(), 'selected');
