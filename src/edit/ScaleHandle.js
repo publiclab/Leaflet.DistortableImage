@@ -10,7 +10,7 @@ L.ScaleHandle = L.EditHandle.extend({
 
 	_onHandleDrag: function() {
 		var overlay = this._handled,
-			formerLatLng = this._handled._corners[this._corner],
+			formerLatLng = overlay.getCorner(this._corner),
 			newLatLng = this.getLatLng(),
 
 			scale = this._calculateScalingFactor(formerLatLng, newLatLng);
@@ -18,13 +18,10 @@ L.ScaleHandle = L.EditHandle.extend({
 		overlay.editing._scaleBy(scale);
 
 		overlay.fire('update');
-
-		this._handled.editing._showToolbar();
+		overlay.editing._updateToolbarPos();
 	},
 
 	updateHandle: function() {
-		this.setLatLng(this._handled._corners[this._corner]);
+		this.setLatLng(this._handled.getCorner(this._corner));
 	},
-
-
 });
