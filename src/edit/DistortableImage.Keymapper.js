@@ -9,7 +9,7 @@ L.DistortableImage.Keymapper = L.Control.extend({
     onAdd: function() {
         var el_wrapper = L.DomUtil.create("div", "l-container");
         el_wrapper.innerHTML =
-          "<table><tbody>" +
+          "<table class='ldi'><tbody>" +
             "<tr><th>Keymappings</th></tr>" +
             "<tr><td><kbd>t</kbd>: <span>Transparency</span></td></tr>" +
             "<tr><td><kbd>o</kbd>: <span>Outline</span></td></tr>" +
