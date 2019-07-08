@@ -523,22 +523,31 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var layer = e.layer; 
     
     layer.editing.enable();
-    L.DomEvent.on(layer._image, "mousedown", this._deselectOthers, this);
+
     L.DomEvent.on(layer, {
       dragstart: this._dragStartMultiple, 
       drag: this._dragMultiple
     }, this);
- 
+
+    L.DomEvent.on(layer._image, {
+      mousedown: this._deselectOthers,
+      contextmenu: this._longPressMultiSelect  /* Enable longpress for multi select for touch devices. */
+    }, this);
   },
 
   _turnOffEditing: function(e) {
     var layer = e.layer; 
 
     layer.editing.disable();
-    L.DomEvent.off(layer._image, "mousedown", this._deselectOthers, this);
+
     L.DomEvent.off(layer, {
       dragstart: this._dragStartMultiple,
       drag: this._dragMultiple
+    }, this);
+
+    L.DomEvent.off(layer._image, {
+      mousedown: this._deselectOthers,
+      contextmenu: this._longPressMultiSelect
     }, this);
   },
 
@@ -608,6 +617,14 @@ L.DistortableCollection = L.FeatureGroup.extend({
         }
       });
     }
+  },
+
+  _longPressMultiSelect: function(e) {
+    var image = e.target;
+
+     e.preventDefault();
+     L.DomUtil.toggleClass(image, "selected");
+     this._addToolbar();
   },
 
   isSelected: function (overlay) {
@@ -1767,12 +1784,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     L.DomEvent.on(map, "click", this._deselect, this);
     L.DomEvent.on(overlay._image, "click", this._select, this);
 
-     /* Enable longpress. */
-    L.DomEvent.on(overlay._image, 'contextmenu', function (e) { 
-      e.preventDefault();
-      if (this._mode === "lock") { this._toggleLock(); }
-    }, this);
-
     /* Enable hotkeys. */
     L.DomEvent.on(window, "keydown", this._onKeyDown, this);
   },
@@ -1793,12 +1804,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (this.editing) { this.editing.disable(); }
 
     map.removeLayer(this._handles[this._mode]);
-
-     /* Disable longpress. */
-    L.DomEvent.off(overlay._image, 'contextmenu', function (e) { 
-      e.preventDefault();
-      if (this._mode === "lock") { this._toggleLock(); }
-    }, this);
 
     /* Disable hotkeys. */
     L.DomEvent.off(window, "keydown", this._onKeyDown, this);
