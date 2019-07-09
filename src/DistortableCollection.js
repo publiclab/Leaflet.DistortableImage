@@ -19,8 +19,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
       click: this._deselectAll, 
       boxzoomend: this._addSelections 
     }, this);
-
-    this._lastInitialSelected();
   },
 
   onRemove: function() {
@@ -119,22 +117,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
         return false;
       }
     }, this);
-  },
-
-  _lastInitialSelected: function() {
-    var layerArr = this.getLayers();
-
-    var initialSelected = layerArr.filter(function(layer) {
-      return layer.options.selected;
-    });
-    
-    if (initialSelected.length !== 0) {
-      this.eachLayer(function(layer) {
-        if (!initialSelected[-1]) {
-          layer._deselect();
-        }
-      });
-    }
   },
 
   _longPressMultiSelect: function(e) {

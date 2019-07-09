@@ -100,7 +100,7 @@ For example, to overrwrite the toolbar to only include the `ToggleTransparency` 
 
 ``` JS
 img = L.distortableImageOverlay(
-  'example.png', {
+*   'example.png', {
     // 'corners' is the only required option for this class
     // and is in NW, NE, SW, SE order
     corners: [
@@ -149,7 +149,7 @@ By default, your image will initially appear on the screen as "unselected", mean
 
 Some developers prefer that an image initially appears as "selected" instead of "unselected". In this case, we provide an option to pass `selected: true`.
 
-Note: when working with the multi image interface, the collection group will ensure only the last overlay you pass `selected` to will appear initially selected.
+Note: when working with the multi image interface, only the last overlay you pass `selected: true` to will appear with editing handles _and_ a toolbar.
 
 ### Mode
 
