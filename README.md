@@ -309,11 +309,16 @@ To add / remove a tool from the toolbar at runtime, we have also added the metho
 ### UI and functionalities 
 Currently it supports multiple image selection and translations, and WIP we are working on porting all editing tools to work for it, such as transparency, etc. Image distortions still use the single-image interface.
 
-  - Multi-selection works with <kbd>cmd</kbd> + `click` to toggle an individual image's inclusion in this interface.
-  - Or <kbd>shift</kbd> + `drag` to use our `BoxSelector` handler to select multiple at once. 
+**How to multi-select:**
+  1. Multi-selection works with <kbd>cmd</kbd> + `click` to toggle an individual image's inclusion in this interface.
+  2. Or <kbd>shift</kbd> + `drag` to use our `BoxSelector` handler to select multiple at once.
+  3. Or for touch devices, `touch` and `hold` (aka `longpress`). 
+
+  **How to un-multi-select:**
   - A single toolbar instance (using `L.control`) renders the set of tools available to use on collections of images.
   - In order to return to the single-image interface, where each `L.popup` toolbar only applies actions on the image it's attached to, you must toggle *all* images out of multi-select or...
   - ...Click on the map or hit the <kbd>esc</kbd> key to quickly deselect all images.
+  - For the aforementioned 3 mutli-select methods, the `BoxSelector` method is the only one that doesn't also toggle _out_ of multi-select mode. 
 
 <hr>
 
