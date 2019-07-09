@@ -2462,7 +2462,6 @@ L.Map.BoxSelector = L.Map.BoxZoom.extend({
       contextmenu: L.DomEvent.stop,
       mousemove: this._onMouseMove,
       mouseup: this._onMouseUp,
-      keydown: this._onKeyDown
     }, this);
   },
 
@@ -2500,7 +2499,6 @@ L.Map.BoxSelector = L.Map.BoxZoom.extend({
       contextmenu: L.DomEvent.stop,
       mousemove: this._onMouseMove,
       mouseup: this._onMouseUp,
-      keydown: this._onKeyDown
     }, this);
   },
 
