@@ -2305,8 +2305,8 @@ L.DistortableImage.Edit = L.Handler.extend({
     // make a new image
     var downloadable = new Image();
 
-    downloadable.id = downloadable.id || "tempId12345";
-    $("body").append(downloadable);
+    downloadable.id = downloadable.id || 'tempId12345';
+    $('body').append(downloadable);
 
     downloadable.onload = function onLoadDownloadableImage() {
       var height = downloadable.height,
@@ -2339,7 +2339,7 @@ L.DistortableImage.Edit = L.Handler.extend({
         $(downloadable).remove();
       };
 
-      if (window && window.hasOwnProperty("warpWebGl")) {
+      if (window && window.hasOwnProperty('warpWebGl')) {
         warpWebGl(
           downloadable.id,
           [0, 0, width, 0, width, height, 0, height],
