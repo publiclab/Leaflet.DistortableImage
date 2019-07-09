@@ -2443,9 +2443,7 @@ L.Map.BoxSelector = L.Map.BoxZoom.extend({
   },
 
   _onMouseDown: function(e) {
-    if (!e.shiftKey || (e.which !== 1 && e.button !== 1)) {
-      return false;
-    }
+    if (!e.shiftKey || (e.which !== 1 && e.button !== 1)) { return false; }
 
     // Clear the deferred resetState if it hasn't executed yet, otherwise it
     // will interrupt the interaction and orphan a box element in the container.
@@ -2500,22 +2498,15 @@ L.Map.BoxSelector = L.Map.BoxZoom.extend({
   },
 
   _onMouseUp: function(e) {
-    if (e.which !== 1 && e.button !== 1) {
-      return;
-    }
+    if (e.which !== 1 && e.button !== 1) { return; }
 
     this._finish();
 
-    if (!this._moved) {
-      return;
-    }
+    if (!this._moved) { return; }
     // Postpone to next JS tick so internal click event handling
     // still see it as "moved".
     this._clearDeferredResetState();
-    this._resetStateTimeout = setTimeout(
-      L.Util.bind(this._resetState, this),
-      0
-    );
+    this._resetStateTimeout = setTimeout(L.Util.bind(this._resetState, this), 0);
 
     var bounds = new L.latLngBounds(
       this._map.layerPointToLatLng(this._bounds.getBottomLeft()),
