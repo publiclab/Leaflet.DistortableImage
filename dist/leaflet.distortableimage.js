@@ -623,7 +623,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var image = e.target;
 
      e.preventDefault();
-     L.DomUtil.toggleClass(image, "selected");
+     L.DomUtil.toggleClass(image, 'selected');
      this._addToolbar();
   },
 
@@ -664,19 +664,13 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   _addSelections: function(e) {
-    var box = e.boxZoomBounds,
-      i = 0;
+    var box = e.boxZoomBounds;
 
     this.eachLayer(function(layer) {
-      var edit = layer.editing;
-
-      for (i = 0; i < 4; i++) {
-        if (box.contains(layer.getCorner(i))) {
-          edit._deselect();
-          L.DomUtil.addClass(layer.getElement(), 'selected');
-          if (!this.toolbar) { this._addToolbar(); }
-          break;
-        }
+      var imgBounds = new L.latLngBounds(layer.getCorner(2), layer.getCorner(1));
+      if (box.intersects(imgBounds)) {
+        if (!this.toolbar) { this._addToolbar(); }
+        L.DomUtil.addClass(layer.getElement(), 'selected');
       }
     }, this);
   },
@@ -733,6 +727,10 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   _deselectAll: function(event) {
+    var oe = event.originalEvent;
+    /* prevents image deselection following the 'boxzoomend' event - note 'shift' must not be released until dragging is complete */
+    if (oe && oe.shiftKey) { return; }
+
     this.eachLayer(function(layer) {
       var edit = layer.editing;
       L.DomUtil.removeClass(layer.getElement(), 'selected');
@@ -1717,7 +1715,7 @@ L.DistortableImage = L.DistortableImage || {};
 L.DistortableImage.Edit = L.Handler.extend({
   options: {
     opacity: 0.7,
-    outline: "1px solid red",
+    outline: '1px solid red',
     keymap: {
      'Backspace': '_removeOverlay', // backspace windows / delete mac
      'CapsLock': '_toggleRotate',
@@ -1737,8 +1735,8 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._overlay = overlay;
     this._toggledImage = false;
     /* Interaction modes. TODO - create API for limiting modes similar to toolbar actions API */
-    var modes = ["distort", "lock", "rotate", "scale", "rotateScale"];
-    this._mode = modes[modes.indexOf(overlay.options.mode)] || "distort";
+    var modes = ['distort', 'lock', 'rotate', 'scale', 'rotateScale'];
+    this._mode = modes[modes.indexOf(overlay.options.mode)] || 'distort';
     
     this._selected = this._overlay.options.selected || false;
     this._transparent = false;
@@ -1869,7 +1867,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   addTool: function (value) {
-    if (value.baseClass === "leaflet-toolbar-icon" && !this.hasTool(value)) {
+    if (value.baseClass === 'leaflet-toolbar-icon' && !this.hasTool(value)) {
       this._removeToolbar();
       this.editActions.push(value);
       this._addToolbar();
@@ -2029,13 +2027,13 @@ L.DistortableImage.Edit = L.Handler.extend({
   _toggleRotateScale: function() {
     var map = this._overlay._map;
 
-    if (this._mode === "lock") { return; }
+    if (this._mode === 'lock') { return; }
 
     map.removeLayer(this._handles[this._mode]);
 
     /* Switch mode. */
-    if (this._mode === "rotateScale") { this._mode = "distort"; } 
-    else { this._mode = "rotateScale"; }
+    if (this._mode === 'rotateScale') { this._mode = 'distort'; } 
+    else { this._mode = 'rotateScale'; }
 
     map.addLayer(this._handles[this._mode]);
 
@@ -2045,12 +2043,12 @@ L.DistortableImage.Edit = L.Handler.extend({
   _toggleScale: function() {
 		var map = this._overlay._map;
 
-    if (this._mode === "lock") { return; }
+    if (this._mode === 'lock') { return; }
 
     map.removeLayer(this._handles[this._mode]);
 
-		if (this._mode === "scale") { this._mode = "distort"; }
-		else { this._mode = "scale"; }
+		if (this._mode === 'scale') { this._mode = 'distort'; }
+		else { this._mode = 'scale'; }
 
     map.addLayer(this._handles[this._mode]);
 
@@ -2059,11 +2057,11 @@ L.DistortableImage.Edit = L.Handler.extend({
   _toggleRotate: function() {
 		var map = this._overlay._map;
 
-		if (this._mode === "lock") { return; }
+		if (this._mode === 'lock') { return; }
 
     map.removeLayer(this._handles[this._mode]);
-    if (this._mode === "rotate") { this._mode = "distort"; } 
-		else { this._mode = "rotate"; }
+    if (this._mode === 'rotate') { this._mode = 'distort'; } 
+		else { this._mode = 'rotate'; }
 		
     map.addLayer(this._handles[this._mode]);
   },
@@ -2076,7 +2074,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     opacity = this._transparent ? this.options.opacity : 1;
 
     L.DomUtil.setOpacity(image, opacity);
-    image.setAttribute("opacity", opacity);
+    image.setAttribute('opacity', opacity);
 
     this._showToolbar();
   },
@@ -2087,10 +2085,10 @@ L.DistortableImage.Edit = L.Handler.extend({
       outline;
 
     this._outlined = !this._outlined;
-    outline = this._outlined ? this.options.outline : "none";
+    outline = this._outlined ? this.options.outline : 'none';
 
     L.DomUtil.setOpacity(image, opacity);
-    image.setAttribute("opacity", opacity);
+    image.setAttribute('opacity', opacity);
 
     image.style.outline = outline;
 
@@ -2106,12 +2104,12 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _unlock: function() {
-    this._mode = "distort";
+    this._mode = 'distort';
     this._enableDragging();
   },
 
   _lock: function() {
-    this._mode = "lock";
+    this._mode = 'lock';
     if (this.dragging) { this.dragging.disable(); }
     delete this.dragging;
   },
@@ -2121,7 +2119,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     map.removeLayer(this._handles[this._mode]);
     /* Switch mode. */
-    if (this._mode === "lock") {
+    if (this._mode === 'lock') {
       this._unlock();
     } else {
       this._lock();
@@ -2143,7 +2141,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   _deselect: function() {
     this._selected = false;
     this._removeToolbar();
-    if (this._mode !== "lock") { 
+    if (this._mode !== 'lock') { 
       this._hideMarkers(); 
     }
   },
@@ -2159,7 +2157,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _showMarkers: function() {
-    if (this._mode === "lock") { return; }
+    if (this._mode === 'lock') { return; }
 
     if (this.toolbar && this.toolbar instanceof L.DistortableImage.PopupBar) {
       var currentHandle = this._handles[this._mode];
@@ -2271,7 +2269,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     var overlay = this._overlay,
       eventParents = overlay._eventParents;
 
-    if (this._mode === "lock") { return; }
+    if (this._mode === 'lock') { return; }
 
     var choice = L.DomUtil.confirmDelete();
     if (!choice) { return; }
@@ -2307,8 +2305,8 @@ L.DistortableImage.Edit = L.Handler.extend({
     // make a new image
     var downloadable = new Image();
 
-    downloadable.id = downloadable.id || "tempId12345";
-    $("body").append(downloadable);
+    downloadable.id = downloadable.id || 'tempId12345';
+    $('body').append(downloadable);
 
     downloadable.onload = function onLoadDownloadableImage() {
       var height = downloadable.height,
@@ -2341,7 +2339,7 @@ L.DistortableImage.Edit = L.Handler.extend({
         $(downloadable).remove();
       };
 
-      if (window && window.hasOwnProperty("warpWebGl")) {
+      if (window && window.hasOwnProperty('warpWebGl')) {
         warpWebGl(
           downloadable.id,
           [0, 0, width, 0, width, height, 0, height],
@@ -2402,13 +2400,12 @@ L.DistortableImage.Keymapper = L.Control.extend({
 L.Map.mergeOptions({ boxSelector: true, boxZoom: false });
 
 /** 
- * pretty much all Leaflet 1.5.1 source code. Overriden so that its a selection box with our `L.DistortableCollection` class 
+ * primarily Leaflet 1.5.1 source code. Overriden so that its a selection box with our `L.DistortableCollection` class 
  * instead of a zoom box. 
  * */
 
 L.Map.BoxSelector = L.Map.BoxZoom.extend({
-
-  initialize: function (map) {
+  initialize: function(map) {
     this._map = map;
     this._container = map._container;
     this._pane = map._panes.overlayPane;
@@ -2416,37 +2413,37 @@ L.Map.BoxSelector = L.Map.BoxZoom.extend({
     map.on('unload', this._destroy, this);
   },
 
-  addHooks: function () {
+  addHooks: function() {
     L.DomEvent.on(this._container, 'mousedown', this._onMouseDown, this);
   },
 
-  removeHooks: function () {
+  removeHooks: function() {
     L.DomEvent.off(this._container, 'mousedown', this._onMouseDown, this);
   },
 
-  moved: function () {
+  moved: function() {
     return this._moved;
   },
 
-  _destroy: function () {
+  _destroy: function() {
     L.DomUtil.remove(this._pane);
     delete this._pane;
   },
 
-  _resetState: function () {
+  _resetState: function() {
     this._resetStateTimeout = 0;
     this._moved = false;
   },
 
-  _clearDeferredResetState: function () {
+  _clearDeferredResetState: function() {
     if (this._resetStateTimeout !== 0) {
       clearTimeout(this._resetStateTimeout);
       this._resetStateTimeout = 0;
     }
   },
 
-  _onMouseDown: function (e) {
-    if (!e.shiftKey || ((e.which !== 1) && (e.button !== 1))) { return false; }
+  _onMouseDown: function(e) {
+    if (!e.shiftKey || (e.which !== 1 && e.button !== 1)) { return false; }
 
     // Clear the deferred resetState if it hasn't executed yet, otherwise it
     // will interrupt the interaction and orphan a box element in the container.
@@ -2459,14 +2456,13 @@ L.Map.BoxSelector = L.Map.BoxZoom.extend({
     this._startPoint = this._map.mouseEventToContainerPoint(e);
 
     L.DomEvent.on(document, {
-      contextmenu: L.DomEvent.stop,
-      mousemove: this._onMouseMove,
-      mouseup: this._onMouseUp,
-      keydown: this._onKeyDown
+        contextmenu: L.DomEvent.stop,
+        mousemove: this._onMouseMove,
+        mouseup: this._onMouseUp,
     }, this);
   },
 
-  _onMouseMove: function (e) {
+  _onMouseMove: function(e) {
     if (!this._moved) {
       this._moved = true;
 
@@ -2478,16 +2474,16 @@ L.Map.BoxSelector = L.Map.BoxZoom.extend({
 
     this._point = this._map.mouseEventToContainerPoint(e);
 
-    var bounds = L.bounds(this._point, this._startPoint),
-      size = bounds.getSize();
+    this._bounds = L.bounds(this._startPoint, this._point);
+    var size = this._bounds.getSize();
 
-    L.DomUtil.setPosition(this._box, bounds.min);
+    L.DomUtil.setPosition(this._box, this._bounds.min);
 
     this._box.style.width = size.x + 'px';
     this._box.style.height = size.y + 'px';
   },
 
-  _finish: function () {
+  _finish: function() {
     if (this._moved) {
       L.DomUtil.remove(this._box);
       L.DomUtil.removeClass(this._container, 'leaflet-crosshair');
@@ -2497,15 +2493,14 @@ L.Map.BoxSelector = L.Map.BoxZoom.extend({
     L.DomUtil.enableImageDrag();
 
     L.DomEvent.off(document, {
-      contextmenu: L.DomEvent.stop,
-      mousemove: this._onMouseMove,
-      mouseup: this._onMouseUp,
-      keydown: this._onKeyDown
+        contextmenu: L.DomEvent.stop,
+        mousemove: this._onMouseMove,
+        mouseup: this._onMouseUp,
     }, this);
   },
 
-  _onMouseUp: function (e) {
-    if ((e.which !== 1) && (e.button !== 1)) { return; }
+  _onMouseUp: function(e) {
+    if (e.which !== 1 && e.button !== 1) { return; }
 
     this._finish();
 
@@ -2516,17 +2511,11 @@ L.Map.BoxSelector = L.Map.BoxZoom.extend({
     this._resetStateTimeout = setTimeout(L.Util.bind(this._resetState, this), 0);
 
     var bounds = new L.latLngBounds(
-      this._map.containerPointToLatLng(this._startPoint),
-      this._map.containerPointToLatLng(this._point));
+      this._map.layerPointToLatLng(this._bounds.getBottomLeft()),
+      this._map.layerPointToLatLng(this._bounds.getTopRight())
+    );
 
-    this._map
-      .fire('boxzoomend', { boxZoomBounds: bounds });
-  },
-
-  _onKeyDown: function (e) {
-    if (e.keyCode === 27) {
-      this._finish();
-    }
+    this._map.fire('boxzoomend', { boxZoomBounds: bounds });
   }
 });
 
