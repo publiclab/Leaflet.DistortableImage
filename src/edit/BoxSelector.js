@@ -121,12 +121,6 @@ L.Map.BoxSelector = L.Map.BoxZoom.extend({
     this._map
       .fire('boxzoomend', { boxZoomBounds: bounds });
   },
-
-  _onKeyDown: function (e) {
-    if (e.keyCode === 27) {
-      this._finish();
-    }
-  }
 });
 
 L.Map.addInitHook('addHandler', 'boxSelector', L.Map.BoxSelector);
