@@ -52,6 +52,7 @@ L.Map.BoxSelector = L.Map.BoxZoom.extend({
     this._resetState();
 
     L.DomUtil.disableTextSelection();
+    L.DomUtil.disableImageDrag();
 
     this._startPoint = this._map.mouseEventToContainerPoint(e);
 
@@ -90,6 +91,7 @@ L.Map.BoxSelector = L.Map.BoxZoom.extend({
     }
 
     L.DomUtil.enableTextSelection();
+    L.DomUtil.enableImageDrag();
 
     L.DomEvent.off(document, {
         contextmenu: L.DomEvent.stop,
