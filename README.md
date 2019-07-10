@@ -60,7 +60,7 @@ L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.p
 img = L.distortableImageOverlay(
   'example.png', {
     // 'corners' is the only required option for this class
-    // and is in NW, NE, SW, SE order
+    // and should be in NW, NE, SW, SE order
     corners: [
       L.latLng(51.52,-0.14),
       L.latLng(51.52,-0.10),
@@ -100,7 +100,7 @@ For example, to overrwrite the toolbar to only include the `ToggleTransparency` 
 
 ``` JS
 img = L.distortableImageOverlay(
-*   'example.png', {
+   'example.png', {
     // 'corners' is the only required option for this class
     // and is in NW, NE, SW, SE order
     corners: [
@@ -115,18 +115,18 @@ img = L.distortableImageOverlay(
 
 ### Corners
 
-The corners are stored as `L.latLng` objects on the image, and can be accessed using 
-our `getCorners()` method after the image is instantiated and added to the map. 
-They are provided in `NW, NE, SW, SE` order (in a `Z` shape).
+`corners` (*required*, default: false, value: *array*)
 
-Useful usage example:
+An array of 4 `L.latLng` objects (geographical coordinates) representing the corners of the image.
+
+All projections and API methods assume a `NW, NE, SW, SE` order (a `Z` shape).
+
+After the image is instantiated and added to the map, 
+they are accessible via the `getCorners()` method.
+
+For example:
 
 ```js
-// instantiate, add to map and enable
-img = L.distortableImageOverlay(...);
-img.addTo(map);
-L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
-
 // grab the initial corner positions
 JSON.stringify(img.getCorners())
 => "[{"lat":51.52,"lng":-0.14},{"lat":51.52,"lng":-0.1},{"lat":51.5,"lng":-0.14},{"lat":51.5,"lng":-0.1}]"
@@ -139,7 +139,7 @@ JSON.stringify(img.getCorners())
 
 // note there is an added level of precision after dragging the image for debugging purposes
 ```
-We further added a `getCorner(idx)` method used the same way as its plural counterpart but with an index passed to it.
+You can also access a single corner with the `getCorner(idx)` method, used the same way as its plural counterpart but with an index passed to it.
 
 ### Selected
 
