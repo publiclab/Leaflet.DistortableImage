@@ -1,11 +1,11 @@
 L.EditHandle = L.Marker.extend({
   initialize: function(overlay, corner, options) {
     var markerOptions,
-      latlng = overlay.getCorner(corner);
+        latlng = overlay.getCorner(corner);
 
     L.setOptions(this, options);
 
-    this._handled = overlay;
+    this._overlay = overlay;
     this._corner = corner;
 
     markerOptions = {
@@ -33,7 +33,7 @@ L.EditHandle = L.Marker.extend({
 	},
 	
   _onHandleDragStart: function() {
-		this._handled.fire("editstart");
+		this._overlay.fire("editstart");
   },
 
   _onHandleDragEnd: function() {
@@ -41,8 +41,8 @@ L.EditHandle = L.Marker.extend({
 	},
 
   _fireEdit: function() {
-    this._handled.edited = true;
-    this._handled.fire("edit");
+    this._overlay.edited = true;
+    this._overlay.fire("edit");
   },
 
   _bindListeners: function() {
@@ -54,10 +54,9 @@ L.EditHandle = L.Marker.extend({
       },
       this
     );
-
-    this._handled._map.on("zoomend", this.updateHandle, this);
-
-    this._handled.on("update", this.updateHandle, this);
+    
+    this._overlay.on("update", this.updateHandle, this);
+    this._overlay._map.on("zoomend", this.updateHandle, this);
   },
 
   _unbindListeners: function() {
@@ -69,14 +68,14 @@ L.EditHandle = L.Marker.extend({
       },
       this
     );
-
-    this._handled._map.off("zoomend", this.updateHandle, this);
-    this._handled.off("update", this.updateHandle, this);
+    
+    this._overlay.off("update", this.updateHandle, this);
+    this._overlay._map.off("zoomend", this.updateHandle, this);
   },
 
  /* Takes two latlngs and calculates the scaling difference. */
   _calculateScalingFactor: function(latlngA, latlngB) {
-     var overlay = this._handled,
+     var overlay = this._overlay,
        map = overlay._map,
 
        centerPoint = map.latLngToLayerPoint(overlay.getCenter()),
@@ -98,7 +97,7 @@ L.EditHandle = L.Marker.extend({
 
  /* Takes two latlngs and calculates the angle between them. */
 	calculateAngleDelta: function(latlngA, latlngB) {
-    var overlay = this._handled,
+    var overlay = this._overlay,
       map = overlay._map,
 
 			centerPoint = map.latLngToLayerPoint(overlay.getCenter()),

@@ -1,5 +1,4 @@
 L.DistortableImageOverlay = L.ImageOverlay.extend({
-
   options: {
     alt: "",
     height: 200,

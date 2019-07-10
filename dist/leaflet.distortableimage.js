@@ -187,7 +187,6 @@ L.TrigUtil = {
 
 };
 L.DistortableImageOverlay = L.ImageOverlay.extend({
-
   options: {
     alt: "",
     height: 200,
@@ -1006,11 +1005,11 @@ L.EXIF = function getEXIFdata(img) {
 L.EditHandle = L.Marker.extend({
   initialize: function(overlay, corner, options) {
     var markerOptions,
-      latlng = overlay.getCorner(corner);
+        latlng = overlay.getCorner(corner);
 
     L.setOptions(this, options);
 
-    this._handled = overlay;
+    this._overlay = overlay;
     this._corner = corner;
 
     markerOptions = {
@@ -1038,7 +1037,7 @@ L.EditHandle = L.Marker.extend({
 	},
 	
   _onHandleDragStart: function() {
-		this._handled.fire("editstart");
+		this._overlay.fire("editstart");
   },
 
   _onHandleDragEnd: function() {
@@ -1046,8 +1045,8 @@ L.EditHandle = L.Marker.extend({
 	},
 
   _fireEdit: function() {
-    this._handled.edited = true;
-    this._handled.fire("edit");
+    this._overlay.edited = true;
+    this._overlay.fire("edit");
   },
 
   _bindListeners: function() {
@@ -1059,10 +1058,9 @@ L.EditHandle = L.Marker.extend({
       },
       this
     );
-
-    this._handled._map.on("zoomend", this.updateHandle, this);
-
-    this._handled.on("update", this.updateHandle, this);
+    
+    this._overlay.on("update", this.updateHandle, this);
+    this._overlay._map.on("zoomend", this.updateHandle, this);
   },
 
   _unbindListeners: function() {
@@ -1074,14 +1072,14 @@ L.EditHandle = L.Marker.extend({
       },
       this
     );
-
-    this._handled._map.off("zoomend", this.updateHandle, this);
-    this._handled.off("update", this.updateHandle, this);
+    
+    this._overlay.off("update", this.updateHandle, this);
+    this._overlay._map.off("zoomend", this.updateHandle, this);
   },
 
  /* Takes two latlngs and calculates the scaling difference. */
   _calculateScalingFactor: function(latlngA, latlngB) {
-     var overlay = this._handled,
+     var overlay = this._overlay,
        map = overlay._map,
 
        centerPoint = map.latLngToLayerPoint(overlay.getCenter()),
@@ -1103,7 +1101,7 @@ L.EditHandle = L.Marker.extend({
 
  /* Takes two latlngs and calculates the angle between them. */
 	calculateAngleDelta: function(latlngA, latlngB) {
-    var overlay = this._handled,
+    var overlay = this._overlay,
       map = overlay._map,
 
 			centerPoint = map.latLngToLayerPoint(overlay.getCenter()),
@@ -1118,24 +1116,23 @@ L.EditHandle = L.Marker.extend({
 });
 
 L.LockHandle = L.EditHandle.extend({
-	options: {
-		TYPE: 'lock',
-		icon: L.icon({ 
-			iconUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAD8SURBVO3BPU7CYAAA0AdfjIcQlRCQBG7C3gk2uIPG2RC3Dk16Gz0FTO1WZs/gwGCMP/2+xsSl7+n1er1Iz9LtRQjaPeMeO+TinLDCJV78YqjdA04YodKuxhUaPGoRxMmxwRQZSt87Yo4KExGCeAUyLLFB4bMacxywEClIU2KDKXbInTUYo8JCgoFuGoxQO5uiwY1EA91VmDqrcKeDoX8WdNNgjApvmGGLXKIgXY0xGkxQYItrrFFIEKQ5Yo4KEx9yrDFDhlKkIF6NOQ5Y+KpAhiXWKEQI4pxwiwoLPyuxwQw75FoE7fZYocFEuwI7jHCBV39gL92TXq/Xi/AOcmczZmaIMScAAAAASUVORK5CYII=',
-			iconSize: [32, 32],
-			iconAnchor: [16, 16]
-		})
-	},
+  options: {
+	TYPE: 'lock',
+	icon: L.icon({ 
+	  iconUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAD8SURBVO3BPU7CYAAA0AdfjIcQlRCQBG7C3gk2uIPG2RC3Dk16Gz0FTO1WZs/gwGCMP/2+xsSl7+n1er1Iz9LtRQjaPeMeO+TinLDCJV78YqjdA04YodKuxhUaPGoRxMmxwRQZSt87Yo4KExGCeAUyLLFB4bMacxywEClIU2KDKXbInTUYo8JCgoFuGoxQO5uiwY1EA91VmDqrcKeDoX8WdNNgjApvmGGLXKIgXY0xGkxQYItrrFFIEKQ5Yo4KEx9yrDFDhlKkIF6NOQ5Y+KpAhiXWKEQI4pxwiwoLPyuxwQw75FoE7fZYocFEuwI7jHCBV39gL92TXq/Xi/AOcmczZmaIMScAAAAASUVORK5CYII=',
+	  iconSize: [32, 32],
+	  iconAnchor: [16, 16]
+	})
+  },
 
-	/* cannot be dragged */
-	_onHandleDrag: function() {
-	},
+  /* cannot be dragged */
+  _onHandleDrag: function() {
+  },
 
-	updateHandle: function() {
-		this.setLatLng(this._handled.getCorner(this._corner));
-		L.DomUtil.removeClass(this._handled.getElement(), 'selected');
-	}
-
+  updateHandle: function() {
+    this.setLatLng(this._overlay.getCorner(this._corner));
+	L.DomUtil.removeClass(this._overlay.getElement(), 'selected');
+  }
 });
 
 L.DistortHandle = L.EditHandle.extend({
@@ -1150,7 +1147,7 @@ L.DistortHandle = L.EditHandle.extend({
   },
 
   _onHandleDrag: function() {
-    var overlay = this._handled;
+    var overlay = this._overlay;
 
     overlay.setCorner(this._corner, this.getLatLng());
 
@@ -1159,108 +1156,105 @@ L.DistortHandle = L.EditHandle.extend({
   },
 
   updateHandle: function() {
-    this.setLatLng(this._handled.getCorner(this._corner));
+    this.setLatLng(this._overlay.getCorner(this._corner));
 	},
 
 });
 
 L.RotateScaleHandle = L.EditHandle.extend({
-	options: {
-		TYPE: 'rotateScale',
-		icon: L.icon({
-			iconUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAHiSURBVMXBa3HbShgA0PMp/1sCCo8oCEpgTaCXgIXAJiDzyCJoAUTm4UVQAns1Y8+snWnTvJyeE16hkjDgDrfoNTMKcpC9UPiLSo8JyetkjEHxjPCMyoS199kFoz8Iv1HpMaN3qWDCHoegOKkkRwnJpRmroHgiPFEZ8IBekzEGxQtUEhKSS/fB7Ew4U+lxcGkVZG9QWWPSFAxBcdK59KApuA+yNwp2uEdx1GN25sZJZULSfAtm77SlbNjju6MvG75u+WHRWVR6rDVjMPsgwYyVZl3pLTpHkyYHOx8syMiayaJzlDTZ9YyaZNFVkiYH2ZUEBcVJJXVImuz6Js3Qofe59pq7DoOTILu+g+a288mCouk7/1iH4qTS+2QdDppbV1ZJmrnDXnPnc5UOs2Z0fUmTuyBr+krvSioJyUmQO0dZM7mepMkWnaNRkyrJB6uskTSjxY3Fll8bvmJwlDb83FJ8gMqAB80uyBY3Trb82PAfvjj6vuHnluIdKgMeNXOwctK5NKBoHitrb1RJeHRp5Ux4ojLg0aWMHGQvUOkxIWkKVsHsTPiNSo8HDC5lZIsgO6n0uMUdRvQuFQxB8UR4RmXC2vvsgtEfhL+o9JiQvE7GGBTPCK9QSUjoMWgKDthjDrIX+h/k0I7gth6N5gAAAABJRU5ErkJggg==',
-			iconSize: [32, 32],
-			iconAnchor: [16, 16]
-		})
-	},
+  options: {
+	TYPE: 'rotateScale',
+	icon: L.icon({
+	  iconUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAHiSURBVMXBa3HbShgA0PMp/1sCCo8oCEpgTaCXgIXAJiDzyCJoAUTm4UVQAns1Y8+snWnTvJyeE16hkjDgDrfoNTMKcpC9UPiLSo8JyetkjEHxjPCMyoS199kFoz8Iv1HpMaN3qWDCHoegOKkkRwnJpRmroHgiPFEZ8IBekzEGxQtUEhKSS/fB7Ew4U+lxcGkVZG9QWWPSFAxBcdK59KApuA+yNwp2uEdx1GN25sZJZULSfAtm77SlbNjju6MvG75u+WHRWVR6rDVjMPsgwYyVZl3pLTpHkyYHOx8syMiayaJzlDTZ9YyaZNFVkiYH2ZUEBcVJJXVImuz6Js3Qofe59pq7DoOTILu+g+a288mCouk7/1iH4qTS+2QdDppbV1ZJmrnDXnPnc5UOs2Z0fUmTuyBr+krvSioJyUmQO0dZM7mepMkWnaNRkyrJB6uskTSjxY3Fll8bvmJwlDb83FJ8gMqAB80uyBY3Trb82PAfvjj6vuHnluIdKgMeNXOwctK5NKBoHitrb1RJeHRp5Ux4ojLg0aWMHGQvUOkxIWkKVsHsTPiNSo8HDC5lZIsgO6n0uMUdRvQuFQxB8UR4RmXC2vvsgtEfhL+o9JiQvE7GGBTPCK9QSUjoMWgKDthjDrIX+h/k0I7gth6N5gAAAABJRU5ErkJggg==',
+	  iconSize: [32, 32],
+	  iconAnchor: [16, 16]
+	})
+  },
 
-	_onHandleDrag: function() {
-		var overlay = this._handled,
-			edit = overlay.editing,
-			formerLatLng = overlay.getCorner(this._corner),
-			newLatLng = this.getLatLng(),
+  _onHandleDrag: function() {
+    var overlay = this._overlay,
+		edit = overlay.editing,
+		formerLatLng = overlay.getCorner(this._corner),
+		newLatLng = this.getLatLng(),
+		angle = this.calculateAngleDelta(formerLatLng, newLatLng),
+		scale = this._calculateScalingFactor(formerLatLng, newLatLng);
+	
+	if (angle !== 0) { edit._rotateBy(angle); }
 
-			angle = this.calculateAngleDelta(formerLatLng, newLatLng),
-			scale = this._calculateScalingFactor(formerLatLng, newLatLng);
-		
-		if (angle !== 0) { edit._rotateBy(angle); }
+	/** 
+     * checks whether the "edgeMinWidth" property is set and tracks the minimum edge length;
+	 * this enables preventing scaling to zero, but we might also add an overall scale limit
+	*/		
+	if (overlay.hasOwnProperty('edgeMinWidth')) {
+	  var edgeMinWidth = overlay.edgeMinWidth,
+		  w = L.latLng(overlay.getCorner(0)).distanceTo(overlay.getCorner(1)),
+		  h = L.latLng(overlay.getCorner(1)).distanceTo(overlay.getCorner(2));
 
-		/* 
-		  checks whether the "edgeMinWidth" property is set and tracks the minimum edge length;
-		  this enables preventing scaling to zero, but we might also add an overall scale limit
-		*/		
-		if (overlay.hasOwnProperty('edgeMinWidth')){
-			var edgeMinWidth = overlay.edgeMinWidth,
-			    w = L.latLng(overlay.getCorner(0)).distanceTo(overlay.getCorner(1)),
-					h = L.latLng(overlay.getCorner(1)).distanceTo(overlay.getCorner(2));
-			if ((w > edgeMinWidth && h > edgeMinWidth) || scale > 1) {
-				edit._scaleBy(scale);
-			}
-		} 
+	  if ((w > edgeMinWidth && h > edgeMinWidth) || scale > 1) {
+		edit._scaleBy(scale);
+	  }
+	} 
 
-		overlay.fire('update');
-		edit._updateToolbarPos();
-	},
+	overlay.fire('update');
+	edit._updateToolbarPos();
+  },
 
-	updateHandle: function() {
-		this.setLatLng(this._handled.getCorner(this._corner));
-	},
+  updateHandle: function() {
+    this.setLatLng(this._overlay.getCorner(this._corner));
+  }
 });
 
 L.RotateHandle = L.EditHandle.extend({
-	options: {
-		TYPE: 'rotate',
-		icon: L.icon({
-			iconUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAHiSURBVMXBa3HbShgA0PMp/1sCCo8oCEpgTaCXgIXAJiDzyCJoAUTm4UVQAns1Y8+snWnTvJyeE16hkjDgDrfoNTMKcpC9UPiLSo8JyetkjEHxjPCMyoS199kFoz8Iv1HpMaN3qWDCHoegOKkkRwnJpRmroHgiPFEZ8IBekzEGxQtUEhKSS/fB7Ew4U+lxcGkVZG9QWWPSFAxBcdK59KApuA+yNwp2uEdx1GN25sZJZULSfAtm77SlbNjju6MvG75u+WHRWVR6rDVjMPsgwYyVZl3pLTpHkyYHOx8syMiayaJzlDTZ9YyaZNFVkiYH2ZUEBcVJJXVImuz6Js3Qofe59pq7DoOTILu+g+a288mCouk7/1iH4qTS+2QdDppbV1ZJmrnDXnPnc5UOs2Z0fUmTuyBr+krvSioJyUmQO0dZM7mepMkWnaNRkyrJB6uskTSjxY3Fll8bvmJwlDb83FJ8gMqAB80uyBY3Trb82PAfvjj6vuHnluIdKgMeNXOwctK5NKBoHitrb1RJeHRp5Ux4ojLg0aWMHGQvUOkxIWkKVsHsTPiNSo8HDC5lZIsgO6n0uMUdRvQuFQxB8UR4RmXC2vvsgtEfhL+o9JiQvE7GGBTPCK9QSUjoMWgKDthjDrIX+h/k0I7gth6N5gAAAABJRU5ErkJggg==',
-			iconSize: [32, 32],
-			iconAnchor: [16, 16]
-		})
-	},
+  options: {
+	TYPE: 'rotate',
+	icon: L.icon({
+	  iconUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAHiSURBVMXBa3HbShgA0PMp/1sCCo8oCEpgTaCXgIXAJiDzyCJoAUTm4UVQAns1Y8+snWnTvJyeE16hkjDgDrfoNTMKcpC9UPiLSo8JyetkjEHxjPCMyoS199kFoz8Iv1HpMaN3qWDCHoegOKkkRwnJpRmroHgiPFEZ8IBekzEGxQtUEhKSS/fB7Ew4U+lxcGkVZG9QWWPSFAxBcdK59KApuA+yNwp2uEdx1GN25sZJZULSfAtm77SlbNjju6MvG75u+WHRWVR6rDVjMPsgwYyVZl3pLTpHkyYHOx8syMiayaJzlDTZ9YyaZNFVkiYH2ZUEBcVJJXVImuz6Js3Qofe59pq7DoOTILu+g+a288mCouk7/1iH4qTS+2QdDppbV1ZJmrnDXnPnc5UOs2Z0fUmTuyBr+krvSioJyUmQO0dZM7mepMkWnaNRkyrJB6uskTSjxY3Fll8bvmJwlDb83FJ8gMqAB80uyBY3Trb82PAfvjj6vuHnluIdKgMeNXOwctK5NKBoHitrb1RJeHRp5Ux4ojLg0aWMHGQvUOkxIWkKVsHsTPiNSo8HDC5lZIsgO6n0uMUdRvQuFQxB8UR4RmXC2vvsgtEfhL+o9JiQvE7GGBTPCK9QSUjoMWgKDthjDrIX+h/k0I7gth6N5gAAAABJRU5ErkJggg==',
+	  iconSize: [32, 32],
+	  iconAnchor: [16, 16]
+	})
+  },
 	
-	_onHandleDrag: function() {
-		var overlay = this._handled,
-			formerLatLng = overlay.getCorner(this._corner),
-			newLatLng = this.getLatLng(),
-			angle = this.calculateAngleDelta(formerLatLng, newLatLng);
+  _onHandleDrag: function() {
+	var overlay = this._overlay,
+		formerLatLng = overlay.getCorner(this._corner),
+		newLatLng = this.getLatLng(),
+		angle = this.calculateAngleDelta(formerLatLng, newLatLng);
 
-	 	if (angle !== 0) { overlay.editing._rotateBy(angle); }
+	if (angle !== 0) { overlay.editing._rotateBy(angle); }
 
-		overlay.fire('update');
-		overlay.editing._updateToolbarPos();
-	},
+	overlay.fire('update');
+	overlay.editing._updateToolbarPos();
+  },
 
-	updateHandle: function() {
-		this.setLatLng(this._handled.getCorner(this._corner));
-	}
-	
+  updateHandle: function() {
+	this.setLatLng(this._overlay.getCorner(this._corner));
+  }	
 });
 
 L.ScaleHandle = L.EditHandle.extend({
-	options: {
-		TYPE: 'rotate',
-		icon: L.icon({
-			iconUrl:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIHdpZHRoPSI0NTkiIGhlaWdodD0iNDY0IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA1MTIgNTEyIiB4bWw6c3BhY2U9InByZXNlcnZlIiBzdHlsZT0iIj48cmVjdCBpZD0iYmFja2dyb3VuZHJlY3QiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHg9IjAiIHk9IjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0ibm9uZSIgY2xhc3M9IiIgc3R5bGU9IiIvPjxnIGNsYXNzPSJjdXJyZW50TGF5ZXIiIHN0eWxlPSIiPjx0aXRsZT5MYXllciAxPC90aXRsZT48cGF0aCBkPSJNNDU5LjA0OTE1OTUzMDQ3MTM0LDg2LjkyNjIzNDUxMjU1MDAyIFYwIGgtODUuNzE0NTczMzU2MzEyMDkgdjI3LjA0MzcxNzQwMzkwNDQ1MiBIODUuNzE0NTczMzU2MzEyMDMgVjAgSDAgdjg2LjkyNjIzNDUxMjU1MDAyIGgyNS43MTQzNzIwMDY4OTM2MjYgdjI4OS43NTQxMTUwNDE4MzM0IEgwIHY4Ni45MjYyMzQ1MTI1NTAwMiBoODUuNzE0NTczMzU2MzEyMDkgdi0yNy4wNDM3MTc0MDM5MDQ0NTIgaDI4NS43MTUyNDQ1MjEwNDAzIHYyNy4wNDM3MTc0MDM5MDQ0NTIgaDg1LjcxNDU3MzM1NjMxMjA5IHYtODYuOTI2MjM0NTEyNTUwMDIgaC0yMy44MDk2MDM3MTAwODY2OSBWODYuOTI2MjM0NTEyNTUwMDIgSDQ1OS4wNDkxNTk1MzA0NzEzNCB6TTM4NC43NjMxOTU5NTUwMDA5LDEyLjU1NjAxMTY1MTgxMjc4MSBoNjEuOTA0OTY5NjQ2MjI1Mzk2IHY2Mi43ODAwNTgyNTkwNjM5MSBoLTYxLjkwNDk2OTY0NjIyNTM5NiBWMTIuNTU2MDExNjUxODEyNzgxIHpNMTIuMzgwOTkzOTI5MjQ1MDUsMTIuNTU2MDExNjUxODEyNzgxIGg2MS45MDQ5Njk2NDYyMjUzOTYgdjYyLjc4MDA1ODI1OTA2MzkxIEgxMi4zODA5OTM5MjkyNDUwNSBWMTIuNTU2MDExNjUxODEyNzgxIHpNNzQuMjg1OTYzNTc1NDcwNTMsNDUxLjA1MDU3MjQxNTEyMDY2IEgxMi4zODA5OTM5MjkyNDUwNSB2LTYyLjc4MDA1ODI1OTA2MzkxIGg2MS45MDQ5Njk2NDYyMjUzOTYgVjQ1MS4wNTA1NzI0MTUxMjA2NiB6TTQ0NS43MTU3ODE0NTI4MjI3NCw0NTEuMDUwNTcyNDE1MTIwNjYgaC02Mi44NTczNTM3OTQ2Mjg4NjQgdi02Mi43ODAwNTgyNTkwNjM5MSBoNjIuODU3MzUzNzk0NjI4ODY0IFY0NTEuMDUwNTcyNDE1MTIwNjYgek00MDcuNjIwNDE1NTE2Njg0MjYsMzc2LjY4MDM0OTU1NDM4MzQ0IGgtMzYuMTkwNTk3NjM5MzMxNzcgdjMyLjgzODc5OTcwNDc0MTEyIEg4NS43MTQ1NzMzNTYzMTIwMyB2LTMyLjgzODc5OTcwNDc0MTEyIEg0OS41MjM5NzU3MTY5ODAzMiBWODYuOTI2MjM0NTEyNTUwMDIgaDM2LjE5MDU5NzYzOTMzMTc3IFY1MC4yMjQwNDY2MDcyNTExMjUgaDI4Ny42MjAwMTI4MTc4NDcyIHYzNi43MDIxODc5MDUyOTg5IGgzNC4yODU4MjkzNDI1MjQ4MzUgVjM3Ni42ODAzNDk1NTQzODM0NCB6IiBpZD0ic3ZnXzIiIGNsYXNzPSIiIGZpbGw9IiMxYTFhZWIiIGZpbGwtb3BhY2l0eT0iMSIvPjwvZz48L3N2Zz4=',
-			iconSize: [32, 32],
-			iconAnchor: [16, 16]
-		})
-	},
+  options: {
+	TYPE: 'rotate',
+	icon: L.icon({
+	  iconUrl:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIHdpZHRoPSI0NTkiIGhlaWdodD0iNDY0IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA1MTIgNTEyIiB4bWw6c3BhY2U9InByZXNlcnZlIiBzdHlsZT0iIj48cmVjdCBpZD0iYmFja2dyb3VuZHJlY3QiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHg9IjAiIHk9IjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0ibm9uZSIgY2xhc3M9IiIgc3R5bGU9IiIvPjxnIGNsYXNzPSJjdXJyZW50TGF5ZXIiIHN0eWxlPSIiPjx0aXRsZT5MYXllciAxPC90aXRsZT48cGF0aCBkPSJNNDU5LjA0OTE1OTUzMDQ3MTM0LDg2LjkyNjIzNDUxMjU1MDAyIFYwIGgtODUuNzE0NTczMzU2MzEyMDkgdjI3LjA0MzcxNzQwMzkwNDQ1MiBIODUuNzE0NTczMzU2MzEyMDMgVjAgSDAgdjg2LjkyNjIzNDUxMjU1MDAyIGgyNS43MTQzNzIwMDY4OTM2MjYgdjI4OS43NTQxMTUwNDE4MzM0IEgwIHY4Ni45MjYyMzQ1MTI1NTAwMiBoODUuNzE0NTczMzU2MzEyMDkgdi0yNy4wNDM3MTc0MDM5MDQ0NTIgaDI4NS43MTUyNDQ1MjEwNDAzIHYyNy4wNDM3MTc0MDM5MDQ0NTIgaDg1LjcxNDU3MzM1NjMxMjA5IHYtODYuOTI2MjM0NTEyNTUwMDIgaC0yMy44MDk2MDM3MTAwODY2OSBWODYuOTI2MjM0NTEyNTUwMDIgSDQ1OS4wNDkxNTk1MzA0NzEzNCB6TTM4NC43NjMxOTU5NTUwMDA5LDEyLjU1NjAxMTY1MTgxMjc4MSBoNjEuOTA0OTY5NjQ2MjI1Mzk2IHY2Mi43ODAwNTgyNTkwNjM5MSBoLTYxLjkwNDk2OTY0NjIyNTM5NiBWMTIuNTU2MDExNjUxODEyNzgxIHpNMTIuMzgwOTkzOTI5MjQ1MDUsMTIuNTU2MDExNjUxODEyNzgxIGg2MS45MDQ5Njk2NDYyMjUzOTYgdjYyLjc4MDA1ODI1OTA2MzkxIEgxMi4zODA5OTM5MjkyNDUwNSBWMTIuNTU2MDExNjUxODEyNzgxIHpNNzQuMjg1OTYzNTc1NDcwNTMsNDUxLjA1MDU3MjQxNTEyMDY2IEgxMi4zODA5OTM5MjkyNDUwNSB2LTYyLjc4MDA1ODI1OTA2MzkxIGg2MS45MDQ5Njk2NDYyMjUzOTYgVjQ1MS4wNTA1NzI0MTUxMjA2NiB6TTQ0NS43MTU3ODE0NTI4MjI3NCw0NTEuMDUwNTcyNDE1MTIwNjYgaC02Mi44NTczNTM3OTQ2Mjg4NjQgdi02Mi43ODAwNTgyNTkwNjM5MSBoNjIuODU3MzUzNzk0NjI4ODY0IFY0NTEuMDUwNTcyNDE1MTIwNjYgek00MDcuNjIwNDE1NTE2Njg0MjYsMzc2LjY4MDM0OTU1NDM4MzQ0IGgtMzYuMTkwNTk3NjM5MzMxNzcgdjMyLjgzODc5OTcwNDc0MTEyIEg4NS43MTQ1NzMzNTYzMTIwMyB2LTMyLjgzODc5OTcwNDc0MTEyIEg0OS41MjM5NzU3MTY5ODAzMiBWODYuOTI2MjM0NTEyNTUwMDIgaDM2LjE5MDU5NzYzOTMzMTc3IFY1MC4yMjQwNDY2MDcyNTExMjUgaDI4Ny42MjAwMTI4MTc4NDcyIHYzNi43MDIxODc5MDUyOTg5IGgzNC4yODU4MjkzNDI1MjQ4MzUgVjM3Ni42ODAzNDk1NTQzODM0NCB6IiBpZD0ic3ZnXzIiIGNsYXNzPSIiIGZpbGw9IiMxYTFhZWIiIGZpbGwtb3BhY2l0eT0iMSIvPjwvZz48L3N2Zz4=',
+	  iconSize: [32, 32],
+	  iconAnchor: [16, 16]
+	})
+  },
 
-	_onHandleDrag: function() {
-		var overlay = this._handled,
-			formerLatLng = overlay.getCorner(this._corner),
-			newLatLng = this.getLatLng(),
+  _onHandleDrag: function() {
+    var overlay = this._overlay,
+		formerLatLng = overlay.getCorner(this._corner),
+		newLatLng = this.getLatLng(),
+		scale = this._calculateScalingFactor(formerLatLng, newLatLng);
 
-			scale = this._calculateScalingFactor(formerLatLng, newLatLng);
+	overlay.editing._scaleBy(scale);
+	overlay.fire('update');
+	overlay.editing._updateToolbarPos();
+  },
 
-		overlay.editing._scaleBy(scale);
-
-		overlay.fire('update');
-		overlay.editing._updateToolbarPos();
-	},
-
-	updateHandle: function() {
-		this.setLatLng(this._handled.getCorner(this._corner));
-	},
+  updateHandle: function() {
+	this.setLatLng(this._overlay.getCorner(this._corner));
+  }
 });
 
 L.EditAction = L.Toolbar2.Action.extend({

@@ -10,7 +10,7 @@ L.DistortHandle = L.EditHandle.extend({
   },
 
   _onHandleDrag: function() {
-    var overlay = this._handled;
+    var overlay = this._overlay;
 
     overlay.setCorner(this._corner, this.getLatLng());
 
@@ -19,7 +19,7 @@ L.DistortHandle = L.EditHandle.extend({
   },
 
   updateHandle: function() {
-    this.setLatLng(this._handled.getCorner(this._corner));
+    this.setLatLng(this._overlay.getCorner(this._corner));
 	},
 
 });
