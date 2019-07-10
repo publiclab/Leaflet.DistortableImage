@@ -25,8 +25,8 @@ L.RotateScaleHandle = L.EditHandle.extend({
 		*/		
 		if (overlay.hasOwnProperty('edgeMinWidth')){
 			var edgeMinWidth = overlay.edgeMinWidth;
-                        var corner1 = map.latLngToContainerPoint(overlay.getCorner(0)),
-                            corner2 = map.latLngToContainerPoint(overlay.getCorner(1));
+                        var corner1 = overlay._map.latLngToContainerPoint(overlay.getCorner(0)),
+                            corner2 = overlay._map.latLngToContainerPoint(overlay.getCorner(1));
                         var w = Math.abs(corner1.x - corner2.x);
                         var h = Math.abs(corner1.y - corner2.y);
                         var distance = Math.sqrt(w * w + h * h);
