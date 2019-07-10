@@ -397,11 +397,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       topLeft = latLngToNewLayerPoint(this.getCorner(0)),
       warp = L.DomUtil.getMatrixString(transformMatrix);
 
-      L.DomUtil.setPosition(image, topLeft);
-
-    if (!L.Browser.gecko) {
-      image.style[L.DomUtil.TRANSFORM] = image.style[L.DomUtil.TRANSFORM] + warp;
-    }
+    L.DomUtil.setPosition(image, topLeft);
+    image.style[L.DomUtil.TRANSFORM] = image.style[L.DomUtil.TRANSFORM] + warp;
   },
 
   getCorners: function() {
