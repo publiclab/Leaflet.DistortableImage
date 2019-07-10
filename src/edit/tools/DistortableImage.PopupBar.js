@@ -68,7 +68,7 @@ var Delete = L.EditAction.extend({
     options = options || {};
     options.toolbarIcon = {
       html: '<svg>' + href + '</svg>',
-      tooltip: 'Delete Image'
+      tooltip: 'Permanently Delete Image'
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -211,14 +211,14 @@ var EnableEXIF = L.EditAction.extend({
   }
 });
 
-var Restore = L.EditAction.extend({
+var Revert = L.EditAction.extend({
   initialize: function(map, overlay, options) {
     var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#restore"></use>';
 
     options = options || {};
     options.toolbarIcon = {
       html: '<svg>' + href + '</svg>',
-      tooltip: 'Restore'
+      tooltip: 'Restore Original Image Dimensions'
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -227,7 +227,7 @@ var Restore = L.EditAction.extend({
   addHooks: function() {
     var editing = this._overlay.editing;
 
-    editing._restore();
+    editing._revert();
   }
 });
 
@@ -241,7 +241,7 @@ L.DistortableImage.PopupBar = L.Toolbar2.Popup.extend({
       ToggleRotateScale,
       ToggleOrder,
       EnableEXIF,
-      Restore,
+      Revert,
       Export,
       Delete
     ]
@@ -281,7 +281,7 @@ L.DistortableImageOverlay.addInitHook(function () {
     ToggleRotateScale, 
     ToggleOrder,
     EnableEXIF,
-    Restore,
+    Revert,
     Export,
     Delete
   ];
@@ -295,7 +295,7 @@ L.DistortableImageOverlay.addInitHook(function () {
   this.editing = new L.DistortableImage.Edit(this, { actions: this.editActions });
 
   if (this.options.editable) {
-    L.DomEvent.on(this._image, "load", this.editing.enable, this.editing);
+    L.DomEvent.on(this._image, 'load', this.editing.enable, this.editing);
   }
 
   this.on('remove', function () {

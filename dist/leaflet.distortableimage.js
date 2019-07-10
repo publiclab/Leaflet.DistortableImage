@@ -1336,7 +1336,7 @@ var Delete = L.EditAction.extend({
     options = options || {};
     options.toolbarIcon = {
       html: '<svg>' + href + '</svg>',
-      tooltip: 'Delete Image'
+      tooltip: 'Permanently Delete Image'
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -1479,14 +1479,14 @@ var EnableEXIF = L.EditAction.extend({
   }
 });
 
-var Restore = L.EditAction.extend({
+var Revert = L.EditAction.extend({
   initialize: function(map, overlay, options) {
     var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#restore"></use>';
 
     options = options || {};
     options.toolbarIcon = {
       html: '<svg>' + href + '</svg>',
-      tooltip: 'Restore'
+      tooltip: 'Restore Original Image Dimensions'
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -1495,7 +1495,7 @@ var Restore = L.EditAction.extend({
   addHooks: function() {
     var editing = this._overlay.editing;
 
-    editing._restore();
+    editing._revert();
   }
 });
 
@@ -1509,7 +1509,7 @@ L.DistortableImage.PopupBar = L.Toolbar2.Popup.extend({
       ToggleRotateScale,
       ToggleOrder,
       EnableEXIF,
-      Restore,
+      Revert,
       Export,
       Delete
     ]
@@ -1549,7 +1549,7 @@ L.DistortableImageOverlay.addInitHook(function () {
     ToggleRotateScale, 
     ToggleOrder,
     EnableEXIF,
-    Restore,
+    Revert,
     Export,
     Delete
   ];
@@ -1563,7 +1563,7 @@ L.DistortableImageOverlay.addInitHook(function () {
   this.editing = new L.DistortableImage.Edit(this, { actions: this.editActions });
 
   if (this.options.editable) {
-    L.DomEvent.on(this._image, "load", this.editing.enable, this.editing);
+    L.DomEvent.on(this._image, 'load', this.editing.enable, this.editing);
   }
 
   this.on('remove', function () {
@@ -1748,20 +1748,19 @@ L.DistortableImage.Edit = L.Handler.extend({
       3: L.point(0, 0)
     };
 
-    L.DomEvent.on(map, "click", this._deselect, this);
-    L.DomEvent.on(overlay._image, "click", this._select, this);
+    L.DomEvent.on(map, 'click', this._deselect, this);
+    L.DomEvent.on(overlay._image, 'click', this._select, this);
 
     /* Enable hotkeys. */
-    L.DomEvent.on(window, "keydown", this._onKeyDown, this);
+    L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
   },
 
-  /* Run on image deselection. */
   removeHooks: function() {
     var overlay = this._overlay,
       map = overlay._map;
 
-    L.DomEvent.off(map, "click", this._deselect, this);
-    L.DomEvent.off(overlay._image, "click", this._select, this);
+    L.DomEvent.off(map, 'click', this._deselect, this);
+    L.DomEvent.off(overlay._image, 'click', this._select, this);
 
     // First, check if dragging exists - it may be off due to locking
     if (this.dragging) { this.dragging.disable(); }
@@ -1773,7 +1772,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     map.removeLayer(this._handles[this._mode]);
 
     /* Disable hotkeys. */
-    L.DomEvent.off(window, "keydown", this._onKeyDown, this);
+    L.DomEvent.off(window, 'keydown', this._onKeyDown, this);
   },
 
   _initHandles: function() {
@@ -1888,7 +1887,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     overlay._reset();
   },
 
-  _restore: function() {
+  _revert: function() {
     var overlay = this._overlay;
     var angle = overlay.rotation;
     var map = overlay._map;
@@ -1942,24 +1941,23 @@ L.DistortableImage.Edit = L.Handler.extend({
     this.dragging.enable();
 
     /* Hide toolbars and markers while dragging; click will re-show it */
-    this.dragging.on("dragstart", function() {
-      overlay.fire("dragstart");
+    this.dragging.on('dragstart', function() {
+      overlay.fire('dragstart');
       this._removeToolbar();
     },this);
 
     /*
-     * Adjust default behavior of L.Draggable.
-     * By default, L.Draggable overwrites the CSS3 distort transform
+     * Adjust default behavior of L.Draggable. By default, L.Draggable overwrites the CSS3 distort transform
      * that we want when it calls L.DomUtil.setPosition.
      */
     this.dragging._updatePosition = function() {
       var delta = this._newPos.subtract(
-          map.latLngToLayerPoint(overlay._corners[0])
+          map.latLngToLayerPoint(overlay.getCorner(0))
         ),
         currentPoint,
         i;
 
-      this.fire("predrag");
+      this.fire('predrag');
 
       for (i = 0; i < 4; i++) {
         currentPoint = map.latLngToLayerPoint(overlay._corners[i]);
@@ -1967,10 +1965,10 @@ L.DistortableImage.Edit = L.Handler.extend({
 			}
 
       overlay._reset();
-      overlay.fire("update");
-      overlay.fire("drag");
+      overlay.fire('update');
+      overlay.fire('drag');
 
-      this.fire("drag");
+      this.fire('drag');
     };
   },
 
@@ -2000,7 +1998,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     map.removeLayer(this._handles[this._mode]);
 
-    /* Switch mode. */
     if (this._mode === 'rotateScale') { this._mode = 'distort'; } 
     else { this._mode = 'rotateScale'; }
 
@@ -2029,6 +2026,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 		if (this._mode === 'lock') { return; }
 
     map.removeLayer(this._handles[this._mode]);
+
     if (this._mode === 'rotate') { this._mode = 'distort'; } 
 		else { this._mode = 'rotate'; }
 		
@@ -2087,12 +2085,9 @@ L.DistortableImage.Edit = L.Handler.extend({
     var map = this._overlay._map;
 
     map.removeLayer(this._handles[this._mode]);
-    /* Switch mode. */
-    if (this._mode === 'lock') {
-      this._unlock();
-    } else {
-      this._lock();
-    }
+
+    if (this._mode === 'lock') { this._unlock(); } 
+    else { this._lock(); }
 
     map.addLayer(this._handles[this._mode]);
 
@@ -2267,22 +2262,20 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   // Based on https://github.com/publiclab/mapknitter/blob/8d94132c81b3040ae0d0b4627e685ff75275b416/app/assets/javascripts/mapknitter/Map.js#L47-L82
   _getExport: function() {
-    var map = this._overlay._map;
-    var overlay = this._overlay;
-
-    // make a new image
-    var downloadable = new Image();
+    var overlay = this._overlay,
+        map = overlay._map,
+        downloadable = new Image(); /* make a new image */
 
     downloadable.id = downloadable.id || 'tempId12345';
     $('body').append(downloadable);
 
     downloadable.onload = function onLoadDownloadableImage() {
       var height = downloadable.height,
-        width = downloadable.width,
-        nw = map.latLngToLayerPoint(overlay.getCorner(0)),
-        ne = map.latLngToLayerPoint(overlay.getCorner(1)),
-        sw = map.latLngToLayerPoint(overlay.getCorner(2)),
-        se = map.latLngToLayerPoint(overlay.getCorner(3));
+          width = downloadable.width,
+          nw = map.latLngToLayerPoint(overlay.getCorner(0)),
+          ne = map.latLngToLayerPoint(overlay.getCorner(1)),
+          sw = map.latLngToLayerPoint(overlay.getCorner(2)),
+          se = map.latLngToLayerPoint(overlay.getCorner(3));
 
       // I think this is to move the image to the upper left corner,
       // jywarren: i think we may need these or the image goes off the edge of the canvas

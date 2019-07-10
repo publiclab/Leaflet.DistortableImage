@@ -92,7 +92,7 @@ Options available to pass during `L.DistortableImageOverlay` initialization:
 
 ### Actions 
 
-- `actions` (*optional*, default: [ToggleTransparency, ToggleOutline, ToggleLock, ToggleRotateScale, ToggleOrder, EnableEXIF, Restore, Export, Delete], value: *array*)
+- `actions` (*optional*, default: [ToggleTransparency, ToggleOutline, ToggleLock, ToggleRotateScale, ToggleOrder, EnableEXIF, Revert, Export, Delete], value: *array*)
 
 If you would like to overrwrite the default toolbar actions available for an individual image's `L.Popup` toolbar, pass an array with the actions you want. Reference the available values [here](#Single-Image-Interface).
 
@@ -343,7 +343,6 @@ Defaults:
 
   - Toggles between [rotateScale](#rotateScale) and [distort mode](#distort-(_default_)).
 
-
 - **ToggleOrder (<kbd>j</kbd>, <kbd>k</kbd>)**
 
   - If you have multiple images, use this to switch an individual image's overlap back and forth into view. Employs [`bringToFront()`](https://leafletjs.com/reference-1.5.0.html\#imageoverlay-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.5.0.html#imageoverlay-bringtoback) from the Leaflet API.
@@ -354,7 +353,7 @@ Defaults:
 
 - **EnableEXIF (WIP)**
 
-- **Restore**
+- **Revert**
 
   - Restores the image to its original proportions and scale, but keeps its current rotation angle and location on the map intact.
 
