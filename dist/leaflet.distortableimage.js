@@ -1202,7 +1202,7 @@ L.RotateScaleHandle = L.EditHandle.extend({
                             corner2 = map.latLngToContainerPoint(overlay.getCorner(1));
                         var w = Math.abs(corner1.x - corner2.x);
                         var h = Math.abs(corner1.y - corner2.y);
-                        var distance = Math.srqt(w * w + h * h);
+                        var distance = Math.sqrt(w * w + h * h);
 			if ((distance > edgeMinWidth) || scale > 1) {
 				edit._scaleBy(scale);
 			} else {
