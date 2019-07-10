@@ -1205,9 +1205,7 @@ L.RotateScaleHandle = L.EditHandle.extend({
                         var distance = Math.sqrt(w * w + h * h);
 			if ((distance > edgeMinWidth) || scale > 1) {
 				edit._scaleBy(scale);
-			} else {
-                          console.log('limited', w, h, distance);
-                        }
+			}
 		} 
 
 		overlay.fire('update');
