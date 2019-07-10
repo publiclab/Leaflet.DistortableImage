@@ -170,13 +170,20 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       image = this._image,
       latLngToLayerPoint = L.bind(map.latLngToLayerPoint, map),
       transformMatrix = this._calculateProjectiveTransform(latLngToLayerPoint),
-      topLeft = latLngToLayerPoint(this.getCorner(0)),
-      warp = L.DomUtil.getMatrixString(transformMatrix);
 
-    L.DomUtil.setPosition(image, topLeft);
-    image.style[L.DomUtil.TRANSFORM] = image.style[L.DomUtil.TRANSFORM] + warp;
+      topLeft = latLngToLayerPoint(this.getCorner(0));
+      window.transformMatrix = transformMatrix;
+      var transformM2 = L.DomUtil.get3dMatrix(transformMatrix);
+      var translateMatrix = L.MatrixUtil.translateMatrix(topLeft.x, topLeft.y, 1);
+      var finalTMatrix = L.MatrixUtil.multiplyArrayOfMatrices([translateMatrix, transformM2]);
+      var warp = L.MatrixUtil.matrixArrayToCssMatrix(finalTMatrix);
+      // topLeft = latLngToLayerPoint(this.getCorner(0)),
+      // warp = L.DomUtil.getMatrixString(transformMatrix);
+
+    // L.DomUtil.setPosition(image, topLeft);
+    image.style[L.DomUtil.TRANSFORM] = warp;
     /* Set origin to the upper-left corner rather than the center of the image, which is the default. */
-    image.style[L.DomUtil.TRANSFORM + "-origin"] = "0 0 0";
+    // image.style[L.DomUtil.TRANsSFORM + "-origin"] = "0 0 0";
   },
 
   /*
@@ -193,11 +200,16 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       transformMatrix = this._calculateProjectiveTransform(
         latLngToNewLayerPoint
       ),
-      topLeft = latLngToNewLayerPoint(this.getCorner(0)),
-      warp = L.DomUtil.getMatrixString(transformMatrix);
+      topLeft = latLngToNewLayerPoint(this.getCorner(0));
+      window.transformMatrix = transformMatrix;
+      var transformM2 = L.DomUtil.get3dMatrix(transformMatrix);
+      var translateMatrix = L.MatrixUtil.translateMatrix(topLeft.x, topLeft.y, 1);
+      var finalTMatrix = L.MatrixUtil.multiplyArrayOfMatrices([translateMatrix, transformM2]);
+      var warp = L.MatrixUtil.matrixArrayToCssMatrix(finalTMatrix);
+      // warp = L.DomUtil.getMatrixString(transformMatrix);
 
-    L.DomUtil.setPosition(image, topLeft);
-    image.style[L.DomUtil.TRANSFORM] = image.style[L.DomUtil.TRANSFORM] + warp;
+    // L.DomUtil.setPosition(image, topLeft);
+    image.style[L.DomUtil.TRANSFORM] = warp;
   },
 
   getCorners: function() {

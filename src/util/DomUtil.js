@@ -24,6 +24,15 @@ L.DomUtil = L.extend(L.DomUtil, {
     return str;
   },
 
+  get3dMatrix: function(m) {
+	 return [
+        m[0], m[3], 0, m[6],
+        m[1], m[4], 0, m[7],
+        0, 0, 1, 0,
+        m[2], m[5], 0, m[8]
+	  ];
+  },
+
   getRotateString: function(angle, units) {
     var is3d = L.Browser.webkit3d || L.Browser.gecko3d || L.Browser.ie3d,
       open = "rotate" + (is3d ? "3d" : "") + "(",

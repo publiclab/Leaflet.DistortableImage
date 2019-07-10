@@ -24,6 +24,15 @@ L.DomUtil = L.extend(L.DomUtil, {
     return str;
   },
 
+  get3dMatrix: function(m) {
+	 return [
+        m[0], m[3], 0, m[6],
+        m[1], m[4], 0, m[7],
+        0, 0, 1, 0,
+        m[2], m[5], 0, m[8]
+	  ];
+  },
+
   getRotateString: function(angle, units) {
     var is3d = L.Browser.webkit3d || L.Browser.gecko3d || L.Browser.ie3d,
       open = "rotate" + (is3d ? "3d" : "") + "(",
@@ -85,6 +94,81 @@ L.Map.include({
 	}
 });
 L.MatrixUtil = {
+
+	matrixArrayToCssMatrix: function (array) {
+  		return "matrix3d(" + array.join(',') + ")";
+	},
+
+	multiplyMatrices: function (a, b) {
+  
+		// TODO - Simplify for explanation
+		// currently taken from https://github.com/toji/gl-matrix/blob/master/src/gl-matrix/mat4.js#L306-L337
+		
+		var result = [];
+		
+		var a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3],
+			a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7],
+			a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11],
+			a30 = a[12], a31 = a[13], a32 = a[14], a33 = a[15];
+
+		// Cache only the current line of the second matrix
+		var b0  = b[0], b1 = b[1], b2 = b[2], b3 = b[3];  
+		result[0] = b0*a00 + b1*a10 + b2*a20 + b3*a30;
+		result[1] = b0*a01 + b1*a11 + b2*a21 + b3*a31;
+		result[2] = b0*a02 + b1*a12 + b2*a22 + b3*a32;
+		result[3] = b0*a03 + b1*a13 + b2*a23 + b3*a33;
+
+		b0 = b[4]; b1 = b[5]; b2 = b[6]; b3 = b[7];
+		result[4] = b0*a00 + b1*a10 + b2*a20 + b3*a30;
+		result[5] = b0*a01 + b1*a11 + b2*a21 + b3*a31;
+		result[6] = b0*a02 + b1*a12 + b2*a22 + b3*a32;
+		result[7] = b0*a03 + b1*a13 + b2*a23 + b3*a33;
+
+		b0 = b[8]; b1 = b[9]; b2 = b[10]; b3 = b[11];
+		result[8] = b0*a00 + b1*a10 + b2*a20 + b3*a30;
+		result[9] = b0*a01 + b1*a11 + b2*a21 + b3*a31;
+		result[10] = b0*a02 + b1*a12 + b2*a22 + b3*a32;
+		result[11] = b0*a03 + b1*a13 + b2*a23 + b3*a33;
+
+		b0 = b[12]; b1 = b[13]; b2 = b[14]; b3 = b[15];
+		result[12] = b0*a00 + b1*a10 + b2*a20 + b3*a30;
+		result[13] = b0*a01 + b1*a11 + b2*a21 + b3*a31;
+		result[14] = b0*a02 + b1*a12 + b2*a22 + b3*a32;
+		result[15] = b0*a03 + b1*a13 + b2*a23 + b3*a33;
+
+		return result;
+	},
+
+	multiplyArrayOfMatrices: function (matrices) {
+  
+		var inputMatrix = matrices[0];
+		
+		for(var i=1; i < matrices.length; i++) {
+			inputMatrix = L.MatrixUtil.multiplyMatrices(inputMatrix, matrices[i]);
+		}
+		
+		return inputMatrix;
+	},
+
+	identityMatrix: function() {
+		return [
+			1, 0, 0, 0,
+			0, 1, 0, 0,
+			0, 0, 1, 0,
+			0, 0, 0, 1
+		];
+	},
+
+
+	translateMatrix: function (x, y, z) {
+		return [
+			1,    0,    0,   0,
+			0,    1,    0,   0,
+			0,    0,    1,   0,
+			x,    y,    z,   1
+		];
+	},
+
 
 	// Compute the adjugate of m
 	adj: function(m) { 
@@ -358,13 +442,20 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       image = this._image,
       latLngToLayerPoint = L.bind(map.latLngToLayerPoint, map),
       transformMatrix = this._calculateProjectiveTransform(latLngToLayerPoint),
-      topLeft = latLngToLayerPoint(this.getCorner(0)),
-      warp = L.DomUtil.getMatrixString(transformMatrix);
 
-    L.DomUtil.setPosition(image, topLeft);
-    image.style[L.DomUtil.TRANSFORM] = image.style[L.DomUtil.TRANSFORM] + warp;
+      topLeft = latLngToLayerPoint(this.getCorner(0));
+      window.transformMatrix = transformMatrix;
+      var transformM2 = L.DomUtil.get3dMatrix(transformMatrix);
+      var translateMatrix = L.MatrixUtil.translateMatrix(topLeft.x, topLeft.y, 1);
+      var finalTMatrix = L.MatrixUtil.multiplyArrayOfMatrices([translateMatrix, transformM2]);
+      var warp = L.MatrixUtil.matrixArrayToCssMatrix(finalTMatrix);
+      // topLeft = latLngToLayerPoint(this.getCorner(0)),
+      // warp = L.DomUtil.getMatrixString(transformMatrix);
+
+    // L.DomUtil.setPosition(image, topLeft);
+    image.style[L.DomUtil.TRANSFORM] = warp;
     /* Set origin to the upper-left corner rather than the center of the image, which is the default. */
-    image.style[L.DomUtil.TRANSFORM + "-origin"] = "0 0 0";
+    // image.style[L.DomUtil.TRANsSFORM + "-origin"] = "0 0 0";
   },
 
   /*
@@ -381,11 +472,16 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       transformMatrix = this._calculateProjectiveTransform(
         latLngToNewLayerPoint
       ),
-      topLeft = latLngToNewLayerPoint(this.getCorner(0)),
-      warp = L.DomUtil.getMatrixString(transformMatrix);
+      topLeft = latLngToNewLayerPoint(this.getCorner(0));
+      window.transformMatrix = transformMatrix;
+      var transformM2 = L.DomUtil.get3dMatrix(transformMatrix);
+      var translateMatrix = L.MatrixUtil.translateMatrix(topLeft.x, topLeft.y, 1);
+      var finalTMatrix = L.MatrixUtil.multiplyArrayOfMatrices([translateMatrix, transformM2]);
+      var warp = L.MatrixUtil.matrixArrayToCssMatrix(finalTMatrix);
+      // warp = L.DomUtil.getMatrixString(transformMatrix);
 
-    L.DomUtil.setPosition(image, topLeft);
-    image.style[L.DomUtil.TRANSFORM] = image.style[L.DomUtil.TRANSFORM] + warp;
+    // L.DomUtil.setPosition(image, topLeft);
+    image.style[L.DomUtil.TRANSFORM] = warp;
   },
 
   getCorners: function() {
