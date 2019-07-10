@@ -106,7 +106,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
         map.containerPointToLatLng(center.add(offset))
       ];
     }
-    
+
     this._initialDimensions = { 
       'height': imageHeight, 
       'width': imageWidth, 
@@ -166,31 +166,16 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this._reset();
   },
 
-  /* Copied from Leaflet v0.7 https://github.com/Leaflet/Leaflet/blob/66282f14bcb180ec87d9818d9f3c9f75afd01b30/src/dom/DomUtil.js#L189-L199 */
-  /* since L.DomUtil.getTranslateString() is deprecated in Leaflet v1.0 */
-  _getTranslateString: function(point) {
-    // on WebKit browsers (Chrome/Safari/iOS Safari/Android) using translate3d instead of translate
-    // makes animation smoother as it ensures HW accel is used. Firefox 13 doesn't care
-    // (same speed either way), Opera 12 doesn't support translate3d
-
-    var is3d = L.Browser.webkit3d,
-      open = "translate" + (is3d ? "3d" : "") + "(",
-      close = (is3d ? ",0" : "") + ")";
-
-    return open + point.x + "px," + point.y + "px" + close;
-  },
-
   _reset: function() {
     var map = this._map,
       image = this._image,
       latLngToLayerPoint = L.bind(map.latLngToLayerPoint, map),
       transformMatrix = this._calculateProjectiveTransform(latLngToLayerPoint),
       topLeft = latLngToLayerPoint(this.getCorner(0)),
-      warp = L.DomUtil.getMatrixString(transformMatrix),
-      translation = this._getTranslateString(topLeft);
+      warp = L.DomUtil.getMatrixString(transformMatrix);
 
     L.DomUtil.setPosition(image, topLeft);
-    image.style[L.DomUtil.TRANSFORM] = [translation, warp].join(" ");
+    image.style[L.DomUtil.TRANSFORM] = image.style[L.DomUtil.TRANSFORM] + warp;
     /* Set origin to the upper-left corner rather than the center of the image, which is the default. */
     image.style[L.DomUtil.TRANSFORM + "-origin"] = "0 0 0";
   },
@@ -210,13 +195,12 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
         latLngToNewLayerPoint
       ),
       topLeft = latLngToNewLayerPoint(this.getCorner(0)),
-      warp = L.DomUtil.getMatrixString(transformMatrix),
-      translation = this._getTranslateString(topLeft);
+      warp = L.DomUtil.getMatrixString(transformMatrix);
 
       L.DomUtil.setPosition(image, topLeft);
 
     if (!L.Browser.gecko) {
-      image.style[L.DomUtil.TRANSFORM] = [translation, warp].join(" ");
+      image.style[L.DomUtil.TRANSFORM] = image.style[L.DomUtil.TRANSFORM] + warp;
     }
   },
 
