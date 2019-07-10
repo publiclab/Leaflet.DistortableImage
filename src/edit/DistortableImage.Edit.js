@@ -506,7 +506,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   },
 
-  // TODO: toolbar for multiple image selection
   _showToolbar: function() {
     var overlay = this._overlay,
       eventParents = overlay._eventParents;

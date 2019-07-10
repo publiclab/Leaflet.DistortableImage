@@ -2,6 +2,7 @@ Leaflet.DistortableImage
 ===================
 
 [![Build Status](https://travis-ci.org/publiclab/Leaflet.DistortableImage.svg?branch=master)](https://travis-ci.org/publiclab/Leaflet.DistortableImage)
+[![npm version](https://badge.fury.io/js/leaflet-distortableimage.svg)](https://badge.fury.io/js/leaflet-distortableimage)
 
 A Leaflet extension to distort images -- "rubbersheeting" -- for the [MapKnitter.org](http://mapknitter.org) ([src](https://github.com/publiclab/mapknitter)) image georectification service by [Public Lab](http://publiclab.org). Leaflet.DistortableImage allows for perspectival distortions of images, client-side, using CSS3 transformations in the DOM.
 
@@ -99,7 +100,7 @@ For example, to overrwrite the toolbar to only include the `ToggleTransparency` 
 
 ``` JS
 img = L.distortableImageOverlay(
-  'example.png', {
+*   'example.png', {
     // 'corners' is the only required option for this class
     // and is in NW, NE, SW, SE order
     corners: [
@@ -148,7 +149,7 @@ By default, your image will initially appear on the screen as "unselected", mean
 
 Some developers prefer that an image initially appears as "selected" instead of "unselected". In this case, we provide an option to pass `selected: true`.
 
-Note: when working with the multi image interface, the collection group will ensure only the last overlay you pass `selected` to will appear initially selected.
+Note: when working with the multi image interface, only the last overlay you pass `selected: true` to will appear with editing handles _and_ a toolbar.
 
 ### Mode
 
