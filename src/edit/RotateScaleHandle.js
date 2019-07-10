@@ -24,12 +24,17 @@ L.RotateScaleHandle = L.EditHandle.extend({
 		  this enables preventing scaling to zero, but we might also add an overall scale limit
 		*/		
 		if (overlay.hasOwnProperty('edgeMinWidth')){
-			var edgeMinWidth = overlay.edgeMinWidth,
-			    w = L.latLng(overlay.getCorner(0)).distanceTo(overlay.getCorner(1)),
-					h = L.latLng(overlay.getCorner(1)).distanceTo(overlay.getCorner(2));
-			if ((w > edgeMinWidth && h > edgeMinWidth) || scale > 1) {
+			var edgeMinWidth = overlay.edgeMinWidth;
+                        var corner1 = map.latLngToContainerPoint(overlay.getCorner(0)),
+                            corner2 = map.latLngToContainerPoint(overlay.getCorner(1));
+                        var w = Math.abs(corner1.x - corner2.x);
+                        var h = Math.abs(corner1.y - corner2.y);
+                        var distance = Math.srqt(w * w + h * h);
+			if ((distance > edgeMinWidth) || scale > 1) {
 				edit._scaleBy(scale);
-			}
+			} else {
+                          console.log('limited', w, h, distance);
+                        }
 		} 
 
 		overlay.fire('update');
