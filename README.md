@@ -115,7 +115,7 @@ img = L.distortableImageOverlay(
 
 ### Corners
 
-`corners` (*required*, default: false, value: *array*)
+`corners` (*required*, value: *array*)
 
 An array of 4 `L.latLng` objects (geographical coordinates) representing the corners of the image.
 
