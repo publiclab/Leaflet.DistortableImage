@@ -101,16 +101,17 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     } else {
       this._corners = [
         map.containerPointToLatLng(center.subtract(offset)),
-        map.containerPointToLatLng(
-          center.add(L.point(offset.x, -offset.y))
-        ),
-        map.containerPointToLatLng(
-          center.add(L.point(-offset.x, offset.y))
-        ),
+        map.containerPointToLatLng(center.add(L.point(offset.x, -offset.y))),
+        map.containerPointToLatLng(center.add(L.point(-offset.x, offset.y))),
         map.containerPointToLatLng(center.add(offset))
       ];
     }
-    this._initialDimensions = { 'height': imageHeight, 'width': imageWidth, 'offset': offset };
+    
+    this._initialDimensions = { 
+      'height': imageHeight, 
+      'width': imageWidth, 
+      'offset': offset 
+    };
   },
 
   _initEvents: function() {
@@ -184,14 +185,12 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       image = this._image,
       latLngToLayerPoint = L.bind(map.latLngToLayerPoint, map),
       transformMatrix = this._calculateProjectiveTransform(latLngToLayerPoint),
-      topLeft = latLngToLayerPoint(this._corners[0]),
+      topLeft = latLngToLayerPoint(this.getCorner(0)),
       warp = L.DomUtil.getMatrixString(transformMatrix),
       translation = this._getTranslateString(topLeft);
 
-      L.DomUtil.setPosition(image, topLeft);
-
+    L.DomUtil.setPosition(image, topLeft);
     image.style[L.DomUtil.TRANSFORM] = [translation, warp].join(" ");
-
     /* Set origin to the upper-left corner rather than the center of the image, which is the default. */
     image.style[L.DomUtil.TRANSFORM + "-origin"] = "0 0 0";
   },
@@ -268,14 +267,16 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     /* Setting reasonable but made-up image defaults
      * allow us to place images on the map before
      * they've finished downloading. */
-    var offset = latLngToCartesian(this._corners[0]),
+    var offset = latLngToCartesian(this.getCorner(0)),
       w = this._image.offsetWidth || 500,
       h = this._image.offsetHeight || 375,
       c = [],
-      j;
+      j,
+      n = this.getCorners().length;
+
     /* Convert corners to container points (i.e. cartesian coordinates). */
-    for (j = 0; j < this._corners.length; j++) {
-      c.push(latLngToCartesian(this._corners[j])._subtract(offset));
+    for (j = 0; j < n; j++) {
+      c.push(latLngToCartesian(this.getCorner(j)).subtract(offset));
     }
 
     /*
