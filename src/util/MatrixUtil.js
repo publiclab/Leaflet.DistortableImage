@@ -1,8 +1,25 @@
 L.MatrixUtil = {
 
 	matrixArrayToCssMatrix: function (array) {
-  		return "matrix3d(" + array.join(',') + ")";
+		var is3d = L.Browser.webkit3d || L.Browser.gecko3d || L.Browser.ie3d,
+			str = is3d ? "matrix3d(" + array.join(',') + ")" : "";
+
+		if (!is3d) {
+		  console.log("Your browser must support 3D CSS transforms in order to use DistortableImageOverlay.");
+        }
+
+  		return str;
 	},
+
+	/* Since matrix3d takes a 4*4 matrix, we add in an empty row and column, which act as the identity on the z-axis. */
+	from2dTo3dMatrix: function(m) {
+	 return [
+        m[0], m[3], 0, m[6],
+        m[1], m[4], 0, m[7],
+        0, 0, 1, 0,
+        m[2], m[5], 0, m[8]
+	  ];
+  	},
 
 	multiplyMatrices: function (a, b) {
   

@@ -1,37 +1,28 @@
 L.DomUtil = L.extend(L.DomUtil, {
-  getMatrixString: function(m) {
-    var is3d = L.Browser.webkit3d || L.Browser.gecko3d || L.Browser.ie3d,
-      /*
-       * Since matrix3d takes a 4*4 matrix, we add in an empty row and column, which act as the identity on the z-axis.
-       * See:
-       *     http://franklinta.com/2014/09/08/computing-css-matrix3d-transforms/
-       *     https://developer.mozilla.org/en-US/docs/Web/CSS/transform-function#M.C3.B6bius'_homogeneous_coordinates_in_projective_geometry
-       */
-      matrix = [
-        m[0], m[3], 0, m[6],
-        m[1], m[4], 0, m[7],
-        0, 0, 1, 0,
-        m[2], m[5], 0, m[8]
-	  ],
-      str = is3d ? "matrix3d(" + matrix.join(",") + ")" : "";
+//   getMatrixString: function(m) {
+//     var is3d = L.Browser.webkit3d || L.Browser.gecko3d || L.Browser.ie3d,
+//       /*
+    //    * Since matrix3d takes a 4*4 matrix, we add in an empty row and column, which act as the identity on the z-axis.
+//        * See:
+//        *     http://franklinta.com/2014/09/08/computing-css-matrix3d-transforms/
+//        *     https://developer.mozilla.org/en-US/docs/Web/CSS/transform-function#M.C3.B6bius'_homogeneous_coordinates_in_projective_geometry
+//        */
+//       matrix = [
+//         m[0], m[3], 0, m[6],
+//         m[1], m[4], 0, m[7],
+//         0, 0, 1, 0,
+//         m[2], m[5], 0, m[8]
+// 	  ],
+//       str = is3d ? "matrix3d(" + matrix.join(",") + ")" : "";
 
-    if (!is3d) {
-      console.log(
-        "Your browser must support 3D CSS transforms in order to use DistortableImageOverlay."
-      );
-    }
+//     if (!is3d) {
+//       console.log(
+//         "Your browser must support 3D CSS transforms in order to use DistortableImageOverlay."
+//       );
+//     }
 
-    return str;
-  },
-
-  get3dMatrix: function(m) {
-	 return [
-        m[0], m[3], 0, m[6],
-        m[1], m[4], 0, m[7],
-        0, 0, 1, 0,
-        m[2], m[5], 0, m[8]
-	  ];
-  },
+//     return str;
+//   },
 
   getRotateString: function(angle, units) {
     var is3d = L.Browser.webkit3d || L.Browser.gecko3d || L.Browser.ie3d,
@@ -96,8 +87,25 @@ L.Map.include({
 L.MatrixUtil = {
 
 	matrixArrayToCssMatrix: function (array) {
-  		return "matrix3d(" + array.join(',') + ")";
+		var is3d = L.Browser.webkit3d || L.Browser.gecko3d || L.Browser.ie3d,
+			str = is3d ? "matrix3d(" + array.join(',') + ")" : "";
+
+		if (!is3d) {
+		  console.log("Your browser must support 3D CSS transforms in order to use DistortableImageOverlay.");
+        }
+
+  		return str;
 	},
+
+	/* Since matrix3d takes a 4*4 matrix, we add in an empty row and column, which act as the identity on the z-axis. */
+	from2dTo3dMatrix: function(m) {
+	 return [
+        m[0], m[3], 0, m[6],
+        m[1], m[4], 0, m[7],
+        0, 0, 1, 0,
+        m[2], m[5], 0, m[8]
+	  ];
+  	},
 
 	multiplyMatrices: function (a, b) {
   
@@ -441,15 +449,16 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     var map = this._map,
       image = this._image,
       latLngToLayerPoint = L.bind(map.latLngToLayerPoint, map),
-      transformMatrix = this._calculateProjectiveTransform(latLngToLayerPoint),
+      transform2dMatrix = this._calculateProjectiveTransform(
+        latLngToLayerPoint
+      ),
+      topLeft = latLngToLayerPoint(this.getCorner(0)),
+      // window.transformMatrix = transformMatrix;
+      transform3dMatrix = L.MatrixUtil.from2dTo3dMatrix(transform2dMatrix),
+      translateMatrix = L.MatrixUtil.translateMatrix(topLeft.x, topLeft.y, 1),
+      composedMatrix = L.MatrixUtil.multiplyArrayOfMatrices([translateMatrix, transform3dMatrix]),
+      warp = L.MatrixUtil.matrixArrayToCssMatrix(composedMatrix);
 
-      topLeft = latLngToLayerPoint(this.getCorner(0));
-      window.transformMatrix = transformMatrix;
-      var transformM2 = L.DomUtil.get3dMatrix(transformMatrix);
-      var translateMatrix = L.MatrixUtil.translateMatrix(topLeft.x, topLeft.y, 1);
-      var finalTMatrix = L.MatrixUtil.multiplyArrayOfMatrices([translateMatrix, transformM2]);
-      var warp = L.MatrixUtil.matrixArrayToCssMatrix(finalTMatrix);
-      // topLeft = latLngToLayerPoint(this.getCorner(0)),
       // warp = L.DomUtil.getMatrixString(transformMatrix);
 
     // L.DomUtil.setPosition(image, topLeft);
@@ -459,9 +468,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   /*
-   * Calculates the transform string that will be correct *at the end* of zooming.
-   * Leaflet then generates a CSS3 animation between the current transform and
-   *		 future transform which makes the transition appear smooth.
+   * Calculates the transform string that will be correct *at the end* of zooming. Leaflet then generates a CSS3 animation 
+   * between the current transform and future transform which makes the transition appear smooth.
    */
   _animateZoom: function(event) {
     var map = this._map,
@@ -469,15 +477,14 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       latLngToNewLayerPoint = function(latlng) {
         return map._latLngToNewLayerPoint(latlng, event.zoom, event.center);
       },
-      transformMatrix = this._calculateProjectiveTransform(
+      transform2dMatrix = this._calculateProjectiveTransform(
         latLngToNewLayerPoint
       ),
-      topLeft = latLngToNewLayerPoint(this.getCorner(0));
-      window.transformMatrix = transformMatrix;
-      var transformM2 = L.DomUtil.get3dMatrix(transformMatrix);
-      var translateMatrix = L.MatrixUtil.translateMatrix(topLeft.x, topLeft.y, 1);
-      var finalTMatrix = L.MatrixUtil.multiplyArrayOfMatrices([translateMatrix, transformM2]);
-      var warp = L.MatrixUtil.matrixArrayToCssMatrix(finalTMatrix);
+      topLeft = latLngToNewLayerPoint(this.getCorner(0)),
+      transform3dMatrix = L.MatrixUtil.from2dTo3dMatrix(transform2dMatrix),
+      translateMatrix = L.MatrixUtil.translateMatrix(topLeft.x, topLeft.y, 1),
+      composedMatrix = L.MatrixUtil.multiplyArrayOfMatrices([translateMatrix, transform3dMatrix]),
+      warp = L.MatrixUtil.matrixArrayToCssMatrix(composedMatrix);
       // warp = L.DomUtil.getMatrixString(transformMatrix);
 
     // L.DomUtil.setPosition(image, topLeft);

@@ -169,15 +169,16 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     var map = this._map,
       image = this._image,
       latLngToLayerPoint = L.bind(map.latLngToLayerPoint, map),
-      transformMatrix = this._calculateProjectiveTransform(latLngToLayerPoint),
+      transform2dMatrix = this._calculateProjectiveTransform(
+        latLngToLayerPoint
+      ),
+      topLeft = latLngToLayerPoint(this.getCorner(0)),
+      // window.transformMatrix = transformMatrix;
+      transform3dMatrix = L.MatrixUtil.from2dTo3dMatrix(transform2dMatrix),
+      translateMatrix = L.MatrixUtil.translateMatrix(topLeft.x, topLeft.y, 1),
+      composedMatrix = L.MatrixUtil.multiplyArrayOfMatrices([translateMatrix, transform3dMatrix]),
+      warp = L.MatrixUtil.matrixArrayToCssMatrix(composedMatrix);
 
-      topLeft = latLngToLayerPoint(this.getCorner(0));
-      window.transformMatrix = transformMatrix;
-      var transformM2 = L.DomUtil.get3dMatrix(transformMatrix);
-      var translateMatrix = L.MatrixUtil.translateMatrix(topLeft.x, topLeft.y, 1);
-      var finalTMatrix = L.MatrixUtil.multiplyArrayOfMatrices([translateMatrix, transformM2]);
-      var warp = L.MatrixUtil.matrixArrayToCssMatrix(finalTMatrix);
-      // topLeft = latLngToLayerPoint(this.getCorner(0)),
       // warp = L.DomUtil.getMatrixString(transformMatrix);
 
     // L.DomUtil.setPosition(image, topLeft);
@@ -187,9 +188,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   /*
-   * Calculates the transform string that will be correct *at the end* of zooming.
-   * Leaflet then generates a CSS3 animation between the current transform and
-   *		 future transform which makes the transition appear smooth.
+   * Calculates the transform string that will be correct *at the end* of zooming. Leaflet then generates a CSS3 animation 
+   * between the current transform and future transform which makes the transition appear smooth.
    */
   _animateZoom: function(event) {
     var map = this._map,
@@ -197,15 +197,14 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       latLngToNewLayerPoint = function(latlng) {
         return map._latLngToNewLayerPoint(latlng, event.zoom, event.center);
       },
-      transformMatrix = this._calculateProjectiveTransform(
+      transform2dMatrix = this._calculateProjectiveTransform(
         latLngToNewLayerPoint
       ),
-      topLeft = latLngToNewLayerPoint(this.getCorner(0));
-      window.transformMatrix = transformMatrix;
-      var transformM2 = L.DomUtil.get3dMatrix(transformMatrix);
-      var translateMatrix = L.MatrixUtil.translateMatrix(topLeft.x, topLeft.y, 1);
-      var finalTMatrix = L.MatrixUtil.multiplyArrayOfMatrices([translateMatrix, transformM2]);
-      var warp = L.MatrixUtil.matrixArrayToCssMatrix(finalTMatrix);
+      topLeft = latLngToNewLayerPoint(this.getCorner(0)),
+      transform3dMatrix = L.MatrixUtil.from2dTo3dMatrix(transform2dMatrix),
+      translateMatrix = L.MatrixUtil.translateMatrix(topLeft.x, topLeft.y, 1),
+      composedMatrix = L.MatrixUtil.multiplyArrayOfMatrices([translateMatrix, transform3dMatrix]),
+      warp = L.MatrixUtil.matrixArrayToCssMatrix(composedMatrix);
       // warp = L.DomUtil.getMatrixString(transformMatrix);
 
     // L.DomUtil.setPosition(image, topLeft);
