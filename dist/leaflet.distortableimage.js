@@ -363,8 +363,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       warp = L.DomUtil.getMatrixString(transformMatrix),
       translation = this._getTranslateString(topLeft);
 
-    /* See L.DomUtil.setPosition. Mainly for the purposes of L.Draggable. */
-    image._leaflet_pos = topLeft;
+      L.DomUtil.setPosition(image, topLeft);
 
     image.style[L.DomUtil.TRANSFORM] = [translation, warp].join(" ");
 
@@ -390,8 +389,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       warp = L.DomUtil.getMatrixString(transformMatrix),
       translation = this._getTranslateString(topLeft);
 
-    /* See L.DomUtil.setPosition. Mainly for the purposes of L.Draggable. */
-    image._leaflet_pos = topLeft;
+      L.DomUtil.setPosition(image, topLeft);
 
     if (!L.Browser.gecko) {
       image.style[L.DomUtil.TRANSFORM] = [translation, warp].join(" ");
