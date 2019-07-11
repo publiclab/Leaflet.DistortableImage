@@ -59,8 +59,7 @@ L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.p
 // create an image
 img = L.distortableImageOverlay(
   'example.png', {
-    // 'corners' is the only required option for this class
-    // and should be in NW, NE, SW, SE order
+    // 'corners' should be in NW, NE, SW, SE order
     corners: [
       L.latLng(51.52,-0.14),
       L.latLng(51.52,-0.10),
@@ -68,9 +67,6 @@ img = L.distortableImageOverlay(
       L.latLng(51.50,-0.10)
     ],
   }).addTo(map);
-
-// enable editing
-L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
 ```
 
 Options available to pass during `L.DistortableImageOverlay` initialization:
@@ -100,9 +96,7 @@ For example, to overrwrite the toolbar to only include the `ToggleTransparency` 
 
 ``` JS
 img = L.distortableImageOverlay(
-   'example.png', {
-    // 'corners' is the only required option for this class
-    // and is in NW, NE, SW, SE order
+  'example.png', {
     corners: [
       L.latLng(51.52,-0.14),
       L.latLng(51.52,-0.10),
@@ -115,7 +109,7 @@ img = L.distortableImageOverlay(
 
 ### Corners
 
-`corners` (*required*, value: *array*)
+`corners` (*optional*, default: TODO value: *array*)
 
 An array of 4 `L.latLng` objects (geographical coordinates) representing the corners of the image.
 
@@ -161,31 +155,17 @@ This option sets the image's initial editing mode, meaning the corresponding edi
 
 Values available to pass to `mode` are: 
 
-- #### distort (_default_)
-
-  - Distortion via individually draggable corners.
-
-- #### rotate
-
-  - Rotation only.
-
-- #### scale
-
-  - Resize only. 
-
-- #### rotateScale:
-
-  - Free transform. Combines the `rotate` and `scale` modes into one.
-
-- #### lock:
-
-  - Prevents any image actions (including those triggered from the toolbar, user gestures, and hotkeys) until the toolbar action [ToggleLock](#ToggleLock-(<kbd>l</kbd>)) is explicitly triggered (or its hotkey <kbd>l</kbd>).
+- **distort** (_default_): Distortion via individually draggable corners.
+- **rotate:** Rotation only.
+- **scale:** Resize only. 
+- **rotateScale:** Free transform. Combines the `rotate` and `scale` modes into one.
+- **lock:** Prevents any image actions (including those triggered from the toolbar, user gestures, and hotkeys) until the toolbar action [ToggleLock](#ToggleLock-(<kbd>l</kbd>)) is explicitly triggered (or its hotkey <kbd>l</kbd>).
 
 In the below example, the image will be initialiazed with "rotateScale" handles:
 
 ```js
-// create an image
-  img = L.distortableImageOverlay("example.png", {
+img = L.distortableImageOverlay(
+  "example.png", {
     corners: [
       L.latLng(51.52, -0.14),
       L.latLng(51.52, -0.10),
@@ -194,8 +174,6 @@ In the below example, the image will be initialiazed with "rotateScale" handles:
     ],
     mode: "rotateScale",
   }).addTo(map);
-
-L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
 ```
 
 ### Keymapper
@@ -205,6 +183,8 @@ L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
 By default, an image loads with a keymapper legend showing the available key bindings for different editing / interaction options. To suppress the keymapper, pass `keymapper: false` as an additional option to the image.
 
 ### Full-resolution download
+
+`fullResolutionSrc` (*optional*, value: *url*)
 
 We've added a GPU-accelerated means to generate a full resolution version of the distorted image; it requires two additional dependencies to enable; see how we've included them in the demo:
 
@@ -216,10 +196,6 @@ We've added a GPU-accelerated means to generate a full resolution version of the
 When instantiating a Distortable Image, pass in a `fullResolutionSrc` option set to the url of the higher resolution image. This image will be used in full-res exporting.
 
 ```JS
-// create basic map setup from above
-
-// create an image - note the optional
-// fullResolutionSrc option is now passed in
 img = L.distortableImageOverlay(
   'example.png', {
     corners: [
@@ -230,8 +206,6 @@ img = L.distortableImageOverlay(
     ],
     fullResolutionSrc: 'large.jpg'
   }).addTo(map);
-
-L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
 ```
 
 ### Suppress Toolbar
@@ -282,13 +256,10 @@ img2 = L.distortableImageOverlay(
 // 3. Instantiate an empty `DistortableCollection` group
 imgGroup = L.distortableCollection().addTo(map);
 
-// 4. Add the images to the group 
+// 4. Add the images to the group now or when you're ready
 imgGroup.addLayer(img);
 imgGroup.addLayer(img2);
 ```
-
-<blockquote><strong>Note</strong>: notice how we didn't <code>enable</code> the image editing above as we had done for the single image interface. This is because our <code>DistortableCollection</code> class uses event listeners internally (<code>layeradd</code>) to enable editing on every image as it's added. This event is only triggered if we add the layers to the group dynamically. I.e. you must add the group to the map initially empty.</blockquote>
-
 Options available to pass during `L.DistortableCollection` initialization: 
 
 - [actions](#✤-Actions)

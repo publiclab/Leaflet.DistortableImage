@@ -262,6 +262,18 @@ L.MatrixUtil = {
 		return L.MatrixUtil.multsm(1/m[8], m);
 	}
 };
+  
+L.PointUtil = {
+
+  calcCenterTopPoint: function(topLeft, topRight) {
+    var centerPoint = { x: "", y: "" };
+
+    centerPoint.x = topRight.x + (topLeft.x - topRight.x) / 2;
+    centerPoint.y = topRight.y + (topLeft.y - topRight.y) / 2;
+
+    return centerPoint;
+  } 
+};
 L.TrigUtil = {
 
   calcAngleDegrees: function(x, y) {
@@ -317,29 +329,31 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
         map.on("zoomanim", this._animateZoom, this);
       }
 
-      /* This reset happens before image load; it allows
-       * us to place the image on the map earlier with
-       * "guessed" dimensions. */
+      /* 
+       * This reset happens before image load. It allows us to place the 
+       * image on the map earlier with "guessed" dimensions. 
+       */
       this._reset();
     }
 
-    /* Have to wait for the image to load because
-     * we need to access its width and height. */
+    /* Have to wait for the image to load bc we need to access its width and height. */
     L.DomEvent.on(this._image, "load", function() {
       this._initImageDimensions();
+      this.editing.enable();
       this._reset();
       /* Initialize default corners if not already set */
-      if (!this._corners) {
-        if (map.options.zoomAnimation && L.Browser.any3d) {
-          map.on("zoomanim", this._animateZoom, this);
-        }
-      }
+      // if (!this._corners) {    /* TODO this code doesnt do anything? delete? */
+      //   if (map.options.zoomAnimation && L.Browser.any3d) {
+      //     map.on("zoomanim", this._animateZoom, this);
+      //   }
+      // }
     }, this);
 
     this.fire("add");
   },
 
   onRemove: function(map) {
+    this.editing.disable();
     this.fire("remove");
 
     L.ImageOverlay.prototype.onRemove.call(this, map);
@@ -366,14 +380,14 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   _initImageDimensions: function() {
     var map = this._map,
-      originalImageWidth = L.DomUtil.getStyle(this._image, "width"),
-      originalImageHeight = L.DomUtil.getStyle(this._image, "height"),
-      aspectRatio =
-        parseInt(originalImageWidth) / parseInt(originalImageHeight),
-      imageHeight = this.options.height,
-      imageWidth = parseInt(aspectRatio * imageHeight),
-      center = map.latLngToContainerPoint(map.getCenter()),
-      offset = L.point(imageWidth, imageHeight).divideBy(2);
+        originalImageWidth = L.DomUtil.getStyle(this._image, 'width'),
+        originalImageHeight = L.DomUtil.getStyle(this._image, 'height'),
+        aspectRatio = parseInt(originalImageWidth) / parseInt(originalImageHeight),
+        imageHeight = this.options.height,
+        imageWidth = parseInt(aspectRatio * imageHeight),
+        center = map.latLngToContainerPoint(map.getCenter()),
+        /* an offset of 0, 0 would set the image in top right corner of the map */
+        offset = L.point(imageWidth, imageHeight).divideBy(2);
 
     if (this.options.corners) {
       this._corners = this.options.corners;
@@ -394,7 +408,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   _initEvents: function() {
-    this._events = ["click"];
+    this._events = ['click'];
 
     for (var i = 0, l = this._events.length; i < l; i++) {
       L.DomEvent.on(this._image, this._events[i], this._fireMouseEvent, this);
@@ -406,9 +420,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     if (!this.hasEventListeners(event.type)) { return; }
 
     var map = this._map,
-      containerPoint = map.mouseEventToContainerPoint(event),
-      layerPoint = map.containerPointToLayerPoint(containerPoint),
-      latlng = map.layerPointToLatLng(layerPoint);
+        containerPoint = map.mouseEventToContainerPoint(event),
+        layerPoint = map.containerPointToLayerPoint(containerPoint),
+        latlng = map.layerPointToLatLng(layerPoint);
 
     this.fire(event.type, {
       latlng: latlng,
@@ -435,8 +449,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   _setCornersFromPoints: function(pointsObj) {
-    var map = this._map;
-    var i = 0;
+    var map = this._map,
+        i = 0;
+        
     for (var k in pointsObj) {
       this._corners[i] = map.layerPointToLatLng(pointsObj[k]);
       i += 1;
@@ -447,16 +462,16 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   _reset: function() {
     var map = this._map,
-      image = this._image,
-      latLngToLayerPoint = L.bind(map.latLngToLayerPoint, map),
-      transform2dMatrix = this._calculateProjectiveTransform(
-        latLngToLayerPoint
-      ),
-      topLeft = latLngToLayerPoint(this.getCorner(0)),
-      transform3dMatrix = L.MatrixUtil.from2dTo3dMatrix(transform2dMatrix),
-      translateMatrix = L.MatrixUtil.translateMatrix(topLeft.x, topLeft.y, 0),
-      composedMatrix = L.MatrixUtil.multiplyArrayOfMatrices([translateMatrix, transform3dMatrix]),
-      warp = L.MatrixUtil.matrixArrayToCssMatrix(composedMatrix);
+        image = this._image,
+        latLngToLayerPoint = L.bind(map.latLngToLayerPoint, map),
+        transform2dMatrix = this._calculateProjectiveTransform(
+          latLngToLayerPoint
+        ),
+        topLeft = latLngToLayerPoint(this.getCorner(0)),
+        transform3dMatrix = L.MatrixUtil.from2dTo3dMatrix(transform2dMatrix),
+        translateMatrix = L.MatrixUtil.translateMatrix(topLeft.x, topLeft.y, 0),
+        composedMatrix = L.MatrixUtil.multiplyArrayOfMatrices([translateMatrix, transform3dMatrix]),
+        warp = L.MatrixUtil.matrixArrayToCssMatrix(composedMatrix);
 
     image._leaflet_pos = topLeft;
     image.style[L.DomUtil.TRANSFORM] = warp;
@@ -470,18 +485,18 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
    */
   _animateZoom: function(event) {
     var map = this._map,
-      image = this._image,
-      latLngToNewLayerPoint = function(latlng) {
-        return map._latLngToNewLayerPoint(latlng, event.zoom, event.center);
-      },
-      transform2dMatrix = this._calculateProjectiveTransform(
-        latLngToNewLayerPoint
-      ),
-      topLeft = latLngToNewLayerPoint(this.getCorner(0)),
-      transform3dMatrix = L.MatrixUtil.from2dTo3dMatrix(transform2dMatrix),
-      translateMatrix = L.MatrixUtil.translateMatrix(topLeft.x, topLeft.y, 0),
-      composedMatrix = L.MatrixUtil.multiplyArrayOfMatrices([translateMatrix, transform3dMatrix]),
-      warp = L.MatrixUtil.matrixArrayToCssMatrix(composedMatrix);
+        image = this._image,
+        latLngToNewLayerPoint = function(latlng) {
+          return map._latLngToNewLayerPoint(latlng, event.zoom, event.center);
+        },
+        transform2dMatrix = this._calculateProjectiveTransform(
+          latLngToNewLayerPoint
+        ),
+        topLeft = latLngToNewLayerPoint(this.getCorner(0)),
+        transform3dMatrix = L.MatrixUtil.from2dTo3dMatrix(transform2dMatrix),
+        translateMatrix = L.MatrixUtil.translateMatrix(topLeft.x, topLeft.y, 0),
+        composedMatrix = L.MatrixUtil.multiplyArrayOfMatrices([translateMatrix, transform3dMatrix]),
+        warp = L.MatrixUtil.matrixArrayToCssMatrix(composedMatrix);
 
     image._leaflet_pos = topLeft;
     image.style[L.DomUtil.TRANSFORM] = warp;
@@ -501,14 +516,14 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
    */
   getCenter: function(ll2c, c2ll) {
     var map = this._map,
-      latLngToCartesian = ll2c ? ll2c : map.latLngToLayerPoint,
-      cartesianToLatLng = c2ll ? c2ll : map.layerPointToLatLng,
-      nw = latLngToCartesian.call(map, this.getCorner(0)),
-      ne = latLngToCartesian.call(map, this.getCorner(1)),
-      se = latLngToCartesian.call(map, this.getCorner(2)),
-      sw = latLngToCartesian.call(map, this.getCorner(3)),
-      nmid = nw.add(ne.subtract(nw).divideBy(2)),
-      smid = sw.add(se.subtract(sw).divideBy(2));
+        latLngToCartesian = ll2c ? ll2c : map.latLngToLayerPoint,
+        cartesianToLatLng = c2ll ? c2ll : map.layerPointToLatLng,
+        nw = latLngToCartesian.call(map, this.getCorner(0)),
+        ne = latLngToCartesian.call(map, this.getCorner(1)),
+        se = latLngToCartesian.call(map, this.getCorner(2)),
+        sw = latLngToCartesian.call(map, this.getCorner(3)),
+        nmid = nw.add(ne.subtract(nw).divideBy(2)),
+        smid = sw.add(se.subtract(sw).divideBy(2));
 
     return cartesianToLatLng.call(
       map,
@@ -521,25 +536,16 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return this._dragStartPoints[0].subtract(this._dragPoints[0]);
   },
 
-  _calcCenterTwoCornerPoints: function(topLeft, topRight) {
-    var toolPoint = { x: "", y: "" };
-
-    toolPoint.x = topRight.x + (topLeft.x - topRight.x) / 2;
-    toolPoint.y = topRight.y + (topLeft.y - topRight.y) / 2;
-
-    return toolPoint;
-  },
-
   _calculateProjectiveTransform: function(latLngToCartesian) {
     /* Setting reasonable but made-up image defaults
      * allow us to place images on the map before
      * they've finished downloading. */
     var offset = latLngToCartesian(this.getCorner(0)),
-      w = this._image.offsetWidth || 500,
-      h = this._image.offsetHeight || 375,
-      c = [],
-      j,
-      n = this.getCorners().length;
+        w = this._image.offsetWidth || 500,
+        h = this._image.offsetHeight || 375,
+        c = [],
+        j,
+        n = this.getCorners().length;
 
     /* Convert corners to container points (i.e. cartesian coordinates). */
     for (j = 0; j < n; j++) {
@@ -561,7 +567,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       w, h, c[3].x, c[3].y
     );
   }
-
 });
 
 L.distortableImageOverlay = function(id, options) {
@@ -610,8 +615,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
   _turnOnEditing: function(e) {
     var layer = e.layer; 
-    
-    layer.editing.enable();
 
     L.DomEvent.on(layer, {
       dragstart: this._dragStartMultiple, 
@@ -626,8 +629,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
   _turnOffEditing: function(e) {
     var layer = e.layer; 
-
-    layer.editing.disable();
 
     L.DomEvent.off(layer, {
       dragstart: this._dragStartMultiple,
@@ -1613,27 +1614,6 @@ L.DistortableImage.PopupBar = L.Toolbar2.Popup.extend({
       Delete
     ]
   },
-
-  // todo: move to some sort of util class, these methods could be useful in future
-  _rotateToolbarAngleDeg: function(angle) {
-    var div = this._container,
-      divStyle = div.style;
-
-    var oldTransform = divStyle.transform;
-
-    divStyle.transform = oldTransform + "rotate(" + angle + "deg)";
-    divStyle.transformOrigin = "1080% 650%";
-
-    this._rotateToolbarIcons(angle);
-  },
-
-  _rotateToolbarIcons: function(angle) {
-    var icons = document.querySelectorAll(".fa");
-
-    for (var i = 0; i < icons.length; i++) {
-      icons.item(i).style.transform = "rotate(" + -angle + "deg)";
-    }
-  }
 });
 
 L.distortableImage.popupBar = function (latlng, options) {
@@ -1820,8 +1800,8 @@ L.DistortableImage.Edit = L.Handler.extend({
   /* Run on image selection. */
   addHooks: function() {
     var overlay = this._overlay,
-      map = overlay._map,
-      keymapper_position;
+        map = overlay._map,
+        keymapper_position;
 
     /* instantiate and render keymapper for one instance only */
     if (this.instance_count === 1 && overlay.options.keymapper !== false) {
@@ -1839,8 +1819,8 @@ L.DistortableImage.Edit = L.Handler.extend({
     this.editActions = this.options.actions;
 
     if (this._selected && !overlay.options.suppressToolbar) { this._addToolbar(); }
-
-    this._overlay._dragStartPoints = {
+    
+    overlay._dragStartPoints = {
       0: L.point(0, 0),
       1: L.point(0, 0),
       2: L.point(0, 0),
@@ -1916,7 +1896,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _appendHandlesandDragable: function (mode) {
     var overlay = this._overlay,
-      map = overlay._map;
+        map = overlay._map;
 
     map.addLayer(this._handles[mode]);
 
@@ -1964,11 +1944,9 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _rotateBy: function(angle) {
     var overlay = this._overlay,
-      map = overlay._map,
-      center = map.latLngToLayerPoint(overlay.getCenter()),
-      i,
-      p,
-      q;
+        map = overlay._map,
+        center = map.latLngToLayerPoint(overlay.getCenter()),
+        i, p, q;
 
     for (i = 0; i < 4; i++) {
       p = map.latLngToLayerPoint(overlay.getCorner(i)).subtract(center);
@@ -1987,18 +1965,17 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _revert: function() {
-    var overlay = this._overlay;
-    var angle = overlay.rotation;
-    var map = overlay._map;
-    var center = map.latLngToLayerPoint(overlay.getCenter());
-    var offset = overlay._initialDimensions.offset;
-
-    var corners = { 
-      0: map.layerPointToLatLng(center.subtract(offset)),
-      1: map.layerPointToLatLng(center.add(L.point(offset.x, -offset.y))),
-      2: map.layerPointToLatLng(center.add(L.point(-offset.x, offset.y))),
-      3: map.layerPointToLatLng(center.add(offset))
-    };
+    var overlay = this._overlay,
+        angle = overlay.rotation,
+        map = overlay._map,
+        center = map.latLngToLayerPoint(overlay.getCenter()),
+        offset = overlay._initialDimensions.offset,
+        corners = { 
+          0: map.layerPointToLatLng(center.subtract(offset)),
+          1: map.layerPointToLatLng(center.add(L.point(offset.x, -offset.y))),
+          2: map.layerPointToLatLng(center.add(L.point(-offset.x, offset.y))),
+          3: map.layerPointToLatLng(center.add(offset))
+        };
 
     map.removeLayer(this._handles[this._mode]);
 
@@ -2015,10 +1992,9 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _scaleBy: function(scale) {
     var overlay = this._overlay,
-      map = overlay._map,
-      center = map.latLngToLayerPoint(overlay.getCenter()),
-      i,
-      p;
+        map = overlay._map,
+        center = map.latLngToLayerPoint(overlay.getCenter()),
+        i, p;
 
     for (i = 0; i < 4; i++) {
       p = map
@@ -2034,7 +2010,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _enableDragging: function() {
     var overlay = this._overlay,
-      map = overlay._map;
+        map = overlay._map;
 
     this.dragging = new L.Draggable(overlay.getElement());
     this.dragging.enable();
@@ -2043,18 +2019,16 @@ L.DistortableImage.Edit = L.Handler.extend({
     this.dragging.on('dragstart', function() {
       overlay.fire('dragstart');
       this._removeToolbar();
-    },this);
+    }, this);
 
     /*
      * Adjust default behavior of L.Draggable. By default, L.Draggable overwrites the CSS3 distort transform
      * that we want when it calls L.DomUtil.setPosition.
      */
     this.dragging._updatePosition = function() {
-      var delta = this._newPos.subtract(
-          map.latLngToLayerPoint(overlay.getCorner(0))
-        ),
-        currentPoint,
-        i;
+      var delta = this._newPos.subtract(map.latLngToLayerPoint(overlay.getCorner(0))),
+          currentPoint,
+          i;
 
       this.fire('predrag');
 
@@ -2073,8 +2047,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _onKeyDown: function(event) {
     var keymap = this.options.keymap,
-      handlerName = keymap[event.key],
-      eventParents = this._overlay._eventParents;
+        handlerName = keymap[event.key],
+        eventParents = this._overlay._eventParents;
 
     if (eventParents) {
       var eP = eventParents[Object.keys(eventParents)[0]];
@@ -2133,8 +2107,8 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _toggleTransparency: function() {
-    var image = this._overlay._image,
-      opacity;
+    var image = this._overlay.getElement(),
+        opacity;
 
     this._transparent = !this._transparent;
     opacity = this._transparent ? this.options.opacity : 1;
@@ -2147,8 +2121,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _toggleOutline: function() {
     var image = this._overlay.getElement(),
-      opacity,
-      outline;
+        opacity,
+        outline;
 
     this._outlined = !this._outlined;
     outline = this._outlined ? this.options.outline : 'none';
@@ -2211,7 +2185,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _removeToolbar: function() {
     var overlay = this._overlay,
-      map = overlay._map;
+        map = overlay._map;
 
     if (this.toolbar) {
       map.removeLayer(this.toolbar);
@@ -2227,7 +2201,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
       currentHandle.eachLayer(function (layer) {
         var drag = layer.dragging,
-          opts = layer.options;
+            opts = layer.options;
 
         layer.setOpacity(1);
         if (drag) { drag.enable(); }
@@ -2240,11 +2214,11 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (!this._handles) { this._initHandles(); }  // workaround for race condition w/ feature group
 
     var mode = this._mode,
-      currentHandle = this._handles[mode];
+        currentHandle = this._handles[mode];
     
 		currentHandle.eachLayer(function (layer) {
       var drag = layer.dragging,
-				opts = layer.options;
+				  opts = layer.options;
 
       if (mode !== 'lock') {
         layer.setOpacity(0);
@@ -2256,10 +2230,10 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _addToolbar: function() {
     var overlay = this._overlay,
-      map = overlay._map,
-      //Find the topmost point on the image.
-      corners = overlay.getCorners(),
-      maxLat = -Infinity;
+        map = overlay._map,
+        //Find the topmost point on the image.
+        corners = overlay.getCorners(),
+        maxLat = -Infinity;
 
     for (var i = 0; i < corners.length; i++) {
       if (corners[i].lat > maxLat) {
@@ -2283,7 +2257,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _showToolbar: function() {
     var overlay = this._overlay,
-      eventParents = overlay._eventParents;
+        eventParents = overlay._eventParents;
 
     if (overlay.options.suppressToolbar) { return; }
 
@@ -2305,10 +2279,10 @@ L.DistortableImage.Edit = L.Handler.extend({
   
   _updateToolbarPos: function() {
     var overlay = this._overlay,
-      //Find the topmost point on the image.
-      corners = overlay.getCorners(),
-      toolbar = this.toolbar,
-      maxLat = -Infinity;
+        //Find the topmost point on the image.
+        corners = overlay.getCorners(),
+        toolbar = this.toolbar,
+        maxLat = -Infinity;
 
     if (toolbar && toolbar instanceof L.DistortableImage.PopupBar) { 
       for (var i = 0; i < corners.length; i++) {
@@ -2321,7 +2295,7 @@ L.DistortableImage.Edit = L.Handler.extend({
       var raised_point = overlay.getCenter();
       raised_point.lat = maxLat;
 
-      if (overlay.options.suppressToolbar !== true) {
+      if (!overlay.options.suppressToolbar) {
         this.toolbar.setLatLng(raised_point);
       }
     }
@@ -2329,7 +2303,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _removeOverlay: function () {
     var overlay = this._overlay,
-      eventParents = overlay._eventParents;
+        eventParents = overlay._eventParents;
 
     if (this._mode === 'lock') { return; }
 
