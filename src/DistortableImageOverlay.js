@@ -173,18 +173,15 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
         latLngToLayerPoint
       ),
       topLeft = latLngToLayerPoint(this.getCorner(0)),
-      // window.transformMatrix = transformMatrix;
       transform3dMatrix = L.MatrixUtil.from2dTo3dMatrix(transform2dMatrix),
-      translateMatrix = L.MatrixUtil.translateMatrix(topLeft.x, topLeft.y, 1),
+      translateMatrix = L.MatrixUtil.translateMatrix(topLeft.x, topLeft.y, 0),
       composedMatrix = L.MatrixUtil.multiplyArrayOfMatrices([translateMatrix, transform3dMatrix]),
       warp = L.MatrixUtil.matrixArrayToCssMatrix(composedMatrix);
 
-      // warp = L.DomUtil.getMatrixString(transformMatrix);
-
-    // L.DomUtil.setPosition(image, topLeft);
+    image._leaflet_pos = topLeft;
     image.style[L.DomUtil.TRANSFORM] = warp;
     /* Set origin to the upper-left corner rather than the center of the image, which is the default. */
-    // image.style[L.DomUtil.TRANsSFORM + "-origin"] = "0 0 0";
+    image.style[L.DomUtil.TRANSFORM + "-origin"] = "0 0 0";
   },
 
   /*
@@ -202,12 +199,11 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       ),
       topLeft = latLngToNewLayerPoint(this.getCorner(0)),
       transform3dMatrix = L.MatrixUtil.from2dTo3dMatrix(transform2dMatrix),
-      translateMatrix = L.MatrixUtil.translateMatrix(topLeft.x, topLeft.y, 1),
+      translateMatrix = L.MatrixUtil.translateMatrix(topLeft.x, topLeft.y, 0),
       composedMatrix = L.MatrixUtil.multiplyArrayOfMatrices([translateMatrix, transform3dMatrix]),
       warp = L.MatrixUtil.matrixArrayToCssMatrix(composedMatrix);
-      // warp = L.DomUtil.getMatrixString(transformMatrix);
 
-    // L.DomUtil.setPosition(image, topLeft);
+    image._leaflet_pos = topLeft;
     image.style[L.DomUtil.TRANSFORM] = warp;
   },
 
