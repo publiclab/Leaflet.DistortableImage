@@ -112,9 +112,11 @@ L.Map.BoxSelector = L.Map.BoxZoom.extend({
     this._resetStateTimeout = setTimeout(L.Util.bind(this._resetState, this), 0);
 
     var bounds = new L.latLngBounds(
-      this._map.layerPointToLatLng(this._bounds.getBottomLeft()),
-      this._map.layerPointToLatLng(this._bounds.getTopRight())
+      this._map.containerPointToLatLng(this._bounds.getBottomLeft()),
+      this._map.containerPointToLatLng(this._bounds.getTopRight())
     );
+
+    bounds = this._map._latLngBoundsToNewLayerBounds(bounds, this._map.getZoom(), this._map.getCenter());
 
     this._map.fire('boxzoomend', { boxZoomBounds: bounds });
   }
