@@ -14,7 +14,9 @@ L.ScaleHandle = L.EditHandle.extend({
 		newLatLng = this.getLatLng(),
 		scale = this._calculateScalingFactor(formerLatLng, newLatLng);
 
-	overlay.editing._scaleBy(scale);
+
+	overlay.scale = scale;
+	overlay._reset();
 	overlay.fire('update');
 	overlay.editing._updateToolbarPos();
   },

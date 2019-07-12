@@ -91,6 +91,24 @@ L.MatrixUtil = {
 		];
 	},
 
+	scaleMatrix: function(w, h, d) {
+		return [
+			w,    0,    0,   0,
+			0,    h,    0,   0,
+			0,    0,    d,   0,
+			0,    0,    0,   1
+		];
+	},
+
+	rotateAroundZAxisMatrix: function(a) {
+  
+		return [
+			Math.cos(a), -Math.sin(a),    0,    0,
+			Math.sin(a),  Math.cos(a),    0,    0,
+				0,       0,    1,    0,
+				0,       0,    0,    1
+		];
+	},
 
 	// Compute the adjugate of m
 	adj: function(m) { 

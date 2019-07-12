@@ -1,9 +1,9 @@
 L.DistortableImageOverlay = L.ImageOverlay.extend({
   options: {
-    alt: "",
+    alt: '',
     height: 200,
-		crossOrigin: true,
-		// todo: find ideal number to prevent distortions during RotateScale, and make it dynamic (remove hardcoding)
+    crossOrigin: true,
+    // todo: find ideal number to prevent distortions during RotateScale, and make it dynamic (remove hardcoding)
     edgeMinWidth: 520
   },
 
@@ -12,7 +12,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this.edgeMinWidth = this.options.edgeMinWidth;
     this._url = url;
     this.rotation = 0;
-    // window.rotation = this.rotation;
+    this.scale = 1;
+    window.rotation = this.rotation;
     L.DistortableImage._options = options;
 
     L.setOptions(this, options);
@@ -22,47 +23,57 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     /* Copied from L.ImageOverlay */
     this._map = map;
 
-    if (!this._image) { this._initImage(); }
-    if (!this._events) { this._initEvents(); }
+    if (!this._image) {
+      this._initImage();
+    }
+    if (!this._events) {
+      this._initEvents();
+    }
 
     map._panes.overlayPane.appendChild(this._image);
 
-    map.on("viewreset", this._reset, this);
+    map.on('viewreset', this._reset, this);
     /* End copied from L.ImageOverlay */
 
     /* Use provided corners if available */
     if (this.options.corners) {
       this._corners = this.options.corners;
+      this.setBounds(new L.latLngBounds(this.getCorner(2), this.getCorner(1)));
       if (map.options.zoomAnimation && L.Browser.any3d) {
-        map.on("zoomanim", this._animateZoom, this);
+        map.on('zoomanim', this._animateZoom, this);
       }
 
-      /* 
-       * This reset happens before image load. It allows us to place the 
-       * image on the map earlier with "guessed" dimensions. 
+      /*
+       * This reset happens before image load. It allows us to place the
+       * image on the map earlier with "guessed" dimensions.
        */
       this._reset();
     }
 
     /* Have to wait for the image to load bc we need to access its width and height. */
-    L.DomEvent.on(this._image, "load", function() {
-      this._initImageDimensions();
-      this.editing.enable();
-      this._reset();
-      /* Initialize default corners if not already set */
-      // if (!this._corners) {    /* TODO this code doesnt do anything? delete? */
-      //   if (map.options.zoomAnimation && L.Browser.any3d) {
-      //     map.on("zoomanim", this._animateZoom, this);
-      //   }
-      // }
-    }, this);
+    L.DomEvent.on(
+      this._image,
+      'load',
+      function() {
+        this._initImageDimensions();
+        this.editing.enable();
+        this._reset();
+        /* Initialize default corners if not already set */
+        // if (!this._corners) {    /* TODO this code doesnt do anything? delete? */
+        //   if (map.options.zoomAnimation && L.Browser.any3d) {
+        //     map.on("zoomanim", this._animateZoom, this);
+        //   }
+        // }
+      },
+      this
+    );
 
-    this.fire("add");
+    this.fire('add');
   },
 
   onRemove: function(map) {
     this.editing.disable();
-    this.fire("remove");
+    this.fire('remove');
 
     L.ImageOverlay.prototype.onRemove.call(this, map);
   },
@@ -88,18 +99,17 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   _initImageDimensions: function() {
     var map = this._map,
-        originalImageWidth = L.DomUtil.getStyle(this._image, 'width'),
-        originalImageHeight = L.DomUtil.getStyle(this._image, 'height'),
-        aspectRatio = parseInt(originalImageWidth) / parseInt(originalImageHeight),
-        imageHeight = this.options.height,
-        imageWidth = parseInt(aspectRatio * imageHeight),
-        center = map.latLngToContainerPoint(map.getCenter()),
-        /* an offset of 0, 0 would set the image in top right corner of the map */
-        offset = L.point(imageWidth, imageHeight).divideBy(2);
+      originalImageWidth = L.DomUtil.getStyle(this._image, 'width'),
+      originalImageHeight = L.DomUtil.getStyle(this._image, 'height'),
+      aspectRatio =
+        parseInt(originalImageWidth) / parseInt(originalImageHeight),
+      imageHeight = this.options.height,
+      imageWidth = parseInt(aspectRatio * imageHeight),
+      center = map.latLngToContainerPoint(map.getCenter()),
+      /* an offset of 0, 0 would set the image in top right corner of the map */
+      offset = L.point(imageWidth, imageHeight).divideBy(2);
 
-    if (this.options.corners) {
-      this._corners = this.options.corners;
-    } else {
+    if (!this._corners) {
       this._corners = [
         map.containerPointToLatLng(center.subtract(offset)),
         map.containerPointToLatLng(center.add(L.point(offset.x, -offset.y))),
@@ -108,10 +118,12 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       ];
     }
 
-    this._initialDimensions = { 
-      'height': imageHeight, 
-      'width': imageWidth, 
-      'offset': offset 
+    this.setBounds(new L.latLngBounds(this.getCorner(2), this.getCorner(1)));
+
+    this._initialDimensions = {
+      height: imageHeight,
+      width: imageWidth,
+      offset: offset
     };
   },
 
@@ -125,12 +137,14 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   /* See src/layer/vector/Path.SVG.js in the Leaflet source. */
   _fireMouseEvent: function(event) {
-    if (!this.hasEventListeners(event.type)) { return; }
+    if (!this.hasEventListeners(event.type)) {
+      return;
+    }
 
     var map = this._map,
-        containerPoint = map.mouseEventToContainerPoint(event),
-        layerPoint = map.containerPointToLayerPoint(containerPoint),
-        latlng = map.layerPointToLatLng(layerPoint);
+      containerPoint = map.mouseEventToContainerPoint(event),
+      layerPoint = map.containerPointToLayerPoint(containerPoint),
+      latlng = map.layerPointToLatLng(layerPoint);
 
     this.fire(event.type, {
       latlng: latlng,
@@ -158,8 +172,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   _setCornersFromPoints: function(pointsObj) {
     var map = this._map,
-        i = 0;
-        
+      i = 0;
+
     for (var k in pointsObj) {
       this._corners[i] = map.layerPointToLatLng(pointsObj[k]);
       i += 1;
@@ -170,41 +184,56 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   _reset: function() {
     var map = this._map,
-        image = this._image,
-        latLngToLayerPoint = L.bind(map.latLngToLayerPoint, map),
-        transform2dMatrix = this._calculateProjectiveTransform(
-          latLngToLayerPoint
-        ),
-        topLeft = latLngToLayerPoint(this.getCorner(0)),
-        transform3dMatrix = L.MatrixUtil.from2dTo3dMatrix(transform2dMatrix),
-        translateMatrix = L.MatrixUtil.translateMatrix(topLeft.x, topLeft.y, 0),
-        composedMatrix = L.MatrixUtil.multiplyArrayOfMatrices([translateMatrix, transform3dMatrix]),
-        warp = L.MatrixUtil.matrixArrayToCssMatrix(composedMatrix);
+      image = this._image,
+      latLngToLayerPoint = L.bind(map.latLngToLayerPoint, map),
+      transform2dMatrix = this._calculateProjectiveTransform(
+        latLngToLayerPoint
+      ),
+      topLeft = latLngToLayerPoint(this.getCorner(0)),
+      transform3dMatrix = L.MatrixUtil.from2dTo3dMatrix(transform2dMatrix),
+      translateMatrix = L.MatrixUtil.translateMatrix(topLeft.x, topLeft.y, 0),
+      scaleMatrix = L.MatrixUtil.scaleMatrix(this.scale, this.scale, this.scale),
+      // rotateMatrix = L.MatrixUtil.rotateAroundZAxisMatrix(this.rotatation),
+      composedMatrix = L.MatrixUtil.multiplyArrayOfMatrices([
+        translateMatrix,
+        scaleMatrix,
+        transform3dMatrix
+      ]),
+      warp = L.MatrixUtil.matrixArrayToCssMatrix(composedMatrix);
 
     image._leaflet_pos = topLeft;
-    image.style[L.DomUtil.TRANSFORM] = warp;
+    // image.style[L.DomUtil.TRANSFORM] = warp + "scale(" + this.scale + ")" + "rotate(" + this.rotation + "rad)";
+    image.style[L.DomUtil.TRANSFORM] = warp + "rotate(" + this.rotation + "rad)";
+    // image.style[L.DomUtil.TRANSFORM] = warp;
     /* Set origin to the upper-left corner rather than the center of the image, which is the default. */
-    image.style[L.DomUtil.TRANSFORM + "-origin"] = "0 0 0";
+    if (this.editing._mode !== 'distort' && this.editing._mode !== 'lock') {
+      image.style[L.DomUtil.TRANSFORM + '-origin'] = 'center';
+    } else {
+      image.style[L.DomUtil.TRANSFORM + '-origin'] = '0 0 0';
+    }
   },
 
   /*
-   * Calculates the transform string that will be correct *at the end* of zooming. Leaflet then generates a CSS3 animation 
+   * Calculates the transform string that will be correct *at the end* of zooming. Leaflet then generates a CSS3 animation
    * between the current transform and future transform which makes the transition appear smooth.
    */
   _animateZoom: function(event) {
     var map = this._map,
-        image = this._image,
-        latLngToNewLayerPoint = function(latlng) {
-          return map._latLngToNewLayerPoint(latlng, event.zoom, event.center);
-        },
-        transform2dMatrix = this._calculateProjectiveTransform(
-          latLngToNewLayerPoint
-        ),
-        topLeft = latLngToNewLayerPoint(this.getCorner(0)),
-        transform3dMatrix = L.MatrixUtil.from2dTo3dMatrix(transform2dMatrix),
-        translateMatrix = L.MatrixUtil.translateMatrix(topLeft.x, topLeft.y, 0),
-        composedMatrix = L.MatrixUtil.multiplyArrayOfMatrices([translateMatrix, transform3dMatrix]),
-        warp = L.MatrixUtil.matrixArrayToCssMatrix(composedMatrix);
+      image = this._image,
+      latLngToNewLayerPoint = function(latlng) {
+        return map._latLngToNewLayerPoint(latlng, event.zoom, event.center);
+      },
+      transform2dMatrix = this._calculateProjectiveTransform(
+        latLngToNewLayerPoint
+      ),
+      topLeft = latLngToNewLayerPoint(this.getCorner(0)),
+      transform3dMatrix = L.MatrixUtil.from2dTo3dMatrix(transform2dMatrix),
+      translateMatrix = L.MatrixUtil.translateMatrix(topLeft.x, topLeft.y, 0),
+      composedMatrix = L.MatrixUtil.multiplyArrayOfMatrices([
+        translateMatrix,
+        transform3dMatrix
+      ]),
+      warp = L.MatrixUtil.matrixArrayToCssMatrix(composedMatrix);
 
     image._leaflet_pos = topLeft;
     image.style[L.DomUtil.TRANSFORM] = warp;
@@ -221,7 +250,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   /*
    * Calculates the centroid of the image.
    *		 See http://stackoverflow.com/questions/6149175/logical-question-given-corners-find-center-of-quadrilateral
-   */
+  //  */
   getCenter: function(ll2c, c2ll) {
     var map = this._map,
         latLngToCartesian = ll2c ? ll2c : map.latLngToLayerPoint,
@@ -239,6 +268,18 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     );
   },
 
+  getScaleCenter: function() {
+    var bounds = this._map._latLngBoundsToNewLayerBounds(this.getBounds());
+
+    return bounds.getCenter();
+
+    // map._latLngBounds
+    // return new L.latLng(
+    //   (this._bounds._southWest.lat + this._bounds._northEast.lat) / 2,
+    //   (this._bounds._southWest.lng + this._bounds._northEast.lng) / 2
+    // );
+  },
+
   // Use for translation calculations - for translation the delta for 1 corner applies to all 4
   _calcCornerPointDelta: function() {
     return this._dragStartPoints[0].subtract(this._dragPoints[0]);
@@ -249,11 +290,11 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
      * allow us to place images on the map before
      * they've finished downloading. */
     var offset = latLngToCartesian(this.getCorner(0)),
-        w = this._image.offsetWidth || 500,
-        h = this._image.offsetHeight || 375,
-        c = [],
-        j,
-        n = this.getCorners().length;
+      w = this._image.offsetWidth || 500,
+      h = this._image.offsetHeight || 375,
+      c = [],
+      j,
+      n = this.getCorners().length;
 
     /* Convert corners to container points (i.e. cartesian coordinates). */
     for (j = 0; j < n; j++) {
@@ -269,10 +310,22 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
      *		 says that the upper-left corner of the image maps to the first latlng in this._corners.
      */
     return L.MatrixUtil.general2DProjection(
-      0, 0, c[0].x, c[0].y,
-      w, 0, c[1].x, c[1].y,
-      0, h, c[2].x, c[2].y,
-      w, h, c[3].x, c[3].y
+      0,
+      0,
+      c[0].x,
+      c[0].y,
+      w,
+      0,
+      c[1].x,
+      c[1].y,
+      0,
+      h,
+      c[2].x,
+      c[2].y,
+      w,
+      h,
+      c[3].x,
+      c[3].y
     );
   }
 });

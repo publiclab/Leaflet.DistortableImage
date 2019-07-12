@@ -16,8 +16,11 @@ L.RotateScaleHandle = L.EditHandle.extend({
 		angle = this.calculateAngleDelta(formerLatLng, newLatLng),
 		scale = this._calculateScalingFactor(formerLatLng, newLatLng);
 	
-	if (angle !== 0) { edit._rotateBy(angle); }
-
+	// if (angle !== 0) { edit._rotateBy(angle); }
+	// if (angle !== 0) { overlay.rotation = angle; }
+	overlay.rotation = angle;
+	overlay._reset();
+	overlay.fire('update');
 	/** 
      * checks whether the "edgeMinWidth" property is set and tracks the minimum edge length;
 	 * this enables preventing scaling to zero, but we might also add an overall scale limit
@@ -28,9 +31,10 @@ L.RotateScaleHandle = L.EditHandle.extend({
 		  h = L.latLng(overlay.getCorner(1)).distanceTo(overlay.getCorner(2));
 
 	  if ((w > edgeMinWidth && h > edgeMinWidth) || scale > 1) {
-		edit._scaleBy(scale);
+		overlay.scale = scale;
 	  }
 	} 
+	overlay._reset();
 
 	overlay.fire('update');
 	edit._updateToolbarPos();
