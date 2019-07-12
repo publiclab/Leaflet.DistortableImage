@@ -2501,9 +2501,7 @@ L.Map.BoxSelector = L.Map.BoxZoom.extend({
       this._map.containerPointToLatLng(this._bounds.getTopRight())
     );
 
-    /*
-     * calls the `project` method but 1st updates the pixel origin - see https://github.com/publiclab/Leaflet.DistortableImage/pull/344
-    */
+    // calls the `project` method but 1st updates the pixel origin - see https://github.com/publiclab/Leaflet.DistortableImage/pull/344
     bounds = this._map._latLngBoundsToNewLayerBounds(bounds, this._map.getZoom(), this._map.getCenter());
 
     this._map.fire('boxzoomend', { boxZoomBounds: bounds });
