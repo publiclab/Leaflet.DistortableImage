@@ -166,17 +166,10 @@ L.DistortableCollection = L.FeatureGroup.extend({
   _addSelections: function(e) {
     var box = e.boxZoomBounds;
 
-    window.box = box;
-
-    console.log("Evnt fire");
-
     this.eachLayer(function(layer) {
       var imgBounds = new L.latLngBounds(layer.getCorner(2), layer.getCorner(1));
-      window.bforeImageBounds = imgBounds;
       imgBounds = this._map._latLngBoundsToNewLayerBounds(imgBounds, this._map.getZoom(), this._map.getCenter());
-      window.imgBounds = imgBounds;
       if (box.intersects(imgBounds)) {
-        console.log("here");
         if (!this.toolbar) { this._addToolbar(); }
         L.DomUtil.addClass(layer.getElement(), 'selected');
       }

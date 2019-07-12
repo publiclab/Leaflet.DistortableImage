@@ -641,17 +641,10 @@ L.DistortableCollection = L.FeatureGroup.extend({
   _addSelections: function(e) {
     var box = e.boxZoomBounds;
 
-    window.box = box;
-
-    console.log("Evnt fire");
-
     this.eachLayer(function(layer) {
       var imgBounds = new L.latLngBounds(layer.getCorner(2), layer.getCorner(1));
-      window.bforeImageBounds = imgBounds;
       imgBounds = this._map._latLngBoundsToNewLayerBounds(imgBounds, this._map.getZoom(), this._map.getCenter());
-      window.imgBounds = imgBounds;
       if (box.intersects(imgBounds)) {
-        console.log("here");
         if (!this.toolbar) { this._addToolbar(); }
         L.DomUtil.addClass(layer.getElement(), 'selected');
       }
@@ -2499,6 +2492,9 @@ L.Map.BoxSelector = L.Map.BoxZoom.extend({
       this._map.containerPointToLatLng(this._bounds.getTopRight())
     );
 
+    /*
+     * calls the `project` method but 1st updates the pixel origin - see https://github.com/publiclab/Leaflet.DistortableImage/pull/344
+    */
     bounds = this._map._latLngBoundsToNewLayerBounds(bounds, this._map.getZoom(), this._map.getCenter());
 
     this._map.fire('boxzoomend', { boxZoomBounds: bounds });
