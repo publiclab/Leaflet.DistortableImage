@@ -12,11 +12,35 @@ beforeEach(function() {
 	 *      2) the booleans after the list of 0s simulate the presence (or lack of) the following keys (in order) during the mouse event: 'ctrlKey', 'altKey', 'shiftKey', 'metaKey' 
 	 */
 	chai.simulateCommandMousedown = function simulateCommandMousedownFn(el) {
-  		if (document.createEvent) {
-    		var e = document.createEvent('MouseEvents');
-    		e.initMouseEvent('mousedown', true, true, window, 0, 0, 0, 0, 0, true, false, false, true, 0, null);
-    		return el.dispatchEvent(e);
-  		}
+		if (document.createEvent) {
+			var e = document.createEvent('MouseEvents');
+			e.initMouseEvent('mousedown', true, true, window, 0, 0, 0, 0, 0, true, false, false, true, 0, null);
+			return el.dispatchEvent(e);
+		}
+	};
+
+	chai.simulateMousedown= function simulateMousedownFn(el) {
+		if (document.createEvent) {
+			var e = document.createEvent('MouseEvents');
+			e.initMouseEvent('mousedown', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+			return el.dispatchEvent(e);
+		}
+	};
+
+	chai.simulateCommandClick = function simulateCommandClickFn(el) {
+		if (document.createEvent) {
+			var e = document.createEvent('MouseEvents');
+			e.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, true, false, false, true, 0, null);
+			return el.dispatchEvent(e);
+		}
+	};
+
+	chai.simulateClick = function simulateClickFn(el) {
+		if (document.createEvent) {
+			var e = document.createEvent('MouseEvents');
+			e.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+			return el.dispatchEvent(e);
+		}
 	};
 
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
@@ -24,7 +48,7 @@ beforeEach(function() {
 /* 
  * Asserts that two latlngs are close. 
  * For example: 
- *     > expect(new L.LatLng(0, 0.00005)).to.be.closeToLatLng(new L.LatLng(0, 0))
+ *     > expect(L.latLng(0, 0.00005)).to.be.closeToLatLng(L.latLng(0, 0))
  *     > true
  */
 chai.use(function(chai, utils) {

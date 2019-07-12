@@ -4,7 +4,7 @@ L.tools.EXIF = function getEXIFdata(ref, overlay) {
   var GPS = ref.exifdata,
     lat,
     lng;
-
+  
   if (
     typeof GPS.GPSLatitude !== "undefined" &&
     typeof GPS.GPSLongitude !== "undefined"
@@ -48,7 +48,7 @@ L.tools.EXIF = function getEXIFdata(ref, overlay) {
     //  _corners: array element holding a <LatLng> object ([])
     //  changes made to _corners, unlike getCorners (value return only)
     // will actually mutate corners, which is what we need to do
-
+  
   overlay._corners[0] = L.latLng(lat + y_diff / 2, lng + x_diff / 2);
   overlay._corners[1] = L.latLng(lat + y_diff / 2, lng - x_diff / 2);
   overlay._corners[2] = L.latLng(lat - y_diff / 2, lng + x_diff / 2);
@@ -57,4 +57,6 @@ L.tools.EXIF = function getEXIFdata(ref, overlay) {
   overlay.editing._rotateBy(angle);
 
   overlay._map.setView(panTo, 13);
+
+  return GPS;
 };

@@ -1,3 +1,9 @@
+svg {
+  width: 18px;
+  height: 18px;
+  vertical-align: middle;
+}
+
 #imgcontainer {
   position:relative;
   width: 100%;
@@ -21,7 +27,7 @@
 }
 
 #inputimage {
-  position:absolute; 
+  position:absolute;
   top:-100px;
 }
 
@@ -40,3 +46,47 @@
 img.leaflet-image-layer.selected {
   box-shadow: 0px 0px 0px 12px #ffea00;
 }
+
+.l-container {
+  background-color: rgb(255, 255, 255, 0.75);
+  color: black;
+  padding: 0px 10px 6px 10px;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+}
+
+.l-container table th{
+  font-size: 16px;
+  padding-top: 8px;
+}
+
+th {
+  vertical-align: bottom;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.06);
+  padding: 0.75rem;
+  vertical-align: top;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+td {
+  padding: 0.3rem;
+  vertical-align: top;
+}
+
+kbd {
+  font-weight: 500;
+  padding: 0.2rem 0.4rem;
+  font-size: 95%;
+  color: black; 
+  background-color: rgb(247, 247, 247);
+  border-radius: 3px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -moz-box-shadow: 0 1px 0px rgba(0, 0, 0, 0.2), 0 0 0 2px #ffffff inset;
+  -webkit-box-shadow: 0 1px 0px rgba(0, 0, 0, 0.2), 0 0 0 2px #ffffff inset;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, .2), 0 2px 0 0 rgba(255, 255, 255, .7) inset;
+  text-shadow: 0 0.5px 0 #fff;
+}
+
