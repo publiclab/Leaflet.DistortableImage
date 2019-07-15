@@ -1492,14 +1492,14 @@ var EnableEXIF = L.EditAction.extend({
   }
 });
 
-var Restore = L.EditAction.extend({
+var Revert = L.EditAction.extend({
   initialize: function(map, overlay, options) {
     var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#restore"></use>';
 
     options = options || {};
     options.toolbarIcon = {
       html: '<svg>' + href + '</svg>',
-      tooltip: 'Restore'
+      tooltip: 'Restore Original Image Dimensions'
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -1508,7 +1508,7 @@ var Restore = L.EditAction.extend({
   addHooks: function() {
     var editing = this._overlay.editing;
 
-    editing._restore();
+    editing._revert();
   }
 });
 
@@ -1522,7 +1522,7 @@ L.DistortableImage.PopupBar = L.Toolbar2.Popup.extend({
       ToggleRotateScale,
       ToggleOrder,
       EnableEXIF,
-      Restore,
+      Revert,
       Export,
       Delete
     ]
@@ -1562,7 +1562,7 @@ L.DistortableImageOverlay.addInitHook(function () {
     ToggleRotateScale, 
     ToggleOrder,
     EnableEXIF,
-    Restore,
+    Revert,
     Export,
     Delete
   ];
@@ -1901,7 +1901,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     overlay._reset();
   },
 
-  _restore: function() {
+  _revert: function() {
     var overlay = this._overlay;
     var angle = overlay.rotation;
     var map = overlay._map;
