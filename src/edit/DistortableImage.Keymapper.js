@@ -3,9 +3,8 @@ L.DistortableImage = L.DistortableImage || {};
 L.distortableImage = L.DistortableImage;
 
 L.DistortableImage.Keymapper = L.Handler.extend({
-  initialize: function (map, image, params) {
+  initialize: function (map, params) {
     this._map = map;
-    this._image = image;
     this._params = params || {};
     this._position = this._params.position || 'topright';
 
@@ -51,10 +50,6 @@ L.DistortableImage.Keymapper = L.Handler.extend({
       return el_wrapper;
     };
     this._keymapper.addTo(this._map);
-  },
-
-  keymapper: function () {
-    return this._keymapper;
   }
 });
 

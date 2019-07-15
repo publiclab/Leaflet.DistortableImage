@@ -313,11 +313,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     });
   },
 
-  // _addKeymapper: function() {
-  //   this._keymapper = L.distortableImage.keymapper(this);
-  //   this._hasKeymapper = false;
-  // },
-
   setCorner: function(corner, latlng) {
     this._corners[corner] = latlng;
     this._reset();
@@ -1705,9 +1700,8 @@ L.DistortableImage = L.DistortableImage || {};
 L.distortableImage = L.DistortableImage;
 
 L.DistortableImage.Keymapper = L.Handler.extend({
-  initialize: function (map, image, params) {
+  initialize: function (map, params) {
     this._map = map;
-    this._image = image;
     this._params = params || {};
     this._position = this._params.position || 'topright';
 
@@ -1753,10 +1747,6 @@ L.DistortableImage.Keymapper = L.Handler.extend({
       return el_wrapper;
     };
     this._keymapper.addTo(this._map);
-  },
-
-  keymapper: function () {
-    return this._keymapper;
   }
 });
 
@@ -1809,7 +1799,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._mode = modes[modes.indexOf(overlay.options.mode)] || 'distort';
     
     this._selected = this._overlay.options.selected || false;
-    this._keymapper = this._overlay.options.keymapper || false;
+    // this._keymapper = this._overlay.options.keymapper || false;
     this._transparent = false;
     this._outlined = false;
 
@@ -1961,10 +1951,10 @@ L.DistortableImage.Edit = L.Handler.extend({
     }, this);
   },
 
-  _addKeymapper: function () {
-    var overlay = this._overlay;
-    this._keymapper = L.distortableImage.keymapper(overlay._map, overlay.getElement());
-  },
+  // _addKeymapper: function () {
+  //   var overlay = this._overlay;
+  //   this._keymapper = L.distortableImage.keymapper(overlay._map, overlay.getElement());
+  // },
 
   _rotateBy: function(angle) {
     var overlay = this._overlay,

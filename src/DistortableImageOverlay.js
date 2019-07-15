@@ -138,11 +138,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     });
   },
 
-  // _addKeymapper: function() {
-  //   this._keymapper = L.distortableImage.keymapper(this);
-  //   this._hasKeymapper = false;
-  // },
-
   setCorner: function(corner, latlng) {
     this._corners[corner] = latlng;
     this._reset();
