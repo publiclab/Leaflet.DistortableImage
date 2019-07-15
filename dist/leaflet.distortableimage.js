@@ -1761,7 +1761,8 @@ L.DistortableImage.Keymapper = L.Handler.extend({
 });
 
 window.onload = function () {
-  document.getElementById('toggle-keymapper').addEventListener('click', function () {
+  document.getElementById('toggle-keymapper').addEventListener('click', function (e) {
+    L.DomEvent.stop(e);
     var container = document.getElementById('l-container');
     var xlink = document.querySelector("#toggle-keymapper > svg > use:nth-child(1)");
     var keymapWrap = document.getElementById('keymapper-wrapper');
