@@ -1,24 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <title>Leaflet.DistortableImage Example</title>
-  <meta charset="utf-8" />
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta http-equiv="x-ua-compatible" content="ie=edge"/>
 
   <script src="../node_modules/leaflet/dist/leaflet-src.js" type="text/javascript" charset="utf-8"></script>
-  <link href="../node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="../node_modules/leaflet/dist/leaflet.css" type="text/css" media="screen" title="no title" charset="utf-8">
+  <link rel="stylesheet" href="../node_modules/leaflet/dist/leaflet.css" media="screen" title="no title">
   <script src="../node_modules/leaflet-toolbar/dist/leaflet.toolbar.js"></script>
-  <link href="../node_modules/leaflet-toolbar/dist/leaflet.toolbar.css" rel="stylesheet"/>
+  <link href="../node_modules/leaflet-toolbar/dist/leaflet.toolbar.css" rel="stylesheet">
 
   <!-- for full-res export -->
   <script src="../node_modules/jquery/dist/jquery.js"></script>
-  <script src="../node_modules/webgl-distort/dist/webgl-distort.js"></script>
-  <script src="../node_modules/glfx/glfx.js"></script>
+  <script defer src="../node_modules/webgl-distort/dist/webgl-distort.js"></script>
+  <script defer src="../node_modules/glfx/glfx.js"></script>
 
-  <link rel="stylesheet" href="../dist/leaflet.distortableimage.css" type="text/css" media="screen" title="no title" charset="utf-8">
+  <link rel="stylesheet" href="../dist/leaflet.distortableimage.css" media="screen" title="no title">
   <script src="../dist/leaflet.distortableimage.js"></script>
+
+  <!-- svg external sprite polyfill for IE 11 -->
+  <script src="https://rawgit.com/jonathantneal/svg4everybody/master/dist/svg4everybody.js"></script>
+  <script>svg4everybody(); // run it now or whenever you are ready</script>
 </head>
 <body style="margin:0;">
 
@@ -47,6 +50,7 @@
       // create an image
       img = L.distortableImageOverlay(
         'example.png', {
+          keymapper: false,
           corners: [
             L.latLng(51.52,-0.10),
             L.latLng(51.52,-0.14),

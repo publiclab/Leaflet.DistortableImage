@@ -35,7 +35,7 @@ describe("L.DistortableImage.Edit", function() {
 		// this test applies to a selected image
 		chai.simulateClick(img);
 
-		overlay._updateCorner(0, L.latLng(41.7934, -87.6252));
+		overlay.setCorner(0, L.latLng(41.7934, -87.6252));
 		overlay.fire('update');
 		
 		/* Warp handles are currently on the map; they should have been updated. */
@@ -153,6 +153,4 @@ describe("L.DistortableImage.Edit", function() {
 			expect(edit.toolbar).to.be.false
 		});
 	});
-
-
 });

@@ -2,6 +2,7 @@ Leaflet.DistortableImage
 ===================
 
 [![Build Status](https://travis-ci.org/publiclab/Leaflet.DistortableImage.svg?branch=master)](https://travis-ci.org/publiclab/Leaflet.DistortableImage)
+[![npm version](https://badge.fury.io/js/leaflet-distortableimage.svg)](https://badge.fury.io/js/leaflet-distortableimage)
 
 A Leaflet extension to distort images -- "rubbersheeting" -- for the [MapKnitter.org](http://mapknitter.org) ([src](https://github.com/publiclab/mapknitter)) image georectification service by [Public Lab](http://publiclab.org). Leaflet.DistortableImage allows for perspectival distortions of images, client-side, using CSS3 transformations in the DOM.
 
@@ -16,7 +17,7 @@ Advantages include:
 
 [Download as zip](https://github.com/publiclab/Leaflet.DistortableImage/releases) or clone the repo to get a local copy.
 
-This plugin has basic functionality, and is in production as part of MapKnitter, but there are [plenty of outstanding issues to resolve](https://github.com/publiclab/Leaflet.DistortableImage/issues). Please consider helping out!
+Also available [on NPM](https://www.npmjs.com/package/leaflet-distortableimage) as `leaflet-distortableimage`
 
 The recommended Google satellite base layer can be integrated using this Leaflet plugin: https://gitlab.com/IvanSanchez/Leaflet.GridLayer.GoogleMutant
 
@@ -24,10 +25,11 @@ Here's a screenshot:
 
 ![screenshot](example.png)
 
-## Setup
+## Setup - Single Image Interface
 
 1. From the root directory, run `npm install` or `sudo npm install`
-2. Open examples/index.html in a browser
+
+2. Open `examples/index.html` in a browser
 
 ## Demo
 
@@ -58,23 +60,26 @@ L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.p
 img = L.distortableImageOverlay(
   'example.png', {
     // 'corners' is the only required option for this class
+    // and is in NW, NE, SW, SE order
     corners: [
-      L.latLng(51.52,-0.10),
       L.latLng(51.52,-0.14),
-      L.latLng(51.50,-0.10),
-      L.latLng(51.50,-0.14)
+      L.latLng(51.52,-0.10),
+      L.latLng(51.50,-0.14),
+      L.latLng(51.50,-0.10)
     ],
-  }
-).addTo(map);
+  }).addTo(map);
 
 // enable editing
 L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
 ```
 
 Options available to pass during `L.DistortableImageOverlay` initialization:
-- corners
 
-- [selected](#selection)
+- [actions](#Actions)
+
+- [corners](#corners)
+
+- [selected](#selected)
 
 - [mode](#mode)
 
@@ -82,10 +87,61 @@ Options available to pass during `L.DistortableImageOverlay` initialization:
 
 - [keymapper](#keymapper)
 
-- [suppressToolbar](#suppressToolbar)
+- [suppressToolbar](#Suppress-Toolbar)
 
 
-## Selected
+### Actions 
+
+- `actions` (*optional*, default: [ToggleTransparency, ToggleOutline, ToggleLock, ToggleRotateScale, ToggleOrder, EnableEXIF, Restore, Export, Delete], value: *array*)
+
+If you would like to overrwrite the default toolbar actions available for an individual image's `L.Popup` toolbar, pass an array with the actions you want. Reference the available values [here](#Single-Image-Interface).
+
+For example, to overrwrite the toolbar to only include the `ToggleTransparency` and `Delete` actions:
+
+``` JS
+img = L.distortableImageOverlay(
+*   'example.png', {
+    // 'corners' is the only required option for this class
+    // and is in NW, NE, SW, SE order
+    corners: [
+      L.latLng(51.52,-0.14),
+      L.latLng(51.52,-0.10),
+      L.latLng(51.50,-0.14),
+      L.latLng(51.50,-0.10)
+    ],
+    actions: [ToggleTransparency, Delete]
+  }).addTo(map);
+```
+
+### Corners
+
+The corners are stored as `L.latLng` objects on the image, and can be accessed using 
+our `getCorners()` method after the image is instantiated and added to the map. 
+They are provided in `NW, NE, SW, SE` order (in a `Z` shape).
+
+Useful usage example:
+
+```js
+// instantiate, add to map and enable
+img = L.distortableImageOverlay(...);
+img.addTo(map);
+L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
+
+// grab the initial corner positions
+JSON.stringify(img.getCorners())
+=> "[{"lat":51.52,"lng":-0.14},{"lat":51.52,"lng":-0.1},{"lat":51.5,"lng":-0.14},{"lat":51.5,"lng":-0.1}]"
+
+// ...move the image around...
+
+// check the new corner positions.
+JSON.stringify(img.getCorners())
+=> "[{"lat":51.50685099607552,"lng":-0.06058305501937867},{"lat":51.50685099607552,"lng":-0.02058595418930054},{"lat":51.486652692081925,"lng":-0.06058305501937867},{"lat":51.486652692081925,"lng":-0.02058595418930054}]"
+
+// note there is an added level of precision after dragging the image for debugging purposes
+```
+We further added a `getCorner(idx)` method used the same way as its plural counterpart but with an index passed to it.
+
+### Selected
 
 `selected` (*optional*, default: false, value: *boolean*)
 
@@ -93,20 +149,37 @@ By default, your image will initially appear on the screen as "unselected", mean
 
 Some developers prefer that an image initially appears as "selected" instead of "unselected". In this case, we provide an option to pass `selected: true`.
 
-## Mode
+Note: when working with the multi image interface, only the last overlay you pass `selected: true` to will appear with editing handles _and_ a toolbar.
+
+### Mode
 
 `mode` (*optional*, default: "distort", value: *string*)
 
-Each primary editing mode corresponds to a separate editing tool.
+Each primary editing mode corresponds to a separate editing handle.
 
-This option sets the image's initial editing mode, meaning the corresponding editing tool will always appear first when you interact with the image.
+This option sets the image's initial editing mode, meaning the corresponding editing handle will always appear first when you interact with the image.
 
-values available to pass to `mode` are: 
-- "distort" (the default)
-- "lock"
-- "rotate"
-- "scale"
-- "rotateScale"
+Values available to pass to `mode` are: 
+
+- #### distort (_default_)
+
+  - Distortion via individually draggable corners.
+
+- #### rotate
+
+  - Rotation only.
+
+- #### scale
+
+  - Resize only. 
+
+- #### rotateScale:
+
+  - Free transform. Combines the `rotate` and `scale` modes into one.
+
+- #### lock:
+
+  - Prevents any image actions (including those triggered from the toolbar, user gestures, and hotkeys) until the toolbar action [ToggleLock](#ToggleLock-(<kbd>l</kbd>)) is explicitly triggered (or its hotkey <kbd>l</kbd>).
 
 In the below example, the image will be initialiazed with "rotateScale" handles:
 
@@ -114,34 +187,35 @@ In the below example, the image will be initialiazed with "rotateScale" handles:
 // create an image
   img = L.distortableImageOverlay("example.png", {
     corners: [
-      L.latLng(51.52, -0.1),
       L.latLng(51.52, -0.14),
-      L.latLng(51.5, -0.1),
-      L.latLng(51.5, -0.14)
+      L.latLng(51.52, -0.10),
+      L.latLng(51.50, -0.14),
+      L.latLng(51.50, -0.10)
     ],
     mode: "rotateScale",
   }).addTo(map);
+
+L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
 ```
 
-## Keymapper
+### Keymapper
 
 `keymapper` (*optional*, default: true, value: *boolean*)
 
 By default, an image loads with a keymapper legend showing the available key bindings for different editing / interaction options. To suppress the keymapper, pass `keymapper: false` as an additional option to the image.
 
-## Full-resolution download
+### Full-resolution download
 
 We've added a GPU-accelerated means to generate a full resolution version of the distorted image; it requires two additional dependencies to enable; see how we've included them in the demo:
 
-```
+```HTML
 <script src="../node_modules/webgl-distort/dist/webgl-distort.js"></script>
 <script src="../node_modules/glfx/glfx.js"></script>
 ```
 
 When instantiating a Distortable Image, pass in a `fullResolutionSrc` option set to the url of the higher resolution image. This image will be used in full-res exporting.
 
-```js
-
+```JS
 // create basic map setup from above
 
 // create an image - note the optional
@@ -149,110 +223,227 @@ When instantiating a Distortable Image, pass in a `fullResolutionSrc` option set
 img = L.distortableImageOverlay(
   'example.png', {
     corners: [
-      L.latLng(51.52,-0.10),
       L.latLng(51.52,-0.14),
-      L.latLng(51.50,-0.10),
-      L.latLng(51.50,-0.14)
+      L.latLng(51.52,-0.10),
+      L.latLng(51.50,-0.14),
+      L.latLng(51.50,-0.10)
     ],
     fullResolutionSrc: 'large.jpg'
-  }
-).addTo(map);
+  }).addTo(map);
 
 L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
-
 ```
 
-## suppressToolbar
+### Suppress Toolbar
 
 `suppressToolbar` (*optional*, default: false, value: *boolean*)
 
 To initialize an image without its toolbar, pass it `suppressToolbar: true`. 
 
-Typically, editing actions are triggered through our toolbar interface or our predefined keybindings. If disabling the toolbar, the developer will need to implement their own toolbar UI or just use the keybindings.
+Typically, editing actions are triggered through our toolbar interface or our predefined keybindings. If disabling the toolbar, the developer will need to implement their own toolbar UI or just use the keybindings. (WIP API for doing this)
 
 This option will override other options related to the toolbar, such as [`selected: true`](#Selected)
 
-## Multiple Images
+## Setup - Multiple Image Interface
 
-To test the multi-image interface, open `select.html`. Currently it supports multiple image selection and translations; image distortions still use the single-image interface.
+1.  From the root directory, run `npm install` or `sudo npm install`
 
-  - Multiple images can be selected using <kbd>cmd</kbd> + `click` to toggle individual image selection.
-  - Click on the map or hit the <kbd>esc</kbd> key to quickly deselect all images.
+2.  Open `examples/select.html` in a browser (todo -- add gh pages demo)
 
-Our `DistortableCollection` class allows working with multiple images simultaneously. Say we instantiated 3 images, saved them to the variables `img`, `img2`, and `img3`, and enabled editing on all of them. To access the UI and functionalities available in the multiple image interface, pass them to the collection class:
+Our `DistortableCollection` class allows working with multiple images simultaneously. This interface builds on the single image interface.
 
-```js
-// OPTION 1: Pass in images immediately
-L.distortableCollection([img, img2, img3]).addTo(map);
-
-// OPTION 2: Instantiate an empty collection and pass in images later
-var imageFeatureGroup = L.distortableCollection().addTo(map);
-
-imageFeatureGroup.addLayer(img);
-imageFeatureGroup.addLayer(img2);
-imageFeatureGroup.addLayer(img3);
-
-```
-
-## Image-ordering
-
-For multiple images, we've also added a `ToggleOrder` action, that switches overlapping images back and forth into view by employing [`bringToFront()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.4.0.html#popup-bringtoback) from the Leaflet API.
-
-```js
-ToggleOrder = EditOverlayAction.extend({
-  options: {
-    toolbarIcon: {
-      html: '<span class="fa fa-sort"></span>',
-      tooltip: 'Change order',
-      title: 'Toggle order'
-    }
-  },
-
-  addHooks: function ()
-  {
-    var editing = this._overlay.editing;
-
-    editing._toggleOrder(); // toggles images into view
-    this.disable();
-  }
-});
-
-```
-
-## Corners
-
-The corners are stored as `L.latLng` objects
-on the image, and can be accessed using our `getCorners()` method after the image is instantiated and added to the map.
-
-Useful usage example:
+The setup is relatively similar - here is an example with two images:
 
 ```JS
-// instantiate and add to map
-img = L.distortableImageOverlay(...);
-img.addTo(map);
+// 1. Instantiate map
+// 2. Instantiate images but this time *dont* add them directly to the map
+img = L.distortableImageOverlay(
+  'example.png', {
+    keymapper: false,
+    corners: [
+      L.latLng(51.52, -0.14),
+      L.latLng(51.52,-0.10),
+      L.latLng(51.50, -0.14),
+      L.latLng(51.50,-0.10)
+    ],
+  });
 
-// grab the initial corner positions
-JSON.stringify(img.getCorners())
-=> "[{"lat":51.52,"lng":-0.1},{"lat":51.52,"lng":-0.14},{"lat":51.5,"lng":-0.1},{"lat":51.5,"lng":-0.14}]"
+img2 = L.distortableImageOverlay(
+  'example.png', {
+    keymapper: false,
+    corners: [
+      L.latLng(51.51, -0.20),
+      L.latLng(51.51,-0.16),
+      L.latLng(51.49, -0.21),
+      L.latLng(51.49,-0.17)
+    ],
+});
 
-// ...move the image around...
+// 3. Instantiate an empty `DistortableCollection` group
+imgGroup = L.distortableCollection().addTo(map);
 
-// check the new corner positions.
-JSON.stringify(img.getCorners())
-=> "[{"lat":51.51091971397745,"lng":-0.015994012355804447},{"lat":51.51091971397745,"lng":-0.05599111318588257},{"lat":51.49093697986642,"lng":-0.015994012355804447},{"lat":51.49093697986642,"lng":-0.05599111318588257}]"
-
-// note there is an added level of precision after dragging the image for debugging purposes
-
+// 4. Add the images to the group 
+imgGroup.addLayer(img);
+imgGroup.addLayer(img2);
 ```
-We further added a `getCorner(idx)` method used the same way as its plural counterpart but with an index passed to it.
+
+<blockquote><strong>Note</strong>: notice how we didn't <code>enable</code> the image editing above as we had done for the single image interface. This is because our <code>DistortableCollection</code> class uses event listeners internally (<code>layeradd</code>) to enable editing on every image as it's added. This event is only triggered if we add the layers to the group dynamically. I.e. you must add the group to the map initially empty.</blockquote>
+
+Options available to pass during `L.DistortableCollection` initialization: 
+
+- [actions](#✤-Actions)
+
+### ✤ Actions
+
+- `actions` (*optional*, default: [Exports, Deletes, Locks, Unlocks], value: *array*)
+
+Overrwrite the default toolbar actions for an image collection's `L.Control` toolbar. Reference the available values [here](#Multiple-Image-Interface).
+
+For example, to overrwrite the toolbar to only include the `Deletes` action:
+
+```JS
+imgGroup = L.distortableCollection({
+  actions: [Deletes]
+}).addTo(map);
+```
+
+To add / remove a tool from the toolbar at runtime, we have also added the methods `addTool(action)` and `removeTool(action)`.
+
+### UI and functionalities 
+Currently it supports multiple image selection and translations, and WIP we are working on porting all editing tools to work for it, such as transparency, etc. Image distortions still use the single-image interface.
+
+**multi-select:** A single toolbar instance (using `L.control`) renders the set of tools available to use on collections of images.
+
+
+  1. Multi-selection works with <kbd>cmd</kbd> + `click` to toggle an individual image's inclusion in this interface.
+  2. Or <kbd>shift</kbd> + `drag` to use our `BoxSelector` handler to select multiple at once.
+  3. Or for touch devices, `touch` and `hold` (aka `longpress`). 
+
+  **How to un-multi-select:**
+
+  - In order to return to the single-image interface, where each `L.popup` toolbar only applies actions on the image it's attached to, you must toggle *all* images out of multi-select or...
+  - ...Click on the map or hit the <kbd>esc</kbd> key to quickly deselect all images.
+  - For the aforementioned 3 mutli-select methods, the `BoxSelector` method is the only one that doesn't also toggle _out_ of multi-select mode. 
+
+<hr>
+
+## Toolbar Actions (& Keybindings)
+
+<hr>
+
+### Single Image Interface:
+
+<hr>
+
+Defaults:
+
+- **ToggleLock (<kbd>l</kbd>)**
+
+  - Toggles between [lock mode](#lock) and [distort mode](#distort-(_default_)).
+
+- **ToggleRotateScale (<kbd>r</kbd>, <kbd>d</kbd>)**
+
+  - Toggles between [rotateScale](#rotateScale) and [distort mode](#distort-(_default_)).
+
+
+- **ToggleOrder (<kbd>j</kbd>, <kbd>k</kbd>)**
+
+  - If you have multiple images, use this to switch an individual image's overlap back and forth into view. Employs [`bringToFront()`](https://leafletjs.com/reference-1.5.0.html\#imageoverlay-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.5.0.html#imageoverlay-bringtoback) from the Leaflet API.
+
+- **ToggleOutline (<kbd>o</kbd>)**
+
+- **ToggleTransparency (<kbd>t</kbd>)**
+
+- **EnableEXIF (WIP)**
+
+- **Restore**
+
+  - Restores the image to its original proportions and scale, but keeps its current rotation angle and location on the map intact.
+
+- **Export**
+
+- **Delete (<kbd>delete</kbd>, <kbd>backscpace</kbd>)**
+
+  - Permanently deletes the image from the map.
+
+ Addons:
+
+- **ToggleRotate** (<kbd>caps lock</kbd>):
+
+  - Toggles between [rotate mode](#rotate) and [distort mode](#distort-(_default_)).
+  - Replaced as a default toolbar action by `ToggleRotateScale`, but still accessible via its hotkey, `mode`, and (WIP) custom toolbar actions API.
+
+
+- **ToggleScale** (<kbd>s</kbd>):
+
+  - Toggles between [scale mode](#scale) and [distort mode](#distort-(_default_)).
+  - Replaced as a default toolbar action by `ToggleRotateScale`, but still accessible via its hotkey, `mode`, and (WIP) custom toolbar actions API.
+
+<hr>
+
+### Multiple Image Interface:
+
+<hr>
+
+Defaults:
+
+-   **Exports**
+
+-   **Deletes (<kbd>delete</kbd>, <kbd>backscpace</kbd>)**
+
+    - Permanently deletes groups of selected images from the map.
+
+- **Locks** (<kbd>l</kbd>)
+
+- **Unlocks** (<kbd>u</kbd>)
+
+## Quick API Reference
+
+<hr>
+
+`L.DistortableImageOverlay`
+
+<hr>
+
+- [`getCorners()`](#corners) and [`getCorner(idx)`](#corners)
+
+- `getCenter()` - Calculates the centroid of the image.
+
+<hr>
+
+`L.DistortableCollection`
+
+<hr>
+
+- [`removeTool(action)`](#actions) - Removes the passed tool from the control toolbar in runtime.
+
+  - Ex: `imgGroup.removeTool(Deletes)`
+
+- [`addTool(action)`](#actions) - Adds the passed tool to the control toolbar in runtime. Returns false if the tool is not available or is already present.
+
+- `hasTool(action)` - Checks if the tool is already present in the currently rendered control toolbar.
 
 ## Contributing
 
-1. This project uses `grunt` to do a lot of things, including concatenate source files from /src/ to /DistortableImageOverlay.js. But you may need to install grunt-cli: `npm install -g grunt-cli` first.
-2. Run `grunt` in the root directory, and it will watch for changes and concatenate them on the fly.
+This plugin has basic functionality, and is in production as part of MapKnitter, but there are [plenty of outstanding issues to resolve](https://github.com/publiclab/Leaflet.DistortableImage/issues). Please consider helping out!
 
-To build all files from `/src/` into the `/dist/` folder, run `grunt concat:dist`.
+1) This project uses `grunt` to do a lot of things, including concatenate source files from `/src/` to `/DistortableImageOverlay.js`:
 
+```Bash
+#you may need to install grunt-cli first:
+$ npm install -g grunt-cli
+
+#run in root dir, and it'll watch for changes and concatenate them on the fly
+$ grunt
+```
+
+2) To build all files from `/src/` into the `/dist/` folder, run:
+
+```Bash
+$ grunt concat:dist
+```
+
+3. _Optional_: We use SVG for our icon system. Please visit our wiki [SVG Icon System](https://github.com/publiclab/Leaflet.DistortableImage/wiki/SVG-Icon-System) if you are interested in making updates to them or just simply learning about our workflow. 
 ****
 
 ### Contributors

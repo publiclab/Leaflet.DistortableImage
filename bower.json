@@ -37,9 +37,7 @@
     "sinon": "^1.12.2"
   },
   "dependencies": {
-    "font-awesome": "^4.2.0",
     "jquery": "^2.1.3",
-    "leaflet": "^1.0.0",
-    "leaflet-toolbar": "git+https://github.com/manleyjster/Leaflet.Toolbar.git"
+    "leaflet": "^1.0.0"
   }
 }

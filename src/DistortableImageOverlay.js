@@ -5,17 +5,18 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     height: 200,
 		crossOrigin: true,
 		// todo: find ideal number to prevent distortions during RotateScale, and make it dynamic (remove hardcoding)
-    edgeMinWidth: 520
+    edgeMinWidth: 50
   },
 
   initialize: function(url, options) {
-    this._toolArray = L.DistortableImage.EditToolbarDefaults;
+    // this._toolArray = L.DistortableImage.EditToolbarDefaults;
     this.edgeMinWidth = this.options.edgeMinWidth;
     this._url = url;
-    this._rotation = this.options.rotation;
+    this.rotation = 0;
+    // window.rotation = this.rotation;
     L.DistortableImage._options = options;
 
-    L.Util.setOptions(this, options);
+    L.setOptions(this, options);
   },
 
   onAdd: function(map) {
@@ -73,14 +74,16 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     });
   },
 
-  _addTool: function(tool) {
-    this._toolArray.push(tool);
-    L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
-      options: {
-        actions: this._toolArray
-      }
-    });
-  },
+  /** this is never used but leaving here for now */
+
+  // _addTool: function(tool) {
+  //   this._toolArray.push(tool);
+  //   L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
+  //     options: {
+  //       actions: this._toolArray
+  //     }
+  //   });
+  // },
 
   _initImageDimensions: function() {
     var map = this._map,
@@ -91,7 +94,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       imageHeight = this.options.height,
       imageWidth = parseInt(aspectRatio * imageHeight),
       center = map.latLngToContainerPoint(map.getCenter()),
-      offset = new L.Point(imageWidth, imageHeight).divideBy(2);
+      offset = L.point(imageWidth, imageHeight).divideBy(2);
 
     if (this.options.corners) {
       this._corners = this.options.corners;
@@ -99,14 +102,15 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       this._corners = [
         map.containerPointToLatLng(center.subtract(offset)),
         map.containerPointToLatLng(
-          center.add(new L.Point(offset.x, -offset.y))
+          center.add(L.point(offset.x, -offset.y))
         ),
         map.containerPointToLatLng(
-          center.add(new L.Point(-offset.x, offset.y))
+          center.add(L.point(-offset.x, offset.y))
         ),
         map.containerPointToLatLng(center.add(offset))
       ];
     }
+    this._initialDimensions = { 'height': imageHeight, 'width': imageWidth, 'offset': offset };
   },
 
   _initEvents: function() {
@@ -134,13 +138,13 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     });
   },
 
-  _updateCorner: function(corner, latlng) {
+  setCorner: function(corner, latlng) {
     this._corners[corner] = latlng;
     this._reset();
   },
 
   // fires a reset after all corner positions are updated instead of after each one (above). Use for translating
-  _updateCorners: function(latlngObj) {
+  setCorners: function(latlngObj) {
     var i = 0;
     for (var k in latlngObj) {
       this._corners[i] = latlngObj[k];
@@ -150,7 +154,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this._reset();
   },
 
-  _updateCornersFromPoints: function(pointsObj) {
+  _setCornersFromPoints: function(pointsObj) {
     var map = this._map;
     var i = 0;
     for (var k in pointsObj) {
@@ -207,7 +211,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       transformMatrix = this._calculateProjectiveTransform(
         latLngToNewLayerPoint
       ),
-      topLeft = latLngToNewLayerPoint(this._corners[0]),
+      topLeft = latLngToNewLayerPoint(this.getCorner(0)),
       warp = L.DomUtil.getMatrixString(transformMatrix),
       translation = this._getTranslateString(topLeft);
 
@@ -235,10 +239,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     var map = this._map,
       latLngToCartesian = ll2c ? ll2c : map.latLngToLayerPoint,
       cartesianToLatLng = c2ll ? c2ll : map.layerPointToLatLng,
-      nw = latLngToCartesian.call(map, this._corners[0]),
-      ne = latLngToCartesian.call(map, this._corners[1]),
-      se = latLngToCartesian.call(map, this._corners[2]),
-      sw = latLngToCartesian.call(map, this._corners[3]),
+      nw = latLngToCartesian.call(map, this.getCorner(0)),
+      ne = latLngToCartesian.call(map, this.getCorner(1)),
+      se = latLngToCartesian.call(map, this.getCorner(2)),
+      sw = latLngToCartesian.call(map, this.getCorner(3)),
       nmid = nw.add(ne.subtract(nw).divideBy(2)),
       smid = sw.add(se.subtract(sw).divideBy(2));
 
@@ -290,15 +294,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       0, h, c[2].x, c[2].y,
       w, h, c[3].x, c[3].y
     );
-  },
-
-  _getCmPerPixel: function() {
-    var map = this._map;
-
-    var dist = map.latLngToLayerPoint(this.getCorner(0))
-      .distanceTo(map.latLngToLayerPoint(this.getCorner(1)));
-    
-    return (dist * 100) / this._image.width;
   }
 
 });

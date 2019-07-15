@@ -1,7 +1,7 @@
 L.EditHandle = L.Marker.extend({
   initialize: function(overlay, corner, options) {
     var markerOptions,
-      latlng = overlay._corners[corner];
+      latlng = overlay.getCorner(corner);
 
     L.setOptions(this, options);
 
@@ -76,13 +76,14 @@ L.EditHandle = L.Marker.extend({
 
  /* Takes two latlngs and calculates the scaling difference. */
   _calculateScalingFactor: function(latlngA, latlngB) {
-    var map = this._handled._map,
-      centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
-      formerPoint = map.latLngToLayerPoint(latlngA),
-      newPoint = map.latLngToLayerPoint(latlngB),
+     var overlay = this._handled,
+       map = overlay._map,
 
-      formerRadiusSquared = this._d2(centerPoint, formerPoint),
-      newRadiusSquared = this._d2(centerPoint, newPoint);
+       centerPoint = map.latLngToLayerPoint(overlay.getCenter()),
+       formerPoint = map.latLngToLayerPoint(latlngA),
+       newPoint = map.latLngToLayerPoint(latlngB),
+       formerRadiusSquared = this._d2(centerPoint, formerPoint),
+       newRadiusSquared = this._d2(centerPoint, newPoint);
 
     return Math.sqrt(newRadiusSquared / formerRadiusSquared);
   },
@@ -96,10 +97,11 @@ L.EditHandle = L.Marker.extend({
   },
 
  /* Takes two latlngs and calculates the angle between them. */
-	_calculateAngle: function(latlngA, latlngB) {
-		var map = this._handled._map,
+	calculateAngleDelta: function(latlngA, latlngB) {
+    var overlay = this._handled,
+      map = overlay._map,
 
-			centerPoint = map.latLngToLayerPoint(this._handled.getCenter()),
+			centerPoint = map.latLngToLayerPoint(overlay.getCenter()),
 			formerPoint = map.latLngToLayerPoint(latlngA),
 			newPoint = map.latLngToLayerPoint(latlngB),
 
