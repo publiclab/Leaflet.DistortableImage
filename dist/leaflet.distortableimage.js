@@ -180,7 +180,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     height: 200,
 		crossOrigin: true,
 		// todo: find ideal number to prevent distortions during RotateScale, and make it dynamic (remove hardcoding)
-    edgeMinWidth: 520
+    edgeMinWidth: 50
   },
 
   initialize: function(url, options) {
@@ -1197,10 +1197,13 @@ L.RotateScaleHandle = L.EditHandle.extend({
 		  this enables preventing scaling to zero, but we might also add an overall scale limit
 		*/		
 		if (overlay.hasOwnProperty('edgeMinWidth')){
-			var edgeMinWidth = overlay.edgeMinWidth,
-			    w = L.latLng(overlay.getCorner(0)).distanceTo(overlay.getCorner(1)),
-					h = L.latLng(overlay.getCorner(1)).distanceTo(overlay.getCorner(2));
-			if ((w > edgeMinWidth && h > edgeMinWidth) || scale > 1) {
+			var edgeMinWidth = overlay.edgeMinWidth;
+                        var corner1 = overlay._map.latLngToContainerPoint(overlay.getCorner(0)),
+                            corner2 = overlay._map.latLngToContainerPoint(overlay.getCorner(1));
+                        var w = Math.abs(corner1.x - corner2.x);
+                        var h = Math.abs(corner1.y - corner2.y);
+                        var distance = Math.sqrt(w * w + h * h);
+			if ((distance > edgeMinWidth) || scale > 1) {
 				edit._scaleBy(scale);
 			}
 		} 
@@ -1492,14 +1495,14 @@ var EnableEXIF = L.EditAction.extend({
   }
 });
 
-var Restore = L.EditAction.extend({
+var Revert = L.EditAction.extend({
   initialize: function(map, overlay, options) {
     var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#restore"></use>';
 
     options = options || {};
     options.toolbarIcon = {
       html: '<svg>' + href + '</svg>',
-      tooltip: 'Restore'
+      tooltip: 'Restore Original Image Dimensions'
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -1508,7 +1511,7 @@ var Restore = L.EditAction.extend({
   addHooks: function() {
     var editing = this._overlay.editing;
 
-    editing._restore();
+    editing._revert();
   }
 });
 
@@ -1522,7 +1525,7 @@ L.DistortableImage.PopupBar = L.Toolbar2.Popup.extend({
       ToggleRotateScale,
       ToggleOrder,
       EnableEXIF,
-      Restore,
+      Revert,
       Export,
       Delete
     ]
@@ -1562,7 +1565,7 @@ L.DistortableImageOverlay.addInitHook(function () {
     ToggleRotateScale, 
     ToggleOrder,
     EnableEXIF,
-    Restore,
+    Revert,
     Export,
     Delete
   ];
@@ -1901,7 +1904,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     overlay._reset();
   },
 
-  _restore: function() {
+  _revert: function() {
     var overlay = this._overlay;
     var angle = overlay.rotation;
     var map = overlay._map;
