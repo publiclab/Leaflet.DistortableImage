@@ -56,8 +56,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this._appendHandlesandDragable(this._mode);
 
-    this._addToolbox();
-
     this.editActions = this.options.actions;
 
     if (this._selected && !overlay.options.suppressToolbar) { this._addToolbar(); }
@@ -184,23 +182,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     }, this);
   },
 
-   _addToolbox: function(){
-      // var params = this.params();
-
-      this._toolbox = new L.Control.AffineToolbox(this);
-      this._hasToolbox = true;
-      this._toolbox.addTo(this._map);
-      
-      //Setting up render function to slider
-      var slider = this._toolbox.slider();
-      
-
-      slider.on("slide", $.proxy(function () {
-            // this._renderFunc(params);
-        },this));
-
-    },
-
   _rotateBy: function(angle) {
     var overlay = this._overlay,
         map = overlay._map,
@@ -248,8 +229,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this._overlay.rotation = angle;
   },
-
-  
 
   _scaleBy: function(scale) {
     var overlay = this._overlay,

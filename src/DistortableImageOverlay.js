@@ -69,8 +69,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     );
 
     this.fire('add');
-
-    
   },
 
   onRemove: function(map) {
