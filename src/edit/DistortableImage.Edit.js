@@ -180,9 +180,8 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _addKeymapper: function () {
-    this._keymapper = L.distortableImage.keymapper(this._overlay._map, this._overlay._image);
-    // keymapper.enable()
-    // this._keymapper.addTo(this._map);
+    var overlay = this._overlay;
+    this._keymapper = L.distortableImage.keymapper(overlay._map, overlay.getElement());
   },
 
   _rotateBy: function(angle) {

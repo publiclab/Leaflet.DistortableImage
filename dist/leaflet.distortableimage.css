@@ -95,7 +95,7 @@ span {
   letter-spacing: 1.2px;
 }
 
-#close-keymapper-button {
+#toggle-keymapper {
   background-color: #fff;
   padding: 0px;
   width: 30px;
@@ -109,7 +109,7 @@ span {
   border-width: 2px
 }
 
-#close-keymapper-button:hover {
+#toggle-keymapper:hover {
   background-color: #f4f4f4;
 }
 
