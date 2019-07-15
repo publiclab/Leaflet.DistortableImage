@@ -55,7 +55,7 @@
         // add a suppressToolbar: 'true' here to disable toolbars
         // add a keymapper_position field with combinations of 'top', 'bottom', 'left' or 'right'
         // mode: "distort", => default handle
-        keymapper: false,
+        keymapper: true,
         selected: true,
         corners: [
           L.latLng(51.52, -0.14),
@@ -65,11 +65,8 @@
         ],
         fullResolutionSrc: "large.jpg"
       }).addTo(map);
-
-      keymapper = new L.DistortableImage.Keymapper(map, img._image);
+      
       L.DomEvent.on(img._image, "load", img.editing.enable, img.editing);
-      L.Map.addInitHook('addHandler', 'keymapper', keymapper);
-      keymapper.enable();
     })();
   </script>
 </html>

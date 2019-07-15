@@ -96,18 +96,21 @@ span {
 }
 
 #close-keymapper-button {
-  border: none;
-  background-color: rgba(0,0,0,0);
+  background-color: #fff;
+  padding: 0px;
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
   outline: none;
   position: absolute;
-  top: 0;
-  right: 0;
-  font-size: 20px;
+  top: 8px;
+  right: 16px;
+  cursor: pointer;
+  border-width: 2px
 }
 
-#close-keymapper-kbd {
-  background-color: #fff;
-  color: #333;
+#close-keymapper-button:hover {
+  background-color: #f4f4f4;
 }
 
 #keymapper-heading {
