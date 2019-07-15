@@ -207,7 +207,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     overlay._reset();
   },
 
-  _restore: function() {
+  _revert: function() {
     var overlay = this._overlay;
     var angle = overlay.rotation;
     var map = overlay._map;
