@@ -47,7 +47,7 @@ img.leaflet-image-layer.selected {
   box-shadow: 0px 0px 0px 12px #ffea00;
 }
 
-.l-container {
+.l-keymapper {
   background-color: rgb(255, 255, 255, 0.75);
   color: black;
   padding: 0px 10px 6px 10px;
@@ -57,12 +57,12 @@ img.leaflet-image-layer.selected {
   line-height: 1.2;
 }
 
-.l-container table th{
+.l-keymapper table th{
   font-size: 16px;
   padding-top: 8px;
 }
 
-th {
+.l-keymapper th {
   vertical-align: bottom;
   border-bottom: 2px solid rgba(0, 0, 0, 0.06);
   padding: 0.75rem;
@@ -70,12 +70,12 @@ th {
   border-top: 1px solid rgba(0, 0, 0, 0.06);
 }
 
-td {
+.l-keymapper td {
   padding: 0.3rem;
   vertical-align: top;
 }
 
-kbd {
+.l-keymapper kbd {
   font-weight: 500;
   padding: 0.2rem 0.4rem;
   font-size: 95%;
@@ -89,4 +89,3 @@ kbd {
   box-shadow: 0 1px 1px rgba(0, 0, 0, .2), 0 2px 0 0 rgba(255, 255, 255, .7) inset;
   text-shadow: 0 0.5px 0 #fff;
 }
-
