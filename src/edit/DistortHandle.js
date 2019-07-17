@@ -21,5 +21,4 @@ L.DistortHandle = L.EditHandle.extend({
   updateHandle: function() {
     this.setLatLng(this._handled.getCorner(this._corner));
 	},
-
 });
