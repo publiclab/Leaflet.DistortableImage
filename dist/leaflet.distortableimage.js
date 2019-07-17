@@ -1706,11 +1706,12 @@ L.distortableImage = L.DistortableImage;
 
   var Exports = L.EditAction.extend({
     initialize: function (map, group, options) {
-      var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#get_app"></use>';
+      var use = '#get_app';
   
       options = options || {};
       options.toolbarIcon = {
-        html: '<svg>' + href + '</svg>',
+        svg: true,
+        html: use,
         tooltip: 'Export Images'
       };
 
@@ -1726,11 +1727,12 @@ L.distortableImage = L.DistortableImage;
 
   var Deletes = L.EditAction.extend({
     initialize: function(map, overlay, options) {
-      var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#delete_forever"></use>';
+      var use = '#delete_forever';
 
       options = options || {};
       options.toolbarIcon = {
-        html: '<svg>' + href + '</svg>',
+        svg: true,
+        html: use,
         tooltip: 'Delete Images'
       };
 
@@ -1746,11 +1748,12 @@ L.distortableImage = L.DistortableImage;
 
 var Locks = L.EditAction.extend({
   initialize: function (map, overlay, options) {
-    var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#lock"></use>';
+    var use = '#lock';
 
     options = options || {};
     options.toolbarIcon = {
-      html: '<svg>' + href + '</svg>',
+      svg: true,
+      html: use,
       tooltip: 'Lock Images'
     };
 
@@ -1766,11 +1769,12 @@ var Locks = L.EditAction.extend({
 
 var Unlocks = L.EditAction.extend({
   initialize: function (map, overlay, options) {
-    var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#unlock"></use>';
+    var use = '#unlock';
 
     options = options || {};
     options.toolbarIcon = {
-      html: '<svg>' + href + '</svg>',
+      svg: true,
+      html: use,
       tooltip: 'Unlock Images'
     };
 
