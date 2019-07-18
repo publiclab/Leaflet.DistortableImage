@@ -168,6 +168,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     this.eachLayer(function(layer) {
       var imgBounds = new L.latLngBounds(layer.getCorner(2), layer.getCorner(1));
+      imgBounds = this._map._latLngBoundsToNewLayerBounds(imgBounds, this._map.getZoom(), this._map.getCenter());
       if (box.intersects(imgBounds)) {
         if (!this.toolbar) { this._addToolbar(); }
         L.DomUtil.addClass(layer.getElement(), 'selected');

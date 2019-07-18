@@ -65,12 +65,14 @@ L.ImageUtil = {
 };
 
 L.Map.include({
-	_newLayerPointToLatLng: function(point, newZoom, newCenter) {
-		var topLeft = L.Map.prototype._getNewTopLeftPoint.call(this, newCenter, newZoom)
-				.add(L.Map.prototype._getMapPanePos.call(this));
-		return this.unproject(point.add(topLeft), newZoom);
-	}
+  _newLayerPointToLatLng: function(point, newZoom, newCenter) {
+    var topLeft = L.Map.prototype._getTopLeftPoint
+      .call(this, newCenter, newZoom)
+      .add(L.Map.prototype._getMapPanePos.call(this));
+    return this.unproject(point.add(topLeft), newZoom);
+  }
 });
+
 L.MatrixUtil = {
 
 	// Compute the adjugate of m
@@ -650,6 +652,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     this.eachLayer(function(layer) {
       var imgBounds = new L.latLngBounds(layer.getCorner(2), layer.getCorner(1));
+      imgBounds = this._map._latLngBoundsToNewLayerBounds(imgBounds, this._map.getZoom(), this._map.getCenter());
       if (box.intersects(imgBounds)) {
         if (!this.toolbar) { this._addToolbar(); }
         L.DomUtil.addClass(layer.getElement(), 'selected');
@@ -1168,7 +1171,6 @@ L.DistortHandle = L.EditHandle.extend({
   updateHandle: function() {
     this.setLatLng(this._handled.getCorner(this._corner));
 	},
-
 });
 
 L.RotateScaleHandle = L.EditHandle.extend({
@@ -2495,9 +2497,12 @@ L.Map.BoxSelector = L.Map.BoxZoom.extend({
     this._resetStateTimeout = setTimeout(L.Util.bind(this._resetState, this), 0);
 
     var bounds = new L.latLngBounds(
-      this._map.layerPointToLatLng(this._bounds.getBottomLeft()),
-      this._map.layerPointToLatLng(this._bounds.getTopRight())
+      this._map.containerPointToLatLng(this._bounds.getBottomLeft()),
+      this._map.containerPointToLatLng(this._bounds.getTopRight())
     );
+
+    // calls the `project` method but 1st updates the pixel origin - see https://github.com/publiclab/Leaflet.DistortableImage/pull/344
+    bounds = this._map._latLngBoundsToNewLayerBounds(bounds, this._map.getZoom(), this._map.getCenter());
 
     this._map.fire('boxzoomend', { boxZoomBounds: bounds });
   }
