@@ -65,11 +65,8 @@
         fullResolutionSrc: "large.jpg"
       }).addTo(map);
 
-      /* instantiate and enable keymapper */
-      keymapper = L.distortableImage.keymapper(map);
-      L.Map.addInitHook('addHandler', 'keymapper', keymapper);
-      keymapper.disable();
-      
+      kmpr1 = L.distortableImage.keymapper(map);
+
       L.DomEvent.on(img._image, "load", img.editing.enable, img.editing);
     })();
   </script>

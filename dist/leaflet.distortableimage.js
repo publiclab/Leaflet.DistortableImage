@@ -1704,18 +1704,31 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     this._map = map;
     this._params = params || {};
     this._position = this._params.position || 'topright';
-
     this._setMapper();
+    window.keymapper_instances = window.keymapper_instances ? window.keymapper_instances + 1 : 1;
+    this._instancesCheck(window.keymapper_instances);
   },
 
-  addHooks: function () {
-
+  _instancesCheck: function (len) { 
+    var instances_len = len; 
+    if (instances_len > 1) { 
+      this._disableAllButOne();
+      console.warn("Only single keymapper instance declaration is allowed!");
+    }
+  },
+  
+  disable: function () {    
+    var el = document.getElementById('l-container');
+    el.parentNode.removeChild(el);
   },
 
-  removeHooks: function () {
-    
+  _disableAllButOne: function () { 
+    var generated_instances_array = Array.from(document.querySelectorAll('#l-container'));
+    for (var i = 0; i < generated_instances_array.length-1; i++) { 
+      generated_instances_array[i].parentNode.removeChild(generated_instances_array[i]);
+    }
   },
-
+  
   _setMapper: function () {
     this._keymapper = L.control({ position: this._position });
     this._keymapper.onAdd = function () {
@@ -1751,25 +1764,27 @@ L.DistortableImage.Keymapper = L.Handler.extend({
 });
 
 window.onload = function () {
-  document.getElementById('toggle-keymapper').addEventListener('click', function (e) {
-    L.DomEvent.stop(e);
-    var container = document.getElementById('l-container');
-    var xlink = document.querySelector("#toggle-keymapper > svg > use:nth-child(1)");
-    var keymapWrap = document.getElementById('keymapper-wrapper');
+  if (document.getElementById('l-container')) {
+    document.getElementById('toggle-keymapper').addEventListener('click', function (e) {
+      L.DomEvent.stop(e);
+      var container = document.getElementById('l-container');
+      var xlink = document.querySelector("#toggle-keymapper > svg > use:nth-child(1)");
+      var keymapWrap = document.getElementById('keymapper-wrapper');
 
-    var newClass = container.className === 'l-container leaflet-control' ? 'l-container-hide leaflet-control' : 'l-container leaflet-control';
-    var newXlink = xlink.getAttribute('xlink:href') === "#arrow-collapse" ? "#keyboard-open" : "#arrow-collapse";
-    var newStyle = keymapWrap.style.display === 'none' ? 'block' : 'none';
+      var newClass = container.className === 'l-container leaflet-control' ? 'l-container-hide leaflet-control' : 'l-container leaflet-control';
+      var newXlink = xlink.getAttribute('xlink:href') === "#arrow-collapse" ? "#keyboard-open" : "#arrow-collapse";
+      var newStyle = keymapWrap.style.display === 'none' ? 'block' : 'none';
 
-    container.className = newClass;
-    xlink.setAttribute('xlink:href', newXlink);
-    keymapWrap.style.display = newStyle;
-  });
-};
+      container.className = newClass;
+      xlink.setAttribute('xlink:href', newXlink);
+      keymapWrap.style.display = newStyle;
+    });
+  }};
 
 L.distortableImage.keymapper = function (options) {
   return new L.DistortableImage.Keymapper(options);
 };
+
 L.DistortableImage = L.DistortableImage || {};
 
 L.DistortableImage.Edit = L.Handler.extend({
