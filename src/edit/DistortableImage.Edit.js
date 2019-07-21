@@ -2,7 +2,6 @@ L.DistortableImage = L.DistortableImage || {};
 
 L.DistortableImage.Edit = L.Handler.extend({
   options: {
-    opacity: 0.7,
     outline: '1px solid red',
     keymap: {
      'Backspace': '_removeOverlay', // backspace windows / delete mac
@@ -27,8 +26,8 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._mode = modes[modes.indexOf(overlay.options.mode)] || 'distort';
     
     this._selected = this._overlay.options.selected || false;
-    this._transparent = false;
     this._outlined = false;
+    this._opacity = 1;
 
     /* generate instance counts. TODO - add the keymapper to collection instead of individ. imgs perhaps? */
     this.instance_count = L.DistortableImage.Edit.prototype.instances =
@@ -355,14 +354,12 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _toggleTransparency: function() {
-    var image = this._overlay._image,
-      opacity;
+    var image = this._overlay._image;
 
-    this._transparent = !this._transparent;
-    opacity = this._transparent ? this.options.opacity : 1;
+    this._opacity = Math.round(this._opacity*10) === 1 ? 1 : this._opacity - 0.3;
 
-    L.DomUtil.setOpacity(image, opacity);
-    image.setAttribute('opacity', opacity);
+    L.DomUtil.setOpacity(image, this._opacity);
+    image.setAttribute('opacity', this._opacity);
 
     this._showToolbar();
   },

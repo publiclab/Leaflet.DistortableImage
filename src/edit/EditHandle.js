@@ -50,7 +50,7 @@ L.EditHandle = L.Marker.extend({
       {
         dragstart: this._onHandleDragStart,
         drag: this._onHandleDrag,
-        dragend: this._onHandleDragEnd
+        dragend: this._onHandleDragEnd,
       },
       this
     );
@@ -65,7 +65,7 @@ L.EditHandle = L.Marker.extend({
       {
         dragstart: this._onHandleDragStart,
         drag: this._onHandleDrag,
-        dragend: this._onHandleDragEnd
+        dragend: this._onHandleDragEnd,
       },
       this
     );
