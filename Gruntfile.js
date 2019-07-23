@@ -80,7 +80,7 @@ module.exports = function(grunt) {
             { removeTitle: true }, // "leaflet-toolbar" lets us specify the title attribute later
             { removeAttrs: 
               {
-						    attrs: ['xmlns', 'fill', 'fill-rule']
+						    attrs: ['xmlns', 'fill']
               }
             }
           ]
