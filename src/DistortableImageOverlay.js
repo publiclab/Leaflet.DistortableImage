@@ -26,7 +26,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     if (!this._image) { this._initImage(); }
     if (!this._events) { this._initEvents(); }
 
-    map._panes.overlayPane.appendChild(this._image);
+    this.getPane().appendChild(this._image);
 
     map.on("viewreset", this._reset, this);
     /* End copied from L.ImageOverlay */
@@ -218,9 +218,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     /* See L.DomUtil.setPosition. Mainly for the purposes of L.Draggable. */
     image._leaflet_pos = topLeft;
 
-    if (!L.Browser.gecko) {
-      image.style[L.DomUtil.TRANSFORM] = [translation, warp].join(" ");
-    }
+    image.style[L.DomUtil.TRANSFORM] = [translation, warp].join(" ");
   },
 
   getCorners: function() {

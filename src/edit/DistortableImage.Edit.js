@@ -27,13 +27,8 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._mode = modes[modes.indexOf(overlay.options.mode)] || 'distort';
     
     this._selected = this._overlay.options.selected || false;
-    // this._keymapper = this._overlay.options.keymapper || false;
     this._transparent = false;
     this._outlined = false;
-
-    /* generate instance counts. TODO - add the keymapper to collection instead of individ. imgs perhaps? */
-    this.instance_count = L.DistortableImage.Edit.prototype.instances =
-      L.DistortableImage.Edit.prototype.instances ? L.DistortableImage.Edit.prototype.instances + 1 : 1;
 
     L.setOptions(this, options); 
   },
@@ -53,8 +48,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     this.editActions = this.options.actions;
 
     if (this._selected && !overlay.options.suppressToolbar) { this._addToolbar(); }
-
-    if (this._keymapper) { this._addKeymapper(); }
 
     this._overlay._dragStartPoints = {
       0: L.point(0, 0),
@@ -179,11 +172,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     }, this);
   },
 
-  // _addKeymapper: function () {
-  //   var overlay = this._overlay;
-  //   this._keymapper = L.distortableImage.keymapper(overlay._map, overlay.getElement());
-  // },
-
   _rotateBy: function(angle) {
     var overlay = this._overlay,
       map = overlay._map,
@@ -208,7 +196,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     overlay._reset();
   },
 
-  _restore: function() {
+  _revert: function() {
     var overlay = this._overlay;
     var angle = overlay.rotation;
     var map = overlay._map;
