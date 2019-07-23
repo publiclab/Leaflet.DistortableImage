@@ -103,7 +103,8 @@ module.exports = function(grunt) {
             mode: {
               symbol: {
                 sprite: "sprite.symbol.svg",
-                example: true
+                example: true,
+                
               }
             }
           }
@@ -146,6 +147,8 @@ module.exports = function(grunt) {
       }
     });
 
+    grunt.loadNpmTasks('grunt-svg-sprite', 'grunt-svgmin');
+
     /* Run tests once. */
     grunt.registerTask('test', [ 'jshint', 'karma:test' ]);
 
@@ -155,8 +158,6 @@ module.exports = function(grunt) {
     grunt.registerTask('build', [
         'jshint',
         'karma:development:start',
-        'svgmin',
-        'svg_sprite',
         'coverage',
         'concat:dist'
     ]);
