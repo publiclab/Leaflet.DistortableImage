@@ -5,11 +5,11 @@ svg.ldi-icon {
   fill: #0078A8;
 }
 
-.delete_forever {
+#delete_forever {
   fill: #c10d0d;
 }
 
-.get_app, .restore {
+#get_app, #restore {
   fill: #058dc4;
 }
 
