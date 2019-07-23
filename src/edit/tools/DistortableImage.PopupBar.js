@@ -72,6 +72,7 @@ var Delete = L.EditAction.extend({
     options = options || {};
     options.toolbarIcon = {
       svg: true,
+      subclass: 'delete_forever',
       html: use,
       tooltip: 'Delete Image'
     };

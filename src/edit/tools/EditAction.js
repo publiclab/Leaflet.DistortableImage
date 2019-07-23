@@ -63,7 +63,13 @@ L.EditAction = L.Toolbar2.Action.extend({
   },
 
   _svgIconHelper: function(ref) {
-    return '<svg class="ldi-icon" role="img" focusable="false"><use xlink:href="' + ref + '"></use></svg>';
+    var subclass = ref.slice(1, ref.length);
+    
+    return (
+      '<svg class="ldi-icon ' + subclass + '"role="img" focusable="false">' + 
+      '<use xlink:href="' + ref + '"></use>' + 
+      '</svg>'
+    );
   },
 
   _injectIconSet: function() {
