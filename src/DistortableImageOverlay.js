@@ -26,7 +26,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     if (!this._image) { this._initImage(); }
     if (!this._events) { this._initEvents(); }
 
-    map._panes.overlayPane.appendChild(this._image);
+    this.getPane().appendChild(this._image);
 
     map.on("viewreset", this._reset, this);
     /* End copied from L.ImageOverlay */
