@@ -65,12 +65,14 @@ L.ImageUtil = {
 };
 
 L.Map.include({
-	_newLayerPointToLatLng: function(point, newZoom, newCenter) {
-		var topLeft = L.Map.prototype._getNewTopLeftPoint.call(this, newCenter, newZoom)
-				.add(L.Map.prototype._getMapPanePos.call(this));
-		return this.unproject(point.add(topLeft), newZoom);
-	}
+  _newLayerPointToLatLng: function(point, newZoom, newCenter) {
+    var topLeft = L.Map.prototype._getTopLeftPoint
+      .call(this, newCenter, newZoom)
+      .add(L.Map.prototype._getMapPanePos.call(this));
+    return this.unproject(point.add(topLeft), newZoom);
+  }
 });
+
 L.MatrixUtil = {
 
 	// Compute the adjugate of m
@@ -201,7 +203,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     if (!this._image) { this._initImage(); }
     if (!this._events) { this._initEvents(); }
 
-    map._panes.overlayPane.appendChild(this._image);
+    this.getPane().appendChild(this._image);
 
     map.on("viewreset", this._reset, this);
     /* End copied from L.ImageOverlay */
@@ -393,9 +395,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     /* See L.DomUtil.setPosition. Mainly for the purposes of L.Draggable. */
     image._leaflet_pos = topLeft;
 
-    if (!L.Browser.gecko) {
-      image.style[L.DomUtil.TRANSFORM] = [translation, warp].join(" ");
-    }
+    image.style[L.DomUtil.TRANSFORM] = [translation, warp].join(" ");
   },
 
   getCorners: function() {
@@ -650,6 +650,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     this.eachLayer(function(layer) {
       var imgBounds = new L.latLngBounds(layer.getCorner(2), layer.getCorner(1));
+      imgBounds = this._map._latLngBoundsToNewLayerBounds(imgBounds, this._map.getZoom(), this._map.getCenter());
       if (box.intersects(imgBounds)) {
         if (!this.toolbar) { this._addToolbar(); }
         L.DomUtil.addClass(layer.getElement(), 'selected');
@@ -1168,7 +1169,6 @@ L.DistortHandle = L.EditHandle.extend({
   updateHandle: function() {
     this.setLatLng(this._handled.getCorner(this._corner));
 	},
-
 });
 
 L.RotateScaleHandle = L.EditHandle.extend({
@@ -1495,14 +1495,14 @@ var EnableEXIF = L.EditAction.extend({
   }
 });
 
-var Restore = L.EditAction.extend({
+var Revert = L.EditAction.extend({
   initialize: function(map, overlay, options) {
     var href = '<use xlink:href="../assets/icons/symbol/sprite.symbol.svg#restore"></use>';
 
     options = options || {};
     options.toolbarIcon = {
       html: '<svg>' + href + '</svg>',
-      tooltip: 'Restore'
+      tooltip: 'Restore Original Image Dimensions'
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -1511,7 +1511,7 @@ var Restore = L.EditAction.extend({
   addHooks: function() {
     var editing = this._overlay.editing;
 
-    editing._restore();
+    editing._revert();
   }
 });
 
@@ -1525,7 +1525,7 @@ L.DistortableImage.PopupBar = L.Toolbar2.Popup.extend({
       ToggleRotateScale,
       ToggleOrder,
       EnableEXIF,
-      Restore,
+      Revert,
       Export,
       Delete
     ]
@@ -1565,7 +1565,7 @@ L.DistortableImageOverlay.addInitHook(function () {
     ToggleRotateScale, 
     ToggleOrder,
     EnableEXIF,
-    Restore,
+    Revert,
     Export,
     Delete
   ];
@@ -1983,7 +1983,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     overlay._reset();
   },
 
-  _restore: function() {
+  _revert: function() {
     var overlay = this._overlay;
     var angle = overlay.rotation;
     var map = overlay._map;
@@ -2547,9 +2547,12 @@ L.Map.BoxSelector = L.Map.BoxZoom.extend({
     this._resetStateTimeout = setTimeout(L.Util.bind(this._resetState, this), 0);
 
     var bounds = new L.latLngBounds(
-      this._map.layerPointToLatLng(this._bounds.getBottomLeft()),
-      this._map.layerPointToLatLng(this._bounds.getTopRight())
+      this._map.containerPointToLatLng(this._bounds.getBottomLeft()),
+      this._map.containerPointToLatLng(this._bounds.getTopRight())
     );
+
+    // calls the `project` method but 1st updates the pixel origin - see https://github.com/publiclab/Leaflet.DistortableImage/pull/344
+    bounds = this._map._latLngBoundsToNewLayerBounds(bounds, this._map.getZoom(), this._map.getCenter());
 
     this._map.fire('boxzoomend', { boxZoomBounds: bounds });
   }
