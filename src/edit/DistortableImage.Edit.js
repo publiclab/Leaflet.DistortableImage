@@ -27,7 +27,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._mode = modes[modes.indexOf(overlay.options.mode)] || 'distort';
     
     this._selected = this._overlay.options.selected || false;
-    this._keymapper = this._overlay.options.keymapper || false;
     this._transparent = false;
     this._outlined = false;
 
@@ -49,8 +48,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     this.editActions = this.options.actions;
 
     if (this._selected && !overlay.options.suppressToolbar) { this._addToolbar(); }
-
-    if (this._keymapper) { this._addKeymapper(); }
 
     this._overlay._dragStartPoints = {
       0: L.point(0, 0),
@@ -173,12 +170,6 @@ L.DistortableImage.Edit = L.Handler.extend({
         return false;
       }
     }, this);
-  },
-
-  _addKeymapper: function () {
-    this._keymapper = L.distortableImage.keymapper(this._overlay._map, this._overlay._image);
-    // keymapper.enable()
-    // this._keymapper.addTo(this._map);
   },
 
   _rotateBy: function(angle) {
