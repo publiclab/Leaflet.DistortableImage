@@ -65,7 +65,6 @@ module.exports = function(grunt) {
         dist: {
           files: [
             {
-              attrs: 'fill',
               expand: true,
               cwd: 'assets/icons/svg',
               src: ['*.svg'],
@@ -81,7 +80,7 @@ module.exports = function(grunt) {
             { removeTitle: true }, // "leaflet-toolbar" lets us specify the title attribute later
             { removeAttrs: 
               {
-						    attrs: ['xmlns']
+						    attrs: ['xmlns', 'fill', 'fill-rule']
               }
             }
           ]
@@ -99,12 +98,6 @@ module.exports = function(grunt) {
           dest: 'assets/icons/',
           options: {
             log: 'info',
-            shape: {
-              dimension: {
-                maxWidth: 18,
-                maxHeight: 18
-              }
-            },
             mode: {
               symbol: {
                 sprite: 'sprite.symbol.svg',
