@@ -2,6 +2,15 @@ svg.ldi-icon {
   width: 18px;
   height: 18px;
   vertical-align: middle;
+  fill: #0078A8;
+}
+
+.delete_forever {
+  fill: #c10d0d;
+}
+
+.get_app, .restore {
+  fill: #058dc4;
 }
 
 #imgcontainer {
