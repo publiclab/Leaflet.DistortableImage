@@ -449,8 +449,8 @@ $ grunt concat:dist
 * Anish Shah, [@anishshah101](https://github.com/anishshah101)
 * Justin Manley, [@manleyjster](https://github.com/manleyjster)
 * Jeff Warren, [@jywarren](https://github.com/jywarren)
-* Pranshu Srivastava, [@rexagod](https://github.com/rexagod)
 * Sasha Boginsky, [@sashadev-sky](https://github.com/sashadev-sky)
+* Pranshu Srivastava, [@rexagod](https://github.com/rexagod)
 
 Many more at https://github.com/publiclab/Leaflet.DistortableImage/graphs/contributors
 ﻿
