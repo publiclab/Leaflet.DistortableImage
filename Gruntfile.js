@@ -151,8 +151,6 @@ module.exports = function(grunt) {
       }
     });
 
-    grunt.loadNpmTasks('grunt-svg-sprite', 'grunt-svgmin');
-
     /* Run tests once. */
     grunt.registerTask('test', [ 'jshint', 'karma:test' ]);
 
@@ -165,6 +163,9 @@ module.exports = function(grunt) {
         'coverage',
         'concat:dist'
     ]);
+
+    // recompile svg icon sprite
+    grunt.registerTask('icons', ['svgmin', 'svg_sprite']);
 
     grunt.registerTask('coverage', 'Custom commmand-line reporter for karma-coverage', function() {
         var coverageReports = grunt.file.expand('coverage/*/coverage.txt'),
