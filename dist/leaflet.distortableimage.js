@@ -1716,7 +1716,11 @@ L.DistortableImage.Keymapper = L.Handler.extend({
       console.warn("Only single keymapper instance declaration is allowed!");
     }
   },
-  
+
+  removeHooks: function () { 
+    this.disable();
+  },
+
   disable: function () {    
     var el = document.getElementById('l-container');
     el.parentNode.removeChild(el);

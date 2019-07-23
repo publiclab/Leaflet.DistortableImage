@@ -66,6 +66,7 @@
       }).addTo(map);
 
       kmpr1 = L.distortableImage.keymapper(map);
+      // kmpr1.disable(); // disable keymapper
 
       L.DomEvent.on(img._image, "load", img.editing.enable, img.editing);
     })();
