@@ -66,7 +66,7 @@ L.EditAction = L.Toolbar2.Action.extend({
     var subclass = ref.slice(1, ref.length);
     
     return (
-      '<svg class="ldi-icon ldi_' + subclass + '"role="img" focusable="false">' + 
+      '<svg class="ldi-icon ldi-' + subclass + '"role="img" focusable="false">' + 
       '<use xlink:href="' + ref + '"></use>' + 
       '</svg>'
     );
