@@ -35,6 +35,10 @@ svg {
   pointer-events: all !important;
 }
 
+.leaflet-pane .leaflet-custom1-pane img {
+  pointer-events: all !important;
+}
+
 .leaflet-toolbar-icon {
   box-sizing: initial;
 }

@@ -492,6 +492,10 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     this._map = map;
 
+    this._highestPane = this._map.createPane('custom1');
+    this._highestPane.style.zIndex = 700;
+    this._highestPane._events = ["click"];
+
     this.on("layeradd", this._turnOnEditing, this);
     this.on("layerremove", this._turnOffEditing, this);
 
@@ -529,6 +533,8 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     L.DomEvent.on(layer._image, {
       mousedown: this._deselectOthers,
+      mouseup: this._selectHandle,
+      // click: this._select,
       contextmenu: this._longPressMultiSelect  /* Enable longpress for multi select for touch devices. */
     }, this);
   },
@@ -545,6 +551,8 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     L.DomEvent.off(layer._image, {
       mousedown: this._deselectOthers,
+      mouseup: this._selectHandle,
+      // click: this._select,
       contextmenu: this._longPressMultiSelect
     }, this);
   },
@@ -628,22 +636,72 @@ L.DistortableCollection = L.FeatureGroup.extend({
       edit._deselect();
     } else {
       this._removeToolbar();
+      // this._globalOverlap(edit);
+      // edit._select();
+      this._globalOverlap(edit);
     }
   },
 
   _deselectOthers: function(event) {
     this.eachLayer(function(layer) {
-
       var edit = layer.editing;
+
       if (layer.getElement() !== event.target) {
         edit._deselect();
+        this._noGlobalOverlap(edit);
       } else {
         this._toggleMultiSelect(event, edit);
       }
     }, this);
 
-    L.DomEvent.stopPropagation(event);
+    // L.DomEvent.stopPropagation(event);
   },
+
+  _selectHandle: function(event) {
+    this.eachLayer(function(layer) {
+      var edit = layer.editing;
+
+      if (layer.getElement() === event.target) {
+        edit._select();
+        // this._noGlobalOverlap(edit);
+      }
+    }, this);
+  },
+
+  _noGlobalOverlap: function(edit) {
+    var currentHandle = edit._handles[edit._mode];
+    var overlayPane = edit._overlay._map.getPane('overlayPane');
+    var markerPane = edit._overlay._map.getPane('markerPane');
+
+    overlayPane.appendChild(edit._overlay.getElement());
+    currentHandle.eachLayer(function(layer) {
+      markerPane.appendChild(layer._icon);
+    });
+  },
+
+  _globalOverlap: function(edit) {
+    var currentHandle = edit._handles[edit._mode];
+
+    this._highestPane.appendChild(edit._overlay.getElement());
+    currentHandle.eachLayer(function(layer) {
+      this._highestPane.appendChild(layer._icon);
+    }, this);
+  },
+
+  // _select: function(event) {
+  //   console.log(event);
+  //   window.ee =event;
+  //   this.eachLayer(function(layer) {
+  //     var edit = layer.editing;
+
+  //     if (layer.getElement() === event.target) {
+  //       // this._globalOverlap(edit);
+  //       edit._select();
+  //     }
+  //   }, this);
+
+  //   // L.DomEvent.stopPropagation(event);
+  // },
 
   _addSelections: function(e) {
     var box = e.boxZoomBounds;
@@ -1957,10 +2015,15 @@ L.DistortableImage.Edit = L.Handler.extend({
     this.dragging = new L.Draggable(overlay.getElement());
     this.dragging.enable();
 
-    /* Hide toolbars and markers while dragging; click will re-show it */
     this.dragging.on("dragstart", function() {
       overlay.fire("dragstart");
       this._removeToolbar();
+    },this);
+
+    /* Hide toolbars and markers while dragging; click will re-show it */
+    this.dragging.on("dragend", function() {
+      overlay.fire("dragend");
+      this._showToolbar();
     },this);
 
     /*
@@ -2009,24 +2072,49 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
   }, 
 
+  _toggleLock: function() {
+    var map = this._overlay._map,
+        eventParents = this._overlay._eventParents;
+
+    map.removeLayer(this._handles[this._mode]);
+
+    if (this._mode === 'lock') { this._unlock(); } 
+    else { this._lock(); }
+
+    map.addLayer(this._handles[this._mode]);
+
+    if (eventParents) {
+      var eP = eventParents[Object.keys(eventParents)[0]];
+      eP._globalOverlap(this);
+    }
+
+    this._showToolbar();
+  },
+
   _toggleRotateScale: function() {
-    var map = this._overlay._map;
+    var map = this._overlay._map,
+        eventParents = this._overlay._eventParents;
 
     if (this._mode === 'lock') { return; }
 
     map.removeLayer(this._handles[this._mode]);
 
-    /* Switch mode. */
     if (this._mode === 'rotateScale') { this._mode = 'distort'; } 
     else { this._mode = 'rotateScale'; }
 
     map.addLayer(this._handles[this._mode]);
 
+    if (eventParents) {
+      var eP = eventParents[Object.keys(eventParents)[0]];
+      eP._globalOverlap(this);
+    }
+
     this._showToolbar();
   },
 
   _toggleScale: function() {
-		var map = this._overlay._map;
+    var map = this._overlay._map,
+        eventParents = this._overlay._eventParents;
 
     if (this._mode === 'lock') { return; }
 
@@ -2037,18 +2125,29 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     map.addLayer(this._handles[this._mode]);
 
+    if (eventParents) {
+      var eP = eventParents[Object.keys(eventParents)[0]];
+      eP._globalOverlap(this);
+    }
   },
 
   _toggleRotate: function() {
-		var map = this._overlay._map;
+    var map = this._overlay._map,
+        eventParents = this._overlay._eventParents;
 
 		if (this._mode === 'lock') { return; }
 
     map.removeLayer(this._handles[this._mode]);
+
     if (this._mode === 'rotate') { this._mode = 'distort'; } 
 		else { this._mode = 'rotate'; }
 		
     map.addLayer(this._handles[this._mode]);
+
+    if (eventParents) {
+      var eP = eventParents[Object.keys(eventParents)[0]];
+      eP._globalOverlap(this);
+    }
   },
 
   _toggleTransparency: function() {
@@ -2099,22 +2198,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     delete this.dragging;
   },
 
-  _toggleLock: function() {
-    var map = this._overlay._map;
-
-    map.removeLayer(this._handles[this._mode]);
-    /* Switch mode. */
-    if (this._mode === 'lock') {
-      this._unlock();
-    } else {
-      this._lock();
-    }
-
-    map.addLayer(this._handles[this._mode]);
-
-    this._showToolbar();
-  },
-
   _select: function(event) {
     this._selected = true;
     this._showToolbar();
@@ -2142,20 +2225,27 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _showMarkers: function() {
+    var eventParents = this._overlay._eventParents;
+    
     if (this._mode === 'lock') { return; }
 
-    if (this.toolbar && this.toolbar instanceof L.DistortableImage.PopupBar) {
-      var currentHandle = this._handles[this._mode];
+    if (eventParents) {
+      var eP = eventParents[Object.keys(eventParents)[0]];
+      if (eP.anySelected()) {
+        return;
+      }
+    } 
 
-      currentHandle.eachLayer(function (layer) {
-        var drag = layer.dragging,
-          opts = layer.options;
+    var currentHandle = this._handles[this._mode];
 
-        layer.setOpacity(1);
-        if (drag) { drag.enable(); }
-        if (opts.draggable) { opts.draggable = true; }
-      });
-    }
+    currentHandle.eachLayer(function (layer) {
+      var drag = layer.dragging,
+        opts = layer.options;
+
+      layer.setOpacity(1);
+      if (drag) { drag.enable(); }
+      if (opts.draggable) { opts.draggable = true; }
+    });
   },
 
   _hideMarkers: function() {
