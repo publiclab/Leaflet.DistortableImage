@@ -1,15 +1,15 @@
-svg.ldi-icon {
+.ldi-icon {
   width: 18px;
   height: 18px;
   vertical-align: middle;
   fill: #0078A8;
 }
 
-svg.delete_forever {
+.ldi_delete_forever {
   fill: #c10d0d;
 }
 
-svg.get_app, svg.restore {
+.ldi_get_app, .ldi_restore {
   fill: #058dc4;
 }
 
@@ -30,28 +30,33 @@ svg.get_app, svg.restore {
   -o-transform-origin: 0 0;
 }
 
+.ldi .corner {
+  position: absolute;
+  top: -10px; left: -10px;
+}
+
 input.ldi {
   position:absolute;
   top:-100px;
 }
 
-.leaflet-pane .leaflet-overlay-pane img {
+.ldi .leaflet-pane .leaflet-overlay-pane img {
   pointer-events: all !important;
 }
 
-.leaflet-toolbar-icon {
+.ldi .leaflet-toolbar-icon {
   box-sizing: initial;
 }
 
-.leaflet-toolbar-tip {
+.ldi .leaflet-toolbar-tip {
   box-sizing: border-box;
 }
 
-img.leaflet-image-layer.selected {
+.ldi img.leaflet-image-layer.selected {
   box-shadow: 0px 0px 0px 12px #ffea00;
 }
 
-.l-keymapper {
+.ldi-keymapper {
   background-color: rgb(255, 255, 255, 0.75);
   color: black;
   padding: 0px 10px 6px 10px;
@@ -61,12 +66,12 @@ img.leaflet-image-layer.selected {
   line-height: 1.2;
 }
 
-.l-keymapper table th{
+.ldi-keymapper table th{
   font-size: 16px;
   padding-top: 8px;
 }
 
-.l-keymapper th {
+.ldi-keymapper th {
   vertical-align: bottom;
   border-bottom: 2px solid rgba(0, 0, 0, 0.06);
   padding: 0.75rem;
@@ -74,12 +79,12 @@ img.leaflet-image-layer.selected {
   border-top: 1px solid rgba(0, 0, 0, 0.06);
 }
 
-.l-keymapper td {
+.ldi-keymapper td {
   padding: 0.3rem;
   vertical-align: top;
 }
 
-.l-keymapper kbd {
+.ldi-keymapper kbd {
   font-weight: 500;
   padding: 0.2rem 0.4rem;
   font-size: 95%;

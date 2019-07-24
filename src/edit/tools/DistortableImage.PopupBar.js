@@ -10,7 +10,7 @@ var ToggleTransparency = L.EditAction.extend({
       use = '#opacity';
       tooltip = 'Make Image Opaque';
     } else {
-      use = '#opacity-empty';
+      use = '#opacity_empty';
       tooltip = 'Make Image Transparent';
     }
 
@@ -27,7 +27,7 @@ var ToggleTransparency = L.EditAction.extend({
   addHooks: function() {
     var editing = this._overlay.editing;
 
-    this.toggleXlink('#opacity-empty', '#opacity');
+    this.toggleXlink('#opacity_empty', '#opacity');
     this.toggleTooltip('Make Image Opaque', 'Make Image Transparent');
     editing._toggleTransparency();
   }
