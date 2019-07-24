@@ -30,12 +30,7 @@ svg.get_app, svg.restore {
   -o-transform-origin: 0 0;
 }
 
-.corner {
-  position: absolute;
-  top: -10px; left: -10px;
-}
-
-#inputimage {
+input.ldi {
   position:absolute;
   top:-100px;
 }
