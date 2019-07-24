@@ -21,17 +21,13 @@
 
     <link rel="stylesheet" href="../dist/leaflet.distortableimage.css" media="screen" title="no title">
     <script src="../dist/leaflet.distortableimage.js"></script>
-
-    <!-- svg external sprite polyfill for IE 11 -->
-    <script src="https://rawgit.com/jonathantneal/svg4everybody/master/dist/svg4everybody.js"></script>
-    <script>svg4everybody(); // run it now or whenever you are ready</script>
   </head>
   <body style="margin:0;">
     <form id="test_form">
-      <input type="file" id="inputimage" accept="image/*" />
+      <input type="file" class="ldi" id="inputimage" accept="image/*" />
     </form>
 
-    <div id="map" style="width:100%; height:100%; position:absolute; top:0;"></div>
+    <div id="map" class="ldi" style="width:100%; height:100%; position:absolute; top:0;"></div>
   </body>
   <script>
     var map;
@@ -52,7 +48,6 @@
 
       // create an image
       img = L.distortableImageOverlay("example.jpg", {
-        // (WIP) add a toolbarType field with values 'popup' (default) or 'control'
         // add a keymapper_position field with combinations of 'top', 'bottom', 'left' or 'right'
         // mode: "distort", => default handle
         keymapper: false,
