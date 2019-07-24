@@ -7,7 +7,6 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     this._map = map;
     this._params = params || {};
     this._position = this._params.position || 'topright';
-    this._setMapper();
     window.keymapper_instances = window.keymapper_instances ? window.keymapper_instances + 1 : 1;
     this._instancesCheck(window.keymapper_instances);
   },
@@ -19,6 +18,10 @@ L.DistortableImage.Keymapper = L.Handler.extend({
       console.warn("Only single keymapper instance declaration is allowed!");
     }
   },
+
+  addHooks: function () {
+    this._setMapper();
+   },
 
   removeHooks: function () { 
     this.disable();
