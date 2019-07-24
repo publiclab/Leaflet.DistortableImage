@@ -19,10 +19,13 @@ L.EditAction = L.Toolbar2.Action.extend({
     this._injectIconSet();
   },
 
-  toggleXlink: function(href1, href2) {
+  toggleXlink: function(ref1, ref2) {
+    var href1 = "#" + ref1,
+        href2 = "#" + ref2;
+
     if (this._link.querySelector('use')) {
       var xlink = this._link.querySelector('use:nth-child(1)');
-      var newXlink = xlink.getAttribute('xlink:href') === href1 ? href2 : href1;
+      var newXlink = xlink.getAttribute('xlink:href') === href1 ?  href2 : href1;
       xlink.setAttribute('xlink:href', newXlink);
       return newXlink;
     }
@@ -63,11 +66,9 @@ L.EditAction = L.Toolbar2.Action.extend({
   },
 
   _svgIconHelper: function(ref) {
-    var subclass = ref.slice(1, ref.length);
-    
     return (
-      '<svg class="ldi-icon ldi-' + subclass + '"role="img" focusable="false">' + 
-      '<use xlink:href="' + ref + '"></use>' + 
+      '<svg class="ldi-icon ldi-' + ref + '"role="img" focusable="false">' + 
+      '<use xlink:href="#' + ref + '"></use>' + 
       '</svg>'
     );
   },

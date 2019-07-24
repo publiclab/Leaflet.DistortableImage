@@ -3,7 +3,7 @@ L.distortableImage = L.DistortableImage;
 
   var Exports = L.EditAction.extend({
     initialize: function (map, group, options) {
-      var use = '#get_app';
+      var use = 'get_app';
   
       options = options || {};
       options.toolbarIcon = {
@@ -24,7 +24,7 @@ L.distortableImage = L.DistortableImage;
 
   var Deletes = L.EditAction.extend({
     initialize: function(map, overlay, options) {
-      var use = '#delete_forever';
+      var use = 'delete_forever';
 
       options = options || {};
       options.toolbarIcon = {
@@ -45,7 +45,7 @@ L.distortableImage = L.DistortableImage;
 
 var Locks = L.EditAction.extend({
   initialize: function (map, overlay, options) {
-    var use = '#lock';
+    var use = 'lock';
 
     options = options || {};
     options.toolbarIcon = {
@@ -66,7 +66,7 @@ var Locks = L.EditAction.extend({
 
 var Unlocks = L.EditAction.extend({
   initialize: function (map, overlay, options) {
-    var use = '#unlock';
+    var use = 'unlock';
 
     options = options || {};
     options.toolbarIcon = {

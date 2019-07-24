@@ -1323,10 +1323,13 @@ L.EditAction = L.Toolbar2.Action.extend({
     this._injectIconSet();
   },
 
-  toggleXlink: function(href1, href2) {
+  toggleXlink: function(ref1, ref2) {
+    var href1 = "#" + ref1,
+        href2 = "#" + ref2;
+
     if (this._link.querySelector('use')) {
       var xlink = this._link.querySelector('use:nth-child(1)');
-      var newXlink = xlink.getAttribute('xlink:href') === href1 ? href2 : href1;
+      var newXlink = xlink.getAttribute('xlink:href') === href1 ?  href2 : href1;
       xlink.setAttribute('xlink:href', newXlink);
       return newXlink;
     }
@@ -1367,11 +1370,9 @@ L.EditAction = L.Toolbar2.Action.extend({
   },
 
   _svgIconHelper: function(ref) {
-    var subclass = ref.slice(1, ref.length);
-    
     return (
-      '<svg class="ldi-icon ldi-' + subclass + '"role="img" focusable="false">' + 
-      '<use xlink:href="' + ref + '"></use>' + 
+      '<svg class="ldi-icon ldi-' + ref + '"role="img" focusable="false">' + 
+      '<use xlink:href="#' + ref + '"></use>' + 
       '</svg>'
     );
   },
@@ -1397,10 +1398,10 @@ var ToggleTransparency = L.EditAction.extend({
       use, tooltip;
     
     if (edit._transparent) {
-      use = '#opacity';
+      use = 'opacity';
       tooltip = 'Make Image Opaque';
     } else {
-      use = '#opacity_empty';
+      use = 'opacity_empty';
       tooltip = 'Make Image Transparent';
     }
 
@@ -1417,7 +1418,7 @@ var ToggleTransparency = L.EditAction.extend({
   addHooks: function() {
     var editing = this._overlay.editing;
 
-    this.toggleXlink('#opacity_empty', '#opacity');
+    this.toggleXlink('opacity_empty', 'opacity');
     this.toggleTooltip('Make Image Opaque', 'Make Image Transparent');
     editing._toggleTransparency();
   }
@@ -1429,10 +1430,10 @@ var ToggleOutline = L.EditAction.extend({
       use, tooltip;
     
     if (edit._outlined) {
-      use = '#border_clear';
+      use = 'border_clear';
       tooltip = 'Remove Border';
     } else {
-      use = '#border_outer';
+      use = 'border_outer';
       tooltip = 'Add Border';
     }
 
@@ -1449,7 +1450,7 @@ var ToggleOutline = L.EditAction.extend({
   addHooks: function() {
     var editing = this._overlay.editing;
 
-    this.toggleXlink('#border_clear', '#border_outer');
+    this.toggleXlink('border_clear', 'border_outer');
     this.toggleTooltip('Remove Border', 'Add Border');
     editing._toggleOutline();
   }
@@ -1457,7 +1458,7 @@ var ToggleOutline = L.EditAction.extend({
 
 var Delete = L.EditAction.extend({
   initialize: function(map, overlay, options) {
-    var use = '#delete_forever';
+    var use = 'delete_forever';
 
     options = options || {};
     options.toolbarIcon = {
@@ -1482,10 +1483,10 @@ var ToggleLock = L.EditAction.extend({
       use, tooltip;
 
     if (edit._mode === 'lock') {
-      use = '#unlock';
+      use = 'unlock';
       tooltip = 'Unlock';
     } else {
-      use = '#lock';
+      use = 'lock';
       tooltip = 'Lock';
     }
 
@@ -1502,7 +1503,7 @@ var ToggleLock = L.EditAction.extend({
   addHooks: function() {
     var editing = this._overlay.editing;
 
-    this.toggleXlink('#unlock', '#lock');
+    this.toggleXlink('unlock', 'lock');
     this.toggleTooltip('Unlock', 'Lock');
     editing._toggleLock();
   }
@@ -1514,10 +1515,10 @@ var ToggleRotateScale = L.EditAction.extend({
       use, tooltip;
 
     if (edit._mode === 'rotateScale') {
-      use = '#transform';
+      use = 'transform';
       tooltip = 'Distort';
     } else {
-      use = '#crop_rotate';
+      use = 'crop_rotate';
       tooltip = 'Rotate+Scale';
     }
 
@@ -1534,7 +1535,7 @@ var ToggleRotateScale = L.EditAction.extend({
   addHooks: function() {
     var editing = this._overlay.editing;
 
-    this.toggleXlink('#transform', '#crop_rotate');
+    this.toggleXlink('transform', 'crop_rotate');
     this.toggleTooltip('Distort', 'Rotate+Scale');
     editing._toggleRotateScale();
   }
@@ -1542,7 +1543,7 @@ var ToggleRotateScale = L.EditAction.extend({
 
 var Export = L.EditAction.extend({
   initialize: function(map, overlay, options) {
-    var  use = '#get_app';
+    var  use = 'get_app';
 
     options = options || {};
     options.toolbarIcon = {
@@ -1567,10 +1568,10 @@ var ToggleOrder = L.EditAction.extend({
       use, tooltip;
 
     if (edit._toggledImage) {
-      use = '#flip_to_front';
+      use = 'flip_to_front';
       tooltip = 'Stack to Front';
     } else {
-      use = '#flip_to_back';
+      use = 'flip_to_back';
       tooltip = 'Stack to Back';
     }
 
@@ -1587,7 +1588,7 @@ var ToggleOrder = L.EditAction.extend({
   addHooks: function() {
     var editing = this._overlay.editing;
 
-    this.toggleXlink('#flip_to_front', '#flip_to_back');
+    this.toggleXlink('flip_to_front', 'flip_to_back');
     this.toggleTooltip('Stack to Front', 'Stack to Back');
     editing._toggleOrder();
   }
@@ -1595,7 +1596,7 @@ var ToggleOrder = L.EditAction.extend({
 
 var EnableEXIF = L.EditAction.extend({
   initialize: function(map, overlay, options) {
-    var use = '#explore';
+    var use = 'explore';
 
     options = options || {};
     options.toolbarIcon = {
@@ -1616,7 +1617,7 @@ var EnableEXIF = L.EditAction.extend({
 
 var Revert = L.EditAction.extend({
   initialize: function(map, overlay, options) {
-    var use = '#restore';
+    var use = 'restore';
 
     options = options || {};
     options.toolbarIcon = {
@@ -1712,7 +1713,7 @@ L.distortableImage = L.DistortableImage;
 
   var Exports = L.EditAction.extend({
     initialize: function (map, group, options) {
-      var use = '#get_app';
+      var use = 'get_app';
   
       options = options || {};
       options.toolbarIcon = {
@@ -1733,7 +1734,7 @@ L.distortableImage = L.DistortableImage;
 
   var Deletes = L.EditAction.extend({
     initialize: function(map, overlay, options) {
-      var use = '#delete_forever';
+      var use = 'delete_forever';
 
       options = options || {};
       options.toolbarIcon = {
@@ -1754,7 +1755,7 @@ L.distortableImage = L.DistortableImage;
 
 var Locks = L.EditAction.extend({
   initialize: function (map, overlay, options) {
-    var use = '#lock';
+    var use = 'lock';
 
     options = options || {};
     options.toolbarIcon = {
@@ -1775,7 +1776,7 @@ var Locks = L.EditAction.extend({
 
 var Unlocks = L.EditAction.extend({
   initialize: function (map, overlay, options) {
-    var use = '#unlock';
+    var use = 'unlock';
 
     options = options || {};
     options.toolbarIcon = {

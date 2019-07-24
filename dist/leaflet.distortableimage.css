@@ -5,11 +5,11 @@
   fill: #0078A8;
 }
 
-.ldi-delete_forever {
+.ldi-icon.ldi-delete_forever {
   fill: #c10d0d;
 }
 
-.ldi-get_app, .ldi-restore {
+.ldi-icon.ldi-get_app, .ldi-icon.ldi-restore {
   fill: #058dc4;
 }
 
