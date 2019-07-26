@@ -204,8 +204,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     if (!this._events) { this._initEvents(); }
 
     this.getPane().appendChild(this._image);
-    if (!L.DomUtil.hasClass(this.getPane(), "ldi")) {
-      L.DomUtil.addClass(this.getPane(), "ldi");
+    if (!L.DomUtil.hasClass(this.getPane(), 'ldi')) {
+      L.DomUtil.addClass(this.getPane(), 'ldi');
     }
    
     map.on("viewreset", this._reset, this);
@@ -560,7 +560,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
           position: 'topleft'
         }).addTo(this._map, this);
         L.DomUtil.addClass(this.toolbar._container, 'ldi');
-        this.fire("toolbar:created");
+        this.fire('toolbar:created');
       }
     } catch (e) { }
   },
@@ -2319,7 +2319,7 @@ L.DistortableImage.Edit = L.Handler.extend({
         actions: this.editActions
       }).addTo(map, overlay);
       L.DomUtil.addClass(this.toolbar._container, 'ldi');
-      overlay.fire('toolbar:created', { toolbar: this.toolbar });
+      overlay.fire('toolbar:created');
     }
     catch (e) { }
 

@@ -493,7 +493,7 @@ L.DistortableImage.Edit = L.Handler.extend({
         actions: this.editActions
       }).addTo(map, overlay);
       L.DomUtil.addClass(this.toolbar._container, 'ldi');
-      overlay.fire('toolbar:created', { toolbar: this.toolbar });
+      overlay.fire('toolbar:created');
     }
     catch (e) { }
 
