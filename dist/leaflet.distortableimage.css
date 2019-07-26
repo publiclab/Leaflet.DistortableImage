@@ -18,7 +18,7 @@ input.ldi {
   top:-100px;
 }
 
-.leaflet-overlay-pane.ldi img {
+.ldi .leaflet-overlay-pane img {
   pointer-events: all !important;
 }
 
