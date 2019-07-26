@@ -74,7 +74,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
           actions: this.editActions,
           position: 'topleft'
         }).addTo(this._map, this);
-        this.fire("toolbar:created");
+        this.fire('toolbar:created');
       }
     } catch (e) { }
   },

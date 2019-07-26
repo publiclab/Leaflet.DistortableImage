@@ -26,8 +26,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     if (!this._image) { this._initImage(); }
     if (!this._events) { this._initEvents(); }
 
-    map._panes.overlayPane.appendChild(this._image);
-
+    this.getPane().appendChild(this._image);
+   
     map.on("viewreset", this._reset, this);
     /* End copied from L.ImageOverlay */
 
@@ -293,12 +293,17 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       w, h, c[3].x, c[3].y
     );
   }
-
 });
 
 L.distortableImageOverlay = function(id, options) {
 	return new L.DistortableImageOverlay(id, options);
 };
+
+L.Map.addInitHook(function () {
+  if (!L.DomUtil.hasClass(this.getContainer(), 'ldi')) {
+    L.DomUtil.addClass(this.getContainer(), 'ldi');
+  }
+});
 
 
 
