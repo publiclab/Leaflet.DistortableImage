@@ -27,7 +27,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     if (!this._events) { this._initEvents(); }
 
     this.getPane().appendChild(this._image);
-
+    if (!L.DomUtil.hasClass(this.getPane(), "ldi")) {
+      L.DomUtil.addClass(this.getPane(), "ldi");
+    }
+   
     map.on("viewreset", this._reset, this);
     /* End copied from L.ImageOverlay */
 

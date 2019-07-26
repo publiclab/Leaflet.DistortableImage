@@ -13,17 +13,12 @@
   fill: #058dc4;
 }
 
-.ldi .corner {
-  position: absolute;
-  top: -10px; left: -10px;
-}
-
 input.ldi {
   position:absolute;
   top:-100px;
 }
 
-.ldi .leaflet-pane .leaflet-overlay-pane img {
+.leaflet-overlay-pane.ldi img {
   pointer-events: all !important;
 }
 
