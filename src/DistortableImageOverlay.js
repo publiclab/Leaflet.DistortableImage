@@ -14,8 +14,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this._url = url;
     this.rotation = 0;
     // window.rotation = this.rotation;
-    L.DistortableImage._options = options;
-
     L.setOptions(this, options);
   },
 
