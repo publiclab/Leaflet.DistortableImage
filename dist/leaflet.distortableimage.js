@@ -52,23 +52,28 @@ L.DomUtil = L.extend(L.DomUtil, {
 });
 
 L.IconUtil = {
-  /** creates an svg elemenet with built in accessibility properties and standardized 
+  /** creates an svg elemenet with built in accessibility properties and standardized
    * classes for styling, takes in the fragment identifier (id) of the symbol to reference.
    * note for symplicity we allow providing the icon target with or without the '#' prefix */
   create: function(ref) {
-    if (/^#/.test(ref)) { ref = ref.replace(/^#/, ''); }
+    if (/^#/.test(ref)) {
+      ref = ref.replace(/^#/, '');
+    }
 
     return (
-      '<svg class="ldi-icon ldi-' + ref + '"role="img" focusable="false">' + 
-      '<use xlink:href="#' + ref + '"></use>' + 
-      '</svg>'
+      '<svg class="ldi-icon ldi-' + ref + '"role="img" focusable="false">' +
+      '<use xlink:href="#' + ref + '"></use>' + '</svg>'
     );
   },
 
-  /** toggles the use element's ref, aka toggles the icon it renders. */
+  /** finds the use element and toggles its icon reference */
   toggleXlink: function(container, ref1, ref2) {
-    if (!/^#/.test(ref1)) { ref1 = "#" + ref1; }
-    if (!/^#/.test(ref2)) { ref2 = "#" + ref2; }
+    if (!/^#/.test(ref1)) {
+      ref1 = '#' + ref1;
+    }
+    if (!/^#/.test(ref2)) {
+      ref2 = '#' + ref2;
+    }
 
     var use = container.querySelector('use');
     if (use) {
@@ -77,6 +82,12 @@ L.IconUtil = {
       return toggled;
     }
     return false;
+  },
+
+  toggleTooltip: function(container, title1, title2) {
+    var toggled = container.getAttribute('title') === title1 ? title2 : title1;
+    container.setAttribute('title', toggled);
+    return toggled;
   }
 };
 
@@ -1375,25 +1386,8 @@ L.EditAction = L.Toolbar2.Action.extend({
 
     L.setOptions(this, options);
     L.Toolbar2.Action.prototype.initialize.call(this, options);
-  },
 
-  toggleXlink: function(ref1, ref2) {
-    var href1 = "#" + ref1,
-        href2 = "#" + ref2;
-
-    if (this._link.querySelector('use')) {
-      var xlink = this._link.querySelector('use:nth-child(1)');
-      var newXlink = xlink.getAttribute('xlink:href') === href1 ?  href2 : href1;
-      xlink.setAttribute('xlink:href', newXlink);
-      return newXlink;
-    }
-    return false;
-  },
-
-  toggleTooltip: function(title1, title2) {
-    var newTt = this._link.getAttribute('title') === title1 ? title2 : title1;
-    this._link.setAttribute('title', newTt);
-    return newTt;
+    this._injectIconSet();
   },
 
   _createIcon: function(toolbar, container, args) {
@@ -1436,9 +1430,6 @@ L.EditAction = L.Toolbar2.Action.extend({
   }
 });
 
-L.EditAction.addInitHook(function() {
-  this._injectIconSet();
-});
 
 L.DistortableImage = L.DistortableImage || {};
 L.distortableImage = L.DistortableImage;
@@ -1469,8 +1460,8 @@ var ToggleTransparency = L.EditAction.extend({
   addHooks: function() {
     var editing = this._overlay.editing;
 
-    this.toggleXlink('opacity_empty', 'opacity');
-    this.toggleTooltip('Make Image Opaque', 'Make Image Transparent');
+    L.IconUtil.toggleXlink(this._link, 'opacity_empty', 'opacity');
+    L.IconUtil.toggleTooltip(this._link, 'Make Image Opaque', 'Make Image Transparent');
     editing._toggleTransparency();
   }
 });
@@ -1501,8 +1492,8 @@ var ToggleOutline = L.EditAction.extend({
   addHooks: function() {
     var editing = this._overlay.editing;
 
-    this.toggleXlink('border_clear', 'border_outer');
-    this.toggleTooltip('Remove Border', 'Add Border');
+    L.IconUtil.toggleXlink(this._link, 'border_clear', 'border_outer');
+    L.IconUtil.toggleTooltip(this._link, 'Remove Border', 'Add Border');
     editing._toggleOutline();
   }
 });
@@ -1554,8 +1545,8 @@ var ToggleLock = L.EditAction.extend({
   addHooks: function() {
     var editing = this._overlay.editing;
 
-    this.toggleXlink('unlock', 'lock');
-    this.toggleTooltip('Unlock', 'Lock');
+    L.IconUtil.toggleXlink(this._link, 'unlock', 'lock');
+    L.IconUtil.toggleTooltip(this._link, 'Unlock', 'Lock');
     editing._toggleLock();
   }
 });
@@ -1586,8 +1577,8 @@ var ToggleRotateScale = L.EditAction.extend({
   addHooks: function() {
     var editing = this._overlay.editing;
 
-    this.toggleXlink('transform', 'crop_rotate');
-    this.toggleTooltip('Distort', 'Rotate+Scale');
+    L.IconUtil.toggleXlink(this._link, 'transform', 'crop_rotate');
+    L.IconUtil.toggleTooltip(this._link, 'Distort', 'Rotate+Scale');
     editing._toggleRotateScale();
   }
 });
@@ -1639,8 +1630,8 @@ var ToggleOrder = L.EditAction.extend({
   addHooks: function() {
     var editing = this._overlay.editing;
 
-    this.toggleXlink('flip_to_front', 'flip_to_back');
-    this.toggleTooltip('Stack to Front', 'Stack to Back');
+    L.IconUtil.toggleXlink(this._link, 'flip_to_front', 'flip_to_back');
+    L.IconUtil.toggleTooltip(this._link, 'Stack to Front', 'Stack to Back');
     editing._toggleOrder();
   }
 });
@@ -2549,7 +2540,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     toggler.setAttribute('id', 'toggle-keymapper');
     toggler.setAttribute('href', '#');
     toggler.setAttribute('role', 'button');
-    toggler.setAttribute('title', 'Display Keybindings');
+    toggler.setAttribute('title', 'Show Keybindings');
     toggler.innerHTML = L.IconUtil.create("keyboard_open");
 
     return toggler;
@@ -2586,16 +2577,18 @@ L.DistortableImage.Keymapper = L.Handler.extend({
 
   _toggleKeymapper: function (e) {
     L.DomEvent.stop(e);
-      var container = document.getElementById('ldi-keymapper');
-      // var use = this._toggler.querySelector('use:nth-child(1)');
-      var keymapWrap = document.getElementById('keymapper-wrapper');
+    var container = document.getElementById('ldi-keymapper');
+    var keymapWrap = document.getElementById('keymapper-wrapper');
 
-      var newClass = container.className === 'ldi-keymapper leaflet-control' ? 'ldi-keymapper-hide leaflet-control' : 'ldi-keymapper leaflet-control';
-      var newStyle = keymapWrap.style.display === 'none' ? 'block' : 'none';
+    var newClass = container.className === 'ldi-keymapper leaflet-control' ? 'ldi-keymapper-hide leaflet-control' : 'ldi-keymapper leaflet-control';
+    var newStyle = keymapWrap.style.display === 'none' ? 'block' : 'none';
 
-      container.className = newClass;
-      L.IconUtil.toggleXlink(this._toggler, "keyboard_open", "arrow_collapse");
-      keymapWrap.style.display = newStyle;
+    container.className = newClass;
+    keymapWrap.style.display = newStyle;
+
+    L.IconUtil.toggleXlink(this._toggler, 'keyboard_open', 'arrow_collapse');
+    L.IconUtil.toggleTooltip(this._toggler, 'Show Keybindings', 'Hide Keybindings');
+
   },
 
   _injectIconSet: function() {

@@ -27,8 +27,8 @@ var ToggleTransparency = L.EditAction.extend({
   addHooks: function() {
     var editing = this._overlay.editing;
 
-    this.toggleXlink('opacity_empty', 'opacity');
-    this.toggleTooltip('Make Image Opaque', 'Make Image Transparent');
+    L.IconUtil.toggleXlink(this._link, 'opacity_empty', 'opacity');
+    L.IconUtil.toggleTooltip(this._link, 'Make Image Opaque', 'Make Image Transparent');
     editing._toggleTransparency();
   }
 });
@@ -59,8 +59,8 @@ var ToggleOutline = L.EditAction.extend({
   addHooks: function() {
     var editing = this._overlay.editing;
 
-    this.toggleXlink('border_clear', 'border_outer');
-    this.toggleTooltip('Remove Border', 'Add Border');
+    L.IconUtil.toggleXlink(this._link, 'border_clear', 'border_outer');
+    L.IconUtil.toggleTooltip(this._link, 'Remove Border', 'Add Border');
     editing._toggleOutline();
   }
 });
@@ -112,8 +112,8 @@ var ToggleLock = L.EditAction.extend({
   addHooks: function() {
     var editing = this._overlay.editing;
 
-    this.toggleXlink('unlock', 'lock');
-    this.toggleTooltip('Unlock', 'Lock');
+    L.IconUtil.toggleXlink(this._link, 'unlock', 'lock');
+    L.IconUtil.toggleTooltip(this._link, 'Unlock', 'Lock');
     editing._toggleLock();
   }
 });
@@ -144,8 +144,8 @@ var ToggleRotateScale = L.EditAction.extend({
   addHooks: function() {
     var editing = this._overlay.editing;
 
-    this.toggleXlink('transform', 'crop_rotate');
-    this.toggleTooltip('Distort', 'Rotate+Scale');
+    L.IconUtil.toggleXlink(this._link, 'transform', 'crop_rotate');
+    L.IconUtil.toggleTooltip(this._link, 'Distort', 'Rotate+Scale');
     editing._toggleRotateScale();
   }
 });
@@ -197,8 +197,8 @@ var ToggleOrder = L.EditAction.extend({
   addHooks: function() {
     var editing = this._overlay.editing;
 
-    this.toggleXlink('flip_to_front', 'flip_to_back');
-    this.toggleTooltip('Stack to Front', 'Stack to Back');
+    L.IconUtil.toggleXlink(this._link, 'flip_to_front', 'flip_to_back');
+    L.IconUtil.toggleTooltip(this._link, 'Stack to Front', 'Stack to Back');
     editing._toggleOrder();
   }
 });

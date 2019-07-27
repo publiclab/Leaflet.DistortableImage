@@ -62,7 +62,9 @@
       }).addTo(map);
 
       // add a keymapper_position field with combinations of 'top', 'bottom', 'left' or 'right'
-      kmpr1 = L.distortableImage.keymapper(map);
+      kmpr1 = L.distortableImage.keymapper(map, {
+        position: 'topleft'
+      });
 
       L.DomEvent.on(img._image, "load", img.editing.enable, img.editing);
     })();

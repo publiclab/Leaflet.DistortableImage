@@ -31,7 +31,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     toggler.setAttribute('id', 'toggle-keymapper');
     toggler.setAttribute('href', '#');
     toggler.setAttribute('role', 'button');
-    toggler.setAttribute('title', 'Display Keybindings');
+    toggler.setAttribute('title', 'Show Keybindings');
     toggler.innerHTML = L.IconUtil.create("keyboard_open");
 
     return toggler;
@@ -68,16 +68,18 @@ L.DistortableImage.Keymapper = L.Handler.extend({
 
   _toggleKeymapper: function (e) {
     L.DomEvent.stop(e);
-      var container = document.getElementById('ldi-keymapper');
-      // var use = this._toggler.querySelector('use:nth-child(1)');
-      var keymapWrap = document.getElementById('keymapper-wrapper');
+    var container = document.getElementById('ldi-keymapper');
+    var keymapWrap = document.getElementById('keymapper-wrapper');
 
-      var newClass = container.className === 'ldi-keymapper leaflet-control' ? 'ldi-keymapper-hide leaflet-control' : 'ldi-keymapper leaflet-control';
-      var newStyle = keymapWrap.style.display === 'none' ? 'block' : 'none';
+    var newClass = container.className === 'ldi-keymapper leaflet-control' ? 'ldi-keymapper-hide leaflet-control' : 'ldi-keymapper leaflet-control';
+    var newStyle = keymapWrap.style.display === 'none' ? 'block' : 'none';
 
-      container.className = newClass;
-      L.IconUtil.toggleXlink(this._toggler, "keyboard_open", "arrow_collapse");
-      keymapWrap.style.display = newStyle;
+    container.className = newClass;
+    keymapWrap.style.display = newStyle;
+
+    L.IconUtil.toggleXlink(this._toggler, 'keyboard_open', 'arrow_collapse');
+    L.IconUtil.toggleTooltip(this._toggler, 'Show Keybindings', 'Hide Keybindings');
+
   },
 
   _injectIconSet: function() {

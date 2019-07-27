@@ -15,25 +15,8 @@ L.EditAction = L.Toolbar2.Action.extend({
 
     L.setOptions(this, options);
     L.Toolbar2.Action.prototype.initialize.call(this, options);
-  },
 
-  toggleXlink: function(ref1, ref2) {
-    var href1 = "#" + ref1,
-        href2 = "#" + ref2;
-
-    if (this._link.querySelector('use')) {
-      var xlink = this._link.querySelector('use:nth-child(1)');
-      var newXlink = xlink.getAttribute('xlink:href') === href1 ?  href2 : href1;
-      xlink.setAttribute('xlink:href', newXlink);
-      return newXlink;
-    }
-    return false;
-  },
-
-  toggleTooltip: function(title1, title2) {
-    var newTt = this._link.getAttribute('title') === title1 ? title2 : title1;
-    this._link.setAttribute('title', newTt);
-    return newTt;
+    this._injectIconSet();
   },
 
   _createIcon: function(toolbar, container, args) {
@@ -76,6 +59,3 @@ L.EditAction = L.Toolbar2.Action.extend({
   }
 });
 
-L.EditAction.addInitHook(function() {
-  this._injectIconSet();
-});

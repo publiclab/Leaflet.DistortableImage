@@ -122,9 +122,9 @@ module.exports = function(grunt) {
         dist: {
           src: [
             'src/util/*.js',
-            'src/edit/IconSets/IconSet.js',
-            'src/edit/IconSets/ToolbarIconSet.js',
-            'src/edit/IconSets/KeymapperIconSet.js',
+            'src/edit/iconsets/IconSet.js',
+            'src/edit/iconsets/ToolbarIconSet.js',
+            'src/edit/iconsets/KeymapperIconSet.js',
             'src/DistortableImageOverlay.js',
             'src/DistortableCollection.js',
             'src/edit/getEXIFdata.js',
