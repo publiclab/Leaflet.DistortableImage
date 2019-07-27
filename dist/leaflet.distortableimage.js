@@ -2545,10 +2545,13 @@ L.DistortableImage.Keymapper = L.Handler.extend({
   },
 
   _toggleButton: function () {
-    var toggler = L.DomUtil.create('button');
+    var toggler = L.DomUtil.create('a', '');
     toggler.setAttribute('id', 'toggle-keymapper');
+    toggler.setAttribute('href', '#');
+    toggler.setAttribute('role', 'button');
+    toggler.setAttribute('title', 'Display Keybindings');
     toggler.innerHTML = L.IconUtil.create("keyboard_open");
-    toggler.title = "Display Keybindings";
+
     return toggler;
   },
   

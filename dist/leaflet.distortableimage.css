@@ -97,7 +97,13 @@ span {
   top: 8px;
   right: 16px;
   cursor: pointer;
-  border-width: 2px
+  border-width: 2px;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  display: block;
+  text-align: center;
+  border: 2px solid rgba(0,0,0,0.2);
+  line-height: 30px;
 }
 
 #toggle-keymapper:hover {
