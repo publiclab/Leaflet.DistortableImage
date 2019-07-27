@@ -78,9 +78,9 @@ module.exports = function(grunt) {
             { removeViewBox: false },
             { removeEmptyAttrs: false },
             { removeTitle: true }, // "leaflet-toolbar" lets us specify the title attribute later
-            { removeAttrs: 
-              {
-						    attrs: ['xmlns', 'fill']
+            {
+              removeAttrs: {
+                attrs: ['xmlns', 'fill']
               }
             }
           ]
@@ -136,7 +136,8 @@ module.exports = function(grunt) {
             'src/edit/tools/DistortableImage.PopupBar.js',
             'src/edit/tools/DistortableImage.ControlBar.js',
             'src/edit/DistortableImage.Edit.js',
-            'src/edit/DistortableImage.Keymapper.js',
+            'src/edit/components/KeymapperIconSet.js',
+            'src/edit/components/DistortableImage.Keymapper.js',
             'src/edit/BoxSelector.js'
           ],
           dest: 'dist/leaflet.distortableimage.js'

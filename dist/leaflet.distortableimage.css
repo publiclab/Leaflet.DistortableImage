@@ -13,6 +13,10 @@
   fill: #058dc4;
 }
 
+.ldi-icon.ldi-keyboard_open, .ldi-icon.ldi-arrow_collapse {
+  fill: black;
+}
+
 input.ldi {
   position:absolute;
   top:-100px;

@@ -12,6 +12,8 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     window.keymapper_instances = window.keymapper_instances ? window.keymapper_instances + 1 : 1;
     this._instancesCheck(window.keymapper_instances);
     this._keymapper = L.control({ position: this._position });
+
+    this._injectIconSet();
   },
 
   _instancesCheck: function (len) { 
@@ -47,15 +49,18 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     }
   },
 
+  _svgIconHelper: function(ref) {
+    return (
+      '<svg class="ldi-icon ldi-' + ref + '"role="img" focusable="false">' + 
+      '<use xlink:href="#' + ref + '"></use>' + 
+      '</svg>'
+    );
+  },
+
   _createToggler: function () {
     this._toggler = L.DomUtil.create('button');
     this._toggler.setAttribute('id', 'toggle-keymapper');
-    this._toggler.innerHTML = 
-      '<svg>' +
-      '<use xlink:href="#keyboard-open"></use>' +
-      '<symbol viewBox="0 0 25 25" id="keyboard-open" xmlns="http://www.w3.org/2000/svg"><path d="M12 23l4-4H8l4 4zm7-15h-2V6h2v2zm0 3h-2V9h2v2zm-3-3h-2V6h2v2zm0 3h-2V9h2v2zm0 4H8v-2h8v2zM7 8H5V6h2v2zm0 3H5V9h2v2zm1-2h2v2H8V9zm0-3h2v2H8V6zm3 3h2v2h-2V9zm0-3h2v2h-2V6zm9-3H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></symbol>' +
-      '<symbol viewBox="0 0 20 20" id="arrow-collapse" xmlns="http://www.w3.org/2000/svg"><path d="M2.6 19l4.5-4.5v3.6h2v-7h-7v2h3.6l-4.5 4.5L2.6 19zm15.5-9.9v-2h-3.6L19 2.6l-1.4-1.4-4.5 4.5V2.1h-2v7h7z"/></symbol>' +
-      '</svg>';
+    this._toggler.innerHTML = this._svgIconHelper("keyboard_open");
     L.DomEvent.on(this._toggler, 'click', this._toggleKeymapper, this);
     return this._toggler;
   },
@@ -63,8 +68,8 @@ L.DistortableImage.Keymapper = L.Handler.extend({
   _setMapper: function () {
     var button = this._createToggler();
     this._container = this._keymapper.onAdd = function () {
-      var el_wrapper = L.DomUtil.create("div", "l-container-hide");
-      el_wrapper.setAttribute('id', 'l-container');
+      var el_wrapper = L.DomUtil.create("div", "ldi-keymapper-hide");
+      el_wrapper.setAttribute('id', 'ldi-keymapper');
       el_wrapper.appendChild(button);
       el_wrapper.insertAdjacentHTML('beforeend', 
         '<div id="keymapper-wrapper" style="display:none">' +
@@ -89,18 +94,29 @@ L.DistortableImage.Keymapper = L.Handler.extend({
 
   _toggleKeymapper: function (e) {
     L.DomEvent.stop(e);
-      var container = document.getElementById('l-container');
+      var container = document.getElementById('ldi-keymapper');
       var xlink = document.querySelector("#toggle-keymapper > svg > use:nth-child(1)");
       var keymapWrap = document.getElementById('keymapper-wrapper');
 
-      var newClass = container.className === 'l-container leaflet-control' ? 'l-container-hide leaflet-control' : 'l-container leaflet-control';
-      var newXlink = xlink.getAttribute('xlink:href') === "#arrow-collapse" ? "#keyboard-open" : "#arrow-collapse";
+      var newClass = container.className === 'ldi-keymapper leaflet-control' ? 'ldi-keymapper-hide leaflet-control' : 'ldi-keymapper leaflet-control';
+      var newXlink = xlink.getAttribute('xlink:href') === "#keyboard_open" ? "#arrow_collapse" : "#keyboard_open";
       var newStyle = keymapWrap.style.display === 'none' ? 'block' : 'none';
 
       container.className = newClass;
       xlink.setAttribute('xlink:href', newXlink);
       keymapWrap.style.display = newStyle;
   },
+
+  _injectIconSet: function() {
+    if (document.querySelector('#keymapper-iconset')) { return; }
+
+    var el = document.createElement('div');
+    el.id = 'keymapper-iconset';
+    el.setAttribute('hidden', 'hidden');
+    el.innerHTML = new L.KeymapperIconSet().render();
+
+    document.querySelector('.leaflet-control-container').appendChild(el);
+  }
 });
 
 L.distortableImage.keymapper = function (options) {
