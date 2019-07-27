@@ -63,6 +63,20 @@ L.IconUtil = {
       '<use xlink:href="#' + ref + '"></use>' + 
       '</svg>'
     );
+  },
+
+  /** toggles the use element's ref, aka toggles the icon it renders. */
+  toggleXlink: function(container, ref1, ref2) {
+    if (!/^#/.test(ref1)) { ref1 = "#" + ref1; }
+    if (!/^#/.test(ref2)) { ref2 = "#" + ref2; }
+
+    var use = container.querySelector('use');
+    if (use) {
+      var toggled = use.getAttribute('xlink:href') === ref1 ? ref2 : ref1;
+      use.setAttribute('xlink:href', toggled);
+      return toggled;
+    }
+    return false;
   }
 };
 
@@ -1361,8 +1375,6 @@ L.EditAction = L.Toolbar2.Action.extend({
 
     L.setOptions(this, options);
     L.Toolbar2.Action.prototype.initialize.call(this, options);
-
-    this._injectIconSet();
   },
 
   toggleXlink: function(ref1, ref2) {
@@ -1399,6 +1411,7 @@ L.EditAction = L.Toolbar2.Action.extend({
 
     this._link.setAttribute('href', '#');
     this._link.setAttribute('title', iconOptions.tooltip);
+    this._link.setAttribute('role', 'button');
 
     L.DomUtil.addClass(this._link, this.constructor.baseClass);
     if (iconOptions.className) {
@@ -1421,6 +1434,10 @@ L.EditAction = L.Toolbar2.Action.extend({
 
     document.querySelector('.leaflet-marker-pane').appendChild(el);
   }
+});
+
+L.EditAction.addInitHook(function() {
+  this._injectIconSet();
 });
 
 L.DistortableImage = L.DistortableImage || {};
@@ -2504,46 +2521,40 @@ L.DistortableImage = L.DistortableImage || {};
 L.distortableImage = L.DistortableImage;
 
 L.DistortableImage.Keymapper = L.Handler.extend({
-  initialize: function (map, image, params) {
+  initialize: function (map, params) {
     this._map = map;
-    this._image = image;
     this._params = params || {};
     this._position = this._params.position || 'topright';
-    this.enable();
-
-    this._injectIconSet();
   },
 
   addHooks: function () {
-    this.enable();
-   },
+    if (!this._keymapper) {
+      this._toggler = this._toggleButton();
+      this._setMapper(this._toggler);
+      L.DomEvent.on(this._toggler, 'click', this._toggleKeymapper, this);
+    }
+  },
 
   removeHooks: function () { 
-    this.disable();
-  },
-
-  enable: function () {
-    if (!this._keymapper) { this._setMapper(); }
-  },
-
-  disable: function () {  
     if (this._keymapper) {
-     L.DomUtil.remove(this._keymapper._container);
-     this._keymapper = false;
+      L.DomEvent.off(this._toggler, 'click', this._toggleKeymapper, this);
+      L.DomUtil.remove(this._toggler);
+      L.DomUtil.remove(this._keymapper._container);
+      this._keymapper = false;
     } 
   },
 
-  _createToggler: function () {
-    this._toggler = L.DomUtil.create('button');
-    this._toggler.setAttribute('id', 'toggle-keymapper');
-    this._toggler.innerHTML = L.IconUtil.create("keyboard_open");
-    L.DomEvent.on(this._toggler, 'click', this._toggleKeymapper, this);
-    return this._toggler;
+  _toggleButton: function () {
+    var toggler = L.DomUtil.create('button');
+    toggler.setAttribute('id', 'toggle-keymapper');
+    toggler.innerHTML = L.IconUtil.create("keyboard_open");
+    toggler.title = "Display Keybindings";
+    return toggler;
   },
   
-  _setMapper: function () {
-    var button = this._createToggler();
+  _setMapper: function (button) {
     this._keymapper = L.control({ position: this._position });
+
     this._container = this._keymapper.onAdd = function () {
       var el_wrapper = L.DomUtil.create("div", "ldi-keymapper-hide");
       el_wrapper.setAttribute('id', 'ldi-keymapper');
@@ -2566,21 +2577,21 @@ L.DistortableImage.Keymapper = L.Handler.extend({
         '</tbody></table>');
       return el_wrapper;
     };
+
     this._keymapper.addTo(this._map);
   },
 
   _toggleKeymapper: function (e) {
     L.DomEvent.stop(e);
       var container = document.getElementById('ldi-keymapper');
-      var xlink = document.querySelector("#toggle-keymapper > svg > use:nth-child(1)");
+      // var use = this._toggler.querySelector('use:nth-child(1)');
       var keymapWrap = document.getElementById('keymapper-wrapper');
 
       var newClass = container.className === 'ldi-keymapper leaflet-control' ? 'ldi-keymapper-hide leaflet-control' : 'ldi-keymapper leaflet-control';
-      var newXlink = xlink.getAttribute('xlink:href') === "#keyboard_open" ? "#arrow_collapse" : "#keyboard_open";
       var newStyle = keymapWrap.style.display === 'none' ? 'block' : 'none';
 
       container.className = newClass;
-      xlink.setAttribute('xlink:href', newXlink);
+      L.IconUtil.toggleXlink(this._toggler, "keyboard_open", "arrow_collapse");
       keymapWrap.style.display = newStyle;
   },
 
@@ -2596,6 +2607,11 @@ L.DistortableImage.Keymapper = L.Handler.extend({
 
     document.querySelector('.leaflet-control-container').appendChild(el);
   }
+});
+
+L.DistortableImage.Keymapper.addInitHook(function() {
+  this.enable();
+  this._injectIconSet();
 });
 
 L.distortableImage.keymapper = function (options) {

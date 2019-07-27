@@ -15,8 +15,6 @@ L.EditAction = L.Toolbar2.Action.extend({
 
     L.setOptions(this, options);
     L.Toolbar2.Action.prototype.initialize.call(this, options);
-
-    this._injectIconSet();
   },
 
   toggleXlink: function(ref1, ref2) {
@@ -53,6 +51,7 @@ L.EditAction = L.Toolbar2.Action.extend({
 
     this._link.setAttribute('href', '#');
     this._link.setAttribute('title', iconOptions.tooltip);
+    this._link.setAttribute('role', 'button');
 
     L.DomUtil.addClass(this._link, this.constructor.baseClass);
     if (iconOptions.className) {
@@ -75,4 +74,8 @@ L.EditAction = L.Toolbar2.Action.extend({
 
     document.querySelector('.leaflet-marker-pane').appendChild(el);
   }
+});
+
+L.EditAction.addInitHook(function() {
+  this._injectIconSet();
 });

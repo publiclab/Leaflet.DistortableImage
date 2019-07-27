@@ -10,5 +10,19 @@ L.IconUtil = {
       '<use xlink:href="#' + ref + '"></use>' + 
       '</svg>'
     );
+  },
+
+  /** toggles the use element's ref, aka toggles the icon it renders. */
+  toggleXlink: function(container, ref1, ref2) {
+    if (!/^#/.test(ref1)) { ref1 = "#" + ref1; }
+    if (!/^#/.test(ref2)) { ref2 = "#" + ref2; }
+
+    var use = container.querySelector('use');
+    if (use) {
+      var toggled = use.getAttribute('xlink:href') === ref1 ? ref2 : ref1;
+      use.setAttribute('xlink:href', toggled);
+      return toggled;
+    }
+    return false;
   }
 };
