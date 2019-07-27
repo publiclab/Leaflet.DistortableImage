@@ -1119,7 +1119,7 @@ L.EditHandle = L.Marker.extend({
       zIndexOffset: 10
     };
 
-    if (options && options.hasOwnProperty("draggable")) {
+    if (options && options.hasOwnProperty('draggable')) {
       markerOptions.draggable = options.draggable;
     }
 
@@ -1139,7 +1139,7 @@ L.EditHandle = L.Marker.extend({
 	},
 	
   _onHandleDragStart: function() {
-		this._handled.fire("editstart");
+		this._handled.fire('editstart');
   },
 
   _onHandleDragEnd: function() {
@@ -1148,7 +1148,7 @@ L.EditHandle = L.Marker.extend({
 
   _fireEdit: function() {
     this._handled.edited = true;
-    this._handled.fire("edit");
+    this._handled.fire('edit');
   },
 
   _bindListeners: function() {
@@ -1161,9 +1161,9 @@ L.EditHandle = L.Marker.extend({
       this
     );
 
-    this._handled._map.on("zoomend", this.updateHandle, this);
+    this._handled._map.on('zoomend', this.updateHandle, this);
 
-    this._handled.on("update", this.updateHandle, this);
+    this._handled.on('update', this.updateHandle, this);
   },
 
   _unbindListeners: function() {
@@ -1176,8 +1176,8 @@ L.EditHandle = L.Marker.extend({
       this
     );
 
-    this._handled._map.off("zoomend", this.updateHandle, this);
-    this._handled.off("update", this.updateHandle, this);
+    this._handled._map.off('zoomend', this.updateHandle, this);
+    this._handled.off('update', this.updateHandle, this);
   },
 
  /* Takes two latlngs and calculates the scaling difference. */
@@ -2586,7 +2586,6 @@ L.DistortableImage.Keymapper = L.Handler.extend({
 
     L.IconUtil.toggleXlink(this._toggler, 'keyboard_open', 'arrow_collapse');
     L.IconUtil.toggleTooltip(this._toggler, 'Show Keybindings', 'Hide Keybindings');
-
   },
 
   _injectIconSet: function() {
@@ -2604,8 +2603,8 @@ L.DistortableImage.Keymapper = L.Handler.extend({
 });
 
 L.DistortableImage.Keymapper.addInitHook(function() {
-   L.DistortableImage.Keymapper.prototype._n =
-      L.DistortableImage.Keymapper.prototype._n ? L.DistortableImage.Keymapper.prototype._n + 1 : 1;
+  L.DistortableImage.Keymapper.prototype._n =
+    L.DistortableImage.Keymapper.prototype._n ? L.DistortableImage.Keymapper.prototype._n + 1 : 1;
 
   if (L.DistortableImage.Keymapper.prototype._n === 1) {
     this.enable();

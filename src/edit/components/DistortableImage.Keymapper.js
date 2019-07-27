@@ -80,7 +80,6 @@ L.DistortableImage.Keymapper = L.Handler.extend({
 
     L.IconUtil.toggleXlink(this._toggler, 'keyboard_open', 'arrow_collapse');
     L.IconUtil.toggleTooltip(this._toggler, 'Show Keybindings', 'Hide Keybindings');
-
   },
 
   _injectIconSet: function() {
@@ -98,8 +97,8 @@ L.DistortableImage.Keymapper = L.Handler.extend({
 });
 
 L.DistortableImage.Keymapper.addInitHook(function() {
-   L.DistortableImage.Keymapper.prototype._n =
-      L.DistortableImage.Keymapper.prototype._n ? L.DistortableImage.Keymapper.prototype._n + 1 : 1;
+  L.DistortableImage.Keymapper.prototype._n =
+    L.DistortableImage.Keymapper.prototype._n ? L.DistortableImage.Keymapper.prototype._n + 1 : 1;
 
   if (L.DistortableImage.Keymapper.prototype._n === 1) {
     this.enable();
