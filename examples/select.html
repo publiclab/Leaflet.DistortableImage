@@ -49,10 +49,6 @@
       map.whenReady(function() {
         img = L.distortableImageOverlay(
           'example.jpg', {
-<<<<<<< HEAD
-=======
-            // keymapper: false,
->>>>>>> Make updates on rexagods updates
             corners: [
               L.latLng(51.52, -0.14),
               L.latLng(51.52,-0.10),
@@ -65,10 +61,6 @@
         // create a second image
         img2 = L.distortableImageOverlay(
           'example.jpg', {
-<<<<<<< HEAD
-=======
-            // keymapper: false,
->>>>>>> Make updates on rexagods updates
             corners: [
               L.latLng(51.51, -0.20),
               L.latLng(51.51,-0.16),
@@ -80,10 +72,6 @@
 
         img3 = L.distortableImageOverlay(
           'example.jpg', {
-<<<<<<< HEAD
-=======
-            // keymapper: false,
->>>>>>> Make updates on rexagods updates
             corners: [
               L.latLng(51.50, -0.13),
               L.latLng(51.50,-0.09),
@@ -112,12 +100,6 @@
         imgGroup.addLayer(img4);
 
       }, this);
-
-      /* instantiate and enable keymapper */
-      keymapper = L.distortableImage.keymapper(map);
-      L.Map.addInitHook('addHandler', 'keymapper', keymapper);
-      keymapper.disable();
-      // can be disabled using keymapper.disable();      
     })();
 
   </script>

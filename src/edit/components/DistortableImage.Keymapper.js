@@ -3,6 +3,7 @@ L.DistortableImage = L.DistortableImage || {};
 L.distortableImage = L.DistortableImage;
 
 L.DistortableImage.Keymapper = L.Handler.extend({
+
   initialize: function (map, params) {
     this._map = map;
     this._params = params || {};
@@ -97,8 +98,13 @@ L.DistortableImage.Keymapper = L.Handler.extend({
 });
 
 L.DistortableImage.Keymapper.addInitHook(function() {
-  this.enable();
-  this._injectIconSet();
+   L.DistortableImage.Keymapper.prototype._n =
+      L.DistortableImage.Keymapper.prototype._n ? L.DistortableImage.Keymapper.prototype._n + 1 : 1;
+
+  if (L.DistortableImage.Keymapper.prototype._n === 1) {
+    this.enable();
+    this._injectIconSet();
+  }
 });
 
 L.distortableImage.keymapper = function (options) {

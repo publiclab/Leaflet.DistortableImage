@@ -9,18 +9,15 @@ L.IconUtil = {
 
     return (
       '<svg class="ldi-icon ldi-' + ref + '"role="img" focusable="false">' +
-      '<use xlink:href="#' + ref + '"></use>' + '</svg>'
+      '<use xlink:href="#' + ref + '"></use>' + 
+      '</svg>'
     );
   },
 
   /** finds the use element and toggles its icon reference */
   toggleXlink: function(container, ref1, ref2) {
-    if (!/^#/.test(ref1)) {
-      ref1 = '#' + ref1;
-    }
-    if (!/^#/.test(ref2)) {
-      ref2 = '#' + ref2;
-    }
+    if (!/^#/.test(ref1)) { ref1 = '#' + ref1; }
+    if (!/^#/.test(ref2)) { ref2 = '#' + ref2; }
 
     var use = container.querySelector('use');
     if (use) {
