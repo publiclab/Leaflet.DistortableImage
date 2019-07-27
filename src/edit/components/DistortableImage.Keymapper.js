@@ -16,14 +16,6 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     this._injectIconSet();
   },
 
-  _instancesCheck: function (len) { 
-    var instances_len = len; 
-    if (instances_len > 1) { 
-      this._disableAllButOne();
-      console.warn("Only single keymapper instance declaration is allowed!");
-    }
-  },
-
   addHooks: function () {
     this.enable();
    },
@@ -33,40 +25,27 @@ L.DistortableImage.Keymapper = L.Handler.extend({
   },
 
   enable: function () {
-    this._setMapper();
+    if (!this._keymapper) { this._setMapper(); }
   },
 
   disable: function () {  
     if (this._keymapper) {
      L.DomUtil.remove(this._keymapper._container);
+     this._keymapper = false;
     } 
-  },
-
-  _disableAllButOne: function () { 
-    var generated_instances_array = Array.from(document.querySelectorAll('#l-container'));
-    for (var i = 0; i < generated_instances_array.length-1; i++) { 
-      generated_instances_array[i].parentNode.removeChild(generated_instances_array[i]);
-    }
-  },
-
-  _svgIconHelper: function(ref) {
-    return (
-      '<svg class="ldi-icon ldi-' + ref + '"role="img" focusable="false">' + 
-      '<use xlink:href="#' + ref + '"></use>' + 
-      '</svg>'
-    );
   },
 
   _createToggler: function () {
     this._toggler = L.DomUtil.create('button');
     this._toggler.setAttribute('id', 'toggle-keymapper');
-    this._toggler.innerHTML = this._svgIconHelper("keyboard_open");
+    this._toggler.innerHTML = L.IconUtil.create("keyboard_open");
     L.DomEvent.on(this._toggler, 'click', this._toggleKeymapper, this);
     return this._toggler;
   },
   
   _setMapper: function () {
     var button = this._createToggler();
+    this._keymapper = L.control({ position: this._position });
     this._container = this._keymapper.onAdd = function () {
       var el_wrapper = L.DomUtil.create("div", "ldi-keymapper-hide");
       el_wrapper.setAttribute('id', 'ldi-keymapper');
@@ -113,7 +92,9 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     var el = document.createElement('div');
     el.id = 'keymapper-iconset';
     el.setAttribute('hidden', 'hidden');
-    el.innerHTML = new L.KeymapperIconSet().render();
+
+    this._iconset = new L.KeymapperIconSet().render();
+    el.innerHTML = this._iconset;
 
     document.querySelector('.leaflet-control-container').appendChild(el);
   }

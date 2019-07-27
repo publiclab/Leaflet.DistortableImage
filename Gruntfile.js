@@ -122,6 +122,9 @@ module.exports = function(grunt) {
         dist: {
           src: [
             'src/util/*.js',
+            'src/edit/IconSets/IconSet.js',
+            'src/edit/IconSets/ToolbarIconSet.js',
+            'src/edit/IconSets/KeymapperIconSet.js',
             'src/DistortableImageOverlay.js',
             'src/DistortableCollection.js',
             'src/edit/getEXIFdata.js',
@@ -131,12 +134,10 @@ module.exports = function(grunt) {
             'src/edit/RotateScaleHandle.js',
             'src/edit/RotateHandle.js',
             'src/edit/ScaleHandle.js',
-            'src/edit/tools/IconSet.js',
             'src/edit/tools/EditAction.js',
             'src/edit/tools/DistortableImage.PopupBar.js',
             'src/edit/tools/DistortableImage.ControlBar.js',
             'src/edit/DistortableImage.Edit.js',
-            'src/edit/components/KeymapperIconSet.js',
             'src/edit/components/DistortableImage.Keymapper.js',
             'src/edit/BoxSelector.js'
           ],

@@ -46,7 +46,7 @@ L.EditAction = L.Toolbar2.Action.extend({
     this._link = L.DomUtil.create('a', '', this._icon);
 
     if (iconOptions.svg) {
-      this._link.innerHTML = this._svgIconHelper(iconOptions.html);
+      this._link.innerHTML = L.IconUtil.create(iconOptions.html);
     } else {
       this._link.innerHTML = iconOptions.html;
     }
@@ -65,21 +65,13 @@ L.EditAction = L.Toolbar2.Action.extend({
     this._addSubToolbar(toolbar, this._icon, args);
   },
 
-  _svgIconHelper: function(ref) {
-    return (
-      '<svg class="ldi-icon ldi-' + ref + '"role="img" focusable="false">' + 
-      '<use xlink:href="#' + ref + '"></use>' + 
-      '</svg>'
-    );
-  },
-
   _injectIconSet: function() {
     if (document.querySelector('#iconset')) { return; }
 
     var el = document.createElement('div');
     el.id = 'iconset';
     el.setAttribute('hidden', 'hidden');
-    el.innerHTML = new L.IconSet().render();
+    el.innerHTML = new L.ToolbarIconSet().render();
 
     document.querySelector('.leaflet-marker-pane').appendChild(el);
   }
