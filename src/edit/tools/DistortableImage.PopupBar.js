@@ -118,19 +118,11 @@ var ToggleLock = L.EditAction.extend({
   }
 });
 
-var ToggleRotateScale = L.EditAction.extend({
+var ToggleDistort = L.EditAction.extend({
   initialize: function(map, overlay, options) {
-    var edit = overlay.editing,
-      use, tooltip;
-
-    if (edit._mode === 'rotateScale') {
-      use = 'transform';
-      tooltip = 'Distort';
-    } else {
-      use = 'crop_rotate';
-      tooltip = 'Rotate+Scale';
-    }
-
+    var use = 'transform',
+        tooltip = 'Distort';
+    
     options = options || {};
     options.toolbarIcon = {
       svg: true,
@@ -143,9 +135,27 @@ var ToggleRotateScale = L.EditAction.extend({
 
   addHooks: function() {
     var editing = this._overlay.editing;
+    editing._toggleDistort();
+  }
+});
 
-    this.toggleXlink('transform', 'crop_rotate');
-    this.toggleTooltip('Distort', 'Rotate+Scale');
+var ToggleRotateScale = L.EditAction.extend({
+  initialize: function(map, overlay, options) {
+    var use = 'crop_rotate',
+        tooltip = 'Rotate+Scale';
+   
+    options = options || {};
+    options.toolbarIcon = {
+      svg: true,
+      html: use,
+      tooltip: tooltip
+    };
+
+    L.EditAction.prototype.initialize.call(this, map, overlay, options);
+  },
+
+  addHooks: function() {
+    var editing = this._overlay.editing;
     editing._toggleRotateScale();
   }
 });
@@ -166,7 +176,6 @@ var Export = L.EditAction.extend({
 
   addHooks: function() {
     var editing = this._overlay.editing;
-
     editing._getExport();
   }
 });
@@ -240,7 +249,6 @@ var Revert = L.EditAction.extend({
 
   addHooks: function() {
     var editing = this._overlay.editing;
-
     editing._revert();
   }
 });
@@ -248,17 +256,6 @@ var Revert = L.EditAction.extend({
 L.DistortableImage.PopupBar = L.Toolbar2.Popup.extend({
   options: {
     anchor: [0, -10],
-    actions: [
-      ToggleTransparency,
-      ToggleOutline,
-      ToggleLock,
-      ToggleRotateScale,
-      ToggleOrder,
-      EnableEXIF,
-      Revert,
-      Export,
-      Delete
-    ]
   },
 
   // todo: move to some sort of util class, these methods could be useful in future
@@ -292,6 +289,7 @@ L.DistortableImageOverlay.addInitHook(function () {
     ToggleTransparency, 
     ToggleOutline, 
     ToggleLock, 
+    ToggleDistort,
     ToggleRotateScale, 
     ToggleOrder,
     EnableEXIF,

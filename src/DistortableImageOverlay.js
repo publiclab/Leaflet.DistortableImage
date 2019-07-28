@@ -1,11 +1,13 @@
 L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   options: {
-    alt: "",
+    alt: '',
     height: 200,
 		crossOrigin: true,
 		// todo: find ideal number to prevent distortions during RotateScale, and make it dynamic (remove hardcoding)
-    edgeMinWidth: 50
+    edgeMinWidth: 50,
+    mode: '',
+    modes: '',
   },
 
   initialize: function(url, options) {
