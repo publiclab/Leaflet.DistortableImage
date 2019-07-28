@@ -49,10 +49,10 @@
       // create an image
       img = L.distortableImageOverlay("example.jpg", {
         // add a keymapper_position field with combinations of 'top', 'bottom', 'left' or 'right'
-        // mode: "distort", => default handle
         keymapper: false,
         selected: true,
-        mode: "rotateScale",
+        mode: 'rotateScale',
+        modes: ['rotateScale', 'scale'],
         corners: [
           L.latLng(51.52, -0.14),
           L.latLng(51.52, -0.10),

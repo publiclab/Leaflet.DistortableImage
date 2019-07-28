@@ -5,7 +5,8 @@ L.EditAction = L.Toolbar2.Action.extend({
       svg: false,
       html: '',
       className: '',
-      tooltip: ''
+      tooltip: '',
+      hotkey: ''
     },
   },
 

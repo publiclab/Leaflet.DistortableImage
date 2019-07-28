@@ -103,8 +103,11 @@ var ToggleLock = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: tooltip
+      tooltip: tooltip,
+      hotkey: 'l'
     };
+
+    // L.DomEvent.on(window, "keydown", this.enable, this);
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
@@ -115,6 +118,7 @@ var ToggleLock = L.EditAction.extend({
     this.toggleXlink('unlock', 'lock');
     this.toggleTooltip('Unlock', 'Lock');
     editing._toggleLock();
+    // this.disable();
   }
 });
 

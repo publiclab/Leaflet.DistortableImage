@@ -36,7 +36,12 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._modes = ooms ? ooms : Object.keys(this.options.modes);
 
     var oom = overlay.options.mode;
-    this._mode = oom && this.options.modes[oom] !== -1 ? oom : this.options.mode;
+    this._mode = oom && this.options.modes[oom] ? oom : this.options.mode;
+
+    if (this._modes.indexOf(this._mode) === -1) {
+      this._modes.push(this._mode);
+    }
+    
     this._initialMode = this._mode;
     
     this._selected = this._overlay.options.selected || false;
@@ -442,6 +447,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (L.Util.indexOf(this._modes, 'distort') === -1 && this._initialMode !== 'distort') { return; }
     /** this conditional is for when the mode is the initially selected mode, so don't toggle the handles */
     if (this._mode === 'distort' && this._mode === this._initialMode) { return; }
+    if (this._mode === 'distort' && 'lock' === this._initialMode) { return; }
 
     if (this._mode !== 'none') {
       modeHandles = this.options.modes[this._mode];
@@ -463,6 +469,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (this._mode === 'lock') { return; }
     if (L.Util.indexOf(this._modes, 'rotateScale') === -1 && this._initialMode !== 'rotateScale') { return; }
     if (this._mode === 'rotateScale' && this._mode === this._initialMode) { return; }
+    if (this._mode === 'rotateScale' && 'lock' === this._initialMode) { return; }
 
     if (this._mode !== 'none') { 
       modeHandles = this.options.modes[this._mode];
@@ -484,6 +491,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (this._mode === 'lock') { return; }
     if (L.Util.indexOf(this._modes, 'scale') === -1 && this._initialMode !== 'scale') { return; }
     if (this._mode === 'scale' && this._mode === this._initialMode) { return; }
+    if (this._mode === 'scale' && 'lock' === this._initialMode) { return; }
 
     if (this._mode !== 'none') { 
       modeHandles = this.options.modes[this._mode];
@@ -505,6 +513,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (this._mode === 'lock') { return; }
     if (L.Util.indexOf(this._modes, 'rotate') === -1 && this._initialMode !== 'rotate') { return; }
     if (this._mode === 'rotate' && this._mode === this._initialMode) { return; }
+    if (this._mode === 'rotate' && 'lock' === this._initialMode) { return; }
 
     if (this._mode !== 'none') { 
       modeHandles = this.options.modes[this._mode];
