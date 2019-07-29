@@ -52,15 +52,15 @@ input.ldi {
 .ldi-keymapper {
   background-color: rgb(255, 255, 255, 1);
   color: black;
-  padding: 15px;
+  padding: 8px;
   font-size: 13px;
   font-weight: 400;
   letter-spacing: 0.2px;
   line-height: 1.3;
   height: auto;
-  width: 250px;
+  width: 235px;
   border-radius: 21px;
-  overflow-y: hidden;
+  overflow: hidden;
 }
 
 .ldi-keymapper table th {
@@ -70,7 +70,7 @@ input.ldi {
 
 .ldi .left {
   display: block;
-  width: 45%;
+  width: 46%;
 }
 
 .ldi .left span {
@@ -89,7 +89,7 @@ input.ldi {
   transform: rotate(90deg);
   position: relative;
   transform-origin: 0px;
-  left: 52%;
+  left: 50%;
   margin: -2px;
   width: 200%;
 }
@@ -168,17 +168,21 @@ input.ldi {
   text-align: center;
   text-decoration: none;
   text-transform: uppercase;
-  width: 45px;
+  width: 254px;
   font-size: 11px;
   border: 1px solid lightgray;
   margin: 0;
   padding: 0;
   background-color: whitesmoke;
   border-radius: 0;
+  border-bottom-left-radius: 21px;
+  border-bottom-right-radius: 21px;
+  position: relative;
   height: 21px;
   line-height: 22px;
   color: gray;
-  right: inherit;
+  top: 10px;
+  left: -10px
 }
 
 #keymapper-heading {
