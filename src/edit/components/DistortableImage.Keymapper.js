@@ -4,23 +4,35 @@ L.distortableImage = L.DistortableImage;
 
 L.DistortableImage.Keymapper = L.Handler.extend({
 
-  initialize: function (map, params) {
+  options: {
+    position: 'topright'
+  },
+
+  initialize: function (map, options) {
     this._map = map;
-    this._params = params || {};
-    this._position = this._params.position || 'topright';
+    L.setOptions(this, options);
   },
 
   addHooks: function () {
     if (!this._keymapper) {
       this._toggler = this._toggleButton();
-      this._setMapper(this._toggler);
+      this._scrollWrapper = this._wrap();
+      this._setMapper(this._toggler, this._scrollWrapper);
+
       L.DomEvent.on(this._toggler, 'click', this._toggleKeymapper, this);
+      L.DomEvent.on(this._scrollWrapper, 'click', function(e) { L.DomEvent.stop(e); });
+      L.DomEvent.on(this._scrollWrapper, 'mouseenter', this._disableMapScroll, this);
+      L.DomEvent.on(this._scrollWrapper, 'mouseleave', this._enableMapScroll, this);
     }
   },
 
   removeHooks: function () { 
     if (this._keymapper) {
       L.DomEvent.off(this._toggler, 'click', this._toggleKeymapper, this);
+      L.DomEvent.off(this._scrollWrapper, 'click', function(e) { L.DomEvent.stop(e); });
+      L.DomEvent.off(this._scrollWrapper, 'mouseenter', this._disableMapScroll, this);
+      L.DomEvent.off(this._scrollWrapper, 'mouseleave', this._enableMapScroll, this);
+
       L.DomUtil.remove(this._toggler);
       L.DomUtil.remove(this._keymapper._container);
       this._keymapper = false;
@@ -37,30 +49,40 @@ L.DistortableImage.Keymapper = L.Handler.extend({
 
     return toggler;
   },
+
+  _wrap: function () {
+    var wrap = L.DomUtil.create('div', '');
+    wrap.setAttribute('id', 'keymapper-wrapper');
+    wrap.style.display = 'none';
+
+    return wrap;
+  },
   
-  _setMapper: function (button) {
-    this._keymapper = L.control({ position: this._position });
+  _setMapper: function (button, wrap) {
+    this._keymapper = L.control({ position: this.options.position });
 
     this._container = this._keymapper.onAdd = function () {
       var el_wrapper = L.DomUtil.create("div", "ldi-keymapper-hide");
       el_wrapper.setAttribute('id', 'ldi-keymapper');
       el_wrapper.appendChild(button);
-      el_wrapper.insertAdjacentHTML('beforeend', 
-        '<div id="keymapper-wrapper" style="display:none">' +
-        '<table><tbody>' +
-        "<tr><td><center><span id='keymapper-heading'>Keymappings</span></center></td></tr>" +
-        "<tr><td id='keymapper-hr'><hr></td></tr>" +
-        '<tr><td><kbd>j</kbd>, <kbd>k</kbd>: <span>Stack up / down</span></td></tr>' +
-        '<tr><td><kbd>l</kbd>: <span>Lock</span></td></tr>' +
-        '<tr><td><kbd>o</kbd>: <span>Outline</span></td></tr>' +
-        '<tr><td><kbd>s</kbd>: <span>Scale</span></td></tr>' +
-        '<tr><td><kbd>t</kbd>: <span>Transparency</span></td></tr>' +
-        '<tr><td><kbd>d</kbd> , <kbd>r</kbd>: <span>RotateScale</span> </td></tr>' +
-        '<tr><td><kbd>esc</kbd>: <span>Deselect All</span></td></tr>' +
-        '<tr><td><kbd>delete</kbd> , <kbd>backspace</kbd>: <span>Delete</span></td></tr>' +
-        '<tr><td><kbd>caps</kbd>: <span>Rotate</span></td></tr>' +
-        '</div>' +
-        '</tbody></table>');
+      var divider = L.DomUtil.create('BR', 'divider');
+      el_wrapper.appendChild(divider);
+      el_wrapper.appendChild(wrap);       
+      wrap.insertAdjacentHTML(
+        'beforeend',
+          '<table><tbody>' +
+          '<hr id="keymapper-hr2">' +
+          '<tr><td><div class="left"><span>Stack up / down</span></div> <div class="right"><kbd>j</kbd> <kbd>k</kbd></div></td></tr>' +
+          '<tr><td><div class="left"><span>Lock Image</span></div> <div class="right"><kbd>l</kbd></div></td></tr>' +
+          '<tr><td><div class="left"><span>Outline</span></div> <div class="right"><kbd>o</kbd></div></td></tr>' +
+          '<tr><td><div class="left"><span>Scale</span></div> <div class="right"><kbd>s</kbd></div></td></tr>' +
+          '<tr><td><div class="left"><span>Transparency</span></div> <div class="right"><kbd>t</kbd></div></td></tr>' +
+          '<tr><td><div class="left"><span>RotateScale</span></div> <div class="right"><kbd>d</kbd> <kbd>r</kbd></div></td></tr>' +
+          '<tr><td><div class="left"><span>Deselect All</span></div> <div class="right"><kbd>esc</kbd></div></td></tr>' +
+          '<tr><td><div class="left"><span>Delete Image</span></div><div class="right"><kbd>delete</kbd> <kbd>backspace</kbd></div></td></tr>' +
+          '<tr><td><div class="left"><span>Rotate</span></div> <div class="right"><kbd>caps</kbd></div></td></tr>' +
+          '</tbody></table>'
+      );
       return el_wrapper;
     };
 
@@ -78,8 +100,18 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     container.className = newClass;
     keymapWrap.style.display = newStyle;
 
-    L.IconUtil.toggleXlink(this._toggler, 'keyboard_open', 'arrow_collapse');
+    // L.IconUtil.toggleXlink(this._toggler, 'keyboard_open', 'arrow_collapse');
     L.IconUtil.toggleTooltip(this._toggler, 'Show Keybindings', 'Hide Keybindings');
+    this._toggler.innerHTML = this._toggler.innerHTML === 'close' ? L.IconUtil.create("keyboard_open") : 'close';
+    L.DomUtil.toggleClass(this._toggler, 'close-icon');
+  },
+
+  _disableMapScroll: function() {
+    this._map.scrollWheelZoom.disable();
+  },
+  
+  _enableMapScroll: function() {
+    this._map.scrollWheelZoom.enable();
   },
 
   _injectIconSet: function() {
@@ -106,6 +138,6 @@ L.DistortableImage.Keymapper.addInitHook(function() {
   }
 });
 
-L.distortableImage.keymapper = function (options) {
-  return new L.DistortableImage.Keymapper(options);
+L.distortableImage.keymapper = function (map, options) {
+  return new L.DistortableImage.Keymapper(map, options);
 };
