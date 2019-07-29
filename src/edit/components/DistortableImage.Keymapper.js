@@ -40,7 +40,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
       }, this);
      
       L.DomUtil.remove(this._toggler);
-      L.DomUtil.remove(this._keymapper._container);
+      L.DomUtil.remove(this._scrollWrapper);
       this._keymapper = false;
     } 
   },
@@ -67,16 +67,16 @@ L.DistortableImage.Keymapper = L.Handler.extend({
   _setMapper: function (button, wrap) {
     this._keymapper = L.control({ position: this.options.position });
 
-    this._container = this._keymapper.onAdd = function () {
+    this._keymapper.onAdd = function () {
       var el_wrapper = L.DomUtil.create("div", "ldi-keymapper-hide");
       el_wrapper.setAttribute('id', 'ldi-keymapper');
-      var divider = L.DomUtil.create('BR', 'divider');
+      var divider = L.DomUtil.create('br', 'divider');
       el_wrapper.appendChild(divider);
       el_wrapper.appendChild(wrap);       
       wrap.insertAdjacentHTML(
         'beforeend',
         '<table><tbody>' +
-          '<hr id="keymapper-hr2">' +
+          '<hr id="keymapper-hr">' +
           '<tr><td><div class="left"><span>Stack up / down</span></div> <div class="right"><kbd>j</kbd>\xa0<kbd>k</kbd></div></td></tr>' +
           '<tr><td><div class="left"><span>Lock Image</span></div> <div class="right"><kbd>l</kbd></div></td></tr>' +
           '<tr><td><div class="left"><span>Outline</span></div> <div class="right"><kbd>o</kbd></div></td></tr>' +

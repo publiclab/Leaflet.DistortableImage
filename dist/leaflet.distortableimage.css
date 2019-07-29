@@ -76,7 +76,7 @@ input.ldi {
   align-items: flex-start;
 }
 
-.ldi #keymapper-hr2 {
+.ldi #keymapper-hr {
   transform: rotate(90deg);
   position: relative;
   transform-origin: 0px;

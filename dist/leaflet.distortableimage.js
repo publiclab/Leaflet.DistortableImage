@@ -253,8 +253,7 @@ L.ToolbarIconSet = L.IconSet.extend({
 L.KeymapperIconSet = L.IconSet.extend({
 
   _symbols: 
-      '<symbol viewBox="0 0 25 25" id="keyboard_open"><path d="M12 23l4-4H8l4 4zm7-15h-2V6h2v2zm0 3h-2V9h2v2zm-3-3h-2V6h2v2zm0 3h-2V9h2v2zm0 4H8v-2h8v2zM7 8H5V6h2v2zm0 3H5V9h2v2zm1-2h2v2H8V9zm0-3h2v2H8V6zm3 3h2v2h-2V9zm0-3h2v2h-2V6zm9-3H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></symbol>' +
-      '<symbol viewBox="0 0 20 20" id="arrow_collapse"><path d="M2.6 19l4.5-4.5v3.6h2v-7h-7v2h3.6l-4.5 4.5L2.6 19zm15.5-9.9v-2h-3.6L19 2.6l-1.4-1.4-4.5 4.5V2.1h-2v7h7z"/></symbol>',
+      '<symbol viewBox="0 0 25 25" id="keyboard_open"><path d="M12 23l4-4H8l4 4zm7-15h-2V6h2v2zm0 3h-2V9h2v2zm-3-3h-2V6h2v2zm0 3h-2V9h2v2zm0 4H8v-2h8v2zM7 8H5V6h2v2zm0 3H5V9h2v2zm1-2h2v2H8V9zm0-3h2v2H8V6zm3 3h2v2h-2V9zm0-3h2v2h-2V6zm9-3H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></symbol>',
 
 });
 
@@ -2541,7 +2540,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
       }, this);
      
       L.DomUtil.remove(this._toggler);
-      L.DomUtil.remove(this._keymapper._container);
+      L.DomUtil.remove(this._scrollWrapper);
       this._keymapper = false;
     } 
   },
@@ -2568,16 +2567,16 @@ L.DistortableImage.Keymapper = L.Handler.extend({
   _setMapper: function (button, wrap) {
     this._keymapper = L.control({ position: this.options.position });
 
-    this._container = this._keymapper.onAdd = function () {
+    this._keymapper.onAdd = function () {
       var el_wrapper = L.DomUtil.create("div", "ldi-keymapper-hide");
       el_wrapper.setAttribute('id', 'ldi-keymapper');
-      var divider = L.DomUtil.create('BR', 'divider');
+      var divider = L.DomUtil.create('br', 'divider');
       el_wrapper.appendChild(divider);
       el_wrapper.appendChild(wrap);       
       wrap.insertAdjacentHTML(
         'beforeend',
         '<table><tbody>' +
-          '<hr id="keymapper-hr2">' +
+          '<hr id="keymapper-hr">' +
           '<tr><td><div class="left"><span>Stack up / down</span></div> <div class="right"><kbd>j</kbd>\xa0<kbd>k</kbd></div></td></tr>' +
           '<tr><td><div class="left"><span>Lock Image</span></div> <div class="right"><kbd>l</kbd></div></td></tr>' +
           '<tr><td><div class="left"><span>Outline</span></div> <div class="right"><kbd>o</kbd></div></td></tr>' +
