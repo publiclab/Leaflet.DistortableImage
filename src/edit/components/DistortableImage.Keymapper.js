@@ -68,7 +68,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     this._keymapper = L.control({ position: this.options.position });
 
     this._keymapper.onAdd = function () {
-      var el_wrapper = L.DomUtil.create("div", "ldi-keymapper-hide");
+      var el_wrapper = L.DomUtil.create('div', 'ldi-keymapper-hide');
       el_wrapper.setAttribute('id', 'ldi-keymapper');
       var divider = L.DomUtil.create('br', 'divider');
       el_wrapper.appendChild(divider);
@@ -77,15 +77,15 @@ L.DistortableImage.Keymapper = L.Handler.extend({
         'beforeend',
         '<table><tbody>' +
           '<hr id="keymapper-hr">' +
-          '<tr><td><div class="left"><span>Stack up / down</span></div> <div class="right"><kbd>j</kbd>\xa0<kbd>k</kbd></div></td></tr>' +
-          '<tr><td><div class="left"><span>Lock Image</span></div> <div class="right"><kbd>l</kbd></div></td></tr>' +
-          '<tr><td><div class="left"><span>Outline</span></div> <div class="right"><kbd>o</kbd></div></td></tr>' +
-          '<tr><td><div class="left"><span>Scale</span></div> <div class="right"><kbd>s</kbd></div></td></tr>' +
-          '<tr><td><div class="left"><span>Transparency</span></div> <div class="right"><kbd>t</kbd></div></td></tr>' +
-          '<tr><td><div class="left"><span>RotateScale</span></div> <div class="right"><kbd>d</kbd>\xa0<kbd>r</kbd></div></td></tr>' +
-          '<tr><td><div class="left"><span>Deselect All</span></div> <div class="right"><kbd>esc</kbd></div></td></tr>' +
+          '<tr><td><div class="left"><span>Stack up / down</span></div><div class="right"><kbd>j</kbd>\xa0<kbd>k</kbd></div></td></tr>' +
+          '<tr><td><div class="left"><span>Lock Image</span></div><div class="right"><kbd>l</kbd></div></td></tr>' +
+          '<tr><td><div class="left"><span>Outline</span></div><div class="right"><kbd>o</kbd></div></td></tr>' +
+          '<tr><td><div class="left"><span>Scale</span></div><div class="right"><kbd>s</kbd></div></td></tr>' +
+          '<tr><td><div class="left"><span>Transparency</span></div><div class="right"><kbd>t</kbd></div></td></tr>' +
+          '<tr><td><div class="left"><span>RotateScale</span></div><div class="right"><kbd>d</kbd>\xa0<kbd>r</kbd></div></td></tr>' +
+          '<tr><td><div class="left"><span>Deselect All</span></div><div class="right"><kbd>esc</kbd></div></td></tr>' +
           '<tr><td><div class="left"><span>Delete Image</span></div><div class="right"><kbd>delete</kbd>\xa0<kbd>backspace</kbd></div></td></tr>' +
-          '<tr><td><div class="left"><span>Rotate</span></div> <div class="right"><kbd>caps</kbd></div></td></tr>' +
+          '<tr><td><div class="left"><span>Rotate</span></div><div class="right"><kbd>caps</kbd></div></td></tr>' +
           '</tbody></table>'
       );
       el_wrapper.appendChild(button);
@@ -107,7 +107,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     keymapWrap.style.display = newStyle;
 
     L.IconUtil.toggleTooltip(this._toggler, 'Show Keybindings', 'Hide Keybindings');
-    this._toggler.innerHTML = this._toggler.innerHTML === 'close' ? L.IconUtil.create("keyboard_open") : 'close';
+    this._toggler.innerHTML = this._toggler.innerHTML === 'close' ? L.IconUtil.create('keyboard_open') : 'close';
     L.DomUtil.toggleClass(this._toggler, 'close-icon');
   },
 
