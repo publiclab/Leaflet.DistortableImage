@@ -20,19 +20,25 @@ L.DistortableImage.Keymapper = L.Handler.extend({
       this._setMapper(this._toggler, this._scrollWrapper);
 
       L.DomEvent.on(this._toggler, 'click', this._toggleKeymapper, this);
-      L.DomEvent.on(this._scrollWrapper, 'click', function(e) { L.DomEvent.stop(e); });
-      L.DomEvent.on(this._scrollWrapper, 'mouseenter', this._disableMapScroll, this);
-      L.DomEvent.on(this._scrollWrapper, 'mouseleave', this._enableMapScroll, this);
+
+      L.DomEvent.on(this._scrollWrapper, {
+        click: L.DomEvent.stop,
+        mouseenter: this._disableMapScroll,
+        mouseleave: this._enableMapScroll,
+      }, this);
     }
   },
 
   removeHooks: function () { 
     if (this._keymapper) {
       L.DomEvent.off(this._toggler, 'click', this._toggleKeymapper, this);
-      L.DomEvent.off(this._scrollWrapper, 'click', function(e) { L.DomEvent.stop(e); });
-      L.DomEvent.off(this._scrollWrapper, 'mouseenter', this._disableMapScroll, this);
-      L.DomEvent.off(this._scrollWrapper, 'mouseleave', this._enableMapScroll, this);
 
+      L.DomEvent.off(this._scrollWrapper, {
+        click: L.DomEvent.stop,
+        mouseenter: this._disableMapScroll,
+        mouseleave: this._enableMapScroll,
+      }, this);
+     
       L.DomUtil.remove(this._toggler);
       L.DomUtil.remove(this._keymapper._container);
       this._keymapper = false;
