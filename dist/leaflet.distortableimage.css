@@ -116,13 +116,12 @@ input.ldi {
   border-radius: 4px;
   right: 16px;
   cursor: pointer;
-  border-width: 2px;
   background-position: 50% 50%;
   background-repeat: no-repeat;
   display: block;
   text-align: center;
   text-decoration: none;
-  border: 2px solid rgba(0,0,0,0.2);
+  border: 2px solid rgba(184, 178, 173, 0.9);
   line-height: 30px;
 }
 
