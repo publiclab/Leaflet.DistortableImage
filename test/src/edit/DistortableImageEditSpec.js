@@ -20,7 +20,6 @@ describe("L.DistortableImage.Edit", function() {
 		afterEach(function () {
 			L.DomUtil.remove(overlay);
 		});
-		
 	});
 
 	it("Should be initialized along with each instance of L.DistortableImageOverlay.", function() {

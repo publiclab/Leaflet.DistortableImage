@@ -1,3 +1,11 @@
+.ldi .leaflet-pane .leaflet-overlay-pane img {
+  pointer-events: all !important;
+}
+
+.ldi img.leaflet-image-layer.selected {
+  box-shadow: 0px 0px 0px 12px #ffea00;
+}
+
 .ldi-icon {
   width: 18px;
   height: 18px;
@@ -13,13 +21,13 @@
   fill: #058dc4;
 }
 
+.ldi-icon.ldi-keyboard_open {
+  fill: black;
+}
+
 input.ldi {
   position:absolute;
   top:-100px;
-}
-
-.ldi .leaflet-pane .leaflet-overlay-pane img {
-  pointer-events: all !important;
 }
 
 .ldi .leaflet-toolbar-icon {
@@ -30,42 +38,65 @@ input.ldi {
   box-sizing: border-box;
 }
 
-.ldi img.leaflet-image-layer.selected {
-  box-shadow: 0px 0px 0px 12px #ffea00;
-}
-
 .ldi-keymapper {
-  background-color: rgb(255, 255, 255, 0.75);
+  background-color: rgb(255, 255, 255, 1);
   color: black;
-  padding: 0px 10px 6px 10px;
-  font-size: 14px;
-  font-weight: 400;
-  letter-spacing: 0.5px;
-  line-height: 1.2;
+  padding: 8px;
+  font-size: 13px;
+  letter-spacing: 0.2px;
+  line-height: 1.3;
+  height: auto;
+  width: 235px;
+  border-radius: 21px;
+  overflow: hidden;
 }
 
-.ldi-keymapper table th {
-  font-size: 16px;
-  padding-top: 8px;
+.ldi #keymapper-wrapper {
+  position: relative;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: 186px;
+  min-height: 186px;
 }
 
-.ldi-keymapper th {
-  vertical-align: bottom;
-  border-bottom: 2px solid rgba(0, 0, 0, 0.06);
-  padding: 0.75rem;
-  vertical-align: top;
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
+.ldi .left {
+  width: 46%;
+}
+
+.ldi .left span {
+  overflow-wrap: break-word;
+}
+
+.ldi .right {
+  display: flex;
+  max-width: 40%;
+  flex-wrap: wrap;
+  margin-left: 20px;
+  align-items: flex-start;
+}
+
+.ldi #keymapper-hr {
+  transform: rotate(90deg);
+  position: relative;
+  transform-origin: 0px;
+  left: 50%;
+  margin: -2px;
+  width: 200%;
+}
+
+.ldi-keymapper tr {
+  display: block;
 }
 
 .ldi-keymapper td {
-  padding: 0.3rem;
-  vertical-align: top;
+  padding: 0.2rem;
+  display: flex;
+  width: 100%;
 }
 
 .ldi-keymapper kbd {
-  font-weight: 500;
   padding: 0.2rem 0.4rem;
-  font-size: 95%;
   color: black; 
   background-color: rgb(247, 247, 247);
   border-radius: 3px;
@@ -75,4 +106,48 @@ input.ldi {
   -webkit-box-shadow: 0 1px 0px rgba(0, 0, 0, 0.2), 0 0 0 2px #ffffff inset;
   box-shadow: 0 1px 1px rgba(0, 0, 0, .2), 0 2px 0 0 rgba(255, 255, 255, .7) inset;
   text-shadow: 0 0.5px 0 #fff;
+}
+
+#toggle-keymapper {
+  background-color: #fff;
+  padding: 0px;
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  right: 16px;
+  cursor: pointer;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  border: 2px solid rgba(184, 178, 173, 0.9);
+  line-height: 30px;
+}
+
+#toggle-keymapper:hover {
+  background-color: #f4f4f4;
+}
+
+.close-icon#toggle-keymapper {
+  text-transform: uppercase;
+  width: 254px;
+  font-size: 11px;
+  border: 1px solid lightgray;
+  margin: 0;
+  padding: 0;
+  background-color: whitesmoke;
+  border-radius: 0;
+  border-bottom-left-radius: 21px;
+  border-bottom-right-radius: 21px;
+  position: relative;
+  height: 21px;
+  line-height: 22px;
+  color: gray;
+  top: 10px;
+  left: -10px
+}
+
+.close-icon#toggle-keymapper:hover {
+  background-color: #efefef;
 }

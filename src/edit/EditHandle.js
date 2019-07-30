@@ -13,7 +13,7 @@ L.EditHandle = L.Marker.extend({
       zIndexOffset: 10
     };
 
-    if (options && options.hasOwnProperty("draggable")) {
+    if (options && options.hasOwnProperty('draggable')) {
       markerOptions.draggable = options.draggable;
     }
 
@@ -33,7 +33,7 @@ L.EditHandle = L.Marker.extend({
 	},
 	
   _onHandleDragStart: function() {
-		this._handled.fire("editstart");
+		this._handled.fire('editstart');
   },
 
   _onHandleDragEnd: function() {
@@ -42,7 +42,7 @@ L.EditHandle = L.Marker.extend({
 
   _fireEdit: function() {
     this._handled.edited = true;
-    this._handled.fire("edit");
+    this._handled.fire('edit');
   },
 
   _bindListeners: function() {
@@ -55,9 +55,9 @@ L.EditHandle = L.Marker.extend({
       this
     );
 
-    this._handled._map.on("zoomend", this.updateHandle, this);
+    this._handled._map.on('zoomend', this.updateHandle, this);
 
-    this._handled.on("update", this.updateHandle, this);
+    this._handled.on('update', this.updateHandle, this);
   },
 
   _unbindListeners: function() {
@@ -70,8 +70,8 @@ L.EditHandle = L.Marker.extend({
       this
     );
 
-    this._handled._map.off("zoomend", this.updateHandle, this);
-    this._handled.off("update", this.updateHandle, this);
+    this._handled._map.off('zoomend', this.updateHandle, this);
+    this._handled.off('update', this.updateHandle, this);
   },
 
  /* Takes two latlngs and calculates the scaling difference. */

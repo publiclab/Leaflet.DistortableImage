@@ -30,24 +30,13 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._transparent = false;
     this._outlined = false;
 
-    /* generate instance counts. TODO - add the keymapper to collection instead of individ. imgs perhaps? */
-    this.instance_count = L.DistortableImage.Edit.prototype.instances =
-      L.DistortableImage.Edit.prototype.instances ? L.DistortableImage.Edit.prototype.instances + 1 : 1;
-
     L.setOptions(this, options); 
   },
 
   /* Run on image selection. */
   addHooks: function() {
     var overlay = this._overlay,
-      map = overlay._map,
-      keymapper_position;
-
-    /* instantiate and render keymapper for one instance only */
-    if (this.instance_count === 1 && overlay.options.keymapper !== false) {
-      keymapper_position = overlay.options.keymapper_position || 'topright';
-      map.addControl(new L.DistortableImage.Keymapper({ position: keymapper_position }));
-    }
+      map = overlay._map;
 
     /* bring the selected image into view */
     overlay.bringToFront();

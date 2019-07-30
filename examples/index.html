@@ -33,7 +33,7 @@
     var map;
 
     (function() {
-      // basic Leaflet map setup
+      
       map = L.map("map").setView([51.505, -0.09], 13);
       L.tileLayer(
         "https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.png",
@@ -47,10 +47,10 @@
         }).addTo(map);
 
       // create an image
-      img = L.distortableImageOverlay("example.jpg", {
-        // add a keymapper_position field with combinations of 'top', 'bottom', 'left' or 'right'
+      img = L.distortableImageOverlay("example.png", {
+        // (WIP) add a toolbarType field with values 'popup' (default) or 'control'
+        // add a suppressToolbar: 'true' here to disable toolbars
         // mode: "distort", => default handle
-        keymapper: false,
         selected: true,
         corners: [
           L.latLng(51.52, -0.14),
@@ -60,6 +60,9 @@
         ],
         fullResolutionSrc: "large.jpg"
       }).addTo(map);
+
+      // add a position option with combinations of 'top', 'bottom', 'left' or 'right'
+      kmpr1 = L.distortableImage.keymapper(map, { position: 'topleft' });
 
       L.DomEvent.on(img._image, "load", img.editing.enable, img.editing);
     })();

@@ -58,17 +58,16 @@ L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.p
 }).addTo(map);
 
 // create an image
-img = L.distortableImageOverlay(
-  'example.png', {
-    // 'corners' is the only required option for this class
-    // and is in NW, NE, SW, SE order
-    corners: [
-      L.latLng(51.52,-0.14),
-      L.latLng(51.52,-0.10),
-      L.latLng(51.50,-0.14),
-      L.latLng(51.50,-0.10)
-    ],
-  }).addTo(map);
+img = L.distortableImageOverlay('example.png', {
+  // 'corners' is the only required option for this class
+  // and is in NW, NE, SW, SE order
+  corners: [
+    L.latLng(51.52,-0.14),
+    L.latLng(51.52,-0.10),
+    L.latLng(51.50,-0.14),
+    L.latLng(51.50,-0.10)
+  ],
+}).addTo(map);
 
 // enable editing
 L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
@@ -93,18 +92,15 @@ If you would like to overrwrite the default toolbar actions available for an ind
 For example, to overrwrite the toolbar to only include the `ToggleTransparency` and `Delete` actions:
 
 ``` JS
-img = L.distortableImageOverlay(
-*   'example.png', {
-    // 'corners' is the only required option for this class
-    // and is in NW, NE, SW, SE order
-    corners: [
-      L.latLng(51.52,-0.14),
-      L.latLng(51.52,-0.10),
-      L.latLng(51.50,-0.14),
-      L.latLng(51.50,-0.10)
-    ],
-    actions: [ToggleTransparency, Delete]
-  }).addTo(map);
+img = L.distortableImageOverlay('example.png', {
+  corners: [
+    L.latLng(51.52,-0.14),
+    L.latLng(51.52,-0.10),
+    L.latLng(51.50,-0.14),
+    L.latLng(51.50,-0.10)
+  ],
+  actions: [ToggleTransparency, Delete]
+}).addTo(map);
 ```
 
 ### Corners
@@ -180,13 +176,10 @@ In the below example, the image will be initialiazed with "rotateScale" handles:
 L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
 ```
 
-### Keymapper
-
-`keymapper` (*optional*, default: true, value: *boolean*)
-
-By default, an image loads with a keymapper legend showing the available key bindings for different editing / interaction options. To suppress the keymapper, pass `keymapper: false` as an additional option to the image.
-
 ### Full-resolution download
+
+`fullResolutionSrc` (*optional*)
+
 
 We've added a GPU-accelerated means to generate a full resolution version of the distorted image; it requires two additional dependencies to enable; see how we've included them in the demo:
 
@@ -198,20 +191,15 @@ We've added a GPU-accelerated means to generate a full resolution version of the
 When instantiating a Distortable Image, pass in a `fullResolutionSrc` option set to the url of the higher resolution image. This image will be used in full-res exporting.
 
 ```JS
-// create basic map setup from above
-
-// create an image - note the optional
-// fullResolutionSrc option is now passed in
-img = L.distortableImageOverlay(
-  'example.png', {
-    corners: [
-      L.latLng(51.52,-0.14),
-      L.latLng(51.52,-0.10),
-      L.latLng(51.50,-0.14),
-      L.latLng(51.50,-0.10)
-    ],
-    fullResolutionSrc: 'large.jpg'
-  }).addTo(map);
+img = L.distortableImageOverlay('example.png', {
+  corners: [
+    L.latLng(51.52,-0.14),
+    L.latLng(51.52,-0.10),
+    L.latLng(51.50,-0.14),
+    L.latLng(51.50,-0.10)
+  ],
+  fullResolutionSrc: 'large.jpg'
+}).addTo(map);
 
 L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
 ```
@@ -239,26 +227,22 @@ The setup is relatively similar - here is an example with two images:
 ```JS
 // 1. Instantiate map
 // 2. Instantiate images but this time *dont* add them directly to the map
-img = L.distortableImageOverlay(
-  'example.png', {
-    keymapper: false,
-    corners: [
-      L.latLng(51.52, -0.14),
-      L.latLng(51.52,-0.10),
-      L.latLng(51.50, -0.14),
-      L.latLng(51.50,-0.10)
-    ],
-  });
+img = L.distortableImageOverlay('example.png', {
+  corners: [
+    L.latLng(51.52, -0.14),
+    L.latLng(51.52,-0.10),
+    L.latLng(51.50, -0.14),
+    L.latLng(51.50,-0.10)
+  ],
+});
 
-img2 = L.distortableImageOverlay(
-  'example.png', {
-    keymapper: false,
-    corners: [
-      L.latLng(51.51, -0.20),
-      L.latLng(51.51,-0.16),
-      L.latLng(51.49, -0.21),
-      L.latLng(51.49,-0.17)
-    ],
+img2 = L.distortableImageOverlay('example.png', {
+  corners: [
+    L.latLng(51.51, -0.20),
+    L.latLng(51.51,-0.16),
+    L.latLng(51.49, -0.21),
+    L.latLng(51.49,-0.17)
+  ],
 });
 
 // 3. Instantiate an empty `DistortableCollection` group
@@ -294,13 +278,15 @@ To add / remove a tool from the toolbar at runtime, we have also added the metho
 ### UI and functionalities 
 Currently it supports multiple image selection and translations, and WIP we are working on porting all editing tools to work for it, such as transparency, etc. Image distortions still use the single-image interface.
 
-**How to multi-select:**
+**multi-select:** A single toolbar instance (using `L.control`) renders the set of tools available to use on collections of images.
+
+
   1. Multi-selection works with <kbd>cmd</kbd> + `click` to toggle an individual image's inclusion in this interface.
   2. Or <kbd>shift</kbd> + `drag` to use our `BoxSelector` handler to select multiple at once.
   3. Or for touch devices, `touch` and `hold` (aka `longpress`). 
 
   **How to un-multi-select:**
-  - A single toolbar instance (using `L.control`) renders the set of tools available to use on collections of images.
+
   - In order to return to the single-image interface, where each `L.popup` toolbar only applies actions on the image it's attached to, you must toggle *all* images out of multi-select or...
   - ...Click on the map or hit the <kbd>esc</kbd> key to quickly deselect all images.
   - For the aforementioned 3 mutli-select methods, the `BoxSelector` method is the only one that doesn't also toggle _out_ of multi-select mode. 
@@ -402,6 +388,26 @@ Defaults:
 - [`addTool(action)`](#actions) - Adds the passed tool to the control toolbar in runtime. Returns false if the tool is not available or is already present.
 
 - `hasTool(action)` - Checks if the tool is already present in the currently rendered control toolbar.
+
+## Additional Components
+
+### Keymapper
+
+
+```JS
+// add a position option with combinations of 'top', 'bottom', 'left' or 'right'
+L.distortableImage.keymapper(map, { 
+  position: 'topleft' 
+});
+```
+
+Options:
+ - `position` (*optional*, default: 'topright', value: *string*)
+
+
+Adds a control onto the map which opens a keymapper legend showing the available key bindings for different editing / interaction options. 
+
+(WIP) Currently includes keybindings for all available actions and does not update yet if you use the `actions` API to limit available actions.
 
 ## Contributing
 
