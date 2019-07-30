@@ -2115,16 +2115,16 @@ L.DistortableImage.Edit = L.Handler.extend({
   _dragBy: function (formerPoint, newPoint) {
 	  var overlay = this._overlay,
 	  	map = overlay._map,
-		center = map.latLngToLayerPoint(overlay.getCenter()),
+		center = map.project(overlay.getCenter()),
 		i,
 		p;
-	    diference = map.latLngToLayerPoint (formerPoint).subtract (map.latLngToLayerPoint (newPoint));
+	    diference = map.project (formerPoint).subtract (map.project (newPoint));
 	  
 	  for (i = 0; i < 4; i++) {
         p = map
-          .latLngToLayerPoint(overlay.getCorner(i))
+          .project(overlay.getCorner(i))
           .subtract(diference);
-        overlay.setCorner(i, map.layerPointToLatLng(p));
+        overlay.setCorner(i, map.unproject(p));
       }
 	  overlay._reset();	  
   },
