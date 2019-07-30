@@ -3,7 +3,7 @@ module.exports = function(grunt) {
     require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
     grunt.initConfig({
-      pkg: grunt.file.readJSON("package.json"),
+      pkg: grunt.file.readJSON('package.json'),
 
       jshint: {
         options: {
@@ -44,19 +44,19 @@ module.exports = function(grunt) {
           }
         },
         source: {
-          src: ["src/**/*.js", "package.json"]
+          src: ['src/**/*.js', 'package.json']
         },
         grunt: {
-          src: ["Gruntfile.js"]
+          src: ['Gruntfile.js']
         }
       },
 
       karma: {
         development: {
-          configFile: "test/karma.conf.js"
+          configFile: 'test/karma.conf.js'
         },
         test: {
-          configFile: "test/karma.conf.js"
+          configFile: 'test/karma.conf.js'
         }
       },
 
@@ -65,12 +65,11 @@ module.exports = function(grunt) {
         dist: {
           files: [
             {
-              attrs: "fill",
               expand: true,
-              cwd: "assets/icons/svg",
-              src: ["*.svg"],
-              dest: "assets/icons/svg-min/",
-              ext: ".svg"
+              cwd: 'assets/icons/svg',
+              src: ['*.svg'],
+              dest: 'assets/icons/svg-min/',
+              ext: '.svg'
             }
           ]
         },
@@ -78,7 +77,12 @@ module.exports = function(grunt) {
           plugins: [
             { removeViewBox: false },
             { removeEmptyAttrs: false },
-            { removeTitle: true } // addtitle will add it back in later
+            { removeTitle: true }, // "leaflet-toolbar" lets us specify the title attribute later
+            { removeAttrs: 
+              {
+						    attrs: ['xmlns', 'fill']
+              }
+            }
           ]
         }
       },
@@ -89,20 +93,14 @@ module.exports = function(grunt) {
         },
         dist: {
           expand: true,
-          cwd: "assets/icons/svg-min/",
-          src: ["*.svg"],
-          dest: "assets/icons/",
+          cwd: 'assets/icons/svg-min/',
+          src: ['*.svg'],
+          dest: 'assets/icons/',
           options: {
-            log: "info",
-            shape: {
-              dimension: {
-                maxWidth: 18,
-                maxHeight: 18
-              }
-            },
+            log: 'info',
             mode: {
               symbol: {
-                sprite: "sprite.symbol.svg",
+                sprite: 'sprite.symbol.svg',
                 example: true
               }
             }
@@ -115,32 +113,33 @@ module.exports = function(grunt) {
           livereload: true
         },
         source: {
-          files: ["src/**/*.js", "test/**/*.js", "Gruntfile.js"],
-          tasks: ["build:js"]
+          files: ['src/**/*.js', 'test/**/*.js', 'Gruntfile.js'],
+          tasks: ['build:js']
         }
       },
 
       concat: {
         dist: {
           src: [
-            "src/util/*.js",
-            "src/DistortableImageOverlay.js",
-            "src/DistortableCollection.js",
-            "src/edit/getEXIFdata.js",
-            "src/edit/EditHandle.js",
-            "src/edit/LockHandle.js",
-            "src/edit/DistortHandle.js",
-            "src/edit/RotateScaleHandle.js",
-            "src/edit/RotateHandle.js",
-            "src/edit/ScaleHandle.js",
-            "src/edit/tools/EditAction.js",
-            "src/edit/tools/DistortableImage.PopupBar.js",
-            "src/edit/tools/DistortableImage.ControlBar.js",
-            "src/edit/DistortableImage.Keymapper.js",
-            "src/edit/DistortableImage.Edit.js",
-            "src/edit/BoxSelector.js"
+            'src/util/*.js',
+            'src/DistortableImageOverlay.js',
+            'src/DistortableCollection.js',
+            'src/edit/getEXIFdata.js',
+            'src/edit/EditHandle.js',
+            'src/edit/LockHandle.js',
+            'src/edit/DistortHandle.js',
+            'src/edit/RotateScaleHandle.js',
+            'src/edit/RotateHandle.js',
+            'src/edit/ScaleHandle.js',
+            'src/edit/tools/IconSet.js',
+            'src/edit/tools/EditAction.js',
+            'src/edit/tools/DistortableImage.PopupBar.js',
+            'src/edit/tools/DistortableImage.ControlBar.js',
+            'src/edit/DistortableImage.Edit.js',
+            'src/edit/DistortableImage.Keymapper.js',
+            'src/edit/BoxSelector.js'
           ],
-          dest: "dist/leaflet.distortableimage.js"
+          dest: 'dist/leaflet.distortableimage.js'
         }
       }
     });
@@ -154,11 +153,12 @@ module.exports = function(grunt) {
     grunt.registerTask('build', [
         'jshint',
         'karma:development:start',
-        'svgmin',
-        'svg_sprite',
         'coverage',
         'concat:dist'
     ]);
+
+    // recompile svg icon sprite
+    grunt.registerTask('icons', ['svgmin', 'svg_sprite']);
 
     grunt.registerTask('coverage', 'Custom commmand-line reporter for karma-coverage', function() {
         var coverageReports = grunt.file.expand('coverage/*/coverage.txt'),

@@ -2,6 +2,7 @@ Leaflet.DistortableImage
 ===================
 
 [![Build Status](https://travis-ci.org/publiclab/Leaflet.DistortableImage.svg?branch=master)](https://travis-ci.org/publiclab/Leaflet.DistortableImage)
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/publiclab/Leaflet.DistortableImage/issues)
 [![npm version](https://badge.fury.io/js/leaflet-distortableimage.svg)](https://badge.fury.io/js/leaflet-distortableimage)
 
 A Leaflet extension to distort images -- "rubbersheeting" -- for the [MapKnitter.org](http://mapknitter.org) ([src](https://github.com/publiclab/mapknitter)) image georectification service by [Public Lab](http://publiclab.org). Leaflet.DistortableImage allows for perspectival distortions of images, client-side, using CSS3 transformations in the DOM.
@@ -74,19 +75,12 @@ L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
 ```
 
 Options available to pass during `L.DistortableImageOverlay` initialization:
-
 - [actions](#Actions)
-
 - [corners](#corners)
-
 - [selected](#selected)
-
 - [mode](#mode)
-
 - [fullResolutionSrc](#Full-resolution%20download)
-
 - [keymapper](#keymapper)
-
 - [suppressToolbar](#Suppress-Toolbar)
 
 
@@ -160,31 +154,19 @@ Each primary editing mode corresponds to a separate editing handle.
 This option sets the image's initial editing mode, meaning the corresponding editing handle will always appear first when you interact with the image.
 
 Values available to pass to `mode` are: 
+- **distort** (_default_): Distortion via individually draggable corners.
 
-- #### distort (_default_)
+- **rotate**: Rotation only.
 
-  - Distortion via individually draggable corners.
+- **scale**: Resize only. 
 
-- #### rotate
+- **rotateScale**: Free transform. Combines the rotate and scale modes into one.
 
-  - Rotation only.
-
-- #### scale
-
-  - Resize only. 
-
-- #### rotateScale:
-
-  - Free transform. Combines the `rotate` and `scale` modes into one.
-
-- #### lock:
-
-  - Prevents any image actions (including those triggered from the toolbar, user gestures, and hotkeys) until the toolbar action [ToggleLock](#ToggleLock-(<kbd>l</kbd>)) is explicitly triggered (or its hotkey <kbd>l</kbd>).
+- **lock**: Prevents any image actions (including those triggered from the toolbar, user gestures, and hotkeys) until the toolbar action [ToggleLock](#ToggleLock-(<kbd>l</kbd>)) is explicitly triggered (or its hotkey <kbd>l</kbd>).
 
 In the below example, the image will be initialiazed with "rotateScale" handles:
 
 ```js
-// create an image
   img = L.distortableImageOverlay("example.png", {
     corners: [
       L.latLng(51.52, -0.14),
@@ -450,7 +432,9 @@ $ grunt concat:dist
 
 * Anish Shah, [@anishshah101](https://github.com/anishshah101)
 * Justin Manley, [@manleyjster](https://github.com/manleyjster)
-* Jeff Warren [@jywarren](https://github.com/jywarren)
+* Jeff Warren, [@jywarren](https://github.com/jywarren)
+* Sasha Boginsky, [@sashadev-sky](https://github.com/sashadev-sky)
+* Pranshu Srivastava, [@rexagod](https://github.com/rexagod)
 
 Many more at https://github.com/publiclab/Leaflet.DistortableImage/graphs/contributors
 ﻿
