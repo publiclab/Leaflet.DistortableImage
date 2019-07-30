@@ -94,9 +94,7 @@ For example, to overrwrite the toolbar to only include the `ToggleTransparency` 
 
 ``` JS
 img = L.distortableImageOverlay(
-*   'example.png', {
-    // 'corners' is the only required option for this class
-    // and is in NW, NE, SW, SE order
+   'example.png', {
     corners: [
       L.latLng(51.52,-0.14),
       L.latLng(51.52,-0.10),
@@ -180,13 +178,10 @@ In the below example, the image will be initialiazed with "rotateScale" handles:
 L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
 ```
 
-### Keymapper
-
-`keymapper` (*optional*, default: true, value: *boolean*)
-
-By default, an image loads with a keymapper legend showing the available key bindings for different editing / interaction options. To suppress the keymapper, pass `keymapper: false` as an additional option to the image.
-
 ### Full-resolution download
+
+`fullResolutionSrc` (*optional*)
+
 
 We've added a GPU-accelerated means to generate a full resolution version of the distorted image; it requires two additional dependencies to enable; see how we've included them in the demo:
 
@@ -198,20 +193,15 @@ We've added a GPU-accelerated means to generate a full resolution version of the
 When instantiating a Distortable Image, pass in a `fullResolutionSrc` option set to the url of the higher resolution image. This image will be used in full-res exporting.
 
 ```JS
-// create basic map setup from above
-
-// create an image - note the optional
-// fullResolutionSrc option is now passed in
-img = L.distortableImageOverlay(
-  'example.png', {
-    corners: [
-      L.latLng(51.52,-0.14),
-      L.latLng(51.52,-0.10),
-      L.latLng(51.50,-0.14),
-      L.latLng(51.50,-0.10)
-    ],
-    fullResolutionSrc: 'large.jpg'
-  }).addTo(map);
+img = L.distortableImageOverlay('example.png', {
+  corners: [
+    L.latLng(51.52,-0.14),
+    L.latLng(51.52,-0.10),
+    L.latLng(51.50,-0.14),
+    L.latLng(51.50,-0.10)
+  ],
+  fullResolutionSrc: 'large.jpg'
+}).addTo(map);
 
 L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
 ```
@@ -404,6 +394,26 @@ Defaults:
 - [`addTool(action)`](#actions) - Adds the passed tool to the control toolbar in runtime. Returns false if the tool is not available or is already present.
 
 - `hasTool(action)` - Checks if the tool is already present in the currently rendered control toolbar.
+
+## Additional Components
+
+### Keymapper
+
+
+```JS
+// add a position option with combinations of 'top', 'bottom', 'left' or 'right'
+L.distortableImage.keymapper(map, { 
+  position: 'topleft' 
+});
+```
+
+Options:
+ - `position` (*optional*, default: 'topright', value: *string*)
+
+
+Adds a control onto the map which opens a keymapper legend showing the available key bindings for different editing / interaction options. 
+
+(WIP) Currently includes keybindings for all available actions and does not update yet if you use the `actions` API to limit available actions.
 
 ## Contributing
 

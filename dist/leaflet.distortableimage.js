@@ -2523,8 +2523,8 @@ L.DistortableImage.Keymapper = L.Handler.extend({
 
       L.DomEvent.on(this._scrollWrapper, {
         click: L.DomEvent.stop,
-        mouseenter: this._disableMapScroll,
-        mouseleave: this._enableMapScroll,
+        mouseenter: this._disableMap,
+        mouseleave: this._enableMap,
       }, this);
     }
   },
@@ -2535,8 +2535,8 @@ L.DistortableImage.Keymapper = L.Handler.extend({
 
       L.DomEvent.off(this._scrollWrapper, {
         click: L.DomEvent.stop,
-        mouseenter: this._disableMapScroll,
-        mouseleave: this._enableMapScroll,
+        mouseenter: this._disableMap,
+        mouseleave: this._enableMap,
       }, this);
      
       L.DomUtil.remove(this._toggler);
@@ -2611,12 +2611,14 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     L.DomUtil.toggleClass(this._toggler, 'close-icon');
   },
 
-  _disableMapScroll: function() {
+  _disableMap: function() {
     this._map.scrollWheelZoom.disable();
+    this._map.dragging.disable();
   },
   
-  _enableMapScroll: function() {
+  _enableMap: function() {
     this._map.scrollWheelZoom.enable();
+    this._map.dragging.enable();
   },
 
   _injectIconSet: function() {
