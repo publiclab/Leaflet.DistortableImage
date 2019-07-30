@@ -15,7 +15,7 @@ L.DistortableImage.Edit = L.Handler.extend({
      'l': '_toggleLock',
      'o': '_toggleOutline',
      's': '_toggleScale',
-		 't': '_toggleTransparency',
+     't': '_toggleTransparency',
     }
   },
 
@@ -23,7 +23,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._overlay = overlay;
     this._toggledImage = false;
     /* Interaction modes. TODO - create API for limiting modes similar to toolbar actions API */
-    var modes = ['distort', 'lock', 'rotate', 'scale', 'rotateScale'];
+    var modes = ['distort', 'drag', 'lock', 'rotate', 'scale', 'rotateScale'];
     this._mode = modes[modes.indexOf(overlay.options.mode)] || 'distort';
     
     this._selected = this._overlay.options.selected || false;
@@ -125,13 +125,19 @@ L.DistortableImage.Edit = L.Handler.extend({
     for (i = 0; i < 4; i++) {
       this._rotateScaleHandles.addLayer(new L.RotateScaleHandle(overlay, i));
     }
+    
+    this._dragHandles = L.layerGroup();
+    for (i = 0; i < 4; i++) {
+      this._dragHandles.addLayer(new L.DragHandle(overlay, i));
+    }
 
     this._handles = {
       lock: this._lockHandles,
       distort: this._distortHandles,
       rotateScale: this._rotateScaleHandles,
       scale: this._scaleHandles,
-      rotate: this._rotateHandles
+      rotate: this._rotateHandles,
+      drag: this._dragHandles
     };
   },
 
@@ -253,6 +259,23 @@ L.DistortableImage.Edit = L.Handler.extend({
     overlay._reset();
   },
 
+  _dragBy: function (formerPoint, newPoint) {
+	  var overlay = this._overlay,
+	  	map = overlay._map,
+		center = map.latLngToLayerPoint(overlay.getCenter()),
+		i,
+		p;
+	    diference = map.latLngToLayerPoint (formerPoint).subtract (map.latLngToLayerPoint (newPoint));
+	  
+	  for (i = 0; i < 4; i++) {
+        p = map
+          .latLngToLayerPoint(overlay.getCorner(i))
+          .subtract(diference);
+        overlay.setCorner(i, map.layerPointToLatLng(p));
+      }
+	  overlay._reset();	  
+  },
+  
   _enableDragging: function() {
     var overlay = this._overlay,
       map = overlay._map;
