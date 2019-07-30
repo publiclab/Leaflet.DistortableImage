@@ -257,6 +257,68 @@ L.KeymapperIconSet = L.IconSet.extend({
 
 });
 
+L.EditAction = L.Toolbar2.Action.extend({
+
+  options: {
+    toolbarIcon: {
+      svg: false,
+      html: '',
+      className: '',
+      tooltip: ''
+    },
+  },
+
+  initialize: function(map, overlay, options) {
+    this._overlay = overlay;
+    this._map = map;
+
+    L.setOptions(this, options);
+    L.Toolbar2.Action.prototype.initialize.call(this, options);
+
+    this._injectIconSet();
+  },
+
+  _createIcon: function(toolbar, container, args) {
+    var iconOptions = this.options.toolbarIcon;
+
+    this.toolbar = toolbar;
+    this._icon = L.DomUtil.create('li', '', container);
+    this._link = L.DomUtil.create('a', '', this._icon);
+
+    if (iconOptions.svg) {
+      this._link.innerHTML = L.IconUtil.create(iconOptions.html);
+    } else {
+      this._link.innerHTML = iconOptions.html;
+    }
+
+    this._link.setAttribute('href', '#');
+    this._link.setAttribute('title', iconOptions.tooltip);
+    this._link.setAttribute('role', 'button');
+
+    L.DomUtil.addClass(this._link, this.constructor.baseClass);
+    if (iconOptions.className) {
+      L.DomUtil.addClass(this._link, iconOptions.className);
+    }
+
+    L.DomEvent.on(this._link, 'click', this.enable, this);
+
+    /* Add secondary toolbar */
+    this._addSubToolbar(toolbar, this._icon, args);
+  },
+
+  _injectIconSet: function() {
+    if (document.querySelector('#iconset')) { return; }
+
+    var el = document.createElement('div');
+    el.id = 'iconset';
+    el.setAttribute('hidden', 'hidden');
+    el.innerHTML = new L.ToolbarIconSet().render();
+
+    document.querySelector('.leaflet-marker-pane').appendChild(el);
+  }
+});
+
+
 L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   options: {
@@ -273,8 +335,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this._url = url;
     this.rotation = 0;
     // window.rotation = this.rotation;
-    L.DistortableImage._options = options;
-
     L.setOptions(this, options);
   },
 
@@ -1360,68 +1420,6 @@ L.ScaleHandle = L.EditHandle.extend({
 	},
 });
 
-L.EditAction = L.Toolbar2.Action.extend({
-
-  options: {
-    toolbarIcon: {
-      svg: false,
-      html: '',
-      className: '',
-      tooltip: ''
-    },
-  },
-
-  initialize: function(map, overlay, options) {
-    this._overlay = overlay;
-    this._map = map;
-
-    L.setOptions(this, options);
-    L.Toolbar2.Action.prototype.initialize.call(this, options);
-
-    this._injectIconSet();
-  },
-
-  _createIcon: function(toolbar, container, args) {
-    var iconOptions = this.options.toolbarIcon;
-
-    this.toolbar = toolbar;
-    this._icon = L.DomUtil.create('li', '', container);
-    this._link = L.DomUtil.create('a', '', this._icon);
-
-    if (iconOptions.svg) {
-      this._link.innerHTML = L.IconUtil.create(iconOptions.html);
-    } else {
-      this._link.innerHTML = iconOptions.html;
-    }
-
-    this._link.setAttribute('href', '#');
-    this._link.setAttribute('title', iconOptions.tooltip);
-    this._link.setAttribute('role', 'button');
-
-    L.DomUtil.addClass(this._link, this.constructor.baseClass);
-    if (iconOptions.className) {
-      L.DomUtil.addClass(this._link, iconOptions.className);
-    }
-
-    L.DomEvent.on(this._link, 'click', this.enable, this);
-
-    /* Add secondary toolbar */
-    this._addSubToolbar(toolbar, this._icon, args);
-  },
-
-  _injectIconSet: function() {
-    if (document.querySelector('#iconset')) { return; }
-
-    var el = document.createElement('div');
-    el.id = 'iconset';
-    el.setAttribute('hidden', 'hidden');
-    el.innerHTML = new L.ToolbarIconSet().render();
-
-    document.querySelector('.leaflet-marker-pane').appendChild(el);
-  }
-});
-
-
 L.DistortableImage = L.DistortableImage || {};
 L.distortableImage = L.DistortableImage;
 
@@ -1891,14 +1889,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   /* Run on image selection. */
   addHooks: function() {
     var overlay = this._overlay,
-      map = overlay._map,
-      keymapper_position;
-
-    /* instantiate and render keymapper for one instance only */
-    if (this.instance_count === 1 && overlay.options.keymapper !== false) {
-      keymapper_position = overlay.options.keymapper_position || 'topright';
-      map.addControl(new L.DistortableImage.Keymapper({ position: keymapper_position }));
-    }
+      map = overlay._map;
 
     /* bring the selected image into view */
     overlay.bringToFront();
@@ -2541,6 +2532,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
      
       L.DomUtil.remove(this._toggler);
       L.DomUtil.remove(this._scrollWrapper);
+      L.DomUtil.remove(this._keymapper._container);
       this._keymapper = false;
     } 
   },
@@ -2567,7 +2559,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
   _setMapper: function (button, wrap) {
     this._keymapper = L.control({ position: this.options.position });
 
-    this._keymapper.onAdd = function () {
+    this._container = this._keymapper.onAdd = function () {
       var el_wrapper = L.DomUtil.create('div', 'ldi-keymapper-hide');
       el_wrapper.setAttribute('id', 'ldi-keymapper');
       var divider = L.DomUtil.create('br', 'divider');

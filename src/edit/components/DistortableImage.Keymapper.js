@@ -41,6 +41,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
      
       L.DomUtil.remove(this._toggler);
       L.DomUtil.remove(this._scrollWrapper);
+      L.DomUtil.remove(this._keymapper._container);
       this._keymapper = false;
     } 
   },
@@ -67,7 +68,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
   _setMapper: function (button, wrap) {
     this._keymapper = L.control({ position: this.options.position });
 
-    this._keymapper.onAdd = function () {
+    this._container = this._keymapper.onAdd = function () {
       var el_wrapper = L.DomUtil.create('div', 'ldi-keymapper-hide');
       el_wrapper.setAttribute('id', 'ldi-keymapper');
       var divider = L.DomUtil.create('br', 'divider');
