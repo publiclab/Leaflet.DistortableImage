@@ -58,17 +58,16 @@ L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.p
 }).addTo(map);
 
 // create an image
-img = L.distortableImageOverlay(
-  'example.png', {
-    // 'corners' is the only required option for this class
-    // and is in NW, NE, SW, SE order
-    corners: [
-      L.latLng(51.52,-0.14),
-      L.latLng(51.52,-0.10),
-      L.latLng(51.50,-0.14),
-      L.latLng(51.50,-0.10)
-    ],
-  }).addTo(map);
+img = L.distortableImageOverlay('example.png', {
+  // 'corners' is the only required option for this class
+  // and is in NW, NE, SW, SE order
+  corners: [
+    L.latLng(51.52,-0.14),
+    L.latLng(51.52,-0.10),
+    L.latLng(51.50,-0.14),
+    L.latLng(51.50,-0.10)
+  ],
+}).addTo(map);
 
 // enable editing
 L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
@@ -93,16 +92,15 @@ If you would like to overrwrite the default toolbar actions available for an ind
 For example, to overrwrite the toolbar to only include the `ToggleTransparency` and `Delete` actions:
 
 ``` JS
-img = L.distortableImageOverlay(
-   'example.png', {
-    corners: [
-      L.latLng(51.52,-0.14),
-      L.latLng(51.52,-0.10),
-      L.latLng(51.50,-0.14),
-      L.latLng(51.50,-0.10)
-    ],
-    actions: [ToggleTransparency, Delete]
-  }).addTo(map);
+img = L.distortableImageOverlay('example.png', {
+  corners: [
+    L.latLng(51.52,-0.14),
+    L.latLng(51.52,-0.10),
+    L.latLng(51.50,-0.14),
+    L.latLng(51.50,-0.10)
+  ],
+  actions: [ToggleTransparency, Delete]
+}).addTo(map);
 ```
 
 ### Corners
@@ -229,26 +227,22 @@ The setup is relatively similar - here is an example with two images:
 ```JS
 // 1. Instantiate map
 // 2. Instantiate images but this time *dont* add them directly to the map
-img = L.distortableImageOverlay(
-  'example.png', {
-    keymapper: false,
-    corners: [
-      L.latLng(51.52, -0.14),
-      L.latLng(51.52,-0.10),
-      L.latLng(51.50, -0.14),
-      L.latLng(51.50,-0.10)
-    ],
-  });
+img = L.distortableImageOverlay('example.png', {
+  corners: [
+    L.latLng(51.52, -0.14),
+    L.latLng(51.52,-0.10),
+    L.latLng(51.50, -0.14),
+    L.latLng(51.50,-0.10)
+  ],
+});
 
-img2 = L.distortableImageOverlay(
-  'example.png', {
-    keymapper: false,
-    corners: [
-      L.latLng(51.51, -0.20),
-      L.latLng(51.51,-0.16),
-      L.latLng(51.49, -0.21),
-      L.latLng(51.49,-0.17)
-    ],
+img2 = L.distortableImageOverlay('example.png', {
+  corners: [
+    L.latLng(51.51, -0.20),
+    L.latLng(51.51,-0.16),
+    L.latLng(51.49, -0.21),
+    L.latLng(51.49,-0.17)
+  ],
 });
 
 // 3. Instantiate an empty `DistortableCollection` group
