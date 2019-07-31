@@ -10,7 +10,11 @@
     <link href="../node_modules/leaflet/dist/leaflet.css" rel="stylesheet" media="screen" title="no title">
     <script src="../node_modules/leaflet-toolbar/dist/leaflet.toolbar.js"></script>
     <link href="../node_modules/leaflet-toolbar/dist/leaflet.toolbar.css" rel="stylesheet">
-
+    
+    <!-- google mutant layer -->
+    <script src="../node_modules/leaflet.gridlayer.googlemutant/Leaflet.GoogleMutant.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAxlBXzYwdeaOMKZgx_UNBp2qBtdD0L_9g"></script>
+    
     <!-- for full-res export -->
     <script src="../node_modules/jquery/dist/jquery.js"></script>
     <script defer src="../node_modules/webgl-distort/dist/webgl-distort.js"></script>
@@ -35,16 +39,12 @@
     (function() {
       
       map = L.map("map").setView([51.505, -0.09], 13);
-      L.tileLayer(
-        "https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.png",
-        {
-          maxZoom: 18,
-          attribution:
-            'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-            '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-            'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-          id: "examples.map-i86knfo3"
-        }).addTo(map);
+      var googleMutant = L.gridLayer.googleMutant({
+        type: 'satellite', // valid values are 'roadmap', 'satellite', 'terrain' and 'hybrid'
+        maxZoom: 18,
+        maxNativeZoom: 18,
+        opacity: 0.7
+      }).addTo(map);
 
       // create an image
       img = L.distortableImageOverlay("example.jpg", {
