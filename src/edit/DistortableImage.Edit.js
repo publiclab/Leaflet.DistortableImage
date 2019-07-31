@@ -253,8 +253,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 	  	map = overlay._map,
 		center = map.project(overlay.getCenter()),
 		i,
-		p;
-	    diference = map.project (formerPoint).subtract (map.project (newPoint));
+		p,
+		diference = map.project (formerPoint).subtract (map.project (newPoint));
 	  
 	  for (i = 0; i < 4; i++) {
         p = map
