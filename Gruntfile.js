@@ -131,6 +131,7 @@ module.exports = function(grunt) {
             'src/edit/RotateScaleHandle.js',
             'src/edit/RotateHandle.js',
             'src/edit/ScaleHandle.js',
+            'src/edit/DragHandle.js',
             'src/iconsets/IconSet.js',
             'src/iconsets/KeymapperIconSet.js',
             'src/iconsets/ToolbarIconSet.js',
