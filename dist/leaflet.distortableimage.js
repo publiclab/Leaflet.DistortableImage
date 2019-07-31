@@ -51,6 +51,43 @@ L.DomUtil = L.extend(L.DomUtil, {
 
 });
 
+L.IconUtil = {
+  /** creates an svg elemenet with built in accessibility properties and standardized
+   * classes for styling, takes in the fragment identifier (id) of the symbol to reference.
+   * note for symplicity we allow providing the icon target with or without the '#' prefix */
+  create: function(ref) {
+    if (/^#/.test(ref)) {
+      ref = ref.replace(/^#/, '');
+    }
+
+    return (
+      '<svg class="ldi-icon ldi-' + ref + '"role="img" focusable="false">' +
+      '<use xlink:href="#' + ref + '"></use>' + 
+      '</svg>'
+    );
+  },
+
+  /** finds the use element and toggles its icon reference */
+  toggleXlink: function(container, ref1, ref2) {
+    if (!/^#/.test(ref1)) { ref1 = '#' + ref1; }
+    if (!/^#/.test(ref2)) { ref2 = '#' + ref2; }
+
+    var use = container.querySelector('use');
+    if (use) {
+      var toggled = use.getAttribute('xlink:href') === ref1 ? ref2 : ref1;
+      use.setAttribute('xlink:href', toggled);
+      return toggled;
+    }
+    return false;
+  },
+
+  toggleTooltip: function(container, title1, title2) {
+    var toggled = container.getAttribute('title') === title1 ? title2 : title1;
+    container.setAttribute('title', toggled);
+    return toggled;
+  }
+};
+
 L.ImageUtil = {
 
   getCmPerPixel: function(overlay) {
@@ -175,6 +212,113 @@ L.TrigUtil = {
   }
 
 };
+/** this is the baseclass other IconSets inherit from, we don't use it directly */
+L.IconSet = L.Class.extend({
+
+  _svg: '<svg xmlns="http://www.w3.org/2000/svg">',
+
+  _symbols: '',
+
+  render: function() {
+    this.addSymbols(this._symbols);
+    return this._svg;
+  },
+
+  addSymbols: function(symbols) {
+    this._svg += symbols; 
+  }
+  
+});
+
+L.ToolbarIconSet = L.IconSet.extend({
+
+  _symbols:
+      '<symbol viewBox="0 0 18 18" id="border_clear"><path d="M5.25 3.75h1.5v-1.5h-1.5v1.5zm0 6h1.5v-1.5h-1.5v1.5zm0 6h1.5v-1.5h-1.5v1.5zm3-3h1.5v-1.5h-1.5v1.5zm0 3h1.5v-1.5h-1.5v1.5zm-6 0h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm6 6h1.5v-1.5h-1.5v1.5zm6 3h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm0 6h1.5v-1.5h-1.5v1.5zm0-9h1.5v-1.5h-1.5v1.5zm-6 0h1.5v-1.5h-1.5v1.5zm6-4.5v1.5h1.5v-1.5h-1.5zm-6 1.5h1.5v-1.5h-1.5v1.5zm3 12h1.5v-1.5h-1.5v1.5zm0-6h1.5v-1.5h-1.5v1.5zm0-6h1.5v-1.5h-1.5v1.5z"/></symbol>' +
+      '<symbol viewBox="0 0 18 18" id="border_outer"><path d="M9.75 5.25h-1.5v1.5h1.5v-1.5zm0 3h-1.5v1.5h1.5v-1.5zm3 0h-1.5v1.5h1.5v-1.5zm-10.5-6v13.5h13.5V2.25H2.25zm12 12H3.75V3.75h10.5v10.5zm-4.5-3h-1.5v1.5h1.5v-1.5zm-3-3h-1.5v1.5h1.5v-1.5z"/></symbol>' +
+      '<symbol viewBox="0 0 18 18" id="crop_rotate"><path d="M5.603 16.117C3.15 14.947 1.394 12.57 1.125 9.75H0C.383 14.37 4.245 18 8.963 18c.172 0 .33-.015.495-.023L6.6 15.113l-.997 1.005zM9.037 0c-.172 0-.33.015-.495.03L11.4 2.888l.998-.998a7.876 7.876 0 0 1 4.477 6.36H18C17.617 3.63 13.755 0 9.037 0zM12 10.5h1.5V6A1.5 1.5 0 0 0 12 4.5H7.5V6H12v4.5zM6 12V3H4.5v1.5H3V6h1.5v6A1.5 1.5 0 0 0 6 13.5h6V15h1.5v-1.5H15V12H6z"/></symbol>' +
+      '<symbol viewBox="0 0 18 18" id="delete_forever"><path d="M4.5 14.25c0 .825.675 1.5 1.5 1.5h6c.825 0 1.5-.675 1.5-1.5v-9h-9v9zm1.845-5.34l1.058-1.058L9 9.443l1.59-1.59 1.058 1.058-1.59 1.59 1.59 1.59-1.058 1.058L9 11.558l-1.59 1.59-1.058-1.058 1.59-1.59-1.597-1.59zM11.625 3l-.75-.75h-3.75l-.75.75H3.75v1.5h10.5V3h-2.625z"/></symbol>' +
+      '<symbol viewBox="0 0 18 18" id="explore"><path d="M9 1.5C4.86 1.5 1.5 4.86 1.5 9c0 4.14 3.36 7.5 7.5 7.5 4.14 0 7.5-3.36 7.5-7.5 0-4.14-3.36-7.5-7.5-7.5zM9 15c-3.308 0-6-2.693-6-6 0-3.308 2.692-6 6-6 3.307 0 6 2.692 6 6 0 3.307-2.693 6-6 6zm-4.125-1.875l5.633-2.617 2.617-5.633-5.633 2.617-2.617 5.633zM9 8.175c.457 0 .825.367.825.825A.823.823 0 0 1 9 9.825.823.823 0 0 1 8.175 9c0-.457.367-.825.825-.825z"/></symbol>' +
+      '<symbol viewBox="0 0 18 18" id="flip_to_back"><path d="M6.75 5.25h-1.5v1.5h1.5v-1.5zm0 3h-1.5v1.5h1.5v-1.5zm0-6a1.5 1.5 0 0 0-1.5 1.5h1.5v-1.5zm3 9h-1.5v1.5h1.5v-1.5zm4.5-9v1.5h1.5c0-.825-.675-1.5-1.5-1.5zm-4.5 0h-1.5v1.5h1.5v-1.5zm-3 10.5v-1.5h-1.5a1.5 1.5 0 0 0 1.5 1.5zm7.5-3h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm0 6c.825 0 1.5-.675 1.5-1.5h-1.5v1.5zm-10.5-7.5h-1.5v9a1.5 1.5 0 0 0 1.5 1.5h9v-1.5h-9v-9zm7.5-1.5h1.5v-1.5h-1.5v1.5zm0 9h1.5v-1.5h-1.5v1.5z"/></symbol>' +
+      '<symbol viewBox="0 0 18 18" id="flip_to_front"><path d="M2.25 9.75h1.5v-1.5h-1.5v1.5zm0 3h1.5v-1.5h-1.5v1.5zm1.5 3v-1.5h-1.5a1.5 1.5 0 0 0 1.5 1.5zm-1.5-9h1.5v-1.5h-1.5v1.5zm9 9h1.5v-1.5h-1.5v1.5zm3-13.5h-7.5a1.5 1.5 0 0 0-1.5 1.5v7.5a1.5 1.5 0 0 0 1.5 1.5h7.5c.825 0 1.5-.675 1.5-1.5v-7.5c0-.825-.675-1.5-1.5-1.5zm0 9h-7.5v-7.5h7.5v7.5zm-6 4.5h1.5v-1.5h-1.5v1.5zm-3 0h1.5v-1.5h-1.5v1.5z"/></symbol>' +
+      '<symbol viewBox="0 0 18 18" id="get_app"><path d="M14.662 6.95h-3.15v-4.5H6.787v4.5h-3.15L9.15 12.2l5.512-5.25zM3.637 13.7v1.5h11.025v-1.5H3.637z"/></symbol>' +
+      '<symbol viewBox="0 0 18 18" id="lock"><path d="M13.5 6h-.75V4.5C12.75 2.43 11.07.75 9 .75 6.93.75 5.25 2.43 5.25 4.5V6H4.5C3.675 6 3 6.675 3 7.5V15c0 .825.675 1.5 1.5 1.5h9c.825 0 1.5-.675 1.5-1.5V7.5c0-.825-.675-1.5-1.5-1.5zM6.75 4.5A2.247 2.247 0 0 1 9 2.25a2.247 2.247 0 0 1 2.25 2.25V6h-4.5V4.5zM13.5 15h-9V7.5h9V15zM9 12.75c.825 0 1.5-.675 1.5-1.5s-.675-1.5-1.5-1.5-1.5.675-1.5 1.5.675 1.5 1.5 1.5z"/></symbol>' +
+      '<symbol viewBox="0 0 18 18" id="opacity"><path d="M13.245 6L9 1.763 4.755 6A6.015 6.015 0 0 0 3 10.23c0 1.5.585 3.082 1.755 4.252a5.993 5.993 0 0 0 8.49 0A6.066 6.066 0 0 0 15 10.23c0-1.5-.585-3.06-1.755-4.23zM4.5 10.5c.008-1.5.465-2.453 1.32-3.3L9 3.952l3.18 3.285c.855.84 1.313 1.763 1.32 3.263h-9z"/></symbol>' +
+      '<symbol viewBox="0 0 14 18" id="opacity_empty"><path stroke="#0078A8" stroke-width="1.7" d="M10.708 6.25A5.113 5.113 0 0 1 12.2 9.846c0 1.275-.497 2.62-1.492 3.614a5.094 5.094 0 0 1-7.216 0A5.156 5.156 0 0 1 2 9.846c0-1.275.497-2.601 1.492-3.596L7.1 2.648l3.608 3.602zm0 0L7.1 2.648 3.492 6.25A5.113 5.113 0 0 0 2 9.846c0 1.275.497 2.62 1.492 3.614a5.094 5.094 0 0 0 7.216 0A5.156 5.156 0 0 0 12.2 9.846a5.113 5.113 0 0 0-1.492-3.596z"/></symbol>' +
+      '<symbol viewBox="0 0 18 18" id="restore"><path d="M15.67 3.839a.295.295 0 0 0-.22.103l-5.116 3.249V4.179a.342.342 0 0 0-.193-.315.29.29 0 0 0-.338.078L3.806 7.751v-4.63h-.002l.002-.022c0-.277-.204-.502-.456-.502h-.873V2.6c-.253 0-.457.225-.457.503l.002.026v10.883h.005c.021.257.217.454.452.455l.016-.002h.822c.013.001.025.004.038.004.252 0 .457-.225.457-.502a.505.505 0 0 0-.006-.068V9.318l6.001 3.811a.288.288 0 0 0 .332.074.34.34 0 0 0 .194-.306V9.878l5.12 3.252a.288.288 0 0 0 .332.073.34.34 0 0 0 .194-.306V4.18a.358.358 0 0 0-.09-.24.296.296 0 0 0-.218-.1z"/></symbol>' +
+      '<symbol viewBox="0 0 18 18" id="transform"><path d="M16.5 13.5V12H6V3h1.5L5.25.75 3 3h1.5v1.5h-3V6h3v6c0 .825.675 1.5 1.5 1.5h6V15h-1.5l2.25 2.25L15 15h-1.5v-1.5h3zM7.5 6H12v4.5h1.5V6c0-.825-.675-1.5-1.5-1.5H7.5V6z"/></symbol>' +
+      '<symbol viewBox="0 0 18 18" id="unlock"><path d="M13.5 6h-.75V4.5C12.75 2.43 11.07.75 9 .75 6.93.75 5.25 2.43 5.25 4.5h1.5A2.247 2.247 0 0 1 9 2.25a2.247 2.247 0 0 1 2.25 2.25V6H4.5C3.675 6 3 6.675 3 7.5V15c0 .825.675 1.5 1.5 1.5h9c.825 0 1.5-.675 1.5-1.5V7.5c0-.825-.675-1.5-1.5-1.5zm0 9h-9V7.5h9V15zM9 12.75c.825 0 1.5-.675 1.5-1.5s-.675-1.5-1.5-1.5-1.5.675-1.5 1.5.675 1.5 1.5 1.5z"/></symbol>'
+
+});
+
+L.KeymapperIconSet = L.IconSet.extend({
+
+  _symbols: 
+      '<symbol viewBox="0 0 25 25" id="keyboard_open"><path d="M12 23l4-4H8l4 4zm7-15h-2V6h2v2zm0 3h-2V9h2v2zm-3-3h-2V6h2v2zm0 3h-2V9h2v2zm0 4H8v-2h8v2zM7 8H5V6h2v2zm0 3H5V9h2v2zm1-2h2v2H8V9zm0-3h2v2H8V6zm3 3h2v2h-2V9zm0-3h2v2h-2V6zm9-3H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></symbol>',
+
+});
+
+L.EditAction = L.Toolbar2.Action.extend({
+
+  options: {
+    toolbarIcon: {
+      svg: false,
+      html: '',
+      className: '',
+      tooltip: ''
+    },
+  },
+
+  initialize: function(map, overlay, options) {
+    this._overlay = overlay;
+    this._map = map;
+
+    L.setOptions(this, options);
+    L.Toolbar2.Action.prototype.initialize.call(this, options);
+
+    this._injectIconSet();
+  },
+
+  _createIcon: function(toolbar, container, args) {
+    var iconOptions = this.options.toolbarIcon;
+
+    this.toolbar = toolbar;
+    this._icon = L.DomUtil.create('li', '', container);
+    this._link = L.DomUtil.create('a', '', this._icon);
+
+    if (iconOptions.svg) {
+      this._link.innerHTML = L.IconUtil.create(iconOptions.html);
+    } else {
+      this._link.innerHTML = iconOptions.html;
+    }
+
+    this._link.setAttribute('href', '#');
+    this._link.setAttribute('title', iconOptions.tooltip);
+    this._link.setAttribute('role', 'button');
+
+    L.DomUtil.addClass(this._link, this.constructor.baseClass);
+    if (iconOptions.className) {
+      L.DomUtil.addClass(this._link, iconOptions.className);
+    }
+
+    L.DomEvent.on(this._link, 'click', this.enable, this);
+
+    /* Add secondary toolbar */
+    this._addSubToolbar(toolbar, this._icon, args);
+  },
+
+  _injectIconSet: function() {
+    if (document.querySelector('#iconset')) { return; }
+
+    var el = document.createElement('div');
+    el.id = 'iconset';
+    el.setAttribute('hidden', 'hidden');
+    el.innerHTML = new L.ToolbarIconSet().render();
+
+    document.querySelector('.leaflet-marker-pane').appendChild(el);
+  }
+});
+
+
 L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   options: {
@@ -1029,7 +1173,7 @@ L.EditHandle = L.Marker.extend({
       zIndexOffset: 10
     };
 
-    if (options && options.hasOwnProperty("draggable")) {
+    if (options && options.hasOwnProperty('draggable')) {
       markerOptions.draggable = options.draggable;
     }
 
@@ -1049,7 +1193,7 @@ L.EditHandle = L.Marker.extend({
 	},
 	
   _onHandleDragStart: function() {
-		this._handled.fire("editstart");
+		this._handled.fire('editstart');
   },
 
   _onHandleDragEnd: function() {
@@ -1058,7 +1202,7 @@ L.EditHandle = L.Marker.extend({
 
   _fireEdit: function() {
     this._handled.edited = true;
-    this._handled.fire("edit");
+    this._handled.fire('edit');
   },
 
   _bindListeners: function() {
@@ -1071,9 +1215,9 @@ L.EditHandle = L.Marker.extend({
       this
     );
 
-    this._handled._map.on("zoomend", this.updateHandle, this);
+    this._handled._map.on('zoomend', this.updateHandle, this);
 
-    this._handled.on("update", this.updateHandle, this);
+    this._handled.on('update', this.updateHandle, this);
   },
 
   _unbindListeners: function() {
@@ -1086,8 +1230,8 @@ L.EditHandle = L.Marker.extend({
       this
     );
 
-    this._handled._map.off("zoomend", this.updateHandle, this);
-    this._handled.off("update", this.updateHandle, this);
+    this._handled._map.off('zoomend', this.updateHandle, this);
+    this._handled.off('update', this.updateHandle, this);
   },
 
  /* Takes two latlngs and calculates the scaling difference. */
@@ -1276,93 +1420,6 @@ L.ScaleHandle = L.EditHandle.extend({
 	},
 });
 
-L.EditAction = L.Toolbar2.Action.extend({
-
-  options: {
-    toolbarIcon: {
-      svg: false,
-      html: '',
-      className: '',
-      tooltip: ''
-    },
-  },
-
-  initialize: function(map, overlay, options) {
-    this._overlay = overlay;
-    this._map = map;
-
-    L.setOptions(this, options);
-    L.Toolbar2.Action.prototype.initialize.call(this, options);
-
-    this._injectIconSet();
-  },
-
-  toggleXlink: function(ref1, ref2) {
-    var href1 = "#" + ref1,
-        href2 = "#" + ref2;
-
-    if (this._link.querySelector('use')) {
-      var xlink = this._link.querySelector('use:nth-child(1)');
-      var newXlink = xlink.getAttribute('xlink:href') === href1 ?  href2 : href1;
-      xlink.setAttribute('xlink:href', newXlink);
-      return newXlink;
-    }
-    return false;
-  },
-
-  toggleTooltip: function(title1, title2) {
-    var newTt = this._link.getAttribute('title') === title1 ? title2 : title1;
-    this._link.setAttribute('title', newTt);
-    return newTt;
-  },
-
-  _createIcon: function(toolbar, container, args) {
-    var iconOptions = this.options.toolbarIcon;
-
-    this.toolbar = toolbar;
-    this._icon = L.DomUtil.create('li', '', container);
-    this._link = L.DomUtil.create('a', '', this._icon);
-
-    if (iconOptions.svg) {
-      this._link.innerHTML = this._svgIconHelper(iconOptions.html);
-    } else {
-      this._link.innerHTML = iconOptions.html;
-    }
-
-    this._link.setAttribute('href', '#');
-    this._link.setAttribute('title', iconOptions.tooltip);
-
-    L.DomUtil.addClass(this._link, this.constructor.baseClass);
-    if (iconOptions.className) {
-      L.DomUtil.addClass(this._link, iconOptions.className);
-    }
-
-    L.DomEvent.on(this._link, 'click', this.enable, this);
-
-    /* Add secondary toolbar */
-    this._addSubToolbar(toolbar, this._icon, args);
-  },
-
-  _svgIconHelper: function(ref) {
-    return (
-      '<svg class="ldi-icon ldi-' + ref + '"role="img" focusable="false">' + 
-      '<use xlink:href="#' + ref + '"></use>' + 
-      '</svg>'
-    );
-  },
-
-  _injectIconSet: function() {
-    if (document.querySelector('#iconset')) { return; }
-
-    var el = document.createElement('div');
-    el.id = 'iconset';
-    el.setAttribute('hidden', 'hidden');
-    el.innerHTML = new L.IconSet().render();
-
-    document.querySelector('.leaflet-marker-pane').appendChild(el);
-  }
-});
-
 L.DistortableImage = L.DistortableImage || {};
 L.distortableImage = L.DistortableImage;
 
@@ -1392,8 +1449,8 @@ var ToggleTransparency = L.EditAction.extend({
   addHooks: function() {
     var editing = this._overlay.editing;
 
-    this.toggleXlink('opacity_empty', 'opacity');
-    this.toggleTooltip('Make Image Opaque', 'Make Image Transparent');
+    L.IconUtil.toggleXlink(this._link, 'opacity_empty', 'opacity');
+    L.IconUtil.toggleTooltip(this._link, 'Make Image Opaque', 'Make Image Transparent');
     editing._toggleTransparency();
   }
 });
@@ -1424,8 +1481,8 @@ var ToggleOutline = L.EditAction.extend({
   addHooks: function() {
     var editing = this._overlay.editing;
 
-    this.toggleXlink('border_clear', 'border_outer');
-    this.toggleTooltip('Remove Border', 'Add Border');
+    L.IconUtil.toggleXlink(this._link, 'border_clear', 'border_outer');
+    L.IconUtil.toggleTooltip(this._link, 'Remove Border', 'Add Border');
     editing._toggleOutline();
   }
 });
@@ -1477,8 +1534,8 @@ var ToggleLock = L.EditAction.extend({
   addHooks: function() {
     var editing = this._overlay.editing;
 
-    this.toggleXlink('unlock', 'lock');
-    this.toggleTooltip('Unlock', 'Lock');
+    L.IconUtil.toggleXlink(this._link, 'unlock', 'lock');
+    L.IconUtil.toggleTooltip(this._link, 'Unlock', 'Lock');
     editing._toggleLock();
   }
 });
@@ -1509,8 +1566,8 @@ var ToggleRotateScale = L.EditAction.extend({
   addHooks: function() {
     var editing = this._overlay.editing;
 
-    this.toggleXlink('transform', 'crop_rotate');
-    this.toggleTooltip('Distort', 'Rotate+Scale');
+    L.IconUtil.toggleXlink(this._link, 'transform', 'crop_rotate');
+    L.IconUtil.toggleTooltip(this._link, 'Distort', 'Rotate+Scale');
     editing._toggleRotateScale();
   }
 });
@@ -1562,8 +1619,8 @@ var ToggleOrder = L.EditAction.extend({
   addHooks: function() {
     var editing = this._overlay.editing;
 
-    this.toggleXlink('flip_to_front', 'flip_to_back');
-    this.toggleTooltip('Stack to Front', 'Stack to Back');
+    L.IconUtil.toggleXlink(this._link, 'flip_to_front', 'flip_to_back');
+    L.IconUtil.toggleTooltip(this._link, 'Stack to Front', 'Stack to Back');
     editing._toggleOrder();
   }
 });
@@ -1811,7 +1868,7 @@ L.DistortableImage.Edit = L.Handler.extend({
      'l': '_toggleLock',
      'o': '_toggleOutline',
      's': '_toggleScale',
-     't': '_toggleTransparency',
+		 't': '_toggleTransparency',
     }
   },
 
@@ -1819,16 +1876,12 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._overlay = overlay;
     this._toggledImage = false;
     /* Interaction modes. TODO - create API for limiting modes similar to toolbar actions API */
-    var modes = ['distort', 'drag', 'lock', 'rotate', 'scale', 'rotateScale'];
+    var modes = ['distort', 'lock', 'rotate', 'scale', 'rotateScale'];
     this._mode = modes[modes.indexOf(overlay.options.mode)] || 'distort';
     
     this._selected = this._overlay.options.selected || false;
     this._transparent = false;
     this._outlined = false;
-
-    /* generate instance counts. TODO - add the keymapper to collection instead of individ. imgs perhaps? */
-    this.instance_count = L.DistortableImage.Edit.prototype.instances =
-      L.DistortableImage.Edit.prototype.instances ? L.DistortableImage.Edit.prototype.instances + 1 : 1;
 
     L.setOptions(this, options); 
   },
@@ -1836,14 +1889,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   /* Run on image selection. */
   addHooks: function() {
     var overlay = this._overlay,
-      map = overlay._map,
-      keymapper_position;
-
-    /* instantiate and render keymapper for one instance only */
-    if (this.instance_count === 1 && overlay.options.keymapper !== false) {
-      keymapper_position = overlay.options.keymapper_position || 'topright';
-      map.addControl(new L.DistortableImage.Keymapper({ position: keymapper_position }));
-    }
+      map = overlay._map;
 
     /* bring the selected image into view */
     overlay.bringToFront();
@@ -1921,19 +1967,13 @@ L.DistortableImage.Edit = L.Handler.extend({
     for (i = 0; i < 4; i++) {
       this._rotateScaleHandles.addLayer(new L.RotateScaleHandle(overlay, i));
     }
-    
-    this._dragHandles = L.layerGroup();
-    for (i = 0; i < 4; i++) {
-      this._dragHandles.addLayer(new L.DragHandle(overlay, i));
-    }
 
     this._handles = {
       lock: this._lockHandles,
       distort: this._distortHandles,
       rotateScale: this._rotateScaleHandles,
       scale: this._scaleHandles,
-      rotate: this._rotateHandles,
-      drag: this._dragHandles
+      rotate: this._rotateHandles
     };
   },
 
@@ -2055,23 +2095,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     overlay._reset();
   },
 
-  _dragBy: function (formerPoint, newPoint) {
-	  var overlay = this._overlay,
-	  	map = overlay._map,
-		center = map.project(overlay.getCenter()),
-		i,
-		p;
-	    diference = map.project (formerPoint).subtract (map.project (newPoint));
-	  
-	  for (i = 0; i < 4; i++) {
-        p = map
-          .project(overlay.getCorner(i))
-          .subtract(diference);
-        overlay.setCorner(i, map.unproject(p));
-      }
-	  overlay._reset();	  
-  },
-  
   _enableDragging: function() {
     var overlay = this._overlay,
       map = overlay._map;
@@ -2468,38 +2491,162 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 L.DomUtil = L.DomUtil || {};
 L.DistortableImage = L.DistortableImage || {};
+L.distortableImage = L.DistortableImage;
 
-L.DistortableImage.Keymapper = L.Control.extend({
-    initialize: function(options) {
-        L.Control.prototype.initialize.call(this, options);
-    },
-    
-    onAdd: function() {
-        var el_wrapper = L.DomUtil.create("div", "ldi-keymapper");
-        el_wrapper.innerHTML =
-          "<table><tbody>" +
-            "<tr><th>Keymappings</th></tr>" +
-            "<tr><td><kbd>t</kbd>: <span>Transparency</span></td></tr>" +
-            "<tr><td><kbd>o</kbd>: <span>Outline</span></td></tr>" +
-            "<tr><td><kbd>l</kbd>: <span>Lock</span></td></tr>" +
-            "<tr><td><kbd>caps</kbd>: <span>Rotate</span></td></tr>" +
-            "<tr><td><kbd>s</kbd>: <span>Scale</span></td></tr>" +
-            "<tr><td><kbd>d</kbd>: <span>Distort</span> </td></tr>" +
-            "<tr><td><kbd>r</kbd>: <span>Rotate+Scale</span> </td></tr>" +
-            "<tr><td><kbd>j</kbd>, <kbd>k</kbd>: <span>Stack up / down</span></td></tr>" +
-            "<tr><td><kbd>esc</kbd>: <span>Deselect All</span></td></tr>" +
-            "<tr><td><kbd>delete</kbd> , <kbd>backspace</kbd>: <span>Delete</span></td></tr>" +
-          "</tbody></table>";
-        return el_wrapper;
+L.DistortableImage.Keymapper = L.Handler.extend({
+
+  options: {
+    position: 'topright'
+  },
+
+  initialize: function (map, options) {
+    this._map = map;
+    L.setOptions(this, options);
+  },
+
+  addHooks: function () {
+    if (!this._keymapper) {
+      this._toggler = this._toggleButton();
+      this._scrollWrapper = this._wrap();
+      this._setMapper(this._toggler, this._scrollWrapper);
+
+      L.DomEvent.on(this._toggler, 'click', this._toggleKeymapper, this);
+
+      L.DomEvent.on(this._scrollWrapper, {
+        click: L.DomEvent.stop,
+        mouseenter: this._disableMap,
+        mouseleave: this._enableMap,
+      }, this);
     }
+  },
+
+  removeHooks: function () { 
+    if (this._keymapper) {
+      L.DomEvent.off(this._toggler, 'click', this._toggleKeymapper, this);
+
+      L.DomEvent.off(this._scrollWrapper, {
+        click: L.DomEvent.stop,
+        mouseenter: this._disableMap,
+        mouseleave: this._enableMap,
+      }, this);
+     
+      L.DomUtil.remove(this._toggler);
+      L.DomUtil.remove(this._scrollWrapper);
+      L.DomUtil.remove(this._keymapper._container);
+      this._keymapper = false;
+    } 
+  },
+
+  _toggleButton: function () {
+    var toggler = L.DomUtil.create('a', '');
+    toggler.setAttribute('id', 'toggle-keymapper');
+    toggler.setAttribute('href', '#');
+    toggler.setAttribute('role', 'button');
+    toggler.setAttribute('title', 'Show Keybindings');
+    toggler.innerHTML = L.IconUtil.create("keyboard_open");
+
+    return toggler;
+  },
+
+  _wrap: function () {
+    var wrap = L.DomUtil.create('div', '');
+    wrap.setAttribute('id', 'keymapper-wrapper');
+    wrap.style.display = 'none';
+
+    return wrap;
+  },
+  
+  _setMapper: function (button, wrap) {
+    this._keymapper = L.control({ position: this.options.position });
+
+    this._container = this._keymapper.onAdd = function () {
+      var el_wrapper = L.DomUtil.create('div', 'ldi-keymapper-hide');
+      el_wrapper.setAttribute('id', 'ldi-keymapper');
+      var divider = L.DomUtil.create('br', 'divider');
+      el_wrapper.appendChild(divider);
+      el_wrapper.appendChild(wrap);       
+      wrap.insertAdjacentHTML(
+        'beforeend',
+        '<table><tbody>' +
+          '<hr id="keymapper-hr">' +
+          '<tr><td><div class="left"><span>Stack up / down</span></div><div class="right"><kbd>j</kbd>\xa0<kbd>k</kbd></div></td></tr>' +
+          '<tr><td><div class="left"><span>Lock Image</span></div><div class="right"><kbd>l</kbd></div></td></tr>' +
+          '<tr><td><div class="left"><span>Outline</span></div><div class="right"><kbd>o</kbd></div></td></tr>' +
+          '<tr><td><div class="left"><span>Scale</span></div><div class="right"><kbd>s</kbd></div></td></tr>' +
+          '<tr><td><div class="left"><span>Transparency</span></div><div class="right"><kbd>t</kbd></div></td></tr>' +
+          '<tr><td><div class="left"><span>RotateScale</span></div><div class="right"><kbd>d</kbd>\xa0<kbd>r</kbd></div></td></tr>' +
+          '<tr><td><div class="left"><span>Deselect All</span></div><div class="right"><kbd>esc</kbd></div></td></tr>' +
+          '<tr><td><div class="left"><span>Delete Image</span></div><div class="right"><kbd>delete</kbd>\xa0<kbd>backspace</kbd></div></td></tr>' +
+          '<tr><td><div class="left"><span>Rotate</span></div><div class="right"><kbd>caps</kbd></div></td></tr>' +
+          '</tbody></table>'
+      );
+      el_wrapper.appendChild(button);
+      return el_wrapper;
+    };
+
+    this._keymapper.addTo(this._map);
+  },
+
+  _toggleKeymapper: function (e) {
+    L.DomEvent.stop(e);
+    var container = document.getElementById('ldi-keymapper');
+    var keymapWrap = document.getElementById('keymapper-wrapper');
+
+    var newClass = container.className === 'ldi-keymapper leaflet-control' ? 'ldi-keymapper-hide leaflet-control' : 'ldi-keymapper leaflet-control';
+    var newStyle = keymapWrap.style.display === 'none' ? 'block' : 'none';
+
+    container.className = newClass;
+    keymapWrap.style.display = newStyle;
+
+    L.IconUtil.toggleTooltip(this._toggler, 'Show Keybindings', 'Hide Keybindings');
+    this._toggler.innerHTML = this._toggler.innerHTML === 'close' ? L.IconUtil.create('keyboard_open') : 'close';
+    L.DomUtil.toggleClass(this._toggler, 'close-icon');
+  },
+
+  _disableMap: function() {
+    this._map.scrollWheelZoom.disable();
+    this._map.dragging.disable();
+  },
+  
+  _enableMap: function() {
+    this._map.scrollWheelZoom.enable();
+    this._map.dragging.enable();
+  },
+
+  _injectIconSet: function() {
+    if (document.querySelector('#keymapper-iconset')) { return; }
+
+    var el = document.createElement('div');
+    el.id = 'keymapper-iconset';
+    el.setAttribute('hidden', 'hidden');
+
+    this._iconset = new L.KeymapperIconSet().render();
+    el.innerHTML = this._iconset;
+
+    document.querySelector('.leaflet-control-container').appendChild(el);
+  }
 });
+
+L.DistortableImage.Keymapper.addInitHook(function() {
+  L.DistortableImage.Keymapper.prototype._n =
+    L.DistortableImage.Keymapper.prototype._n ? L.DistortableImage.Keymapper.prototype._n + 1 : 1;
+
+  if (L.DistortableImage.Keymapper.prototype._n === 1) {
+    this.enable();
+    this._injectIconSet();
+  }
+});
+
+L.distortableImage.keymapper = function (map, options) {
+  return new L.DistortableImage.Keymapper(map, options);
+};
+
 L.Map.mergeOptions({ boxSelector: true, boxZoom: false });
 
 /** 
  * primarily Leaflet 1.5.1 source code. Overriden so that its a selection box with our `L.DistortableCollection` class 
  * instead of a zoom box. 
  * */
-
 L.Map.BoxSelector = L.Map.BoxZoom.extend({
   initialize: function(map) {
     this._map = map;
@@ -2619,31 +2766,3 @@ L.Map.BoxSelector = L.Map.BoxZoom.extend({
 });
 
 L.Map.addInitHook('addHandler', 'boxSelector', L.Map.BoxSelector);
-
-L.DragHandle = L.EditHandle.extend({
-	options: {
-		TYPE: 'drag',
-		icon: L.icon({
-			iconUrl: 
-				'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAsVJREFUeNrMVztLXEEUvnNVFAVBAhY2aRKbTZEHJNpYabuNjSgYg/GxdsmPSJkUAa/ZdVEX8mgWYVutbHxAHkVskjQBuUUgBISVhCQk3wnfwMlk1rusN1wHPubOzJlzvjlz5sxc01Ma/hUEwQnwDIjqc7uvgv9YYO86qgIwCXQbdNTlQ8kcCBHgBch8TcloF6oJGr6phk6EQAkfdz3zvgDr9Mr7Fg1fptEZoM8jsmrokpfsiIFO4IIjuE2v1EDmR4LRdlR5Gh51hj8D34ABtm8YTtqna0TgklIw5CgQguKxIojEjmFROg/MKQO27NkFAB+4wAPouGUJiIvWKHwbAxX2XyWRKWkqhT+pbJntJZJuUzISW0+5hW+obxrVBsfvoH/dqCCJuU97GBh2VteLSiYvArmErT8EVoAK9Bw7enbpVYmvAQlyowYforrH5jXL2rPHI/TKONDB7u9AlavdaTBPvPmazUeQuy8f7UomUgTEwIJPEQ3sQGE/6ll2l9H/KcEzBcfWn2IclluM3DpddJxSHujlFkscbUPvmB0LHVnLrId7nlaZVkEc6QGXQI1MAwZcWmVRHeNaQwJMMiU2cwy4s7p/RJ2ckpvIQs+cIs+5GzitloLKHUV3MPREuXbTOKO91dX387gGTONxIgEWm+E61FFrpcyqXLHsEwiDjEsjAksqw5XPoL9MHVrn6QR4q+XZrDaR4RoWzq2ymafuRA/Mq1stSsHLVkcbdf9VjOcx8ZH3+SFWcCWlVPyWuUBOwUWdC1wP5NVjYiXFWLO69PZ6CRTUY6KSIoEKdf6T3IzzgHxnsyHctNBEkmn6Oob8ExUDg/ahGybd177cDjzH5xHwgDiSvoS7I/LZyvxJZj0wod7tkX5G0XVC7rEyLhfLJjBGbKoLLEfZWObyKeZ6oY82g+yf5Zn/mJyHX7PMf04z/T3/LcAAu4E6iiyJqf0AAAAASUVORK5CYII=',
-			iconSize: [32, 32],
-			iconAnchor: [16, 16]
-		})
-	},
-	
-	_onHandleDrag: function() {
-		var overlay = this._handled,
-		formerLatLng = overlay.getCorner(this._corner),
-		newLatLng = this.getLatLng();
-		
-		overlay.editing._dragBy(formerLatLng, newLatLng);
-		
-		overlay.fire('update');
-		overlay.editing._updateToolbarPos();
-	},
-
-	updateHandle: function() {
-		this.setLatLng(this._handled.getCorner(this._corner));
-	}
-	
-}),
