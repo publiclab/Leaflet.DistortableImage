@@ -23,7 +23,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._overlay = overlay;
     this._toggledImage = false;
     /* Interaction modes. TODO - create API for limiting modes similar to toolbar actions API */
-    var modes = ['distort', 'lock', 'rotate', 'scale', 'rotateScale'];
+    var modes = ['distort', 'lock', 'rotate', 'scale', 'rotateScale', 'drag'];
     this._mode = modes[modes.indexOf(overlay.options.mode)] || 'distort';
     
     this._selected = this._overlay.options.selected || false;
@@ -115,12 +115,18 @@ L.DistortableImage.Edit = L.Handler.extend({
       this._rotateScaleHandles.addLayer(new L.RotateScaleHandle(overlay, i));
     }
 
+    this._dragHandles = L.layerGroup();
+    for (i = 0; i < 4; i++) {
+      this._dragHandles.addLayer(new L.DragHandle(overlay, i));
+    }
+    
     this._handles = {
       lock: this._lockHandles,
       distort: this._distortHandles,
       rotateScale: this._rotateScaleHandles,
       scale: this._scaleHandles,
-      rotate: this._rotateHandles
+      rotate: this._rotateHandles,
+      drag: this._dragHandles
     };
   },
 
@@ -242,6 +248,23 @@ L.DistortableImage.Edit = L.Handler.extend({
     overlay._reset();
   },
 
+  _dragBy: function (formerPoint, newPoint) {
+	  var overlay = this._overlay,
+	  	map = overlay._map,
+		center = map.project(overlay.getCenter()),
+		i,
+		p;
+	    diference = map.project (formerPoint).subtract (map.project (newPoint));
+	  
+	  for (i = 0; i < 4; i++) {
+        p = map
+          .project(overlay.getCorner(i))
+          .subtract(diference);
+        overlay.setCorner(i, map.unproject(p));
+      }
+	  overlay._reset();	  
+  },
+  
   _enableDragging: function() {
     var overlay = this._overlay,
       map = overlay._map;
