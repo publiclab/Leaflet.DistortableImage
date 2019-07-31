@@ -124,7 +124,13 @@ L.DistortableImage.Edit = L.Handler.extend({
       );
     }
 
+    this._dragHandles = L.layerGroup();
+    for (i = 0; i < 4; i++) {
+      this._dragHandles.addLayer(new L.DragHandle(overlay, i));
+    }
+
     this._handles = {
+      drag: this._dragHandles,
       scale: this._scaleHandles,
       distort: this._distortHandles,
       rotate: this._rotateHandles,
@@ -204,6 +210,21 @@ L.DistortableImage.Edit = L.Handler.extend({
       map.removeLayer(this.toolbar);
       this.toolbar = false;
     }
+  },
+
+  _dragBy: function(formerPoint, newPoint) {
+    var overlay = this._overlay;
+    var map = overlay._map;
+    var i;
+    var p;
+    var transCorners = {};
+    var delta = map.project(formerPoint).subtract(map.project(newPoint));
+
+    for (i = 0; i < 4; i++) {
+      p = map.project(overlay.getCorner(i)).subtract(delta);
+      transCorners[i] = map.unproject(p);
+    }
+    overlay.setCorners(transCorners);
   },
 
   _enableDragging: function() {
