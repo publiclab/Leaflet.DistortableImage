@@ -229,6 +229,7 @@ L.DistortableImage.Edit = L.Handler.extend({
       p = map.project(overlay.getCorner(i)).subtract(delta);
       transCorners[i] = map.unproject(p);
     }
+
     overlay.setCorners(transCorners);
   },
 
