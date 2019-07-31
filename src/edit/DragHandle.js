@@ -24,4 +24,4 @@ L.DragHandle = L.EditHandle.extend({
 		this.setLatLng(this._handled.getCorner(this._corner));
 	}
 	
-}),
+})
