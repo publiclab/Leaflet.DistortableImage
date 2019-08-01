@@ -1418,7 +1418,7 @@ L.EditAction = L.Toolbar2.Action.extend({
     el.innerHTML = new L.ToolbarIconSet().render();
 
     document.querySelector('.leaflet-marker-pane').appendChild(el);
-  },
+  }
 });
 
 
@@ -1750,7 +1750,7 @@ L.DistortableImageOverlay.addInitHook(function () {
     Delete
   ];
 
-  if (this.options.actions) { /* ('this' being DistortablemageOverlay, not the toolbar) */
+  if (this.options.actions) { /* (`this` being DistortablemageOverlay, not the toolbar) */
     this.editActions = this.options.actions;
   } else {
     this.editActions = this.ACTIONS;
@@ -1759,7 +1759,7 @@ L.DistortableImageOverlay.addInitHook(function () {
   this.editing = new L.DistortableImage.Edit(this, { actions: this.editActions });
 
   if (this.options.editable) {
-    L.DomEvent.on(this._image, "load", this.editing.enable, this.editing);
+    L.DomEvent.on(this._image, 'load', this.editing.enable, this.editing);
   }
 
   this.on('remove', function () {
