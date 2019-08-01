@@ -4,19 +4,9 @@ L.DistortableImage.Edit = L.Handler.extend({
   options: {
     opacity: 0.7,
     outline: '1px solid red',
-    // keymap: {
-    //  'Backspace': '_removeOverlay', // backspace windows / delete mac
-    //  'CapsLock': '_toggleRotate',
-    //  'Escape': '_deselect',
-    //  'd': '_toggleRotateScale',
-    //  'r': '_toggleRotateScale',
-    //  'j': '_toggleOrder',
-    //  'k': '_toggleOrder',
-    //  'l': '_toggleLock',
-    //  'o': '_toggleOutline',
-    //  's': '_toggleScale',
-		//  't': '_toggleTransparency',
-    // }
+    keymap: {
+     'Escape': '_deselect',
+    }
   },
 
   initialize: function(overlay, options) {
@@ -533,9 +523,11 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
   },
 
-  _removeOverlay: function () {
+  _removeOverlay: function (e) {
     var overlay = this._overlay,
       eventParents = overlay._eventParents;
+
+    if (e) { L.DomEvent.stopPropagation(e); }
 
     if (this._mode === 'lock') { return; }
 

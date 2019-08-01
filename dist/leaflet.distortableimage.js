@@ -535,7 +535,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     this.on("layeradd", this._turnOnEditing, this);
     this.on("layerremove", this._turnOffEditing, this);
 
-    L.DomEvent.on(document, "keydown", this._onKeyDown, this);
+    // L.DomEvent.on(document, "keydown", this._onKeyDown, this);
 
     L.DomEvent.on(map, { 
       click: this._deselectAll, 
@@ -549,7 +549,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     this.off("layeradd", this._turnOnEditing, this);
     this.off("layerremove", this._turnOffEditing, this);
 
-    L.DomEvent.off(document, "keydown", this._onKeyDown, this);
+    // L.DomEvent.off(document, "keydown", this._onKeyDown, this);
 
     L.DomEvent.off(map, {
       click: this._deselectAll,
@@ -702,15 +702,15 @@ L.DistortableCollection = L.FeatureGroup.extend({
     if (e.key === 'Escape') {
       this._deselectAll(e);
     }
-    if (e.key === 'Backspace') {
-      this._removeGroup(e);
-    }
-    if (e.key === 'l') {
-      this._lockGroup(e);
-    }
-    if (e.key === 'u') {
-      this._unlockGroup(e);
-    }
+    // if (e.key === 'Backspace') {
+    //   this._removeGroup(e);
+    // }
+    // if (e.key === 'l') {
+    //   this._lockGroup(e);
+    // }
+    // if (e.key === 'u') {
+    //   this._unlockGroup(e);
+    // }
   },
 
   _dragStartMultiple: function(event) {
@@ -1369,10 +1369,10 @@ L.EditAction = L.Toolbar2.Action.extend({
       className: '',
       tooltip: ''
     },
+    // individual actions
     keymap: {
       'Backspace': 'Delete', // backspace windows / delete mac
       'CapsLock': 'ToggleRotate',
-      // 'Escape': '_deselect',
       'd': 'ToggleRotateScale',
       'r': 'ToggleRotateScale',
       'j': 'ToggleOrder',
@@ -1381,7 +1381,17 @@ L.EditAction = L.Toolbar2.Action.extend({
       'o': 'ToggleOutline',
       's': 'ToggleScale',
       't': 'ToggleTransparency',
+    },
+    // collection actions
+    keymap2: {
+      'Backspace': 'Deletes',
+      'l': 'Lock',
+      'u': 'Unlock'
     }
+  },
+
+  removeHooks: function() {
+    L.DomEvent.off(window, "keydown", this._onKeyDown, this);
   },
 
 
@@ -1435,12 +1445,15 @@ L.EditAction = L.Toolbar2.Action.extend({
     document.querySelector('.leaflet-marker-pane').appendChild(el);
   },
 
-  _onKeyDown: function (event) {
-    var keymap = this.options.keymap,
-        action = keymap[event.key];
+  _onKeyDown: function (e) {
+    var opts = this.options,
+        action = opts.keymap[e.key],
+        action2 = opts.keymap2[e.key];
 
-    if (action) {
-      if (L.DomUtil.hasClass(this._link, action)) {
+    L.DomEvent.stopPropagation(e);
+
+    if (action || action2) {
+      if (L.DomUtil.hasClass(this._link, action) || L.DomUtil.hasClass(this._link, action2)) {
         this.enable();
       }
     }
@@ -1565,6 +1578,8 @@ var ToggleLock = L.EditAction.extend({
 
   addHooks: function() {
     var editing = this._overlay.editing;
+
+    L.DomEvent.on(window, "keydown", this._onKeyDown, this);
 
     L.IconUtil.toggleXlink(this._link, 'unlock', 'lock');
     L.IconUtil.toggleTooltip(this._link, 'Unlock', 'Lock');
@@ -1805,7 +1820,6 @@ L.DistortableImageOverlay.addInitHook(function () {
     ToggleLock, 
     ToggleRotateScale, 
     ToggleOrder,
-    EnableEXIF,
     Revert,
     Export,
     Delete
@@ -1946,19 +1960,9 @@ L.DistortableImage.Edit = L.Handler.extend({
   options: {
     opacity: 0.7,
     outline: '1px solid red',
-    // keymap: {
-    //  'Backspace': '_removeOverlay', // backspace windows / delete mac
-    //  'CapsLock': '_toggleRotate',
-    //  'Escape': '_deselect',
-    //  'd': '_toggleRotateScale',
-    //  'r': '_toggleRotateScale',
-    //  'j': '_toggleOrder',
-    //  'k': '_toggleOrder',
-    //  'l': '_toggleLock',
-    //  'o': '_toggleOutline',
-    //  's': '_toggleScale',
-		//  't': '_toggleTransparency',
-    // }
+    keymap: {
+     'Escape': '_deselect',
+    }
   },
 
   initialize: function(overlay, options) {
@@ -2475,9 +2479,11 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
   },
 
-  _removeOverlay: function () {
+  _removeOverlay: function (e) {
     var overlay = this._overlay,
       eventParents = overlay._eventParents;
+
+    if (e) { L.DomEvent.stopPropagation(e); }
 
     if (this._mode === 'lock') { return; }
 

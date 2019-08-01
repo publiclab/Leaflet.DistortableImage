@@ -116,6 +116,8 @@ var ToggleLock = L.EditAction.extend({
   addHooks: function() {
     var editing = this._overlay.editing;
 
+    L.DomEvent.on(window, "keydown", this._onKeyDown, this);
+
     L.IconUtil.toggleXlink(this._link, 'unlock', 'lock');
     L.IconUtil.toggleTooltip(this._link, 'Unlock', 'Lock');
     editing._toggleLock();
@@ -355,7 +357,6 @@ L.DistortableImageOverlay.addInitHook(function () {
     ToggleLock, 
     ToggleRotateScale, 
     ToggleOrder,
-    EnableEXIF,
     Revert,
     Export,
     Delete
