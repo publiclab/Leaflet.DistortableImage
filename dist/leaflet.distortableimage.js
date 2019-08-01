@@ -535,7 +535,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     this.on("layeradd", this._turnOnEditing, this);
     this.on("layerremove", this._turnOffEditing, this);
 
-    // L.DomEvent.on(document, "keydown", this._onKeyDown, this);
+    L.DomEvent.on(document, "keydown", this._onKeyDown, this);
 
     L.DomEvent.on(map, { 
       click: this._deselectAll, 
@@ -549,7 +549,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     this.off("layeradd", this._turnOnEditing, this);
     this.off("layerremove", this._turnOffEditing, this);
 
-    // L.DomEvent.off(document, "keydown", this._onKeyDown, this);
+    L.DomEvent.off(document, "keydown", this._onKeyDown, this);
 
     L.DomEvent.off(map, {
       click: this._deselectAll,
@@ -702,15 +702,15 @@ L.DistortableCollection = L.FeatureGroup.extend({
     if (e.key === 'Escape') {
       this._deselectAll(e);
     }
-    // if (e.key === 'Backspace') {
-    //   this._removeGroup(e);
-    // }
-    // if (e.key === 'l') {
-    //   this._lockGroup(e);
-    // }
-    // if (e.key === 'u') {
-    //   this._unlockGroup(e);
-    // }
+    if (e.key === 'Backspace') {
+      this._removeGroup(e);
+    }
+    if (e.key === 'l') {
+      this._lockGroup(e);
+    }
+    if (e.key === 'u') {
+      this._unlockGroup(e);
+    }
   },
 
   _dragStartMultiple: function(event) {
@@ -1727,11 +1727,7 @@ var ToggleScale = L.EditAction.extend({
 L.DistortableImage.PopupBar = L.Toolbar2.Popup.extend({
   options: {
     anchor: [0, -10],
-    /** 
-     * **all* possible actions *must* be included here or the keydown listener in EditAction.js will not work properly 
-     * for any action. The actual actions that will be rendered are either *'this.ACTIONS'* (Default - look lower down) 
-     * or the *'actions'* array passed during initialization, if specified by the user
-     */
+    /* all possible actions */
     actions: [
       ToggleTransparency,
       ToggleOutline,

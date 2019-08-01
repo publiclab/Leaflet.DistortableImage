@@ -303,11 +303,7 @@ var ToggleScale = L.EditAction.extend({
 L.DistortableImage.PopupBar = L.Toolbar2.Popup.extend({
   options: {
     anchor: [0, -10],
-    /** 
-     * **all* possible actions *must* be included here or the keydown listener in EditAction.js will not work properly 
-     * for any action. The actual actions that will be rendered are either *'this.ACTIONS'* (Default - look lower down) 
-     * or the *'actions'* array passed during initialization, if specified by the user
-     */
+    /* all possible actions */
     actions: [
       ToggleTransparency,
       ToggleOutline,

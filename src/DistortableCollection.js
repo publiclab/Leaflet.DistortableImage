@@ -13,7 +13,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     this.on("layeradd", this._turnOnEditing, this);
     this.on("layerremove", this._turnOffEditing, this);
 
-    // L.DomEvent.on(document, "keydown", this._onKeyDown, this);
+    L.DomEvent.on(document, "keydown", this._onKeyDown, this);
 
     L.DomEvent.on(map, { 
       click: this._deselectAll, 
@@ -27,7 +27,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     this.off("layeradd", this._turnOnEditing, this);
     this.off("layerremove", this._turnOffEditing, this);
 
-    // L.DomEvent.off(document, "keydown", this._onKeyDown, this);
+    L.DomEvent.off(document, "keydown", this._onKeyDown, this);
 
     L.DomEvent.off(map, {
       click: this._deselectAll,
@@ -180,15 +180,15 @@ L.DistortableCollection = L.FeatureGroup.extend({
     if (e.key === 'Escape') {
       this._deselectAll(e);
     }
-    // if (e.key === 'Backspace') {
-    //   this._removeGroup(e);
-    // }
-    // if (e.key === 'l') {
-    //   this._lockGroup(e);
-    // }
-    // if (e.key === 'u') {
-    //   this._unlockGroup(e);
-    // }
+    if (e.key === 'Backspace') {
+      this._removeGroup(e);
+    }
+    if (e.key === 'l') {
+      this._lockGroup(e);
+    }
+    if (e.key === 'u') {
+      this._unlockGroup(e);
+    }
   },
 
   _dragStartMultiple: function(event) {
