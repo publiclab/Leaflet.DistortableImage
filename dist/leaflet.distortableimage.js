@@ -1443,7 +1443,6 @@ var ToggleTransparency = L.EditAction.extend({
       svg: true,
       html: use,
       tooltip: tooltip,
-      className: 'ToggleTransparency',
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -1476,7 +1475,6 @@ var ToggleOutline = L.EditAction.extend({
       svg: true,
       html: use,
       tooltip: tooltip,
-      className: 'ToggleOutline',
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -1500,7 +1498,6 @@ var Delete = L.EditAction.extend({
       svg: true,
       html: use,
       tooltip: 'Delete Image',
-      className: 'Delete'
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -1531,7 +1528,6 @@ var ToggleLock = L.EditAction.extend({
       svg: true,
       html: use,
       tooltip: tooltip,
-      className: 'ToggleLock'
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -1566,7 +1562,6 @@ var ToggleRotateScale = L.EditAction.extend({
       svg: true,
       html: use,
       tooltip: tooltip,
-      className: 'ToggleRotateScale'
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -1590,7 +1585,6 @@ var Export = L.EditAction.extend({
       svg: true,
       html: use,
       tooltip: 'Export Image',
-      className: 'Export'
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -1621,7 +1615,6 @@ var ToggleOrder = L.EditAction.extend({
       svg: true,
       html: use,
       tooltip: tooltip,
-      className: 'ToggleOrder'
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -1645,7 +1638,6 @@ var EnableEXIF = L.EditAction.extend({
       svg: true,
       html: use,
       tooltip: 'Geolocate Image',
-      className: 'EnableExif'
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -1667,7 +1659,6 @@ var Revert = L.EditAction.extend({
       svg: true,
       html: use,
       tooltip: 'Restore Original Image Dimensions',
-      className: 'Revert'
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -1689,7 +1680,6 @@ var ToggleRotate = L.EditAction.extend({
       svg: true,
       html: use,
       tooltip: 'Rotate Image',
-      className: 'ToggleRotate'
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -1711,7 +1701,6 @@ var ToggleScale = L.EditAction.extend({
       svg: true,
       html: use,
       tooltip: 'Scale Image',
-      className: 'ToggleScale'
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
