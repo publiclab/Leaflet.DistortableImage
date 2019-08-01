@@ -7,31 +7,7 @@ L.EditAction = L.Toolbar2.Action.extend({
       className: '',
       tooltip: ''
     },
-    // individual actions
-    keymap: {
-      'Backspace': 'Delete', // backspace windows / delete mac
-      'CapsLock': 'ToggleRotate',
-      'd': 'ToggleRotateScale',
-      'r': 'ToggleRotateScale',
-      'j': 'ToggleOrder',
-      'k': 'ToggleOrder',
-      'l': 'ToggleLock',
-      'o': 'ToggleOutline',
-      's': 'ToggleScale',
-      't': 'ToggleTransparency',
-    },
-    // collection actions
-    keymap2: {
-      'Backspace': 'Deletes',
-      'l': 'Lock',
-      'u': 'Unlock'
-    }
   },
-
-  removeHooks: function() {
-    L.DomEvent.off(window, "keydown", this._onKeyDown, this);
-  },
-
 
   initialize: function(map, overlay, options) {
     this._overlay = overlay;
@@ -66,7 +42,6 @@ L.EditAction = L.Toolbar2.Action.extend({
     }
 
     L.DomEvent.on(this._link, 'click', this.enable, this);
-    L.DomEvent.on(window, "keydown", this._onKeyDown, this);
 
     /* Add secondary toolbar */
     this._addSubToolbar(toolbar, this._icon, args);
@@ -82,19 +57,5 @@ L.EditAction = L.Toolbar2.Action.extend({
 
     document.querySelector('.leaflet-marker-pane').appendChild(el);
   },
-
-  _onKeyDown: function (e) {
-    var opts = this.options,
-        action = opts.keymap[e.key],
-        action2 = opts.keymap2[e.key];
-
-    L.DomEvent.stopPropagation(e);
-
-    if (action || action2) {
-      if (L.DomUtil.hasClass(this._link, action) || L.DomUtil.hasClass(this._link, action2)) {
-        this.enable();
-      }
-    }
-  }, 
 });
 

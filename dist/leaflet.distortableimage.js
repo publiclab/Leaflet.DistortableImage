@@ -1369,31 +1369,7 @@ L.EditAction = L.Toolbar2.Action.extend({
       className: '',
       tooltip: ''
     },
-    // individual actions
-    keymap: {
-      'Backspace': 'Delete', // backspace windows / delete mac
-      'CapsLock': 'ToggleRotate',
-      'd': 'ToggleRotateScale',
-      'r': 'ToggleRotateScale',
-      'j': 'ToggleOrder',
-      'k': 'ToggleOrder',
-      'l': 'ToggleLock',
-      'o': 'ToggleOutline',
-      's': 'ToggleScale',
-      't': 'ToggleTransparency',
-    },
-    // collection actions
-    keymap2: {
-      'Backspace': 'Deletes',
-      'l': 'Lock',
-      'u': 'Unlock'
-    }
   },
-
-  removeHooks: function() {
-    L.DomEvent.off(window, "keydown", this._onKeyDown, this);
-  },
-
 
   initialize: function(map, overlay, options) {
     this._overlay = overlay;
@@ -1428,7 +1404,6 @@ L.EditAction = L.Toolbar2.Action.extend({
     }
 
     L.DomEvent.on(this._link, 'click', this.enable, this);
-    L.DomEvent.on(window, "keydown", this._onKeyDown, this);
 
     /* Add secondary toolbar */
     this._addSubToolbar(toolbar, this._icon, args);
@@ -1444,20 +1419,6 @@ L.EditAction = L.Toolbar2.Action.extend({
 
     document.querySelector('.leaflet-marker-pane').appendChild(el);
   },
-
-  _onKeyDown: function (e) {
-    var opts = this.options,
-        action = opts.keymap[e.key],
-        action2 = opts.keymap2[e.key];
-
-    L.DomEvent.stopPropagation(e);
-
-    if (action || action2) {
-      if (L.DomUtil.hasClass(this._link, action) || L.DomUtil.hasClass(this._link, action2)) {
-        this.enable();
-      }
-    }
-  }, 
 });
 
 
@@ -1785,27 +1746,6 @@ L.DistortableImage.PopupBar = L.Toolbar2.Popup.extend({
       ToggleRotate
     ]
   },
-
-  // todo: move to some sort of util class, these methods could be useful in future
-  _rotateToolbarAngleDeg: function(angle) {
-    var div = this._container,
-      divStyle = div.style;
-
-    var oldTransform = divStyle.transform;
-
-    divStyle.transform = oldTransform + "rotate(" + angle + "deg)";
-    divStyle.transformOrigin = "1080% 650%";
-
-    this._rotateToolbarIcons(angle);
-  },
-
-  _rotateToolbarIcons: function(angle) {
-    var icons = document.querySelectorAll(".fa");
-
-    for (var i = 0; i < icons.length; i++) {
-      icons.item(i).style.transform = "rotate(" + -angle + "deg)";
-    }
-  }
 });
 
 L.distortableImage.popupBar = function (latlng, options) {
@@ -1961,7 +1901,17 @@ L.DistortableImage.Edit = L.Handler.extend({
     opacity: 0.7,
     outline: '1px solid red',
     keymap: {
+     'Backspace': '_removeOverlay', // backspace windows / delete mac
+     'CapsLock': '_toggleRotate',
      'Escape': '_deselect',
+     'd': '_toggleRotateScale',
+     'r': '_toggleRotateScale',
+     'j': '_toggleOrder',
+     'k': '_toggleOrder',
+     'l': '_toggleLock',
+     'o': '_toggleOutline',
+     's': '_toggleScale',
+		 't': '_toggleTransparency',
     }
   },
 
@@ -2006,7 +1956,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     L.DomEvent.on(overlay._image, "click", this._select, this);
 
     /* Enable hotkeys. */
-    // L.DomEvent.on(window, "keydown", this._onKeyDown, this);
+    L.DomEvent.on(window, "keydown", this._onKeyDown, this);
   },
 
   /* Run on image deselection. */
@@ -2027,7 +1977,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     map.removeLayer(this._handles[this._mode]);
 
     /* Disable hotkeys. */
-    // L.DomEvent.off(window, "keydown", this._onKeyDown, this);
+    L.DomEvent.off(window, "keydown", this._onKeyDown, this);
   },
 
   _initHandles: function() {
@@ -2228,24 +2178,24 @@ L.DistortableImage.Edit = L.Handler.extend({
     };
   },
 
-  // _onKeyDown: function(event) {
-  //   var keymap = this.options.keymap,
-  //     handlerName = keymap[event.key],
-  //     eventParents = this._overlay._eventParents;
+  _onKeyDown: function(event) {
+    var keymap = this.options.keymap,
+      handlerName = keymap[event.key],
+      eventParents = this._overlay._eventParents;
 
-  //   if (eventParents) {
-  //     var eP = eventParents[Object.keys(eventParents)[0]];
-  //     if (eP.anySelected()) {
-  //       return;
-  //     }
-  //   }
+    if (eventParents) {
+      var eP = eventParents[Object.keys(eventParents)[0]];
+      if (eP.anySelected()) {
+        return;
+      }
+    }
 
-  //   if (this[handlerName] !== undefined && !this._overlay.options.suppressToolbar) {
-  //     if (this._selected) {
-  //       this[handlerName].call(this);
-  //     }
-  //   }
-  // }, 
+    if (this[handlerName] !== undefined && !this._overlay.options.suppressToolbar) {
+      if (this._selected) {
+        this[handlerName].call(this);
+      }
+    }
+  }, 
 
   _toggleRotateScale: function() {
     var map = this._overlay._map;
@@ -2259,6 +2209,8 @@ L.DistortableImage.Edit = L.Handler.extend({
     else { this._mode = 'rotateScale'; }
 
     map.addLayer(this._handles[this._mode]);
+
+    this._showToolbar();
   },
 
   _toggleScale: function() {
@@ -2272,7 +2224,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 		else { this._mode = 'scale'; }
 
     map.addLayer(this._handles[this._mode]);
-
   },
 
   _toggleRotate: function() {
@@ -2296,6 +2247,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     L.DomUtil.setOpacity(image, opacity);
     image.setAttribute('opacity', opacity);
+
+    this._showToolbar();
   },
 
   _toggleOutline: function() {
@@ -2310,6 +2263,8 @@ L.DistortableImage.Edit = L.Handler.extend({
     image.setAttribute('opacity', opacity);
 
     image.style.outline = outline;
+
+    this._showToolbar();
   },
 
   _sendUp: function() {
@@ -2343,6 +2298,8 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
 
     map.addLayer(this._handles[this._mode]);
+
+    this._showToolbar();
   },
 
   _select: function(event) {
@@ -2479,11 +2436,9 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
   },
 
-  _removeOverlay: function (e) {
+  _removeOverlay: function () {
     var overlay = this._overlay,
       eventParents = overlay._eventParents;
-
-    if (e) { L.DomEvent.stopPropagation(e); }
 
     if (this._mode === 'lock') { return; }
 
