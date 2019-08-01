@@ -19,6 +19,7 @@ var ToggleTransparency = L.EditAction.extend({
       svg: true,
       html: use,
       tooltip: tooltip,
+      className: 'ToggleTransparency',
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -50,7 +51,8 @@ var ToggleOutline = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: tooltip
+      tooltip: tooltip,
+      className: 'ToggleOutline',
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -73,7 +75,8 @@ var Delete = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: 'Delete Image'
+      tooltip: 'Delete Image',
+      className: 'Delete'
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -103,7 +106,8 @@ var ToggleLock = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: tooltip
+      tooltip: tooltip,
+      className: 'ToggleLock'
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -124,18 +128,19 @@ var ToggleRotateScale = L.EditAction.extend({
       use, tooltip;
 
     if (edit._mode === 'rotateScale') {
-      use = 'transform';
-      tooltip = 'Distort';
+      use = 'distort';
+      tooltip = 'Distort Image';
     } else {
       use = 'crop_rotate';
-      tooltip = 'Rotate+Scale';
+      tooltip = 'Rotate+Scale Image';
     }
 
     options = options || {};
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: tooltip
+      tooltip: tooltip,
+      className: 'ToggleRotateScale'
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -144,8 +149,8 @@ var ToggleRotateScale = L.EditAction.extend({
   addHooks: function() {
     var editing = this._overlay.editing;
 
-    L.IconUtil.toggleXlink(this._link, 'transform', 'crop_rotate');
-    L.IconUtil.toggleTooltip(this._link, 'Distort', 'Rotate+Scale');
+    L.IconUtil.toggleXlink(this._link, 'distort', 'crop_rotate');
+    L.IconUtil.toggleTooltip(this._link, 'Distort Image', 'Rotate+Scale Image');
     editing._toggleRotateScale();
   }
 });
@@ -158,7 +163,8 @@ var Export = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: 'Export Image'
+      tooltip: 'Export Image',
+      className: 'Export'
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -188,7 +194,8 @@ var ToggleOrder = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: tooltip
+      tooltip: tooltip,
+      className: 'ToggleOrder'
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -211,7 +218,8 @@ var EnableEXIF = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: 'Geolocate Image'
+      tooltip: 'Geolocate Image',
+      className: 'EnableExif'
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -232,7 +240,8 @@ var Revert = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: 'Restore Original Image Dimensions'
+      tooltip: 'Restore Original Image Dimensions',
+      className: 'Revert'
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -245,9 +254,58 @@ var Revert = L.EditAction.extend({
   }
 });
 
+var ToggleRotate = L.EditAction.extend({
+  initialize: function(map, overlay, options) {
+    var use = 'rotate';
+
+    options = options || {};
+    options.toolbarIcon = {
+      svg: true,
+      html: use,
+      tooltip: 'Rotate Image',
+      className: 'ToggleRotate'
+    };
+
+    L.EditAction.prototype.initialize.call(this, map, overlay, options);
+  },
+
+  addHooks: function() {
+    var editing = this._overlay.editing;
+
+    editing._toggleRotate();
+  }
+});
+
+var ToggleScale = L.EditAction.extend({
+  initialize: function(map, overlay, options) {
+    var use = 'scale';
+
+    options = options || {};
+    options.toolbarIcon = {
+      svg: true,
+      html: use,
+      tooltip: 'Scale Image',
+      className: 'ToggleScale'
+    };
+
+    L.EditAction.prototype.initialize.call(this, map, overlay, options);
+  },
+
+  addHooks: function() {
+    var editing = this._overlay.editing;
+
+    editing._toggleScale();
+  }
+});
+
 L.DistortableImage.PopupBar = L.Toolbar2.Popup.extend({
   options: {
     anchor: [0, -10],
+    /** 
+     * **all* possible actions *must* be included here or the keydown listener in EditAction.js will not work properly 
+     * for any action. The actual actions that will be rendered are either *'this.ACTIONS'* (Default - look lower down) 
+     * or the *'actions'* array passed during initialization, if specified by the user
+     */
     actions: [
       ToggleTransparency,
       ToggleOutline,
@@ -257,7 +315,9 @@ L.DistortableImage.PopupBar = L.Toolbar2.Popup.extend({
       EnableEXIF,
       Revert,
       Export,
-      Delete
+      Delete,
+      ToggleScale,
+      ToggleRotate
     ]
   },
 
@@ -288,6 +348,7 @@ L.distortableImage.popupBar = function (latlng, options) {
 };
 
 L.DistortableImageOverlay.addInitHook(function () {
+  /** Default actions */
   this.ACTIONS = [
     ToggleTransparency, 
     ToggleOutline, 
@@ -300,7 +361,7 @@ L.DistortableImageOverlay.addInitHook(function () {
     Delete
   ];
 
-  if (this.options.actions) {
+  if (this.options.actions) { /* ('this' being DistortablemageOverlay, not the toolbar) */
     this.editActions = this.options.actions;
   } else {
     this.editActions = this.ACTIONS;

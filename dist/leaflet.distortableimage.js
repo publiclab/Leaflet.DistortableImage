@@ -212,113 +212,6 @@ L.TrigUtil = {
   }
 
 };
-/** this is the baseclass other IconSets inherit from, we don't use it directly */
-L.IconSet = L.Class.extend({
-
-  _svg: '<svg xmlns="http://www.w3.org/2000/svg">',
-
-  _symbols: '',
-
-  render: function() {
-    this.addSymbols(this._symbols);
-    return this._svg;
-  },
-
-  addSymbols: function(symbols) {
-    this._svg += symbols; 
-  }
-  
-});
-
-L.ToolbarIconSet = L.IconSet.extend({
-
-  _symbols:
-      '<symbol viewBox="0 0 18 18" id="border_clear"><path d="M5.25 3.75h1.5v-1.5h-1.5v1.5zm0 6h1.5v-1.5h-1.5v1.5zm0 6h1.5v-1.5h-1.5v1.5zm3-3h1.5v-1.5h-1.5v1.5zm0 3h1.5v-1.5h-1.5v1.5zm-6 0h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm6 6h1.5v-1.5h-1.5v1.5zm6 3h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm0 6h1.5v-1.5h-1.5v1.5zm0-9h1.5v-1.5h-1.5v1.5zm-6 0h1.5v-1.5h-1.5v1.5zm6-4.5v1.5h1.5v-1.5h-1.5zm-6 1.5h1.5v-1.5h-1.5v1.5zm3 12h1.5v-1.5h-1.5v1.5zm0-6h1.5v-1.5h-1.5v1.5zm0-6h1.5v-1.5h-1.5v1.5z"/></symbol>' +
-      '<symbol viewBox="0 0 18 18" id="border_outer"><path d="M9.75 5.25h-1.5v1.5h1.5v-1.5zm0 3h-1.5v1.5h1.5v-1.5zm3 0h-1.5v1.5h1.5v-1.5zm-10.5-6v13.5h13.5V2.25H2.25zm12 12H3.75V3.75h10.5v10.5zm-4.5-3h-1.5v1.5h1.5v-1.5zm-3-3h-1.5v1.5h1.5v-1.5z"/></symbol>' +
-      '<symbol viewBox="0 0 18 18" id="crop_rotate"><path d="M5.603 16.117C3.15 14.947 1.394 12.57 1.125 9.75H0C.383 14.37 4.245 18 8.963 18c.172 0 .33-.015.495-.023L6.6 15.113l-.997 1.005zM9.037 0c-.172 0-.33.015-.495.03L11.4 2.888l.998-.998a7.876 7.876 0 0 1 4.477 6.36H18C17.617 3.63 13.755 0 9.037 0zM12 10.5h1.5V6A1.5 1.5 0 0 0 12 4.5H7.5V6H12v4.5zM6 12V3H4.5v1.5H3V6h1.5v6A1.5 1.5 0 0 0 6 13.5h6V15h1.5v-1.5H15V12H6z"/></symbol>' +
-      '<symbol viewBox="0 0 18 18" id="delete_forever"><path d="M4.5 14.25c0 .825.675 1.5 1.5 1.5h6c.825 0 1.5-.675 1.5-1.5v-9h-9v9zm1.845-5.34l1.058-1.058L9 9.443l1.59-1.59 1.058 1.058-1.59 1.59 1.59 1.59-1.058 1.058L9 11.558l-1.59 1.59-1.058-1.058 1.59-1.59-1.597-1.59zM11.625 3l-.75-.75h-3.75l-.75.75H3.75v1.5h10.5V3h-2.625z"/></symbol>' +
-      '<symbol viewBox="0 0 18 18" id="explore"><path d="M9 1.5C4.86 1.5 1.5 4.86 1.5 9c0 4.14 3.36 7.5 7.5 7.5 4.14 0 7.5-3.36 7.5-7.5 0-4.14-3.36-7.5-7.5-7.5zM9 15c-3.308 0-6-2.693-6-6 0-3.308 2.692-6 6-6 3.307 0 6 2.692 6 6 0 3.307-2.693 6-6 6zm-4.125-1.875l5.633-2.617 2.617-5.633-5.633 2.617-2.617 5.633zM9 8.175c.457 0 .825.367.825.825A.823.823 0 0 1 9 9.825.823.823 0 0 1 8.175 9c0-.457.367-.825.825-.825z"/></symbol>' +
-      '<symbol viewBox="0 0 18 18" id="flip_to_back"><path d="M6.75 5.25h-1.5v1.5h1.5v-1.5zm0 3h-1.5v1.5h1.5v-1.5zm0-6a1.5 1.5 0 0 0-1.5 1.5h1.5v-1.5zm3 9h-1.5v1.5h1.5v-1.5zm4.5-9v1.5h1.5c0-.825-.675-1.5-1.5-1.5zm-4.5 0h-1.5v1.5h1.5v-1.5zm-3 10.5v-1.5h-1.5a1.5 1.5 0 0 0 1.5 1.5zm7.5-3h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm0 6c.825 0 1.5-.675 1.5-1.5h-1.5v1.5zm-10.5-7.5h-1.5v9a1.5 1.5 0 0 0 1.5 1.5h9v-1.5h-9v-9zm7.5-1.5h1.5v-1.5h-1.5v1.5zm0 9h1.5v-1.5h-1.5v1.5z"/></symbol>' +
-      '<symbol viewBox="0 0 18 18" id="flip_to_front"><path d="M2.25 9.75h1.5v-1.5h-1.5v1.5zm0 3h1.5v-1.5h-1.5v1.5zm1.5 3v-1.5h-1.5a1.5 1.5 0 0 0 1.5 1.5zm-1.5-9h1.5v-1.5h-1.5v1.5zm9 9h1.5v-1.5h-1.5v1.5zm3-13.5h-7.5a1.5 1.5 0 0 0-1.5 1.5v7.5a1.5 1.5 0 0 0 1.5 1.5h7.5c.825 0 1.5-.675 1.5-1.5v-7.5c0-.825-.675-1.5-1.5-1.5zm0 9h-7.5v-7.5h7.5v7.5zm-6 4.5h1.5v-1.5h-1.5v1.5zm-3 0h1.5v-1.5h-1.5v1.5z"/></symbol>' +
-      '<symbol viewBox="0 0 18 18" id="get_app"><path d="M14.662 6.95h-3.15v-4.5H6.787v4.5h-3.15L9.15 12.2l5.512-5.25zM3.637 13.7v1.5h11.025v-1.5H3.637z"/></symbol>' +
-      '<symbol viewBox="0 0 18 18" id="lock"><path d="M13.5 6h-.75V4.5C12.75 2.43 11.07.75 9 .75 6.93.75 5.25 2.43 5.25 4.5V6H4.5C3.675 6 3 6.675 3 7.5V15c0 .825.675 1.5 1.5 1.5h9c.825 0 1.5-.675 1.5-1.5V7.5c0-.825-.675-1.5-1.5-1.5zM6.75 4.5A2.247 2.247 0 0 1 9 2.25a2.247 2.247 0 0 1 2.25 2.25V6h-4.5V4.5zM13.5 15h-9V7.5h9V15zM9 12.75c.825 0 1.5-.675 1.5-1.5s-.675-1.5-1.5-1.5-1.5.675-1.5 1.5.675 1.5 1.5 1.5z"/></symbol>' +
-      '<symbol viewBox="0 0 18 18" id="opacity"><path d="M13.245 6L9 1.763 4.755 6A6.015 6.015 0 0 0 3 10.23c0 1.5.585 3.082 1.755 4.252a5.993 5.993 0 0 0 8.49 0A6.066 6.066 0 0 0 15 10.23c0-1.5-.585-3.06-1.755-4.23zM4.5 10.5c.008-1.5.465-2.453 1.32-3.3L9 3.952l3.18 3.285c.855.84 1.313 1.763 1.32 3.263h-9z"/></symbol>' +
-      '<symbol viewBox="0 0 14 18" id="opacity_empty"><path stroke="#0078A8" stroke-width="1.7" d="M10.708 6.25A5.113 5.113 0 0 1 12.2 9.846c0 1.275-.497 2.62-1.492 3.614a5.094 5.094 0 0 1-7.216 0A5.156 5.156 0 0 1 2 9.846c0-1.275.497-2.601 1.492-3.596L7.1 2.648l3.608 3.602zm0 0L7.1 2.648 3.492 6.25A5.113 5.113 0 0 0 2 9.846c0 1.275.497 2.62 1.492 3.614a5.094 5.094 0 0 0 7.216 0A5.156 5.156 0 0 0 12.2 9.846a5.113 5.113 0 0 0-1.492-3.596z"/></symbol>' +
-      '<symbol viewBox="0 0 18 18" id="restore"><path d="M15.67 3.839a.295.295 0 0 0-.22.103l-5.116 3.249V4.179a.342.342 0 0 0-.193-.315.29.29 0 0 0-.338.078L3.806 7.751v-4.63h-.002l.002-.022c0-.277-.204-.502-.456-.502h-.873V2.6c-.253 0-.457.225-.457.503l.002.026v10.883h.005c.021.257.217.454.452.455l.016-.002h.822c.013.001.025.004.038.004.252 0 .457-.225.457-.502a.505.505 0 0 0-.006-.068V9.318l6.001 3.811a.288.288 0 0 0 .332.074.34.34 0 0 0 .194-.306V9.878l5.12 3.252a.288.288 0 0 0 .332.073.34.34 0 0 0 .194-.306V4.18a.358.358 0 0 0-.09-.24.296.296 0 0 0-.218-.1z"/></symbol>' +
-      '<symbol viewBox="0 0 18 18" id="transform"><path d="M16.5 13.5V12H6V3h1.5L5.25.75 3 3h1.5v1.5h-3V6h3v6c0 .825.675 1.5 1.5 1.5h6V15h-1.5l2.25 2.25L15 15h-1.5v-1.5h3zM7.5 6H12v4.5h1.5V6c0-.825-.675-1.5-1.5-1.5H7.5V6z"/></symbol>' +
-      '<symbol viewBox="0 0 18 18" id="unlock"><path d="M13.5 6h-.75V4.5C12.75 2.43 11.07.75 9 .75 6.93.75 5.25 2.43 5.25 4.5h1.5A2.247 2.247 0 0 1 9 2.25a2.247 2.247 0 0 1 2.25 2.25V6H4.5C3.675 6 3 6.675 3 7.5V15c0 .825.675 1.5 1.5 1.5h9c.825 0 1.5-.675 1.5-1.5V7.5c0-.825-.675-1.5-1.5-1.5zm0 9h-9V7.5h9V15zM9 12.75c.825 0 1.5-.675 1.5-1.5s-.675-1.5-1.5-1.5-1.5.675-1.5 1.5.675 1.5 1.5 1.5z"/></symbol>'
-
-});
-
-L.KeymapperIconSet = L.IconSet.extend({
-
-  _symbols: 
-      '<symbol viewBox="0 0 25 25" id="keyboard_open"><path d="M12 23l4-4H8l4 4zm7-15h-2V6h2v2zm0 3h-2V9h2v2zm-3-3h-2V6h2v2zm0 3h-2V9h2v2zm0 4H8v-2h8v2zM7 8H5V6h2v2zm0 3H5V9h2v2zm1-2h2v2H8V9zm0-3h2v2H8V6zm3 3h2v2h-2V9zm0-3h2v2h-2V6zm9-3H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></symbol>',
-
-});
-
-L.EditAction = L.Toolbar2.Action.extend({
-
-  options: {
-    toolbarIcon: {
-      svg: false,
-      html: '',
-      className: '',
-      tooltip: ''
-    },
-  },
-
-  initialize: function(map, overlay, options) {
-    this._overlay = overlay;
-    this._map = map;
-
-    L.setOptions(this, options);
-    L.Toolbar2.Action.prototype.initialize.call(this, options);
-
-    this._injectIconSet();
-  },
-
-  _createIcon: function(toolbar, container, args) {
-    var iconOptions = this.options.toolbarIcon;
-
-    this.toolbar = toolbar;
-    this._icon = L.DomUtil.create('li', '', container);
-    this._link = L.DomUtil.create('a', '', this._icon);
-
-    if (iconOptions.svg) {
-      this._link.innerHTML = L.IconUtil.create(iconOptions.html);
-    } else {
-      this._link.innerHTML = iconOptions.html;
-    }
-
-    this._link.setAttribute('href', '#');
-    this._link.setAttribute('title', iconOptions.tooltip);
-    this._link.setAttribute('role', 'button');
-
-    L.DomUtil.addClass(this._link, this.constructor.baseClass);
-    if (iconOptions.className) {
-      L.DomUtil.addClass(this._link, iconOptions.className);
-    }
-
-    L.DomEvent.on(this._link, 'click', this.enable, this);
-
-    /* Add secondary toolbar */
-    this._addSubToolbar(toolbar, this._icon, args);
-  },
-
-  _injectIconSet: function() {
-    if (document.querySelector('#iconset')) { return; }
-
-    var el = document.createElement('div');
-    el.id = 'iconset';
-    el.setAttribute('hidden', 'hidden');
-    el.innerHTML = new L.ToolbarIconSet().render();
-
-    document.querySelector('.leaflet-marker-pane').appendChild(el);
-  }
-});
-
-
 L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   options: {
@@ -1420,6 +1313,141 @@ L.ScaleHandle = L.EditHandle.extend({
 	},
 });
 
+/** this is the baseclass other IconSets inherit from, we don't use it directly */
+L.IconSet = L.Class.extend({
+
+  _svg: '<svg xmlns="http://www.w3.org/2000/svg">',
+
+  _symbols: '',
+
+  render: function() {
+    this.addSymbols(this._symbols);
+    return this._svg;
+  },
+
+  addSymbols: function(symbols) {
+    this._svg += symbols; 
+  },
+});
+
+L.KeymapperIconSet = L.IconSet.extend({
+
+  _symbols: 
+      '<symbol viewBox="0 0 25 25" id="keyboard_open"><path d="M12 23l4-4H8l4 4zm7-15h-2V6h2v2zm0 3h-2V9h2v2zm-3-3h-2V6h2v2zm0 3h-2V9h2v2zm0 4H8v-2h8v2zM7 8H5V6h2v2zm0 3H5V9h2v2zm1-2h2v2H8V9zm0-3h2v2H8V6zm3 3h2v2h-2V9zm0-3h2v2h-2V6zm9-3H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></symbol>',
+
+});
+
+L.ToolbarIconSet = L.IconSet.extend({
+
+  _symbols:
+      '<symbol viewBox="0 0 18 18" id="border_clear"><path d="M5.25 3.75h1.5v-1.5h-1.5v1.5zm0 6h1.5v-1.5h-1.5v1.5zm0 6h1.5v-1.5h-1.5v1.5zm3-3h1.5v-1.5h-1.5v1.5zm0 3h1.5v-1.5h-1.5v1.5zm-6 0h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm6 6h1.5v-1.5h-1.5v1.5zm6 3h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm0 6h1.5v-1.5h-1.5v1.5zm0-9h1.5v-1.5h-1.5v1.5zm-6 0h1.5v-1.5h-1.5v1.5zm6-4.5v1.5h1.5v-1.5h-1.5zm-6 1.5h1.5v-1.5h-1.5v1.5zm3 12h1.5v-1.5h-1.5v1.5zm0-6h1.5v-1.5h-1.5v1.5zm0-6h1.5v-1.5h-1.5v1.5z"/></symbol>' +
+      '<symbol viewBox="0 0 18 18" id="border_outer"><path d="M9.75 5.25h-1.5v1.5h1.5v-1.5zm0 3h-1.5v1.5h1.5v-1.5zm3 0h-1.5v1.5h1.5v-1.5zm-10.5-6v13.5h13.5V2.25H2.25zm12 12H3.75V3.75h10.5v10.5zm-4.5-3h-1.5v1.5h1.5v-1.5zm-3-3h-1.5v1.5h1.5v-1.5z"/></symbol>' +
+      '<symbol viewBox="0 0 18 18" id="crop_rotate"><path d="M5.603 16.117C3.15 14.947 1.394 12.57 1.125 9.75H0C.383 14.37 4.245 18 8.963 18c.172 0 .33-.015.495-.023L6.6 15.113l-.997 1.005zM9.037 0c-.172 0-.33.015-.495.03L11.4 2.888l.998-.998a7.876 7.876 0 0 1 4.477 6.36H18C17.617 3.63 13.755 0 9.037 0zM12 10.5h1.5V6A1.5 1.5 0 0 0 12 4.5H7.5V6H12v4.5zM6 12V3H4.5v1.5H3V6h1.5v6A1.5 1.5 0 0 0 6 13.5h6V15h1.5v-1.5H15V12H6z"/></symbol>' +
+      '<symbol viewBox="0 0 18 18" id="delete_forever"><path d="M4.5 14.25c0 .825.675 1.5 1.5 1.5h6c.825 0 1.5-.675 1.5-1.5v-9h-9v9zm1.845-5.34l1.058-1.058L9 9.443l1.59-1.59 1.058 1.058-1.59 1.59 1.59 1.59-1.058 1.058L9 11.558l-1.59 1.59-1.058-1.058 1.59-1.59-1.597-1.59zM11.625 3l-.75-.75h-3.75l-.75.75H3.75v1.5h10.5V3h-2.625z"/></symbol>' +
+      '<symbol viewBox="0 0 18 18" id="distort"><path d="M1.7 1.4H6v1.4h5.8V1.4h4.3v4.3h-1.4v5.8h1.4v4.4h-4.3v-1.5H6v1.5H1.7v-4.4h1.4V5.7H1.7V1.4zm10.1 4.3V4.3H6v1.4H4.6v5.8H6V13h5.8v-1.5h1.4V5.7h-1.4zM3.1 2.8v1.5h1.5V2.8H3.1zm10.1 0v1.5h1.5V2.8h-1.5zM3.1 13v1.4h1.5V13H3.1zm10.1 0v1.4h1.5V13h-1.5z"/></symbol>' +
+      '<symbol viewBox="0 0 18 18" id="explore"><path d="M9 1.5C4.86 1.5 1.5 4.86 1.5 9c0 4.14 3.36 7.5 7.5 7.5 4.14 0 7.5-3.36 7.5-7.5 0-4.14-3.36-7.5-7.5-7.5zM9 15c-3.308 0-6-2.693-6-6 0-3.308 2.692-6 6-6 3.307 0 6 2.692 6 6 0 3.307-2.693 6-6 6zm-4.125-1.875l5.633-2.617 2.617-5.633-5.633 2.617-2.617 5.633zM9 8.175c.457 0 .825.367.825.825A.823.823 0 0 1 9 9.825.823.823 0 0 1 8.175 9c0-.457.367-.825.825-.825z"/></symbol>' +
+      '<symbol viewBox="0 0 18 18" id="flip_to_back"><path d="M6.75 5.25h-1.5v1.5h1.5v-1.5zm0 3h-1.5v1.5h1.5v-1.5zm0-6a1.5 1.5 0 0 0-1.5 1.5h1.5v-1.5zm3 9h-1.5v1.5h1.5v-1.5zm4.5-9v1.5h1.5c0-.825-.675-1.5-1.5-1.5zm-4.5 0h-1.5v1.5h1.5v-1.5zm-3 10.5v-1.5h-1.5a1.5 1.5 0 0 0 1.5 1.5zm7.5-3h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm0 6c.825 0 1.5-.675 1.5-1.5h-1.5v1.5zm-10.5-7.5h-1.5v9a1.5 1.5 0 0 0 1.5 1.5h9v-1.5h-9v-9zm7.5-1.5h1.5v-1.5h-1.5v1.5zm0 9h1.5v-1.5h-1.5v1.5z"/></symbol>' +
+      '<symbol viewBox="0 0 18 18" id="flip_to_front"><path d="M2.25 9.75h1.5v-1.5h-1.5v1.5zm0 3h1.5v-1.5h-1.5v1.5zm1.5 3v-1.5h-1.5a1.5 1.5 0 0 0 1.5 1.5zm-1.5-9h1.5v-1.5h-1.5v1.5zm9 9h1.5v-1.5h-1.5v1.5zm3-13.5h-7.5a1.5 1.5 0 0 0-1.5 1.5v7.5a1.5 1.5 0 0 0 1.5 1.5h7.5c.825 0 1.5-.675 1.5-1.5v-7.5c0-.825-.675-1.5-1.5-1.5zm0 9h-7.5v-7.5h7.5v7.5zm-6 4.5h1.5v-1.5h-1.5v1.5zm-3 0h1.5v-1.5h-1.5v1.5z"/></symbol>' +
+      '<symbol viewBox="0 0 18 18" id="get_app"><path d="M14.662 6.95h-3.15v-4.5H6.787v4.5h-3.15L9.15 12.2l5.512-5.25zM3.637 13.7v1.5h11.025v-1.5H3.637z"/></symbol>' +
+      '<symbol viewBox="0 0 18 18" id="lock"><path d="M13.5 6h-.75V4.5C12.75 2.43 11.07.75 9 .75 6.93.75 5.25 2.43 5.25 4.5V6H4.5C3.675 6 3 6.675 3 7.5V15c0 .825.675 1.5 1.5 1.5h9c.825 0 1.5-.675 1.5-1.5V7.5c0-.825-.675-1.5-1.5-1.5zM6.75 4.5A2.247 2.247 0 0 1 9 2.25a2.247 2.247 0 0 1 2.25 2.25V6h-4.5V4.5zM13.5 15h-9V7.5h9V15zM9 12.75c.825 0 1.5-.675 1.5-1.5s-.675-1.5-1.5-1.5-1.5.675-1.5 1.5.675 1.5 1.5 1.5z"/></symbol>' +
+      '<symbol viewBox="0 0 18 18" id="opacity"><path d="M13.245 6L9 1.763 4.755 6A6.015 6.015 0 0 0 3 10.23c0 1.5.585 3.082 1.755 4.252a5.993 5.993 0 0 0 8.49 0A6.066 6.066 0 0 0 15 10.23c0-1.5-.585-3.06-1.755-4.23zM4.5 10.5c.008-1.5.465-2.453 1.32-3.3L9 3.952l3.18 3.285c.855.84 1.313 1.763 1.32 3.263h-9z"/></symbol>' +
+      '<symbol viewBox="0 0 14 18" id="opacity_empty"><path stroke="#0078A8" stroke-width="1.7" d="M10.708 6.25A5.113 5.113 0 0 1 12.2 9.846c0 1.275-.497 2.62-1.492 3.614a5.094 5.094 0 0 1-7.216 0A5.156 5.156 0 0 1 2 9.846c0-1.275.497-2.601 1.492-3.596L7.1 2.648l3.608 3.602zm0 0L7.1 2.648 3.492 6.25A5.113 5.113 0 0 0 2 9.846c0 1.275.497 2.62 1.492 3.614a5.094 5.094 0 0 0 7.216 0A5.156 5.156 0 0 0 12.2 9.846a5.113 5.113 0 0 0-1.492-3.596z"/></symbol>' +
+      '<symbol viewBox="0 0 18 18" id="restore"><path d="M15.67 3.839a.295.295 0 0 0-.22.103l-5.116 3.249V4.179a.342.342 0 0 0-.193-.315.29.29 0 0 0-.338.078L3.806 7.751v-4.63h-.002l.002-.022c0-.277-.204-.502-.456-.502h-.873V2.6c-.253 0-.457.225-.457.503l.002.026v10.883h.005c.021.257.217.454.452.455l.016-.002h.822c.013.001.025.004.038.004.252 0 .457-.225.457-.502a.505.505 0 0 0-.006-.068V9.318l6.001 3.811a.288.288 0 0 0 .332.074.34.34 0 0 0 .194-.306V9.878l5.12 3.252a.288.288 0 0 0 .332.073.34.34 0 0 0 .194-.306V4.18a.358.358 0 0 0-.09-.24.296.296 0 0 0-.218-.1z"/></symbol>' +
+      '<symbol viewBox="0 0 18 18" id="rotate"><path d="M5.505 4.808L.645 9.675l4.867 4.86 4.868-4.86-4.875-4.868zM2.768 9.675L5.513 6.93 8.25 9.675 5.505 12.42 2.768 9.675zM14.52 4.98A6.713 6.713 0 009.75 3V.57L6.57 3.75l3.18 3.18V4.5a5.23 5.23 0 013.713 1.537 5.255 5.255 0 010 7.426 5.23 5.23 0 01-5.843 1.08L6.503 15.66a6.76 6.76 0 003.247.84c1.725 0 3.457-.66 4.77-1.98a6.735 6.735 0 000-9.54z"/></symbol>' +
+      '<symbol viewBox="0 0 18 18" id="scale" > <path d="M8.25 9h-6a.75.75 0 00-.75.75v6c0 .414.336.75.75.75h6a.75.75 0 00.75-.75v-6A.75.75 0 008.25 9zm-.75 6H3v-4.5h4.5V15zm8.94-13.035a.75.75 0 00-.405-.405.75.75 0 00-.285-.06h-4.5a.75.75 0 000 1.5h2.692L9.967 6.968a.75.75 0 000 1.064.75.75 0 001.065 0L15 4.057V6.75a.75.75 0 101.5 0v-4.5a.75.75 0 00-.06-.285z" /></symbol>' +
+      '<symbol viewBox="0 0 18 18" id="transform"><path d="M16.5 13.5V12H6V3h1.5L5.25.75 3 3h1.5v1.5h-3V6h3v6c0 .825.675 1.5 1.5 1.5h6V15h-1.5l2.25 2.25L15 15h-1.5v-1.5h3zM7.5 6H12v4.5h1.5V6c0-.825-.675-1.5-1.5-1.5H7.5V6z"/></symbol>' +
+      '<symbol viewBox="0 0 18 18" id="unlock"><path d="M13.5 6h-.75V4.5C12.75 2.43 11.07.75 9 .75 6.93.75 5.25 2.43 5.25 4.5h1.5A2.247 2.247 0 0 1 9 2.25a2.247 2.247 0 0 1 2.25 2.25V6H4.5C3.675 6 3 6.675 3 7.5V15c0 .825.675 1.5 1.5 1.5h9c.825 0 1.5-.675 1.5-1.5V7.5c0-.825-.675-1.5-1.5-1.5zm0 9h-9V7.5h9V15zM9 12.75c.825 0 1.5-.675 1.5-1.5s-.675-1.5-1.5-1.5-1.5.675-1.5 1.5.675 1.5 1.5 1.5z"/></symbol>'
+
+});
+
+L.EditAction = L.Toolbar2.Action.extend({
+
+  options: {
+    toolbarIcon: {
+      svg: false,
+      html: '',
+      className: '',
+      tooltip: ''
+    },
+    keymap: {
+      'Backspace': 'Delete', // backspace windows / delete mac
+      'CapsLock': 'ToggleRotate',
+      // 'Escape': '_deselect',
+      'd': 'ToggleRotateScale',
+      'r': 'ToggleRotateScale',
+      'j': 'ToggleOrder',
+      'k': 'ToggleOrder',
+      'l': 'ToggleLock',
+      'o': 'ToggleOutline',
+      's': 'ToggleScale',
+      't': 'ToggleTransparency',
+    }
+  },
+
+
+  initialize: function(map, overlay, options) {
+    this._overlay = overlay;
+    this._map = map;
+
+    L.setOptions(this, options);
+    L.Toolbar2.Action.prototype.initialize.call(this, options);
+
+    this._injectIconSet();
+  },
+
+  _createIcon: function(toolbar, container, args) {
+    var iconOptions = this.options.toolbarIcon;
+
+    this.toolbar = toolbar;
+    this._icon = L.DomUtil.create('li', '', container);
+    this._link = L.DomUtil.create('a', '', this._icon);
+
+    if (iconOptions.svg) {
+      this._link.innerHTML = L.IconUtil.create(iconOptions.html);
+    } else {
+      this._link.innerHTML = iconOptions.html;
+    }
+
+    this._link.setAttribute('href', '#');
+    this._link.setAttribute('title', iconOptions.tooltip);
+    this._link.setAttribute('role', 'button');
+
+    L.DomUtil.addClass(this._link, this.constructor.baseClass);
+    if (iconOptions.className) {
+      L.DomUtil.addClass(this._link, iconOptions.className);
+    }
+
+    L.DomEvent.on(this._link, 'click', this.enable, this);
+    L.DomEvent.on(window, "keydown", this._onKeyDown, this);
+
+    /* Add secondary toolbar */
+    this._addSubToolbar(toolbar, this._icon, args);
+  },
+
+  _injectIconSet: function() {
+    if (document.querySelector('#iconset')) { return; }
+
+    var el = document.createElement('div');
+    el.id = 'iconset';
+    el.setAttribute('hidden', 'hidden');
+    el.innerHTML = new L.ToolbarIconSet().render();
+
+    document.querySelector('.leaflet-marker-pane').appendChild(el);
+  },
+
+  _onKeyDown: function (event) {
+    var keymap = this.options.keymap,
+        action = keymap[event.key];
+
+    if (action) {
+      if (L.DomUtil.hasClass(this._link, action)) {
+        this.enable();
+      }
+    }
+  }, 
+});
+
+
 L.DistortableImage = L.DistortableImage || {};
 L.distortableImage = L.DistortableImage;
 
@@ -1441,6 +1469,7 @@ var ToggleTransparency = L.EditAction.extend({
       svg: true,
       html: use,
       tooltip: tooltip,
+      className: 'ToggleTransparency',
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -1472,7 +1501,8 @@ var ToggleOutline = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: tooltip
+      tooltip: tooltip,
+      className: 'ToggleOutline',
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -1495,7 +1525,8 @@ var Delete = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: 'Delete Image'
+      tooltip: 'Delete Image',
+      className: 'Delete'
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -1525,7 +1556,8 @@ var ToggleLock = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: tooltip
+      tooltip: tooltip,
+      className: 'ToggleLock'
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -1546,18 +1578,19 @@ var ToggleRotateScale = L.EditAction.extend({
       use, tooltip;
 
     if (edit._mode === 'rotateScale') {
-      use = 'transform';
-      tooltip = 'Distort';
+      use = 'distort';
+      tooltip = 'Distort Image';
     } else {
       use = 'crop_rotate';
-      tooltip = 'Rotate+Scale';
+      tooltip = 'Rotate+Scale Image';
     }
 
     options = options || {};
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: tooltip
+      tooltip: tooltip,
+      className: 'ToggleRotateScale'
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -1566,8 +1599,8 @@ var ToggleRotateScale = L.EditAction.extend({
   addHooks: function() {
     var editing = this._overlay.editing;
 
-    L.IconUtil.toggleXlink(this._link, 'transform', 'crop_rotate');
-    L.IconUtil.toggleTooltip(this._link, 'Distort', 'Rotate+Scale');
+    L.IconUtil.toggleXlink(this._link, 'distort', 'crop_rotate');
+    L.IconUtil.toggleTooltip(this._link, 'Distort Image', 'Rotate+Scale Image');
     editing._toggleRotateScale();
   }
 });
@@ -1580,7 +1613,8 @@ var Export = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: 'Export Image'
+      tooltip: 'Export Image',
+      className: 'Export'
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -1610,7 +1644,8 @@ var ToggleOrder = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: tooltip
+      tooltip: tooltip,
+      className: 'ToggleOrder'
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -1633,7 +1668,8 @@ var EnableEXIF = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: 'Geolocate Image'
+      tooltip: 'Geolocate Image',
+      className: 'EnableExif'
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -1654,7 +1690,8 @@ var Revert = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: 'Restore Original Image Dimensions'
+      tooltip: 'Restore Original Image Dimensions',
+      className: 'Revert'
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -1667,9 +1704,58 @@ var Revert = L.EditAction.extend({
   }
 });
 
+var ToggleRotate = L.EditAction.extend({
+  initialize: function(map, overlay, options) {
+    var use = 'rotate';
+
+    options = options || {};
+    options.toolbarIcon = {
+      svg: true,
+      html: use,
+      tooltip: 'Rotate Image',
+      className: 'ToggleRotate'
+    };
+
+    L.EditAction.prototype.initialize.call(this, map, overlay, options);
+  },
+
+  addHooks: function() {
+    var editing = this._overlay.editing;
+
+    editing._toggleRotate();
+  }
+});
+
+var ToggleScale = L.EditAction.extend({
+  initialize: function(map, overlay, options) {
+    var use = 'scale';
+
+    options = options || {};
+    options.toolbarIcon = {
+      svg: true,
+      html: use,
+      tooltip: 'Scale Image',
+      className: 'ToggleScale'
+    };
+
+    L.EditAction.prototype.initialize.call(this, map, overlay, options);
+  },
+
+  addHooks: function() {
+    var editing = this._overlay.editing;
+
+    editing._toggleScale();
+  }
+});
+
 L.DistortableImage.PopupBar = L.Toolbar2.Popup.extend({
   options: {
     anchor: [0, -10],
+    /** 
+     * **all* possible actions *must* be included here or the keydown listener in EditAction.js will not work properly 
+     * for any action. The actual actions that will be rendered are either *'this.ACTIONS'* (Default - look lower down) 
+     * or the *'actions'* array passed during initialization, if specified by the user
+     */
     actions: [
       ToggleTransparency,
       ToggleOutline,
@@ -1679,7 +1765,9 @@ L.DistortableImage.PopupBar = L.Toolbar2.Popup.extend({
       EnableEXIF,
       Revert,
       Export,
-      Delete
+      Delete,
+      ToggleScale,
+      ToggleRotate
     ]
   },
 
@@ -1710,6 +1798,7 @@ L.distortableImage.popupBar = function (latlng, options) {
 };
 
 L.DistortableImageOverlay.addInitHook(function () {
+  /** Default actions */
   this.ACTIONS = [
     ToggleTransparency, 
     ToggleOutline, 
@@ -1722,7 +1811,7 @@ L.DistortableImageOverlay.addInitHook(function () {
     Delete
   ];
 
-  if (this.options.actions) {
+  if (this.options.actions) { /* ('this' being DistortablemageOverlay, not the toolbar) */
     this.editActions = this.options.actions;
   } else {
     this.editActions = this.ACTIONS;
@@ -1857,19 +1946,19 @@ L.DistortableImage.Edit = L.Handler.extend({
   options: {
     opacity: 0.7,
     outline: '1px solid red',
-    keymap: {
-     'Backspace': '_removeOverlay', // backspace windows / delete mac
-     'CapsLock': '_toggleRotate',
-     'Escape': '_deselect',
-     'd': '_toggleRotateScale',
-     'r': '_toggleRotateScale',
-     'j': '_toggleOrder',
-     'k': '_toggleOrder',
-     'l': '_toggleLock',
-     'o': '_toggleOutline',
-     's': '_toggleScale',
-		 't': '_toggleTransparency',
-    }
+    // keymap: {
+    //  'Backspace': '_removeOverlay', // backspace windows / delete mac
+    //  'CapsLock': '_toggleRotate',
+    //  'Escape': '_deselect',
+    //  'd': '_toggleRotateScale',
+    //  'r': '_toggleRotateScale',
+    //  'j': '_toggleOrder',
+    //  'k': '_toggleOrder',
+    //  'l': '_toggleLock',
+    //  'o': '_toggleOutline',
+    //  's': '_toggleScale',
+		//  't': '_toggleTransparency',
+    // }
   },
 
   initialize: function(overlay, options) {
@@ -1913,7 +2002,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     L.DomEvent.on(overlay._image, "click", this._select, this);
 
     /* Enable hotkeys. */
-    L.DomEvent.on(window, "keydown", this._onKeyDown, this);
+    // L.DomEvent.on(window, "keydown", this._onKeyDown, this);
   },
 
   /* Run on image deselection. */
@@ -1934,7 +2023,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     map.removeLayer(this._handles[this._mode]);
 
     /* Disable hotkeys. */
-    L.DomEvent.off(window, "keydown", this._onKeyDown, this);
+    // L.DomEvent.off(window, "keydown", this._onKeyDown, this);
   },
 
   _initHandles: function() {
@@ -2135,24 +2224,24 @@ L.DistortableImage.Edit = L.Handler.extend({
     };
   },
 
-  _onKeyDown: function(event) {
-    var keymap = this.options.keymap,
-      handlerName = keymap[event.key],
-      eventParents = this._overlay._eventParents;
+  // _onKeyDown: function(event) {
+  //   var keymap = this.options.keymap,
+  //     handlerName = keymap[event.key],
+  //     eventParents = this._overlay._eventParents;
 
-    if (eventParents) {
-      var eP = eventParents[Object.keys(eventParents)[0]];
-      if (eP.anySelected()) {
-        return;
-      }
-    }
+  //   if (eventParents) {
+  //     var eP = eventParents[Object.keys(eventParents)[0]];
+  //     if (eP.anySelected()) {
+  //       return;
+  //     }
+  //   }
 
-    if (this[handlerName] !== undefined && !this._overlay.options.suppressToolbar) {
-      if (this._selected) {
-        this[handlerName].call(this);
-      }
-    }
-  }, 
+  //   if (this[handlerName] !== undefined && !this._overlay.options.suppressToolbar) {
+  //     if (this._selected) {
+  //       this[handlerName].call(this);
+  //     }
+  //   }
+  // }, 
 
   _toggleRotateScale: function() {
     var map = this._overlay._map;

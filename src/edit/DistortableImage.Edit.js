@@ -4,19 +4,19 @@ L.DistortableImage.Edit = L.Handler.extend({
   options: {
     opacity: 0.7,
     outline: '1px solid red',
-    keymap: {
-     'Backspace': '_removeOverlay', // backspace windows / delete mac
-     'CapsLock': '_toggleRotate',
-     'Escape': '_deselect',
-     'd': '_toggleRotateScale',
-     'r': '_toggleRotateScale',
-     'j': '_toggleOrder',
-     'k': '_toggleOrder',
-     'l': '_toggleLock',
-     'o': '_toggleOutline',
-     's': '_toggleScale',
-		 't': '_toggleTransparency',
-    }
+    // keymap: {
+    //  'Backspace': '_removeOverlay', // backspace windows / delete mac
+    //  'CapsLock': '_toggleRotate',
+    //  'Escape': '_deselect',
+    //  'd': '_toggleRotateScale',
+    //  'r': '_toggleRotateScale',
+    //  'j': '_toggleOrder',
+    //  'k': '_toggleOrder',
+    //  'l': '_toggleLock',
+    //  'o': '_toggleOutline',
+    //  's': '_toggleScale',
+		//  't': '_toggleTransparency',
+    // }
   },
 
   initialize: function(overlay, options) {
@@ -60,7 +60,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     L.DomEvent.on(overlay._image, "click", this._select, this);
 
     /* Enable hotkeys. */
-    L.DomEvent.on(window, "keydown", this._onKeyDown, this);
+    // L.DomEvent.on(window, "keydown", this._onKeyDown, this);
   },
 
   /* Run on image deselection. */
@@ -81,7 +81,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     map.removeLayer(this._handles[this._mode]);
 
     /* Disable hotkeys. */
-    L.DomEvent.off(window, "keydown", this._onKeyDown, this);
+    // L.DomEvent.off(window, "keydown", this._onKeyDown, this);
   },
 
   _initHandles: function() {
@@ -282,24 +282,24 @@ L.DistortableImage.Edit = L.Handler.extend({
     };
   },
 
-  _onKeyDown: function(event) {
-    var keymap = this.options.keymap,
-      handlerName = keymap[event.key],
-      eventParents = this._overlay._eventParents;
+  // _onKeyDown: function(event) {
+  //   var keymap = this.options.keymap,
+  //     handlerName = keymap[event.key],
+  //     eventParents = this._overlay._eventParents;
 
-    if (eventParents) {
-      var eP = eventParents[Object.keys(eventParents)[0]];
-      if (eP.anySelected()) {
-        return;
-      }
-    }
+  //   if (eventParents) {
+  //     var eP = eventParents[Object.keys(eventParents)[0]];
+  //     if (eP.anySelected()) {
+  //       return;
+  //     }
+  //   }
 
-    if (this[handlerName] !== undefined && !this._overlay.options.suppressToolbar) {
-      if (this._selected) {
-        this[handlerName].call(this);
-      }
-    }
-  }, 
+  //   if (this[handlerName] !== undefined && !this._overlay.options.suppressToolbar) {
+  //     if (this._selected) {
+  //       this[handlerName].call(this);
+  //     }
+  //   }
+  // }, 
 
   _toggleRotateScale: function() {
     var map = this._overlay._map;

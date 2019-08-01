@@ -7,7 +7,21 @@ L.EditAction = L.Toolbar2.Action.extend({
       className: '',
       tooltip: ''
     },
+    keymap: {
+      'Backspace': 'Delete', // backspace windows / delete mac
+      'CapsLock': 'ToggleRotate',
+      // 'Escape': '_deselect',
+      'd': 'ToggleRotateScale',
+      'r': 'ToggleRotateScale',
+      'j': 'ToggleOrder',
+      'k': 'ToggleOrder',
+      'l': 'ToggleLock',
+      'o': 'ToggleOutline',
+      's': 'ToggleScale',
+      't': 'ToggleTransparency',
+    }
   },
+
 
   initialize: function(map, overlay, options) {
     this._overlay = overlay;
@@ -42,6 +56,7 @@ L.EditAction = L.Toolbar2.Action.extend({
     }
 
     L.DomEvent.on(this._link, 'click', this.enable, this);
+    L.DomEvent.on(window, "keydown", this._onKeyDown, this);
 
     /* Add secondary toolbar */
     this._addSubToolbar(toolbar, this._icon, args);
@@ -56,6 +71,17 @@ L.EditAction = L.Toolbar2.Action.extend({
     el.innerHTML = new L.ToolbarIconSet().render();
 
     document.querySelector('.leaflet-marker-pane').appendChild(el);
-  }
+  },
+
+  _onKeyDown: function (event) {
+    var keymap = this.options.keymap,
+        action = keymap[event.key];
+
+    if (action) {
+      if (L.DomUtil.hasClass(this._link, action)) {
+        this.enable();
+      }
+    }
+  }, 
 });
 
