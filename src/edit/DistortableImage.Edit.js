@@ -336,6 +336,8 @@ L.DistortableImage.Edit = L.Handler.extend({
     else { this._mode = 'rotateScale'; }
 
     map.addLayer(this._handles[this._mode]);
+
+    this._showToolbar();
   },
 
   _toggleScale: function() {
@@ -349,7 +351,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 		else { this._mode = 'scale'; }
 
     map.addLayer(this._handles[this._mode]);
-
   },
 
   _toggleRotate: function() {
@@ -373,6 +374,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     L.DomUtil.setOpacity(image, opacity);
     image.setAttribute('opacity', opacity);
+
+    this._showToolbar();
   },
 
   _toggleOutline: function() {
@@ -387,6 +390,8 @@ L.DistortableImage.Edit = L.Handler.extend({
     image.setAttribute('opacity', opacity);
 
     image.style.outline = outline;
+
+    this._showToolbar();
   },
 
   _sendUp: function() {
@@ -420,6 +425,8 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
 
     map.addLayer(this._handles[this._mode]);
+
+    this._showToolbar();
   },
 
   _select: function(event) {

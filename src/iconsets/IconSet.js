@@ -12,6 +12,5 @@ L.IconSet = L.Class.extend({
 
   addSymbols: function(symbols) {
     this._svg += symbols; 
-  }
-  
+  },
 });
