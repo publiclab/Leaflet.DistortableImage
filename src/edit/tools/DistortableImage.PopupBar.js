@@ -18,7 +18,7 @@ var ToggleTransparency = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: tooltip,
+      tooltip: tooltip
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -112,6 +112,8 @@ var ToggleLock = L.EditAction.extend({
   addHooks: function() {
     var editing = this._overlay.editing;
 
+    L.DomEvent.on(window, "keydown", this._onKeyDown, this);
+
     L.IconUtil.toggleXlink(this._link, 'unlock', 'lock');
     L.IconUtil.toggleTooltip(this._link, 'Unlock', 'Lock');
     editing._toggleLock();
@@ -124,11 +126,11 @@ var ToggleRotateScale = L.EditAction.extend({
       use, tooltip;
 
     if (edit._mode === 'rotateScale') {
-      use = 'transform';
-      tooltip = 'Distort';
+      use = 'distort';
+      tooltip = 'Distort Image';
     } else {
       use = 'crop_rotate';
-      tooltip = 'Rotate+Scale';
+      tooltip = 'Rotate+Scale Image';
     }
 
     options = options || {};
@@ -144,8 +146,8 @@ var ToggleRotateScale = L.EditAction.extend({
   addHooks: function() {
     var editing = this._overlay.editing;
 
-    L.IconUtil.toggleXlink(this._link, 'transform', 'crop_rotate');
-    L.IconUtil.toggleTooltip(this._link, 'Distort', 'Rotate+Scale');
+    L.IconUtil.toggleXlink(this._link, 'distort', 'crop_rotate');
+    L.IconUtil.toggleTooltip(this._link, 'Distort Image', 'Rotate+Scale Image');
     editing._toggleRotateScale();
   }
 });
@@ -245,9 +247,52 @@ var Revert = L.EditAction.extend({
   }
 });
 
+var ToggleRotate = L.EditAction.extend({
+  initialize: function(map, overlay, options) {
+    var use = 'rotate';
+
+    options = options || {};
+    options.toolbarIcon = {
+      svg: true,
+      html: use,
+      tooltip: 'Rotate Image'
+    };
+
+    L.EditAction.prototype.initialize.call(this, map, overlay, options);
+  },
+
+  addHooks: function() {
+    var editing = this._overlay.editing;
+
+    editing._toggleRotate();
+  }
+});
+
+var ToggleScale = L.EditAction.extend({
+  initialize: function(map, overlay, options) {
+    var use = 'scale';
+
+    options = options || {};
+    options.toolbarIcon = {
+      svg: true,
+      html: use,
+      tooltip: 'Scale Image'
+    };
+
+    L.EditAction.prototype.initialize.call(this, map, overlay, options);
+  },
+
+  addHooks: function() {
+    var editing = this._overlay.editing;
+
+    editing._toggleScale();
+  }
+});
+
 L.DistortableImage.PopupBar = L.Toolbar2.Popup.extend({
   options: {
     anchor: [0, -10],
+    /* all possible actions */
     actions: [
       ToggleTransparency,
       ToggleOutline,
@@ -257,30 +302,11 @@ L.DistortableImage.PopupBar = L.Toolbar2.Popup.extend({
       EnableEXIF,
       Revert,
       Export,
-      Delete
+      Delete,
+      ToggleScale,
+      ToggleRotate
     ]
   },
-
-  // todo: move to some sort of util class, these methods could be useful in future
-  _rotateToolbarAngleDeg: function(angle) {
-    var div = this._container,
-      divStyle = div.style;
-
-    var oldTransform = divStyle.transform;
-
-    divStyle.transform = oldTransform + "rotate(" + angle + "deg)";
-    divStyle.transformOrigin = "1080% 650%";
-
-    this._rotateToolbarIcons(angle);
-  },
-
-  _rotateToolbarIcons: function(angle) {
-    var icons = document.querySelectorAll(".fa");
-
-    for (var i = 0; i < icons.length; i++) {
-      icons.item(i).style.transform = "rotate(" + -angle + "deg)";
-    }
-  }
 });
 
 L.distortableImage.popupBar = function (latlng, options) {
@@ -288,19 +314,19 @@ L.distortableImage.popupBar = function (latlng, options) {
 };
 
 L.DistortableImageOverlay.addInitHook(function () {
+  /** Default actions */
   this.ACTIONS = [
     ToggleTransparency, 
     ToggleOutline, 
     ToggleLock, 
     ToggleRotateScale, 
     ToggleOrder,
-    EnableEXIF,
     Revert,
     Export,
     Delete
   ];
 
-  if (this.options.actions) {
+  if (this.options.actions) { /* (`this` being DistortablemageOverlay, not the toolbar) */
     this.editActions = this.options.actions;
   } else {
     this.editActions = this.ACTIONS;
@@ -309,7 +335,7 @@ L.DistortableImageOverlay.addInitHook(function () {
   this.editing = new L.DistortableImage.Edit(this, { actions: this.editActions });
 
   if (this.options.editable) {
-    L.DomEvent.on(this._image, "load", this.editing.enable, this.editing);
+    L.DomEvent.on(this._image, 'load', this.editing.enable, this.editing);
   }
 
   this.on('remove', function () {
