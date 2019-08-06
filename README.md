@@ -85,11 +85,11 @@ Options available to pass during `L.DistortableImageOverlay` initialization:
 
 ### Actions 
 
-- `actions` (*optional*, default: [ToggleTransparency, ToggleOutline, ToggleLock, ToggleRotateScale, ToggleOrder, EnableEXIF, Revert, Export, Delete], value: *array*)
+- `actions` (*optional*, default: [ToggleTransparency, ToggleOutline, ToggleLock, ToggleRotateScale, ToggleOrder, Revert, Export, Delete], value: *array*)
 
 If you would like to overrwrite the default toolbar actions available for an individual image's `L.Popup` toolbar, pass an array with the actions you want. Reference the available values [here](#Single-Image-Interface).
 
-For example, to overrwrite the toolbar to only include the `ToggleTransparency` and `Delete` actions:
+For example, to overrwrite the toolbar to only include the `ToggleTransparency` and `Delete` actions, and also add on the additional `ToggleScale` action:
 
 ``` JS
 img = L.distortableImageOverlay('example.png', {
@@ -99,7 +99,7 @@ img = L.distortableImageOverlay('example.png', {
     L.latLng(51.50,-0.14),
     L.latLng(51.50,-0.10)
   ],
-  actions: [ToggleTransparency, Delete]
+  actions: [ToggleTransparency, ToggleScale, Delete]
 }).addTo(map);
 ```
 
@@ -320,8 +320,6 @@ Defaults:
 
 - **ToggleTransparency (<kbd>t</kbd>)**
 
-- **EnableEXIF (WIP)**
-
 - **Revert**
 
   - Restores the image to its original proportions and scale, but keeps its current rotation angle and location on the map intact.
@@ -344,6 +342,9 @@ Defaults:
 
   - Toggles between [scale mode](#scale) and [distort mode](#distort-(_default_)).
   - Replaced as a default toolbar action by `ToggleRotateScale`, but still accessible via its hotkey, `mode`, and (WIP) custom toolbar actions API.
+
+-   **EnableEXIF (WIP)**
+
 
 <hr>
 
@@ -385,7 +386,7 @@ Defaults:
 
   - Ex: `imgGroup.removeTool(Deletes)`
 
-- [`addTool(action)`](#actions) - Adds the passed tool to the control toolbar in runtime. Returns false if the tool is not available or is already present.
+- [`addTool(action)`](#actions) - Adds the passed tool to the end of the control toolbar in runtime. Returns false if the tool is not available or is already present.
 
 - `hasTool(action)` - Checks if the tool is already present in the currently rendered control toolbar.
 
