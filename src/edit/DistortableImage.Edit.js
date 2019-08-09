@@ -232,17 +232,18 @@ L.DistortableImage.Edit = L.Handler.extend({
   _scaleBy: function(scale) {
     var overlay = this._overlay,
       map = overlay._map,
-      center = map.latLngToLayerPoint(overlay.getCenter()),
+      center = map.project(overlay.getCenter()),
       i,
       p;
 
     for (i = 0; i < 4; i++) {
       p = map
-        .latLngToLayerPoint(overlay.getCorner(i))
+        .project(overlay.getCorner(i))
         .subtract(center)
         .multiplyBy(scale)
         .add(center);
-      overlay.setCorner(i, map.layerPointToLatLng(p));
+      overlay.setCorner(i, map.unproject(p));
+      console.log('corner', map.project(overlay.getCorner(i)));
     }
 
     overlay._reset();
