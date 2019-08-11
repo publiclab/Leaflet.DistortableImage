@@ -17,13 +17,7 @@ Advantages include:
 
 [Download as zip](https://github.com/publiclab/Leaflet.DistortableImage/releases) or clone the repo to get a local copy.
 
-Also available [on NPM](https://www.npmjs.com/package/leaflet-distortableimage) as `leaflet-distortableimage`
-
-The recommended Google satellite base layer can be integrated using this Leaflet plugin: https://gitlab.com/IvanSanchez/Leaflet.GridLayer.GoogleMutant
-
-Here's a screenshot:
-
-![screenshot](example.png)
+Also available on NPM as [leaflet-distortableimage](https://www.npmjs.com/package/leaflet-distortableimage).
 
 ## Setup
 

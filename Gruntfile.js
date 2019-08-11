@@ -116,7 +116,7 @@ module.exports = function(grunt) {
         tasks: ['build:js'],
       },
     },
-
+    
     concat: {
       dist: {
         src: [
@@ -137,13 +137,13 @@ module.exports = function(grunt) {
           'src/edit/tools/DistortableImage.PopupBar.js',
           'src/edit/tools/DistortableImage.ControlBar.js',
           'src/edit/DistortableImage.Edit.js',
-          'src/edit/DistortableCollection.Edit.js',
           'src/components/DistortableImage.Keymapper.js',
+          'src/edit/DoubleClickLabels.js',
           'src/edit/BoxSelector.js'
         ],
         dest: 'dist/leaflet.distortableimage.js'
       }
-    },
+    }
   });
 
   /* Run tests once. */

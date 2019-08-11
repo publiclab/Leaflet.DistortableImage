@@ -1,8 +1,6 @@
 L.Map.mergeOptions({
   boxSelector: true,
   boxZoom: false,
-  doubleClickLabels: true,
-  doubleClickZoom: false
 });
 
 /** 
@@ -136,28 +134,5 @@ L.Map.BoxSelector = L.Map.BoxZoom.extend({
   },
 });
 
-L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
-  addHooks: function() {
-    this._map.on('dblclick', this._onDoubleClick, this);
-  },
-
-  removeHooks: function() {
-    this._map.off('dblclick', this._onDoubleClick, this);
-  },
-
-  _onDoubleClick: function(e) {
-    var map = this._map,
-        labels = map._labels;
-
-    if (labels.opacity === 1) {
-      labels.opacity = 0;
-      labels.setOpacity(0);
-    } else {
-      labels.opacity = 1;
-      labels.setOpacity(1);
-    }
-  }
-});
-
 L.Map.addInitHook('addHandler', 'boxSelector', L.Map.BoxSelector);
-L.Map.addInitHook('addHandler', 'doubleClickLabels', L.Map.DoubleClickLabels);
+

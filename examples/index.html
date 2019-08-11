@@ -11,9 +11,6 @@
     <script src="../node_modules/leaflet-toolbar/dist/leaflet.toolbar.js"></script>
     <link href="../node_modules/leaflet-toolbar/dist/leaflet.toolbar.css" rel="stylesheet">
     
-    <!-- google mutant layer -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAxlBXzYwdeaOMKZgx_UNBp2qBtdD0L_9g"></script>
-    
     <!-- for full-res export -->
     <script src="../node_modules/jquery/dist/jquery.js"></script>
     <script defer src="../node_modules/webgl-distort/dist/webgl-distort.js"></script>
@@ -37,11 +34,14 @@
 
     (function() {
       
-      map = L.map("map").setView([51.505, -0.09], 13);
+      map = L.map('map', {
+        center: [51.505, -0.09],
+        zoom: 13
+      });
 
       map._googleMutant = L.tileLayer('http://mt0.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
         maxZoom: 18,
-        // opacity: 0.7,
+        opacity: 0.8,
       }).addTo(map);
 
       map._labels = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-labels/{z}/{x}/{y}{r}.{ext}', {
@@ -52,14 +52,6 @@
         maxZoom: 18,
         ext: 'png'
       }).addTo(map);
-
-    //   // listen for google maps
-      // map.on('zoomstart', function (eo) {
-      //   if (map._labels.opacity === 1) { 
-      //     map._labels.opacity = 0;
-      //     map._labels.setOpacity(0); 
-      //   }
-      // });
 
       // create an image
       img = L.distortableImageOverlay("example.jpg", {

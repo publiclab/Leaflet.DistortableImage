@@ -1909,9 +1909,13 @@ L.DistortableImage.Edit = L.Handler.extend({
       3: L.point(0, 0),
     };
 
-    L.DomEvent.on(map, 'click', this._deselect, this);
+    L.DomEvent.on(map, 'singleclick', this._singleClick , this);
     L.DomEvent.on(overlay._image, 'click', this._select, this);
+    // we only want to show labels on map dblclick - leave img dblclick open to something else
+    // if adding a method don't forget to attach the stop.
+    L.DomEvent.on(overlay._image, 'dblclick', L.DomEvent.stop, this);
 
+    /* Enable hotkeys. */
     L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
   },
 
@@ -1920,9 +1924,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     var overlay = this._overlay,
         map = overlay._map,
         eventParents = overlay._eventParents;
-
-    L.DomEvent.off(map, 'click', this._deselect, this);
-    L.DomEvent.off(overlay._image, 'click', this._select, this);
 
     // First, check if dragging exists - it may be off due to locking
     if (this.dragging) {
@@ -1956,6 +1957,12 @@ L.DistortableImage.Edit = L.Handler.extend({
       }
     }
 
+    L.DomEvent.off(map, 'singleclick', this._singleClick, this);
+    L.DomEvent.off(overlay._image, {
+      click: this._select,
+      dblclick: L.DomEvent.stop
+    }, this);
+    /* Disable hotkeys. */
     L.DomEvent.off(window, 'keydown', this._onKeyDown, this);
   },
 
@@ -2236,8 +2243,17 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._showToolbar();
   },
 
+  _singleClick: function(e) {
+    if (e.deselect) {
+      this._deselect();
+    } else {
+      return;
+    }
+  },
+
   _select: function(e) {
     this._selected = true;
+    this._lastSelected = this;
     this._showToolbar();
     this._showMarkers();
 
@@ -2475,309 +2491,6 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 });
 
-L.DistortableImage = L.DistortableImage || {};
-
-// this class holds the keybindings and toolbar API for an image collection instance
-L.DistortableCollection.Edit = L.Handler.extend({
-  options: {
-    keymap: L.distortableImage.group_action_map,
-  },
-
-  initialize: function(group, options) {
-    this._group = group;
-    L.setOptions(this, options);
-
-    L.distortableImage.group_action_map.Escape = '_deselectAll';
-  },
-
-  addHooks: function() {
-    var group = this._group;
-    var map = group._map;
-
-    this.editActions = this.options.actions;
-
-    L.DomEvent.on(document, 'keydown', this._onKeyDown, this);
-
-    L.DomEvent.on(map, {
-      click: this._deselectAll,
-      boxzoomend: this._addSelections,
-    }, this);
-
-    this._group.editable = true;
-    this._group.eachLayer(function(layer) {
-      layer.editing.enable();
-    });
-  },
-
-  removeHooks: function() {
-    var group = this._group;
-    var map = group._map;
-
-    L.DomEvent.off(document, 'keydown', this._onKeyDown, this);
-
-    L.DomEvent.off(map, {
-      click: this._deselectAll,
-      boxzoomend: this._addSelections,
-    }, this);
-
-    this._deselectAll();
-    this._group.editable = false;
-    this._group.eachLayer(function(layer) {
-      layer.editing.disable();
-    });
-  },
-
-  enable: function() {
-    this._enabled = true;
-    this.addHooks();
-    return this;
-  },
-
-  disable: function() {
-    this._enabled = false;
-    this.removeHooks();
-
-    return this;
-  },
-
-  _onKeyDown: function(e) {
-    var keymap = this.options.keymap;
-    var handlerName = keymap[e.key];
-
-    if (!this[handlerName]) {
-      return;
-    }
-
-    if (this._group.anySelected()) {
-      this[handlerName].call(this);
-    }
-  },
-
-  _deselectAll: function(e) {
-    var oe;
-
-    if (e) {
-      oe = e.originalEvent;
-    }
-    /**
-     * prevents image deselection following the 'boxzoomend' event - note 'shift' must not be released until dragging is complete
-     * also prevents deselection following a click on a disabled img by differentiating it from the map
-     */
-    if (oe && (oe.shiftKey || oe.target instanceof HTMLImageElement)) {
-      return;
-    }
-
-    this._group.eachLayer(function(layer) {
-      var edit = layer.editing;
-      L.DomUtil.removeClass(layer.getElement(), 'selected');
-      edit._deselect();
-    });
-
-    this._removeToolbar();
-
-    if (e) {
-      L.DomEvent.stopPropagation(e);
-    }
-  },
-
-  _unlockGroup: function() {
-    var map = this._group._map;
-
-    this._group.eachLayer(function(layer) {
-      if (this._group.isSelected(layer)) {
-        var edit = layer.editing;
-        if (edit._mode === 'lock') {
-          map.removeLayer(edit._handles[edit._mode]);
-          edit._unlock();
-          edit._refreshPopupIcons();
-        }
-      }
-    }, this);
-  },
-
-  _lockGroup: function() {
-    var map = this._group._map;
-
-    this._group.eachLayer(function(layer) {
-      if (this._group.isSelected(layer) ) {
-        var edit = layer.editing;
-        if (edit._mode !== 'lock') {
-          edit._lock();
-          map.addLayer(edit._handles[edit._mode]);
-          edit._refreshPopupIcons();
-          // map.addLayer also deselects the image, so we reselect here
-          L.DomUtil.addClass(layer.getElement(), 'selected');
-        }
-      }
-    }, this);
-  },
-
-  _addSelections: function(e) {
-    var box = e.boxZoomBounds;
-    var map = this._group._map;
-
-    this._group.eachLayer(function(layer) {
-      var edit = layer.editing;
-      if (edit._selected) {
-        edit._deselect();
-      }
-
-      var imgBounds = L.latLngBounds(layer.getCorner(2), layer.getCorner(1));
-      imgBounds = map._latLngBoundsToNewLayerBounds(imgBounds, map.getZoom(), map.getCenter());
-      if (box.intersects(imgBounds) && edit.enabled()) {
-        if (!this.toolbar) {
-          this._addToolbar();
-        }
-        L.DomUtil.addClass(layer.getElement(), 'selected');
-      }
-    }, this);
-  },
-
-  _removeGroup: function(e) {
-    var layersToRemove = this._group._toRemove();
-    var n = layersToRemove.length;
-
-    if (n === 0) {
-      return;
-    }
-
-    var choice = L.DomUtil.confirmDeletes(n);
-
-    if (choice) {
-      layersToRemove.forEach(function(layer) {
-        this._group.removeLayer(layer);
-      }, this);
-      if (!this._group.anySelected()) {
-        this._removeToolbar();
-      }
-    }
-
-    if (e) {
-      L.DomEvent.stopPropagation(e);
-    }
-  },
-
-  startExport: function(opts) {
-    opts = opts || {};
-    opts.collection = opts.collection || this._group.generateExportJson();
-    opts.frequency = opts.frequency || 3000;
-    opts.scale = opts.scale || 100; // switch it to _getAvgCmPerPixel !
-    var statusUrl;
-    var updateInterval;
-
-    // this may be overridden to update the UI to show export progress or completion
-    // eslint-disable-next-line require-jsdoc
-    function _defaultUpdater(data) {
-      data = JSON.parse(data);
-      // optimization: fetch status directly from google storage:
-      if (statusUrl !== data.status_url && data.status_url.match('.json')) {
-        statusUrl = data.status_url;
-      }
-      if (data.status === 'complete') {
-        clearInterval(updateInterval);
-      }
-      if (data.status === 'complete' && data.jpg !== null) {
-        alert('Export succeeded. http://export.mapknitter.org/' + data.jpg);
-      }
-      // TODO: update to clearInterval when status == "failed" if we update that in this file:
-      // https://github.com/publiclab/mapknitter-exporter/blob/main/lib/mapknitterExporter.rb
-      console.log(data);
-    }
-
-    // receives the URL of status.json, and starts running the updater to repeatedly fetch from status.json;
-    // this may be overridden to integrate with any UI
-    // eslint-disable-next-line require-jsdoc
-    function _defaultHandleStatusUrl(data) {
-      console.log(data);
-      statusUrl = '//export.mapknitter.org' + data;
-      opts.updater = opts.updater || _defaultUpdater;
-
-      // repeatedly fetch the status.json
-      updateInterval = setInterval(function intervalUpdater() {
-        $.ajax(statusUrl + '?' + Date.now(), {// bust cache with timestamp
-          type: 'GET',
-          crossDomain: true,
-        }).done(function(data) {
-          opts.updater(data);
-        });
-      }, opts.frequency);
-    }
-
-    // eslint-disable-next-line require-jsdoc
-    function _fetchStatusUrl(collection, scale) {
-      opts.handleStatusUrl = opts.handleStatusUrl || _defaultHandleStatusUrl;
-
-      $.ajax({
-        url: '//export.mapknitter.org/export',
-        crossDomain: true,
-        type: 'POST',
-        data: {
-          collection: JSON.stringify(collection.images),
-          scale: scale,
-        },
-        success: opts.handleStatusUrl, // this handles the initial response
-      });
-    }
-
-    _fetchStatusUrl(opts.collection, opts.scale);
-  },
-
-  _addToolbar: function() {
-    var group = this._group;
-    var map = group._map;
-
-    try {
-      if (!this.toolbar) {
-        this.toolbar = L.distortableImage.controlBar({
-          actions: this.editActions,
-          position: 'topleft',
-        }).addTo(map, group);
-        this.fire('toolbar:created');
-      }
-    } catch (e) { }
-  },
-
-  _removeToolbar: function() {
-    var map = this._group._map;
-
-    if (this.toolbar) {
-      map.removeLayer(this.toolbar);
-      this.toolbar = false;
-    } else {
-      return false;
-    }
-  },
-
-  hasTool: function(value) {
-    return this.editActions.some(function(action) {
-      return action === value;
-    });
-  },
-
-  addTool: function(value) {
-    if (value.baseClass === 'leaflet-toolbar-icon' && !this.hasTool(value)) {
-      this._removeToolbar();
-      this.editActions.push(value);
-      this._addToolbar();
-    } else {
-      return false;
-    }
-  },
-
-  removeTool: function(value) {
-    this.editActions.some(function(item, idx) {
-      if (this.editActions[idx] === value) {
-        this._removeToolbar();
-        this.editActions.splice(idx, 1);
-        this._addToolbar();
-        return true;
-      } else {
-        return false;
-      }
-    }, this);
-  },
-});
-
 L.DomUtil = L.DomUtil || {};
 L.DistortableImage = L.DistortableImage || {};
 L.distortableImage = L.DistortableImage;
@@ -2785,15 +2498,15 @@ L.distortableImage = L.DistortableImage;
 L.DistortableImage.Keymapper = L.Handler.extend({
 
   options: {
-    position: 'topright',
+    position: 'topright'
   },
 
-  initialize: function(map, options) {
+  initialize: function (map, options) {
     this._map = map;
     L.setOptions(this, options);
   },
 
-  addHooks: function() {
+  addHooks: function () {
     if (!this._keymapper) {
       this._toggler = this._toggleButton();
       this._scrollWrapper = this._wrap();
@@ -2809,7 +2522,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     }
   },
 
-  removeHooks: function() {
+  removeHooks: function () { 
     if (this._keymapper) {
       L.DomEvent.off(this._toggler, 'click', this._toggleKeymapper, this);
 
@@ -2818,45 +2531,45 @@ L.DistortableImage.Keymapper = L.Handler.extend({
         mouseenter: this._disableMap,
         mouseleave: this._enableMap,
       }, this);
-
+     
       L.DomUtil.remove(this._toggler);
       L.DomUtil.remove(this._scrollWrapper);
       L.DomUtil.remove(this._keymapper._container);
       this._keymapper = false;
-    }
+    } 
   },
 
-  _toggleButton: function() {
+  _toggleButton: function () {
     var toggler = L.DomUtil.create('a', '');
     toggler.setAttribute('id', 'toggle-keymapper');
     toggler.setAttribute('href', '#');
     toggler.setAttribute('role', 'button');
     toggler.setAttribute('title', 'Show Keybindings');
-    toggler.innerHTML = L.IconUtil.create('keyboard_open');
+    toggler.innerHTML = L.IconUtil.create("keyboard_open");
 
     return toggler;
   },
 
-  _wrap: function() {
+  _wrap: function () {
     var wrap = L.DomUtil.create('div', '');
     wrap.setAttribute('id', 'keymapper-wrapper');
     wrap.style.display = 'none';
 
     return wrap;
   },
+  
+  _setMapper: function (button, wrap) {
+    this._keymapper = L.control({ position: this.options.position });
 
-  _setMapper: function(button, wrap) {
-    this._keymapper = L.control({position: this.options.position});
-
-    this._container = this._keymapper.onAdd = function() {
-      var elWrapper = L.DomUtil.create('div', 'ldi-keymapper-hide');
-      elWrapper.setAttribute('id', 'ldi-keymapper');
+    this._container = this._keymapper.onAdd = function () {
+      var el_wrapper = L.DomUtil.create('div', 'ldi-keymapper-hide');
+      el_wrapper.setAttribute('id', 'ldi-keymapper');
       var divider = L.DomUtil.create('br', 'divider');
-      elWrapper.appendChild(divider);
-      elWrapper.appendChild(wrap);
+      el_wrapper.appendChild(divider);
+      el_wrapper.appendChild(wrap);       
       wrap.insertAdjacentHTML(
-          'beforeend',
-          '<table><tbody>' +
+        'beforeend',
+        '<table><tbody>' +
           '<hr id="keymapper-hr">' +
           /* eslint-disable */
           '<tr><td><div class="left"><span>Stack up / down</span></div><div class="right"><kbd>j</kbd>\xa0<kbd>k</kbd></div></td></tr>' +
@@ -2871,46 +2584,43 @@ L.DistortableImage.Keymapper = L.Handler.extend({
           '</tbody></table>'
       );
       /* eslint-enable */
-      elWrapper.appendChild(button);
-      return elWrapper;
+      el_wrapper.appendChild(button);
+      return el_wrapper;
     };
 
     this._keymapper.addTo(this._map);
   },
 
-  _toggleKeymapper: function(e) {
+  _toggleKeymapper: function (e) {
     L.DomEvent.stop(e);
     var container = document.getElementById('ldi-keymapper');
     var keymapWrap = document.getElementById('keymapper-wrapper');
 
-    var newClass = container.className === 'ldi-keymapper leaflet-control' ?
-      'ldi-keymapper-hide leaflet-control' : 'ldi-keymapper leaflet-control';
+    var newClass = container.className === 'ldi-keymapper leaflet-control' ? 'ldi-keymapper-hide leaflet-control' : 'ldi-keymapper leaflet-control';
     var newStyle = keymapWrap.style.display === 'none' ? 'block' : 'none';
 
     container.className = newClass;
     keymapWrap.style.display = newStyle;
 
-    L.IconUtil.toggleTooltip(this._toggler,
-        'Show Keybindings', 'Hide Keybindings');
-    this._toggler.innerHTML = this._toggler.innerHTML === 'close' ?
-      L.IconUtil.create('keyboard_open') : 'close';
+    L.IconUtil.toggleTooltip(this._toggler, 'Show Keybindings', 'Hide Keybindings');
+    this._toggler.innerHTML = this._toggler.innerHTML === 'close' ? L.IconUtil.create('keyboard_open') : 'close';
     L.DomUtil.toggleClass(this._toggler, 'close-icon');
   },
 
   _disableMap: function() {
     this._map.scrollWheelZoom.disable();
     this._map.dragging.disable();
+    this._map.doubleClickLabels.disable();
   },
-
+  
   _enableMap: function() {
     this._map.scrollWheelZoom.enable();
     this._map.dragging.enable();
+    this._map.doubleClickLabels.enable();
   },
 
   _injectIconSet: function() {
-    if (document.querySelector('#keymapper-iconset')) {
-      return;
-    }
+    if (document.querySelector('#keymapper-iconset')) { return; }
 
     var el = document.createElement('div');
     el.id = 'keymapper-iconset';
@@ -2920,13 +2630,12 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     el.innerHTML = this._iconset;
 
     document.querySelector('.leaflet-control-container').appendChild(el);
-  },
+  }
 });
 
 L.DistortableImage.Keymapper.addInitHook(function() {
   L.DistortableImage.Keymapper.prototype._n =
-    L.DistortableImage.Keymapper.prototype._n ?
-      L.DistortableImage.Keymapper.prototype._n + 1 : 1;
+    L.DistortableImage.Keymapper.prototype._n ? L.DistortableImage.Keymapper.prototype._n + 1 : 1;
 
   if (L.DistortableImage.Keymapper.prototype._n === 1) {
     this.enable();
@@ -2934,15 +2643,59 @@ L.DistortableImage.Keymapper.addInitHook(function() {
   }
 });
 
-L.distortableImage.keymapper = function(map, options) {
+L.distortableImage.keymapper = function (map, options) {
   return new L.DistortableImage.Keymapper(map, options);
 };
+
+L.Map.mergeOptions({ 
+  doubleClickLabels: true, 
+  doubleClickZoom: false
+});
+
+L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
+  addHooks: function() {
+    this._map.clicked = 0;
+
+    this._map.on('dblclick', this._onDoubleClick, this);
+    this._map.on('click', this._isDoubleClick, this);
+  },
+
+  _isDoubleClick: function() {
+    var map = this._map;
+    map.clicked += 1;
+    setTimeout(function() {
+      if (map.clicked === 1) {
+        map.clicked = 0;
+        map.fire('singleclick', { deselect: true });
+      }
+    }, 300);
+  },
+
+  removeHooks: function() {
+    this._map.off('dblclick', this._onDoubleClick, this);
+  },
+
+  _onDoubleClick: function() {
+    var map = this._map,
+        labels = map._labels;
+
+    map.clicked = 0;
+
+    if (labels.opacity === 1) {
+      labels.opacity = 0;
+      labels.setOpacity(0);
+    } else {
+      labels.opacity = 1;
+      labels.setOpacity(1);
+    }
+  }
+});
+
+L.Map.addInitHook('addHandler', 'doubleClickLabels', L.Map.DoubleClickLabels);
 
 L.Map.mergeOptions({
   boxSelector: true,
   boxZoom: false,
-  doubleClickLabels: true,
-  doubleClickZoom: false
 });
 
 /** 
@@ -3076,28 +2829,5 @@ L.Map.BoxSelector = L.Map.BoxZoom.extend({
   },
 });
 
-L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
-  addHooks: function() {
-    this._map.on('dblclick', this._onDoubleClick, this);
-  },
-
-  removeHooks: function() {
-    this._map.off('dblclick', this._onDoubleClick, this);
-  },
-
-  _onDoubleClick: function(e) {
-    var map = this._map,
-        labels = map._labels;
-
-    if (labels.opacity === 1) {
-      labels.opacity = 0;
-      labels.setOpacity(0);
-    } else {
-      labels.opacity = 1;
-      labels.setOpacity(1);
-    }
-  }
-});
-
 L.Map.addInitHook('addHandler', 'boxSelector', L.Map.BoxSelector);
-L.Map.addInitHook('addHandler', 'doubleClickLabels', L.Map.DoubleClickLabels);
+

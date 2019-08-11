@@ -50,9 +50,13 @@ L.DistortableImage.Edit = L.Handler.extend({
       3: L.point(0, 0),
     };
 
-    L.DomEvent.on(map, 'click', this._deselect, this);
+    L.DomEvent.on(map, 'singleclick', this._singleClick , this);
     L.DomEvent.on(overlay._image, 'click', this._select, this);
+    // we only want to show labels on map dblclick - leave img dblclick open to something else
+    // if adding a method don't forget to attach the stop.
+    L.DomEvent.on(overlay._image, 'dblclick', L.DomEvent.stop, this);
 
+    /* Enable hotkeys. */
     L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
   },
 
@@ -61,9 +65,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     var overlay = this._overlay,
         map = overlay._map,
         eventParents = overlay._eventParents;
-
-    L.DomEvent.off(map, 'click', this._deselect, this);
-    L.DomEvent.off(overlay._image, 'click', this._select, this);
 
     // First, check if dragging exists - it may be off due to locking
     if (this.dragging) {
@@ -97,6 +98,12 @@ L.DistortableImage.Edit = L.Handler.extend({
       }
     }
 
+    L.DomEvent.off(map, 'singleclick', this._singleClick, this);
+    L.DomEvent.off(overlay._image, {
+      click: this._select,
+      dblclick: L.DomEvent.stop
+    }, this);
+    /* Disable hotkeys. */
     L.DomEvent.off(window, 'keydown', this._onKeyDown, this);
   },
 
@@ -377,8 +384,17 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._showToolbar();
   },
 
+  _singleClick: function(e) {
+    if (e.deselect) {
+      this._deselect();
+    } else {
+      return;
+    }
+  },
+
   _select: function(e) {
     this._selected = true;
+    this._lastSelected = this;
     this._showToolbar();
     this._showMarkers();
 
