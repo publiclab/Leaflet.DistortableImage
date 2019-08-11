@@ -256,6 +256,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
     this.edgeMinWidth = this.options.edgeMinWidth;
     this.editable = this.options.editable;
+    this.scale = 1;
     this._url = url;
     this.rotation = 0;
     // window.rotation = this.rotation;
@@ -2937,14 +2938,17 @@ L.distortableImage.keymapper = function(map, options) {
   return new L.DistortableImage.Keymapper(map, options);
 };
 
-L.Map.mergeOptions({boxSelector: true, boxZoom: false});
+L.Map.mergeOptions({
+  boxSelector: true,
+  boxZoom: false,
+  labelsViz: true,
+  doubleClickZoom: false
+});
 
-/*
- * primarily Leaflet 1.5.1 source code.
- * Overriden so that its a selection box
- * with our `L.DistortableCollection` class
- * instead of a zoom box.
- */
+/** 
+ * primarily Leaflet 1.5.1 source code. Overriden so that its a selection box with our `L.DistortableCollection` class 
+ * instead of a zoom box. 
+ * */
 L.Map.BoxSelector = L.Map.BoxZoom.extend({
   initialize: function(map) {
     this._map = map;
@@ -3072,4 +3076,28 @@ L.Map.BoxSelector = L.Map.BoxZoom.extend({
   },
 });
 
+L.Map.LabelsViz = L.Map.DoubleClickZoom.extend({
+  addHooks: function() {
+    this._map.on('dblclick', this._onDoubleClick, this);
+  },
+
+  removeHooks: function() {
+    this._map.off('dblclick', this._onDoubleClick, this);
+  },
+
+  _onDoubleClick: function(e) {
+    var map = this._map,
+        labels = map._labels;
+
+    if (labels.opacity === 1) {
+      labels.opacity = 0;
+      labels.setOpacity(0);
+    } else {
+      labels.opacity = 1;
+      labels.setOpacity(1);
+    }
+  }
+});
+
 L.Map.addInitHook('addHandler', 'boxSelector', L.Map.BoxSelector);
+L.Map.addInitHook('addHandler', 'labelsViz', L.Map.LabelsViz);
