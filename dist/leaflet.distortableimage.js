@@ -2941,7 +2941,7 @@ L.distortableImage.keymapper = function(map, options) {
 L.Map.mergeOptions({
   boxSelector: true,
   boxZoom: false,
-  labelsViz: true,
+  doubleClickLabels: true,
   doubleClickZoom: false
 });
 
@@ -3076,7 +3076,7 @@ L.Map.BoxSelector = L.Map.BoxZoom.extend({
   },
 });
 
-L.Map.LabelsViz = L.Map.DoubleClickZoom.extend({
+L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
   addHooks: function() {
     this._map.on('dblclick', this._onDoubleClick, this);
   },
@@ -3100,4 +3100,4 @@ L.Map.LabelsViz = L.Map.DoubleClickZoom.extend({
 });
 
 L.Map.addInitHook('addHandler', 'boxSelector', L.Map.BoxSelector);
-L.Map.addInitHook('addHandler', 'labelsViz', L.Map.LabelsViz);
+L.Map.addInitHook('addHandler', 'doubleClickLabels', L.Map.DoubleClickLabels);
