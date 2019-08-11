@@ -8,7 +8,7 @@ A Leaflet extension to distort images -- "rubbersheeting" -- for the [MapKnitter
 
 Advantages include:
 
-* It can handle over 100 images smoothly, even on a smartphone.
+* It can handle over 100 images smoothly, even on a smartphone
 * Images can be right-clicked and downloaded individually in their original state
 * CSS3 transforms are GPU-accelerated in most (all?) browsers, for a very smooth UI
 * No need to server-side generate raster GeoTiffs, tilesets, etc. in order to view distorted imagery layers
