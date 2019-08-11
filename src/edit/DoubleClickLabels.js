@@ -7,11 +7,13 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
   addHooks: function() {
     this._map.clicked = 0;
 
-    this._map.on('dblclick', this._onDoubleClick, this);
-    this._map.on('click', this._isDoubleClick, this);
+    this._map.on({
+      click: this._fireIfSingle,
+      dblclick: this._onDoubleClick
+    }, this);
   },
 
-  _isDoubleClick: function() {
+  _fireIfSingle: function() {
     var map = this._map;
     map.clicked += 1;
     setTimeout(function() {
@@ -23,7 +25,10 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
   },
 
   removeHooks: function() {
-    this._map.off('dblclick', this._onDoubleClick, this);
+    this._map.off({
+      click: this._fireIfSingle,
+      dblclick: this._onDoubleClick
+    }, this);
   },
 
   _onDoubleClick: function() {
