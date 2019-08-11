@@ -50,7 +50,9 @@ L.DistortableImage.Edit = L.Handler.extend({
       3: L.point(0, 0),
     };
 
+    // custom event fired from DoubleClickLabels.js
     L.DomEvent.on(map, 'singleclick', this._singleClick , this);
+
     L.DomEvent.on(overlay._image, 'click', this._select, this);
     // we only want to show labels on map dblclick - leave img dblclick open to something else
     // if adding a method don't forget to attach the stop.
@@ -156,9 +158,9 @@ L.DistortableImage.Edit = L.Handler.extend({
     };
   },
 
-  _appendHandlesandDragable: function(mode) {
-    var overlay = this._overlay;
-    var map = overlay._map;
+  _appendHandlesandDragable: function (mode) {
+    var overlay = this._overlay,
+        map = overlay._map;
 
     map.addLayer(this._handles[mode]);
 
@@ -225,7 +227,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
    _removeToolbar: function() {
     var overlay = this._overlay,
-      map = overlay._map;
+        map = overlay._map;
 
     if (this.toolbar) {
       map.removeLayer(this.toolbar);
@@ -280,8 +282,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     map.removeLayer(this._handles[this._mode]);
 
-    /* Switch mode. */
-    if (this._mode === 'rotateScale') { this._mode = 'distort'; }
+    if (this._mode === 'rotateScale') { this._mode = 'distort'; } 
     else { this._mode = 'rotateScale'; }
 
     map.addLayer(this._handles[this._mode]);
@@ -387,14 +388,11 @@ L.DistortableImage.Edit = L.Handler.extend({
   _singleClick: function(e) {
     if (e.deselect) {
       this._deselect();
-    } else {
-      return;
-    }
+    } else { return; }
   },
 
   _select: function(e) {
     this._selected = true;
-    this._lastSelected = this;
     this._showToolbar();
     this._showMarkers();
 
