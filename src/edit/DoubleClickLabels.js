@@ -13,6 +13,13 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
     }, this);
   },
 
+  removeHooks: function() {
+    this._map.off({
+      click: this._fireIfSingle,
+      dblclick: this._onDoubleClick
+    }, this);
+  },
+
   _fireIfSingle: function() {
     var map = this._map;
     map.clicked += 1;
@@ -22,13 +29,6 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
         map.fire('singleclick', { deselect: true });
       }
     }, 300);
-  },
-
-  removeHooks: function() {
-    this._map.off({
-      click: this._fireIfSingle,
-      dblclick: this._onDoubleClick
-    }, this);
   },
 
   _onDoubleClick: function() {
