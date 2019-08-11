@@ -163,6 +163,30 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this._reset();
   },
 
+  scaleBy: function(scale) {
+    var map = this._map,
+        center = map.project(this.getCenter()),
+        i, p,
+        scaledCorners = {0: '', 1: '', 2: '', 3: ''},
+        edit = this.editing;
+
+    for (i = 0; i < 4; i++) {
+      p = map
+        .project(this.getCorner(i))
+        .subtract(center)
+        .multiplyBy(scale)
+        .add(center);
+      scaledCorners[i] = map.unproject(p);
+    }
+
+    this.setCorners(scaledCorners);
+    this.fire('update');
+
+    if (edit.toolbar &&  edit.toolbar instanceof L.DistortableImage.PopupBar) {
+      edit._updateToolbarPos();
+    }
+  },
+
   /* Copied from Leaflet v0.7 https://github.com/Leaflet/Leaflet/blob/66282f14bcb180ec87d9818d9f3c9f75afd01b30/src/dom/DomUtil.js#L189-L199 */
   /* since L.DomUtil.getTranslateString() is deprecated in Leaflet v1.0 */
   _getTranslateString: function(point) {

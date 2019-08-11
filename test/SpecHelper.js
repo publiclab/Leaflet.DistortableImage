@@ -70,4 +70,20 @@ chai.use(function(chai, utils) {
 		lat.to.be.closeTo(actual.lat, delta, message);
 		lng.to.be.closeTo(actual.lng, delta, message);
 	});
+
+	Assertion.addMethod('equalToPoint', function(actual) {
+		var obj = utils.flag(this, 'object');
+
+		expect(obj).to.have.property('x');
+		expect(obj).to.have.property('y');
+
+		var x = new Assertion(obj.x),
+			y = new Assertion(obj.y);
+
+		utils.transferFlags(this, x, false);
+		utils.transferFlags(this, y, false);
+
+		x.to.equal(actual.x);
+		y.to.equal(actual.y);
+	});
 });

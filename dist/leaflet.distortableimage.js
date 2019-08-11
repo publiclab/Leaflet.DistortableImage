@@ -377,6 +377,30 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this._reset();
   },
 
+  scaleBy: function(scale) {
+    var map = this._map,
+        center = map.project(this.getCenter()),
+        i, p,
+        scaledCorners = {0: '', 1: '', 2: '', 3: ''},
+        edit = this.editing;
+
+    for (i = 0; i < 4; i++) {
+      p = map
+        .project(this.getCorner(i))
+        .subtract(center)
+        .multiplyBy(scale)
+        .add(center);
+      scaledCorners[i] = map.unproject(p);
+    }
+
+    this.setCorners(scaledCorners);
+    this.fire('update');
+
+    if (edit.toolbar &&  edit.toolbar instanceof L.DistortableImage.PopupBar) {
+      edit._updateToolbarPos();
+    }
+  },
+
   /* Copied from Leaflet v0.7 https://github.com/Leaflet/Leaflet/blob/66282f14bcb180ec87d9818d9f3c9f75afd01b30/src/dom/DomUtil.js#L189-L199 */
   /* since L.DomUtil.getTranslateString() is deprecated in Leaflet v1.0 */
   _getTranslateString: function(point) {
@@ -1299,13 +1323,10 @@ L.ScaleHandle = L.EditHandle.extend({
 		var overlay = this._handled,
 			formerLatLng = overlay.getCorner(this._corner),
 			newLatLng = this.getLatLng(),
-
 			scale = this._calculateScalingFactor(formerLatLng, newLatLng);
 
-		overlay.editing._scaleBy(scale);
-
-		overlay.fire('update');
-		overlay.editing._updateToolbarPos();
+		if (scale  === 0) { return; }
+		if (scale !== 1) { overlay.scaleBy(scale); }
 	},
 
 	updateHandle: function() {
@@ -2100,26 +2121,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._updateToolbarPos();
 
     this._overlay.rotation = angle;
-  },
-
-  _scaleBy: function(scale) {
-    var overlay = this._overlay,
-      map = overlay._map,
-      center = map.project(overlay.getCenter()),
-      i,
-      p;
-
-    for (i = 0; i < 4; i++) {
-      p = map
-        .project(overlay.getCorner(i))
-        .subtract(center)
-        .multiplyBy(scale)
-        .add(center);
-      overlay.setCorner(i, map.unproject(p));
-      console.log('corner', map.project(overlay.getCorner(i)));
-    }
-
-    overlay._reset();
   },
 
   _enableDragging: function() {

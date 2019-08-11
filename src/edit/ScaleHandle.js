@@ -12,13 +12,10 @@ L.ScaleHandle = L.EditHandle.extend({
 		var overlay = this._handled,
 			formerLatLng = overlay.getCorner(this._corner),
 			newLatLng = this.getLatLng(),
-
 			scale = this._calculateScalingFactor(formerLatLng, newLatLng);
 
-		overlay.editing._scaleBy(scale);
-
-		overlay.fire('update');
-		overlay.editing._updateToolbarPos();
+		if (scale  === 0) { return; }
+		if (scale !== 1) { overlay.scaleBy(scale); }
 	},
 
 	updateHandle: function() {

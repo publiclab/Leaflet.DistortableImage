@@ -223,26 +223,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._overlay.rotation = angle;
   },
 
-  _scaleBy: function(scale) {
-    var overlay = this._overlay,
-      map = overlay._map,
-      center = map.project(overlay.getCenter()),
-      i,
-      p;
-
-    for (i = 0; i < 4; i++) {
-      p = map
-        .project(overlay.getCorner(i))
-        .subtract(center)
-        .multiplyBy(scale)
-        .add(center);
-      overlay.setCorner(i, map.unproject(p));
-      console.log('corner', map.project(overlay.getCorner(i)));
-    }
-
-    overlay._reset();
-  },
-
   _enableDragging: function() {
     var overlay = this._overlay,
       map = overlay._map;
