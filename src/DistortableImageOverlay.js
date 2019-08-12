@@ -9,7 +9,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   initialize: function(url, options) {
-    // this._toolArray = L.DistortableImage.EditToolbarDefaults;
     this.edgeMinWidth = this.options.edgeMinWidth;
     this._url = url;
     this.rotation = 0;
@@ -72,17 +71,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     });
   },
 
-  /** this is never used but leaving here for now */
-
-  // _addTool: function(tool) {
-  //   this._toolArray.push(tool);
-  //   L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
-  //     options: {
-  //       actions: this._toolArray
-  //     }
-  //   });
-  // },
-
   _initImageDimensions: function() {
     var map = this._map,
       originalImageWidth = L.DomUtil.getStyle(this._image, "width"),
@@ -137,38 +125,57 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   setCorner: function(corner, latlng) {
+    var edit = this.editing;
+    
     this._corners[corner] = latlng;
     this._reset();
+    this.fire('update');
+    if (edit.toolbar && edit.toolbar instanceof L.DistortableImage.PopupBar) {
+      edit._updateToolbarPos();
+    }
   },
 
-  // fires a reset after all corner positions are updated instead of after each one (above). Use for translating
+  // fires a reset after all corner positions are updated instead of after each one (above). Use if you're updating all 4 corners
   setCorners: function(latlngObj) {
-    var i = 0;
+    var edit = this.editing,
+        i = 0;
+
     for (var k in latlngObj) {
       this._corners[i] = latlngObj[k];
       i += 1;
     }
 
     this._reset();
+    this.fire('update');
+    if (edit.toolbar && edit.toolbar instanceof L.DistortableImage.PopupBar) {
+      edit._updateToolbarPos();
+    }
   },
 
   _setCornersFromPoints: function(pointsObj) {
-    var map = this._map;
-    var i = 0;
+    var map = this._map,
+        edit =  this.editing,
+        i = 0;
+
     for (var k in pointsObj) {
       this._corners[i] = map.layerPointToLatLng(pointsObj[k]);
       i += 1;
     }
 
     this._reset();
+    this.fire('update');
+    if (edit.toolbar && edit.toolbar instanceof L.DistortableImage.PopupBar) {
+      edit._updateToolbarPos();
+    }
   },
 
   scaleBy: function(scale) {
     var map = this._map,
         center = map.project(this.getCenter()),
         i, p,
-        scaledCorners = {0: '', 1: '', 2: '', 3: ''},
-        edit = this.editing;
+        scaledCorners = {0: '', 1: '', 2: '', 3: ''};
+
+    if (scale === 0) { return; }
 
     for (i = 0; i < 4; i++) {
       p = map
@@ -180,12 +187,30 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     }
 
     this.setCorners(scaledCorners);
-    this.fire('update');
-
-    if (edit.toolbar &&  edit.toolbar instanceof L.DistortableImage.PopupBar) {
-      edit._updateToolbarPos();
-    }
   },
+
+  _rotateBy: function(angle) {
+    var map = this._map,
+        center = map.project(this.getCenter()),
+        corners = {0: '', 1: '', 2: '', 3: ''},
+        i, p, q;
+
+    for (i = 0; i < 4; i++) {
+      p = map.project(this.getCorner(i)).subtract(center);
+      q = L.point(
+        Math.cos(angle) * p.x - Math.sin(angle) * p.y,
+        Math.sin(angle) * p.x + Math.cos(angle) * p.y
+      );
+      corners[i] = map.unproject(q.add(center));
+    }
+
+    this.setCorners(corners);
+
+    // window.angle = L.TrigUtil.radiansToDegrees(angle);
+
+    this.rotation -= L.TrigUtil.radiansToDegrees(angle);
+  },
+
 
   /* Copied from Leaflet v0.7 https://github.com/Leaflet/Leaflet/blob/66282f14bcb180ec87d9818d9f3c9f75afd01b30/src/dom/DomUtil.js#L189-L199 */
   /* since L.DomUtil.getTranslateString() is deprecated in Leaflet v1.0 */

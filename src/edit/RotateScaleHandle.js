@@ -10,33 +10,27 @@ L.RotateScaleHandle = L.EditHandle.extend({
 
 	_onHandleDrag: function() {
 		var overlay = this._handled,
-			edit = overlay.editing,
+			map = overlay._map,
+			edgeMinWidth = overlay.edgeMinWidth,
 			formerLatLng = overlay.getCorner(this._corner),
 			newLatLng = this.getLatLng(),
 
 			angle = this.calculateAngleDelta(formerLatLng, newLatLng),
 			scale = this._calculateScalingFactor(formerLatLng, newLatLng);
 		
-		if (angle !== 0) { edit._rotateBy(angle); }
+		if (angle !== 0) { overlay._rotateBy(angle); }
 
-		/* 
-		  checks whether the "edgeMinWidth" property is set and tracks the minimum edge length;
-		  this enables preventing scaling to zero, but we might also add an overall scale limit
-		*/		
-		if (overlay.hasOwnProperty('edgeMinWidth')){
-			var edgeMinWidth = overlay.edgeMinWidth;
-                        var corner1 = overlay._map.latLngToContainerPoint(overlay.getCorner(0)),
-                            corner2 = overlay._map.latLngToContainerPoint(overlay.getCorner(1));
-                        var w = Math.abs(corner1.x - corner2.x);
-                        var h = Math.abs(corner1.y - corner2.y);
-                        var distance = Math.sqrt(w * w + h * h);
-			if ((distance > edgeMinWidth) || scale > 1) {
-				edit._scaleBy(scale);
-			}
-		} 
-
-		overlay.fire('update');
-		edit._updateToolbarPos();
+		if (!edgeMinWidth) { edgeMinWidth = 50; } /* just in case */
+		var corner1 = map.latLngToContainerPoint(overlay.getCorner(0)),
+			corner2 = map.latLngToContainerPoint(overlay.getCorner(1)),
+			w = Math.abs(corner1.x - corner2.x),
+			h = Math.abs(corner1.y - corner2.y),
+			distance = Math.sqrt(w * w + h * h);
+		if (distance > edgeMinWidth || scale > 1) {
+			overlay.scaleBy(scale);
+		} else {
+			overlay.scaleBy(1);
+		}
 	},
 
 	updateHandle: function() {

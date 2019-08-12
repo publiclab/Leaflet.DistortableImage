@@ -101,7 +101,7 @@ describe("L.DistortableImage.Edit", function() {
             expect(Math.round(scaledC1.lng)).to.equal(Math.round(c2.lng));
 		});
 		
-		it('Keeps image proportions when scaling', function() {
+		it('Maintain image proportions when scaling', function() {
 			var w = overlay.getElement().getBoundingClientRect().width,
 				h = overlay.getElement().getBoundingClientRect().height;
 

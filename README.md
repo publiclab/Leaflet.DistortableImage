@@ -374,13 +374,15 @@ Defaults:
 
 - [`getCorners()`](#corners) and [`getCorner(idx)`](#corners)
 
+- `setCorner(idx, latLng)` and `setCorners(corners)`
+
 - `getCenter()` - Calculates the centroid of the image.
 
-- `scaleBy(num)` - scales the image by the given ratio, updating image, and where relevant, marker, and toolbar positioning.
+- `scaleBy(num)` - scales the image by the given ratio, updating image and, where applicable, markers and toolbar positioning.
    - ex. `overlay.scaleBy(0.5)`
    - a scale of 1 will leave the image unchanged
    - a scale of 0 will leave the image unchanged - dilation cannot have scale factor 0.
-   - a negative scale will invert the image, then change its size depending on the scale value
+   - a negative scale will invert the image and change its size depending on the scale value
 
 <hr>
 

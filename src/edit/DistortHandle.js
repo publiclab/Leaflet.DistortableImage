@@ -13,9 +13,6 @@ L.DistortHandle = L.EditHandle.extend({
     var overlay = this._handled;
 
     overlay.setCorner(this._corner, this.getLatLng());
-
-    overlay.fire("update");
-    overlay.editing._updateToolbarPos();
   },
 
   updateHandle: function() {
