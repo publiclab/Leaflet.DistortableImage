@@ -214,6 +214,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   _revert: function() {
     var angle = this.rotation,
         map = this._map,
+        edit =  this.editing,
         center = map.project(this.getCenter()),
         offset = this._initialDimensions.offset,
         corners = { 
@@ -223,15 +224,13 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
           3: map.unproject(center.add(offset))
         };
 
-    map.removeLayer(this.editing._handles[this.editing._mode]);
+    map.removeLayer(edit._handles[edit._mode]);
 
     this.setCorners(corners);
 
     if (angle !== 0) { this.rotateBy(L.TrigUtil.degreesToRadians(360 - angle)); }
 
-    map.addLayer(this.editing._handles[this.editing._mode]);
-
-    // this._updateToolbarPos();
+    map.addLayer(edit._handles[edit._mode]);
 
     this.rotation = angle;
 },
