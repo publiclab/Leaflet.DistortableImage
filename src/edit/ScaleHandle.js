@@ -29,7 +29,8 @@ L.ScaleHandle = L.EditHandle.extend({
 
 		if (distance > edgeMinWidth|| scale > 1) {
 			overlay.scaleBy(scale);
-		/** scaling by 1 instead of just not scaling at all prevents a small marker flicker */
+		/** running scale logic even for a scale ratio of 1
+		 * prevents a small, occasional marker flicker */
 		} else {
 			overlay.scaleBy(1);
 		}

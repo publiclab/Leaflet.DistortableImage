@@ -374,15 +374,34 @@ Defaults:
 
 - [`getCorners()`](#corners) and [`getCorner(idx)`](#corners)
 
-- `setCorner(idx, latLng)` and `setCorners(corners)`
+- `setCorner(idx, latLng)` - update an individual image corner and, where applicable, marker and toolbar positioning. We use this internally for `distort` mode.
+
+- `setCorners(corners)` - same as`setCorner`, but takes in a "corners" object to update all 4 corners. We use this internally for image translation, rotation, and scaling. 
+   - Ex. 
+   ```JS
+   /** keys: 0-4, values: L.latLng objects for desired corner positions */
+    scaledCorners = {0: '', 1: '', 2: '', 3: ''};
+
+    for (i = 0; i < 4; i++) {
+      p = map
+        .project(this.getCorner(i))
+        .subtract(center)
+        .multiplyBy(scale)
+        .add(center);
+      scaledCorners[i] = map.unproject(p);
+    }
+
+    this.setCorners(scaledCorners);
+  ```
 
 - `getCenter()` - Calculates the centroid of the image.
 
-- `scaleBy(num)` - scales the image by the given ratio, updating image and, where applicable, markers and toolbar positioning.
+- `scaleBy(num)` - scales the image by the given ratio and calls `setCorners`.
    - ex. `overlay.scaleBy(0.5)`
-   - a scale of 1 will leave the image unchanged
-   - a scale of 0 will leave the image unchanged - dilation cannot have scale factor 0.
-   - a negative scale will invert the image and change its size depending on the scale value
+   - a scale of 0 or 1 will leave the image unchanged - but 0 causes the function to automatically return
+   - a negative scale will invert the image and, depending on the scale value, change its size
+
+- `rotateBy(rad)` - rotates the image by the given radian angle and calls `setCorners`.
 
 <hr>
 
