@@ -18,7 +18,7 @@ L.RotateScaleHandle = L.EditHandle.extend({
 			angle = this.calculateAngleDelta(formerLatLng, newLatLng),
 			scale = this._calculateScalingFactor(formerLatLng, newLatLng);
 		
-		if (angle !== 0) { overlay._rotateBy(angle); }
+		if (angle !== 0) { overlay.rotateBy(angle); }
 
 		if (!edgeMinWidth) { edgeMinWidth = 50; } /* just in case */
 		var corner1 = map.latLngToContainerPoint(overlay.getCorner(0)),

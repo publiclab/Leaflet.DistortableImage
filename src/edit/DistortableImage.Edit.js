@@ -172,33 +172,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     }, this);
   },
 
-  _revert: function() {
-    var overlay = this._overlay;
-    var angle = overlay.rotation;
-    var map = overlay._map;
-    var center = map.latLngToLayerPoint(overlay.getCenter());
-    var offset = overlay._initialDimensions.offset;
-
-    var corners = { 
-      0: map.layerPointToLatLng(center.subtract(offset)),
-      1: map.layerPointToLatLng(center.add(L.point(offset.x, -offset.y))),
-      2: map.layerPointToLatLng(center.add(L.point(-offset.x, offset.y))),
-      3: map.layerPointToLatLng(center.add(offset))
-    };
-
-    map.removeLayer(this._handles[this._mode]);
-
-    overlay.setCorners(corners);
-
-    if (angle !== 0) { this._rotateBy(L.TrigUtil.degreesToRadians(360 - angle)); }
-
-    map.addLayer(this._handles[this._mode]);
-
-    this._updateToolbarPos();
-
-    this._overlay.rotation = angle;
-  },
-
   _enableDragging: function() {
     var overlay = this._overlay,
       map = overlay._map;

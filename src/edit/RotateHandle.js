@@ -14,7 +14,7 @@ L.RotateHandle = L.EditHandle.extend({
 			newLatLng = this.getLatLng(),
 			angle = this.calculateAngleDelta(formerLatLng, newLatLng);
 
-	 	if (angle !== 0) { overlay._rotateBy(angle); }
+	 	if (angle !== 0) { overlay.rotateBy(angle); }
 	},
 
 	updateHandle: function() {

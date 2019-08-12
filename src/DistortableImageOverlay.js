@@ -189,7 +189,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this.setCorners(scaledCorners);
   },
 
-  _rotateBy: function(angle) {
+  rotateBy: function(angle) {
     var map = this._map,
         center = map.project(this.getCenter()),
         corners = {0: '', 1: '', 2: '', 3: ''},
@@ -211,6 +211,30 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this.rotation -= L.TrigUtil.radiansToDegrees(angle);
   },
 
+  _revert: function() {
+    var angle = this.rotation,
+        map = this._map,
+        center = map.project(this.getCenter()),
+        offset = this._initialDimensions.offset,
+        corners = { 
+          0: map.unproject(center.subtract(offset)),
+          1: map.unproject(center.add(L.point(offset.x, -offset.y))),
+          2: map.unproject(center.add(L.point(-offset.x, offset.y))),
+          3: map.unproject(center.add(offset))
+        };
+
+    map.removeLayer(this.editing._handles[this.editing._mode]);
+
+    this.setCorners(corners);
+
+    if (angle !== 0) { this.rotateBy(L.TrigUtil.degreesToRadians(360 - angle)); }
+
+    map.addLayer(this.editing._handles[this.editing._mode]);
+
+    // this._updateToolbarPos();
+
+    this.rotation = angle;
+},
 
   /* Copied from Leaflet v0.7 https://github.com/Leaflet/Leaflet/blob/66282f14bcb180ec87d9818d9f3c9f75afd01b30/src/dom/DomUtil.js#L189-L199 */
   /* since L.DomUtil.getTranslateString() is deprecated in Leaflet v1.0 */

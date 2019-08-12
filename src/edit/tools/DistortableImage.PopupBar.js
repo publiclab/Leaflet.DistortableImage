@@ -239,9 +239,7 @@ var Revert = L.EditAction.extend({
   },
 
   addHooks: function() {
-    var editing = this._overlay.editing;
-
-    editing._revert();
+    this._overlay._revert();
   }
 });
 
