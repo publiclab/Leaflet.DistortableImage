@@ -376,7 +376,7 @@ Defaults:
 
 - `setCorner(idx, latLng)` - update an individual image corner and, where applicable, marker and toolbar positioning. We use this internally for `distort` mode.
 
-- `setCorners(corners)` - same as`setCorner`, but takes in a "corners" object to update all 4 corners. We use this internally for image translation, rotation, and scaling. 
+- `setCorners(corners)` - same as`setCorner`, but takes in a "corners" object to update all 4 corners with only one UI update at the end. We use this internally for image translation, rotation, and scaling. 
    - Ex. 
    ```JS
    /** keys: 0-4, values: L.latLng objects for desired corner positions */

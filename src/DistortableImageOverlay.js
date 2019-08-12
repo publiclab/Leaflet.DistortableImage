@@ -135,7 +135,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     }
   },
 
-  // fires a reset after all corner positions are updated instead of after each one (above). Use if you're updating all 4 corners
   setCorners: function(latlngObj) {
     var edit = this.editing,
         i = 0;
