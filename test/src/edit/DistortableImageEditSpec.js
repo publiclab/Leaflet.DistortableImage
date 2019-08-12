@@ -36,8 +36,7 @@ describe("L.DistortableImage.Edit", function() {
 		chai.simulateClick(img);
 
 		overlay.setCorner(0, L.latLng(41.7934, -87.6252));
-		overlay.fire('update');
-		
+
 		/* Warp handles are currently on the map; they should have been updated. */
 		edit._distortHandles.eachLayer(function(handle) {
 			expect(handle.getLatLng()).to.be.closeToLatLng(corners[handle._corner]);
@@ -48,70 +47,6 @@ describe("L.DistortableImage.Edit", function() {
 		/* After we toggle modes, the rotateScaleHandles are on the map and should be synced. */
 		edit._rotateScaleHandles.eachLayer(function(handle) {
 			expect(handle.getLatLng()).to.be.closeToLatLng(corners[handle._corner]);
-		});
-	});
-
-	it.skip("Should keep image in sync with the map while dragging.", function() {
-		var edit = overlay.editing,
-			dragging;
-
-		edit.enable();
-
-		dragging = edit.dragging;
-
-		/* _reset is not called by #onAdd, for some reason... */
-		overlay._reset();
-
-		/* Simulate a sequence of drag events. */
-		dragging._onDown({ touches: [{ clientX: 0, clientY: 0 }], target: overlay._image });
-		dragging._onMove({ touches: [{ clientX: 20, clientY: 30 }], target: overlay._image });
-		dragging._onUp();
-
-		map.setView([41.7896,-87.6996]);
-	});
-
-	describe('#scaleBy', function() {
-		it('Should not change image dimensions when passed a value of 1 or 0', function() {
-			var img = overlay.getElement(),
-				dims = [img.getBoundingClientRect().width, img.getBoundingClientRect().height];
-
-			overlay.scaleBy(1);
-
-			var scaledDims = [img.getBoundingClientRect().width, img.getBoundingClientRect().height];
-			expect(dims).to.be.eql(scaledDims);
-
-			overlay.scaleBy(0);
-
-			var scaledDims2 = [img.getBoundingClientRect().width, img.getBoundingClientRect().height];
-			expect(dims).to.be.eql(scaledDims2);
-		});
-
-		it('Should invert image dimensions when passed a negative value', function() {
-			var c2 = overlay.getCorner(2), 
-				c3 = overlay.getCorner(3);
-
-            overlay.scaleBy(-1);
- 
-			var scaledC = overlay.getCorner(0), 
-				scaledC1 = overlay.getCorner(1);
-
-            expect(Math.round(scaledC.lat)).to.equal(Math.round(c3.lat));
-            expect(Math.round(scaledC.lng)).to.equal(Math.round(c3.lng));
-            expect(Math.round(scaledC1.lat)).to.equal(Math.round(c2.lat));
-            expect(Math.round(scaledC1.lng)).to.equal(Math.round(c2.lng));
-		});
-		
-		it('Maintain image proportions when scaling', function() {
-			var w = overlay.getElement().getBoundingClientRect().width,
-				h = overlay.getElement().getBoundingClientRect().height;
-
-			overlay.scaleBy(0.5);
-
-			var w2 = overlay.getElement().getBoundingClientRect().width,
-				h2 = overlay.getElement().getBoundingClientRect().height;
-
-			expect(Math.round(w / 2)).to.be.equal(Math.round(w2));
-			expect(Math.round(h / 2)).to.be.equal(Math.round(h2));
 		});
 	});
 
