@@ -178,94 +178,23 @@ L.DistortableImage.Edit = L.Handler.extend({
     }, this);
   },
 
-  _rotateBy: function(angle) {
-    var overlay = this._overlay,
-      map = overlay._map,
-      center = map.latLngToLayerPoint(overlay.getCenter()),
-      i,
-      p,
-      q;
-
-    for (i = 0; i < 4; i++) {
-      p = map.latLngToLayerPoint(overlay.getCorner(i)).subtract(center);
-      q = L.point(
-        Math.cos(angle) * p.x - Math.sin(angle) * p.y,
-        Math.sin(angle) * p.x + Math.cos(angle) * p.y
-      );
-      overlay.setCorner(i, map.layerPointToLatLng(q.add(center)));
-    }
-
-    // window.angle = L.TrigUtil.radiansToDegrees(angle);
-
-    this._overlay.rotation -= L.TrigUtil.radiansToDegrees(angle);
-
-    overlay._reset();
-  },
-
-  _revert: function() {
+  _dragBy: function (formerPoint, newPoint) {
     var overlay = this._overlay;
-    var angle = overlay.rotation;
     var map = overlay._map;
-    var center = map.latLngToLayerPoint(overlay.getCenter());
-    var offset = overlay._initialDimensions.offset;
-
-    var corners = { 
-      0: map.layerPointToLatLng(center.subtract(offset)),
-      1: map.layerPointToLatLng(center.add(L.point(offset.x, -offset.y))),
-      2: map.layerPointToLatLng(center.add(L.point(-offset.x, offset.y))),
-      3: map.layerPointToLatLng(center.add(offset))
-    };
-
-    map.removeLayer(this._handles[this._mode]);
-
-    overlay.setCorners(corners);
-
-    if (angle !== 0) { this._rotateBy(L.TrigUtil.degreesToRadians(360 - angle)); }
-
-    map.addLayer(this._handles[this._mode]);
-
-    this._updateToolbarPos();
-
-    this._overlay.rotation = angle;
-  },
-
-  _scaleBy: function(scale) {
-    var overlay = this._overlay,
-      map = overlay._map,
-      center = map.project(overlay.getCenter()),
-      i,
-      p;
+    var center = map.project(overlay.getCenter());
+    var i;
+    var p;
+    var diference = map.project(formerPoint).subtract(map.project(newPoint));
 
     for (i = 0; i < 4; i++) {
       p = map
         .project(overlay.getCorner(i))
-        .subtract(center)
-        .multiplyBy(scale)
-        .add(center);
+        .subtract(diference);
       overlay.setCorner(i, map.unproject(p));
-      console.log('corner', map.project(overlay.getCorner(i)));
     }
-
     overlay._reset();
   },
 
-  _dragBy: function (formerPoint, newPoint) {
-	  var overlay = this._overlay,
-	  	map = overlay._map,
-		center = map.project(overlay.getCenter()),
-		i,
-		p,
-		diference = map.project (formerPoint).subtract (map.project (newPoint));
-	  
-	  for (i = 0; i < 4; i++) {
-        p = map
-          .project(overlay.getCorner(i))
-          .subtract(diference);
-        overlay.setCorner(i, map.unproject(p));
-      }
-	  overlay._reset();	  
-  },
-  
   _enableDragging: function() {
     var overlay = this._overlay,
       map = overlay._map;

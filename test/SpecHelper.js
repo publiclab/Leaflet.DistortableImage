@@ -5,7 +5,7 @@ beforeEach(function() {
 
 	/* Chain global testing utilites below to chai*/
 
-        /*
+    /*
 	 * simulate mouse events manually in the DOM on a passed element. 
 	 *   - (Most) useful parameters: 
 	 *      1) type: string - this is for 'mousedown'. Other options include 'click', 'dblick', 'mouseup', 'mouseover', 'mouseout', 'mousemove
