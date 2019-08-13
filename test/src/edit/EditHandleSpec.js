@@ -3,15 +3,15 @@ describe('L.EditHandle', function() {
 
     beforeEach(function(done) {
         map = L.map(L.DomUtil.create('div', '', document.body))
-               .setView([41.7896, -87.5996], 15);
+               .setView([51.505, -0.09], 13);
 
         overlay = L.distortableImageOverlay('/examples/example.jpg', {
-            corners: [
-                L.latLng(41.7934, -87.6052),
-                L.latLng(41.7934, -87.5852),
-                L.latLng(41.7834, -87.5852),
-                L.latLng(41.7834, -87.6052)
-            ]
+          corners: [
+              L.latLng(51.52, -0.14),
+              L.latLng(51.52, -0.1),
+              L.latLng(51.5, -0.14),
+              L.latLng(51.5, -0.1)
+          ]
         }).addTo(map);
 
         L.DomEvent.on(overlay._image, 'load', function() {
@@ -36,6 +36,17 @@ describe('L.EditHandle', function() {
                 scale = scaleHandle._calculateScalingFactor(latlng, latlng);
 
             expect(scale).to.equal(1);
+        });
+
+        it('Should return a smaller value as the 2nd latlng gets closer to the images original center.', function() {
+            var latlng = overlay.getCorner(0),
+                latlng2 = L.latLng(51.51, -0.13),
+                latlng3 = L.latLng(51.51, -0.12),
+                scale = scaleHandle._calculateScalingFactor(latlng, latlng2);
+                scale2 = scaleHandle._calculateScalingFactor(latlng, latlng3);
+           
+            expect(scale).to.be.below(1);
+            expect(scale2).to.be.below(scale);
         });
     });
 });

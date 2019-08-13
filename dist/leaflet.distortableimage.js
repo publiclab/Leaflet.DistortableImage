@@ -223,7 +223,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   initialize: function(url, options) {
-    // this._toolArray = L.DistortableImage.EditToolbarDefaults;
     this.edgeMinWidth = this.options.edgeMinWidth;
     this._url = url;
     this.rotation = 0;
@@ -286,17 +285,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     });
   },
 
-  /** this is never used but leaving here for now */
-
-  // _addTool: function(tool) {
-  //   this._toolArray.push(tool);
-  //   L.DistortableImage.EditToolbar = LeafletToolbar.Popup.extend({
-  //     options: {
-  //       actions: this._toolArray
-  //     }
-  //   });
-  // },
-
   _initImageDimensions: function() {
     var map = this._map,
       originalImageWidth = L.DomUtil.getStyle(this._image, "width"),
@@ -351,31 +339,114 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   setCorner: function(corner, latlng) {
+    var edit = this.editing;
+    
     this._corners[corner] = latlng;
     this._reset();
+    this.fire('update');
+    if (edit.toolbar && edit.toolbar instanceof L.DistortableImage.PopupBar) {
+      edit._updateToolbarPos();
+    }
   },
 
-  // fires a reset after all corner positions are updated instead of after each one (above). Use for translating
   setCorners: function(latlngObj) {
-    var i = 0;
+    var edit = this.editing,
+        i = 0;
+
     for (var k in latlngObj) {
       this._corners[i] = latlngObj[k];
       i += 1;
     }
 
     this._reset();
+    this.fire('update');
+    if (edit.toolbar && edit.toolbar instanceof L.DistortableImage.PopupBar) {
+      edit._updateToolbarPos();
+    }
   },
 
   _setCornersFromPoints: function(pointsObj) {
-    var map = this._map;
-    var i = 0;
+    var map = this._map,
+        edit =  this.editing,
+        i = 0;
+
     for (var k in pointsObj) {
       this._corners[i] = map.layerPointToLatLng(pointsObj[k]);
       i += 1;
     }
 
     this._reset();
+    this.fire('update');
+    if (edit.toolbar && edit.toolbar instanceof L.DistortableImage.PopupBar) {
+      edit._updateToolbarPos();
+    }
   },
+
+  scaleBy: function(scale) {
+    var map = this._map,
+        center = map.project(this.getCenter()),
+        i, p,
+        scaledCorners = {0: '', 1: '', 2: '', 3: ''};
+
+    if (scale === 0) { return; }
+
+    for (i = 0; i < 4; i++) {
+      p = map
+        .project(this.getCorner(i))
+        .subtract(center)
+        .multiplyBy(scale)
+        .add(center);
+      scaledCorners[i] = map.unproject(p);
+    }
+
+    this.setCorners(scaledCorners);
+  },
+
+  rotateBy: function(angle) {
+    var map = this._map,
+        center = map.project(this.getCenter()),
+        corners = {0: '', 1: '', 2: '', 3: ''},
+        i, p, q;
+
+    for (i = 0; i < 4; i++) {
+      p = map.project(this.getCorner(i)).subtract(center);
+      q = L.point(
+        Math.cos(angle) * p.x - Math.sin(angle) * p.y,
+        Math.sin(angle) * p.x + Math.cos(angle) * p.y
+      );
+      corners[i] = map.unproject(q.add(center));
+    }
+
+    this.setCorners(corners);
+
+    // window.angle = L.TrigUtil.radiansToDegrees(angle);
+
+    this.rotation -= L.TrigUtil.radiansToDegrees(angle);
+  },
+
+  _revert: function() {
+    var angle = this.rotation,
+        map = this._map,
+        edit =  this.editing,
+        center = map.project(this.getCenter()),
+        offset = this._initialDimensions.offset,
+        corners = { 
+          0: map.unproject(center.subtract(offset)),
+          1: map.unproject(center.add(L.point(offset.x, -offset.y))),
+          2: map.unproject(center.add(L.point(-offset.x, offset.y))),
+          3: map.unproject(center.add(offset))
+        };
+
+    map.removeLayer(edit._handles[edit._mode]);
+
+    this.setCorners(corners);
+
+    if (angle !== 0) { this.rotateBy(L.TrigUtil.degreesToRadians(360 - angle)); }
+
+    map.addLayer(edit._handles[edit._mode]);
+
+    this.rotation = angle;
+},
 
   /* Copied from Leaflet v0.7 https://github.com/Leaflet/Leaflet/blob/66282f14bcb180ec87d9818d9f3c9f75afd01b30/src/dom/DomUtil.js#L189-L199 */
   /* since L.DomUtil.getTranslateString() is deprecated in Leaflet v1.0 */
@@ -686,11 +757,15 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   _addSelections: function(e) {
-    var box = e.boxZoomBounds;
+    var box = e.boxZoomBounds,
+        map = this._map;
 
     this.eachLayer(function(layer) {
-      var imgBounds = new L.latLngBounds(layer.getCorner(2), layer.getCorner(1));
-      imgBounds = this._map._latLngBoundsToNewLayerBounds(imgBounds, this._map.getZoom(), this._map.getCenter());
+      var edit = layer.editing;
+      if (edit._selected) { edit._deselect(); }
+
+      var imgBounds = L.latLngBounds(layer.getCorner(2), layer.getCorner(1));
+      imgBounds = map._latLngBoundsToNewLayerBounds(imgBounds, map.getZoom(), map.getCenter());
       if (box.intersects(imgBounds)) {
         if (!this.toolbar) { this._addToolbar(); }
         L.DomUtil.addClass(layer.getElement(), 'selected');
@@ -1201,9 +1276,6 @@ L.DistortHandle = L.EditHandle.extend({
     var overlay = this._handled;
 
     overlay.setCorner(this._corner, this.getLatLng());
-
-    overlay.fire("update");
-    overlay.editing._updateToolbarPos();
   },
 
   updateHandle: function() {
@@ -1223,33 +1295,27 @@ L.RotateScaleHandle = L.EditHandle.extend({
 
 	_onHandleDrag: function() {
 		var overlay = this._handled,
-			edit = overlay.editing,
+			map = overlay._map,
+			edgeMinWidth = overlay.edgeMinWidth,
 			formerLatLng = overlay.getCorner(this._corner),
 			newLatLng = this.getLatLng(),
 
 			angle = this.calculateAngleDelta(formerLatLng, newLatLng),
 			scale = this._calculateScalingFactor(formerLatLng, newLatLng);
 		
-		if (angle !== 0) { edit._rotateBy(angle); }
+		if (angle !== 0) { overlay.rotateBy(angle); }
 
-		/* 
-		  checks whether the "edgeMinWidth" property is set and tracks the minimum edge length;
-		  this enables preventing scaling to zero, but we might also add an overall scale limit
-		*/		
-		if (overlay.hasOwnProperty('edgeMinWidth')){
-			var edgeMinWidth = overlay.edgeMinWidth;
-                        var corner1 = overlay._map.latLngToContainerPoint(overlay.getCorner(0)),
-                            corner2 = overlay._map.latLngToContainerPoint(overlay.getCorner(1));
-                        var w = Math.abs(corner1.x - corner2.x);
-                        var h = Math.abs(corner1.y - corner2.y);
-                        var distance = Math.sqrt(w * w + h * h);
-			if ((distance > edgeMinWidth) || scale > 1) {
-				edit._scaleBy(scale);
-			}
-		} 
-
-		overlay.fire('update');
-		edit._updateToolbarPos();
+		if (!edgeMinWidth) { edgeMinWidth = 50; } /* just in case */
+		var corner1 = map.latLngToContainerPoint(overlay.getCorner(0)),
+			corner2 = map.latLngToContainerPoint(overlay.getCorner(1)),
+			w = Math.abs(corner1.x - corner2.x),
+			h = Math.abs(corner1.y - corner2.y),
+			distance = Math.sqrt(w * w + h * h);
+		if (distance > edgeMinWidth || scale > 1) {
+			overlay.scaleBy(scale);
+		} else {
+			overlay.scaleBy(1);
+		}
 	},
 
 	updateHandle: function() {
@@ -1273,10 +1339,9 @@ L.RotateHandle = L.EditHandle.extend({
 			newLatLng = this.getLatLng(),
 			angle = this.calculateAngleDelta(formerLatLng, newLatLng);
 
-	 	if (angle !== 0) { overlay.editing._rotateBy(angle); }
-
-		overlay.fire('update');
-		overlay.editing._updateToolbarPos();
+		/** running rotation logic even for an angle delta of 0 
+		 * prevents a small, occasional marker flicker */
+	 	overlay.rotateBy(angle);
 	},
 
 	updateHandle: function() {
@@ -1295,17 +1360,32 @@ L.ScaleHandle = L.EditHandle.extend({
 		})
 	},
 
-	_onHandleDrag: function() {
+	_onHandleDrag: function(e) {
 		var overlay = this._handled,
+			map = overlay._map,
+			edgeMinWidth = overlay.edgeMinWidth,
 			formerLatLng = overlay.getCorner(this._corner),
 			newLatLng = this.getLatLng(),
-
 			scale = this._calculateScalingFactor(formerLatLng, newLatLng);
 
-		overlay.editing._scaleBy(scale);
+		/* 
+		 * checks whether the "edgeMinWidth" property is set and tracks the minimum edge length;
+		 * this enables preventing scaling to zero, but we might also add an overall scale limit
+		*/		
+		if (!edgeMinWidth) { edgeMinWidth = 50; } /* just in case */
+		var corner1 = map.latLngToLayerPoint(overlay.getCorner(0)),
+			corner2 = map.latLngToLayerPoint(overlay.getCorner(1)),
+			w = Math.abs(corner1.x - corner2.x),
+			h = Math.abs(corner1.y - corner2.y),
+			distance = Math.sqrt(w * w + h * h);
 
-		overlay.fire('update');
-		overlay.editing._updateToolbarPos();
+		if (distance > edgeMinWidth|| scale > 1) {
+			overlay.scaleBy(scale);
+		/** running scale logic even for a scale ratio of 1
+		 * prevents a small, occasional marker flicker */
+		} else {
+			overlay.scaleBy(1);
+		}
 	},
 
 	updateHandle: function() {
@@ -1663,9 +1743,7 @@ var Revert = L.EditAction.extend({
   },
 
   addHooks: function() {
-    var editing = this._overlay.editing;
-
-    editing._revert();
+    this._overlay._revert();
   }
 });
 
@@ -2049,77 +2127,6 @@ L.DistortableImage.Edit = L.Handler.extend({
         return false;
       }
     }, this);
-  },
-
-  _rotateBy: function(angle) {
-    var overlay = this._overlay,
-      map = overlay._map,
-      center = map.latLngToLayerPoint(overlay.getCenter()),
-      i,
-      p,
-      q;
-
-    for (i = 0; i < 4; i++) {
-      p = map.latLngToLayerPoint(overlay.getCorner(i)).subtract(center);
-      q = L.point(
-        Math.cos(angle) * p.x - Math.sin(angle) * p.y,
-        Math.sin(angle) * p.x + Math.cos(angle) * p.y
-      );
-      overlay.setCorner(i, map.layerPointToLatLng(q.add(center)));
-    }
-
-    // window.angle = L.TrigUtil.radiansToDegrees(angle);
-
-    this._overlay.rotation -= L.TrigUtil.radiansToDegrees(angle);
-
-    overlay._reset();
-  },
-
-  _revert: function() {
-    var overlay = this._overlay;
-    var angle = overlay.rotation;
-    var map = overlay._map;
-    var center = map.latLngToLayerPoint(overlay.getCenter());
-    var offset = overlay._initialDimensions.offset;
-
-    var corners = { 
-      0: map.layerPointToLatLng(center.subtract(offset)),
-      1: map.layerPointToLatLng(center.add(L.point(offset.x, -offset.y))),
-      2: map.layerPointToLatLng(center.add(L.point(-offset.x, offset.y))),
-      3: map.layerPointToLatLng(center.add(offset))
-    };
-
-    map.removeLayer(this._handles[this._mode]);
-
-    overlay.setCorners(corners);
-
-    if (angle !== 0) { this._rotateBy(L.TrigUtil.degreesToRadians(360 - angle)); }
-
-    map.addLayer(this._handles[this._mode]);
-
-    this._updateToolbarPos();
-
-    this._overlay.rotation = angle;
-  },
-
-  _scaleBy: function(scale) {
-    var overlay = this._overlay,
-      map = overlay._map,
-      center = map.project(overlay.getCenter()),
-      i,
-      p;
-
-    for (i = 0; i < 4; i++) {
-      p = map
-        .project(overlay.getCorner(i))
-        .subtract(center)
-        .multiplyBy(scale)
-        .add(center);
-      overlay.setCorner(i, map.unproject(p));
-      console.log('corner', map.project(overlay.getCorner(i)));
-    }
-
-    overlay._reset();
   },
 
   _enableDragging: function() {

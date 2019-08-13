@@ -36,8 +36,7 @@ describe("L.DistortableImage.Edit", function() {
 		chai.simulateClick(img);
 
 		overlay.setCorner(0, L.latLng(41.7934, -87.6252));
-		overlay.fire('update');
-		
+
 		/* Warp handles are currently on the map; they should have been updated. */
 		edit._distortHandles.eachLayer(function(handle) {
 			expect(handle.getLatLng()).to.be.closeToLatLng(corners[handle._corner]);
@@ -49,25 +48,6 @@ describe("L.DistortableImage.Edit", function() {
 		edit._rotateScaleHandles.eachLayer(function(handle) {
 			expect(handle.getLatLng()).to.be.closeToLatLng(corners[handle._corner]);
 		});
-	});
-
-	it.skip("Should keep image in sync with the map while dragging.", function() {
-		var edit = overlay.editing,
-			dragging;
-
-		edit.enable();
-
-		dragging = edit.dragging;
-
-		/* _reset is not called by #onAdd, for some reason... */
-		overlay._reset();
-
-		/* Simulate a sequence of drag events. */
-		dragging._onDown({ touches: [{ clientX: 0, clientY: 0 }], target: overlay._image });
-		dragging._onMove({ touches: [{ clientX: 20, clientY: 30 }], target: overlay._image });
-		dragging._onUp();
-
-		map.setView([41.7896,-87.6996]);
 	});
 
 	describe("#_select", function () {

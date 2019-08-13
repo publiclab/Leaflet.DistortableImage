@@ -14,10 +14,9 @@ L.RotateHandle = L.EditHandle.extend({
 			newLatLng = this.getLatLng(),
 			angle = this.calculateAngleDelta(formerLatLng, newLatLng);
 
-	 	if (angle !== 0) { overlay.editing._rotateBy(angle); }
-
-		overlay.fire('update');
-		overlay.editing._updateToolbarPos();
+		/** running rotation logic even for an angle delta of 0 
+		 * prevents a small, occasional marker flicker */
+	 	overlay.rotateBy(angle);
 	},
 
 	updateHandle: function() {
