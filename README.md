@@ -1,5 +1,4 @@
-Leaflet.DistortableImage
-===================
+# Leaflet.DistortableImage
 
 [![Build Status](https://travis-ci.org/publiclab/Leaflet.DistortableImage.svg?branch=master)](https://travis-ci.org/publiclab/Leaflet.DistortableImage)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/publiclab/Leaflet.DistortableImage/issues)
@@ -76,20 +75,19 @@ By default, the image will be placed centered on the map view specified during i
   ],
 }).addTo(map);
 
-
 Options available to pass during `L.DistortableImageOverlay` initialization:
-- [actions](#Actions)
-- [corners](#corners)
-- [selected](#selected)
-- [mode](#mode)
-- [fullResolutionSrc](#Full-resolution%20download)
-- [keymapper](#keymapper)
-- [suppressToolbar](#Suppress-Toolbar)
 
+* [actions](#Actions)
+* [corners](#corners)
+* [selected](#selected)
+* [mode](#mode)
+* [fullResolutionSrc](#Full-resolution%20download)
+* [keymapper](#keymapper)
+* [suppressToolbar](#Suppress-Toolbar)
 
-### Actions 
+### Actions
 
-- `actions` (*optional*, default: [ToggleTransparency, ToggleOutline, ToggleLock, ToggleRotateScale, ToggleOrder, Revert, Export, Delete], value: *array*)
+* `actions` (*optional*, default: [ToggleTransparency, ToggleOutline, ToggleLock, ToggleRotateScale, ToggleOrder, Revert, Export, Delete], value: *array*)
 
 If you would like to overrwrite the default toolbar actions available for an individual image's `L.Popup` toolbar, pass an array with the actions you want. Reference the available values [here](#Single-Image-Interface).
 
@@ -108,9 +106,10 @@ img = L.distortableImageOverlay('example.png', {
 ```
 
 ### Corners
--   `corners` (*optional*, default: an array of `L.latLng` objects which position the image on the center of the map, value: *array*)
 
-Allows you to set an image's position on the map manually (somewhere other than center). 
+* `corners` (*optional*, default: an array of `L.latLng` objects which position the image on the center of the map, value: *array*)
+
+Allows you to set an image's position on the map manually (somewhere other than center).
 
 They should be passed as an array of `L.latLng` objects in NW, NE, SW, SE order (in a "Z" shape).
 
@@ -220,7 +219,7 @@ L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
 
 `suppressToolbar` (*optional*, default: false, value: *boolean*)
 
-To initialize an image without its toolbar, pass it `suppressToolbar: true`. 
+To initialize an image without its toolbar, pass it `suppressToolbar: true`.
 
 Typically, editing actions are triggered through our toolbar interface or our predefined keybindings. If disabling the toolbar, the developer will need to implement their own toolbar UI or just use the keybindings. (WIP API for doing this)
 
@@ -228,9 +227,9 @@ This option will override other options related to the toolbar, such as [`select
 
 ## Setup - Multiple Image Interface
 
-1.  From the root directory, run `npm install` or `sudo npm install`
+1. From the root directory, run `npm install` or `sudo npm install`
 
-2.  Open `examples/select.html` in a browser (todo -- add gh pages demo)
+2. Open `examples/select.html` in a browser (todo -- add gh pages demo)
 
 Our `DistortableCollection` class allows working with multiple images simultaneously. This interface builds on the single image interface.
 
@@ -269,11 +268,11 @@ imgGroup.addLayer(img2);
 
 Options available to pass during `L.DistortableCollection` initialization: 
 
-- [actions](#✤-Actions)
+* [actions](#✤-Actions)
 
 ### ✤ Actions
 
-- `actions` (*optional*, default: [Exports, Deletes, Locks, Unlocks], value: *array*)
+* `actions` (*optional*, default: [Exports, Deletes, Locks, Unlocks], value: *array*)
 
 Overrwrite the default toolbar actions for an image collection's `L.Control` toolbar. Reference the available values [here](#Multiple-Image-Interface).
 
@@ -287,11 +286,11 @@ imgGroup = L.distortableCollection({
 
 To add / remove a tool from the toolbar at runtime, we have also added the methods `addTool(action)` and `removeTool(action)`.
 
-### UI and functionalities 
+### UI and functionalities
+
 Currently it supports multiple image selection and translations, and WIP we are working on porting all editing tools to work for it, such as transparency, etc. Image distortions still use the single-image interface.
 
 **multi-select:** A single toolbar instance (using `L.control`) renders the set of tools available to use on collections of images.
-
 
   1. Multi-selection works with <kbd>cmd</kbd> + `click` to toggle an individual image's inclusion in this interface.
   2. Or <kbd>shift</kbd> + `drag` to use our `BoxSelector` handler to select multiple at once.
@@ -299,9 +298,9 @@ Currently it supports multiple image selection and translations, and WIP we are 
 
   **How to un-multi-select:**
 
-  - In order to return to the single-image interface, where each `L.popup` toolbar only applies actions on the image it's attached to, you must toggle *all* images out of multi-select or...
-  - ...Click on the map or hit the <kbd>esc</kbd> key to quickly deselect all images.
-  - For the aforementioned 3 mutli-select methods, the `BoxSelector` method is the only one that doesn't also toggle _out_ of multi-select mode. 
+  * In order to return to the single-image interface, where each `L.popup` toolbar only applies actions on the image it's attached to, you must toggle *all* images out of multi-select or...
+  * ...Click on the map or hit the <kbd>esc</kbd> key to quickly deselect all images.
+  * For the aforementioned 3 mutli-select methods, the `BoxSelector` method is the only one that doesn't also toggle _out_ of multi-select mode. 
 
 <hr>
 
@@ -384,43 +383,57 @@ Defaults:
 
 <hr>
 
+<details><summary><code><b>getCorner(<i>idx</i> &#60;number 0..3>)</b>: LatLng</code></summary>
+ <ul><li>returns the coordinates of the image corner at <i>index</i>.</ul></li>
+</details>
+
 <details><summary><code><b>getCorners()</b>: 4 [LatLng, LatLng, LatLng, LatLng]</code></summary>
   <ul><li>returns the coordinates of the image corners in NW, NE, SW, SE order.
 </details>
 
-
-<details><summary><code><b>getCorner(<i>idx</i> &#60;number 0..3>)</b>: LatLng</code></summary>
- <ul><li>returns the coordinates of the image corner at the given index.</ul></li>
+<details><summary><code><b>setCorner(<i>idx</i> &#60;number 0..3>, <i>LatLng</i>)</b>: this</code></summary>
+<ul><li>updates the coordinates of the image corner at <i>index</i> to <i>LatLng</i> and, where applicable, marker and toolbar positioning.</ul></li>
+<ul><li>We use this internally for <code>distort</code> mode.</ul></li>
 </details>
 
-- `setCorner(idx, latLng)` - update an individual image corner and, where applicable, marker and toolbar positioning. We use this internally for `distort` mode.
+<details><summary><code><b>setCorners(<i>corners</i>)</b>: this</code></summary>
+<ul><li>same as <code>#setCorner</code>, but takes in a "corners" object to update all 4 corners with only one UI update at the end.</ul></li>
+<ul><li> We use this internally for image translation, rotation, and scaling.</ul></li>
+<ul><li><i>corners</i>: { <i>keys</i>: &#60;number 0..4>, <i>values</i>: LatLng } <br><br>
+ex.
 
-- `setCorners(corners)` - same as`setCorner`, but takes in a "corners" object to update all 4 corners with only one UI update at the end. We use this internally for image translation, rotation, and scaling. 
-   - Ex. 
-   ```JS
-   /** keys: 0-4, values: L.latLng objects for desired corner positions */
-    scaledCorners = {0: '', 1: '', 2: '', 3: ''};
+<pre>
+  var scaledCorners = {0: '', 1: '', 2: '', 3: ''},
+      i, p;
 
-    for (i = 0; i < 4; i++) {
-      p = map
-        .project(this.getCorner(i))
-        .subtract(center)
-        .multiplyBy(scale)
-        .add(center);
-      scaledCorners[i] = map.unproject(p);
-    }
+  for (i = 0; i < 4; i++) {
+    p = map
+      .project(this.getCorner(i))
+      .subtract(center)
+      .multiplyBy(scale)
+      .add(center);
+    scaledCorners[i] = map.unproject(p);
+  }
 
-    this.setCorners(scaledCorners);
-  ```
+  this.setCorners(scaledCorners);
+  </pre>
+</ul></li>
+</details>
 
-- `getCenter()` - Calculates the centroid of the image.
+<details><summary><code><b>getCenter()</b>: LatLng</code></summary>
+<ul><li>Calculates the centroid of the image.</ul></li>
+</details>
 
-- `scaleBy(num)` - scales the image by the given ratio and calls `setCorners`.
-   - ex. `overlay.scaleBy(0.5)`
-   - a scale of 0 or 1 will leave the image unchanged - but 0 causes the function to automatically return
-   - a negative scale will invert the image and, depending on the scale value, change its size
+<details><summary><code><b>scaleBy(<i>factor</i> &#60;number>)</b>: this</code></summary>
+<ul><li>scales the image by the given factor and calls <code>#setCorners</code>.</ul></li>
+<ul><li>a scale of 0 or 1 will leave the image unchanged - but 0 causes the function to automatically return</ul></li>
+<ul><li>a negative scale will invert the image and, depending on the factor, change its size</ul></li>
+<ul><li>ex. <code>overlay.scaleBy(0.5)</code></ul></li>
+</details>
 
-- `rotateBy(rad)` - rotates the image by the given radian angle and calls `setCorners`.
+<details><summary><code><b>rotateBy(<i>rad</i> &#60;number>)</b>: this</code></summary>
+<ul><li>rotates the image by the given radian angle and calls <code>#setCorners</code>.</ul></li>
+</details>
 
 <hr>
 

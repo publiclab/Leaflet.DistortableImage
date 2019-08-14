@@ -133,9 +133,12 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this._corners[corner] = latlng;
     this._reset();
     this.fire('update');
+    
     if (edit.toolbar && edit.toolbar instanceof L.DistortableImage.PopupBar) {
       edit._updateToolbarPos();
     }
+
+    return this;
   },
 
   setCorners: function(latlngObj) {
@@ -149,9 +152,12 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
     this._reset();
     this.fire('update');
+
     if (edit.toolbar && edit.toolbar instanceof L.DistortableImage.PopupBar) {
       edit._updateToolbarPos();
     }
+
+    return this;
   },
 
   _setCornersFromPoints: function(pointsObj) {
@@ -166,9 +172,12 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
     this._reset();
     this.fire('update');
+    
     if (edit.toolbar && edit.toolbar instanceof L.DistortableImage.PopupBar) {
       edit._updateToolbarPos();
     }
+
+    return this;
   },
 
   scaleBy: function(scale) {
@@ -189,6 +198,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     }
 
     this.setCorners(scaledCorners);
+
+    return this;
   },
 
   rotateBy: function(angle) {
@@ -211,6 +222,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     // window.angle = L.TrigUtil.radiansToDegrees(angle);
 
     this.rotation -= L.TrigUtil.radiansToDegrees(angle);
+
+    return this;
   },
 
   _revert: function() {
