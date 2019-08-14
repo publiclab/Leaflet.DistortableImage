@@ -161,7 +161,6 @@ In the below example, the image will be initialiazed with "rotateScale" handles:
 
 `fullResolutionSrc` (*optional*)
 
-
 We've added a GPU-accelerated means to generate a full resolution version of the distorted image; it requires two additional dependencies to enable; see how we've included them in the demo:
 
 ```HTML
@@ -219,12 +218,14 @@ img2 = L.distortableImageOverlay('example.png', {
 // 3. Instantiate an empty `DistortableCollection` group
 imgGroup = L.distortableCollection().addTo(map);
 
-// 4. Add the images to the group 
+// 4. Add the images to the group
 imgGroup.addLayer(img);
 imgGroup.addLayer(img2);
 ```
 
 <blockquote><strong>Note</strong>: our <code>DistortableCollection</code> class uses event listeners internally (<code>layeradd</code>) to enable additional editing features on every image as it's added. This event is only triggered if we add the layers to the group dynamically. I.e. you must add the group to the map initially empty.</blockquote>
+
+Although not required, you will probably want to pass `corners` to individual images when adding multiple or they will be positioned on top of eachother.
 
 Options available to pass during `L.DistortableCollection` initialization:
 
