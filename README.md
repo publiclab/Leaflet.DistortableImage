@@ -384,14 +384,13 @@ Defaults:
 
 <hr>
 
-<details><summary><code><b>getCorners()</b></code></summary>
-  <ul><li>access the corners of the image
-  after the image is instantiated and added to the map.</li></ul>
+<details><summary><code><b>getCorners()</b>: 4 [LatLng, LatLng, LatLng, LatLng]</code></summary>
+  <ul><li>returns the coordinates of the image corners in NW, NE, SW, SE order.
 </details>
 
 
-<details><summary><code><b>getCorner(<i>idx</i> &#60;number 0..3>)</b></code></summary>
- <ul><li>used the same way as its plural counterpart but with an index passed to it.</ul></li>
+<details><summary><code><b>getCorner(<i>idx</i> &#60;number 0..3>)</b>: LatLng</code></summary>
+ <ul><li>returns the coordinates of the image corner at the given index.</ul></li>
 </details>
 
 - `setCorner(idx, latLng)` - update an individual image corner and, where applicable, marker and toolbar positioning. We use this internally for `distort` mode.
