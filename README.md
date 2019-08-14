@@ -25,11 +25,9 @@ Here's a screenshot:
 
 ![screenshot](example.png)
 
-## Setup - Single Image Interface
+## Setup
 
-1. From the root directory, run `npm install` or `sudo npm install`
-
-2. Open `examples/index.html` in a browser
+* From the root directory, run `npm install` or `sudo npm install`
 
 ## Demo
 
@@ -41,7 +39,9 @@ And watch this GIF demo:
 
 To test the code, open `index.html` in your browser and click and drag the markers on the edges of the image. The image will show perspectival distortions.
 
-## Basic Usage
+For the additional features in the [multiple image interface](#Multiple-Image-Interface), open `select.html` and use <kbd>cmd</kbd> + click on an image or <kbd>shift</kbd> + drag on the map to "multi-select" images.
+
+## Single Image Interface
 
 The simplest implementation is to create a map, then create an image instance of `L.distortableImageOverlay` and add it onto the map:
 
@@ -60,22 +60,9 @@ L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.p
 img = L.distortableImageOverlay('example.png').addTo(map);
 ```
 
-By default, the image will be placed centered on the map view specified during initialization. 
+By default, the image will be placed centered on the map view specified during initialization.
 
- placed on the center  the map center center of the map
-
-, {
-  // 'corners' is the only required option for this class
-  // and is in NW, NE, SW, SE order
-  corners: [
-    L.latLng(51.52,-0.14),
-    L.latLng(51.52,-0.10),
-    L.latLng(51.50,-0.14),
-    L.latLng(51.50,-0.10)
-  ],
-}).addTo(map);
-
-Options available to pass during `L.DistortableImageOverlay` initialization:
+**Options** available to pass during `L.DistortableImageOverlay` initialization:
 
 * [actions](#Actions)
 * [corners](#corners)
@@ -95,19 +82,13 @@ For example, to overrwrite the toolbar to only include the `ToggleTransparency` 
 
 ``` JS
 img = L.distortableImageOverlay('example.png', {
-  corners: [
-    L.latLng(51.52,-0.14),
-    L.latLng(51.52,-0.10),
-    L.latLng(51.50,-0.14),
-    L.latLng(51.50,-0.10)
-  ],
   actions: [ToggleTransparency, ToggleScale, Delete]
 }).addTo(map);
 ```
 
 ### Corners
 
-* `corners` (*optional*, default: an array of `L.latLng` objects which position the image on the center of the map, value: *array*)
+* `corners` (*optional*, default: an array of `LatLang`s which position the image on the center of the map, value: *array*)
 
 Allows you to set an image's position on the map manually (somewhere other than center).
 
@@ -115,7 +96,7 @@ They should be passed as an array of `L.latLng` objects in NW, NE, SW, SE order 
 
 This will not have an effect on the map view, but it will determine the shape and dimensions of the rendered image.
 
-They will be stored on the image. See the [Quick API Reference](#Quick-API-Reference) for their getter and setter methods. 
+They will be stored on the image. See the [Quick API Reference](#Quick-API-Reference) for their getter and setter methods.
 
 Example:
 
@@ -160,31 +141,20 @@ Each primary editing mode corresponds to a separate editing handle.
 
 This option sets the image's initial editing mode, meaning the corresponding editing handle will always appear first when you interact with the image.
 
-Values available to pass to `mode` are: 
-- **distort** (_default_): Distortion via individually draggable corners.
+Values available to pass to `mode` are:
 
-- **rotate**: Rotation only.
-
-- **scale**: Resize only. 
-
-- **rotateScale**: Free transform. Combines the rotate and scale modes into one.
-
-- **lock**: Prevents any image actions (including those triggered from the toolbar, user gestures, and hotkeys) until the toolbar action [ToggleLock](#ToggleLock-(<kbd>l</kbd>)) is explicitly triggered (or its hotkey <kbd>l</kbd>).
+* **distort** (_default_): Distortion via individually draggable corners.
+* **rotate**: Rotation only.
+* **scale**: Resize only.
+* **rotateScale**: Free transform. Combines the rotate and scale modes into one.
+* **lock**: Prevents any image actions (including those triggered from the toolbar, user gestures, and hotkeys) until the toolbar action ToggleLock is explicitly triggered (or its hotkey <kbd>l</kbd>).
 
 In the below example, the image will be initialiazed with "rotateScale" handles:
 
 ```js
   img = L.distortableImageOverlay("example.png", {
-    corners: [
-      L.latLng(51.52, -0.14),
-      L.latLng(51.52, -0.10),
-      L.latLng(51.50, -0.14),
-      L.latLng(51.50, -0.10)
-    ],
     mode: "rotateScale",
   }).addTo(map);
-
-L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
 ```
 
 ### Full-resolution download
@@ -203,16 +173,8 @@ When instantiating a Distortable Image, pass in a `fullResolutionSrc` option set
 
 ```JS
 img = L.distortableImageOverlay('example.png', {
-  corners: [
-    L.latLng(51.52,-0.14),
-    L.latLng(51.52,-0.10),
-    L.latLng(51.50,-0.14),
-    L.latLng(51.50,-0.10)
-  ],
   fullResolutionSrc: 'large.jpg'
 }).addTo(map);
-
-L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
 ```
 
 ### Suppress Toolbar
@@ -225,11 +187,9 @@ Typically, editing actions are triggered through our toolbar interface or our pr
 
 This option will override other options related to the toolbar, such as [`selected: true`](#Selected)
 
-## Setup - Multiple Image Interface
+## Multiple Image Interface
 
-1. From the root directory, run `npm install` or `sudo npm install`
-
-2. Open `examples/select.html` in a browser (todo -- add gh pages demo)
+(todo -- add gh pages demo)
 
 Our `DistortableCollection` class allows working with multiple images simultaneously. This interface builds on the single image interface.
 
@@ -264,9 +224,9 @@ imgGroup.addLayer(img);
 imgGroup.addLayer(img2);
 ```
 
-<blockquote><strong>Note</strong>: notice how we didn't <code>enable</code> the image editing above as we had done for the single image interface. This is because our <code>DistortableCollection</code> class uses event listeners internally (<code>layeradd</code>) to enable editing on every image as it's added. This event is only triggered if we add the layers to the group dynamically. I.e. you must add the group to the map initially empty.</blockquote>
+<blockquote><strong>Note</strong>: our <code>DistortableCollection</code> class uses event listeners internally (<code>layeradd</code>) to enable additional editing features on every image as it's added. This event is only triggered if we add the layers to the group dynamically. I.e. you must add the group to the map initially empty.</blockquote>
 
-Options available to pass during `L.DistortableCollection` initialization: 
+Options available to pass during `L.DistortableCollection` initialization:
 
 * [actions](#✤-Actions)
 
@@ -292,15 +252,15 @@ Currently it supports multiple image selection and translations, and WIP we are 
 
 **multi-select:** A single toolbar instance (using `L.control`) renders the set of tools available to use on collections of images.
 
-  1. Multi-selection works with <kbd>cmd</kbd> + `click` to toggle an individual image's inclusion in this interface.
-  2. Or <kbd>shift</kbd> + `drag` to use our `BoxSelector` handler to select multiple at once.
-  3. Or for touch devices, `touch` and `hold` (aka `longpress`). 
+1. Multi-selection works with <kbd>cmd</kbd> + `click` to toggle an individual image's inclusion in this interface.
+2. Or <kbd>shift</kbd> + `drag` to use our `BoxSelector` handler to select multiple at once.
+3. Or for touch devices, `touch` and `hold` (aka `longpress`).
 
-  **How to un-multi-select:**
+**How to un-multi-select:**
 
-  * In order to return to the single-image interface, where each `L.popup` toolbar only applies actions on the image it's attached to, you must toggle *all* images out of multi-select or...
-  * ...Click on the map or hit the <kbd>esc</kbd> key to quickly deselect all images.
-  * For the aforementioned 3 mutli-select methods, the `BoxSelector` method is the only one that doesn't also toggle _out_ of multi-select mode. 
+* In order to return to the single-image interface, where each `L.popup` toolbar only applies actions on the image it's attached to, you must toggle *all* images out of multi-select or...
+* ...Click on the map or hit the <kbd>esc</kbd> key to quickly deselect all images.
+* For the aforementioned 3 mutli-select methods, the `BoxSelector` method is the only one that doesn't also toggle _out_ of multi-select mode. 
 
 <hr>
 
@@ -314,66 +274,60 @@ Currently it supports multiple image selection and translations, and WIP we are 
 
 Defaults:
 
-- **ToggleLock (<kbd>l</kbd>)**
+* **ToggleLock (<kbd>l</kbd>)**
 
-  - Toggles between [lock mode](#lock) and [distort mode](#distort-(_default_)).
+  * Toggles between [lock mode](#lock) and [distort mode](#distort-(_default_)).
 
-- **ToggleRotateScale (<kbd>r</kbd>, <kbd>d</kbd>)**
+* **ToggleRotateScale (<kbd>r</kbd>, <kbd>d</kbd>)**
 
-  - Toggles between [rotateScale](#rotateScale) and [distort mode](#distort-(_default_)).
+  * Toggles between [rotateScale](#rotateScale) and [distort mode](#distort-(_default_)).
 
+* **ToggleOrder (<kbd>j</kbd>, <kbd>k</kbd>)**
 
-- **ToggleOrder (<kbd>j</kbd>, <kbd>k</kbd>)**
+  * If you have multiple images, use this to switch an individual image's overlap back and forth into view. Employs [`bringToFront()`](https://leafletjs.com/reference-1.5.0.html\#imageoverlay-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.5.0.html#imageoverlay-bringtoback) from the Leaflet API.
 
-  - If you have multiple images, use this to switch an individual image's overlap back and forth into view. Employs [`bringToFront()`](https://leafletjs.com/reference-1.5.0.html\#imageoverlay-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.5.0.html#imageoverlay-bringtoback) from the Leaflet API.
+* **ToggleOutline (<kbd>o</kbd>)**
+* **ToggleTransparency (<kbd>t</kbd>)**
+* **Revert**
 
-- **ToggleOutline (<kbd>o</kbd>)**
+  * Restores the image to its original proportions and scale, but keeps its current rotation angle and location on the map intact.
 
-- **ToggleTransparency (<kbd>t</kbd>)**
+* **Export**
+* **Delete (<kbd>delete</kbd>, <kbd>backscpace</kbd>)**
 
-- **Revert**
-
-  - Restores the image to its original proportions and scale, but keeps its current rotation angle and location on the map intact.
-
-- **Export**
-
-- **Delete (<kbd>delete</kbd>, <kbd>backscpace</kbd>)**
-
-  - Permanently deletes the image from the map.
+  * Permanently deletes the image from the map.
 
  Addons:
 
-- **ToggleRotate** (<kbd>caps lock</kbd>):
+* **ToggleRotate** (<kbd>caps lock</kbd>):
 
-  - Toggles between [rotate mode](#rotate) and [distort mode](#distort-(_default_)).
-  - Replaced as a default toolbar action by `ToggleRotateScale`, but still accessible via its hotkey, `mode`, and (WIP) custom toolbar actions API.
+  * Toggles between [rotate mode](#rotate) and [distort mode](#distort-(_default_)).
+  * Replaced as a default toolbar action by `ToggleRotateScale`, but still accessible via its hotkey, `mode`, and (WIP) custom toolbar actions API.
 
+* **ToggleScale** (<kbd>s</kbd>):
 
-- **ToggleScale** (<kbd>s</kbd>):
+  * Toggles between [scale mode](#scale) and [distort mode](#distort-(_default_)).
+  * Replaced as a default toolbar action by `ToggleRotateScale`, but still accessible via its hotkey, `mode`, and (WIP) custom toolbar actions API.
 
-  - Toggles between [scale mode](#scale) and [distort mode](#distort-(_default_)).
-  - Replaced as a default toolbar action by `ToggleRotateScale`, but still accessible via its hotkey, `mode`, and (WIP) custom toolbar actions API.
-
--   **EnableEXIF (WIP)**
-
+* **EnableEXIF (WIP)**
 
 <hr>
 
-### Multiple Image Interface:
+### Multiple Image Interface
 
 <hr>
 
 Defaults:
 
--   **Exports**
+* **Exports**
 
--   **Deletes (<kbd>delete</kbd>, <kbd>backscpace</kbd>)**
+* **Deletes (<kbd>delete</kbd>, <kbd>backscpace</kbd>)**
 
-    - Permanently deletes groups of selected images from the map.
+  * Permanently deletes groups of selected images from the map.
 
-- **Locks** (<kbd>l</kbd>)
+* **Locks** (<kbd>l</kbd>)
 
-- **Unlocks** (<kbd>u</kbd>)
+* **Unlocks** (<kbd>u</kbd>)
 
 ## Quick API Reference
 
