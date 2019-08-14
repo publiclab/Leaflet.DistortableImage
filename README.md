@@ -88,7 +88,7 @@ img = L.distortableImageOverlay('example.png', {
 
 ### Corners
 
-* `corners` (*optional*, default: an array of `LatLang`s which position the image on the center of the map, value: *array*)
+* `corners` (*optional*, default: an array of `LatLang`s that position the image on the center of the map, value: *array*)
 
 Allows you to set an image's position on the map manually (somewhere other than center).
 
