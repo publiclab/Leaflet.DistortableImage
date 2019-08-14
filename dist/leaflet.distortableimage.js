@@ -266,12 +266,15 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
           map.on("zoomanim", this._animateZoom, this);
         }
       }
+
+      this.editing.enable();
     }, this);
 
     this.fire("add");
   },
 
   onRemove: function(map) {
+    this.editing.disable();
     this.fire("remove");
 
     L.ImageOverlay.prototype.onRemove.call(this, map);
@@ -631,8 +634,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
   _turnOnEditing: function(e) {
     var layer = e.layer; 
     
-    layer.editing.enable();
-
     L.DomEvent.on(layer, {
       dragstart: this._dragStartMultiple, 
       drag: this._dragMultiple
@@ -646,8 +647,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
   _turnOffEditing: function(e) {
     var layer = e.layer; 
-
-    layer.editing.disable();
 
     L.DomEvent.off(layer, {
       dragstart: this._dragStartMultiple,

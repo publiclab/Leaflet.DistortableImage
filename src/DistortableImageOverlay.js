@@ -52,12 +52,15 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
           map.on("zoomanim", this._animateZoom, this);
         }
       }
+
+      this.editing.enable();
     }, this);
 
     this.fire("add");
   },
 
   onRemove: function(map) {
+    this.editing.disable();
     this.fire("remove");
 
     L.ImageOverlay.prototype.onRemove.call(this, map);

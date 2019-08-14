@@ -38,8 +38,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
   _turnOnEditing: function(e) {
     var layer = e.layer; 
     
-    layer.editing.enable();
-
     L.DomEvent.on(layer, {
       dragstart: this._dragStartMultiple, 
       drag: this._dragMultiple
@@ -53,8 +51,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
   _turnOffEditing: function(e) {
     var layer = e.layer; 
-
-    layer.editing.disable();
 
     L.DomEvent.off(layer, {
       dragstart: this._dragStartMultiple,

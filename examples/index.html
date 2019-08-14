@@ -47,24 +47,33 @@
         }).addTo(map);
 
       // create an image
-      img = L.distortableImageOverlay("example.png", {
-        // (WIP) add a toolbarType field with values 'popup' (default) or 'control'
-        // add a suppressToolbar: 'true' here to disable toolbars
-        // mode: "distort", => default handle
-        selected: true,
-        corners: [
-          L.latLng(51.52, -0.14),
-          L.latLng(51.52, -0.10),
-          L.latLng(51.50, -0.14),
-          L.latLng(51.50, -0.10)
-        ],
-        fullResolutionSrc: "large.jpg"
-      }).addTo(map);
+      // img = L.distortableImageOverlay("example.png"
+      // //   // (WIP) add a toolbarType field with values 'popup' (default) or 'control'
+      // //   // mode: "distort", => default handle
+      // //   selected: true,
+      // //   corners: [
+      // //     L.latLng(51.52, -0.14),
+      // //     L.latLng(51.52, -0.10),
+      // //     L.latLng(51.50, -0.14),
+      // //     L.latLng(51.50, -0.10)
+      // //   ],
+      
+      // //   fullResolutionSrc: "large.jpg"
+      // ).addTo(map);
 
-      // add a position option with combinations of 'top', 'bottom', 'left' or 'right'
-      kmpr1 = L.distortableImage.keymapper(map, { position: 'topleft' });
+      img = L.distortableImageOverlay(
+        'example.jpg', {
+          corners: [
+            L.latLng(51.52, -0.14),
+            L.latLng(51.52, -0.10),
+            L.latLng(51.50, -0.14),
+            L.latLng(51.50, -0.10)
+          ],
+          mode: 'lock'
+        }).addTo(map);
 
-      L.DomEvent.on(img._image, "load", img.editing.enable, img.editing);
+      // todo: make dynamic
+      // kmpr1 = L.distortableImage.keymapper(map, { position: 'topleft' });
     })();
   </script>
 </html>

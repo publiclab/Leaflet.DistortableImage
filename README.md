@@ -44,7 +44,7 @@ To test the code, open `index.html` in your browser and click and drag the marke
 
 ## Basic Usage
 
-The most simple implementation to get started:
+The simplest implementation is to create a map, then create an image instance of `L.distortableImageOverlay` and add it onto the map:
 
 ```js
 // basic Leaflet map setup
@@ -57,8 +57,15 @@ L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.p
   id: 'examples.map-i86knfo3'
 }).addTo(map);
 
-// create an image
-img = L.distortableImageOverlay('example.png', {
+// create an image and add it to the map
+img = L.distortableImageOverlay('example.png').addTo(map);
+```
+
+By default, the image will be placed centered on the map view specified during initialization. 
+
+ placed on the center  the map center center of the map
+
+, {
   // 'corners' is the only required option for this class
   // and is in NW, NE, SW, SE order
   corners: [
@@ -69,9 +76,6 @@ img = L.distortableImageOverlay('example.png', {
   ],
 }).addTo(map);
 
-// enable editing
-L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
-```
 
 Options available to pass during `L.DistortableImageOverlay` initialization:
 - [actions](#Actions)
@@ -104,32 +108,40 @@ img = L.distortableImageOverlay('example.png', {
 ```
 
 ### Corners
+-   `corners` (*optional*, default: an array of `L.latLng` objects which position the image on the center of the map, value: *array*)
 
-The corners are stored as `L.latLng` objects on the image, and can be accessed using 
-our `getCorners()` method after the image is instantiated and added to the map. 
-They are provided in `NW, NE, SW, SE` order (in a `Z` shape).
+Allows you to set an image's position on the map manually (somewhere other than center). 
 
-Useful usage example:
+They should be passed as an array of `L.latLng` objects in NW, NE, SW, SE order (in a "Z" shape).
+
+This will not have an effect on the map view, but it will determine the shape and dimensions of the rendered image.
+
+They will be stored on the image. See the [Quick API Reference](#Quick-API-Reference) for their getter and setter methods. 
+
+Example:
 
 ```js
-// instantiate, add to map and enable
-img = L.distortableImageOverlay(...);
-img.addTo(map);
-L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
+img = L.distortableImageOverlay('example.png', {
+  corners: [
+    L.latLng(51.52,-0.14),
+    L.latLng(51.52,-0.10),
+    L.latLng(51.50,-0.14),
+    L.latLng(51.50,-0.10)
+  ]
+}).addTo(map);
 
-// grab the initial corner positions
+// you can grab the initial corner positions
 JSON.stringify(img.getCorners())
 => "[{"lat":51.52,"lng":-0.14},{"lat":51.52,"lng":-0.1},{"lat":51.5,"lng":-0.14},{"lat":51.5,"lng":-0.1}]"
 
 // ...move the image around...
 
-// check the new corner positions.
+// you can check the new corner positions.
 JSON.stringify(img.getCorners())
 => "[{"lat":51.50685099607552,"lng":-0.06058305501937867},{"lat":51.50685099607552,"lng":-0.02058595418930054},{"lat":51.486652692081925,"lng":-0.06058305501937867},{"lat":51.486652692081925,"lng":-0.02058595418930054}]"
 
-// note there is an added level of precision after dragging the image for debugging purposes
+// note there is an added level of precision after dragging the image
 ```
-We further added a `getCorner(idx)` method used the same way as its plural counterpart but with an index passed to it.
 
 ### Selected
 
@@ -372,7 +384,15 @@ Defaults:
 
 <hr>
 
-- [`getCorners()`](#corners) and [`getCorner(idx)`](#corners)
+<details><summary><code><b>getCorners()</b></code></summary>
+  <ul><li>access the corners of the image
+  after the image is instantiated and added to the map.</li></ul>
+</details>
+
+
+<details><summary><code><b>getCorner(<i>idx</i> &#60;number 0..3>)</b></code></summary>
+ <ul><li>used the same way as its plural counterpart but with an index passed to it.</ul></li>
+</details>
 
 - `setCorner(idx, latLng)` - update an individual image corner and, where applicable, marker and toolbar positioning. We use this internally for `distort` mode.
 
