@@ -2,7 +2,7 @@ L.distortableImage = L.DistortableImage || {};
 L.distortableImage = L.DistortableImage;
 
   var Exports = L.EditAction.extend({
-    initialize: function (map, group, options) {
+    initialize: function (map, overlay, options) {
       var use = 'get_app';
   
       options = options || {};
@@ -12,13 +12,13 @@ L.distortableImage = L.DistortableImage;
         tooltip: 'Export Images'
       };
 
-      L.EditAction.prototype.initialize.call(this, map, group, options);
+      L.EditAction.prototype.initialize.call(this, map, overlay, options);
     },
 
     addHooks: function () {
-      var group = this._overlay;
+      var edit = this._overlay;
 
-      group.startExport();
+      edit.startExport();
     }
   });
 
@@ -37,9 +37,9 @@ L.distortableImage = L.DistortableImage;
     },
 
     addHooks: function() {
-      var group = this._overlay;
+      var edit = this._overlay;
 
-      group._removeGroup();
+      edit._removeGroup();
     }
   });
 
@@ -58,9 +58,9 @@ var Locks = L.EditAction.extend({
   },
 
   addHooks: function () {
-    var group = this._overlay;
+    var edit = this._overlay;
 
-    group._lockGroup();
+    edit._lockGroup();
   }
 });
 
@@ -79,9 +79,9 @@ var Unlocks = L.EditAction.extend({
   },
 
   addHooks: function () {
-    var group = this._overlay;
+    var edit = this._overlay;
 
-    group._unlockGroup();
+    edit._unlockGroup();
   }
 });
 
@@ -100,6 +100,7 @@ L.distortableImage.controlBar = function (options) {
   return new L.DistortableImage.ControlBar(options);
 };
 
+/** addInitHooks run before onAdd */
 L.DistortableCollection.addInitHook(function () {
   this.ACTIONS = [Exports, Deletes, Locks, Unlocks];
 
@@ -108,4 +109,6 @@ L.DistortableCollection.addInitHook(function () {
   } else {
     this.editActions = this.ACTIONS;
   }
+
+  this.editing = new L.DistortableCollection.Edit(this, { actions: this.editActions });
 });
