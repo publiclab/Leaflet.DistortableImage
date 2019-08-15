@@ -1,5 +1,6 @@
 L.DistortableImage = L.DistortableImage || {};
 
+// this class holds the keybindings and toolbar API for an individual image instance
 L.DistortableImage.Edit = L.Handler.extend({
   options: {
     opacity: 0.7,
@@ -244,11 +245,9 @@ L.DistortableImage.Edit = L.Handler.extend({
      * that we want when it calls L.DomUtil.setPosition.
      */
     this.dragging._updatePosition = function() {
-      var delta = this._newPos.subtract(
-          map.latLngToLayerPoint(overlay._corners[0])
-        ),
-        currentPoint,
-        i;
+      var delta = this._newPos.subtract(map.latLngToLayerPoint(overlay._corners[0])),
+          currentPoint,
+          i;
 
       this.fire('predrag');
 
@@ -532,11 +531,11 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     downloadable.onload = function onLoadDownloadableImage() {
       var height = downloadable.height,
-        width = downloadable.width,
-        nw = map.latLngToLayerPoint(overlay.getCorner(0)),
-        ne = map.latLngToLayerPoint(overlay.getCorner(1)),
-        sw = map.latLngToLayerPoint(overlay.getCorner(2)),
-        se = map.latLngToLayerPoint(overlay.getCorner(3));
+          width = downloadable.width,
+          nw = map.latLngToLayerPoint(overlay.getCorner(0)),
+          ne = map.latLngToLayerPoint(overlay.getCorner(1)),
+          sw = map.latLngToLayerPoint(overlay.getCorner(2)),
+          se = map.latLngToLayerPoint(overlay.getCorner(3));
 
       // I think this is to move the image to the upper left corner,
       // jywarren: i think we may need these or the image goes off the edge of the canvas

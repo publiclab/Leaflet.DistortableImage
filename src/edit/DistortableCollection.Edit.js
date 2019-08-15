@@ -1,6 +1,6 @@
 L.DistortableImage = L.DistortableImage || {};
 
-/** this class holds keybindings and our toolbar API */
+// this class holds the keybindings and toolbar API for an image collection instance
 L.DistortableCollection.Edit = L.Handler.extend({
   options: {
     keymap: {
