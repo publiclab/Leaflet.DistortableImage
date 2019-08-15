@@ -1,5 +1,6 @@
 L.DistortableImage = L.DistortableImage || {};
 
+// this class holds the keybindings and toolbar API for an individual image instance
 L.DistortableImage.Edit = L.Handler.extend({
   options: {
     opacity: 0.7,
@@ -36,7 +37,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   /* Run on image selection. */
   addHooks: function() {
     var overlay = this._overlay,
-      map = overlay._map;
+        map = overlay._map;
 
     /* bring the selected image into view */
     overlay.bringToFront();
@@ -59,14 +60,14 @@ L.DistortableImage.Edit = L.Handler.extend({
     L.DomEvent.on(map, "click", this._deselect, this);
     L.DomEvent.on(overlay._image, "click", this._select, this);
 
-    /* Enable hotkeys. */
     L.DomEvent.on(window, "keydown", this._onKeyDown, this);
   },
 
   /* Run on image deselection. */
   removeHooks: function() {
     var overlay = this._overlay,
-      map = overlay._map;
+        map = overlay._map,
+        eventParents = overlay._eventParents;
 
     L.DomEvent.off(map, "click", this._deselect, this);
     L.DomEvent.off(overlay._image, "click", this._select, this);
@@ -80,9 +81,33 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     map.removeLayer(this._handles[this._mode]);
 
-    /* Disable hotkeys. */
+    /** 
+     * ensures if you disable an image while it is multi-selected 
+     * additional deselection logic is run
+     */
+    if (L.DomUtil.hasClass(overlay.getElement(), 'selected')) {
+      L.DomUtil.removeClass(overlay.getElement(), 'selected');
+    }
+
+    if (eventParents) {
+      var eP = eventParents[Object.keys(eventParents)[0]];
+      if (eP) {
+        if (!eP.anySelected() && eP.editing.toolbar) {
+          eP.editing._removeToolbar();
+        }
+      }
+    }
+
     L.DomEvent.off(window, "keydown", this._onKeyDown, this);
   },
+
+  disable: function () {
+		if (!this._enabled) { return this; }
+
+		this._enabled = false;
+		this.removeHooks();
+		return this;
+	},
 
   _initHandles: function() {
     var overlay = this._overlay,
@@ -149,6 +174,25 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
   },
 
+  _onKeyDown: function(e) {
+    var keymap = this.options.keymap,
+      handlerName = keymap[e.key],
+      eventParents = this._overlay._eventParents;
+
+    if (eventParents) {
+      var eP = eventParents[Object.keys(eventParents)[0]];
+      if (eP.anySelected()) {
+        return;
+      }
+    }
+
+    if (this[handlerName] !== undefined && !this._overlay.options.suppressToolbar) {
+      if (this._selected) {
+        this[handlerName].call(this);
+      }
+    }
+  }, 
+
   addTool: function (value) {
     if (value.baseClass === 'leaflet-toolbar-icon' && !this.hasTool(value)) {
       this._removeToolbar();
@@ -195,16 +239,26 @@ L.DistortableImage.Edit = L.Handler.extend({
     overlay._reset();
   },
 
-  _enableDragging: function() {
+  _removeToolbar: function() {
     var overlay = this._overlay,
       map = overlay._map;
+
+    if (this.toolbar) {
+      map.removeLayer(this.toolbar);
+      this.toolbar = false;
+    }
+  },
+
+  _enableDragging: function() {
+    var overlay = this._overlay,
+        map = overlay._map;
 
     this.dragging = new L.Draggable(overlay.getElement());
     this.dragging.enable();
 
     /* Hide toolbars and markers while dragging; click will re-show it */
-    this.dragging.on("dragstart", function() {
-      overlay.fire("dragstart");
+    this.dragging.on('dragstart', function() {
+      overlay.fire('dragstart');
       this._removeToolbar();
     },this);
 
@@ -214,13 +268,11 @@ L.DistortableImage.Edit = L.Handler.extend({
      * that we want when it calls L.DomUtil.setPosition.
      */
     this.dragging._updatePosition = function() {
-      var delta = this._newPos.subtract(
-          map.latLngToLayerPoint(overlay._corners[0])
-        ),
-        currentPoint,
-        i;
+      var delta = this._newPos.subtract(map.latLngToLayerPoint(overlay._corners[0])),
+          currentPoint,
+          i;
 
-      this.fire("predrag");
+      this.fire('predrag');
 
       for (i = 0; i < 4; i++) {
         currentPoint = map.latLngToLayerPoint(overlay._corners[i]);
@@ -228,31 +280,12 @@ L.DistortableImage.Edit = L.Handler.extend({
 			}
 
       overlay._reset();
-      overlay.fire("update");
-      overlay.fire("drag");
+      overlay.fire('update');
+      overlay.fire('drag');
 
-      this.fire("drag");
+      this.fire('drag');
     };
   },
-
-  _onKeyDown: function(event) {
-    var keymap = this.options.keymap,
-      handlerName = keymap[event.key],
-      eventParents = this._overlay._eventParents;
-
-    if (eventParents) {
-      var eP = eventParents[Object.keys(eventParents)[0]];
-      if (eP.anySelected()) {
-        return;
-      }
-    }
-
-    if (this[handlerName] !== undefined && !this._overlay.options.suppressToolbar) {
-      if (this._selected) {
-        this[handlerName].call(this);
-      }
-    }
-  }, 
 
   _toggleRotateScale: function() {
     var map = this._overlay._map;
@@ -296,8 +329,8 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _toggleTransparency: function() {
-    var image = this._overlay._image,
-      opacity;
+    var image = this._overlay.getElement(),
+        opacity;
 
     this._transparent = !this._transparent;
     opacity = this._transparent ? this.options.opacity : 1;
@@ -310,8 +343,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _toggleOutline: function() {
     var image = this._overlay.getElement(),
-      opacity,
-      outline;
+        opacity,
+        outline;
 
     this._outlined = !this._outlined;
     outline = this._outlined ? this.options.outline : 'none';
@@ -347,24 +380,21 @@ L.DistortableImage.Edit = L.Handler.extend({
     var map = this._overlay._map;
 
     map.removeLayer(this._handles[this._mode]);
-    /* Switch mode. */
-    if (this._mode === 'lock') {
-      this._unlock();
-    } else {
-      this._lock();
-    }
+ 
+    if (this._mode === 'lock') { this._unlock();
+    } else { this._lock(); }
 
     map.addLayer(this._handles[this._mode]);
 
     this._showToolbar();
   },
 
-  _select: function(event) {
+  _select: function(e) {
     this._selected = true;
     this._showToolbar();
     this._showMarkers();
 
-    if (event) { L.DomEvent.stopPropagation(event); }
+    if (e) { L.DomEvent.stopPropagation(e); }
   },
 
   _deselect: function() {
@@ -372,16 +402,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._removeToolbar();
     if (this._mode !== 'lock') { 
       this._hideMarkers(); 
-    }
-  },
-
-  _removeToolbar: function() {
-    var overlay = this._overlay,
-      map = overlay._map;
-
-    if (this.toolbar) {
-      map.removeLayer(this.toolbar);
-      this.toolbar = false;
     }
   },
 
@@ -406,17 +426,15 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (!this._handles) { this._initHandles(); }  // workaround for race condition w/ feature group
 
     var mode = this._mode,
-      currentHandle = this._handles[mode];
+        currentHandle = this._handles[mode];
     
 		currentHandle.eachLayer(function (layer) {
       var drag = layer.dragging,
-				opts = layer.options;
+			  	opts = layer.options;
 
-      if (mode !== 'lock') {
-        layer.setOpacity(0);
-      }
+      if (mode !== 'lock') { layer.setOpacity(0); }
 			if (drag) { drag.disable(); }
-			if (opts.draggable) { opts.draggable = false; }
+		 	if (opts.draggable) { opts.draggable = false; }
 		});
   },
 
@@ -449,14 +467,14 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _showToolbar: function() {
     var overlay = this._overlay,
-      eventParents = overlay._eventParents;
+        eventParents = overlay._eventParents;
 
     if (overlay.options.suppressToolbar) { return; }
 
     if (eventParents) {
       var eP = eventParents[Object.keys(eventParents)[0]];
       if (eP.anySelected()) {
-        eP._addToolbar();
+        eP.editing._addToolbar();
         return;
       }
     } 
@@ -495,7 +513,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _removeOverlay: function () {
     var overlay = this._overlay,
-      eventParents = overlay._eventParents;
+        eventParents = overlay._eventParents;
 
     if (this._mode === 'lock') { return; }
 
@@ -536,11 +554,11 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     downloadable.onload = function onLoadDownloadableImage() {
       var height = downloadable.height,
-        width = downloadable.width,
-        nw = map.latLngToLayerPoint(overlay.getCorner(0)),
-        ne = map.latLngToLayerPoint(overlay.getCorner(1)),
-        sw = map.latLngToLayerPoint(overlay.getCorner(2)),
-        se = map.latLngToLayerPoint(overlay.getCorner(3));
+          width = downloadable.width,
+          nw = map.latLngToLayerPoint(overlay.getCorner(0)),
+          ne = map.latLngToLayerPoint(overlay.getCorner(1)),
+          sw = map.latLngToLayerPoint(overlay.getCorner(2)),
+          se = map.latLngToLayerPoint(overlay.getCorner(3));
 
       // I think this is to move the image to the upper left corner,
       // jywarren: i think we may need these or the image goes off the edge of the canvas

@@ -4,7 +4,7 @@ L.distortableImage = L.DistortableImage;
 var ToggleTransparency = L.EditAction.extend({
   initialize: function(map, overlay, options) {
     var edit = overlay.editing,
-      use, tooltip;
+        use, tooltip;
     
     if (edit._transparent) {
       use = 'opacity';
@@ -36,7 +36,7 @@ var ToggleTransparency = L.EditAction.extend({
 var ToggleOutline = L.EditAction.extend({
   initialize: function(map, overlay, options) {
     var edit = overlay.editing,
-      use, tooltip;
+        use, tooltip;
     
     if (edit._outlined) {
       use = 'border_clear';
@@ -89,7 +89,7 @@ var Delete = L.EditAction.extend({
 var ToggleLock = L.EditAction.extend({
   initialize: function(map, overlay, options) {
     var edit = overlay.editing,
-      use, tooltip;
+        use, tooltip;
 
     if (edit._mode === 'lock') {
       use = 'unlock';
@@ -121,7 +121,7 @@ var ToggleLock = L.EditAction.extend({
 var ToggleRotateScale = L.EditAction.extend({
   initialize: function(map, overlay, options) {
     var edit = overlay.editing,
-      use, tooltip;
+        use, tooltip;
 
     if (edit._mode === 'rotateScale') {
       use = 'distort';
@@ -174,7 +174,7 @@ var Export = L.EditAction.extend({
 var ToggleOrder = L.EditAction.extend({
   initialize: function(map, overlay, options) {
     var edit = overlay.editing,
-      use, tooltip;
+        use, tooltip;
 
     if (edit._toggledImage) {
       use = 'flip_to_front';
@@ -329,12 +329,4 @@ L.DistortableImageOverlay.addInitHook(function () {
   }
 
   this.editing = new L.DistortableImage.Edit(this, { actions: this.editActions });
-
-  if (this.options.editable) {
-    L.DomEvent.on(this._image, 'load', this.editing.enable, this.editing);
-  }
-
-  this.on('remove', function () {
-    if (this.editing) { this.editing.disable(); }
-  });
 });

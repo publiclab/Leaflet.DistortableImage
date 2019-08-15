@@ -52,6 +52,7 @@ module.exports = function(config) {
       'src/edit/tools/DistortableImage.PopupBar.js',
       'src/edit/tools/DistortableImage.ControlBar.js',
       'src/edit/DistortableImage.Edit.js',
+      'src/edit/DistortableCollection.Edit.js',
       'test/SpecHelper.js',
       'test/src/*Spec.js',
       'test/src/**/*Spec.js'
