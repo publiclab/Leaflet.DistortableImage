@@ -455,7 +455,7 @@ Same as `L.DistortableImage.Edit` but for the collection (`L.DistortableCollecti
 <details><summary><code><b>disable()</b>: this</code></summary>
 <ul><li>Removes the editing interface (makes the image non-interactive, removes markers and toolbar).</ul></li>
 <ul><li>Called internally by default on image group deletion, but can also be used for custom behavior.</ul></li>
-<ul><li>Calls each individual image's <code>#disable</code> method and disables the multi-image interface.</ul></li>li>
+<ul><li>Calls each individual image's <code>#disable</code> method and disables the multi-image interface.</ul></li>
 </details>
 
 <details><summary><code><b>enabled()</b></code></summary></details>
