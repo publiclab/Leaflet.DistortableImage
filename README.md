@@ -162,10 +162,10 @@ Values available to pass to `mode` are:
 
 In the below example, the image will be initialiazed with "rotateScale" handles:
 
-```js
-  img = L.distortableImageOverlay("example.png", {
-    mode: "rotateScale",
-  }).addTo(map);
+```JS
+img = L.distortableImageOverlay("example.png", {
+  mode: "rotateScale",
+}).addTo(map);
 ```
 
 ### Full-resolution download
@@ -272,9 +272,9 @@ Currently it supports multiple image selection and translations, and WIP we are 
 
 **multi-select:** A single toolbar instance (using `L.control`) renders the set of tools available to use on collections of images.
 
-1. Multi-selection works with <kbd>cmd</kbd> + `click` to toggle an individual image's inclusion in this interface.
+1. Multi-selection works with <kbd>shift</kbd> + `click` to toggle an individual image's inclusion in this interface.
 2. Or <kbd>shift</kbd> + `drag` to use our `BoxSelector` handler to select multiple at once.
-3. Or for touch devices, `touch` and `hold` (aka `longpress`).
+3. Or for touch devices, `touch` + `hold` (aka `longpress`).
 
 **How to un-multi-select:**
 
