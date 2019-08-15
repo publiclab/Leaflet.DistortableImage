@@ -144,7 +144,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
       var imgBounds = L.latLngBounds(layer.getCorner(2), layer.getCorner(1));
       imgBounds = map._latLngBoundsToNewLayerBounds(imgBounds, map.getZoom(), map.getCenter());
-      if (box.intersects(imgBounds)) {
+      if (box.intersects(imgBounds) && edit.enabled()) {
         if (!this.toolbar) {
           this._addToolbar();
         }
