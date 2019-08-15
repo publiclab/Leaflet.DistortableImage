@@ -5,15 +5,18 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     height: 200,
 		crossOrigin: true,
 		// todo: find ideal number to prevent distortions during RotateScale, and make it dynamic (remove hardcoding)
-    edgeMinWidth: 50
+    edgeMinWidth: 50,
+    editable: true
   },
 
   initialize: function(url, options) {
+    L.setOptions(this, options);
+
     this.edgeMinWidth = this.options.edgeMinWidth;
+    this.editable = this.options.editable;
     this._url = url;
     this.rotation = 0;
     // window.rotation = this.rotation;
-    L.setOptions(this, options);
   },
 
   onAdd: function(map) {
@@ -52,15 +55,21 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
           map.on("zoomanim", this._animateZoom, this);
         }
       }
-
-      this.editing.enable();
+      /** if there is a featureGroup, only its editable option matter*/
+      var eventParents = this._eventParents;
+      if (eventParents) {
+        var eP = eventParents[Object.keys(eventParents)[0]];
+        if (eP.editable) { this.editing.enable(); }
+      } else {
+        if (this.editable) { this.editing.enable(); }
+      }
     }, this);
 
     this.fire("add");
   },
 
   onRemove: function(map) {
-    this.editing.disable();
+    if (this.editing) { this.editing.disable(); }
     this.fire("remove");
 
     L.ImageOverlay.prototype.onRemove.call(this, map);
@@ -160,7 +169,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return this;
   },
 
-  _setCornersFromPoints: function(pointsObj) {
+  setCornersFromPoints: function(pointsObj) {
     var map = this._map,
         edit =  this.editing,
         i = 0;

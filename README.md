@@ -66,6 +66,7 @@ By default, the image will be placed centered on the map view specified during i
 
 * [actions](#Actions)
 * [corners](#corners)
+* [editable](#editable)
 * [selected](#selected)
 * [mode](#mode)
 * [fullResolutionSrc](#Full-resolution%20download)
@@ -122,6 +123,16 @@ JSON.stringify(img.getCorners())
 
 // note there is an added level of precision after dragging the image
 ```
+
+### Editable
+
+`editable` (*optional*, default: true, value: *boolean*)
+
+Internally, we use the image `load` event to trigger a call to `img.editing.enable()`, which sets up the editing interface (makes the image interactive, markers, toolbar).
+
+For a scenario where you want to allow editing based on custom logic, you can pass `editable: false` and then write your own function with a call to `img.editing.enable()`. Other passed options such as `selected: true` and `mode` will still be applicable and applied then.
+
+Note: when using the multiple image interface (`L.DistortableCollection`) this option will be ignored on individual instances and needs to be passed to the group.
 
 ### Selected
 
@@ -230,6 +241,7 @@ Although not required, you will probably want to pass `corners` to individual im
 Options available to pass during `L.DistortableCollection` initialization:
 
 * [actions](#✤-Actions)
+* [editable](#✤-editable)
 
 ### ✤ Actions
 
@@ -246,6 +258,10 @@ imgGroup = L.distortableCollection({
 ```
 
 To add / remove a tool from the toolbar at runtime, we have also added the methods `addTool(action)` and `removeTool(action)`.
+
+### ✤ Editable
+
+
 
 ### UI and functionalities
 
