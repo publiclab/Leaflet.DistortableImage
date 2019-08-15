@@ -81,7 +81,8 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
   _toggleMultiSelect: function(e, edit) {
     if (e.metaKey || e.ctrlKey) {
-      L.DomUtil.toggleClass(e.target, 'selected');
+      /** conditional prevents disabled images from flickering multi-select mode */
+      if (edit.enabled()) { L.DomUtil.toggleClass(e.target, 'selected'); }
     }
 
     if (this.anySelected()) {

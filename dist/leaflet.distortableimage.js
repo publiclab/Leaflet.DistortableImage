@@ -699,7 +699,8 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
   _toggleMultiSelect: function(e, edit) {
     if (e.metaKey || e.ctrlKey) {
-      L.DomUtil.toggleClass(e.target, 'selected');
+      /** conditional prevents disabled images from flickering multi-select mode */
+      if (edit.enabled()) { L.DomUtil.toggleClass(e.target, 'selected'); }
     }
 
     if (this.anySelected()) {
@@ -1878,14 +1879,14 @@ L.DistortableImage.Edit = L.Handler.extend({
     L.DomEvent.on(map, "click", this._deselect, this);
     L.DomEvent.on(overlay._image, "click", this._select, this);
 
-    /* Enable hotkeys. */
     L.DomEvent.on(window, "keydown", this._onKeyDown, this);
   },
 
   /* Run on image deselection. */
   removeHooks: function() {
     var overlay = this._overlay,
-        map = overlay._map;
+        map = overlay._map,
+        eventParents = overlay._eventParents;
 
     L.DomEvent.off(map, "click", this._deselect, this);
     L.DomEvent.off(overlay._image, "click", this._select, this);
@@ -1899,9 +1900,33 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     map.removeLayer(this._handles[this._mode]);
 
-    /* Disable hotkeys. */
+    /** 
+     * ensures if you disable an image while it is multi-selected 
+     * additional deselection logic is run
+     */
+    if (L.DomUtil.hasClass(overlay.getElement(), 'selected')) {
+      L.DomUtil.removeClass(overlay.getElement(), 'selected');
+    }
+
+    if (eventParents) {
+      var eP = eventParents[Object.keys(eventParents)[0]];
+      if (eP) {
+        if (!eP.anySelected() && eP.editing.toolbar) {
+          eP.editing._removeToolbar();
+        }
+      }
+    }
+
     L.DomEvent.off(window, "keydown", this._onKeyDown, this);
   },
+
+  disable: function () {
+		if (!this._enabled) { return this; }
+
+		this._enabled = false;
+		this.removeHooks();
+		return this;
+	},
 
   _initHandles: function() {
     var overlay = this._overlay,
@@ -2406,20 +2431,27 @@ L.DistortableCollection.Edit = L.Handler.extend({
   },
 
   addHooks: function() {
-    var map = this._group._map;
+    var group = this._group,
+        map = group._map;
 
     this.editActions = this.options.actions;
 
     L.DomEvent.on(document, 'keydown', this._onKeyDown, this);
-
+    
     L.DomEvent.on(map, {
       click: this._deselectAll,
       boxzoomend: this._addSelections
     }, this);
+
+    this._group.editable = true;
+    this._group.eachLayer(function(layer) {
+      layer.editing.enable();
+    });
   },
 
   removeHooks: function() {
-    var map = this._group._map;
+    var group = this._group,
+        map = group._map;
 
     L.DomEvent.off(document, 'keydown', this._onKeyDown, this);
 
@@ -2427,6 +2459,12 @@ L.DistortableCollection.Edit = L.Handler.extend({
       click: this._deselectAll,
       boxzoomend: this._addSelections
     }, this);
+
+    this._deselectAll();
+    this._group.editable = false;
+    this._group.eachLayer(function(layer) {
+      layer.editing.disable();
+    });
   },
 
   enable: function () {
@@ -2434,10 +2472,6 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
     this._enabled = true;
     this.addHooks();
-    this._group.editable = true;
-    this._group.eachLayer(function(layer) {
-      layer.editing.enable();
-    });
     return this;
   },
 
@@ -2446,11 +2480,6 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
     this._enabled = false;
     this.removeHooks();
-    this._deselectAll();
-    this._group.editable = false;
-    this._group.eachLayer(function(layer) {
-      layer.editing.disable();
-    });
 
     return this;
   },
@@ -2472,9 +2501,12 @@ L.DistortableCollection.Edit = L.Handler.extend({
     var oe;
       
     if (e) { oe = e.originalEvent; }
-    /* prevents image deselection following the 'boxzoomend' event - note 'shift' must not be released until dragging is complete */
-    if (oe && oe.shiftKey) { return; }
-
+    /** 
+     * prevents image deselection following the 'boxzoomend' event - note 'shift' must not be released until dragging is complete
+     * also prevents deselection following a click on a disabled img by differentiating it from the map
+     */
+    if (oe && (oe.shiftKey || oe.target instanceof HTMLImageElement)) { return; }
+  
     this._group.eachLayer(function(layer) {
       var edit = layer.editing;
       L.DomUtil.removeClass(layer.getElement(), 'selected');

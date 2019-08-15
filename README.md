@@ -128,11 +128,11 @@ JSON.stringify(img.getCorners())
 
 `editable` (*optional*, default: true, value: *boolean*)
 
-Internally, we use the image `load` event to trigger a call to `img.editing.enable()`, which sets up the editing interface (makes the image interactive, markers, toolbar).
+Internally, we use the image `load` event to trigger a call to `img.editing.enable()`, which sets up the editing interface (makes the image interactive, adds markers and toolbar).
 
 For a scenario where you want to allow editing based on custom logic, you can pass `editable: false` and then write your own function with a call to `img.editing.enable()`. Other passed options such as `selected: true` and `mode` will still be applicable and applied then.
 
-Note: when using the multiple image interface (`L.DistortableCollection`) this option will be ignored on individual instances and needs to be passed to the group.
+<blockquote><b>Note</b>: when using the multiple image interface (<code>L.DistortableCollection</code>) this option will be ignored on individual <code>L.DistortableImageOverlay</code>instances and should instead be passed to the collection instance.</blockquote>
 
 ### Selected
 
@@ -261,6 +261,9 @@ To add / remove a tool from the toolbar at runtime, we have also added the metho
 
 ### ✤ Editable
 
+`editable` (*optional*, default: true, value: *boolean*)
+
+See [editable](#editable).
 
 
 ### UI and functionalities
@@ -338,7 +341,7 @@ Defaults:
 
 * **Exports**
 
-* **Deletes (<kbd>delete</kbd>, <kbd>backscpace</kbd>)**
+* **Deletes (<kbd>delete</kbd>, <kbd>backspace</kbd>)**
 
   * Permanently deletes groups of selected images from the map.
 
@@ -379,14 +382,14 @@ ex.
 
   for (i = 0; i < 4; i++) {
     p = map
-      .project(this.getCorner(i))
+      .project(img.getCorner(i))
       .subtract(center)
       .multiplyBy(scale)
       .add(center);
     scaledCorners[i] = map.unproject(p);
   }
 
-  this.setCorners(scaledCorners);
+  img.setCorners(scaledCorners);
   </pre>
 </ul></li>
 </details>
@@ -399,7 +402,7 @@ ex.
 <ul><li>scales the image by the given factor and calls <code>#setCorners</code>.</ul></li>
 <ul><li>a scale of 0 or 1 will leave the image unchanged - but 0 causes the function to automatically return</ul></li>
 <ul><li>a negative scale will invert the image and, depending on the factor, change its size</ul></li>
-<ul><li>ex. <code>overlay.scaleBy(0.5)</code></ul></li>
+<ul><li>ex. <code>img.scaleBy(0.5)</code></ul></li>
 </details>
 
 <details><summary><code><b>rotateBy(<i>rad</i> &#60;number>)</b>: this</code></summary>
@@ -408,35 +411,83 @@ ex.
 
 <hr>
 
-`L.DistortableCollection`
+`L.DistortableImageOverlay.Edit`
 
 <hr>
 
-- [`removeTool(action)`](#actions) - Removes the passed tool from the control toolbar in runtime.
+A handler that holds the keybindings and toolbar API for an image instance. It is always initialized with an instance of `L.DistortableImageOverlay`. Besides code organization, it provides the ability to `enable` and `disable` image editing using the Leaflet API.
 
-  - Ex: `imgGroup.removeTool(Deletes)`
 
-- [`addTool(action)`](#actions) - Adds the passed tool to the end of the control toolbar in runtime. Returns false if the tool is not available or is already present.
+<details><summary><code><b>enable()</b>: this</code></summary>
+<ul><li>Sets up the editing interface (makes the image interactive, adds markers and toolbar).</ul></li>
+ <ul><li>Called internally by default (<a href="#editable">editable</a>), but unlike the option it can be used in runtime and is not ignored if there is a collection group. In fact...</ul></li>
+ <ul><li>...An individual image can be enabled while the group is disabled. i.e. calling <code>img.editing.enable()</code> after <code>imgGroup.editing.disable()</code> is valid. In this case, the single image interface will be available on  this image but not the multi-image interface.</ul></li>
+</details>
 
-- `hasTool(action)` - Checks if the tool is already present in the currently rendered control toolbar.
+<details><summary><code><b>disable()</b>: this</code></summary>
+<ul><li>Removes the editing interface (makes the image non-interactive, removes markers and toolbar).</ul></li>
+<ul><li>Called internally by default on image deletion.</ul></li>
+<ul><li>An individual image can be disabled while the group is enabled.</ul></li>
+</details>
+
+<hr>
+
+`L.DistortableCollection`
+
+* isSelected
+
+* anySelected
+
+<hr>
+
+`L.DistortableCollection.Edit`
+
+<hr>
+
+Same as `L.DistortableImage.Edit` but for the collection (`L.DistortableCollection`) instance.
+<blockquote><b>Note</b>: The main difference is enabling / disabling collections doesn't have an effect on individual image instances disabled during runtime. i.e. the individual instance gets precedence. Initialization is the opposite case, where via the <code>editable</code> option, it only matters what you pass to the collection if one is present.</blockquote>
+
+<details><summary><code><b>enable()</b>: this</code></summary>
+<ul><li>Sets up the multi-editing interface.</ul></li>
+<ul><li>Called internally by default, see <a href="#editable"> editable</a>.</ul></li>
+<ul><li>The multi-image interface cannot be enabled on any images that are disabled during runtime with <code>img.editing.disable</code>. This means calling <code>imgGroup.editing.enable()</code> will ignore any images that are individually disabled.</ul></li>
+</details>
+
+<details><summary><code><b>disable()</b>: this</code></summary>
+<ul><li>Removes the editing interface (makes the image non-interactive, removes markers and toolbar).</ul></li>
+<ul><li>Called internally by default on image group deletion, but can also be used for custom behavior.</ul></li>
+<ul><li>Calling <code>imgGroup.editing.disable</code> on an individually enabled image removes just the multi-interface. Calling it on an individually disabled image does nothing.</ul></li>
+</details>
+
+<details><summary><code><b>removeTool(action)</b></code></summary>
+<ul><li>Removes the passed tool from the control toolbar in runtime.</ul></li>
+<ul><li>ex: <code>imgGroup.removeTool(Deletes)</code></ul></li>
+</details>
+
+<details><summary><code><b>addTool(action)</b></code></summary>
+<ul><li>Adds the passed tool to the end of the control toolbar in runtime. Returns false if the tool is not available or is already present.</ul></li>
+</details>
+
+<details><summary><code><b>hasTool(action)</b></code></summary>
+<ul><li>Checks if the tool is already present in the currently rendered control toolbar.</ul></li>
+</details>
 
 ## Additional Components
 
 ### Keymapper
 
-
 ```JS
 // add a position option with combinations of 'top', 'bottom', 'left' or 'right'
-L.distortableImage.keymapper(map, { 
-  position: 'topleft' 
+L.distortableImage.keymapper(map, {
+  position: 'topleft'
 });
 ```
 
 Options:
- - `position` (*optional*, default: 'topright', value: *string*)
 
+* `position` (*optional*, default: 'topright', value: *string*)
 
-Adds a control onto the map which opens a keymapper legend showing the available key bindings for different editing / interaction options. 
+Adds a control onto the map which opens a keymapper legend showing the available key bindings for different editing / interaction options.
 
 (WIP) Currently includes keybindings for all available actions and does not update yet if you use the `actions` API to limit available actions.
 

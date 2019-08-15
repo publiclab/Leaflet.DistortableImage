@@ -59,14 +59,14 @@ L.DistortableImage.Edit = L.Handler.extend({
     L.DomEvent.on(map, "click", this._deselect, this);
     L.DomEvent.on(overlay._image, "click", this._select, this);
 
-    /* Enable hotkeys. */
     L.DomEvent.on(window, "keydown", this._onKeyDown, this);
   },
 
   /* Run on image deselection. */
   removeHooks: function() {
     var overlay = this._overlay,
-        map = overlay._map;
+        map = overlay._map,
+        eventParents = overlay._eventParents;
 
     L.DomEvent.off(map, "click", this._deselect, this);
     L.DomEvent.off(overlay._image, "click", this._select, this);
@@ -80,9 +80,33 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     map.removeLayer(this._handles[this._mode]);
 
-    /* Disable hotkeys. */
+    /** 
+     * ensures if you disable an image while it is multi-selected 
+     * additional deselection logic is run
+     */
+    if (L.DomUtil.hasClass(overlay.getElement(), 'selected')) {
+      L.DomUtil.removeClass(overlay.getElement(), 'selected');
+    }
+
+    if (eventParents) {
+      var eP = eventParents[Object.keys(eventParents)[0]];
+      if (eP) {
+        if (!eP.anySelected() && eP.editing.toolbar) {
+          eP.editing._removeToolbar();
+        }
+      }
+    }
+
     L.DomEvent.off(window, "keydown", this._onKeyDown, this);
   },
+
+  disable: function () {
+		if (!this._enabled) { return this; }
+
+		this._enabled = false;
+		this.removeHooks();
+		return this;
+	},
 
   _initHandles: function() {
     var overlay = this._overlay,

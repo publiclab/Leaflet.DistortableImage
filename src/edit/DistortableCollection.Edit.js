@@ -17,20 +17,27 @@ L.DistortableCollection.Edit = L.Handler.extend({
   },
 
   addHooks: function() {
-    var map = this._group._map;
+    var group = this._group,
+        map = group._map;
 
     this.editActions = this.options.actions;
 
     L.DomEvent.on(document, 'keydown', this._onKeyDown, this);
-
+    
     L.DomEvent.on(map, {
       click: this._deselectAll,
       boxzoomend: this._addSelections
     }, this);
+
+    this._group.editable = true;
+    this._group.eachLayer(function(layer) {
+      layer.editing.enable();
+    });
   },
 
   removeHooks: function() {
-    var map = this._group._map;
+    var group = this._group,
+        map = group._map;
 
     L.DomEvent.off(document, 'keydown', this._onKeyDown, this);
 
@@ -38,6 +45,12 @@ L.DistortableCollection.Edit = L.Handler.extend({
       click: this._deselectAll,
       boxzoomend: this._addSelections
     }, this);
+
+    this._deselectAll();
+    this._group.editable = false;
+    this._group.eachLayer(function(layer) {
+      layer.editing.disable();
+    });
   },
 
   enable: function () {
@@ -45,10 +58,6 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
     this._enabled = true;
     this.addHooks();
-    this._group.editable = true;
-    this._group.eachLayer(function(layer) {
-      layer.editing.enable();
-    });
     return this;
   },
 
@@ -57,11 +66,6 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
     this._enabled = false;
     this.removeHooks();
-    this._deselectAll();
-    this._group.editable = false;
-    this._group.eachLayer(function(layer) {
-      layer.editing.disable();
-    });
 
     return this;
   },
@@ -83,9 +87,12 @@ L.DistortableCollection.Edit = L.Handler.extend({
     var oe;
       
     if (e) { oe = e.originalEvent; }
-    /* prevents image deselection following the 'boxzoomend' event - note 'shift' must not be released until dragging is complete */
-    if (oe && oe.shiftKey) { return; }
-
+    /** 
+     * prevents image deselection following the 'boxzoomend' event - note 'shift' must not be released until dragging is complete
+     * also prevents deselection following a click on a disabled img by differentiating it from the map
+     */
+    if (oe && (oe.shiftKey || oe.target instanceof HTMLImageElement)) { return; }
+  
     this._group.eachLayer(function(layer) {
       var edit = layer.editing;
       L.DomUtil.removeClass(layer.getElement(), 'selected');
