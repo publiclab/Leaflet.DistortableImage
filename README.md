@@ -199,8 +199,6 @@ This option will override other options related to the toolbar, such as [`select
 
 ## Multiple Image Interface
 
-(todo -- add gh pages demo)
-
 Our `DistortableCollection` class allows working with multiple images simultaneously. This interface builds on the single image interface.
 
 The setup is relatively similar - here is an example with two images:
@@ -265,7 +263,6 @@ To add / remove a tool from the toolbar at runtime, we have also added the metho
 
 See [editable](#editable).
 
-
 ### UI and functionalities
 
 Currently it supports multiple image selection and translations, and WIP we are working on porting all editing tools to work for it, such as transparency, etc. Image distortions still use the single-image interface.
@@ -280,7 +277,7 @@ Currently it supports multiple image selection and translations, and WIP we are 
 
 * In order to return to the single-image interface, where each `L.popup` toolbar only applies actions on the image it's attached to, you must toggle *all* images out of multi-select or...
 * ...Click on the map or hit the <kbd>esc</kbd> key to quickly deselect all images.
-* For the aforementioned 3 mutli-select methods, the `BoxSelector` method is the only one that doesn't also toggle _out_ of multi-select mode. 
+* For the aforementioned 3 mutli-select methods, the `BoxSelector` method is the only one that doesn't also toggle _out_ of multi-select mode.
 
 <hr>
 
@@ -288,7 +285,7 @@ Currently it supports multiple image selection and translations, and WIP we are 
 
 <hr>
 
-### Single Image Interface:
+### Single Image Interface
 
 <hr>
 
@@ -343,7 +340,7 @@ Defaults:
 
 * **Deletes (<kbd>delete</kbd>, <kbd>backspace</kbd>)**
 
-  * Permanently deletes groups of selected images from the map.
+  * Permanently deletes groups of selected images from the map. Uses a `confirm()` modal dialog.
 
 * **Locks** (<kbd>l</kbd>)
 
