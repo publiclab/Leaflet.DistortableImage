@@ -5,7 +5,7 @@ L.EditAction = L.Toolbar2.Action.extend({
       svg: false,
       html: '',
       className: '',
-      tooltip: ''
+      tooltip: '',
     },
   },
 
@@ -20,7 +20,7 @@ L.EditAction = L.Toolbar2.Action.extend({
   },
 
   _createIcon: function(toolbar, container, args) {
-    var iconOptions = this.options.toolbarIcon;
+    const iconOptions = this.options.toolbarIcon;
 
     this.toolbar = toolbar;
     this._icon = L.DomUtil.create('li', '', container);
@@ -48,14 +48,16 @@ L.EditAction = L.Toolbar2.Action.extend({
   },
 
   _injectIconSet: function() {
-    if (document.querySelector('#iconset')) { return; }
+    if (document.querySelector('#iconset')) {
+      return;
+    }
 
-    var el = document.createElement('div');
+    const el = document.createElement('div');
     el.id = 'iconset';
     el.setAttribute('hidden', 'hidden');
     el.innerHTML = new L.ToolbarIconSet().render();
 
     document.querySelector('.leaflet-marker-pane').appendChild(el);
-  }
+  },
 });
 

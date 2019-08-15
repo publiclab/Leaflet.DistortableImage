@@ -1,9 +1,11 @@
-L.Map.mergeOptions({ boxSelector: true, boxZoom: false });
+L.Map.mergeOptions({boxSelector: true, boxZoom: false});
 
-/** 
- * primarily Leaflet 1.5.1 source code. Overriden so that its a selection box with our `L.DistortableCollection` class 
- * instead of a zoom box. 
- * */
+/*
+ * primarily Leaflet 1.5.1 source code.
+ * Overriden so that its a selection box
+ * with our `L.DistortableCollection` class
+ * instead of a zoom box.
+ */
 L.Map.BoxSelector = L.Map.BoxZoom.extend({
   initialize: function(map) {
     this._map = map;
@@ -43,7 +45,9 @@ L.Map.BoxSelector = L.Map.BoxZoom.extend({
   },
 
   _onMouseDown: function(e) {
-    if (!e.shiftKey || (e.which !== 1 && e.button !== 1)) { return false; }
+    if (!e.shiftKey || (e.which !== 1 && e.button !== 1)) {
+      return false;
+    }
 
     // Clear the deferred resetState if it hasn't executed yet, otherwise it
     // will interrupt the interaction and orphan a box element in the container.
@@ -56,9 +60,9 @@ L.Map.BoxSelector = L.Map.BoxZoom.extend({
     this._startPoint = this._map.mouseEventToContainerPoint(e);
 
     L.DomEvent.on(document, {
-        contextmenu: L.DomEvent.stop,
-        mousemove: this._onMouseMove,
-        mouseup: this._onMouseUp,
+      contextmenu: L.DomEvent.stop,
+      mousemove: this._onMouseMove,
+      mouseup: this._onMouseUp,
     }, this);
   },
 
@@ -75,7 +79,7 @@ L.Map.BoxSelector = L.Map.BoxZoom.extend({
     this._point = this._map.mouseEventToContainerPoint(e);
 
     this._bounds = L.bounds(this._startPoint, this._point);
-    var size = this._bounds.getSize();
+    const size = this._bounds.getSize();
 
     L.DomUtil.setPosition(this._box, this._bounds.min);
 
@@ -93,33 +97,40 @@ L.Map.BoxSelector = L.Map.BoxZoom.extend({
     L.DomUtil.enableImageDrag();
 
     L.DomEvent.off(document, {
-        contextmenu: L.DomEvent.stop,
-        mousemove: this._onMouseMove,
-        mouseup: this._onMouseUp,
+      contextmenu: L.DomEvent.stop,
+      mousemove: this._onMouseMove,
+      mouseup: this._onMouseUp,
     }, this);
   },
 
   _onMouseUp: function(e) {
-    if (e.which !== 1 && e.button !== 1) { return; }
+    if (e.which !== 1 && e.button !== 1) {
+      return;
+    }
 
     this._finish();
 
-    if (!this._moved) { return; }
+    if (!this._moved) {
+      return;
+    }
     // Postpone to next JS tick so internal click event handling
     // still see it as "moved".
     this._clearDeferredResetState();
-    this._resetStateTimeout = setTimeout(L.Util.bind(this._resetState, this), 0);
+    this._resetStateTimeout = setTimeout(
+        L.Util.bind(this._resetState, this), 0);
 
-    var bounds = new L.latLngBounds(
-      this._map.containerPointToLatLng(this._bounds.getBottomLeft()),
-      this._map.containerPointToLatLng(this._bounds.getTopRight())
+    let bounds = new L.latLngBounds(
+        this._map.containerPointToLatLng(this._bounds.getBottomLeft()),
+        this._map.containerPointToLatLng(this._bounds.getTopRight())
     );
 
     // calls the `project` method but 1st updates the pixel origin - see https://github.com/publiclab/Leaflet.DistortableImage/pull/344
-    bounds = this._map._latLngBoundsToNewLayerBounds(bounds, this._map.getZoom(), this._map.getCenter());
+    bounds = this._map.
+        _latLngBoundsToNewLayerBounds(
+            bounds, this._map.getZoom(), this._map.getCenter());
 
-    this._map.fire('boxzoomend', { boxZoomBounds: bounds });
-  }
+    this._map.fire('boxzoomend', {boxZoomBounds: bounds});
+  },
 });
 
 L.Map.addInitHook('addHandler', 'boxSelector', L.Map.BoxSelector);

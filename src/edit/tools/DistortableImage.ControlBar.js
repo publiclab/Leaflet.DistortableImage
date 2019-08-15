@@ -16,7 +16,6 @@ L.distortableImage = L.DistortableImage;
     },
 
     addHooks: function () {
-      console.log(this);
       var edit = this._overlay.editing;
       L.IconUtil.toggleXlink(this._link, 'get_app', 'spinner');
       L.IconUtil.toggleTooltip(this._link, 'Export Images', 'Loading...');
@@ -47,14 +46,14 @@ L.distortableImage = L.DistortableImage;
   });
 
 var Locks = L.EditAction.extend({
-  initialize: function (map, overlay, options) {
-    var use = 'lock';
+  initialize: function(map, overlay, options) {
+    const use = 'lock';
 
     options = options || {};
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: 'Lock Images'
+      tooltip: 'Lock Images',
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -67,14 +66,14 @@ var Locks = L.EditAction.extend({
 });
 
 var Unlocks = L.EditAction.extend({
-  initialize: function (map, overlay, options) {
-    var use = 'unlock';
+  initialize: function(map, overlay, options) {
+    const use = 'unlock';
 
     options = options || {};
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: 'Unlock Images'
+      tooltip: 'Unlock Images',
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -92,12 +91,12 @@ L.DistortableImage.ControlBar = L.Toolbar2.Control.extend({
       Exports,
       Deletes,
       Locks,
-      Unlocks
-    ]
+      Unlocks,
+    ],
   },
 });
 
-L.distortableImage.controlBar = function (options) {
+L.distortableImage.controlBar = function(options) {
   return new L.DistortableImage.ControlBar(options);
 };
 

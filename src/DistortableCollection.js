@@ -36,13 +36,14 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var layer = e.layer;
 
     L.DomEvent.on(layer, {
-      dragstart: this._dragStartMultiple, 
-      drag: this._dragMultiple
+      dragstart: this._dragStartMultiple,
+      drag: this._dragMultiple,
     }, this);
 
     L.DomEvent.on(layer._image, {
       mousedown: this._deselectOthers,
-      contextmenu: this._longPressMultiSelect  /* Enable longpress for multi select for touch devices. */
+      /* Enable longpress for multi select for touch devices. */
+      contextmenu: this._longPressMultiSelect,
     }, this);
   },
 
@@ -51,12 +52,12 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     L.DomEvent.off(layer, {
       dragstart: this._dragStartMultiple,
-      drag: this._dragMultiple
+      drag: this._dragMultiple,
     }, this);
 
     L.DomEvent.off(layer._image, {
       mousedown: this._deselectOthers,
-      contextmenu: this._longPressMultiSelect
+      contextmenu: this._longPressMultiSelect,
     }, this);
   },
 
@@ -124,7 +125,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }
 
     this.eachLayer(function(layer) {
-      var edit = layer.editing;
+      const edit = layer.editing;
       edit._deselect();
 
       for (i = 0; i < 4; i++) {
@@ -148,23 +149,23 @@ L.DistortableCollection = L.FeatureGroup.extend({
       overlay._dragPoints[i] = map.latLngToLayerPoint(overlay.getCorner(i));
     }
 
-    var cpd = overlay._calcCornerPointDelta();
+    const cpd = overlay._calcCornerPointDelta();
 
     this._updateCollectionFromPoints(cpd, overlay);
   },
 
   _toRemove: function() {
-    var layerArr = this.getLayers();
+    const layerArr = this.getLayers();
 
     return layerArr.filter(function(layer) {
-      var edit = layer.editing;
+      const edit = layer.editing;
       return (this.isSelected(layer) && edit._mode !== 'lock');
     }, this);
   },
 
   _calcCollectionFromPoints: function(cpd, overlay) {
-    var layersToMove = [],
-      p = new L.Transformation(1, -cpd.x, 1, -cpd.y);
+    const layersToMove = [];
+    const p = new L.Transformation(1, -cpd.x, 1, -cpd.y);
 
     this.eachLayer(function(layer) {
       if (
@@ -187,10 +188,11 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   /**
-   * cpd === cornerPointDelta
+   * @param {number} cpd (=== cornerPointDelta)
+   * @param {object} overlay
    */
   _updateCollectionFromPoints: function(cpd, overlay) {
-    var layersToMove = this._calcCollectionFromPoints(cpd, overlay);
+    const layersToMove = this._calcCollectionFromPoints(cpd, overlay);
 
     layersToMove.forEach(function(layer) {
       layer.setCornersFromPoints(layer._cpd);
@@ -198,26 +200,26 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   _getAvgCmPerPixel: function(imgs) {
-    var reduce = imgs.reduce(function(sum, img) {
+    const reduce = imgs.reduce(function(sum, img) {
       return sum + img.cm_per_pixel;
     }, 0);
     return reduce / imgs.length;
   },
 
   generateExportJson: function() {
-    var json = {};
+    const json = {};
     json.images = [];
 
     this.eachLayer(function(layer) {
       if (this.isSelected(layer)) {
-        var sections = layer._image.src.split('/');
-        var filename = sections[sections.length-1];
-        var zc = layer.getCorners();
-        var corners = [
-          { lat: zc[0].lat, lon: zc[0].lng },
-          { lat: zc[1].lat, lon: zc[1].lng },
-          { lat: zc[3].lat, lon: zc[3].lng },
-          { lat: zc[2].lat, lon: zc[2].lng }
+        const sections = layer._image.src.split('/');
+        const filename = sections[sections.length-1];
+        const zc = layer.getCorners();
+        const corners = [
+          {lat: zc[0].lat, lon: zc[0].lng},
+          {lat: zc[1].lat, lon: zc[1].lng},
+          {lat: zc[3].lat, lon: zc[3].lng},
+          {lat: zc[2].lat, lon: zc[2].lng},
         ];
         json.images.push({
           id: this.getLayerId(layer),
@@ -226,7 +228,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
           height: layer._image.height,
           image_file_name: filename,
           nodes: corners,
-          cm_per_pixel: L.ImageUtil.getCmPerPixel(layer)
+          cm_per_pixel: L.ImageUtil.getCmPerPixel(layer),
         });
       }
     }, this);

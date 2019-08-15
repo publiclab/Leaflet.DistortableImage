@@ -26,5 +26,12 @@ module.exports = {
         * (see above) when double quotes aren't used.
         */
 
+       /* rules */
+        "no-var": 0,
+        "new-cap": 0,
+        "guard-for-in": 0,
+        "max-len": 1,
+        "prefer-const": 1,
+        "valid-jsdoc": 2
     }
 };

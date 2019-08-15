@@ -6,32 +6,33 @@ L.DistortableImage.Edit = L.Handler.extend({
     opacity: 0.7,
     outline: '1px solid red',
     keymap: {
-     'Backspace': '_removeOverlay', // backspace windows / delete mac
-     'CapsLock': '_toggleRotate',
-     'Escape': '_deselect',
-     'd': '_toggleRotateScale',
-     'r': '_toggleRotateScale',
-     'j': '_toggleOrder',
-     'k': '_toggleOrder',
-     'l': '_toggleLock',
-     'o': '_toggleOutline',
-     's': '_toggleScale',
-		 't': '_toggleTransparency',
-    }
+      'Backspace': '_removeOverlay', // backspace windows / delete mac
+      'CapsLock': '_toggleRotate',
+      'Escape': '_deselect',
+      'd': '_toggleRotateScale',
+      'r': '_toggleRotateScale',
+      'j': '_toggleOrder',
+      'k': '_toggleOrder',
+      'l': '_toggleLock',
+      'o': '_toggleOutline',
+      's': '_toggleScale',
+      't': '_toggleTransparency',
+    },
   },
 
   initialize: function(overlay, options) {
     this._overlay = overlay;
     this._toggledImage = false;
-    /* Interaction modes. TODO - create API for limiting modes similar to toolbar actions API */
-    var modes = ['distort', 'lock', 'rotate', 'scale', 'rotateScale'];
+    /* Interaction modes. TODO - create API for
+    * limiting modes similar to toolbar actions API */
+    const modes = ['distort', 'lock', 'rotate', 'scale', 'rotateScale'];
     this._mode = modes[modes.indexOf(overlay.options.mode)] || 'distort';
-    
+
     this._selected = this._overlay.options.selected || false;
     this._transparent = false;
     this._outlined = false;
 
-    L.setOptions(this, options); 
+    L.setOptions(this, options);
   },
 
   /* Run on image selection. */
@@ -48,19 +49,21 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this.editActions = this.options.actions;
 
-    if (this._selected && !overlay.options.suppressToolbar) { this._addToolbar(); }
+    if (this._selected && !overlay.options.suppressToolbar) {
+      this._addToolbar();
+    }
 
     this._overlay._dragStartPoints = {
       0: L.point(0, 0),
       1: L.point(0, 0),
       2: L.point(0, 0),
-      3: L.point(0, 0)
+      3: L.point(0, 0),
     };
 
-    L.DomEvent.on(map, "click", this._deselect, this);
-    L.DomEvent.on(overlay._image, "click", this._select, this);
+    L.DomEvent.on(map, 'click', this._deselect, this);
+    L.DomEvent.on(overlay._image, 'click', this._select, this);
 
-    L.DomEvent.on(window, "keydown", this._onKeyDown, this);
+    L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
   },
 
   /* Run on image deselection. */
@@ -69,15 +72,21 @@ L.DistortableImage.Edit = L.Handler.extend({
         map = overlay._map,
         eventParents = overlay._eventParents;
 
-    L.DomEvent.off(map, "click", this._deselect, this);
-    L.DomEvent.off(overlay._image, "click", this._select, this);
+    L.DomEvent.off(map, 'click', this._deselect, this);
+    L.DomEvent.off(overlay._image, 'click', this._select, this);
 
     // First, check if dragging exists - it may be off due to locking
-    if (this.dragging) { this.dragging.disable(); }
+    if (this.dragging) {
+      this.dragging.disable();
+    }
     delete this.dragging;
 
-    if (this.toolbar) { this._removeToolbar(); }
-    if (this.editing) { this.editing.disable(); }
+    if (this.toolbar) {
+      this._removeToolbar();
+    }
+    if (this.editing) {
+      this.editing.disable();
+    }
 
     map.removeLayer(this._handles[this._mode]);
 
@@ -98,7 +107,7 @@ L.DistortableImage.Edit = L.Handler.extend({
       }
     }
 
-    L.DomEvent.off(window, "keydown", this._onKeyDown, this);
+    L.DomEvent.off(window, 'keydown', this._onKeyDown, this);
   },
 
   disable: function () {
@@ -110,13 +119,13 @@ L.DistortableImage.Edit = L.Handler.extend({
 	},
 
   _initHandles: function() {
-    var overlay = this._overlay,
-    i;
+    const overlay = this._overlay;
+    let i;
 
     this._lockHandles = L.layerGroup();
     for (i = 0; i < 4; i++) {
       this._lockHandles.addLayer(
-        new L.LockHandle(overlay, i, { draggable: false })
+          new L.LockHandle(overlay, i, {draggable: false})
       );
     }
 
@@ -135,7 +144,8 @@ L.DistortableImage.Edit = L.Handler.extend({
       this._scaleHandles.addLayer(new L.ScaleHandle(overlay, i));
     }
 
-    this._rotateScaleHandles = L.layerGroup(); // handle includes rotate AND scale
+    // handle includes rotate AND scale
+    this._rotateScaleHandles = L.layerGroup();
     for (i = 0; i < 4; i++) {
       this._rotateScaleHandles.addLayer(new L.RotateScaleHandle(overlay, i));
     }
@@ -145,19 +155,19 @@ L.DistortableImage.Edit = L.Handler.extend({
       distort: this._distortHandles,
       rotateScale: this._rotateScaleHandles,
       scale: this._scaleHandles,
-      rotate: this._rotateHandles
+      rotate: this._rotateHandles,
     };
   },
 
-  _appendHandlesandDragable: function (mode) {
-    var overlay = this._overlay,
-      map = overlay._map;
+  _appendHandlesandDragable: function(mode) {
+    const overlay = this._overlay;
+    const map = overlay._map;
 
     map.addLayer(this._handles[mode]);
 
     if (mode !== 'lock') {
       if (!this._selected) {
-        this._handles[mode].eachLayer(function (layer) {
+        this._handles[mode].eachLayer(function(layer) {
           layer.setOpacity(0);
           layer.dragging.disable();
           layer.options.draggable = false;
@@ -197,14 +207,14 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
   },
 
-  hasTool: function (value) {
-    return this.editActions.some(function (action) {
+  hasTool: function(value) {
+    return this.editActions.some(function(action) {
       return action === value;
     });
   },
 
-  removeTool: function (value) {
-    this.editActions.some(function (item, idx) {
+  removeTool: function(value) {
+    this.editActions.some(function(item, idx) {
       if (this.editActions[idx] === value) {
         this._removeToolbar();
         this.editActions.splice(idx, 1);
@@ -237,7 +247,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     this.dragging.on('dragstart', function() {
       overlay.fire('dragstart');
       this._removeToolbar();
-    },this);
+    }, this);
 
     /*
      * Adjust default behavior of L.Draggable.
@@ -254,7 +264,7 @@ L.DistortableImage.Edit = L.Handler.extend({
       for (i = 0; i < 4; i++) {
         currentPoint = map.latLngToLayerPoint(overlay._corners[i]);
         overlay._corners[i] = map.layerPointToLatLng(currentPoint.add(delta));
-			}
+      }
 
       overlay._reset();
       overlay.fire('update');
@@ -265,15 +275,20 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _toggleRotateScale: function() {
-    var map = this._overlay._map;
+    const map = this._overlay._map;
 
-    if (this._mode === 'lock') { return; }
+    if (this._mode === 'lock') {
+      return;
+    }
 
     map.removeLayer(this._handles[this._mode]);
 
     /* Switch mode. */
-    if (this._mode === 'rotateScale') { this._mode = 'distort'; } 
-    else { this._mode = 'rotateScale'; }
+    if (this._mode === 'rotateScale') {
+      this._mode = 'distort';
+    } else {
+      this._mode = 'rotateScale';
+    }
 
     map.addLayer(this._handles[this._mode]);
 
@@ -281,27 +296,37 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _toggleScale: function() {
-		var map = this._overlay._map;
+    const map = this._overlay._map;
 
-    if (this._mode === 'lock') { return; }
+    if (this._mode === 'lock') {
+      return;
+    }
 
     map.removeLayer(this._handles[this._mode]);
 
-		if (this._mode === 'scale') { this._mode = 'distort'; }
-		else { this._mode = 'scale'; }
+    if (this._mode === 'scale') {
+      this._mode = 'distort';
+    } else {
+      this._mode = 'scale';
+    }
 
     map.addLayer(this._handles[this._mode]);
   },
 
   _toggleRotate: function() {
-		var map = this._overlay._map;
+    const map = this._overlay._map;
 
-		if (this._mode === 'lock') { return; }
+    if (this._mode === 'lock') {
+      return;
+    }
 
     map.removeLayer(this._handles[this._mode]);
-    if (this._mode === 'rotate') { this._mode = 'distort'; } 
-		else { this._mode = 'rotate'; }
-		
+    if (this._mode === 'rotate') {
+      this._mode = 'distort';
+    } else {
+      this._mode = 'rotate';
+    }
+
     map.addLayer(this._handles[this._mode]);
   },
 
@@ -310,7 +335,6 @@ L.DistortableImage.Edit = L.Handler.extend({
         opacity;
 
     this._transparent = !this._transparent;
-    opacity = this._transparent ? this.options.opacity : 1;
 
     L.DomUtil.setOpacity(image, opacity);
     image.setAttribute('opacity', opacity);
@@ -324,7 +348,6 @@ L.DistortableImage.Edit = L.Handler.extend({
         outline;
 
     this._outlined = !this._outlined;
-    outline = this._outlined ? this.options.outline : 'none';
 
     L.DomUtil.setOpacity(image, opacity);
     image.setAttribute('opacity', opacity);
@@ -349,12 +372,14 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _lock: function() {
     this._mode = 'lock';
-    if (this.dragging) { this.dragging.disable(); }
+    if (this.dragging) {
+      this.dragging.disable();
+    }
     delete this.dragging;
   },
 
   _toggleLock: function() {
-    var map = this._overlay._map;
+    const map = this._overlay._map;
 
     map.removeLayer(this._handles[this._mode]);
  
@@ -377,30 +402,38 @@ L.DistortableImage.Edit = L.Handler.extend({
   _deselect: function() {
     this._selected = false;
     this._removeToolbar();
-    if (this._mode !== 'lock') { 
-      this._hideMarkers(); 
+    if (this._mode !== 'lock') {
+      this._hideMarkers();
     }
   },
 
   _showMarkers: function() {
-    if (this._mode === 'lock') { return; }
+    if (this._mode === 'lock') {
+      return;
+    }
 
     if (this.toolbar && this.toolbar instanceof L.DistortableImage.PopupBar) {
-      var currentHandle = this._handles[this._mode];
+      const currentHandle = this._handles[this._mode];
 
-      currentHandle.eachLayer(function (layer) {
-        var drag = layer.dragging,
-          opts = layer.options;
+      currentHandle.eachLayer(function(layer) {
+        const drag = layer.dragging;
+        const opts = layer.options;
 
         layer.setOpacity(1);
-        if (drag) { drag.enable(); }
-        if (opts.draggable) { opts.draggable = true; }
+        if (drag) {
+          drag.enable();
+        }
+        if (opts.draggable) {
+          opts.draggable = true;
+        }
       });
     }
   },
 
   _hideMarkers: function() {
-    if (!this._handles) { this._initHandles(); }  // workaround for race condition w/ feature group
+    if (!this._handles) {
+      this._initHandles();
+    } // workaround for race condition w/ feature group
 
     var mode = this._mode,
         currentHandle = this._handles[mode];
@@ -416,45 +449,45 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _addToolbar: function() {
-    var overlay = this._overlay,
-      map = overlay._map,
-      //Find the topmost point on the image.
-      corners = overlay.getCorners(),
-      maxLat = -Infinity;
+    const overlay = this._overlay;
+    const map = overlay._map;
+    // Find the topmost point on the image.
+    const corners = overlay.getCorners();
+    let maxLat = -Infinity;
 
-    for (var i = 0; i < corners.length; i++) {
+    for (let i = 0; i < corners.length; i++) {
       if (corners[i].lat > maxLat) {
         maxLat = corners[i].lat;
       }
     }
 
-    //Longitude is based on the centroid of the image.
-    var raised_point = overlay.getCenter();
-    raised_point.lat = maxLat;
+    // Longitude is based on the centroid of the image.
+    const raisedPoint = overlay.getCenter();
+    raisedPoint.lat = maxLat;
 
     try {
-      this.toolbar = L.distortableImage.popupBar(raised_point, {
-        actions: this.editActions
+      this.toolbar = L.distortableImage.popupBar(raisedPoint, {
+        actions: this.editActions,
       }).addTo(map, overlay);
       overlay.fire('toolbar:created');
-    }
-    catch (e) { }
-
+    } catch (e) { }
   },
 
   _showToolbar: function() {
     var overlay = this._overlay,
         eventParents = overlay._eventParents;
 
-    if (overlay.options.suppressToolbar) { return; }
+    if (overlay.options.suppressToolbar) {
+      return;
+    }
 
     if (eventParents) {
-      var eP = eventParents[Object.keys(eventParents)[0]];
+      const eP = eventParents[Object.keys(eventParents)[0]];
       if (eP.anySelected()) {
         eP.editing._addToolbar();
         return;
       }
-    } 
+    }
 
     this._addToolbar();
   },
@@ -463,27 +496,27 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._addToolbar();
     this._removeToolbar();
   },
-  
-  _updateToolbarPos: function() {
-    var overlay = this._overlay,
-      //Find the topmost point on the image.
-      corners = overlay.getCorners(),
-      toolbar = this.toolbar,
-      maxLat = -Infinity;
 
-    if (toolbar && toolbar instanceof L.DistortableImage.PopupBar) { 
-      for (var i = 0; i < corners.length; i++) {
+  _updateToolbarPos: function() {
+    const overlay = this._overlay;
+    // Find the topmost point on the image.
+    const corners = overlay.getCorners();
+    const toolbar = this.toolbar;
+    let maxLat = -Infinity;
+
+    if (toolbar && toolbar instanceof L.DistortableImage.PopupBar) {
+      for (let i = 0; i < corners.length; i++) {
         if (corners[i].lat > maxLat) {
           maxLat = corners[i].lat;
         }
       }
 
-      //Longitude is based on the centroid of the image.
-      var raised_point = overlay.getCenter();
-      raised_point.lat = maxLat;
+      // Longitude is based on the centroid of the image.
+      const raisedPoint = overlay.getCenter();
+      raisedPoint.lat = maxLat;
 
       if (overlay.options.suppressToolbar !== true) {
-        this.toolbar.setLatLng(raised_point);
+        this.toolbar.setLatLng(raisedPoint);
       }
     }
   },
@@ -492,23 +525,27 @@ L.DistortableImage.Edit = L.Handler.extend({
     var overlay = this._overlay,
         eventParents = overlay._eventParents;
 
-    if (this._mode === 'lock') { return; }
+    if (this._mode === 'lock') {
+      return;
+    }
 
-    var choice = L.DomUtil.confirmDelete();
-    if (!choice) { return; }
+    const choice = L.DomUtil.confirmDelete();
+    if (!choice) {
+      return;
+    }
 
     this._removeToolbar();
 
     if (eventParents) {
-      var eP = eventParents[Object.keys(eventParents)[0]];
+      const eP = eventParents[Object.keys(eventParents)[0]];
       eP.removeLayer(overlay);
     } else {
       overlay._map.removeLayer(overlay);
     }
-	},
+  },
 
-	// compare this to using overlay zIndex
-	_toggleOrder: function () {
+  // compare this to using overlay zIndex
+  _toggleOrder: function() {
     if (this._toggledImage) {
       this._toggledImage = false;
       this._overlay.bringToFront();
@@ -520,11 +557,11 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   // Based on https://github.com/publiclab/mapknitter/blob/8d94132c81b3040ae0d0b4627e685ff75275b416/app/assets/javascripts/mapknitter/Map.js#L47-L82
   _getExport: function() {
-    var map = this._overlay._map;
-    var overlay = this._overlay;
+    const map = this._overlay._map;
+    const overlay = this._overlay;
 
     // make a new image
-    var downloadable = new Image();
+    const downloadable = new Image();
 
     downloadable.id = downloadable.id || 'tempId12345';
     $('body').append(downloadable);
@@ -538,6 +575,7 @@ L.DistortableImage.Edit = L.Handler.extend({
           se = map.latLngToLayerPoint(overlay.getCorner(3));
 
       // I think this is to move the image to the upper left corner,
+      // eslint-disable-next-line max-len
       // jywarren: i think we may need these or the image goes off the edge of the canvas
       // jywarren: but these seem to break the distortion math...
 
@@ -545,15 +583,15 @@ L.DistortableImage.Edit = L.Handler.extend({
       // finds the most negative values of x and y and then
       // adds those to all coordinates
 
-      //nw.x -= nw.x;
-      //ne.x -= nw.x;
-      //se.x -= nw.x;
-      //sw.x -= nw.x;
+      // nw.x -= nw.x;
+      // ne.x -= nw.x;
+      // se.x -= nw.x;
+      // sw.x -= nw.x;
 
-      //nw.y -= nw.y;
-      //ne.y -= nw.y;
-      //se.y -= nw.y;
-      //sw.y -= nw.y;
+      // nw.y -= nw.y;
+      // ne.y -= nw.y;
+      // se.y -= nw.y;
+      // sw.y -= nw.y;
 
       // run once warping is complete
       downloadable.onload = function() {
@@ -562,10 +600,10 @@ L.DistortableImage.Edit = L.Handler.extend({
 
       if (window && window.hasOwnProperty('warpWebGl')) {
         warpWebGl(
-          downloadable.id,
-          [0, 0, width, 0, width, height, 0, height],
-          [nw.x, nw.y, ne.x, ne.y, se.x, se.y, sw.x, sw.y],
-          true // trigger download
+            downloadable.id,
+            [0, 0, width, 0, width, height, 0, height],
+            [nw.x, nw.y, ne.x, ne.y, se.x, se.y, sw.x, sw.y],
+            true // trigger download
         );
       }
     };
@@ -576,17 +614,17 @@ L.DistortableImage.Edit = L.Handler.extend({
   toggleIsolate: function() {
     // this.isolated = !this.isolated;
     // if (this.isolated) {
-    // 	$.each($L.images,function(i,img) {
-    // 		img.hidden = false;
-    // 		img.setOpacity(1);
-    // 	});
+    // $.each($L.images,function(i,img) {
+    // img.hidden = false;
+    // img.setOpacity(1);
+    // });
     // } else {
-    // 	$.each($L.images,function(i,img) {
-    // 		img.hidden = true;
-    // 		img.setOpacity(0);
-    // 	});
+    // $.each($L.images,function(i,img) {
+    // img.hidden = true;
+    // img.setOpacity(0);
+    // });
     // }
     // this.hidden = false;
     // this.setOpacity(1);
-  }
+  },
 });

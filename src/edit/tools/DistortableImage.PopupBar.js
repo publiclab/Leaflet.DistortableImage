@@ -18,19 +18,21 @@ var ToggleTransparency = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: tooltip
+      tooltip: tooltip,
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
   addHooks: function() {
-    var editing = this._overlay.editing;
+    const editing = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'opacity_empty', 'opacity');
-    L.IconUtil.toggleTooltip(this._link, 'Make Image Opaque', 'Make Image Transparent');
+    L.IconUtil.toggleTooltip(this._link,
+        'Make Image Opaque',
+        'Make Image Transparent');
     editing._toggleTransparency();
-  }
+  },
 });
 
 var ToggleOutline = L.EditAction.extend({
@@ -50,40 +52,40 @@ var ToggleOutline = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: tooltip
+      tooltip: tooltip,
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
   addHooks: function() {
-    var editing = this._overlay.editing;
+    const editing = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'border_clear', 'border_outer');
     L.IconUtil.toggleTooltip(this._link, 'Remove Border', 'Add Border');
     editing._toggleOutline();
-  }
+  },
 });
 
 var Delete = L.EditAction.extend({
   initialize: function(map, overlay, options) {
-    var use = 'delete_forever';
+    const use = 'delete_forever';
 
     options = options || {};
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: 'Delete Image'
+      tooltip: 'Delete Image',
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
   addHooks: function() {
-    var editing = this._overlay.editing;
+    const editing = this._overlay.editing;
 
     editing._removeOverlay();
-  }
+  },
 });
 
 var ToggleLock = L.EditAction.extend({
@@ -103,19 +105,19 @@ var ToggleLock = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: tooltip
+      tooltip: tooltip,
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
   addHooks: function() {
-    var editing = this._overlay.editing;
+    const editing = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'unlock', 'lock');
     L.IconUtil.toggleTooltip(this._link, 'Unlock', 'Lock');
     editing._toggleLock();
-  }
+  },
 });
 
 var ToggleRotateScale = L.EditAction.extend({
@@ -135,40 +137,40 @@ var ToggleRotateScale = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: tooltip
+      tooltip: tooltip,
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
   addHooks: function() {
-    var editing = this._overlay.editing;
+    const editing = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'distort', 'crop_rotate');
     L.IconUtil.toggleTooltip(this._link, 'Distort Image', 'Rotate+Scale Image');
     editing._toggleRotateScale();
-  }
+  },
 });
 
 var Export = L.EditAction.extend({
   initialize: function(map, overlay, options) {
-    var  use = 'get_app';
+    const use = 'get_app';
 
     options = options || {};
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: 'Export Image'
+      tooltip: 'Export Image',
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
   addHooks: function() {
-    var editing = this._overlay.editing;
+    const editing = this._overlay.editing;
 
     editing._getExport();
-  }
+  },
 });
 
 var ToggleOrder = L.EditAction.extend({
@@ -188,51 +190,52 @@ var ToggleOrder = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: tooltip
+      tooltip: tooltip,
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
   addHooks: function() {
-    var editing = this._overlay.editing;
+    const editing = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'flip_to_front', 'flip_to_back');
     L.IconUtil.toggleTooltip(this._link, 'Stack to Front', 'Stack to Back');
     editing._toggleOrder();
-  }
+  },
 });
 
 var EnableEXIF = L.EditAction.extend({
   initialize: function(map, overlay, options) {
-    var use = 'explore';
+    const use = 'explore';
 
     options = options || {};
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: 'Geolocate Image'
+      tooltip: 'Geolocate Image',
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
   addHooks: function() {
-    var image = this._overlay.getElement();
+    const image = this._overlay.getElement();
 
+    // eslint-disable-next-line new-cap
     EXIF.getData(image, L.EXIF(image));
-  }
+  },
 });
 
 var Revert = L.EditAction.extend({
   initialize: function(map, overlay, options) {
-    var use = 'restore';
+    const use = 'restore';
 
     options = options || {};
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: 'Restore Original Image Dimensions'
+      tooltip: 'Restore Original Image Dimensions',
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -245,44 +248,44 @@ var Revert = L.EditAction.extend({
 
 var ToggleRotate = L.EditAction.extend({
   initialize: function(map, overlay, options) {
-    var use = 'rotate';
+    const use = 'rotate';
 
     options = options || {};
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: 'Rotate Image'
+      tooltip: 'Rotate Image',
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
   addHooks: function() {
-    var editing = this._overlay.editing;
+    const editing = this._overlay.editing;
 
     editing._toggleRotate();
-  }
+  },
 });
 
 var ToggleScale = L.EditAction.extend({
   initialize: function(map, overlay, options) {
-    var use = 'scale';
+    const use = 'scale';
 
     options = options || {};
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: 'Scale Image'
+      tooltip: 'Scale Image',
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
   addHooks: function() {
-    var editing = this._overlay.editing;
+    const editing = this._overlay.editing;
 
     editing._toggleScale();
-  }
+  },
 });
 
 L.DistortableImage.PopupBar = L.Toolbar2.Popup.extend({
@@ -300,29 +303,30 @@ L.DistortableImage.PopupBar = L.Toolbar2.Popup.extend({
       Export,
       Delete,
       ToggleScale,
-      ToggleRotate
-    ]
+      ToggleRotate,
+    ],
   },
 });
 
-L.distortableImage.popupBar = function (latlng, options) {
+L.distortableImage.popupBar = function(latlng, options) {
   return new L.DistortableImage.PopupBar(latlng, options);
 };
 
-L.DistortableImageOverlay.addInitHook(function () {
+L.DistortableImageOverlay.addInitHook(function() {
   /** Default actions */
   this.ACTIONS = [
-    ToggleTransparency, 
-    ToggleOutline, 
-    ToggleLock, 
-    ToggleRotateScale, 
+    ToggleTransparency,
+    ToggleOutline,
+    ToggleLock,
+    ToggleRotateScale,
     ToggleOrder,
     Revert,
     Export,
-    Delete
+    Delete,
   ];
 
-  if (this.options.actions) { /* (`this` being DistortablemageOverlay, not the toolbar) */
+  /* (`this` being DistortablemageOverlay, not the toolbar) */
+  if (this.options.actions) {
     this.editActions = this.options.actions;
   } else {
     this.editActions = this.ACTIONS;
