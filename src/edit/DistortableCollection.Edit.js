@@ -54,16 +54,12 @@ L.DistortableCollection.Edit = L.Handler.extend({
   },
 
   enable: function () {
-    if (this._enabled) { return this; }
-
     this._enabled = true;
     this.addHooks();
     return this;
   },
 
   disable: function () {
-    if (!this._enabled) { return this; }
-
     this._enabled = false;
     this.removeHooks();
 

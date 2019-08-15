@@ -61,11 +61,11 @@ describe('L.DistortableCollection', function () {
     });
 
     describe('#isSelected', function () {
-        it('Should only return true if the image was selected using command + mousedown', function() {
+        it('Should only return true if the image was selected using shift + mousedown', function() {
             var img = overlay.getElement(),
                 img2 = overlay2.getElement();
             
-            chai.simulateCommandMousedown(img);
+            chai.simulateShiftMousedown(img);
             chai.simulateMousedown(img2);
         
             expect(imgGroup.isSelected(overlay)).to.be.true;
@@ -74,7 +74,7 @@ describe('L.DistortableCollection', function () {
     });
 
     describe('#anySelected', function () {
-        it('Should return false if no selections were made with command + mousedown', function() {
+        it('Should return false if no selections were made with shift + mousedown', function() {
             var img = overlay.getElement(),
                 img2 = overlay2.getElement();
             
@@ -87,12 +87,12 @@ describe('L.DistortableCollection', function () {
     });
 
     describe('#_toggleMultiSelect', function () {
-        it('Should allow multiple image selection on command + click', function() {
+        it('Should allow multiple image selection on shift + click', function() {
             var img = overlay.getElement(),
                 img2 = overlay2.getElement();
 
-            chai.simulateCommandMousedown(img);
-            chai.simulateCommandMousedown(img2);
+            chai.simulateShiftMousedown(img);
+            chai.simulateShiftMousedown(img2);
 
             expect(L.DomUtil.getClass(img)).to.include('selected');
             expect(L.DomUtil.getClass(img2)).to.include('selected');
@@ -102,7 +102,7 @@ describe('L.DistortableCollection', function () {
             var img = overlay.getElement();
 
             overlay.editing._toggleLock();
-            chai.simulateCommandMousedown(img);
+            chai.simulateShiftMousedown(img);
 
             expect(L.DomUtil.getClass(img)).to.include('selected');
         });

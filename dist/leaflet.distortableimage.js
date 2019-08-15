@@ -698,7 +698,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   _toggleMultiSelect: function(e, edit) {
-    if (e.metaKey || e.ctrlKey) {
+    if (e.shiftKey) {
       /** conditional prevents disabled images from flickering multi-select mode */
       if (edit.enabled()) { L.DomUtil.toggleClass(e.target, 'selected'); }
     }
@@ -729,7 +729,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var overlay = e.target,
         i;
 
-    if (!this.isSelected(overlay)) { return; }
+    if (!this.isSelected(overlay) || !overlay.editing.enabled()) { 
+      return; 
+    }
 
     this.eachLayer(function(layer) {
       var edit = layer.editing;
@@ -746,7 +748,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
         map = this._map,
         i;
 
-    if (!this.isSelected(overlay)) { return; }
+    if (!this.isSelected(overlay) || !overlay.editing.enabled()) {
+      return;
+    }
 
     overlay._dragPoints = {};
 
@@ -2468,16 +2472,12 @@ L.DistortableCollection.Edit = L.Handler.extend({
   },
 
   enable: function () {
-    if (this._enabled) { return this; }
-
     this._enabled = true;
     this.addHooks();
     return this;
   },
 
   disable: function () {
-    if (!this._enabled) { return this; }
-
     this._enabled = false;
     this.removeHooks();
 

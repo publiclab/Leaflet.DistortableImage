@@ -417,11 +417,12 @@ ex.
 
 A handler that holds the keybindings and toolbar API for an image instance. It is always initialized with an instance of `L.DistortableImageOverlay`. Besides code organization, it provides the ability to `enable` and `disable` image editing using the Leaflet API.
 
+<blockquote><b>Note</b>: The main difference between the <code>enable</code> / <code>disable</code> runtime API and using the <code>editable</code> option during initialization is in runtime, neither individual image instaces nor the collection group get precedence over the other.</blockquote>
 
 <details><summary><code><b>enable()</b>: this</code></summary>
 <ul><li>Sets up the editing interface (makes the image interactive, adds markers and toolbar).</ul></li>
  <ul><li>Called internally by default (<a href="#editable">editable</a>), but unlike the option it can be used in runtime and is not ignored if there is a collection group. In fact...</ul></li>
- <ul><li>...An individual image can be enabled while the group is disabled. i.e. calling <code>img.editing.enable()</code> after <code>imgGroup.editing.disable()</code> is valid. In this case, the single image interface will be available on  this image but not the multi-image interface.</ul></li>
+ <ul><li>...An individual image can be enabled while the group is disabled. i.e. calling <code>img.editing.enable()</code> after <code>imgGroup.editing.disable()</code> is valid. In this case, the single image interface will be available on this image but not the multi-image interface.</ul></li>
 </details>
 
 <details><summary><code><b>disable()</b>: this</code></summary>
@@ -430,13 +431,15 @@ A handler that holds the keybindings and toolbar API for an image instance. It i
 <ul><li>An individual image can be disabled while the group is enabled.</ul></li>
 </details>
 
+<details><summary><code><b>enabled()</b></code></summary></details>
+
 <hr>
 
 `L.DistortableCollection`
 
-* isSelected
+<details><summary><code><b>isSelected()</b></code></summary></details>
 
-* anySelected
+<details><summary><code><b>anySelected()</b></code></summary></details>
 
 <hr>
 
@@ -445,19 +448,20 @@ A handler that holds the keybindings and toolbar API for an image instance. It i
 <hr>
 
 Same as `L.DistortableImage.Edit` but for the collection (`L.DistortableCollection`) instance.
-<blockquote><b>Note</b>: The main difference is enabling / disabling collections doesn't have an effect on individual image instances disabled during runtime. i.e. the individual instance gets precedence. Initialization is the opposite case, where via the <code>editable</code> option, it only matters what you pass to the collection if one is present.</blockquote>
 
 <details><summary><code><b>enable()</b>: this</code></summary>
 <ul><li>Sets up the multi-editing interface.</ul></li>
 <ul><li>Called internally by default, see <a href="#editable"> editable</a>.</ul></li>
-<ul><li>The multi-image interface cannot be enabled on any images that are disabled during runtime with <code>img.editing.disable</code>. This means calling <code>imgGroup.editing.enable()</code> will ignore any images that are individually disabled.</ul></li>
+<ul><li>Calls each individual image's <code>#enable</code> method and then enables the multi-image interface.</ul></li>
 </details>
 
 <details><summary><code><b>disable()</b>: this</code></summary>
 <ul><li>Removes the editing interface (makes the image non-interactive, removes markers and toolbar).</ul></li>
 <ul><li>Called internally by default on image group deletion, but can also be used for custom behavior.</ul></li>
-<ul><li>Calling <code>imgGroup.editing.disable</code> on an individually enabled image removes just the multi-interface. Calling it on an individually disabled image does nothing.</ul></li>
+<ul><li>Calls each individual image's <code>#disable</code> method and disables the multi-image interface.</ul></li>li>
 </details>
+
+<details><summary><code><b>enabled()</b></code></summary></details>
 
 <details><summary><code><b>removeTool(action)</b></code></summary>
 <ul><li>Removes the passed tool from the control toolbar in runtime.</ul></li>
