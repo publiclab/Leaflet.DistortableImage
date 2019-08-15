@@ -269,7 +269,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
           map.on("zoomanim", this._animateZoom, this);
         }
       }
-      /** if there is a featureGroup, only its editable option matter*/
+      /** if there is a featureGroup, only its editable option matters */
       var eventParents = this._eventParents;
       if (eventParents) {
         var eP = eventParents[Object.keys(eventParents)[0]];
