@@ -316,7 +316,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   onRemove: function(map) {
     if (this.editing) { this.editing.disable(); }
-    this.fire("remove");
+    this.fire('remove');
 
     L.ImageOverlay.prototype.onRemove.call(this, map);
   },
@@ -662,8 +662,6 @@ L.Map.addInitHook(function() {
   }
 });
 
-
-
 L.DistortableCollection = L.FeatureGroup.extend({
   options: {
     editable: true
@@ -914,13 +912,13 @@ L.distortableCollection = function(id, options) {
 L.EXIF = function getEXIFdata(img) {
   if (Object.keys(EXIF.getAllTags(img)).length !== 0) {
     console.log(EXIF.getAllTags(img));
-    var GPS = EXIF.getAllTags(img),
-      altitude;
+    var GPS = EXIF.getAllTags(img);
+    var altitude;
 
     /* If the lat/lng is available. */
     if (
-      typeof GPS.GPSLatitude !== "undefined" &&
-      typeof GPS.GPSLongitude !== "undefined"
+      typeof GPS.GPSLatitude !== 'undefined' &&
+      typeof GPS.GPSLongitude !== 'undefined'
     ) {
       // sadly, encoded in [degrees,minutes,seconds]
       // primitive value = GPS.GPSLatitude[x].numerator
@@ -933,10 +931,10 @@ L.EXIF = function getEXIFdata(img) {
         GPS.GPSLongitude[1] / 60 +
         GPS.GPSLongitude[2] / 3600;
 
-      if (GPS.GPSLatitudeRef !== "N") {
+      if (GPS.GPSLatitudeRef !== 'N') {
         lat = lat * -1;
       }
-      if (GPS.GPSLongitudeRef === "W") {
+      if (GPS.GPSLongitudeRef === 'W') {
         lng = lng * -1;
       }
     }
@@ -1160,113 +1158,118 @@ L.DistortHandle = L.EditHandle.extend({
 });
 
 L.RotateScaleHandle = L.EditHandle.extend({
-	options: {
-		TYPE: 'rotateScale',
-		icon: L.icon({
-			iconUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAHiSURBVMXBa3HbShgA0PMp/1sCCo8oCEpgTaCXgIXAJiDzyCJoAUTm4UVQAns1Y8+snWnTvJyeE16hkjDgDrfoNTMKcpC9UPiLSo8JyetkjEHxjPCMyoS199kFoz8Iv1HpMaN3qWDCHoegOKkkRwnJpRmroHgiPFEZ8IBekzEGxQtUEhKSS/fB7Ew4U+lxcGkVZG9QWWPSFAxBcdK59KApuA+yNwp2uEdx1GN25sZJZULSfAtm77SlbNjju6MvG75u+WHRWVR6rDVjMPsgwYyVZl3pLTpHkyYHOx8syMiayaJzlDTZ9YyaZNFVkiYH2ZUEBcVJJXVImuz6Js3Qofe59pq7DoOTILu+g+a288mCouk7/1iH4qTS+2QdDppbV1ZJmrnDXnPnc5UOs2Z0fUmTuyBr+krvSioJyUmQO0dZM7mepMkWnaNRkyrJB6uskTSjxY3Fll8bvmJwlDb83FJ8gMqAB80uyBY3Trb82PAfvjj6vuHnluIdKgMeNXOwctK5NKBoHitrb1RJeHRp5Ux4ojLg0aWMHGQvUOkxIWkKVsHsTPiNSo8HDC5lZIsgO6n0uMUdRvQuFQxB8UR4RmXC2vvsgtEfhL+o9JiQvE7GGBTPCK9QSUjoMWgKDthjDrIX+h/k0I7gth6N5gAAAABJRU5ErkJggg==',
-			iconSize: [32, 32],
-			iconAnchor: [16, 16]
-		})
-	},
+  options: {
+    TYPE: 'rotateScale',
+    icon: L.icon({
+      // eslint-disable-next-line max-len
+      iconUrl:
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAHiSURBVMXBa3HbShgA0PMp/1sCCo8oCEpgTaCXgIXAJiDzyCJoAUTm4UVQAns1Y8+snWnTvJyeE16hkjDgDrfoNTMKcpC9UPiLSo8JyetkjEHxjPCMyoS199kFoz8Iv1HpMaN3qWDCHoegOKkkRwnJpRmroHgiPFEZ8IBekzEGxQtUEhKSS/fB7Ew4U+lxcGkVZG9QWWPSFAxBcdK59KApuA+yNwp2uEdx1GN25sZJZULSfAtm77SlbNjju6MvG75u+WHRWVR6rDVjMPsgwYyVZl3pLTpHkyYHOx8syMiayaJzlDTZ9YyaZNFVkiYH2ZUEBcVJJXVImuz6Js3Qofe59pq7DoOTILu+g+a288mCouk7/1iH4qTS+2QdDppbV1ZJmrnDXnPnc5UOs2Z0fUmTuyBr+krvSioJyUmQO0dZM7mepMkWnaNRkyrJB6uskTSjxY3Fll8bvmJwlDb83FJ8gMqAB80uyBY3Trb82PAfvjj6vuHnluIdKgMeNXOwctK5NKBoHitrb1RJeHRp5Ux4ojLg0aWMHGQvUOkxIWkKVsHsTPiNSo8HDC5lZIsgO6n0uMUdRvQuFQxB8UR4RmXC2vvsgtEfhL+o9JiQvE7GGBTPCK9QSUjoMWgKDthjDrIX+h/k0I7gth6N5gAAAABJRU5ErkJggg==',
+      iconSize: [32, 32],
+      iconAnchor: [16, 16]
+    })
+  },
 
-	_onHandleDrag: function() {
-		var overlay = this._handled,
-			map = overlay._map,
-			edgeMinWidth = overlay.edgeMinWidth,
-			formerLatLng = overlay.getCorner(this._corner),
-			newLatLng = this.getLatLng(),
+  _onHandleDrag: function() {
+    var overlay = this._handled,
+        map = overlay._map,
+        edgeMinWidth = overlay.edgeMinWidth,
+        formerLatLng = overlay.getCorner(this._corner),
+        newLatLng = this.getLatLng(),
+        angle = this.calculateAngleDelta(formerLatLng, newLatLng),
+        scale = this._calculateScalingFactor(formerLatLng, newLatLng);
 
-			angle = this.calculateAngleDelta(formerLatLng, newLatLng),
-			scale = this._calculateScalingFactor(formerLatLng, newLatLng);
-		
-		if (angle !== 0) { overlay.rotateBy(angle); }
+    if (angle !== 0) { overlay.rotateBy(angle); }
 
-		if (!edgeMinWidth) { edgeMinWidth = 50; } /* just in case */
-		var corner1 = map.latLngToContainerPoint(overlay.getCorner(0)),
-			corner2 = map.latLngToContainerPoint(overlay.getCorner(1)),
-			w = Math.abs(corner1.x - corner2.x),
-			h = Math.abs(corner1.y - corner2.y),
-			distance = Math.sqrt(w * w + h * h);
-		if (distance > edgeMinWidth || scale > 1) {
-			overlay.scaleBy(scale);
-		} else {
-			overlay.scaleBy(1);
-		}
-	},
+    if (!edgeMinWidth) { edgeMinWidth = 50; } /* just in case */
+    var corner1 = map.latLngToContainerPoint(overlay.getCorner(0)),
+        corner2 = map.latLngToContainerPoint(overlay.getCorner(1)),
+        w = Math.abs(corner1.x - corner2.x),
+        h = Math.abs(corner1.y - corner2.y),
+        distance = Math.sqrt(w * w + h * h);
+    if (distance > edgeMinWidth || scale > 1) {
+      overlay.scaleBy(scale);
+    } else {
+      overlay.scaleBy(1);
+    }
+  },
 
-	updateHandle: function() {
-		this.setLatLng(this._handled.getCorner(this._corner));
-	},
+  updateHandle: function() {
+    this.setLatLng(this._handled.getCorner(this._corner));
+  }
 });
 
 L.RotateHandle = L.EditHandle.extend({
-	options: {
-		TYPE: 'rotate',
-		icon: L.icon({
-			iconUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAHiSURBVMXBa3HbShgA0PMp/1sCCo8oCEpgTaCXgIXAJiDzyCJoAUTm4UVQAns1Y8+snWnTvJyeE16hkjDgDrfoNTMKcpC9UPiLSo8JyetkjEHxjPCMyoS199kFoz8Iv1HpMaN3qWDCHoegOKkkRwnJpRmroHgiPFEZ8IBekzEGxQtUEhKSS/fB7Ew4U+lxcGkVZG9QWWPSFAxBcdK59KApuA+yNwp2uEdx1GN25sZJZULSfAtm77SlbNjju6MvG75u+WHRWVR6rDVjMPsgwYyVZl3pLTpHkyYHOx8syMiayaJzlDTZ9YyaZNFVkiYH2ZUEBcVJJXVImuz6Js3Qofe59pq7DoOTILu+g+a288mCouk7/1iH4qTS+2QdDppbV1ZJmrnDXnPnc5UOs2Z0fUmTuyBr+krvSioJyUmQO0dZM7mepMkWnaNRkyrJB6uskTSjxY3Fll8bvmJwlDb83FJ8gMqAB80uyBY3Trb82PAfvjj6vuHnluIdKgMeNXOwctK5NKBoHitrb1RJeHRp5Ux4ojLg0aWMHGQvUOkxIWkKVsHsTPiNSo8HDC5lZIsgO6n0uMUdRvQuFQxB8UR4RmXC2vvsgtEfhL+o9JiQvE7GGBTPCK9QSUjoMWgKDthjDrIX+h/k0I7gth6N5gAAAABJRU5ErkJggg==',
-			iconSize: [32, 32],
-			iconAnchor: [16, 16]
-		})
-	},
-	
-	_onHandleDrag: function() {
-		var overlay = this._handled,
-			formerLatLng = overlay.getCorner(this._corner),
-			newLatLng = this.getLatLng(),
-			angle = this.calculateAngleDelta(formerLatLng, newLatLng);
+  options: {
+    TYPE: 'rotate',
+    icon: L.icon({
+      // eslint-disable-next-line max-len
+      iconUrl:
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAHiSURBVMXBa3HbShgA0PMp/1sCCo8oCEpgTaCXgIXAJiDzyCJoAUTm4UVQAns1Y8+snWnTvJyeE16hkjDgDrfoNTMKcpC9UPiLSo8JyetkjEHxjPCMyoS199kFoz8Iv1HpMaN3qWDCHoegOKkkRwnJpRmroHgiPFEZ8IBekzEGxQtUEhKSS/fB7Ew4U+lxcGkVZG9QWWPSFAxBcdK59KApuA+yNwp2uEdx1GN25sZJZULSfAtm77SlbNjju6MvG75u+WHRWVR6rDVjMPsgwYyVZl3pLTpHkyYHOx8syMiayaJzlDTZ9YyaZNFVkiYH2ZUEBcVJJXVImuz6Js3Qofe59pq7DoOTILu+g+a288mCouk7/1iH4qTS+2QdDppbV1ZJmrnDXnPnc5UOs2Z0fUmTuyBr+krvSioJyUmQO0dZM7mepMkWnaNRkyrJB6uskTSjxY3Fll8bvmJwlDb83FJ8gMqAB80uyBY3Trb82PAfvjj6vuHnluIdKgMeNXOwctK5NKBoHitrb1RJeHRp5Ux4ojLg0aWMHGQvUOkxIWkKVsHsTPiNSo8HDC5lZIsgO6n0uMUdRvQuFQxB8UR4RmXC2vvsgtEfhL+o9JiQvE7GGBTPCK9QSUjoMWgKDthjDrIX+h/k0I7gth6N5gAAAABJRU5ErkJggg==',
+      iconSize: [32, 32],
+      iconAnchor: [16, 16]
+    })
+  },
 
-		/** running rotation logic even for an angle delta of 0 
-		 * prevents a small, occasional marker flicker */
-	 	overlay.rotateBy(angle);
-	},
+  _onHandleDrag: function() {
+    var overlay = this._handled,
+        formerLatLng = overlay.getCorner(this._corner),
+        newLatLng = this.getLatLng(),
+        angle = this.calculateAngleDelta(formerLatLng, newLatLng);
 
-	updateHandle: function() {
-		this.setLatLng(this._handled.getCorner(this._corner));
-	}
-	
+    /** running rotation logic even for an angle delta of 0
+     * prevents a small, occasional marker flicker */
+    overlay.rotateBy(angle);
+  },
+
+  updateHandle: function() {
+    this.setLatLng(this._handled.getCorner(this._corner));
+  }
 });
 
 L.ScaleHandle = L.EditHandle.extend({
-	options: {
-		TYPE: 'rotate',
-		icon: L.icon({
-			iconUrl:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIHdpZHRoPSI0NTkiIGhlaWdodD0iNDY0IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA1MTIgNTEyIiB4bWw6c3BhY2U9InByZXNlcnZlIiBzdHlsZT0iIj48cmVjdCBpZD0iYmFja2dyb3VuZHJlY3QiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHg9IjAiIHk9IjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0ibm9uZSIgY2xhc3M9IiIgc3R5bGU9IiIvPjxnIGNsYXNzPSJjdXJyZW50TGF5ZXIiIHN0eWxlPSIiPjx0aXRsZT5MYXllciAxPC90aXRsZT48cGF0aCBkPSJNNDU5LjA0OTE1OTUzMDQ3MTM0LDg2LjkyNjIzNDUxMjU1MDAyIFYwIGgtODUuNzE0NTczMzU2MzEyMDkgdjI3LjA0MzcxNzQwMzkwNDQ1MiBIODUuNzE0NTczMzU2MzEyMDMgVjAgSDAgdjg2LjkyNjIzNDUxMjU1MDAyIGgyNS43MTQzNzIwMDY4OTM2MjYgdjI4OS43NTQxMTUwNDE4MzM0IEgwIHY4Ni45MjYyMzQ1MTI1NTAwMiBoODUuNzE0NTczMzU2MzEyMDkgdi0yNy4wNDM3MTc0MDM5MDQ0NTIgaDI4NS43MTUyNDQ1MjEwNDAzIHYyNy4wNDM3MTc0MDM5MDQ0NTIgaDg1LjcxNDU3MzM1NjMxMjA5IHYtODYuOTI2MjM0NTEyNTUwMDIgaC0yMy44MDk2MDM3MTAwODY2OSBWODYuOTI2MjM0NTEyNTUwMDIgSDQ1OS4wNDkxNTk1MzA0NzEzNCB6TTM4NC43NjMxOTU5NTUwMDA5LDEyLjU1NjAxMTY1MTgxMjc4MSBoNjEuOTA0OTY5NjQ2MjI1Mzk2IHY2Mi43ODAwNTgyNTkwNjM5MSBoLTYxLjkwNDk2OTY0NjIyNTM5NiBWMTIuNTU2MDExNjUxODEyNzgxIHpNMTIuMzgwOTkzOTI5MjQ1MDUsMTIuNTU2MDExNjUxODEyNzgxIGg2MS45MDQ5Njk2NDYyMjUzOTYgdjYyLjc4MDA1ODI1OTA2MzkxIEgxMi4zODA5OTM5MjkyNDUwNSBWMTIuNTU2MDExNjUxODEyNzgxIHpNNzQuMjg1OTYzNTc1NDcwNTMsNDUxLjA1MDU3MjQxNTEyMDY2IEgxMi4zODA5OTM5MjkyNDUwNSB2LTYyLjc4MDA1ODI1OTA2MzkxIGg2MS45MDQ5Njk2NDYyMjUzOTYgVjQ1MS4wNTA1NzI0MTUxMjA2NiB6TTQ0NS43MTU3ODE0NTI4MjI3NCw0NTEuMDUwNTcyNDE1MTIwNjYgaC02Mi44NTczNTM3OTQ2Mjg4NjQgdi02Mi43ODAwNTgyNTkwNjM5MSBoNjIuODU3MzUzNzk0NjI4ODY0IFY0NTEuMDUwNTcyNDE1MTIwNjYgek00MDcuNjIwNDE1NTE2Njg0MjYsMzc2LjY4MDM0OTU1NDM4MzQ0IGgtMzYuMTkwNTk3NjM5MzMxNzcgdjMyLjgzODc5OTcwNDc0MTEyIEg4NS43MTQ1NzMzNTYzMTIwMyB2LTMyLjgzODc5OTcwNDc0MTEyIEg0OS41MjM5NzU3MTY5ODAzMiBWODYuOTI2MjM0NTEyNTUwMDIgaDM2LjE5MDU5NzYzOTMzMTc3IFY1MC4yMjQwNDY2MDcyNTExMjUgaDI4Ny42MjAwMTI4MTc4NDcyIHYzNi43MDIxODc5MDUyOTg5IGgzNC4yODU4MjkzNDI1MjQ4MzUgVjM3Ni42ODAzNDk1NTQzODM0NCB6IiBpZD0ic3ZnXzIiIGNsYXNzPSIiIGZpbGw9IiMxYTFhZWIiIGZpbGwtb3BhY2l0eT0iMSIvPjwvZz48L3N2Zz4=',
-			iconSize: [32, 32],
-			iconAnchor: [16, 16]
-		})
-	},
+  options: {
+    TYPE: 'rotate',
+    icon: L.icon({
+      // eslint-disable-next-line max-len
+      iconUrl:
+        'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIHdpZHRoPSI0NTkiIGhlaWdodD0iNDY0IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA1MTIgNTEyIiB4bWw6c3BhY2U9InByZXNlcnZlIiBzdHlsZT0iIj48cmVjdCBpZD0iYmFja2dyb3VuZHJlY3QiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHg9IjAiIHk9IjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0ibm9uZSIgY2xhc3M9IiIgc3R5bGU9IiIvPjxnIGNsYXNzPSJjdXJyZW50TGF5ZXIiIHN0eWxlPSIiPjx0aXRsZT5MYXllciAxPC90aXRsZT48cGF0aCBkPSJNNDU5LjA0OTE1OTUzMDQ3MTM0LDg2LjkyNjIzNDUxMjU1MDAyIFYwIGgtODUuNzE0NTczMzU2MzEyMDkgdjI3LjA0MzcxNzQwMzkwNDQ1MiBIODUuNzE0NTczMzU2MzEyMDMgVjAgSDAgdjg2LjkyNjIzNDUxMjU1MDAyIGgyNS43MTQzNzIwMDY4OTM2MjYgdjI4OS43NTQxMTUwNDE4MzM0IEgwIHY4Ni45MjYyMzQ1MTI1NTAwMiBoODUuNzE0NTczMzU2MzEyMDkgdi0yNy4wNDM3MTc0MDM5MDQ0NTIgaDI4NS43MTUyNDQ1MjEwNDAzIHYyNy4wNDM3MTc0MDM5MDQ0NTIgaDg1LjcxNDU3MzM1NjMxMjA5IHYtODYuOTI2MjM0NTEyNTUwMDIgaC0yMy44MDk2MDM3MTAwODY2OSBWODYuOTI2MjM0NTEyNTUwMDIgSDQ1OS4wNDkxNTk1MzA0NzEzNCB6TTM4NC43NjMxOTU5NTUwMDA5LDEyLjU1NjAxMTY1MTgxMjc4MSBoNjEuOTA0OTY5NjQ2MjI1Mzk2IHY2Mi43ODAwNTgyNTkwNjM5MSBoLTYxLjkwNDk2OTY0NjIyNTM5NiBWMTIuNTU2MDExNjUxODEyNzgxIHpNMTIuMzgwOTkzOTI5MjQ1MDUsMTIuNTU2MDExNjUxODEyNzgxIGg2MS45MDQ5Njk2NDYyMjUzOTYgdjYyLjc4MDA1ODI1OTA2MzkxIEgxMi4zODA5OTM5MjkyNDUwNSBWMTIuNTU2MDExNjUxODEyNzgxIHpNNzQuMjg1OTYzNTc1NDcwNTMsNDUxLjA1MDU3MjQxNTEyMDY2IEgxMi4zODA5OTM5MjkyNDUwNSB2LTYyLjc4MDA1ODI1OTA2MzkxIGg2MS45MDQ5Njk2NDYyMjUzOTYgVjQ1MS4wNTA1NzI0MTUxMjA2NiB6TTQ0NS43MTU3ODE0NTI4MjI3NCw0NTEuMDUwNTcyNDE1MTIwNjYgaC02Mi44NTczNTM3OTQ2Mjg4NjQgdi02Mi43ODAwNTgyNTkwNjM5MSBoNjIuODU3MzUzNzk0NjI4ODY0IFY0NTEuMDUwNTcyNDE1MTIwNjYgek00MDcuNjIwNDE1NTE2Njg0MjYsMzc2LjY4MDM0OTU1NDM4MzQ0IGgtMzYuMTkwNTk3NjM5MzMxNzcgdjMyLjgzODc5OTcwNDc0MTEyIEg4NS43MTQ1NzMzNTYzMTIwMyB2LTMyLjgzODc5OTcwNDc0MTEyIEg0OS41MjM5NzU3MTY5ODAzMiBWODYuOTI2MjM0NTEyNTUwMDIgaDM2LjE5MDU5NzYzOTMzMTc3IFY1MC4yMjQwNDY2MDcyNTExMjUgaDI4Ny42MjAwMTI4MTc4NDcyIHYzNi43MDIxODc5MDUyOTg5IGgzNC4yODU4MjkzNDI1MjQ4MzUgVjM3Ni42ODAzNDk1NTQzODM0NCB6IiBpZD0ic3ZnXzIiIGNsYXNzPSIiIGZpbGw9IiMxYTFhZWIiIGZpbGwtb3BhY2l0eT0iMSIvPjwvZz48L3N2Zz4=',
+      iconSize: [32, 32],
+      iconAnchor: [16, 16]
+    })
+  },
 
-	_onHandleDrag: function(e) {
-		var overlay = this._handled,
-			map = overlay._map,
-			edgeMinWidth = overlay.edgeMinWidth,
-			formerLatLng = overlay.getCorner(this._corner),
-			newLatLng = this.getLatLng(),
-			scale = this._calculateScalingFactor(formerLatLng, newLatLng);
+  _onHandleDrag: function(e) {
+    var overlay = this._handled,
+		map = overlay._map,
+		edgeMinWidth = overlay.edgeMinWidth,
+		formerLatLng = overlay.getCorner(this._corner),
+		newLatLng = this.getLatLng(),
+		scale = this._calculateScalingFactor(formerLatLng, newLatLng);
 
-		/* 
-		 * checks whether the "edgeMinWidth" property is set and tracks the minimum edge length;
-		 * this enables preventing scaling to zero, but we might also add an overall scale limit
-		*/		
-		if (!edgeMinWidth) { edgeMinWidth = 50; } /* just in case */
-		var corner1 = map.latLngToLayerPoint(overlay.getCorner(0)),
-			corner2 = map.latLngToLayerPoint(overlay.getCorner(1)),
-			w = Math.abs(corner1.x - corner2.x),
-			h = Math.abs(corner1.y - corner2.y),
-			distance = Math.sqrt(w * w + h * h);
+    /*
+     * checks whether the "edgeMinWidth" property is set and tracks the minimum edge length;
+     * this enables preventing scaling to zero, but we might also add an overall scale limit
+     */
 
-		if (distance > edgeMinWidth|| scale > 1) {
-			overlay.scaleBy(scale);
-		/** running scale logic even for a scale ratio of 1
-		 * prevents a small, occasional marker flicker */
-		} else {
-			overlay.scaleBy(1);
-		}
-	},
+    if (!edgeMinWidth) { edgeMinWidth = 50; } /* just in case */
+    var corner1 = map.latLngToLayerPoint(overlay.getCorner(0)),
+		corner2 = map.latLngToLayerPoint(overlay.getCorner(1)),
+		w = Math.abs(corner1.x - corner2.x),
+		h = Math.abs(corner1.y - corner2.y),
+		distance = Math.sqrt(w * w + h * h);
 
-	updateHandle: function() {
-		this.setLatLng(this._handled.getCorner(this._corner));
-	},
+    if (distance > edgeMinWidth || scale > 1) {
+      overlay.scaleBy(scale);
+      /** running scale logic even for a scale ratio of 1
+       * prevents a small, occasional marker flicker */
+    } else {
+      overlay.scaleBy(1);
+    }
+  },
+
+  updateHandle: function() {
+    this.setLatLng(this._handled.getCorner(this._corner));
+  }
 });
 
 /* this is the baseclass other IconSets inherit from,
@@ -1385,11 +1388,13 @@ L.EditAction = L.Toolbar2.Action.extend({
 L.DistortableImage = L.DistortableImage || {};
 L.distortableImage = L.DistortableImage;
 
+L.DistortableImage.action_map = {};
+
 var ToggleTransparency = L.EditAction.extend({
   initialize: function(map, overlay, options) {
     var edit = overlay.editing,
         use, tooltip;
-    
+
     if (edit._transparent) {
       use = 'opacity';
       tooltip = 'Make Image Opaque';
@@ -1404,7 +1409,7 @@ var ToggleTransparency = L.EditAction.extend({
       html: use,
       tooltip: tooltip,
     };
-
+    L.DistortableImage.action_map.t = '_toggleTransparency';
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
@@ -1423,7 +1428,7 @@ var ToggleOutline = L.EditAction.extend({
   initialize: function(map, overlay, options) {
     var edit = overlay.editing,
         use, tooltip;
-    
+
     if (edit._outlined) {
       use = 'border_clear';
       tooltip = 'Remove Border';
@@ -1438,7 +1443,7 @@ var ToggleOutline = L.EditAction.extend({
       html: use,
       tooltip: tooltip,
     };
-
+    L.DistortableImage.action_map.o = '_toggleOutline';
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
@@ -1461,7 +1466,7 @@ var Delete = L.EditAction.extend({
       html: use,
       tooltip: 'Delete Image',
     };
-
+    L.DistortableImage.action_map.Backspace = '_removeOverlay';
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
@@ -1491,7 +1496,7 @@ var ToggleLock = L.EditAction.extend({
       html: use,
       tooltip: tooltip,
     };
-
+    L.DistortableImage.action_map.l = '_toggleLock';
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
@@ -1523,7 +1528,8 @@ var ToggleRotateScale = L.EditAction.extend({
       html: use,
       tooltip: tooltip,
     };
-
+    L.DistortableImage.action_map.d = '_toggleRotateScale';
+    L.DistortableImage.action_map.r = '_toggleRotateScale';
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
@@ -1546,7 +1552,7 @@ var Export = L.EditAction.extend({
       html: use,
       tooltip: 'Export Image',
     };
-
+    L.DistortableImage.action_map.e = '_getExport';
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
@@ -1576,7 +1582,8 @@ var ToggleOrder = L.EditAction.extend({
       html: use,
       tooltip: tooltip,
     };
-
+    L.DistortableImage.action_map.j = '_toggleOrder';
+    L.DistortableImage.action_map.k = '_toggleOrder';
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
@@ -1640,7 +1647,7 @@ var ToggleRotate = L.EditAction.extend({
       html: use,
       tooltip: 'Rotate Image',
     };
-
+    L.DistortableImage.action_map.CapsLock = '_toggleRotate';
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
@@ -1661,7 +1668,7 @@ var ToggleScale = L.EditAction.extend({
       html: use,
       tooltip: 'Scale Image',
     };
-
+    L.DistortableImage.action_map.s = '_toggleScale';
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
@@ -1698,7 +1705,7 @@ L.distortableImage.popupBar = function(latlng, options) {
 
 L.DistortableImageOverlay.addInitHook(function() {
   /** Default actions */
-  this.ACTIONS = [
+  L.DistortableImageOverlay.ACTIONS = this.ACTIONS = [
     ToggleTransparency,
     ToggleOutline,
     ToggleLock,
@@ -1709,8 +1716,7 @@ L.DistortableImageOverlay.addInitHook(function() {
     Delete,
   ];
 
-  /* (`this` being DistortablemageOverlay, not the toolbar) */
-  if (this.options.actions) {
+if (this.options.actions) { /* (`this` being DistortableImageOverlay, not the toolbar) */
     this.editActions = this.options.actions;
   } else {
     this.editActions = this.ACTIONS;
@@ -1722,49 +1728,49 @@ L.DistortableImageOverlay.addInitHook(function() {
 L.distortableImage = L.DistortableImage || {};
 L.distortableImage = L.DistortableImage;
 
-var Exports = L.EditAction.extend({
-  initialize: function (map, overlay, options) {
-    var use = 'get_app';
+  var Exports = L.EditAction.extend({
+    initialize: function (map, overlay, options) {
+      var use = 'get_app';
+  
+      options = options || {};
+      options.toolbarIcon = {
+        svg: true,
+        html: use,
+        tooltip: 'Export Images'
+      };
 
-    options = options || {};
-    options.toolbarIcon = {
-      svg: true,
-      html: use,
-      tooltip: 'Export Images'
-    };
+      L.EditAction.prototype.initialize.call(this, map, overlay, options);
+    },
 
-    L.EditAction.prototype.initialize.call(this, map, overlay, options);
-  },
+    addHooks: function () {
+      var edit = this._overlay.editing;
+      L.IconUtil.toggleXlink(this._link, 'get_app', 'spinner');
+      L.IconUtil.toggleTooltip(this._link, 'Export Images', 'Loading...');
+      L.IconUtil.addClassToSvg(this._link, 'loader');
+      L.DomEvent.off(this._link, 'click', this.enable, this);
+      edit.startExport();
+    }
+  });
 
-  addHooks: function () {
-    var edit = this._overlay.editing;
-    L.IconUtil.toggleXlink(this._link, 'get_app', 'spinner');
-    L.IconUtil.toggleTooltip(this._link, 'Export Images', 'Loading...');
-    L.IconUtil.addClassToSvg(this._link, 'loader');
-    L.DomEvent.off(this._link, 'click', this.enable, this);
-    edit.startExport();
-  }
-});
+  var Deletes = L.EditAction.extend({
+    initialize: function(map, overlay, options) {
+      var use = 'delete_forever';
 
-var Deletes = L.EditAction.extend({
-  initialize: function(map, overlay, options) {
-    var use = 'delete_forever';
+      options = options || {};
+      options.toolbarIcon = {
+        svg: true,
+        html: use,
+        tooltip: 'Delete Images'
+      };
 
-    options = options || {};
-    options.toolbarIcon = {
-      svg: true,
-      html: use,
-      tooltip: 'Delete Images',
-    };
+      L.EditAction.prototype.initialize.call(this, map, overlay, options);
+    },
 
-    L.EditAction.prototype.initialize.call(this, map, overlay, options);
-  },
-
-  addHooks: function() {
-    var edit = this._overlay.editing;
-    edit._removeGroup();
-  }
-});
+    addHooks: function() {
+      var edit = this._overlay.editing;
+      edit._removeGroup();
+    }
+  });
 
 var Locks = L.EditAction.extend({
   initialize: function(map, overlay, options) {
@@ -1841,19 +1847,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   options: {
     opacity: 0.7,
     outline: '1px solid red',
-    keymap: {
-      'Backspace': '_removeOverlay', // backspace windows / delete mac
-      'CapsLock': '_toggleRotate',
-      'Escape': '_deselect',
-      'd': '_toggleRotateScale',
-      'r': '_toggleRotateScale',
-      'j': '_toggleOrder',
-      'k': '_toggleOrder',
-      'l': '_toggleLock',
-      'o': '_toggleOutline',
-      's': '_toggleScale',
-      't': '_toggleTransparency',
-    },
+    keymap: L.distortableImage.action_map
   },
 
   initialize: function(overlay, options) {
@@ -1926,8 +1920,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     map.removeLayer(this._handles[this._mode]);
 
-    /** 
-     * ensures if you disable an image while it is multi-selected 
+    /**
+     * ensures if you disable an image while it is multi-selected
      * additional deselection logic is run
      */
     if (L.DomUtil.hasClass(overlay.getElement(), 'selected')) {
@@ -2016,8 +2010,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _onKeyDown: function(e) {
     var keymap = this.options.keymap,
-        handlerName = keymap[e.key],
-        eventParents = this._overlay._eventParents;
+      handlerName = keymap[e.key],
+      eventParents = this._overlay._eventParents;
 
     if (eventParents) {
       var eP = eventParents[Object.keys(eventParents)[0]];
@@ -2031,7 +2025,7 @@ L.DistortableImage.Edit = L.Handler.extend({
         this[handlerName].call(this);
       }
     }
-  }, 
+  },
 
   addTool: function (value) {
     if (value.baseClass === 'leaflet-toolbar-icon' && !this.hasTool(value)) {
@@ -2064,7 +2058,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
    _removeToolbar: function() {
     var overlay = this._overlay,
-        map = overlay._map;
+      map = overlay._map;
 
     if (this.toolbar) {
       map.removeLayer(this.toolbar);
@@ -2120,11 +2114,8 @@ L.DistortableImage.Edit = L.Handler.extend({
     map.removeLayer(this._handles[this._mode]);
 
     /* Switch mode. */
-    if (this._mode === 'rotateScale') {
-      this._mode = 'distort';
-    } else {
-      this._mode = 'rotateScale';
-    }
+    if (this._mode === 'rotateScale') { this._mode = 'distort'; }
+    else { this._mode = 'rotateScale'; }
 
     map.addLayer(this._handles[this._mode]);
 
@@ -2157,11 +2148,8 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
 
     map.removeLayer(this._handles[this._mode]);
-    if (this._mode === 'rotate') {
-      this._mode = 'distort';
-    } else {
-      this._mode = 'rotate';
-    }
+    if (this._mode === 'rotate') { this._mode = 'distort'; }
+		else { this._mode = 'rotate'; }
 
     map.addLayer(this._handles[this._mode]);
   },
@@ -2218,7 +2206,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     var map = this._overlay._map;
 
     map.removeLayer(this._handles[this._mode]);
- 
+
     if (this._mode === 'lock') { this._unlock();
     } else { this._lock(); }
 
@@ -2271,12 +2259,9 @@ L.DistortableImage.Edit = L.Handler.extend({
       this._initHandles();
     } // workaround for race condition w/ feature group
 
-    var mode = this._mode;
-    var currentHandle = this._handles[mode];
-
     var mode = this._mode,
         currentHandle = this._handles[mode];
-    
+
 		currentHandle.eachLayer(function (layer) {
       var drag = layer.dragging,
 			  	opts = layer.options;
@@ -2466,162 +2451,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     // this.hidden = false;
     // this.setOpacity(1);
   },
-});
-
-L.DomUtil = L.DomUtil || {};
-L.DistortableImage = L.DistortableImage || {};
-L.distortableImage = L.DistortableImage;
-
-L.DistortableImage.Keymapper = L.Handler.extend({
-
-  options: {
-    position: 'topright',
-  },
-
-  initialize: function(map, options) {
-    this._map = map;
-    L.setOptions(this, options);
-  },
-
-  addHooks: function() {
-    if (!this._keymapper) {
-      this._toggler = this._toggleButton();
-      this._scrollWrapper = this._wrap();
-      this._setMapper(this._toggler, this._scrollWrapper);
-
-      L.DomEvent.on(this._toggler, 'click', this._toggleKeymapper, this);
-
-      L.DomEvent.on(this._scrollWrapper, {
-        click: L.DomEvent.stop,
-        mouseenter: this._disableMap,
-        mouseleave: this._enableMap,
-      }, this);
-    }
-  },
-
-  removeHooks: function() {
-    if (this._keymapper) {
-      L.DomEvent.off(this._toggler, 'click', this._toggleKeymapper, this);
-
-      L.DomEvent.off(this._scrollWrapper, {
-        click: L.DomEvent.stop,
-        mouseenter: this._disableMap,
-        mouseleave: this._enableMap,
-      }, this);
-
-      L.DomUtil.remove(this._toggler);
-      L.DomUtil.remove(this._scrollWrapper);
-      L.DomUtil.remove(this._keymapper._container);
-      this._keymapper = false;
-    }
-  },
-
-  _toggleButton: function() {
-    var toggler = L.DomUtil.create('a', '');
-    toggler.setAttribute('id', 'toggle-keymapper');
-    toggler.setAttribute('href', '#');
-    toggler.setAttribute('role', 'button');
-    toggler.setAttribute('title', 'Show Keybindings');
-    toggler.innerHTML = L.IconUtil.create('keyboard_open');
-
-    return toggler;
-  },
-
-  _wrap: function() {
-    var wrap = L.DomUtil.create('div', '');
-    wrap.setAttribute('id', 'keymapper-wrapper');
-    wrap.style.display = 'none';
-
-    return wrap;
-  },
-
-  _setMapper: function(button, wrap) {
-    this._keymapper = L.control({position: this.options.position});
-
-    this._container = this._keymapper.onAdd = function() {
-      var elWrapper = L.DomUtil.create('div', 'ldi-keymapper-hide');
-      elWrapper.setAttribute('id', 'ldi-keymapper');
-      var divider = L.DomUtil.create('br', 'divider');
-      elWrapper.appendChild(divider);
-      elWrapper.appendChild(wrap);
-      wrap.insertAdjacentHTML(
-          'beforeend',
-          '<table><tbody>' +
-          '<hr id="keymapper-hr">' +
-          /* eslint-disable */
-          '<tr><td><div class="left"><span>Stack up / down</span></div><div class="right"><kbd>j</kbd>\xa0<kbd>k</kbd></div></td></tr>' +
-          '<tr><td><div class="left"><span>Lock Image</span></div><div class="right"><kbd>l</kbd></div></td></tr>' +
-          '<tr><td><div class="left"><span>Outline</span></div><div class="right"><kbd>o</kbd></div></td></tr>' +
-          '<tr><td><div class="left"><span>Scale</span></div><div class="right"><kbd>s</kbd></div></td></tr>' +
-          '<tr><td><div class="left"><span>Transparency</span></div><div class="right"><kbd>t</kbd></div></td></tr>' +
-          '<tr><td><div class="left"><span>RotateScale</span></div><div class="right"><kbd>d</kbd>\xa0<kbd>r</kbd></div></td></tr>' +
-          '<tr><td><div class="left"><span>Deselect All</span></div><div class="right"><kbd>esc</kbd></div></td></tr>' +
-          '<tr><td><div class="left"><span>Delete Image</span></div><div class="right"><kbd>delete</kbd>\xa0<kbd>backspace</kbd></div></td></tr>' +
-          '<tr><td><div class="left"><span>Rotate</span></div><div class="right"><kbd>caps</kbd></div></td></tr>' +
-          '</tbody></table>'
-      );
-      /* eslint-enable */
-      elWrapper.appendChild(button);
-      return elWrapper;
-    };
-
-    this._keymapper.addTo(this._map);
-  },
-
-  _toggleKeymapper: function(e) {
-    L.DomEvent.stop(e);
-    var container = document.getElementById('ldi-keymapper');
-    var keymapWrap = document.getElementById('keymapper-wrapper');
-
-    var newClass = container.className === 'ldi-keymapper leaflet-control' ?
-      'ldi-keymapper-hide leaflet-control' : 'ldi-keymapper leaflet-control';
-    var newStyle = keymapWrap.style.display === 'none' ? 'block' : 'none';
-
-    container.className = newClass;
-    keymapWrap.style.display = newStyle;
-
-    L.IconUtil.toggleTooltip(this._toggler,
-        'Show Keybindings', 'Hide Keybindings');
-    this._toggler.innerHTML = this._toggler.innerHTML === 'close' ?
-      L.IconUtil.create('keyboard_open') : 'close';
-    L.DomUtil.toggleClass(this._toggler, 'close-icon');
-  },
-
-  _disableMap: function() {
-    this._map.scrollWheelZoom.disable();
-    this._map.dragging.disable();
-  },
-
-  _enableMap: function() {
-    this._map.scrollWheelZoom.enable();
-    this._map.dragging.enable();
-  },
-
-  _injectIconSet: function() {
-    if (document.querySelector('#keymapper-iconset')) {
-      return;
-    }
-
-    var el = document.createElement('div');
-    el.id = 'keymapper-iconset';
-    el.setAttribute('hidden', 'hidden');
-
-    this._iconset = new L.KeymapperIconSet().render();
-    el.innerHTML = this._iconset;
-
-    document.querySelector('.leaflet-control-container').appendChild(el);
-  },
-});
-
-L.DistortableImage.Keymapper.addInitHook(function() {
-  L.DistortableImage.Keymapper.prototype._n =
-    L.DistortableImage.Keymapper.prototype._n ?
-      L.DistortableImage.Keymapper.prototype._n + 1 : 1;
-
-  if (L.DistortableImage.Keymapper.prototype._n === 1) {
-    this.enable();
-    this._injectIconSet();
-  }
 });
 
 L.DistortableImage = L.DistortableImage || {};
@@ -2918,15 +2747,15 @@ L.distortableImage = L.DistortableImage;
 L.DistortableImage.Keymapper = L.Handler.extend({
 
   options: {
-    position: 'topright'
+    position: 'topright',
   },
 
-  initialize: function (map, options) {
+  initialize: function(map, options) {
     this._map = map;
     L.setOptions(this, options);
   },
 
-  addHooks: function () {
+  addHooks: function() {
     if (!this._keymapper) {
       this._toggler = this._toggleButton();
       this._scrollWrapper = this._wrap();
@@ -2942,7 +2771,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     }
   },
 
-  removeHooks: function () { 
+  removeHooks: function() {
     if (this._keymapper) {
       L.DomEvent.off(this._toggler, 'click', this._toggleKeymapper, this);
 
@@ -2951,46 +2780,47 @@ L.DistortableImage.Keymapper = L.Handler.extend({
         mouseenter: this._disableMap,
         mouseleave: this._enableMap,
       }, this);
-     
+
       L.DomUtil.remove(this._toggler);
       L.DomUtil.remove(this._scrollWrapper);
       L.DomUtil.remove(this._keymapper._container);
       this._keymapper = false;
-    } 
+    }
   },
 
-  _toggleButton: function () {
+  _toggleButton: function() {
     var toggler = L.DomUtil.create('a', '');
     toggler.setAttribute('id', 'toggle-keymapper');
     toggler.setAttribute('href', '#');
     toggler.setAttribute('role', 'button');
     toggler.setAttribute('title', 'Show Keybindings');
-    toggler.innerHTML = L.IconUtil.create("keyboard_open");
+    toggler.innerHTML = L.IconUtil.create('keyboard_open');
 
     return toggler;
   },
 
-  _wrap: function () {
+  _wrap: function() {
     var wrap = L.DomUtil.create('div', '');
     wrap.setAttribute('id', 'keymapper-wrapper');
     wrap.style.display = 'none';
 
     return wrap;
   },
-  
-  _setMapper: function (button, wrap) {
-    this._keymapper = L.control({ position: this.options.position });
 
-    this._container = this._keymapper.onAdd = function () {
-      var el_wrapper = L.DomUtil.create('div', 'ldi-keymapper-hide');
-      el_wrapper.setAttribute('id', 'ldi-keymapper');
+  _setMapper: function(button, wrap) {
+    this._keymapper = L.control({position: this.options.position});
+
+    this._container = this._keymapper.onAdd = function() {
+      var elWrapper = L.DomUtil.create('div', 'ldi-keymapper-hide');
+      elWrapper.setAttribute('id', 'ldi-keymapper');
       var divider = L.DomUtil.create('br', 'divider');
-      el_wrapper.appendChild(divider);
-      el_wrapper.appendChild(wrap);       
+      elWrapper.appendChild(divider);
+      elWrapper.appendChild(wrap);
       wrap.insertAdjacentHTML(
-        'beforeend',
-        '<table><tbody>' +
+          'beforeend',
+          '<table><tbody>' +
           '<hr id="keymapper-hr">' +
+          /* eslint-disable */
           '<tr><td><div class="left"><span>Stack up / down</span></div><div class="right"><kbd>j</kbd>\xa0<kbd>k</kbd></div></td></tr>' +
           '<tr><td><div class="left"><span>Lock Image</span></div><div class="right"><kbd>l</kbd></div></td></tr>' +
           '<tr><td><div class="left"><span>Outline</span></div><div class="right"><kbd>o</kbd></div></td></tr>' +
@@ -3002,26 +2832,30 @@ L.DistortableImage.Keymapper = L.Handler.extend({
           '<tr><td><div class="left"><span>Rotate</span></div><div class="right"><kbd>caps</kbd></div></td></tr>' +
           '</tbody></table>'
       );
-      el_wrapper.appendChild(button);
-      return el_wrapper;
+      /* eslint-enable */
+      elWrapper.appendChild(button);
+      return elWrapper;
     };
 
     this._keymapper.addTo(this._map);
   },
 
-  _toggleKeymapper: function (e) {
+  _toggleKeymapper: function(e) {
     L.DomEvent.stop(e);
     var container = document.getElementById('ldi-keymapper');
     var keymapWrap = document.getElementById('keymapper-wrapper');
 
-    var newClass = container.className === 'ldi-keymapper leaflet-control' ? 'ldi-keymapper-hide leaflet-control' : 'ldi-keymapper leaflet-control';
+    var newClass = container.className === 'ldi-keymapper leaflet-control' ?
+      'ldi-keymapper-hide leaflet-control' : 'ldi-keymapper leaflet-control';
     var newStyle = keymapWrap.style.display === 'none' ? 'block' : 'none';
 
     container.className = newClass;
     keymapWrap.style.display = newStyle;
 
-    L.IconUtil.toggleTooltip(this._toggler, 'Show Keybindings', 'Hide Keybindings');
-    this._toggler.innerHTML = this._toggler.innerHTML === 'close' ? L.IconUtil.create('keyboard_open') : 'close';
+    L.IconUtil.toggleTooltip(this._toggler,
+        'Show Keybindings', 'Hide Keybindings');
+    this._toggler.innerHTML = this._toggler.innerHTML === 'close' ?
+      L.IconUtil.create('keyboard_open') : 'close';
     L.DomUtil.toggleClass(this._toggler, 'close-icon');
   },
 
@@ -3029,14 +2863,16 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     this._map.scrollWheelZoom.disable();
     this._map.dragging.disable();
   },
-  
+
   _enableMap: function() {
     this._map.scrollWheelZoom.enable();
     this._map.dragging.enable();
   },
 
   _injectIconSet: function() {
-    if (document.querySelector('#keymapper-iconset')) { return; }
+    if (document.querySelector('#keymapper-iconset')) {
+      return;
+    }
 
     var el = document.createElement('div');
     el.id = 'keymapper-iconset';
@@ -3046,12 +2882,13 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     el.innerHTML = this._iconset;
 
     document.querySelector('.leaflet-control-container').appendChild(el);
-  }
+  },
 });
 
 L.DistortableImage.Keymapper.addInitHook(function() {
   L.DistortableImage.Keymapper.prototype._n =
-    L.DistortableImage.Keymapper.prototype._n ? L.DistortableImage.Keymapper.prototype._n + 1 : 1;
+    L.DistortableImage.Keymapper.prototype._n ?
+      L.DistortableImage.Keymapper.prototype._n + 1 : 1;
 
   if (L.DistortableImage.Keymapper.prototype._n === 1) {
     this.enable();
@@ -3059,16 +2896,18 @@ L.DistortableImage.Keymapper.addInitHook(function() {
   }
 });
 
-L.distortableImage.keymapper = function (map, options) {
+L.distortableImage.keymapper = function(map, options) {
   return new L.DistortableImage.Keymapper(map, options);
 };
 
-L.Map.mergeOptions({ boxSelector: true, boxZoom: false });
+L.Map.mergeOptions({boxSelector: true, boxZoom: false});
 
-/** 
- * primarily Leaflet 1.5.1 source code. Overriden so that its a selection box with our `L.DistortableCollection` class 
- * instead of a zoom box. 
- * */
+/*
+ * primarily Leaflet 1.5.1 source code.
+ * Overriden so that its a selection box
+ * with our `L.DistortableCollection` class
+ * instead of a zoom box.
+ */
 L.Map.BoxSelector = L.Map.BoxZoom.extend({
   initialize: function(map) {
     this._map = map;
@@ -3182,7 +3021,7 @@ L.Map.BoxSelector = L.Map.BoxZoom.extend({
     this._resetStateTimeout = setTimeout(
         L.Util.bind(this._resetState, this), 0);
 
-    var bounds = L.latLngBounds(
+    var bounds = new L.latLngBounds(
         this._map.containerPointToLatLng(this._bounds.getBottomLeft()),
         this._map.containerPointToLatLng(this._bounds.getTopRight())
     );
