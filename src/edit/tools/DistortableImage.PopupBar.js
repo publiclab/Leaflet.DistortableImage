@@ -5,8 +5,9 @@ L.DistortableImage.action_map = {};
 
 var ToggleTransparency = L.EditAction.extend({
   initialize: function(map, overlay, options) {
-    var edit = overlay.editing,
-        use, tooltip;
+    var edit = overlay.editing;
+    var use;
+    var tooltip;
 
     if (edit._transparent) {
       use = 'opacity';
@@ -40,8 +41,9 @@ var ToggleTransparency = L.EditAction.extend({
 
 var ToggleOutline = L.EditAction.extend({
   initialize: function(map, overlay, options) {
-    var edit = overlay.editing,
-        use, tooltip;
+    var edit = overlay.editing;
+    var use;
+    var tooltip;
 
     if (edit._outlined) {
       use = 'border_clear';
@@ -95,8 +97,9 @@ var Delete = L.EditAction.extend({
 
 var ToggleLock = L.EditAction.extend({
   initialize: function(map, overlay, options) {
-    var edit = overlay.editing,
-        use, tooltip;
+    var edit = overlay.editing;
+    var use;
+    var tooltip;
 
     if (edit._mode === 'lock') {
       use = 'unlock';
@@ -128,8 +131,9 @@ var ToggleLock = L.EditAction.extend({
 
 var ToggleRotateScale = L.EditAction.extend({
   initialize: function(map, overlay, options) {
-    var edit = overlay.editing,
-        use, tooltip;
+    var edit = overlay.editing;
+    var use;
+    var tooltip;
 
     if (edit._mode === 'rotateScale') {
       use = 'distort';
@@ -184,8 +188,9 @@ var Export = L.EditAction.extend({
 
 var ToggleOrder = L.EditAction.extend({
   initialize: function(map, overlay, options) {
-    var edit = overlay.editing,
-        use, tooltip;
+    var edit = overlay.editing;
+    var use;
+    var tooltip;
 
     if (edit._toggledImage) {
       use = 'flip_to_front';
@@ -254,7 +259,7 @@ var Revert = L.EditAction.extend({
 
   addHooks: function() {
     this._overlay._revert();
-  }
+  },
 });
 
 var ToggleRotate = L.EditAction.extend({
@@ -289,7 +294,7 @@ var ToggleScale = L.EditAction.extend({
       html: use,
       tooltip: 'Scale Image',
     };
-    
+
     L.DistortableImage.action_map.s = '_toggleScale';
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
@@ -338,11 +343,11 @@ L.DistortableImageOverlay.addInitHook(function() {
     Delete,
   ];
 
-if (this.options.actions) { /* (`this` being DistortableImageOverlay, not the toolbar) */
+  if (this.options.actions) { /* (`this` being DistortableImageOverlay, not the toolbar) */
     this.editActions = this.options.actions;
   } else {
     this.editActions = this.ACTIONS;
   }
 
-  this.editing = new L.DistortableImage.Edit(this, { actions: this.editActions });
+  this.editing = new L.DistortableImage.Edit(this, {actions: this.editActions});
 });
