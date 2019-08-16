@@ -39,7 +39,7 @@ And watch this GIF demo:
 
 To test the code, open `index.html` in your browser and click and drag the markers on the edges of the image. The image will show perspectival distortions.
 
-For the additional features in the [multiple image interface](#Multiple-Image-Interface), open `select.html` and use <kbd>cmd</kbd> + click on an image or <kbd>shift</kbd> + drag on the map to "multi-select" images.
+For the additional features in the [multiple image interface](#Multiple-Image-Interface), open `select.html` and use <kbd>shift</kbd> + click on an image or <kbd>shift</kbd> + drag on the map to "multi-select" images. For touch screens, touch + hold the image.
 
 ## Single Image Interface
 
@@ -428,15 +428,22 @@ A handler that holds the keybindings and toolbar API for an image instance. It i
 <ul><li>An individual image can be disabled while the group is enabled.</ul></li>
 </details>
 
-<details><summary><code><b>enabled()</b></code></summary></details>
+<details><summary><code><b>enabled()</b>: Boolean</code></summary>
+<ul><li>Returns true if editing on the individual image instance is enabled.</ul></li>
+<ul><li><code>img.editing.enabled()</code></ul></li>
+</details>
 
 <hr>
 
 `L.DistortableCollection`
 
-<details><summary><code><b>isSelected()</b></code></summary></details>
+<details><summary><code><b>isSelected(<i>img</i> &#60;DistortableImageOverlay>)</b>: Boolean</code></summary>
+<ul><li>Returns true if the passed <code>DistortableImageOverlay</code> instance is multi-selected, i.e. its underlying <code>HTMLImageElement</code> has a class containing "selected".</ul></li>
+</details>
 
-<details><summary><code><b>anySelected()</b></code></summary></details>
+<details><summary><code><b>anySelected()</b>: Boolean</code></summary>
+<ul><li>Returns true if any <code>DistortableImageOverlay</code> instances are mutli-selected.</ul></li>
+</details>
 
 <hr>
 
@@ -458,7 +465,10 @@ Same as `L.DistortableImage.Edit` but for the collection (`L.DistortableCollecti
 <ul><li>Calls each individual image's <code>#disable</code> method and disables the multi-image interface.</ul></li>
 </details>
 
-<details><summary><code><b>enabled()</b></code></summary></details>
+<details><summary><code><b>enabled()</b>: Boolean</code></summary>
+<ul><li>Returns true if editing on the collection instance is enabled.</ul></li>
+<ul><li><code>imgGroup.editing.enabled()</code></ul></li>
+</details>
 
 <details><summary><code><b>removeTool(action)</b></code></summary>
 <ul><li>Removes the passed tool from the control toolbar in runtime.</ul></li>
@@ -469,7 +479,7 @@ Same as `L.DistortableImage.Edit` but for the collection (`L.DistortableCollecti
 <ul><li>Adds the passed tool to the end of the control toolbar in runtime. Returns false if the tool is not available or is already present.</ul></li>
 </details>
 
-<details><summary><code><b>hasTool(action)</b></code></summary>
+<details><summary><code><b>hasTool(action)</b>: Boolean</code></summary>
 <ul><li>Checks if the tool is already present in the currently rendered control toolbar.</ul></li>
 </details>
 
