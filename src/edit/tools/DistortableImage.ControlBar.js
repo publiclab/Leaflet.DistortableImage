@@ -16,8 +16,7 @@ L.distortableImage = L.DistortableImage;
     },
 
     addHooks: function () {
-      var edit = this._overlay;
-
+      var edit = this._overlay.editing;
       edit.startExport();
     }
   });
@@ -37,8 +36,7 @@ L.distortableImage = L.DistortableImage;
     },
 
     addHooks: function() {
-      var edit = this._overlay;
-
+      var edit = this._overlay.editing;
       edit._removeGroup();
     }
   });
@@ -58,8 +56,7 @@ var Locks = L.EditAction.extend({
   },
 
   addHooks: function () {
-    var edit = this._overlay;
-
+    var edit = this._overlay.editing;
     edit._lockGroup();
   }
 });
@@ -79,8 +76,7 @@ var Unlocks = L.EditAction.extend({
   },
 
   addHooks: function () {
-    var edit = this._overlay;
-
+    var edit = this._overlay.editing;
     edit._unlockGroup();
   }
 });
