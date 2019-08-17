@@ -2795,6 +2795,9 @@ L.DistortableCollection.Edit = L.Handler.extend({
 L.DomUtil = L.DomUtil || {};
 L.DistortableImage = L.DistortableImage || {};
 L.distortableImage = L.DistortableImage;
+// L.DistortableImageOverlay.addInitHook(function () {
+//   console.log(this.ACTIONS);
+// });
 
 L.DistortableImage.Keymapper = L.Handler.extend({
 
@@ -2804,6 +2807,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
 
   initialize: function(map, options) {
     this._map = map;
+    this.action_map = L.DistortableImage.action_map;
     L.setOptions(this, options);
   },
 
@@ -2866,6 +2870,31 @@ L.DistortableImage.Keymapper = L.Handler.extend({
 
   _setMapper: function(container, wrap, button) {
     this._keymapper = L.control({position: this.options.position});
+
+    var actions = this.action_map;
+    var action_map_str = '', buffer = '', val = '';
+    for (var i = 0; i < Object.keys(actions).length; i++) {
+      if (Object.values(actions)[i].slice(1, 4) === 'get') {
+        val = 'Get' + Object.values(actions)[i].slice(4);
+      }
+      if (Object.values(actions)[i].slice(1, 7) === 'remove') {
+        val = 'Remove' + Object.values(actions)[i].slice(7);
+      }
+      if (Object.values(actions)[i].slice(1, 7) === 'toggle') {
+        val = 'Toggle' + Object.values(actions)[i].slice(7);
+      }
+      val = val.match(/[A-Z][a-z]+|[0-9]+/g).join(" ");
+      if (Object.values(actions)[i] === Object.values(actions)[i + 1]) {
+        buffer = '</kbd><kbd>' + Object.keys(actions)[i];
+        continue;
+      }
+      action_map_str += '<tr><td><div class="left"><span>' +
+        val + '</span></div><div class="right"><kbd>' +
+        Object.keys(actions)[i] + buffer +
+        '</kbd></div></td></tr>';
+      buffer = '';
+      val = '';
+    }
 
     this._keymapper.onAdd = function() {
       container.appendChild(wrap);
