@@ -88,15 +88,15 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   _initImageDimensions: function() {
-    const map = this._map;
-    const originalImageWidth = L.DomUtil.getStyle(this._image, 'width');
-    const originalImageHeight = L.DomUtil.getStyle(this._image, 'height');
-    const aspectRatio =
+    var map = this._map;
+    var originalImageWidth = L.DomUtil.getStyle(this._image, 'width');
+    var originalImageHeight = L.DomUtil.getStyle(this._image, 'height');
+    var aspectRatio =
         parseInt(originalImageWidth) / parseInt(originalImageHeight);
-    const imageHeight = this.options.height;
-    const imageWidth = parseInt(aspectRatio * imageHeight);
-    const center = map.latLngToContainerPoint(map.getCenter());
-    const offset = L.point(imageWidth, imageHeight).divideBy(2);
+    var imageHeight = this.options.height;
+    var imageWidth = parseInt(aspectRatio * imageHeight);
+    var center = map.latLngToContainerPoint(map.getCenter());
+    var offset = L.point(imageWidth, imageHeight).divideBy(2);
 
     if (this.options.corners) {
       this._corners = this.options.corners;
@@ -123,7 +123,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   _initEvents: function() {
     this._events = ['click'];
 
-    for (let i = 0, l = this._events.length; i < l; i++) {
+    for (var i = 0, l = this._events.length; i < l; i++) {
       L.DomEvent.on(this._image, this._events[i], this._fireMouseEvent, this);
     }
   },
@@ -134,10 +134,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       return;
     }
 
-    const map = this._map;
-    const containerPoint = map.mouseEventToContainerPoint(event);
-    const layerPoint = map.containerPointToLayerPoint(containerPoint);
-    const latlng = map.layerPointToLatLng(layerPoint);
+    var map = this._map;
+    var containerPoint = map.mouseEventToContainerPoint(event);
+    var layerPoint = map.containerPointToLayerPoint(containerPoint);
+    var latlng = map.layerPointToLatLng(layerPoint);
 
     this.fire(event.type, {
       latlng: latlng,
@@ -279,22 +279,22 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     // Firefox 13 doesn't care
     // (same speed either way), Opera 12 doesn't support translate3d
 
-    const is3d = L.Browser.webkit3d;
-    const open = 'translate' + (is3d ? '3d' : '') + '(';
-    const close = (is3d ? ',0' : '') + ')';
+    var is3d = L.Browser.webkit3d;
+    var open = 'translate' + (is3d ? '3d' : '') + '(';
+    var close = (is3d ? ',0' : '') + ')';
 
     return open + point.x + 'px,' + point.y + 'px' + close;
   },
 
   _reset: function() {
-    const map = this._map;
-    const image = this._image;
-    const latLngToLayerPoint = L.bind(map.latLngToLayerPoint, map);
-    const transformMatrix = this
+    var map = this._map;
+    var image = this._image;
+    var latLngToLayerPoint = L.bind(map.latLngToLayerPoint, map);
+    var transformMatrix = this
         ._calculateProjectiveTransform(latLngToLayerPoint);
-    const topLeft = latLngToLayerPoint(this._corners[0]);
-    const warp = L.DomUtil.getMatrixString(transformMatrix);
-    const translation = this._getTranslateString(topLeft);
+    var topLeft = latLngToLayerPoint(this._corners[0]);
+    var warp = L.DomUtil.getMatrixString(transformMatrix);
+    var translation = this._getTranslateString(topLeft);
 
     /* See L.DomUtil.setPosition. Mainly for the purposes of L.Draggable. */
     image._leaflet_pos = topLeft;
@@ -314,17 +314,17 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
    * future transform which makes the transition appear smooth.
    */
   _animateZoom: function(event) {
-    const map = this._map;
-    const image = this._image;
-    const latLngToNewLayerPoint = function(latlng) {
+    var map = this._map;
+    var image = this._image;
+    var latLngToNewLayerPoint = function(latlng) {
       return map._latLngToNewLayerPoint(latlng, event.zoom, event.center);
     };
-    const transformMatrix = this._calculateProjectiveTransform(
+    var transformMatrix = this._calculateProjectiveTransform(
         latLngToNewLayerPoint
     );
-    const topLeft = latLngToNewLayerPoint(this.getCorner(0));
-    const warp = L.DomUtil.getMatrixString(transformMatrix);
-    const translation = this._getTranslateString(topLeft);
+    var topLeft = latLngToNewLayerPoint(this.getCorner(0));
+    var warp = L.DomUtil.getMatrixString(transformMatrix);
+    var translation = this._getTranslateString(topLeft);
 
     /* See L.DomUtil.setPosition. Mainly for the purposes of L.Draggable. */
     image._leaflet_pos = topLeft;
@@ -345,15 +345,15 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
    * See http://stackoverflow.com/questions/6149175/logical-question-given-corners-find-center-of-quadrilateral
    */
   getCenter: function(ll2c, c2ll) {
-    const map = this._map;
-    const latLngToCartesian = ll2c ? ll2c : map.latLngToLayerPoint;
-    const cartesianToLatLng = c2ll ? c2ll : map.layerPointToLatLng;
-    const nw = latLngToCartesian.call(map, this.getCorner(0));
-    const ne = latLngToCartesian.call(map, this.getCorner(1));
-    const se = latLngToCartesian.call(map, this.getCorner(2));
-    const sw = latLngToCartesian.call(map, this.getCorner(3));
-    const nmid = nw.add(ne.subtract(nw).divideBy(2));
-    const smid = sw.add(se.subtract(sw).divideBy(2));
+    var map = this._map;
+    var latLngToCartesian = ll2c ? ll2c : map.latLngToLayerPoint;
+    var cartesianToLatLng = c2ll ? c2ll : map.layerPointToLatLng;
+    var nw = latLngToCartesian.call(map, this.getCorner(0));
+    var ne = latLngToCartesian.call(map, this.getCorner(1));
+    var se = latLngToCartesian.call(map, this.getCorner(2));
+    var sw = latLngToCartesian.call(map, this.getCorner(3));
+    var nmid = nw.add(ne.subtract(nw).divideBy(2));
+    var smid = sw.add(se.subtract(sw).divideBy(2));
 
     return cartesianToLatLng.call(
         map,
@@ -368,7 +368,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   _calcCenterTwoCornerPoints: function(topLeft, topRight) {
-    const toolPoint = {x: '', y: ''};
+    var toolPoint = {x: '', y: ''};
 
     toolPoint.x = topRight.x + (topLeft.x - topRight.x) / 2;
     toolPoint.y = topRight.y + (topLeft.y - topRight.y) / 2;
@@ -380,11 +380,11 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     /* Setting reasonable but made-up image defaults
      * allow us to place images on the map before
      * they've finished downloading. */
-    const offset = latLngToCartesian(this._corners[0]);
-    const w = this._image.offsetWidth || 500;
-    const h = this._image.offsetHeight || 375;
-    const c = [];
-    let j;
+    var offset = latLngToCartesian(this._corners[0]);
+    var w = this._image.offsetWidth || 500;
+    var h = this._image.offsetHeight || 375;
+    var c = [];
+    var j;
     /* Convert corners to container points (i.e. cartesian coordinates). */
     for (j = 0; j < this._corners.length; j++) {
       c.push(latLngToCartesian(this._corners[j])._subtract(offset));

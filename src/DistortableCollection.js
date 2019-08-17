@@ -125,7 +125,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }
 
     this.eachLayer(function(layer) {
-      const edit = layer.editing;
+      var edit = layer.editing;
       edit._deselect();
 
       for (i = 0; i < 4; i++) {
@@ -149,23 +149,23 @@ L.DistortableCollection = L.FeatureGroup.extend({
       overlay._dragPoints[i] = map.latLngToLayerPoint(overlay.getCorner(i));
     }
 
-    const cpd = overlay._calcCornerPointDelta();
+    var cpd = overlay._calcCornerPointDelta();
 
     this._updateCollectionFromPoints(cpd, overlay);
   },
 
   _toRemove: function() {
-    const layerArr = this.getLayers();
+    var layerArr = this.getLayers();
 
     return layerArr.filter(function(layer) {
-      const edit = layer.editing;
+      var edit = layer.editing;
       return (this.isSelected(layer) && edit._mode !== 'lock');
     }, this);
   },
 
   _calcCollectionFromPoints: function(cpd, overlay) {
-    const layersToMove = [];
-    const p = new L.Transformation(1, -cpd.x, 1, -cpd.y);
+    var layersToMove = [];
+    var p = new L.Transformation(1, -cpd.x, 1, -cpd.y);
 
     this.eachLayer(function(layer) {
       if (
@@ -192,7 +192,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
    * @param {object} overlay
    */
   _updateCollectionFromPoints: function(cpd, overlay) {
-    const layersToMove = this._calcCollectionFromPoints(cpd, overlay);
+    var layersToMove = this._calcCollectionFromPoints(cpd, overlay);
 
     layersToMove.forEach(function(layer) {
       layer.setCornersFromPoints(layer._cpd);
@@ -200,22 +200,22 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   _getAvgCmPerPixel: function(imgs) {
-    const reduce = imgs.reduce(function(sum, img) {
+    var reduce = imgs.reduce(function(sum, img) {
       return sum + img.cm_per_pixel;
     }, 0);
     return reduce / imgs.length;
   },
 
   generateExportJson: function() {
-    const json = {};
+    var json = {};
     json.images = [];
 
     this.eachLayer(function(layer) {
       if (this.isSelected(layer)) {
-        const sections = layer._image.src.split('/');
-        const filename = sections[sections.length-1];
-        const zc = layer.getCorners();
-        const corners = [
+        var sections = layer._image.src.split('/');
+        var filename = sections[sections.length-1];
+        var zc = layer.getCorners();
+        var corners = [
           {lat: zc[0].lat, lon: zc[0].lng},
           {lat: zc[1].lat, lon: zc[1].lng},
           {lat: zc[3].lat, lon: zc[3].lng},

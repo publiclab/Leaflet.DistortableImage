@@ -12,9 +12,9 @@ L.RotateHandle = L.EditHandle.extend({
 
   _onHandleDrag: function() {
     var overlay = this._handled,
-      formerLatLng = overlay.getCorner(this._corner),
-      newLatLng = this.getLatLng(),
-      angle = this.calculateAngleDelta(formerLatLng, newLatLng);
+        formerLatLng = overlay.getCorner(this._corner),
+        newLatLng = this.getLatLng(),
+        angle = this.calculateAngleDelta(formerLatLng, newLatLng);
 
     /** running rotation logic even for an angle delta of 0
      * prevents a small, occasional marker flicker */

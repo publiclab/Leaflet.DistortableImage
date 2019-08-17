@@ -32,8 +32,8 @@ describe('L.DistortableImage.Edit', function() {
 
   it('Should keep handles on the map in sync with the corners of the image.', function() {
     var corners = overlay.getCorners(),
-      edit = overlay.editing,
-      img = overlay.getElement();
+        edit = overlay.editing,
+        img = overlay.getElement();
 
     edit.enable();
     // this test applies to a selected image
@@ -57,7 +57,7 @@ describe('L.DistortableImage.Edit', function() {
   describe('#_select', function() {
     it("It should initialize an image's individual toolbar instance", function() {
       var edit = overlay.editing,
-        img = overlay.getElement();
+          img = overlay.getElement();
 
       edit.enable();
 
@@ -71,7 +71,7 @@ describe('L.DistortableImage.Edit', function() {
 
     it("It should show an unlocked image's handles by updating their opacity", function() {
       var edit = overlay.editing,
-        img = overlay.getElement();
+          img = overlay.getElement();
 
       edit.enable();
       chai.simulateClick(img);
@@ -121,7 +121,7 @@ describe('L.DistortableImage.Edit', function() {
 
     it("Should remove an image's individual toolbar instance regardless of lock handles", function() {
       var edit = overlay.editing,
-        img = overlay.getElement();
+          img = overlay.getElement();
 
       edit.enable();
       // switch to lock handles

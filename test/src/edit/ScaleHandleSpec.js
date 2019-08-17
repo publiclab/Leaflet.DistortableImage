@@ -1,7 +1,7 @@
 describe('L.ScaleHandle', function() {
-  let map;
-  let distortable;
-  let scaleHandle;
+  var map;
+  var distortable;
+  var scaleHandle;
 
   beforeEach(function(done) {
     map = L.map(
@@ -24,8 +24,8 @@ describe('L.ScaleHandle', function() {
 
   describe('_calculateScalingFactor', function() {
     it('Should return 1 when given the same latlng twice.', function() {
-      const latlng = distortable.getCorner(0);
-      const scale = scaleHandle._calculateScalingFactor(latlng, latlng);
+      var latlng = distortable.getCorner(0);
+      var scale = scaleHandle._calculateScalingFactor(latlng, latlng);
 
       expect(scale).to.equal(1);
     });

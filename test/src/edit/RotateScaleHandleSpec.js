@@ -1,7 +1,7 @@
 describe('L.RotateScaleHandle', function() {
-  let map;
-  let distortable;
-  let rotateHandle;
+  var map;
+  var distortable;
+  var rotateHandle;
 
   beforeEach(function(done) {
     map = L.map(
@@ -28,8 +28,8 @@ describe('L.RotateScaleHandle', function() {
 
   describe('_calculateRotation', function() {
     it('Should return 0 when given the same latlng twice.', function() {
-      const latlng = distortable.getCorner(0);
-      const angle = rotateHandle.calculateAngleDelta(latlng, latlng);
+      var latlng = distortable.getCorner(0);
+      var angle = rotateHandle.calculateAngleDelta(latlng, latlng);
 
       expect(angle).to.equal(0);
     });
@@ -37,8 +37,8 @@ describe('L.RotateScaleHandle', function() {
 
   describe('_calculateScalingFactor', function() {
     it('Should return 1 when given the same latlng twice.', function() {
-      const latlng = distortable.getCorner(0);
-      const scale = rotateHandle._calculateScalingFactor(latlng, latlng);
+      var latlng = distortable.getCorner(0);
+      var scale = rotateHandle._calculateScalingFactor(latlng, latlng);
 
       expect(scale).to.equal(1);
     });

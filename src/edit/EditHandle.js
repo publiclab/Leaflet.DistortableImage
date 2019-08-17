@@ -1,13 +1,13 @@
 L.EditHandle = L.Marker.extend({
   initialize: function(overlay, corner, options) {
-    const latlng = overlay.getCorner(corner);
+    var latlng = overlay.getCorner(corner);
 
     L.setOptions(this, options);
 
     this._handled = overlay;
     this._corner = corner;
 
-    const markerOptions = {
+    var markerOptions = {
       draggable: true,
       zIndexOffset: 10,
     };
@@ -75,14 +75,14 @@ L.EditHandle = L.Marker.extend({
 
   /* Takes two latlngs and calculates the scaling difference. */
   _calculateScalingFactor: function(latlngA, latlngB) {
-    const overlay = this._handled;
-    const map = overlay._map;
+    var overlay = this._handled;
+    var map = overlay._map;
 
-    const centerPoint = map.latLngToLayerPoint(overlay.getCenter());
-    const formerPoint = map.latLngToLayerPoint(latlngA);
-    const newPoint = map.latLngToLayerPoint(latlngB);
-    const formerRadiusSquared = this._d2(centerPoint, formerPoint);
-    const newRadiusSquared = this._d2(centerPoint, newPoint);
+    var centerPoint = map.latLngToLayerPoint(overlay.getCenter());
+    var formerPoint = map.latLngToLayerPoint(latlngA);
+    var newPoint = map.latLngToLayerPoint(latlngB);
+    var formerRadiusSquared = this._d2(centerPoint, formerPoint);
+    var newRadiusSquared = this._d2(centerPoint, newPoint);
 
     return Math.sqrt(newRadiusSquared / formerRadiusSquared);
   },
@@ -90,25 +90,25 @@ L.EditHandle = L.Marker.extend({
   /* Distance between two points in cartesian space,
   * squared (distance formula). */
   _d2: function(a, b) {
-    const dx = a.x - b.x;
-    const dy = a.y - b.y;
+    var dx = a.x - b.x;
+    var dy = a.y - b.y;
 
     return Math.pow(dx, 2) + Math.pow(dy, 2);
   },
 
   /* Takes two latlngs and calculates the angle between them. */
   calculateAngleDelta: function(latlngA, latlngB) {
-    const overlay = this._handled;
-    const map = overlay._map;
+    var overlay = this._handled;
+    var map = overlay._map;
 
-    const centerPoint = map.latLngToLayerPoint(overlay.getCenter());
-    const formerPoint = map.latLngToLayerPoint(latlngA);
-    const newPoint = map.latLngToLayerPoint(latlngB);
+    var centerPoint = map.latLngToLayerPoint(overlay.getCenter());
+    var formerPoint = map.latLngToLayerPoint(latlngA);
+    var newPoint = map.latLngToLayerPoint(latlngB);
 
-    const initialAngle = Math.
+    var initialAngle = Math.
         atan2(
             centerPoint.y - formerPoint.y, centerPoint.x - formerPoint.x);
-    const newAngle = Math.
+    var newAngle = Math.
         atan2(
             centerPoint.y - newPoint.y, centerPoint.x - newPoint.x);
 

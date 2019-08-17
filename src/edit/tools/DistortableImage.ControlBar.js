@@ -47,7 +47,7 @@ L.distortableImage = L.DistortableImage;
 
 var Locks = L.EditAction.extend({
   initialize: function(map, overlay, options) {
-    const use = 'lock';
+    var use = 'lock';
 
     options = options || {};
     options.toolbarIcon = {
@@ -67,7 +67,7 @@ var Locks = L.EditAction.extend({
 
 var Unlocks = L.EditAction.extend({
   initialize: function(map, overlay, options) {
-    const use = 'unlock';
+    var use = 'unlock';
 
     options = options || {};
     options.toolbarIcon = {

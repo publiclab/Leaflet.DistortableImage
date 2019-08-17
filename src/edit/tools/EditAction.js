@@ -20,7 +20,7 @@ L.EditAction = L.Toolbar2.Action.extend({
   },
 
   _createIcon: function(toolbar, container, args) {
-    const iconOptions = this.options.toolbarIcon;
+    var iconOptions = this.options.toolbarIcon;
 
     this.toolbar = toolbar;
     this._icon = L.DomUtil.create('li', '', container);
@@ -52,7 +52,7 @@ L.EditAction = L.Toolbar2.Action.extend({
       return;
     }
 
-    const el = document.createElement('div');
+    var el = document.createElement('div');
     el.id = 'iconset';
     el.setAttribute('hidden', 'hidden');
     el.innerHTML = new L.ToolbarIconSet().render();

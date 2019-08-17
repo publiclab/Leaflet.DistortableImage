@@ -1,7 +1,7 @@
 L.TrigUtil = {
 
   calcAngleDegrees: function(x, y) {
-    const pointAngle = Math.atan2(y, x);
+    var pointAngle = Math.atan2(y, x);
     return this.radiansToDegrees(pointAngle);
   },
 

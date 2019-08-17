@@ -25,7 +25,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._toggledImage = false;
     /* Interaction modes. TODO - create API for
     * limiting modes similar to toolbar actions API */
-    const modes = ['distort', 'lock', 'rotate', 'scale', 'rotateScale'];
+    var modes = ['distort', 'lock', 'rotate', 'scale', 'rotateScale'];
     this._mode = modes[modes.indexOf(overlay.options.mode)] || 'distort';
 
     this._selected = this._overlay.options.selected || false;
@@ -119,8 +119,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 	},
 
   _initHandles: function() {
-    const overlay = this._overlay;
-    let i;
+    var overlay = this._overlay;
+    var i;
 
     this._lockHandles = L.layerGroup();
     for (i = 0; i < 4; i++) {
@@ -160,8 +160,8 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _appendHandlesandDragable: function(mode) {
-    const overlay = this._overlay;
-    const map = overlay._map;
+    var overlay = this._overlay;
+    var map = overlay._map;
 
     map.addLayer(this._handles[mode]);
 
@@ -275,7 +275,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _toggleRotateScale: function() {
-    const map = this._overlay._map;
+    var map = this._overlay._map;
 
     if (this._mode === 'lock') {
       return;
@@ -296,7 +296,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _toggleScale: function() {
-    const map = this._overlay._map;
+    var map = this._overlay._map;
 
     if (this._mode === 'lock') {
       return;
@@ -314,7 +314,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _toggleRotate: function() {
-    const map = this._overlay._map;
+    var map = this._overlay._map;
 
     if (this._mode === 'lock') {
       return;
@@ -379,7 +379,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _toggleLock: function() {
-    const map = this._overlay._map;
+    var map = this._overlay._map;
 
     map.removeLayer(this._handles[this._mode]);
  
@@ -413,11 +413,11 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
 
     if (this.toolbar && this.toolbar instanceof L.DistortableImage.PopupBar) {
-      const currentHandle = this._handles[this._mode];
+      var currentHandle = this._handles[this._mode];
 
       currentHandle.eachLayer(function(layer) {
-        const drag = layer.dragging;
-        const opts = layer.options;
+        var drag = layer.dragging;
+        var opts = layer.options;
 
         layer.setOpacity(1);
         if (drag) {
@@ -449,20 +449,20 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _addToolbar: function() {
-    const overlay = this._overlay;
-    const map = overlay._map;
+    var overlay = this._overlay;
+    var map = overlay._map;
     // Find the topmost point on the image.
-    const corners = overlay.getCorners();
-    let maxLat = -Infinity;
+    var corners = overlay.getCorners();
+    var maxLat = -Infinity;
 
-    for (let i = 0; i < corners.length; i++) {
+    for (var i = 0; i < corners.length; i++) {
       if (corners[i].lat > maxLat) {
         maxLat = corners[i].lat;
       }
     }
 
     // Longitude is based on the centroid of the image.
-    const raisedPoint = overlay.getCenter();
+    var raisedPoint = overlay.getCenter();
     raisedPoint.lat = maxLat;
 
     try {
@@ -482,7 +482,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
 
     if (eventParents) {
-      const eP = eventParents[Object.keys(eventParents)[0]];
+      var eP = eventParents[Object.keys(eventParents)[0]];
       if (eP.anySelected()) {
         eP.editing._addToolbar();
         return;
@@ -498,21 +498,21 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _updateToolbarPos: function() {
-    const overlay = this._overlay;
+    var overlay = this._overlay;
     // Find the topmost point on the image.
-    const corners = overlay.getCorners();
-    const toolbar = this.toolbar;
-    let maxLat = -Infinity;
+    var corners = overlay.getCorners();
+    var toolbar = this.toolbar;
+    var maxLat = -Infinity;
 
     if (toolbar && toolbar instanceof L.DistortableImage.PopupBar) {
-      for (let i = 0; i < corners.length; i++) {
+      for (var i = 0; i < corners.length; i++) {
         if (corners[i].lat > maxLat) {
           maxLat = corners[i].lat;
         }
       }
 
       // Longitude is based on the centroid of the image.
-      const raisedPoint = overlay.getCenter();
+      var raisedPoint = overlay.getCenter();
       raisedPoint.lat = maxLat;
 
       if (overlay.options.suppressToolbar !== true) {
@@ -529,7 +529,7 @@ L.DistortableImage.Edit = L.Handler.extend({
       return;
     }
 
-    const choice = L.DomUtil.confirmDelete();
+    var choice = L.DomUtil.confirmDelete();
     if (!choice) {
       return;
     }
@@ -537,7 +537,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._removeToolbar();
 
     if (eventParents) {
-      const eP = eventParents[Object.keys(eventParents)[0]];
+      var eP = eventParents[Object.keys(eventParents)[0]];
       eP.removeLayer(overlay);
     } else {
       overlay._map.removeLayer(overlay);
@@ -557,11 +557,11 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   // Based on https://github.com/publiclab/mapknitter/blob/8d94132c81b3040ae0d0b4627e685ff75275b416/app/assets/javascripts/mapknitter/Map.js#L47-L82
   _getExport: function() {
-    const map = this._overlay._map;
-    const overlay = this._overlay;
+    var map = this._overlay._map;
+    var overlay = this._overlay;
 
     // make a new image
-    const downloadable = new Image();
+    var downloadable = new Image();
 
     downloadable.id = downloadable.id || 'tempId12345';
     $('body').append(downloadable);

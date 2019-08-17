@@ -47,7 +47,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
   },
 
   _toggleButton: function() {
-    const toggler = L.DomUtil.create('a', '');
+    var toggler = L.DomUtil.create('a', '');
     toggler.setAttribute('id', 'toggle-keymapper');
     toggler.setAttribute('href', '#');
     toggler.setAttribute('role', 'button');
@@ -58,7 +58,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
   },
 
   _wrap: function() {
-    const wrap = L.DomUtil.create('div', '');
+    var wrap = L.DomUtil.create('div', '');
     wrap.setAttribute('id', 'keymapper-wrapper');
     wrap.style.display = 'none';
 
@@ -69,9 +69,9 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     this._keymapper = L.control({position: this.options.position});
 
     this._container = this._keymapper.onAdd = function() {
-      const elWrapper = L.DomUtil.create('div', 'ldi-keymapper-hide');
+      var elWrapper = L.DomUtil.create('div', 'ldi-keymapper-hide');
       elWrapper.setAttribute('id', 'ldi-keymapper');
-      const divider = L.DomUtil.create('br', 'divider');
+      var divider = L.DomUtil.create('br', 'divider');
       elWrapper.appendChild(divider);
       elWrapper.appendChild(wrap);
       wrap.insertAdjacentHTML(
@@ -100,12 +100,12 @@ L.DistortableImage.Keymapper = L.Handler.extend({
 
   _toggleKeymapper: function(e) {
     L.DomEvent.stop(e);
-    const container = document.getElementById('ldi-keymapper');
-    const keymapWrap = document.getElementById('keymapper-wrapper');
+    var container = document.getElementById('ldi-keymapper');
+    var keymapWrap = document.getElementById('keymapper-wrapper');
 
-    const newClass = container.className === 'ldi-keymapper leaflet-control' ?
+    var newClass = container.className === 'ldi-keymapper leaflet-control' ?
       'ldi-keymapper-hide leaflet-control' : 'ldi-keymapper leaflet-control';
-    const newStyle = keymapWrap.style.display === 'none' ? 'block' : 'none';
+    var newStyle = keymapWrap.style.display === 'none' ? 'block' : 'none';
 
     container.className = newClass;
     keymapWrap.style.display = newStyle;
@@ -132,7 +132,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
       return;
     }
 
-    const el = document.createElement('div');
+    var el = document.createElement('div');
     el.id = 'keymapper-iconset';
     el.setAttribute('hidden', 'hidden');
 

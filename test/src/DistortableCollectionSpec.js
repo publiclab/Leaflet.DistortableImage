@@ -41,9 +41,7 @@ describe('L.DistortableCollection', function() {
     imgGroup.addLayer(overlay3);
 
     /* Forces the images to load before any tests are run. */
-    L.DomEvent.on(overlay3, 'load', function() {
-      done();
-    });
+    L.DomEvent.on(overlay3, 'load', function() { done(); });
   });
 
   afterEach(function() {

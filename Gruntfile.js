@@ -163,9 +163,9 @@ module.exports = function(grunt) {
   grunt.registerTask('icons', ['svgmin', 'svg_sprite']);
 
   grunt.registerTask('coverage', 'Custom commmand-line reporter for karma-coverage', function() {
-    const coverageReports = grunt.file.expand('coverage/*/coverage.txt');
-    const reports = {};
-    let report; let i; let len;
+    var coverageReports = grunt.file.expand('coverage/*/coverage.txt');
+    var reports = {};
+    var report; var i; var len;
 
     for (i = 0, len = coverageReports.length; i < len; i++) {
       report = grunt.file.read(coverageReports[i]);

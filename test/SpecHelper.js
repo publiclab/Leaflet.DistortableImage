@@ -21,7 +21,7 @@ chai.simulateShiftMousedown = function simulateCommandMousedownFn(el) {
 
 chai.simulateMousedown= function simulateMousedownFn(el) {
   if (document.createEvent) {
-    const e = document.createEvent('MouseEvents');
+    var e = document.createEvent('MouseEvents');
     e.initMouseEvent('mousedown', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
     return el.dispatchEvent(e);
   }
@@ -44,17 +44,17 @@ chai.simulateClick = function simulateClickFn(el) {
  *     > true
  */
 chai.use(function(chai, utils) {
-  const Assertion = chai.Assertion;
+  var Assertion = chai.Assertion;
   Assertion.addMethod('closeToLatLng', function(actual, delta, message) {
-    const obj = utils.flag(this, 'object');
+    var obj = utils.flag(this, 'object');
 
     delta = delta || 1e-4;
 
     expect(obj).to.have.property('lat');
     expect(obj).to.have.property('lng');
 
-    const lat = new Assertion(obj.lat);
-    const lng = new Assertion(obj.lng);
+    var lat = new Assertion(obj.lat);
+    var lng = new Assertion(obj.lng);
 
     utils.transferFlags(this, lat, false);
     utils.transferFlags(this, lng, false);

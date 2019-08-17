@@ -1,5 +1,5 @@
 describe('L.MatrixUtil', function() {
-  let identity;
+  var identity;
 
   beforeEach(function() {
     identity = [
@@ -11,15 +11,15 @@ describe('L.MatrixUtil', function() {
 
   describe('.multmm', function() {
     it('Should act as the identity when the identity matrix is on the left.', function() {
-      const test = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-      const left = L.MatrixUtil.multmm(identity, test);
+      var test = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+      var left = L.MatrixUtil.multmm(identity, test);
 
       expect(left).to.deep.equal(test);
     });
 
     it('Should act as the identity when the identity matrix is on the right.', function() {
-      const test = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-      const right = L.MatrixUtil.multmm(test, identity);
+      var test = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+      var right = L.MatrixUtil.multmm(test, identity);
 
       expect(right).to.deep.equal(test);
     });
@@ -38,26 +38,26 @@ describe('L.MatrixUtil', function() {
   describe('.general2DProjection', function() {
     /* AssertionError: expected [ -1, 0, 0, 0, -1, 0, 0, 0, -1 ] to equal [ 1, 0, 0, 0, 1, 0, 0, 0, 1 ] */
     it('Should return the 3*3 identity matrix when each corner is mapped back to itself.', function() {
-      const identityMap = [
+      var identityMap = [
         0, 0, 0, 0,
         1, 0, 1, 0,
         0, 1, 0, 1,
         1, 1, 1, 1,
       ];
-      const projected = L.MatrixUtil.general2DProjection.apply(undefined, identityMap);
+      var projected = L.MatrixUtil.general2DProjection.apply(undefined, identityMap);
 
       expect(projected).to.deep.equal([1, -0, -0, -0, 1, -0, -0, -0, 1]);
     });
 
     /* AssertionError: expected [ -27, 0, 0, 0, -27, 0, 0, 0, -9 ] to deeply equal [ 3, 0, 0, 0, 3, 0, 0, 0, 3 ] */
     it('Should return a scalar multiple of the 3*3 identity matrix when the image is scaled.', function() {
-      const dilationMap = [
+      var dilationMap = [
         0, 0, 0, 0,
         1, 0, 3, 0,
         0, 1, 0, 3,
         1, 1, 3, 3,
       ];
-      const projected = L.MatrixUtil.general2DProjection.apply(undefined, dilationMap);
+      var projected = L.MatrixUtil.general2DProjection.apply(undefined, dilationMap);
 
       expect(projected).to.deep.equal([3, -0, -0, -0, 3, -0, -0, -0, 1]);
     });

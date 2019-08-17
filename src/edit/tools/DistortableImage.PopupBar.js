@@ -25,7 +25,7 @@ var ToggleTransparency = L.EditAction.extend({
   },
 
   addHooks: function() {
-    const editing = this._overlay.editing;
+    var editing = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'opacity_empty', 'opacity');
     L.IconUtil.toggleTooltip(this._link,
@@ -59,7 +59,7 @@ var ToggleOutline = L.EditAction.extend({
   },
 
   addHooks: function() {
-    const editing = this._overlay.editing;
+    var editing = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'border_clear', 'border_outer');
     L.IconUtil.toggleTooltip(this._link, 'Remove Border', 'Add Border');
@@ -69,7 +69,7 @@ var ToggleOutline = L.EditAction.extend({
 
 var Delete = L.EditAction.extend({
   initialize: function(map, overlay, options) {
-    const use = 'delete_forever';
+    var use = 'delete_forever';
 
     options = options || {};
     options.toolbarIcon = {
@@ -82,7 +82,7 @@ var Delete = L.EditAction.extend({
   },
 
   addHooks: function() {
-    const editing = this._overlay.editing;
+    var editing = this._overlay.editing;
 
     editing._removeOverlay();
   },
@@ -112,7 +112,7 @@ var ToggleLock = L.EditAction.extend({
   },
 
   addHooks: function() {
-    const editing = this._overlay.editing;
+    var editing = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'unlock', 'lock');
     L.IconUtil.toggleTooltip(this._link, 'Unlock', 'Lock');
@@ -144,7 +144,7 @@ var ToggleRotateScale = L.EditAction.extend({
   },
 
   addHooks: function() {
-    const editing = this._overlay.editing;
+    var editing = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'distort', 'crop_rotate');
     L.IconUtil.toggleTooltip(this._link, 'Distort Image', 'Rotate+Scale Image');
@@ -154,7 +154,7 @@ var ToggleRotateScale = L.EditAction.extend({
 
 var Export = L.EditAction.extend({
   initialize: function(map, overlay, options) {
-    const use = 'get_app';
+    var use = 'get_app';
 
     options = options || {};
     options.toolbarIcon = {
@@ -167,7 +167,7 @@ var Export = L.EditAction.extend({
   },
 
   addHooks: function() {
-    const editing = this._overlay.editing;
+    var editing = this._overlay.editing;
 
     editing._getExport();
   },
@@ -197,7 +197,7 @@ var ToggleOrder = L.EditAction.extend({
   },
 
   addHooks: function() {
-    const editing = this._overlay.editing;
+    var editing = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'flip_to_front', 'flip_to_back');
     L.IconUtil.toggleTooltip(this._link, 'Stack to Front', 'Stack to Back');
@@ -207,7 +207,7 @@ var ToggleOrder = L.EditAction.extend({
 
 var EnableEXIF = L.EditAction.extend({
   initialize: function(map, overlay, options) {
-    const use = 'explore';
+    var use = 'explore';
 
     options = options || {};
     options.toolbarIcon = {
@@ -220,7 +220,7 @@ var EnableEXIF = L.EditAction.extend({
   },
 
   addHooks: function() {
-    const image = this._overlay.getElement();
+    var image = this._overlay.getElement();
 
     // eslint-disable-next-line new-cap
     EXIF.getData(image, L.EXIF(image));
@@ -229,7 +229,7 @@ var EnableEXIF = L.EditAction.extend({
 
 var Revert = L.EditAction.extend({
   initialize: function(map, overlay, options) {
-    const use = 'restore';
+    var use = 'restore';
 
     options = options || {};
     options.toolbarIcon = {
@@ -248,7 +248,7 @@ var Revert = L.EditAction.extend({
 
 var ToggleRotate = L.EditAction.extend({
   initialize: function(map, overlay, options) {
-    const use = 'rotate';
+    var use = 'rotate';
 
     options = options || {};
     options.toolbarIcon = {
@@ -261,7 +261,7 @@ var ToggleRotate = L.EditAction.extend({
   },
 
   addHooks: function() {
-    const editing = this._overlay.editing;
+    var editing = this._overlay.editing;
 
     editing._toggleRotate();
   },
@@ -269,7 +269,7 @@ var ToggleRotate = L.EditAction.extend({
 
 var ToggleScale = L.EditAction.extend({
   initialize: function(map, overlay, options) {
-    const use = 'scale';
+    var use = 'scale';
 
     options = options || {};
     options.toolbarIcon = {
@@ -282,7 +282,7 @@ var ToggleScale = L.EditAction.extend({
   },
 
   addHooks: function() {
-    const editing = this._overlay.editing;
+    var editing = this._overlay.editing;
 
     editing._toggleScale();
   },

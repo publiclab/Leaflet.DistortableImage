@@ -23,9 +23,7 @@ describe('L.DistortableImageOverlay', function() {
     }).addTo(map);
 
     /* Forces the image to load before any tests are run. */
-    L.DomEvent.on(overlay._image, 'load', function() {
-      done();
-    });
+    L.DomEvent.on(overlay._image, 'load', function() { done(); });
 
     afterEach(function() {
       L.DomUtil.remove(overlay);
@@ -95,12 +93,12 @@ describe('L.DistortableImageOverlay', function() {
 
     it('Maintain image proportions when scaling', function() {
       var w = overlay.getElement().getBoundingClientRect().width,
-        h = overlay.getElement().getBoundingClientRect().height;
+          h = overlay.getElement().getBoundingClientRect().height;
 
       overlay.scaleBy(0.5);
 
       var w2 = overlay.getElement().getBoundingClientRect().width,
-        h2 = overlay.getElement().getBoundingClientRect().height;
+          h2 = overlay.getElement().getBoundingClientRect().height;
 
       expect(Math.round(w / 2)).to.be.equal(Math.round(w2));
       expect(Math.round(h / 2)).to.be.equal(Math.round(h2));
