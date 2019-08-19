@@ -14,6 +14,14 @@ L.IconUtil = {
     );
   },
 
+  addClassToSvg: function(container, loader) {
+    var svg = container.querySelector('svg');
+
+    if (svg) {
+      L.DomUtil.addClass(svg, loader);
+    }
+  },
+
   /** finds the use element and toggles its icon reference */
   toggleXlink: function(container, ref1, ref2) {
     if (!/^#/.test(ref1)) { ref1 = '#' + ref1; }

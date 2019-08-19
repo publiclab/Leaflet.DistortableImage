@@ -17,10 +17,6 @@
   fill: #c10d0d;
 }
 
-.ldi-icon.ldi-get_app, .ldi-icon.ldi-restore {
-  fill: #058dc4;
-}
-
 .ldi-icon.ldi-keyboard_open {
   fill: black;
 }
@@ -150,4 +146,111 @@ input.ldi {
 
 .close-icon#toggle-keymapper:hover {
   background-color: #efefef;
+}
+
+a.leaflet-toolbar-icon[title='Loading...'] {
+  background-color: whitesmoke;
+}
+
+.ldi-icon.loader {
+  -webkit-animation: ldi-spin 1.1s infinite;
+  animation: ldi-spin 1.1s infinite;
+  fill: black;
+  width: 22px;
+  height: 22px;
+  cursor: default;
+}
+
+@keyframes ldi-spin {
+  0% {
+    -webkit-transform: rotate(0);
+    transform: rotate(0);
+  }
+  10% {
+    -webkit-transform: rotate(36deg);
+    transform: rotate(36deg);
+  }
+  20% {
+    -webkit-transform: rotate(72deg);
+    transform: rotate(72deg);
+  }
+  30% {
+    -webkit-transform: rotate(108deg);
+    transform: rotate(108deg);
+  }
+  40% {
+    -webkit-transform: rotate(144deg);
+    transform: rotate(144deg);
+  }
+  50% {
+    -webkit-transform: rotate(180deg);
+    transform: rotate(180deg);
+  }
+  60% {
+    -webkit-transform: rotate(216deg);
+    transform: rotate(216deg);
+  }
+  70% {
+    -webkit-transform: rotate(252deg);
+    transform: rotate(252deg);
+  }
+  80% {
+    -webkit-transform: rotate(288deg);
+    transform: rotate(288deg);
+  }
+  90% {
+    -webkit-transform: rotate(324deg);
+    transform: rotate(324deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+@-webkit-keyframes ldi-spin {
+    0% {
+    -webkit-transform: rotate(0);
+    transform: rotate(0);
+  }
+  10% {
+    -webkit-transform: rotate(36deg);
+    transform: rotate(36deg);
+  }
+  20% {
+    -webkit-transform: rotate(72deg);
+    transform: rotate(72deg);
+  }
+  30% {
+    -webkit-transform: rotate(108deg);
+    transform: rotate(108deg);
+  }
+  40% {
+    -webkit-transform: rotate(144deg);
+    transform: rotate(144deg);
+  }
+  50% {
+    -webkit-transform: rotate(180deg);
+    transform: rotate(180deg);
+  }
+  60% {
+    -webkit-transform: rotate(216deg);
+    transform: rotate(216deg);
+  }
+  70% {
+    -webkit-transform: rotate(252deg);
+    transform: rotate(252deg);
+  }
+  80% {
+    -webkit-transform: rotate(288deg);
+    transform: rotate(288deg);
+  }
+  90% {
+    -webkit-transform: rotate(324deg);
+    transform: rotate(324deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
 }
