@@ -201,8 +201,9 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     if (eP && eP.anySelected()) { return; }
 
-    if (this[handlerName] !== undefined && !overlay.options.suppressToolbar) {
-      if (this._selected) {
+    if (this[handlerName] !== undefined && !this._overlay.options.suppressToolbar) {
+      if (this._selected && this.toolbar) {
+      // if (this._selected) {
         this[handlerName].call(this);
       }
     }
@@ -289,6 +290,9 @@ L.DistortableImage.Edit = L.Handler.extend({
     var map = this._overlay._map;
 
     if (this._mode === 'lock') { return; }
+    // if (this._mode === 'lock' || !this.toolbar.hasRotateScale()) {
+    //   return;
+    // }
 
     map.removeLayer(this._handles[this._mode]);
 
@@ -304,6 +308,9 @@ L.DistortableImage.Edit = L.Handler.extend({
     var map = this._overlay._map;
 
     if (this._mode === 'lock') { return; }
+    // if (this._mode === 'lock' || !this.toolbar.hasScale()) {
+    //   return;
+    // }
 
     map.removeLayer(this._handles[this._mode]);
 
@@ -317,6 +324,9 @@ L.DistortableImage.Edit = L.Handler.extend({
     var map = this._overlay._map;
 
     if (this._mode === 'lock') { return; }
+    // if (this._mode === 'lock' || !this.toolbar.hasRotate()) {
+    //   return;
+    // }
 
     map.removeLayer(this._handles[this._mode]);
     if (this._mode === 'rotate') { this._mode = 'distort'; }
@@ -328,6 +338,10 @@ L.DistortableImage.Edit = L.Handler.extend({
   _toggleTransparency: function() {
     var image = this._overlay.getElement();
     var opacity;
+
+    if (!this.toolbar.hasTransparency()) {
+      return;
+    }
 
     this._transparent = !this._transparent;
     opacity = this._transparent ? this.options.opacity : 1;
@@ -342,6 +356,10 @@ L.DistortableImage.Edit = L.Handler.extend({
     var image = this._overlay.getElement();
     var opacity;
     var outline;
+    
+    // if (!this.toolbar.hasOutline()) {
+    //   return;
+    // }
 
     this._outlined = !this._outlined;
     outline = this._outlined ? this.options.outline : 'none';
@@ -352,6 +370,40 @@ L.DistortableImage.Edit = L.Handler.extend({
     image.style.outline = outline;
 
     this._addToolbar();
+  },
+
+  _toggleLock: function() {
+    var map = this._overlay._map;
+
+    // if (!this.toolbar.hasLock()) {
+    //   return;
+    // }
+
+    map.removeLayer(this._handles[this._mode]);
+
+    if (this._mode === 'lock') { this._unlock();
+    } else { this._lock(); }
+
+    map.addLayer(this._handles[this._mode]);
+
+    this._showToolbar();
+  },
+
+  // compare this to using overlay zIndex
+  _toggleOrder: function() {
+
+    if (!this.toolbar.hasOrder()) {
+      return;
+    }
+
+    if (this._toggledImage) {
+      this._toggledImage = false;
+      this._overlay.bringToFront();
+    } else {
+      this._toggledImage = true;
+      this._overlay.bringToBack();
+    }
+    this._showToolbar();
   },
 
   _sendUp: function() {
@@ -373,19 +425,6 @@ L.DistortableImage.Edit = L.Handler.extend({
       this.dragging.disable();
     }
     delete this.dragging;
-  },
-
-  _toggleLock: function() {
-    var map = this._overlay._map;
-
-    map.removeLayer(this._handles[this._mode]);
-
-    if (this._mode === 'lock') { this._unlock(); }
-    else { this._lock(); }
-
-    map.addLayer(this._handles[this._mode]);
-
-    this._addToolbar();
   },
 
   _singleClick: function(e) {
@@ -523,6 +562,9 @@ L.DistortableImage.Edit = L.Handler.extend({
     var eP = this.parentGroup;
 
     if (this._mode === 'lock') { return; }
+    // if (this._mode === 'lock' || !this.toolbar.hasDelete()) {
+    //   return;
+    // }
 
     var choice = L.DomUtil.confirmDelete();
     if (!choice) { return; }
@@ -533,22 +575,14 @@ L.DistortableImage.Edit = L.Handler.extend({
     else { map.removeLayer(overlay); }
   },
 
-  // compare this to using overlay zIndex
-  _toggleOrder: function() {
-    if (this._toggledImage) {
-      this._toggledImage = false;
-      this._overlay.bringToFront();
-    } else {
-      this._toggledImage = true;
-      this._overlay.bringToBack();
-    }
-    this._addToolbar();
-  },
-
   // Based on https://github.com/publiclab/mapknitter/blob/8d94132c81b3040ae0d0b4627e685ff75275b416/app/assets/javascripts/mapknitter/Map.js#L47-L82
   _getExport: function() {
     var overlay = this._overlay;
     var map = overlay._map;
+
+    if (!this.toolbar.hasExport()) {
+      return;
+    }
 
     // make a new image
     var downloadable = new Image();
