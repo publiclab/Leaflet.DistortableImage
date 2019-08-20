@@ -5,19 +5,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   options: {
     opacity: 0.7,
     outline: '1px solid red',
-    keymap: {
-      'Backspace': '_removeOverlay', // backspace windows / delete mac
-      'CapsLock': '_toggleRotate',
-      'Escape': '_deselect',
-      'd': '_toggleRotateScale',
-      'r': '_toggleRotateScale',
-      'j': '_toggleOrder',
-      'k': '_toggleOrder',
-      'l': '_toggleLock',
-      'o': '_toggleOutline',
-      's': '_toggleScale',
-      't': '_toggleTransparency',
-    },
+    keymap: L.distortableImage.action_map
   },
 
   initialize: function(overlay, options) {
@@ -32,6 +20,8 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._outlined = false;
 
     L.setOptions(this, options);
+
+    L.distortableImage.action_map.Escape = '_deselect';
   },
 
   /* Run on image selection. */
@@ -89,8 +79,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     map.removeLayer(this._handles[this._mode]);
 
-    /** 
-     * ensures if you disable an image while it is multi-selected 
+    /**
+     * ensures if you disable an image while it is multi-selected
      * additional deselection logic is run
      */
     if (L.DomUtil.hasClass(overlay.getElement(), 'selected')) {
@@ -200,7 +190,7 @@ L.DistortableImage.Edit = L.Handler.extend({
         this[handlerName].call(this);
       }
     }
-  }, 
+  },
 
   addTool: function (value) {
     if (value.baseClass === 'leaflet-toolbar-icon' && !this.hasTool(value)) {
@@ -306,11 +296,8 @@ L.DistortableImage.Edit = L.Handler.extend({
     map.removeLayer(this._handles[this._mode]);
 
     /* Switch mode. */
-    if (this._mode === 'rotateScale') {
-      this._mode = 'distort';
-    } else {
-      this._mode = 'rotateScale';
-    }
+    if (this._mode === 'rotateScale') { this._mode = 'distort'; }
+    else { this._mode = 'rotateScale'; }
 
     map.addLayer(this._handles[this._mode]);
 
@@ -343,11 +330,8 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
 
     map.removeLayer(this._handles[this._mode]);
-    if (this._mode === 'rotate') {
-      this._mode = 'distort';
-    } else {
-      this._mode = 'rotate';
-    }
+    if (this._mode === 'rotate') { this._mode = 'distort'; }
+		else { this._mode = 'rotate'; }
 
     map.addLayer(this._handles[this._mode]);
   },
@@ -357,6 +341,7 @@ L.DistortableImage.Edit = L.Handler.extend({
         opacity;
 
     this._transparent = !this._transparent;
+    opacity = this._transparent ? this.options.opacity : 1;
 
     L.DomUtil.setOpacity(image, opacity);
     image.setAttribute('opacity', opacity);
@@ -370,6 +355,7 @@ L.DistortableImage.Edit = L.Handler.extend({
         outline;
 
     this._outlined = !this._outlined;
+    outline = this._outlined ? this.options.outline : 'none';
 
     L.DomUtil.setOpacity(image, opacity);
     image.setAttribute('opacity', opacity);
@@ -404,7 +390,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     var map = this._overlay._map;
 
     map.removeLayer(this._handles[this._mode]);
- 
+
     if (this._mode === 'lock') { this._unlock();
     } else { this._lock(); }
 
@@ -459,7 +445,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     var mode = this._mode,
         currentHandle = this._handles[mode];
-    
+
 		currentHandle.eachLayer(function (layer) {
       var drag = layer.dragging,
 			  	opts = layer.options;
@@ -575,6 +561,7 @@ L.DistortableImage.Edit = L.Handler.extend({
       this._toggledImage = true;
       this._overlay.bringToBack();
     }
+    this._showToolbar();
   },
 
   // Based on https://github.com/publiclab/mapknitter/blob/8d94132c81b3040ae0d0b4627e685ff75275b416/app/assets/javascripts/mapknitter/Map.js#L47-L82
