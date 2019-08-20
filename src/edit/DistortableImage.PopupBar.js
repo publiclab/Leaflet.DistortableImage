@@ -16,15 +16,15 @@ L.distortableImage.popupBar = function(latlng, options) {
 L.DistortableImageOverlay.addInitHook(function() {
   /** Default actions */
   this.ACTIONS = [
+    L.RotateScaleAction,
+    L.DistortAction,
+    L.LockAction,
     L.OpacityAction,
     L.ToggleBorderAction,
-    L.LockAction,
-    L.DistortAction,
-    L.RotateScaleAction,
     L.ToggleOrderAction,
     L.RevertAction,
     L.ExportAction,
-    L.DeleteAction,
+    L.DeleteAction
   ];
 
 if (this.options.actions) { /* (`this` being DistortableImageOverlay, not the toolbar) */
