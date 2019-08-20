@@ -42,7 +42,7 @@ describe('L.EditHandle', function() {
             var latlng = overlay.getCorner(0),
                 latlng2 = L.latLng(51.51, -0.13),
                 latlng3 = L.latLng(51.51, -0.12),
-                scale = scaleHandle._calculateScalingFactor(latlng, latlng2);
+                scale = scaleHandle._calculateScalingFactor(latlng, latlng2),
                 scale2 = scaleHandle._calculateScalingFactor(latlng, latlng3);
            
             expect(scale).to.be.below(1);

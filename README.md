@@ -328,7 +328,7 @@ Defaults:
 
 Defaults:
 
-* **Exports**
+* **Exports** (WIP)
 * **Deletes (<kbd>delete</kbd>, <kbd>backspace</kbd>)**
   * Permanently deletes groups of selected images from the map. Uses a `confirm()` modal dialog.
 * **Locks** (<kbd>l</kbd>)
