@@ -139,8 +139,7 @@ module.exports = function(grunt) {
           'src/edit/DistortableImage.Edit.js',
           'src/edit/DistortableCollection.Edit.js',
           'src/components/DistortableImage.Keymapper.js',
-          'src/edit/DoubleClickLabels.js',
-          'src/edit/BoxSelector.js'
+          'src/mapmixins/*.js'
         ],
         dest: 'dist/leaflet.distortableimage.js'
       }

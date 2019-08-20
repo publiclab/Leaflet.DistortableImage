@@ -121,46 +121,6 @@ L.ImageUtil = {
   },
 };
 
-L.Map.include({
-  addGoogleMutant: function(opts) {
-    opts = this._mutantOptions = L.Util.extend({
-      labels: true,
-      labelOpacity: 0,
-      mutantOpacity: 0.8,
-      maxZoom: 18
-    }, opts);
-
-    if (opts.maxZoom > 21) { opts.maxZoom = 18; }
-
-    this._googleMutant = L.tileLayer('http://mt0.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-      maxZoom: opts.maxZoom,
-      opacity: opts.mutantOpacity
-    }).addTo(this);
-
-    if (opts.labels) { this._addLabels(opts); }
-
-    return this;
-  },
-
-  _addLabels: function(opts) {
-    if (opts.labelOpacity !== 0 && opts.labelOpacity !== 1) {
-      opts.labelOpacity = 0;
-    }
-
-    this._labels = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-labels/{z}/{x}/{y}{r}.{ext}', {
-      attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      subdomains: 'abcd',
-      interactive: false,
-      opacity: opts.labelOpacity,
-      maxZoom: opts.maxZoom,
-      ext: 'png'
-    }).addTo(this);
-
-    this.doubleClickLabels.enable();
-
-    return this;
-  }
-});
 L.MatrixUtil = {
 
   // Compute the adjugate of m
@@ -2964,105 +2924,6 @@ L.distortableImage.keymapper = function (map, options) {
   return new L.DistortableImage.Keymapper(map, options);
 };
 
-/** 
- * The 'doubleClickLabels' handler only runs instead of 'doubleClickZoom' when a googleMutant 
- * layer is added to the map using 'map.addGoogleMutant()' without the option labels: false.
- */
-
-L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
-  addHooks: function() {
-    this._map.clicked = 0;
-
-    this._map.on({
-      click: this._fireIfSingle,
-      dblclick: this._onDoubleClick
-    }, this);
-  },
-
-  removeHooks: function() {
-    this._map.off({
-      click: this._fireIfSingle,
-      dblclick: this._onDoubleClick
-    }, this);
-  },
-
-  enable: function() {
-    var map = this._map; 
-
-    if (this._enabled) { return this; }
-
-    // dont enable 'doubleClickLabels' if the labels layer has not been added.
-    if (!map._labels) {
-      this._enabled = false;
-      return this;
-    }
-
-    // disable 'doubleClickZoom' if 'doubleClickLabels' is enabled.
-    if (map.doubleClickZoom.enabled()) { map.doubleClickZoom.disable(); }
-
-    this._enabled = true;
-    this.addHooks();
-    return this;
-  },
-
-  disable: function () {
-    var map = this._map;
-    
-    if (!this._enabled) { return this; }
-
-		this._enabled = false;
-    this.removeHooks();
-    
-    // enable 'doubleClickZoom' if 'doubleClickLabels' is disabled.
-    if (!map.doubleClickZoom.enabled()) { map.doubleClickZoom.enable(); }
-		return this;
-	},
-
-  _fireIfSingle: function() {
-    var map = this._map;
-
-    map.clicked += 1;
-    setTimeout(function() {
-      if (map.clicked === 1) {
-        map.clicked = 0;
-        map.fire('singleclick', { deselect: true });
-      }
-    }, 300);
-  },
-
-  _onDoubleClick: function() {
-    var map = this._map,
-        labels = map._labels;
-
-    map.clicked = 0;
-
-    if (labels.options.opacity === 1) {
-      labels.options.opacity = 0;
-      labels.setOpacity(0);
-    } else {
-      labels.options.opacity = 1;
-      labels.setOpacity(1);
-    }
-  }
-});
-
-L.Map.DoubleClickZoom.include({
-  enable: function() {
-    if (this._enabled) { return this; }
-    
-    // don't enable 'doubleClickZoom' unless 'doubleClickLabels' is disabled first
-    if (this._map.doubleClickLabels) {
-      if (this._map.doubleClickLabels.enabled()) { return this; }
-    }
-
-    this._enabled = true;
-    this.addHooks();
-    return this;
-  }
-});
-
-L.Map.addInitHook('addHandler', 'doubleClickLabels', L.Map.DoubleClickLabels);
-
 L.Map.mergeOptions({
   boxSelector: true,
   boxZoom: false,
@@ -3199,3 +3060,143 @@ L.Map.BoxSelector = L.Map.BoxZoom.extend({
 
 L.Map.addInitHook('addHandler', 'boxSelector', L.Map.BoxSelector);
 
+
+/** 
+ * The 'doubleClickLabels' handler only runs instead of 'doubleClickZoom' when a googleMutant 
+ * layer is added to the map using 'map.addGoogleMutant()' without the option labels: false.
+ */
+
+L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
+  addHooks: function() {
+    this._map.clicked = 0;
+
+    this._map.on({
+      click: this._fireIfSingle,
+      dblclick: this._onDoubleClick
+    }, this);
+  },
+
+  removeHooks: function() {
+    this._map.off({
+      click: this._fireIfSingle,
+      dblclick: this._onDoubleClick
+    }, this);
+  },
+
+  enable: function() {
+    var map = this._map; 
+
+    if (this._enabled) { return this; }
+
+    // dont enable 'doubleClickLabels' if the labels layer has not been added.
+    if (!map._labels) {
+      this._enabled = false;
+      return this;
+    }
+
+    // disable 'doubleClickZoom' if 'doubleClickLabels' is enabled.
+    if (map.doubleClickZoom.enabled()) { map.doubleClickZoom.disable(); }
+
+    this._enabled = true;
+    this.addHooks();
+    return this;
+  },
+
+  disable: function () {
+    var map = this._map;
+    
+    if (!this._enabled) { return this; }
+
+		this._enabled = false;
+    this.removeHooks();
+    
+    // enable 'doubleClickZoom' if 'doubleClickLabels' is disabled.
+    if (!map.doubleClickZoom.enabled()) { map.doubleClickZoom.enable(); }
+		return this;
+	},
+
+  _fireIfSingle: function() {
+    var map = this._map;
+
+    map.clicked += 1;
+    setTimeout(function() {
+      if (map.clicked === 1) {
+        map.clicked = 0;
+        map.fire('singleclick', { deselect: true });
+      }
+    }, 300);
+  },
+
+  _onDoubleClick: function() {
+    var map = this._map,
+        labels = map._labels;
+
+    map.clicked = 0;
+
+    if (labels.options.opacity === 1) {
+      labels.options.opacity = 0;
+      labels.setOpacity(0);
+    } else {
+      labels.options.opacity = 1;
+      labels.setOpacity(1);
+    }
+  }
+});
+
+L.Map.DoubleClickZoom.include({
+  enable: function() {
+    if (this._enabled) { return this; }
+    
+    // don't enable 'doubleClickZoom' unless 'doubleClickLabels' is disabled first
+    if (this._map.doubleClickLabels) {
+      if (this._map.doubleClickLabels.enabled()) { return this; }
+    }
+
+    this._enabled = true;
+    this.addHooks();
+    return this;
+  }
+});
+
+L.Map.addInitHook('addHandler', 'doubleClickLabels', L.Map.DoubleClickLabels);
+
+L.Map.include({
+  addGoogleMutant: function(opts) {
+    opts = this._mutantOptions = L.Util.extend({
+      labels: true,
+      labelOpacity: 0,
+      mutantOpacity: 0.8,
+      maxZoom: 18
+    }, opts);
+
+    if (opts.maxZoom > 21) { opts.maxZoom = 18; }
+
+    this._googleMutant = L.tileLayer('http://mt0.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+      maxZoom: opts.maxZoom,
+      opacity: opts.mutantOpacity
+    }).addTo(this);
+
+    if (opts.labels) { this._addLabels(opts); }
+
+    return this;
+  },
+
+  _addLabels: function(opts) {
+    if (opts.labelOpacity !== 0 && opts.labelOpacity !== 1) {
+      opts.labelOpacity = 0;
+    }
+
+    this._labels = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-labels/{z}/{x}/{y}{r}.{ext}', {
+      attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      subdomains: 'abcd',
+      interactive: false,
+      opacity: opts.labelOpacity,
+      maxZoom: opts.maxZoom,
+      ext: 'png'
+    }).addTo(this);
+
+    this.doubleClickLabels.enable();
+
+    return this;
+  }
+});
