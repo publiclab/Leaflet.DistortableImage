@@ -4,65 +4,71 @@
 module.exports = function(config) {
   config.set({
     // base path that will be used to resolve all patterns (eg. files, exclude)
-    basePath: "../",
+    basePath: '../',
 
     plugins: [
-      require("mocha"),
-      require("karma-mocha"),
-      require("karma-coverage"),
-      require("karma-mocha-reporter"),
-      require("karma-phantomjs-launcher"),
-      require("glfx"),
-      require("webgl-distort/dist/webgl-distort.js")
+      require('mocha'),
+      require('karma-mocha'),
+      require('karma-coverage'),
+      require('karma-mocha-reporter'),
+      require('karma-phantomjs-launcher'),
+      require('glfx'),
+      require('webgl-distort/dist/webgl-distort.js'),
     ],
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ["mocha"],
+    frameworks: ['mocha'],
 
     // list of files / patterns to load in the browser
     files: [
-      { pattern: "examples/*.jpg", included: false, served: true },
-      { pattern: "examples/*.png", included: false, served: true },
-      "node_modules/leaflet/dist/leaflet-src.js",
-      "node_modules/leaflet/dist/leaflet.css",
-      "node_modules/leaflet-toolbar/dist/leaflet.toolbar.js",
-      "node_modules/leaflet-toolbar/dist/leaflet.toolbar.css",
-      "node_modules/webgl-distort/dist/webgl-distort.js",
-      "node_modules/glfx/glfx.js",
-      "node_modules/chai/chai.js",
-      "node_modules/sinon/pkg/sinon.js",
-      "src/util/*.js",
-      "src/edit/getEXIFdata.js",
-      "src/edit/BoxSelectHandle.js",
-      "src/edit/EditHandle.js",
-      "src/edit/LockHandle.js",
-      "src/edit/DistortHandle.js",
-      "src/edit/RotateScaleHandle.js",
-      "src/edit/RotateHandle.js",
-      "src/edit/ScaleHandle.js",
-      "src/DistortableCollection.js",
-      "src/DistortableImageOverlay.js",
-      "src/edit/tools/DistortableImage.Keymapper.js",
-      "src/edit/DistortableImage.EditToolbar.js",
-      "src/edit/DistortableImage.Edit.js",
-      "test/SpecHelper.js",
-      "test/src/*Spec.js",
-      "test/src/**/*Spec.js"
+      {pattern: 'examples/*.jpg', included: false, served: true},
+      {pattern: 'examples/*.png', included: false, served: true},
+      'node_modules/leaflet/dist/leaflet-src.js',
+      'node_modules/leaflet/dist/leaflet.css',
+      'node_modules/leaflet-toolbar/dist/leaflet.toolbar.js',
+      'node_modules/leaflet-toolbar/dist/leaflet.toolbar.css',
+      'node_modules/webgl-distort/dist/webgl-distort.js',
+      'node_modules/glfx/glfx.js',
+      'node_modules/chai/chai.js',
+      'node_modules/sinon/pkg/sinon.js',
+      'src/util/*.js',
+      'src/edit/getEXIFdata.js',
+      'src/edit/BoxSelector.js',
+      'src/edit/EditHandle.js',
+      'src/edit/LockHandle.js',
+      'src/edit/DistortHandle.js',
+      'src/edit/RotateScaleHandle.js',
+      'src/edit/RotateHandle.js',
+      'src/edit/ScaleHandle.js',
+      'src/DistortableCollection.js',
+      'src/DistortableImageOverlay.js',
+      'src/iconsets/IconSet.js',
+      'src/iconsets/KeymapperIconSet.js',
+      'src/iconsets/ToolbarIconSet.js',
+      'src/edit/tools/EditAction.js',
+      'src/components/DistortableImage.Keymapper.js',
+      'src/edit/tools/DistortableImage.PopupBar.js',
+      'src/edit/tools/DistortableImage.ControlBar.js',
+      'src/edit/DistortableImage.Edit.js',
+      'src/edit/DistortableCollection.Edit.js',
+      'test/SpecHelper.js',
+      'test/src/*Spec.js',
+      'test/src/**/*Spec.js',
     ],
 
     // so that karma can serve examples/example.png
     proxies: {
-      "/examples/": "/base/examples/"
+      '/examples/': '/base/examples/',
     },
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ["mocha", "coverage"],
+    reporters: ['mocha', 'coverage'],
 
     preprocessors: {
-      "../src/**/*.js": "coverage"
+      '../src/**/*.js': 'coverage',
     },
 
     // web server port
@@ -72,12 +78,16 @@ module.exports = function(config) {
     colors: true,
 
     // level of logging
-    // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
+    // possible values: config.LOG_DISABLE
+    // || config.LOG_ERROR
+    // || config.LOG_WARN
+    // || config.LOG_INFO
+    // || config.LOG_DEBUG
     logLevel: config.LOG_INFO,
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ["PhantomJS"],
+    browsers: ['PhantomJS'],
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
@@ -87,10 +97,10 @@ module.exports = function(config) {
 
     coverageReporter: {
       reporters: [
-        { type: "text", dir: "../coverage/", file: "coverage.txt" },
-        { type: "lcovonly", dir: "../coverage/" },
-        { type: "html", dir: "../coverage/" }
-      ]
-    }
+        {type: 'text', dir: '../coverage/', file: 'coverage.txt'},
+        {type: 'lcovonly', dir: '../coverage/'},
+        {type: 'html', dir: '../coverage/'},
+      ],
+    },
   });
 };

@@ -1,139 +1,108 @@
-describe("L.DistortableCollection", function () {
-  var map,
-    overlay,
-    overlay2,
-    imageFeatureGroup;
+describe('L.DistortableCollection', function() {
+  var map, overlay, overlay2, imgGroup;
 
-  beforeEach(function (done) {
-    map = L.map(L.DomUtil.create('div', '', document.body)).setView([41.7896, -87.5996], 15);
+  beforeEach(function(done) {
+    map = L.map(L.DomUtil.create('div', '', document.body)).setView(
+      [41.7896, -87.5996],
+      15
+    );
 
     overlay = L.distortableImageOverlay('/examples/example.png', {
       corners: [
         L.latLng(41.7934, -87.6052),
         L.latLng(41.7934, -87.5852),
-        L.latLng(41.7834, -87.5852),
-        L.latLng(41.7834, -87.6052)
+        L.latLng(41.7834, -87.6052),
+        L.latLng(41.7834, -87.5852)
       ]
-    }).addTo(map);
+    });
 
     overlay2 = L.distortableImageOverlay('/examples/example.png', {
       corners: [
-        L.latLng(41.7934, -87.6050),
-        L.latLng(41.7934, -87.5850),
-        L.latLng(41.7834, -87.5850),
-        L.latLng(41.7834, -87.6050)
+        L.latLng(41.7934, -87.605),
+        L.latLng(41.7934, -87.585),
+        L.latLng(41.7834, -87.605),
+        L.latLng(41.7834, -87.585)
       ]
-    }).addTo(map);
-
-    /* Forces the images and feature group to load before any tests are run. */
-    L.DomEvent.on(overlay._image, 'load', function () { 
-      overlay.editing.enable();
-      overlay2.editing.enable();
-      imageFeatureGroup = L.distortableCollection([overlay, overlay2]).addTo(map);
-      done(); 
     });
 
-    afterEach(function () {
-      L.DomUtil.remove(overlay);
-      L.DomUtil.remove(overlay2);
+    overlay3 = L.distortableImageOverlay('/examples/example.png', {
+      corners: [
+        L.latLng(41.7934, -87.6054),
+        L.latLng(41.7934, -87.5854),
+        L.latLng(41.7834, -87.6054),
+        L.latLng(41.7834, -87.5854)
+      ]
     });
 
+    imgGroup = L.distortableCollection().addTo(map);
+
+    imgGroup.addLayer(overlay);
+    imgGroup.addLayer(overlay2);
+    imgGroup.addLayer(overlay3);
+
+    /* Forces the images to load before any tests are run. */
+    L.DomEvent.on(overlay3, 'load', function() { done(); });
   });
 
-  it.skip("Should keep selected images in sync with eachother during translation", function () {
-
+  afterEach(function() {
+    imgGroup.removeLayer(overlay);
+    imgGroup.removeLayer(overlay2);
+    imgGroup.removeLayer(overlay3);
   });
 
-  describe("#_deselectAll", function () {
-    it("Should remove the 'selected' class from all images", function() {
+  it.skip('Should keep selected images in sync with eachother during translation', function() {});
+
+  it('Adds the layers to the map when they are added to the group', function() {
+    expect(map.hasLayer(overlay)).to.be.true;
+    expect(map.hasLayer(overlay2)).to.be.true;
+    expect(map.hasLayer(overlay3)).to.be.true;
+  });
+
+  describe('#isSelected', function() {
+    it('Should only return true if the image was selected using shift + mousedown', function() {
       var img = overlay.getElement(),
         img2 = overlay2.getElement();
 
-      L.DomUtil.addClass(img, "selected");
-      L.DomUtil.addClass(img2, "selected");
+      chai.simulateShiftMousedown(img);
+      chai.simulateMousedown(img2);
 
-      map.fire('click');
-
-      var classStr = L.DomUtil.getClass(img);
-      expect(classStr).to.not.include("selected");
-
-      var classStr2 = L.DomUtil.getClass(img2);
-      expect(classStr2).to.not.include("selected");
-    });
-
-    it("Should hide all images' handles unless they're lock handles", function() {
-      var edit = overlay.editing,
-        edit2 = overlay2.editing;
-
-      // turn on lock handles for one of the DistortableImages
-      edit2._toggleLock();
-
-      // then trigger _deselectAll
-      map.fire('click');
-
-      var distortHandleState = [];
-      edit._handles["distort"].eachLayer(function (handle) {
-        distortHandleState.push(handle._icon.style.opacity)
-      });
-
-      var lockHandleState = [];
-      edit2._handles["lock"].eachLayer(function (handle) {
-        lockHandleState.push(handle._icon.style.opacity)
-      });
-
-      expect(distortHandleState).to.deep.equal(["0", "0", "0", "0"]);
-      // opacity for lockHandles is unset because we never altered it to hide it as part of deselection
-      expect(lockHandleState).to.deep.equal(["", "", "", ""]); 
-    });
-
-    it("Should remove all images' individual toolbar instances regardless of lock handles", function() {
-      var edit = overlay.editing,
-        edit2 = overlay2.editing,
-        img = overlay.getElement(),
-        img2 = overlay2.getElement();
-
-      // turn on lock handles for one of the DistortableImages
-      edit2._toggleLock();
-
-      // select both images to initially create individual toolbar instances
-      chai.simulateClick(img);
-      chai.simulateClick(img2);
-
-      expect(edit.toolbar).to.not.be.false
-      expect(edit2.toolbar).to.not.be.false
-
-      // then trigger _deselectAll
-      map.fire('click');
-
-      expect(edit.toolbar).to.be.false
-      expect(edit2.toolbar).to.be.false
+      expect(imgGroup.isSelected(overlay)).to.be.true;
+      expect(imgGroup.isSelected(overlay2)).to.be.false;
     });
   });
 
-  describe("#_toggleMultiSelect", function () {
-    it("Should allow multiple image selection on command + click", function() {
+  describe('#anySelected', function() {
+    it('Should return false if no selections were made with shift + mousedown', function() {
       var img = overlay.getElement(),
         img2 = overlay2.getElement();
 
-      chai.simulateCommandMousedown(img);
-      chai.simulateCommandMousedown(img2);
+      chai.simulateMousedown(img);
+      chai.simulateMousedown(img2);
 
-      var classStr = L.DomUtil.getClass(img);
-      expect(classStr).to.include("selected");
+      expect(imgGroup.isSelected(overlay)).to.be.false;
+      expect(imgGroup.isSelected(overlay2)).to.be.false;
+    });
+  });
 
-      var classStr2 = L.DomUtil.getClass(img2);
-      expect(classStr2).to.include("selected");
+  describe('#_toggleMultiSelect', function() {
+    it('Should allow multiple image selection on shift + click', function() {
+      var img = overlay.getElement(),
+        img2 = overlay2.getElement();
+
+      chai.simulateShiftMousedown(img);
+      chai.simulateShiftMousedown(img2);
+
+      expect(L.DomUtil.getClass(img)).to.include('selected');
+      expect(L.DomUtil.getClass(img2)).to.include('selected');
     });
 
-    it("But it should not allow a locked image to be part of multiple image selection", function() {
-        var img = overlay.getElement();
+    it('It should allow a locked image to be part of multiple image selection', function() {
+      var img = overlay.getElement();
 
       overlay.editing._toggleLock();
-      chai.simulateCommandMousedown(img);
+      chai.simulateShiftMousedown(img);
 
-      var classStr = L.DomUtil.getClass(img);
-      expect(classStr).to.not.include("selected");
+      expect(L.DomUtil.getClass(img)).to.include('selected');
     });
   });
-
 });

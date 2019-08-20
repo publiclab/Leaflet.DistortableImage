@@ -1,154 +1,147 @@
 L.DistortableCollection = L.FeatureGroup.extend({
+  options: {
+    editable: true
+  },
+
+  initialize: function(options) {
+    L.setOptions(this, options);
+    L.FeatureGroup.prototype.initialize.call(this, options);
+
+    this.editable = this.options.editable;
+  },
 
   onAdd: function(map) {
     L.FeatureGroup.prototype.onAdd.call(this, map);
 
     this._map = map;
 
-    L.DomEvent.on(document, "keydown", this._onKeyDown, this);
-    L.DomEvent.on(map, "click", this._deselectAll, this);
+    if (this.editable) { this.editing.enable(); }
 
-    /**
-     * the box zoom override works, but there is a bug involving click event propogation.
-     * keeping uncommented for now so that it isn't used as a multi-select mechanism
+    /** 
+     * although we have a DistortableCollection.Edit class that handles collection events to keep our code managable,
+     * events that need to be added on individual images are kept here to do so through `layeradd`.
      */
-
-    // L.DomEvent.on(map, "boxzoomend", this._addSelections, this);
-
-    var lastSelected;
-
-    this.eachLayer(function(layer) {
-      L.DomEvent.on(layer._image, "mousedown", this._deselectOthers, this);
-      L.DomEvent.on(layer, "dragstart", this._dragStartMultiple, this);
-      L.DomEvent.on(layer, "drag", this._dragMultiple, this);
-
-      if (layer.options.selected) { 
-        layer.editing._deselect();
-        lastSelected = layer.editing;
-     }
-    }, this);
-
-    if (lastSelected) { lastSelected._select(); }
-
+    this.on('layeradd', this._addEvents, this);
+    this.on('layerremove', this._removeEvents, this);
   },
 
   onRemove: function() {
-    var map = this._map;
+    if (this.editing) { this.editing.disable(); }
 
-    L.DomEvent.off(document, "keydown", this._onKeyDown, this);
-    L.DomEvent.off(map, "click", this._deselectAll, this);
-    // L.DomEvent.off(map, "boxzoomend", this._addSelections, this);
+    this.off('layeradd', this._addEvents, this);
+    this.off('layerremove', this._removeEvents, this);
+  },
 
-    this.eachLayer(function(layer) {
-      L.DomEvent.off(layer._image, "mousedown", this._deselectOthers, this);
-      L.DomEvent.off(layer, "dragstart", this._dragStartMultiple, this);
-      L.DomEvent.off(layer, "drag", this._dragMultiple, this);
+  _addEvents: function(e) {
+    var layer = e.layer;
+
+    L.DomEvent.on(layer, {
+      dragstart: this._dragStartMultiple,
+      drag: this._dragMultiple,
+    }, this);
+
+    L.DomEvent.on(layer._image, {
+      mousedown: this._deselectOthers,
+      /* Enable longpress for multi select for touch devices. */
+      contextmenu: this._longPressMultiSelect,
     }, this);
   },
 
-  isSelected: function(overlay) {
-    return L.DomUtil.hasClass(overlay.getElement(), "selected");
+  _removeEvents: function(e) {
+    var layer = e.layer; 
+
+    L.DomEvent.off(layer, {
+      dragstart: this._dragStartMultiple,
+      drag: this._dragMultiple,
+    }, this);
+
+    L.DomEvent.off(layer._image, {
+      mousedown: this._deselectOthers,
+      contextmenu: this._longPressMultiSelect,
+    }, this);
   },
 
-  _toggleMultiSelect: function(event, edit) {
-    if (edit._mode === "lock") { return; }
+  _longPressMultiSelect: function(e) {
+    if (!this.editable) { return; }
 
-    if (event.metaKey || event.ctrlKey) {
-      L.DomUtil.toggleClass(event.target, "selected");
+    e.preventDefault();
+
+    this.eachLayer(function(layer) {
+      var edit = layer.editing;
+      if (layer.getElement() === e.target && edit.enabled()) {
+        L.DomUtil.toggleClass(layer.getElement(), 'selected');
+        if (this.anySelected()) {
+          edit._deselect();
+          this.editing._addToolbar(); 
+        }
+        else { this.editing._removeToolbar(); }
+      }
+    }, this);
+  },
+
+  isSelected: function (overlay) {
+    return L.DomUtil.hasClass(overlay.getElement(), 'selected');
+  },
+
+  anySelected: function() {
+    var layerArr = this.getLayers();
+    return layerArr.some(this.isSelected.bind(this));
+  },
+
+  _toggleMultiSelect: function(e, edit) {
+    if (e.shiftKey) {
+      /** conditional prevents disabled images from flickering multi-select mode */
+      if (edit.enabled()) { L.DomUtil.toggleClass(e.target, 'selected'); }
+    }
+
+    if (this.anySelected()) {
+      edit._deselect();
+    } else {
+      this.editing._removeToolbar();
     }
   },
 
-  _deselectOthers: function(event) {
+  _deselectOthers: function(e) {
+    if (!this.editable) { return; }
+
     this.eachLayer(function(layer) {
       var edit = layer.editing;
-      if (layer._image !== event.target) {
+      if (layer.getElement() !== e.target) {
         edit._deselect();
       } else {
-        this._toggleMultiSelect(event, edit);
+        this._toggleMultiSelect(e, edit);
       }
     }, this);
 
-    L.DomEvent.stopPropagation(event);
+    L.DomEvent.stopPropagation(e);
   },
 
-  _addSelections: function(e) {
-    var box = e.boxZoomBounds,
-      i = 0;
+  _dragStartMultiple: function(e) {
+    var overlay = e.target,
+        i;
 
-    this.eachLayer(function(layer) {
-      var edit = layer.editing;
-      if (edit.toolbar) {
-        edit._hideToolbar();
-      }
-      for (i = 0; i < 4; i++) {
-        if (box.contains(layer.getCorner(i)) && edit._mode !== "lock") {
-          L.DomUtil.addClass(layer.getElement(), "selected");
-          break;
-        }
-      }
-    });
-  },
-
-  _getAvgCmPerPixel: function(imgs) {
-    var reduce = imgs.reduce(function(sum, img) {
-      return sum + img.cm_per_pixel;
-    }, 0);
-    return reduce / imgs.length;
-  },
-
-  _generateExportJson: function() {
-    var json = {};
-    json.images = [];
-
-    this.eachLayer(function(layer) {
-      if (this.isSelected(layer)) {
-        json.images.push({ 
-          id: this.getLayerId(layer),
-          src: layer._image.src,
-          nodes: layer.getCorners(),
-          cm_per_pixel: layer._getCmPerPixel()
-        });
-      }
-    }, this);
-
-    json.avg_cm_per_pixel = this._getAvgCmPerPixel(json.images);
-
-    return JSON.stringify(json);
-  },
-
-  _onKeyDown: function(e) {
-    if (e.key === "Escape") {
-      this._deselectAll(e);
-    } 
-    if (e.key === "Backspace") {
-      this._removeFromGroup(e);
+    if (!this.isSelected(overlay) || !overlay.editing.enabled()) { 
+      return; 
     }
-  },
-
-  _dragStartMultiple: function(event) {
-    var overlay = event.target,
-      i;
-
-    if (!this.isSelected(overlay)) { return; }
 
     this.eachLayer(function(layer) {
       var edit = layer.editing;
       edit._deselect();
 
       for (i = 0; i < 4; i++) {
-        layer._dragStartPoints[i] = layer._map.latLngToLayerPoint(
-          layer.getCorner(i)
-        );
+        layer._dragStartPoints[i] = layer._map.latLngToLayerPoint(layer.getCorner(i));
       }
     });
   },
 
-  _dragMultiple: function(event) {
-    var overlay = event.target,
-      map = this._map,
-      i;
+  _dragMultiple: function(e) {
+    var overlay = e.target,
+        map = this._map,
+        i;
 
-    if (!this.isSelected(overlay)) { return; }
+    if (!this.isSelected(overlay) || !overlay.editing.enabled()) {
+      return;
+    }
 
     overlay._dragPoints = {};
 
@@ -161,43 +154,23 @@ L.DistortableCollection = L.FeatureGroup.extend({
     this._updateCollectionFromPoints(cpd, overlay);
   },
 
-  _deselectAll: function(event) {
-    this.eachLayer(function(layer) {
-      var edit = layer.editing;
-      L.DomUtil.removeClass(layer.getElement(), "selected");
-      edit._deselect();
-    });
+  _toRemove: function() {
+    var layerArr = this.getLayers();
 
-    L.DomEvent.stopPropagation(event);
-  },
-
-  _removeFromGroup: function(e) {
-    this.eachLayer(function(layer) {
+    return layerArr.filter(function(layer) {
       var edit = layer.editing;
-      if (edit._selected && edit._mode !== "lock") {
-        var choice = edit.confirmDelete();
-        if (choice) { 
-          edit._selected = false;
-          this.removeLayer(layer); 
-        } else {
-          L.DomEvent.stopPropagation(e);
-          return;
-        }
-      }
+      return (this.isSelected(layer) && edit._mode !== 'lock');
     }, this);
   },
-  /**
-   * images in 'lock' mode are included in this feature group collection for functionalities
-   * such as export, but are filtered out for editing / dragging here
-   */
+
   _calcCollectionFromPoints: function(cpd, overlay) {
-    var layersToMove = [],
-      p = new L.Transformation(1, -cpd.x, 1, -cpd.y);
+    var layersToMove = [];
+    var p = new L.Transformation(1, -cpd.x, 1, -cpd.y);
 
     this.eachLayer(function(layer) {
       if (
         layer !== overlay &&
-        layer.editing._mode !== "lock" &&
+        layer.editing._mode !== 'lock' &&
         this.isSelected(layer)
       ) {
         layer._cpd = {};
@@ -215,15 +188,55 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   /**
-   * cpd === cornerPointDelta
+   * @param {number} cpd (=== cornerPointDelta)
+   * @param {object} overlay
    */
   _updateCollectionFromPoints: function(cpd, overlay) {
     var layersToMove = this._calcCollectionFromPoints(cpd, overlay);
 
     layersToMove.forEach(function(layer) {
-      layer._updateCornersFromPoints(layer._cpd);
-      layer.fire("update");
+      layer.setCornersFromPoints(layer._cpd);
+    });
+  },
+
+  _getAvgCmPerPixel: function(imgs) {
+    var reduce = imgs.reduce(function(sum, img) {
+      return sum + img.cm_per_pixel;
+    }, 0);
+    return reduce / imgs.length;
+  },
+
+  generateExportJson: function() {
+    var json = {};
+    json.images = [];
+
+    this.eachLayer(function(layer) {
+      if (this.isSelected(layer)) {
+        var sections = layer._image.src.split('/');
+        var filename = sections[sections.length-1];
+        var zc = layer.getCorners();
+        var corners = [
+          {lat: zc[0].lat, lon: zc[0].lng},
+          {lat: zc[1].lat, lon: zc[1].lng},
+          {lat: zc[3].lat, lon: zc[3].lng},
+          {lat: zc[2].lat, lon: zc[2].lng},
+        ];
+        json.images.push({
+          id: this.getLayerId(layer),
+          src: layer._image.src,
+          width: layer._image.width,
+          height: layer._image.height,
+          image_file_name: filename,
+          nodes: corners,
+          cm_per_pixel: L.ImageUtil.getCmPerPixel(layer),
+        });
+      }
     }, this);
+
+    json.images = json.images.reverse();
+    json.avg_cm_per_pixel = this._getAvgCmPerPixel(json.images);
+
+    return json;
   }
 });
 
