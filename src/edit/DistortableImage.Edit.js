@@ -21,6 +21,8 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._outlined = false;
 
     L.setOptions(this, options);
+
+    L.distortableImage.action_map.Escape = '_deselect';
   },
 
   /* Run on image selection. */
@@ -317,6 +319,7 @@ L.DistortableImage.Edit = L.Handler.extend({
         opacity;
 
     this._transparent = !this._transparent;
+    opacity = this._transparent ? this.options.opacity : 1;
 
     L.DomUtil.setOpacity(image, opacity);
     image.setAttribute('opacity', opacity);
@@ -330,6 +333,7 @@ L.DistortableImage.Edit = L.Handler.extend({
         outline;
 
     this._outlined = !this._outlined;
+    outline = this._outlined ? this.options.outline : 'none';
 
     L.DomUtil.setOpacity(image, opacity);
     image.setAttribute('opacity', opacity);
@@ -535,6 +539,7 @@ L.DistortableImage.Edit = L.Handler.extend({
       this._toggledImage = true;
       this._overlay.bringToBack();
     }
+    this._showToolbar();
   },
 
   // Based on https://github.com/publiclab/mapknitter/blob/8d94132c81b3040ae0d0b4627e685ff75275b416/app/assets/javascripts/mapknitter/Map.js#L47-L82

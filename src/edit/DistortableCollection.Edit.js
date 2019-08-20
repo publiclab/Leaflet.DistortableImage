@@ -3,30 +3,27 @@ L.DistortableImage = L.DistortableImage || {};
 // this class holds the keybindings and toolbar API for an image collection instance
 L.DistortableCollection.Edit = L.Handler.extend({
   options: {
-    keymap: {
-      Backspace: '_removeGroup', // backspace windows / delete mac
-      Escape: '_deselectAll',
-      l: '_lockGroup',
-      u: '_unlockGroup'
-    }
+    keymap: L.distortableImage.group_action_map,
   },
 
   initialize: function(group, options) {
     this._group = group;
-    L.setOptions(this, options); 
+    L.setOptions(this, options);
+
+    L.distortableImage.group_action_map.Escape = '_deselectAll';
   },
 
   addHooks: function() {
-    var group = this._group,
-        map = group._map;
+    var group = this._group;
+    var map = group._map;
 
     this.editActions = this.options.actions;
 
     L.DomEvent.on(document, 'keydown', this._onKeyDown, this);
-    
+
     L.DomEvent.on(map, {
       click: this._deselectAll,
-      boxzoomend: this._addSelections
+      boxzoomend: this._addSelections,
     }, this);
 
     this._group.editable = true;
@@ -36,14 +33,14 @@ L.DistortableCollection.Edit = L.Handler.extend({
   },
 
   removeHooks: function() {
-    var group = this._group,
-        map = group._map;
+    var group = this._group;
+    var map = group._map;
 
     L.DomEvent.off(document, 'keydown', this._onKeyDown, this);
 
     L.DomEvent.off(map, {
       click: this._deselectAll,
-      boxzoomend: this._addSelections
+      boxzoomend: this._addSelections,
     }, this);
 
     this._deselectAll();
@@ -53,13 +50,13 @@ L.DistortableCollection.Edit = L.Handler.extend({
     });
   },
 
-  enable: function () {
+  enable: function() {
     this._enabled = true;
     this.addHooks();
     return this;
   },
 
-  disable: function () {
+  disable: function() {
     this._enabled = false;
     this.removeHooks();
 
@@ -67,28 +64,32 @@ L.DistortableCollection.Edit = L.Handler.extend({
   },
 
   _onKeyDown: function(e) {
-    var keymap = this.options.keymap,
-        handlerName = keymap[e.key];
+    var keymap = this.options.keymap;
+    var handlerName = keymap[e.key];
 
-    if (!this[handlerName]) { return; }
+    if (!this[handlerName]) {
+      return;
+    }
 
-    this._group.eachLayer(function(layer) {
-      if (this._group.isSelected(layer)) {
-        this[handlerName].call(this);
-      }
-    }, this);
+    if (this._group.anySelected()) {
+      this[handlerName].call(this);
+    }
   },
 
   _deselectAll: function(e) {
     var oe;
-      
-    if (e) { oe = e.originalEvent; }
-    /** 
+
+    if (e) {
+      oe = e.originalEvent;
+    }
+    /**
      * prevents image deselection following the 'boxzoomend' event - note 'shift' must not be released until dragging is complete
      * also prevents deselection following a click on a disabled img by differentiating it from the map
      */
-    if (oe && (oe.shiftKey || oe.target instanceof HTMLImageElement)) { return; }
-  
+    if (oe && (oe.shiftKey || oe.target instanceof HTMLImageElement)) {
+      return;
+    }
+
     this._group.eachLayer(function(layer) {
       var edit = layer.editing;
       L.DomUtil.removeClass(layer.getElement(), 'selected');
@@ -97,17 +98,19 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
     this._removeToolbar();
 
-    if (e) { L.DomEvent.stopPropagation(e); }
+    if (e) {
+      L.DomEvent.stopPropagation(e);
+    }
   },
 
-   _unlockGroup: function() {
+  _unlockGroup: function() {
     var map = this._group._map;
 
-    this._group.eachLayer(function (layer) {
+    this._group.eachLayer(function(layer) {
       if (this._group.isSelected(layer)) {
         var edit = layer.editing;
-        if (edit._mode === 'lock') { 
-          map.removeLayer(edit._handles[edit._mode]); 
+        if (edit._mode === 'lock') {
+          map.removeLayer(edit._handles[edit._mode]);
           edit._unlock();
           edit._refreshPopupIcons();
         }
@@ -118,7 +121,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
   _lockGroup: function() {
     var map = this._group._map;
 
-    this._group.eachLayer(function (layer) {
+    this._group.eachLayer(function(layer) {
       if (this._group.isSelected(layer) ) {
         var edit = layer.editing;
         if (edit._mode !== 'lock') {
@@ -133,8 +136,8 @@ L.DistortableCollection.Edit = L.Handler.extend({
   },
 
   _addSelections: function(e) {
-    var box = e.boxZoomBounds,
-        map = this._group._map;
+    var box = e.boxZoomBounds;
+    var map = this._group._map;
 
     this._group.eachLayer(function(layer) {
       var edit = layer.editing;
@@ -152,22 +155,29 @@ L.DistortableCollection.Edit = L.Handler.extend({
       }
     }, this);
   },
-  
-  _removeGroup: function(e) {
-    var layersToRemove = this._group._toRemove(),
-        n = layersToRemove.length;
 
-    if (n === 0) { return; }
+  _removeGroup: function(e) {
+    var layersToRemove = this._group._toRemove();
+    var n = layersToRemove.length;
+
+    if (n === 0) {
+      return;
+    }
+
     var choice = L.DomUtil.confirmDeletes(n);
 
     if (choice) {
       layersToRemove.forEach(function(layer) {
         this._group.removeLayer(layer);
       }, this);
-      this._removeToolbar();
+      if (!this._group.anySelected()) {
+        this._removeToolbar();
+      }
     }
 
-    if (e) { L.DomEvent.stopPropagation(e); }
+    if (e) {
+      L.DomEvent.stopPropagation(e);
+    }
   },
 
   startExport: function(opts) {
@@ -175,54 +185,60 @@ L.DistortableCollection.Edit = L.Handler.extend({
     opts.collection = opts.collection || this._group.generateExportJson();
     opts.frequency = opts.frequency || 3000;
     opts.scale = opts.scale || 100; // switch it to _getAvgCmPerPixel !
-    var statusUrl, updateInterval;
+    var statusUrl;
+    var updateInterval;
 
     // this may be overridden to update the UI to show export progress or completion
+    // eslint-disable-next-line require-jsdoc
     function _defaultUpdater(data) {
       data = JSON.parse(data);
       // optimization: fetch status directly from google storage:
-      if (statusUrl !== data.status_url && data.status_url.match('.json')) { statusUrl = data.status_url; }
-      if (data.status === "complete") {
+      if (statusUrl !== data.status_url && data.status_url.match('.json')) {
+        statusUrl = data.status_url;
+      }
+      if (data.status === 'complete') {
         clearInterval(updateInterval);
       }
       if (data.status === 'complete' && data.jpg !== null) {
-        alert("Export succeeded. http://export.mapknitter.org/" + data.jpg);
+        alert('Export succeeded. http://export.mapknitter.org/' + data.jpg);
       }
       // TODO: update to clearInterval when status == "failed" if we update that in this file:
       // https://github.com/publiclab/mapknitter-exporter/blob/main/lib/mapknitterExporter.rb
       console.log(data);
     }
 
-    // receives the URL of status.json, and starts running the updater to repeatedly fetch from status.json; 
+    // receives the URL of status.json, and starts running the updater to repeatedly fetch from status.json;
     // this may be overridden to integrate with any UI
+    // eslint-disable-next-line require-jsdoc
     function _defaultHandleStatusUrl(data) {
       console.log(data);
-      statusUrl = "//export.mapknitter.org" + data;
+      statusUrl = '//export.mapknitter.org' + data;
       opts.updater = opts.updater || _defaultUpdater;
 
       // repeatedly fetch the status.json
       updateInterval = setInterval(function intervalUpdater() {
-        $.ajax(statusUrl + "?" + Date.now(), { // bust cache with timestamp
-          type: "GET",
+        $.ajax(statusUrl + '?' + Date.now(), {// bust cache with timestamp
+          type: 'GET',
           crossDomain: true,
         }).done(function(data) {
-            opts.updater(data);
+          opts.updater(data);
         });
       }, opts.frequency);
     }
 
+    // eslint-disable-next-line require-jsdoc
     function _fetchStatusUrl(collection, scale) {
       opts.handleStatusUrl = opts.handleStatusUrl || _defaultHandleStatusUrl;
 
       $.ajax({
-        url: "//export.mapknitter.org/export",
+        url: '//export.mapknitter.org/export',
         crossDomain: true,
-        type: "POST",
+        type: 'POST',
         data: {
           collection: JSON.stringify(collection.images),
-          scale: scale
+          scale: scale,
         },
-        success: opts.handleStatusUrl // this handles the initial response
+        success: opts.handleStatusUrl, // this handles the initial response
       });
     }
 
@@ -230,14 +246,14 @@ L.DistortableCollection.Edit = L.Handler.extend({
   },
 
   _addToolbar: function() {
-    var group = this._group,
-        map = group._map;
+    var group = this._group;
+    var map = group._map;
 
     try {
       if (!this.toolbar) {
         this.toolbar = L.distortableImage.controlBar({
           actions: this.editActions,
-          position: 'topleft'
+          position: 'topleft',
         }).addTo(map, group);
         this.fire('toolbar:created');
       }
@@ -267,12 +283,12 @@ L.DistortableCollection.Edit = L.Handler.extend({
       this.editActions.push(value);
       this._addToolbar();
     } else {
-      return false; 
+      return false;
     }
   },
 
   removeTool: function(value) {
-    this.editActions.some(function (item, idx) {
+    this.editActions.some(function(item, idx) {
       if (this.editActions[idx] === value) {
         this._removeToolbar();
         this.editActions.splice(idx, 1);
