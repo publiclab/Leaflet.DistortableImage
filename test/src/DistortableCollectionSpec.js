@@ -2,10 +2,7 @@ describe('L.DistortableCollection', function() {
   var map, overlay, overlay2, imgGroup;
 
   beforeEach(function(done) {
-    map = L.map(L.DomUtil.create('div', '', document.body)).setView(
-      [41.7896, -87.5996],
-      15
-    );
+    map = L.map(L.DomUtil.create('div', '', document.body)).setView([41.7896, -87.5996], 15);
 
     overlay = L.distortableImageOverlay('/examples/example.png', {
       corners: [

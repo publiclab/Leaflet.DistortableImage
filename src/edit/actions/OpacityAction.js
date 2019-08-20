@@ -5,10 +5,10 @@ L.OpacityAction = L.EditAction.extend({
       tooltip;
 
     if (edit._transparent) {
-      use = 'opacity';
+      use = 'opacity_empty';
       tooltip = 'Make Image Opaque';
     } else {
-      use = 'opacity_empty';
+      use = 'opacity';
       tooltip = 'Make Image Transparent';
     }
 
@@ -19,19 +19,15 @@ L.OpacityAction = L.EditAction.extend({
       tooltip: tooltip
     };
 
-    L.DistortableImage.action_map.t = '_toggleTransparency';
+    L.DistortableImage.action_map.o = '_toggleOpacity';
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
   addHooks: function() {
-    var editing = this._overlay.editing;
+    var edit = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'opacity_empty', 'opacity');
-    L.IconUtil.toggleTooltip(
-      this._link,
-      'Make Image Opaque',
-      'Make Image Transparent'
-    );
-    editing._toggleTransparency();
+    L.IconUtil.toggleTooltip(this._link, 'Make Image Opaque', 'Make Image Transparent');
+    edit._toggleOpacity();
   }
 });

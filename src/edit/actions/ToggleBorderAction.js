@@ -1,19 +1,14 @@
-L.DistortableImage = L.DistortableImage || {};
-L.distortableImage = L.DistortableImage;
-
-L.DistortableImage.action_map = L.DistortableImage.action_map || {};
-
-L.EditAction.ToggleOutline = L.EditAction.extend({
+L.ToggleBorderAction = L.EditAction.extend({
   initialize: function(map, overlay, options) {
     var edit = overlay.editing,
-      use,
-      tooltip;
+        use,
+        tooltip;
 
     if (edit._outlined) {
-      use = 'border_clear';
+      use = 'border_outer';
       tooltip = 'Remove Border';
     } else {
-      use = 'border_outer';
+      use = 'border_clear';
       tooltip = 'Add Border';
     }
 
@@ -24,15 +19,15 @@ L.EditAction.ToggleOutline = L.EditAction.extend({
       tooltip: tooltip
     };
 
-    L.DistortableImage.action_map.o = '_toggleOutline';
+    L.DistortableImage.action_map.b = '_toggleBorder';
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
   addHooks: function() {
-    var editing = this._overlay.editing;
+    var edit = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'border_clear', 'border_outer');
     L.IconUtil.toggleTooltip(this._link, 'Remove Border', 'Add Border');
-    editing._toggleOutline();
+    edit._toggleBorder();
   }
 });

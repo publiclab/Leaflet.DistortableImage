@@ -45,6 +45,12 @@ L.EditAction = L.Toolbar2.Action.extend({
       L.DomUtil.addClass(this._link, iconOptions.className);
     }
 
+    if (iconOptions.className === this._overlay.editing._mode) {
+      L.DomUtil.addClass(this._link, 'selected-mode');
+    } else {
+      L.DomUtil.removeClass(this._link, 'selected-mode');
+    }
+
     L.DomEvent.on(this._link, 'click', this.enable, this);
 
     /* Add secondary toolbar */

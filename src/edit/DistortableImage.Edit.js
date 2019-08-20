@@ -286,53 +286,63 @@ L.DistortableImage.Edit = L.Handler.extend({
     };
   },
 
-  _toggleRotateScale: function() {
+  _rotateScaleMode: function() {
     var map = this._overlay._map;
+    var m = this._mode;
 
-    if (this._mode === 'lock' || !this.hasTool(L.EditAction.ToggleRotateScale)) {
-      return;
-    }
+    if (m === 'lock' || m === 'rotateScale') { return; }
+    if (!this.hasTool(L.RotateScaleAction)) { return; }
 
-    map.removeLayer(this._handles[this._mode]);
+    map.removeLayer(this._handles[m]);
 
-    if (this._mode === 'rotateScale') { this._mode = 'distort'; }
-    else { this._mode = 'rotateScale'; }
-
+    this._mode = 'rotateScale';
     map.addLayer(this._handles[this._mode]);
 
     this._addToolbar();
   },
 
-  _toggleScale: function() {
+  _distortMode: function() {
     var map = this._overlay._map;
+    var m = this._mode;
 
-    if (this._mode === 'lock' || !this.hasTool(L.ScaleAction)) {
-      return;
-    }
+    if (m === 'lock' || m === 'distort') { return; }
+    if (!this.hasTool(L.DistortAction)) { return; }
 
-    map.removeLayer(this._handles[this._mode]);
+    map.removeLayer(this._handles[m]);
 
-    if (this._mode === 'scale') { this._mode = 'distort'; }
-    else { this._mode = 'scale'; }
-
+    this._mode = 'distort';
     map.addLayer(this._handles[this._mode]);
+    this._addToolbar();
   },
 
-  _toggleRotate: function() {
+  _scaleMode: function() {
     var map = this._overlay._map;
+    var m = this._mode;
 
-    if (this._mode === 'lock' || !this.hasTool(L.RotateAction)) {
-      return;
-    }
+    if (m === 'lock' || m === 'scale') { return; }
+    if (!this.hasTool(L.ScaleAction)) { return; }
 
-    map.removeLayer(this._handles[this._mode]);
-    if (this._mode === 'rotate') { this._mode = 'distort'; }
-    else { this._mode = 'rotate'; }
-
+    map.removeLayer(this._handles[m]);
+    this._mode = 'scale';
     map.addLayer(this._handles[this._mode]);
+    this._addToolbar();
   },
 
-  _toggleTransparency: function() {
+  _rotateMode: function() {
+    var map = this._overlay._map;
+    var m = this._mode;
+
+    if (m === 'lock' || m === 'rotate') { return; }
+    if (!this.hasTool(L.RotateAction)) { return; }
+
+    map.removeLayer(this._handles[m]);
+
+    this._mode = 'rotate';
+    map.addLayer(this._handles[this._mode]);
+    this._addToolbar();
+  },
+
+  _toggleOpacity: function() {
     var image = this._overlay.getElement();
     var opacity;
 
@@ -349,14 +359,12 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._addToolbar();
   },
 
-  _toggleOutline: function() {
+  _toggleBorder: function() {
     var image = this._overlay.getElement();
     var opacity;
     var outline;
 
-    if (!this.hasTool(L.EditAction.ToggleOutline)) {
-      return;
-    }
+    if (!this.hasTool(L.ToggleBorderAction)) { return; }
 
     this._outlined = !this._outlined;
     outline = this._outlined ? this.options.outline : 'none';
@@ -369,51 +377,36 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._addToolbar();
   },
 
-  _toggleLock: function() {
-    var map = this._overlay._map;
-
-    if (!this.hasTool(L.EditAction.ToggleLock)) {
-      return;
-    }
-
-    map.removeLayer(this._handles[this._mode]);
-
-    if (this._mode === 'lock') { this._unlock();
-    } else { this._lock(); }
-
-    map.addLayer(this._handles[this._mode]);
-
-    this._showToolbar();
+  _toggleLockMode: function() {
+    if (this._mode === 'lock') { this._unlock(); }
+    else { this._lock(); }
   },
 
   // compare this to using overlay zIndex
   _toggleOrder: function() {
-    if (!this.hasTool(L.EditAction.ToggleOrder)) {
-      return;
-    }
+    if (!this.hasTool(L.EditAction.ToggleOrder)) { return; }
 
-    if (this._toggledImage) {
-      this._toggledImage = false;
-      this._overlay.bringToFront();
-    } else {
-      this._toggledImage = true;
-      this._overlay.bringToBack();
-    }
-    this._showToolbar();
+    // if (this._toggledImage) {
+    //   this._toggledImage = false;
+    //   this._overlay.bringToFront();
+    // } else {
+    //   this._toggledImage = true;
+    //   this._overlay.bringToBack();
+    // }
+    if (this._toggledImage) { this._stackUp(); }
+    else { this._stackDown(); }
+    this._addToolbar();
   },
 
   _removeOverlay: function() {
     var overlay = this._overlay;
     var eventParents = overlay._eventParents;
+    var m = this._mode;
 
-    if (this._mode === 'lock' || !this.hasTool(L.DeleteAction)) {
-      return;
-    }
+    if (m === 'lock' || !this.hasTool(L.DeleteAction)) { return; }
 
     var choice = L.DomUtil.confirmDelete();
-    if (!choice) {
-      return;
-    }
+    if (!choice) { return; }
 
     this._removeToolbar();
 
@@ -427,12 +420,10 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   // Based on https://github.com/publiclab/mapknitter/blob/8d94132c81b3040ae0d0b4627e685ff75275b416/app/assets/javascripts/mapknitter/Map.js#L47-L82
   _getExport: function() {
-    var map = this._overlay._map;
     var overlay = this._overlay;
+    var map = overlay._map;
 
-    if (!this.hasTool(L.ExportAction)) {
-      return;
-    }
+    if (!this.hasTool(L.ExportAction)) { return; }
 
     // make a new image
     var downloadable = new Image();
@@ -485,25 +476,54 @@ L.DistortableImage.Edit = L.Handler.extend({
     downloadable.src = overlay.options.fullResolutionSrc || overlay._image.src;
   },
 
-  _sendUp: function() {
+  _stackUp: function() {
+    var t = this._toggledImage;
+
+    if (!t || !this.hasTool(L.ToggleOrderAction)) { return; }
+
+    this._toggledImage = false;
     this._overlay.bringToFront();
+    this._addToolbar();
   },
 
-  _sendDown: function() {
+  _stackDown: function() {
+    var t = this._toggledImage;
+
+    if (t || !this.hasTool(L.ToggleOrderAction)) { return; }
+    this._toggledImage = true;
     this._overlay.bringToBack();
+    this._addToolbar();
   },
 
   _unlock: function() {
+    var map = this._overlay._map;
+    var m = this._mode;
+
+    if (m !== 'lock' || !this.hasTool(L.LockAction)) { return; }
+
+    map.removeLayer(this._handles[m]);
+
     this._mode = 'distort';
     this._enableDragging();
+    map.addLayer(this._handles[this._mode]);
+    this._addToolbar();
   },
 
   _lock: function() {
+    var map = this._overlay._map;
+    var m = this._mode;
+
+    if (m === 'lock' || !this.hasTool(L.LockAction)) { return; }
+
+    map.removeLayer(this._handles[m]);
+
     this._mode = 'lock';
     if (this.dragging) {
       this.dragging.disable();
     }
     delete this.dragging;
+    map.addLayer(this._handles[this._mode]);
+    this._addToolbar();
   },
 
   _singleClick: function(e) {

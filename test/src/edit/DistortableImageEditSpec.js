@@ -42,7 +42,7 @@ describe('L.DistortableImage.Edit', function() {
       expect(handle.getLatLng()).to.be.closeToLatLng(corners[handle._corner]);
     });
 
-    edit._toggleRotateScale();
+    edit._rotateScaleMode();
 
     /* After we toggle modes, the rotateScaleHandles are on the map and should be synced. */
     edit._rotateScaleHandles.eachLayer(function(handle) {

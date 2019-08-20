@@ -27,27 +27,6 @@ var Exports = L.EditAction.extend({
   },
 });
 
-var Deletes = L.EditAction.extend({
-  initialize: function(map, overlay, options) {
-    var use = 'delete_forever';
-
-    options = options || {};
-    options.toolbarIcon = {
-      svg: true,
-      html: use,
-      tooltip: 'Delete Images',
-    };
-
-    L.DistortableImage.group_action_map.Backspace = '_removeGroup'; // backspace windows / delete mac
-    L.EditAction.prototype.initialize.call(this, map, overlay, options);
-  },
-
-  addHooks: function() {
-    var edit = this._overlay.editing;
-    edit._removeGroup();
-  },
-});
-
 var Locks = L.EditAction.extend({
   initialize: function(map, overlay, options) {
     var use = 'lock';
@@ -92,12 +71,12 @@ var Unlocks = L.EditAction.extend({
 
 L.DistortableImage.ControlBar = L.Toolbar2.Control.extend({
   options: {
-    actions: [
-      Exports,
-      Deletes,
-      Locks,
-      Unlocks,
-    ],
+    // actions: [
+    //   Exports,
+    //   Deletes,
+    //   Locks,
+    //   Unlocks,
+    // ],
   },
 });
 
@@ -107,7 +86,7 @@ L.distortableImage.controlBar = function(options) {
 
 /** addInitHooks run before onAdd */
 L.DistortableCollection.addInitHook(function() {
-  this.ACTIONS = [Exports, Deletes, Locks, Unlocks];
+  this.ACTIONS = [Exports, L.DeleteAction, Locks, Unlocks];
 
   if (this.options.actions) {
     this.editActions = this.options.actions;

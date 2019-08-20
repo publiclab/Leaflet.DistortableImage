@@ -1,14 +1,12 @@
 L.GeolocateAction = L.EditAction.extend({
   initialize: function(map, overlay, options) {
-    var use = 'explore';
-
     options = options || {};
     options.toolbarIcon = {
       svg: true,
-      html: use,
+      html: 'explore',
       tooltip: 'Geolocate Image'
     };
-
+    
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 

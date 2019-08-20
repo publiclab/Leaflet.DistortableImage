@@ -152,6 +152,53 @@ a.leaflet-toolbar-icon[title='Loading...'] {
   background-color: whitesmoke;
 }
 
+a.leaflet-toolbar-icon:active .ldi-icon {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    margin-left: -10px;
+    border-radius: 100%;
+    background-color: #000;
+    background-color: rgba(0, 0, 0, 0.05);
+    transform: scale(1);
+    transform-origin: 50%;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease-in 0s, transform 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.1s;
+    opacity: 0.1;
+}
+
+a.leaflet-toolbar-icon.rotate.selected-mode,
+a.leaflet-toolbar-icon.rotateScale.selected-mode {
+  background-color: hsl(0, 100%, 50%);
+  border: inset 0.5px lightgray;
+}
+
+a.leaflet-toolbar-icon.rotate.selected-mode .ldi-icon,
+a.leaflet-toolbar-icon.rotateScale.selected-mode .ldi-icon {
+  fill: white;
+}
+
+a.leaflet-toolbar-icon.distort.selected-mode,
+a.leaflet-toolbar-icon.scale.selected-mode {
+  background-color: hsl(246, 100%, 50%);
+  border: inset 0.5px lightgray;
+}
+
+a.leaflet-toolbar-icon.distort.selected-mode .ldi-icon,
+a.leaflet-toolbar-icon.scale.selected-mode .ldi-icon {
+  fill: white;
+}
+
+a.leaflet-toolbar-icon.lock.selected-mode {
+  background-color: hsl(0, 0%, 1%);
+  border: inset 0.5px lightgray;
+}
+
+a.leaflet-toolbar-icon.lock.selected-mode .ldi-icon {
+  fill: white;
+}
+
 .ldi-icon.loader {
   -webkit-animation: ldi-spin 1.1s infinite;
   animation: ldi-spin 1.1s infinite;
