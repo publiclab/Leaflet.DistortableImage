@@ -37,11 +37,25 @@ For the additional features in the [multiple image interface](#Multiple-Image-In
 
 ## Single Image Interface
 
-The simplest implementation is to create a map, then create an image instance of `L.distortableImageOverlay` and add it onto the map:
+The simplest implementation is to create a map, add our recommended `TileLayer` to it, then create an image instance of `L.distortableImageOverlay` and add it onto the map.
 
-```js
-// basic Leaflet map setup
+```JS
+// set the initial map center and zoom level
 map = L.map('map').setView([51.505, -0.09], 13);
+// add the Google Mutant layer
+map.addGoogleMutant();
+
+map.whenReady(function () {
+  // By default, 'img' will be placed centered on the map view specified above
+  img = L.distortableImageOverlay('example.png').addTo(map);
+});
+```
+
+<blockquote><b>Note</b>: If you have a different idea in mind, skip the <code>map.addGoogleMutant()</code> call and add your preferred <code>TileLayer</code> instead.
+
+For example, for a more standard looking map you can use:
+
+```JS
 L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.png', {
   maxZoom: 18,
   attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
@@ -49,12 +63,9 @@ L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.p
     'Imagery © <a href="http://mapbox.com">Mapbox</a>',
   id: 'examples.map-i86knfo3'
 }).addTo(map);
-
-// create an image and add it to the map
-img = L.distortableImageOverlay('example.png').addTo(map);
 ```
 
-By default, the image will be placed centered on the map view specified during initialization.
+</blockquote>
 
 **Options** available to pass during `L.DistortableImageOverlay` initialization:
 
@@ -342,69 +353,110 @@ Defaults:
 
 ## Quick API Reference
 
-<hr>
+---
+
+`L.Map`
+
+---
+
+We have extended the classic Leaflet `L.Map` class to include a convenience method for this library:
+
+<details><summary><code><b>addGoogleMutant(<i>opts?</i> &#60;Mutant options>)</b>: this</code></summary>
+  <ul>
+    <li>adds a Google Mutant layer with location labels according to our recommended setup.</li>
+    <li>label visibility is toggled by double clicking on the map.</li>
+    <li><b>Mutant options</b>: {
+      <ul>
+        <li><i>labels</i>: &#60;boolean>, default: true</li>
+        <ul>
+          <li>If set to <code>false</code>, the mutant layer will not have location labels</li>
+        </ul>
+        <li><i>labelOpacity</i>: &#60;number 0, 1>, default: 0</li>
+        <ul>
+          <li>If set to <code>1</code>, labels will be initially visible</li>
+        </ul>
+        <li><i>mutantOpacity</i>: &#60;number 0..1>, default: 0.8</li>
+        <ul>
+          <li>Same as Leaflet's <code>L.TileLayer</code> <code>opacity</code> option</li>
+        </ul>
+        <li><i>maxZoom</i>: &#60;number 0..21>, default: 18</li>
+        <ul>
+          <li>Same as Leaflet's <code>L.TileLayer</code> <code>maxZoom</code> option, except has a maximum value of 21 because higher zoom levels will result in an error being thrown.</li>
+          <li>The mutant layer will appear blurry for zoom levels exceeding 18</li>
+        </ul>
+      </ul>
+    }</li>
+  </ul>
+</details>
+
+---
 
 `L.DistortableImageOverlay`
 
-<hr>
+---
 
 <details><summary><code><b>getCorner(<i>idx</i> &#60;number 0..3>)</b>: LatLng</code></summary>
- <ul><li>returns the coordinates of the image corner at <i>index</i>.</ul></li>
+  <ul><li>returns the coordinates of the image corner at <i>index</i>.</li></ul>
 </details>
 
 <details><summary><code><b>getCorners()</b>: 4 [LatLng, LatLng, LatLng, LatLng]</code></summary>
-  <ul><li>returns the coordinates of the image corners in NW, NE, SW, SE order.
+  <ul><li>returns the coordinates of the image corners in NW, NE, SW, SE order.</li></ul>
 </details>
 
 <details><summary><code><b>setCorner(<i>idx</i> &#60;number 0..3>, <i>LatLng</i>)</b>: this</code></summary>
-<ul><li>updates the coordinates of the image corner at <i>index</i> to <i>LatLng</i> and, where applicable, marker and toolbar positioning.</ul></li>
-<ul><li>We use this internally for <code>distort</code> mode.</ul></li>
+  <ul>
+    <li>updates the coordinates of the image corner at <i>index</i> to <i>LatLng</i> and, where applicable, marker and toolbar positioning.</li>
+    <li>we use this internally for <code>distort</code> mode.</li>
+  </ul>
 </details>
 
 <details><summary><code><b>setCorners(<i>corners</i>)</b>: this</code></summary>
-<ul><li>same as <code>#setCorner</code>, but takes in a "corners" object to update all 4 corners with only one UI update at the end.</ul></li>
-<ul><li> We use this internally for image translation, rotation, and scaling.</ul></li>
-<ul><li><i>corners</i>: { <i>keys</i>: &#60;number 0..4>, <i>values</i>: LatLng } <br><br>
-ex.
+  <ul>
+    <li>same as <code>#setCorner</code>, but takes in a "corners" object to update all 4 corners with only one UI update at the end.</li>
+    <li> we use this internally for image translation, rotation, and scaling.</li>
+    <li><i>corners</i>: { <i>keys</i>: &#60;number 0..4>, <i>values</i>: LatLng } <br>
+  ex.
 
 <pre>
-  var scaledCorners = {0: '', 1: '', 2: '', 3: ''},
-      i, p;
+var scaledCorners = {0: '', 1: '', 2: '', 3: ''},
+    i, p;
 
-  for (i = 0; i < 4; i++) {
-    p = map
-      .project(img.getCorner(i))
-      .subtract(center)
-      .multiplyBy(scale)
-      .add(center);
-    scaledCorners[i] = map.unproject(p);
-  }
+for (i = 0; i < 4; i++) {
+  p = map
+    .project(img.getCorner(i))
+    .subtract(center)
+    .multiplyBy(scale)
+    .add(center);
+  scaledCorners[i] = map.unproject(p);
+}
 
-  img.setCorners(scaledCorners);
-  </pre>
-</ul></li>
+img.setCorners(scaledCorners);
+</pre></li>
+  </ul>
 </details>
 
 <details><summary><code><b>getCenter()</b>: LatLng</code></summary>
-<ul><li>Calculates the centroid of the image.</ul></li>
+  <ul><li>calculates the centroid of the image.</li></ul>
 </details>
 
 <details><summary><code><b>scaleBy(<i>factor</i> &#60;number>)</b>: this</code></summary>
-<ul><li>scales the image by the given factor and calls <code>#setCorners</code>.</ul></li>
-<ul><li>a scale of 0 or 1 will leave the image unchanged - but 0 causes the function to automatically return</ul></li>
-<ul><li>a negative scale will invert the image and, depending on the factor, change its size</ul></li>
-<ul><li>ex. <code>img.scaleBy(0.5)</code></ul></li>
+  <ul>
+    <li>scales the image by the given factor and calls <code>#setCorners</code>.</li>
+    <li>a scale of 0 or 1 will leave the image unchanged - but 0 causes the function to automatically return.</li>
+    <li>a negative scale will invert the image and, depending on the factor, change its size.</li>
+    <li>ex. <code>img.scaleBy(0.5)</code></li>
+  </ul>
 </details>
 
 <details><summary><code><b>rotateBy(<i>rad</i> &#60;number>)</b>: this</code></summary>
-<ul><li>rotates the image by the given radian angle and calls <code>#setCorners</code>.</ul></li>
+  <ul><li>rotates the image by the given radian angle and calls <code>#setCorners</code>.</li></ul>
 </details>
 
-<hr>
+---
 
 `L.DistortableImageOverlay.Edit`
 
-<hr>
+---
 
 A handler that holds the keybindings and toolbar API for an image instance. It is always initialized with an instance of `L.DistortableImageOverlay`. Besides code organization, it provides the ability to `enable` and `disable` image editing using the Leaflet API.
 
@@ -427,7 +479,7 @@ A handler that holds the keybindings and toolbar API for an image instance. It i
 <ul><li><code>img.editing.enabled()</code></ul></li>
 </details>
 
-<hr>
+---
 
 `L.DistortableCollection`
 
@@ -439,11 +491,11 @@ A handler that holds the keybindings and toolbar API for an image instance. It i
 <ul><li>Returns true if any <code>DistortableImageOverlay</code> instances are mutli-selected.</ul></li>
 </details>
 
-<hr>
+---
 
 `L.DistortableCollection.Edit`
 
-<hr>
+---
 
 Same as `L.DistortableImage.Edit` but for the collection (`L.DistortableCollection`) instance.
 

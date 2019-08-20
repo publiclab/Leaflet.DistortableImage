@@ -34,35 +34,17 @@
 
     (function() {
       
-      map = L.map('map', {
-        center: [51.505, -0.09],
-        zoom: 13
+      map = L.map('map').setView([51.505, -0.09], 13);
+      map.addGoogleMutant({labels: true, opacity: 1, maxZoom: 23, labelOpacity: 1});
+
+      map.whenReady(function () {
+        img = L.distortableImageOverlay("example.jpg", {
+          // (WIP) add a toolbarType field with values 'popup' (default) or 'control'
+          selected: true,
+          fullResolutionSrc: "large.jpg"
+        }).addTo(map);
       });
 
-      map._googleMutant = L.tileLayer('http://mt0.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-        maxZoom: 18,
-        opacity: 0.8,
-      }).addTo(map);
-
-      map._labels = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-labels/{z}/{x}/{y}{r}.{ext}', {
-        attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        subdomains: 'abcd',
-        interactive: false,
-        opacity: 0,
-        maxZoom: 18,
-        ext: 'png'
-      }).addTo(map);
-
-      // create an image
-      img = L.distortableImageOverlay("example.jpg", {
-        // (WIP) add a toolbarType field with values 'popup' (default) or 'control'
-        // mode: "distort", => default handle
-        selected: true,
-        fullResolutionSrc: "large.jpg"
-      }).addTo(map);
-
-      // todo: make dynamic
-      // kmpr1 = L.distortableImage.keymapper(map, { position: 'topleft' });
     })();
   </script>
 </html>

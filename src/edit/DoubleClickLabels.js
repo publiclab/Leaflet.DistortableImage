@@ -37,14 +37,22 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
 
     map.clicked = 0;
 
-    if (labels.opacity === 1) {
-      labels.opacity = 0;
+    if (labels.options.opacity === 1) {
+      labels.options.opacity = 0;
       labels.setOpacity(0);
     } else {
-      labels.opacity = 1;
+      labels.options.opacity = 1;
       labels.setOpacity(1);
     }
   }
 });
 
 L.Map.addInitHook('addHandler', 'doubleClickLabels', L.Map.DoubleClickLabels);
+/** 
+ * The 'doubleClickLabels' handler only runs instead of 'doubleClickZoom' when a googleMutant 
+ * layer is added to the map using 'map.addGoogleMutant()' without the option labels: false.
+ */
+L.Map.addInitHook(function() {
+  this.doubleClickLabels.disable();
+  this.doubleClickZoom.enable();
+});
