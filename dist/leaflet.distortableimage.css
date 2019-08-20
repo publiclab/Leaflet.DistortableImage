@@ -148,10 +148,6 @@ input.ldi {
   background-color: #efefef;
 }
 
-a.leaflet-toolbar-icon[title='Loading...'] {
-  background-color: whitesmoke;
-}
-
 a.leaflet-toolbar-icon:active .ldi-icon {
     position: absolute;
     width: 20px;
@@ -170,7 +166,7 @@ a.leaflet-toolbar-icon:active .ldi-icon {
 
 a.leaflet-toolbar-icon.rotate.selected-mode,
 a.leaflet-toolbar-icon.rotateScale.selected-mode {
-  background-color: hsl(0, 100%, 50%);
+  background-color: rgba(251, 18, 14, 0.75);
   border: inset 0.5px lightgray;
 }
 
@@ -181,7 +177,7 @@ a.leaflet-toolbar-icon.rotateScale.selected-mode .ldi-icon {
 
 a.leaflet-toolbar-icon.distort.selected-mode,
 a.leaflet-toolbar-icon.scale.selected-mode {
-  background-color: hsl(246, 100%, 50%);
+  background-color: hsla(239, 97%, 55%, 0.75);
   border: inset 0.5px lightgray;
 }
 
@@ -191,12 +187,18 @@ a.leaflet-toolbar-icon.scale.selected-mode .ldi-icon {
 }
 
 a.leaflet-toolbar-icon.lock.selected-mode {
-  background-color: hsl(0, 0%, 1%);
+  background-color: hsla(0, 0%, 1%, 0.7490196078431373);
   border: inset 0.5px lightgray;
 }
 
 a.leaflet-toolbar-icon.lock.selected-mode .ldi-icon {
   fill: white;
+}
+
+a.leaflet-toolbar-icon[title='Loading...'] {
+  background-color: whitesmoke;
+  pointer-events: none;
+  cursor: default;
 }
 
 .ldi-icon.loader {
@@ -205,7 +207,6 @@ a.leaflet-toolbar-icon.lock.selected-mode .ldi-icon {
   fill: black;
   width: 22px;
   height: 22px;
-  cursor: default;
 }
 
 @keyframes ldi-spin {

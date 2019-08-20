@@ -71,12 +71,6 @@ var Unlocks = L.EditAction.extend({
 
 L.DistortableImage.ControlBar = L.Toolbar2.Control.extend({
   options: {
-    // actions: [
-    //   Exports,
-    //   Deletes,
-    //   Locks,
-    //   Unlocks,
-    // ],
   },
 });
 
