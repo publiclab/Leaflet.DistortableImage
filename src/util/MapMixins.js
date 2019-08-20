@@ -14,9 +14,7 @@ L.Map.include({
       opacity: opts.mutantOpacity
     }).addTo(this);
 
-    if (opts.labels) { 
-      this._addLabels(opts);
-    }
+    if (opts.labels) { this._addLabels(opts); }
 
     return this;
   },
@@ -36,7 +34,6 @@ L.Map.include({
     }).addTo(this);
 
     this.doubleClickLabels.enable();
-    this.doubleClickZoom.disable();
 
     return this;
   }
