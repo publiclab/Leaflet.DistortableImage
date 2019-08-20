@@ -1,3 +1,8 @@
+L.DistortableImage = L.DistortableImage || {};
+L.distortableImage = L.DistortableImage;
+
+L.DistortableImage.action_map = {};
+
 L.EditAction = L.Toolbar2.Action.extend({
   options: {
     toolbarIcon: {
@@ -60,4 +65,6 @@ L.EditAction = L.Toolbar2.Action.extend({
   }
 });
 
-
+L.editAction = function(map, overlay, options) {
+  return new L.EditAction(map, overlay, options);
+};

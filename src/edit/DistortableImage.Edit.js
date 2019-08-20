@@ -289,10 +289,9 @@ L.DistortableImage.Edit = L.Handler.extend({
   _toggleRotateScale: function() {
     var map = this._overlay._map;
 
-    if (this._mode === 'lock') { return; }
-    // if (this._mode === 'lock' || !this.toolbar.hasRotateScale()) {
-    //   return;
-    // }
+    if (this._mode === 'lock' || !this.hasTool(L.EditAction.ToggleRotateScale)) {
+      return;
+    }
 
     map.removeLayer(this._handles[this._mode]);
 
@@ -307,10 +306,9 @@ L.DistortableImage.Edit = L.Handler.extend({
   _toggleScale: function() {
     var map = this._overlay._map;
 
-    if (this._mode === 'lock') { return; }
-    // if (this._mode === 'lock' || !this.toolbar.hasScale()) {
-    //   return;
-    // }
+    if (this._mode === 'lock' || !this.hasTool(L.ScaleAction)) {
+      return;
+    }
 
     map.removeLayer(this._handles[this._mode]);
 
@@ -323,10 +321,9 @@ L.DistortableImage.Edit = L.Handler.extend({
   _toggleRotate: function() {
     var map = this._overlay._map;
 
-    if (this._mode === 'lock') { return; }
-    // if (this._mode === 'lock' || !this.toolbar.hasRotate()) {
-    //   return;
-    // }
+    if (this._mode === 'lock' || !this.hasTool(L.RotateAction)) {
+      return;
+    }
 
     map.removeLayer(this._handles[this._mode]);
     if (this._mode === 'rotate') { this._mode = 'distort'; }
@@ -339,7 +336,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     var image = this._overlay.getElement();
     var opacity;
 
-    if (!this.toolbar.hasTransparency()) {
+    if (!this.hasTool(L.OpacityAction)) {
       return;
     }
 
@@ -356,10 +353,10 @@ L.DistortableImage.Edit = L.Handler.extend({
     var image = this._overlay.getElement();
     var opacity;
     var outline;
-    
-    // if (!this.toolbar.hasOutline()) {
-    //   return;
-    // }
+
+    if (!this.hasTool(L.EditAction.ToggleOutline)) {
+      return;
+    }
 
     this._outlined = !this._outlined;
     outline = this._outlined ? this.options.outline : 'none';
@@ -375,9 +372,9 @@ L.DistortableImage.Edit = L.Handler.extend({
   _toggleLock: function() {
     var map = this._overlay._map;
 
-    // if (!this.toolbar.hasLock()) {
-    //   return;
-    // }
+    if (!this.hasTool(L.EditAction.ToggleLock)) {
+      return;
+    }
 
     map.removeLayer(this._handles[this._mode]);
 
@@ -391,8 +388,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   // compare this to using overlay zIndex
   _toggleOrder: function() {
-
-    if (!this.toolbar.hasOrder()) {
+    if (!this.hasTool(L.EditAction.ToggleOrder)) {
       return;
     }
 
@@ -404,6 +400,89 @@ L.DistortableImage.Edit = L.Handler.extend({
       this._overlay.bringToBack();
     }
     this._showToolbar();
+  },
+
+  _removeOverlay: function() {
+    var overlay = this._overlay;
+    var eventParents = overlay._eventParents;
+
+    if (this._mode === 'lock' || !this.hasTool(L.DeleteAction)) {
+      return;
+    }
+
+    var choice = L.DomUtil.confirmDelete();
+    if (!choice) {
+      return;
+    }
+
+    this._removeToolbar();
+
+    if (eventParents) {
+      var eP = eventParents[Object.keys(eventParents)[0]];
+      eP.removeLayer(overlay);
+    } else {
+      overlay._map.removeLayer(overlay);
+    }
+  },
+
+  // Based on https://github.com/publiclab/mapknitter/blob/8d94132c81b3040ae0d0b4627e685ff75275b416/app/assets/javascripts/mapknitter/Map.js#L47-L82
+  _getExport: function() {
+    var map = this._overlay._map;
+    var overlay = this._overlay;
+
+    if (!this.hasTool(L.ExportAction)) {
+      return;
+    }
+
+    // make a new image
+    var downloadable = new Image();
+
+    downloadable.id = downloadable.id || 'tempId12345';
+    $('body').append(downloadable);
+
+    downloadable.onload = function onLoadDownloadableImage() {
+      var height = downloadable.height;
+      var width = downloadable.width;
+      var nw = map.latLngToLayerPoint(overlay.getCorner(0));
+      var ne = map.latLngToLayerPoint(overlay.getCorner(1));
+      var sw = map.latLngToLayerPoint(overlay.getCorner(2));
+      var se = map.latLngToLayerPoint(overlay.getCorner(3));
+
+      // I think this is to move the image to the upper left corner,
+      // eslint-disable-next-line max-len
+      // jywarren: i think we may need these or the image goes off the edge of the canvas
+      // jywarren: but these seem to break the distortion math...
+
+      // jywarren: i think it should be rejiggered so it
+      // finds the most negative values of x and y and then
+      // adds those to all coordinates
+
+      // nw.x -= nw.x;
+      // ne.x -= nw.x;
+      // se.x -= nw.x;
+      // sw.x -= nw.x;
+
+      // nw.y -= nw.y;
+      // ne.y -= nw.y;
+      // se.y -= nw.y;
+      // sw.y -= nw.y;
+
+      // run once warping is complete
+      downloadable.onload = function() {
+        $(downloadable).remove();
+      };
+
+      if (window && window.hasOwnProperty('warpWebGl')) {
+        warpWebGl(
+            downloadable.id,
+            [0, 0, width, 0, width, height, 0, height],
+            [nw.x, nw.y, ne.x, ne.y, se.x, se.y, sw.x, sw.y],
+            true // trigger download
+        );
+      }
+    };
+
+    downloadable.src = overlay.options.fullResolutionSrc || overlay._image.src;
   },
 
   _sendUp: function() {
@@ -554,85 +633,6 @@ L.DistortableImage.Edit = L.Handler.extend({
         this.toolbar.setLatLng(raisedPoint);
       }
     }
-  },
-
-  _removeOverlay: function() {
-    var overlay = this._overlay;
-    var map = overlay._map;
-    var eP = this.parentGroup;
-
-    if (this._mode === 'lock') { return; }
-    // if (this._mode === 'lock' || !this.toolbar.hasDelete()) {
-    //   return;
-    // }
-
-    var choice = L.DomUtil.confirmDelete();
-    if (!choice) { return; }
-
-    this._removeToolbar();
-
-    if (eP) { eP.removeLayer(overlay); }
-    else { map.removeLayer(overlay); }
-  },
-
-  // Based on https://github.com/publiclab/mapknitter/blob/8d94132c81b3040ae0d0b4627e685ff75275b416/app/assets/javascripts/mapknitter/Map.js#L47-L82
-  _getExport: function() {
-    var overlay = this._overlay;
-    var map = overlay._map;
-
-    if (!this.toolbar.hasExport()) {
-      return;
-    }
-
-    // make a new image
-    var downloadable = new Image();
-
-    downloadable.id = downloadable.id || 'tempId12345';
-    document.body.appendChild(downloadable);
-
-    downloadable.onload = function onLoadDownloadableImage() {
-      var height = downloadable.height;
-      var width = downloadable.width;
-      var nw = map.latLngToLayerPoint(overlay.getCorner(0));
-      var ne = map.latLngToLayerPoint(overlay.getCorner(1));
-      var sw = map.latLngToLayerPoint(overlay.getCorner(2));
-      var se = map.latLngToLayerPoint(overlay.getCorner(3));
-
-      // I think this is to move the image to the upper left corner,
-      // eslint-disable-next-line max-len
-      // jywarren: i think we may need these or the image goes off the edge of the canvas
-      // jywarren: but these seem to break the distortion math...
-
-      // jywarren: i think it should be rejiggered so it
-      // finds the most negative values of x and y and then
-      // adds those to all coordinates
-
-      // nw.x -= nw.x;
-      // ne.x -= nw.x;
-      // se.x -= nw.x;
-      // sw.x -= nw.x;
-
-      // nw.y -= nw.y;
-      // ne.y -= nw.y;
-      // se.y -= nw.y;
-      // sw.y -= nw.y;
-
-      // run once warping is complete
-      downloadable.onload = function() {
-        L.DomUtil.remove(downloadable);
-      };
-
-      if (window && window.hasOwnProperty('warpWebGl')) {
-        warpWebGl(
-            downloadable.id,
-            [0, 0, width, 0, width, height, 0, height],
-            [nw.x, nw.y, ne.x, ne.y, se.x, se.y, sw.x, sw.y],
-            true // trigger download
-        );
-      }
-    };
-
-    downloadable.src = overlay.options.fullResolutionSrc || overlay._image.src;
   },
 
   /**

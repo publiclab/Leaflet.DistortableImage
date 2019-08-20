@@ -1,19 +1,17 @@
 describe('L.DistortableImage.Edit', function() {
-  var map, overlay;
+  var map;
+  var overlay;
 
   beforeEach(function(done) {
-    map = L.map(L.DomUtil.create('div', '', document.body)).setView(
-      [41.7896, -87.5996],
-      15
-    );
+    map = L.map(L.DomUtil.create('div', '', document.body)).setView([41.7896, -87.5996], 15);
 
     overlay = L.distortableImageOverlay('/examples/example.png', {
       corners: [
         L.latLng(41.7934, -87.6052),
         L.latLng(41.7934, -87.5852),
         L.latLng(41.7834, -87.5852),
-        L.latLng(41.7834, -87.6052)
-      ]
+        L.latLng(41.7834, -87.6052),
+      ],
     }).addTo(map);
 
     /* Forces the image to load before any tests are run. */
@@ -29,9 +27,9 @@ describe('L.DistortableImage.Edit', function() {
   });
 
   it('Should keep handles on the map in sync with the corners of the image.', function() {
-    var corners = overlay.getCorners(),
-        edit = overlay.editing,
-        img = overlay.getElement();
+    var corners = overlay.getCorners();
+    var edit = overlay.editing;
+    var img = overlay.getElement();
 
     edit.enable();
     // this test applies to a selected image
@@ -52,59 +50,59 @@ describe('L.DistortableImage.Edit', function() {
     });
   });
 
-	describe('#_deselect', function () {
-		it('It should hide an unlocked image\'s handles by updating their opacity', function () {
-			var edit = overlay.editing;
+  describe('#_deselect', function() {
+    it('It should hide an unlocked image\'s handles by updating their opacity', function() {
+      var edit = overlay.editing;
 
-			edit.enable();
-			// then trigger _deselect
-			map.fire('click');
+      edit.enable();
+      // then trigger _deselect
+      map.fire('click');
 
-			var handleState = [];
-			edit._handles['distort'].eachLayer(function (handle) {
-				handleState.push(handle._icon.style.opacity)
-			});
+      var handleState = [];
+      edit._handles['distort'].eachLayer(function(handle) {
+        handleState.push(handle._icon.style.opacity);
+      });
 
-			expect(handleState).to.deep.equal(['0', '0', '0', '0']);
-		});
+      expect(handleState).to.deep.equal(['0', '0', '0', '0']);
+    });
 
-		it('But it should not hide a locked image\'s handles', function () {
-			var edit = overlay.editing;
+    it('But it should not hide a locked image\'s handles', function() {
+      var edit = overlay.editing;
 
-			edit.enable();
-			// switch to lock handles 
-			edit._toggleLock();
-			// then trigger _deselect
-			map.fire('click');
+      edit.enable();
+      // switch to lock handles
+      edit._toggleLock();
+      // then trigger _deselect
+      map.fire('click');
 
-			var lockHandleState = [];
-			edit._handles['lock'].eachLayer(function (handle) {
-				lockHandleState.push(handle._icon.style.opacity)
-			});
+      var lockHandleState = [];
+      edit._handles['lock'].eachLayer(function(handle) {
+        lockHandleState.push(handle._icon.style.opacity);
+      });
 
-			// opacity for lockHandles is unset because we never altered it to hide it as part of deselection
-			expect(lockHandleState).to.deep.equal(['', '', '', '']);
-		});
+      // opacity for lockHandles is unset because we never altered it to hide it as part of deselection
+      expect(lockHandleState).to.deep.equal(['', '', '', '']);
+    });
 
-		it('Should remove an image\'s individual toolbar instance regardless of lock handles', function () {
-			var edit = overlay.editing,
-				img = overlay.getElement();
+    it('Should remove an image\'s individual toolbar instance regardless of lock handles', function() {
+      var edit = overlay.editing;
+      var img = overlay.getElement();
 
-			edit.enable();
-			// switch to lock handles
-			edit._toggleLock();
-			// select the image to initially create its individual toolbar instance
-			chai.simulateEvent(img, chai.mouseEvents.Click);
+      edit.enable();
+      // switch to lock handles
+      edit._toggleLock();
+      // select the image to initially create its individual toolbar instance
+      chai.simulateEvent(img, chai.mouseEvents.Click);
 
-			expect(edit.toolbar).to.not.be.false
+      expect(edit.toolbar).to.not.be.false;
 
-			// then trigger _deselect
-			map.fire('click');
+      // then trigger _deselect
+      map.fire('click');
 
-			// we deselect after 3ms to confirm the click wasn't a dblclick
-			setTimeout(function() {
-				expect(edit.toolbar).to.be.false;
-			}, 3000);
-		});
-	});
+      // we deselect after 3ms to confirm the click wasn't a dblclick
+      setTimeout(function() {
+        expect(edit.toolbar).to.be.false;
+      }, 3000);
+    });
+  });
 });
