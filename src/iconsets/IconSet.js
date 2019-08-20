@@ -1,4 +1,5 @@
-/** this is the baseclass other IconSets inherit from, we don't use it directly */
+/* this is the baseclass other IconSets inherit from,
+* we don't use it directly */
 L.IconSet = L.Class.extend({
 
   _svg: '<svg xmlns="http://www.w3.org/2000/svg">',
@@ -11,6 +12,6 @@ L.IconSet = L.Class.extend({
   },
 
   addSymbols: function(symbols) {
-    this._svg += symbols; 
+    this._svg += symbols;
   },
 });

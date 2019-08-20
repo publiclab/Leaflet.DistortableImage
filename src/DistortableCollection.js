@@ -36,13 +36,14 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var layer = e.layer;
 
     L.DomEvent.on(layer, {
-      dragstart: this._dragStartMultiple, 
-      drag: this._dragMultiple
+      dragstart: this._dragStartMultiple,
+      drag: this._dragMultiple,
     }, this);
 
     L.DomEvent.on(layer._image, {
       mousedown: this._deselectOthers,
-      contextmenu: this._longPressMultiSelect  /* Enable longpress for multi select for touch devices. */
+      /* Enable longpress for multi select for touch devices. */
+      contextmenu: this._longPressMultiSelect,
     }, this);
   },
 
@@ -51,12 +52,12 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     L.DomEvent.off(layer, {
       dragstart: this._dragStartMultiple,
-      drag: this._dragMultiple
+      drag: this._dragMultiple,
     }, this);
 
     L.DomEvent.off(layer._image, {
       mousedown: this._deselectOthers,
-      contextmenu: this._longPressMultiSelect
+      contextmenu: this._longPressMultiSelect,
     }, this);
   },
 
@@ -163,8 +164,8 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   _calcCollectionFromPoints: function(cpd, overlay) {
-    var layersToMove = [],
-      p = new L.Transformation(1, -cpd.x, 1, -cpd.y);
+    var layersToMove = [];
+    var p = new L.Transformation(1, -cpd.x, 1, -cpd.y);
 
     this.eachLayer(function(layer) {
       if (
@@ -187,7 +188,8 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   /**
-   * cpd === cornerPointDelta
+   * @param {number} cpd (=== cornerPointDelta)
+   * @param {object} overlay
    */
   _updateCollectionFromPoints: function(cpd, overlay) {
     var layersToMove = this._calcCollectionFromPoints(cpd, overlay);
@@ -214,10 +216,10 @@ L.DistortableCollection = L.FeatureGroup.extend({
         var filename = sections[sections.length-1];
         var zc = layer.getCorners();
         var corners = [
-          { lat: zc[0].lat, lon: zc[0].lng },
-          { lat: zc[1].lat, lon: zc[1].lng },
-          { lat: zc[3].lat, lon: zc[3].lng },
-          { lat: zc[2].lat, lon: zc[2].lng }
+          {lat: zc[0].lat, lon: zc[0].lng},
+          {lat: zc[1].lat, lon: zc[1].lng},
+          {lat: zc[3].lat, lon: zc[3].lng},
+          {lat: zc[2].lat, lon: zc[2].lng},
         ];
         json.images.push({
           id: this.getLayerId(layer),
@@ -226,7 +228,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
           height: layer._image.height,
           image_file_name: filename,
           nodes: corners,
-          cm_per_pixel: L.ImageUtil.getCmPerPixel(layer)
+          cm_per_pixel: L.ImageUtil.getCmPerPixel(layer),
         });
       }
     }, this);
