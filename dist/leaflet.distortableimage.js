@@ -3166,13 +3166,15 @@ L.Map.include({
       labels: true,
       labelOpacity: 0,
       mutantOpacity: 0.8,
-      maxZoom: 18
+      maxZoom: 18,
+      minZoom: 0
     }, opts);
 
     if (opts.maxZoom > 21) { opts.maxZoom = 18; }
 
     this._googleMutant = L.tileLayer('http://mt0.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
       maxZoom: opts.maxZoom,
+      minZoom: opts.minZoom,
       opacity: opts.mutantOpacity
     }).addTo(this);
 
@@ -3192,6 +3194,7 @@ L.Map.include({
       interactive: false,
       opacity: opts.labelOpacity,
       maxZoom: opts.maxZoom,
+      minZoom: opts.minZoom,
       ext: 'png'
     }).addTo(this);
 

@@ -278,77 +278,60 @@ Currently it supports multiple image selection and translations, and WIP we are 
 2. Or <kbd>shift</kbd> + `drag` to use our `BoxSelector` handler to select multiple at once.
 3. Or for touch devices, `touch` + `hold` (aka `longpress`).
 
-**How to un-multi-select:**
+**un-multi-select:**
 
 * In order to return to the single-image interface, where each `L.popup` toolbar only applies actions on the image it's attached to, you must toggle *all* images out of multi-select or...
 * ...Click on the map or hit the <kbd>esc</kbd> key to quickly deselect all images.
 * For the aforementioned 3 mutli-select methods, the `BoxSelector` method is the only one that doesn't also toggle _out_ of multi-select mode.
 
-<hr>
+---
 
 ## Toolbar Actions (& Keybindings)
 
-<hr>
+---
 
 ### Single Image Interface
 
-<hr>
+---
 
 Defaults:
 
 * **ToggleLock (<kbd>l</kbd>)**
-
-  * Toggles between [lock mode](#lock) and [distort mode](#distort-(_default_)).
-
+  * Toggles between `lock` mode and `distort` mode.
 * **ToggleRotateScale (<kbd>r</kbd>, <kbd>d</kbd>)**
-
-  * Toggles between [rotateScale](#rotateScale) and [distort mode](#distort-(_default_)).
-
+  * Toggles between `rotateScale` and `distort` mode.
 * **ToggleOrder (<kbd>j</kbd>, <kbd>k</kbd>)**
-
   * If you have multiple images, use this to switch an individual image's overlap back and forth into view. Employs [`bringToFront()`](https://leafletjs.com/reference-1.5.0.html\#imageoverlay-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.5.0.html#imageoverlay-bringtoback) from the Leaflet API.
-
 * **ToggleOutline (<kbd>o</kbd>)**
 * **ToggleTransparency (<kbd>t</kbd>)**
 * **Revert**
-
   * Restores the image to its original proportions and scale, but keeps its current rotation angle and location on the map intact.
-
 * **Export**
 * **Delete (<kbd>delete</kbd>, <kbd>backscpace</kbd>)**
-
   * Permanently deletes the image from the map.
 
  Addons:
 
 * **ToggleRotate** (<kbd>caps lock</kbd>):
-
-  * Toggles between [rotate mode](#rotate) and [distort mode](#distort-(_default_)).
+  * Toggles between `rotate` mode and `distort` mode.
   * Replaced as a default toolbar action by `ToggleRotateScale`, but still accessible via its hotkey, `mode`, and (WIP) custom toolbar actions API.
-
 * **ToggleScale** (<kbd>s</kbd>):
-
-  * Toggles between [scale mode](#scale) and [distort mode](#distort-(_default_)).
+  * Toggles between `scale` mode and `distort` mode.
   * Replaced as a default toolbar action by `ToggleRotateScale`, but still accessible via its hotkey, `mode`, and (WIP) custom toolbar actions API.
-
 * **EnableEXIF (WIP)**
 
-<hr>
+---
 
 ### Multiple Image Interface
 
-<hr>
+---
 
 Defaults:
 
 * **Exports**
-
 * **Deletes (<kbd>delete</kbd>, <kbd>backspace</kbd>)**
-
   * Permanently deletes groups of selected images from the map. Uses a `confirm()` modal dialog.
-
 * **Locks** (<kbd>l</kbd>)
-
 * **Unlocks** (<kbd>u</kbd>)
 
 ## Quick API Reference
@@ -359,7 +342,7 @@ Defaults:
 
 ---
 
-We have extended the classic Leaflet `L.Map` class to include a convenience method for this library:
+We have extended Leaflet's `L.Map` to include a convenience method for this library:
 
 <details><summary><code><b>addGoogleMutant(<i>opts?</i> &#60;Mutant options>)</b>: this</code></summary>
   <ul>
@@ -381,13 +364,36 @@ We have extended the classic Leaflet `L.Map` class to include a convenience meth
         </ul>
         <li><i>maxZoom</i>: &#60;number 0..21>, default: 18</li>
         <ul>
-          <li>Same as Leaflet's <code>L.TileLayer</code> <code>maxZoom</code> option, except has a maximum value of 21 because higher zoom levels will result in an error being thrown.</li>
-          <li>The mutant layer will appear blurry for zoom levels exceeding 18</li>
+          <li>Same as Leaflet's <code>L.TileLayer</code> <code>maxZoom</code> option, except has a maximum value of 21 because higher zoom levels on the mutant layer will result in an error being thrown.</li>
+          <li>The mutant layer will appear blurry for zoom levels exceeding 18.</li>
+        </ul>
+        <li><i>minZoom</i>: &#60;number 0..maxZoom>, default: 0</li>
+        <ul>
+          <li>Same as Leaflet's <code>L.TileLayer</code> <code>maxZoom</code> option</li>
         </ul>
       </ul>
     }</li>
   </ul>
 </details>
+<br>
+And the following handlers:
+<br><br>
+
+<details><summary><code><b>doubleClickLabels</b>: this</code></summary>
+  <ul>
+    <li>when location labels are added via <code>#addGoogleMutant</code>, this handler is enabled to allow toggling their visibility by double clicking on the map.</li>
+    <li>afterwards, can be enabled / disabled during runtime via <a href="https://leafletjs.com/reference-1.5.0.html#handler">Leaflet's Handler API</a>.</li>
+    <li>overrides the map's default <a href="https://leafletjs.com/reference-1.5.0.html#map-doubleclickzoom"><code>doubleClickZoom</code></a> handler when enabled.</li>
+  </ul>
+</details>
+
+<details><summary><code><b>boxSelector</b>: this</code></summary>
+  <ul>
+    <li>overrides the map's default <a href="https://leafletjs.com/reference-1.5.0.html#map-boxzoom"><code>boxZoom</code></a> handler.</li>
+    <li>allows multiple images to be selected when <kbd>shift</kbd> + <code>drag</code>ing on the map in the multiple-image inerface.</li>
+  </ul>
+</details>
+
 
 ---
 
@@ -463,20 +469,26 @@ A handler that holds the keybindings and toolbar API for an image instance. It i
 <blockquote><b>Note</b>: The main difference between the <code>enable</code> / <code>disable</code> runtime API and using the <code>editable</code> option during initialization is in runtime, neither individual image instaces nor the collection group get precedence over the other.</blockquote>
 
 <details><summary><code><b>enable()</b>: this</code></summary>
-<ul><li>Sets up the editing interface (makes the image interactive, adds markers and toolbar).</ul></li>
- <ul><li>Called internally by default (<a href="#editable">editable</a>), but unlike the option it can be used in runtime and is not ignored if there is a collection group. In fact...</ul></li>
- <ul><li>...An individual image can be enabled while the group is disabled. i.e. calling <code>img.editing.enable()</code> after <code>imgGroup.editing.disable()</code> is valid. In this case, the single image interface will be available on this image but not the multi-image interface.</ul></li>
+  <ul>
+    <li>Sets up the editing interface (makes the image interactive, adds markers and toolbar).</li>
+    <li>Called internally by default (<a href="#editable">editable</a>), but unlike the option it can be used in runtime and is not ignored if there is a collection group. In fact...</li>
+    <li>...An individual image can be enabled while the group is disabled. i.e. calling <code>img.editing.enable()</code> after <code>imgGroup.editing.disable()</code> is valid. In this case, the single image interface will be available on this image but not the multi-image interface.</li>
+  </ul>
 </details>
 
 <details><summary><code><b>disable()</b>: this</code></summary>
-<ul><li>Removes the editing interface (makes the image non-interactive, removes markers and toolbar).</ul></li>
-<ul><li>Called internally by default on image deletion.</ul></li>
-<ul><li>An individual image can be disabled while the group is enabled.</ul></li>
+  <ul>
+    <li>Removes the editing interface (makes the image non-interactive, removes markers and toolbar).</li>
+    <li>Called internally by default on image deletion.</li>
+    <li>An individual image can be disabled while the group is enabled.</li>
+  </ul>
 </details>
 
 <details><summary><code><b>enabled()</b>: Boolean</code></summary>
-<ul><li>Returns true if editing on the individual image instance is enabled.</ul></li>
-<ul><li><code>img.editing.enabled()</code></ul></li>
+  <ul>
+    <li>Returns true if editing on the individual image instance is enabled.</li>
+    <li><code>img.editing.enabled()</code></li>
+  </ul>
 </details>
 
 ---
@@ -484,11 +496,11 @@ A handler that holds the keybindings and toolbar API for an image instance. It i
 `L.DistortableCollection`
 
 <details><summary><code><b>isSelected(<i>img</i> &#60;DistortableImageOverlay>)</b>: Boolean</code></summary>
-<ul><li>Returns true if the passed <code>DistortableImageOverlay</code> instance is multi-selected, i.e. its underlying <code>HTMLImageElement</code> has a class containing "selected".</ul></li>
+<ul><li>Returns true if the passed <code>DistortableImageOverlay</code> instance is multi-selected, i.e. its underlying <code>HTMLImageElement</code> has a class containing "selected".</li></ul>
 </details>
 
 <details><summary><code><b>anySelected()</b>: Boolean</code></summary>
-<ul><li>Returns true if any <code>DistortableImageOverlay</code> instances are mutli-selected.</ul></li>
+<ul><li>Returns true if any <code>DistortableImageOverlay</code> instances are mutli-selected.</li></ul>
 </details>
 
 ---
@@ -500,33 +512,41 @@ A handler that holds the keybindings and toolbar API for an image instance. It i
 Same as `L.DistortableImage.Edit` but for the collection (`L.DistortableCollection`) instance.
 
 <details><summary><code><b>enable()</b>: this</code></summary>
-<ul><li>Sets up the multi-editing interface.</ul></li>
-<ul><li>Called internally by default, see <a href="#editable"> editable</a>.</ul></li>
-<ul><li>Calls each individual image's <code>#enable</code> method and then enables the multi-image interface.</ul></li>
+  <ul>
+    <li>Sets up the multi-editing interface.</li>
+    <li>Called internally by default, see <a href="#editable"> editable</a>.</li>
+    <li>Calls each individual image's <code>#enable</code> method and then enables the multi-image interface.</li>
+  </ul>
 </details>
 
 <details><summary><code><b>disable()</b>: this</code></summary>
-<ul><li>Removes the editing interface (makes the image non-interactive, removes markers and toolbar).</ul></li>
-<ul><li>Called internally by default on image group deletion, but can also be used for custom behavior.</ul></li>
-<ul><li>Calls each individual image's <code>#disable</code> method and disables the multi-image interface.</ul></li>
+  <ul>
+    <li>Removes the editing interface (makes the image non-interactive, removes markers and toolbar).</li>
+    <li>Called internally by default on image group deletion, but can also be used for custom behavior.</li>
+    <li>Calls each individual image's <code>#disable</code> method and disables the multi-image interface.</li>
+  </ul>
 </details>
 
 <details><summary><code><b>enabled()</b>: Boolean</code></summary>
-<ul><li>Returns true if editing on the collection instance is enabled.</ul></li>
-<ul><li><code>imgGroup.editing.enabled()</code></ul></li>
+  <ul>
+    <li>Returns true if editing on the collection instance is enabled.</li>
+    <li><code>imgGroup.editing.enabled()</code></li>
+  </ul>
 </details>
 
-<details><summary><code><b>removeTool(action)</b></code></summary>
-<ul><li>Removes the passed tool from the control toolbar in runtime.</ul></li>
-<ul><li>ex: <code>imgGroup.removeTool(Deletes)</code></ul></li>
+<details><summary><code><b>removeTool(<i>action</i> &#60;EditAction>)</b></code></summary>
+  <ul>
+    <li>Removes the passed tool from the control toolbar in runtime.</li>
+    <li>ex: <code>imgGroup.removeTool(Deletes)</code></li>
+  </ul>
 </details>
 
-<details><summary><code><b>addTool(action)</b></code></summary>
-<ul><li>Adds the passed tool to the end of the control toolbar in runtime. Returns false if the tool is not available or is already present.</ul></li>
+<details><summary><code><b>addTool(<i>action</i> &#60;EditAction>)</b></code></summary>
+<ul><li>Adds the passed tool to the end of the control toolbar in runtime. Returns false if the tool is not available or is already present.</li></ul>
 </details>
 
-<details><summary><code><b>hasTool(action)</b>: Boolean</code></summary>
-<ul><li>Checks if the tool is already present in the currently rendered control toolbar.</ul></li>
+<details><summary><code><b>hasTool(<i>action</i> &#60;EditAction>)</b>: Boolean</code></summary>
+<ul><li>Checks if the tool is already present in the currently rendered control toolbar.</li></ul>
 </details>
 
 ## Additional Components
