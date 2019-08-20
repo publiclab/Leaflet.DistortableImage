@@ -11,6 +11,6 @@ L.TrigUtil = {
 
   degreesToRadians: function(angle) {
     return angle * Math.PI / 180;
-  }
+  },
 
 };

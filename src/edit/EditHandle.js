@@ -1,16 +1,15 @@
 L.EditHandle = L.Marker.extend({
   initialize: function(overlay, corner, options) {
-    var markerOptions,
-      latlng = overlay.getCorner(corner);
+    var latlng = overlay.getCorner(corner);
 
     L.setOptions(this, options);
 
     this._handled = overlay;
     this._corner = corner;
 
-    markerOptions = {
+    var markerOptions = {
       draggable: true,
-      zIndexOffset: 10
+      zIndexOffset: 10,
     };
 
     if (options && options.hasOwnProperty('draggable')) {
@@ -30,15 +29,15 @@ L.EditHandle = L.Marker.extend({
   onRemove: function(map) {
     this._unbindListeners();
     L.Marker.prototype.onRemove.call(this, map);
-	},
-	
+  },
+
   _onHandleDragStart: function() {
-		this._handled.fire('editstart');
+    this._handled.fire('editstart');
   },
 
   _onHandleDragEnd: function() {
     this._fireEdit();
-	},
+  },
 
   _fireEdit: function() {
     this._handled.edited = true;
@@ -47,12 +46,12 @@ L.EditHandle = L.Marker.extend({
 
   _bindListeners: function() {
     this.on(
-      {
-        dragstart: this._onHandleDragStart,
-        drag: this._onHandleDrag,
-        dragend: this._onHandleDragEnd
-      },
-      this
+        {
+          dragstart: this._onHandleDragStart,
+          drag: this._onHandleDrag,
+          dragend: this._onHandleDragEnd,
+        },
+        this
     );
 
     this._handled._map.on('zoomend', this.updateHandle, this);
@@ -62,52 +61,57 @@ L.EditHandle = L.Marker.extend({
 
   _unbindListeners: function() {
     this.off(
-      {
-        dragstart: this._onHandleDragStart,
-        drag: this._onHandleDrag,
-        dragend: this._onHandleDragEnd
-      },
-      this
+        {
+          dragstart: this._onHandleDragStart,
+          drag: this._onHandleDrag,
+          dragend: this._onHandleDragEnd,
+        },
+        this
     );
 
     this._handled._map.off('zoomend', this.updateHandle, this);
     this._handled.off('update', this.updateHandle, this);
   },
 
- /* Takes two latlngs and calculates the scaling difference. */
+  /* Takes two latlngs and calculates the scaling difference. */
   _calculateScalingFactor: function(latlngA, latlngB) {
-     var overlay = this._handled,
-       map = overlay._map,
+    var overlay = this._handled;
+    var map = overlay._map;
 
-       centerPoint = map.latLngToLayerPoint(overlay.getCenter()),
-       formerPoint = map.latLngToLayerPoint(latlngA),
-       newPoint = map.latLngToLayerPoint(latlngB),
-       formerRadiusSquared = this._d2(centerPoint, formerPoint),
-       newRadiusSquared = this._d2(centerPoint, newPoint);
+    var centerPoint = map.latLngToLayerPoint(overlay.getCenter());
+    var formerPoint = map.latLngToLayerPoint(latlngA);
+    var newPoint = map.latLngToLayerPoint(latlngB);
+    var formerRadiusSquared = this._d2(centerPoint, formerPoint);
+    var newRadiusSquared = this._d2(centerPoint, newPoint);
 
     return Math.sqrt(newRadiusSquared / formerRadiusSquared);
   },
 
- /* Distance between two points in cartesian space, squared (distance formula). */
+  /* Distance between two points in cartesian space,
+  * squared (distance formula). */
   _d2: function(a, b) {
-      var dx = a.x - b.x,
-          dy = a.y - b.y;
+    var dx = a.x - b.x;
+    var dy = a.y - b.y;
 
-      return Math.pow(dx, 2) + Math.pow(dy, 2);
+    return Math.pow(dx, 2) + Math.pow(dy, 2);
   },
 
- /* Takes two latlngs and calculates the angle between them. */
-	calculateAngleDelta: function(latlngA, latlngB) {
-    var overlay = this._handled,
-      map = overlay._map,
+  /* Takes two latlngs and calculates the angle between them. */
+  calculateAngleDelta: function(latlngA, latlngB) {
+    var overlay = this._handled;
+    var map = overlay._map;
 
-			centerPoint = map.latLngToLayerPoint(overlay.getCenter()),
-			formerPoint = map.latLngToLayerPoint(latlngA),
-			newPoint = map.latLngToLayerPoint(latlngB),
+    var centerPoint = map.latLngToLayerPoint(overlay.getCenter());
+    var formerPoint = map.latLngToLayerPoint(latlngA);
+    var newPoint = map.latLngToLayerPoint(latlngB);
 
-			initialAngle = Math.atan2(centerPoint.y - formerPoint.y, centerPoint.x - formerPoint.x),
-			newAngle = Math.atan2(centerPoint.y - newPoint.y, centerPoint.x - newPoint.x);
+    var initialAngle = Math.
+        atan2(
+            centerPoint.y - formerPoint.y, centerPoint.x - formerPoint.x);
+    var newAngle = Math.
+        atan2(
+            centerPoint.y - newPoint.y, centerPoint.x - newPoint.x);
 
-		return newAngle - initialAngle;
-	}
+    return newAngle - initialAngle;
+  },
 });
