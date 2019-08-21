@@ -71,7 +71,7 @@ describe('L.DistortableImage.Edit', function() {
 
       edit.enable();
       // switch to lock handles
-      edit._toggleLock();
+      edit._toggleLockMode();
       // then trigger _deselect
       map.fire('click');
 
@@ -90,7 +90,7 @@ describe('L.DistortableImage.Edit', function() {
 
       edit.enable();
       // switch to lock handles
-      edit._toggleLock();
+      edit._toggleLockMode();
       // select the image to initially create its individual toolbar instance
       chai.simulateEvent(img, chai.mouseEvents.Click);
 
@@ -100,9 +100,11 @@ describe('L.DistortableImage.Edit', function() {
       map.fire('click');
 
       // we deselect after 3ms to confirm the click wasn't a dblclick
-      setTimeout(function() {
-        expect(edit.toolbar).to.be.false;
-      }, 3000);
+      // setTimeout(function() {
+      //   expect(edit.toolbar).to.be.false;
+      // }, 3000);
+
+      expect(edit.toolbar).to.be.false;
     });
   });
 });
