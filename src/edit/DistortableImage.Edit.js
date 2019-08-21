@@ -53,12 +53,11 @@ L.DistortableImage.Edit = L.Handler.extend({
     // custom event fired from DoubleClickLabels.js
     L.DomEvent.on(map, 'singleclick', this._singleClick , this);
 
-    L.DomEvent.on(overlay._image, 'click', this._select, this);
-    // we only want to show labels on map dblclick - leave img dblclick open to something else
-    // if adding a method don't forget to attach the stop.
-    L.DomEvent.on(overlay._image, 'dblclick', L.DomEvent.stop, this);
+    L.DomEvent.on(overlay._image, {
+      click: this._select,
+      dblclick: this._nextMode
+    }, this);
 
-    /* Enable hotkeys. */
     L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
   },
 
@@ -103,9 +102,9 @@ L.DistortableImage.Edit = L.Handler.extend({
     L.DomEvent.off(map, 'singleclick', this._singleClick, this);
     L.DomEvent.off(overlay._image, {
       click: this._select,
-      dblclick: L.DomEvent.stop
+      dblclick: this._nextMode
     }, this);
-    /* Disable hotkeys. */
+
     L.DomEvent.off(window, 'keydown', this._onKeyDown, this);
   },
 
@@ -627,5 +626,16 @@ L.DistortableImage.Edit = L.Handler.extend({
     // }
     // this.hidden = false;
     // this.setOpacity(1);
+  },
+
+  /** 
+    * need to attach a stop to img dblclick or it will propogate to
+    * the map and fire the handler that shows map location labels on map dblclick.
+    */
+  _nextMode: function(e) {
+    this._enableDragging();
+    this.enable();
+    this._toggleRotateScale();
+    L.DomEvent.stop(e);
   },
 });
