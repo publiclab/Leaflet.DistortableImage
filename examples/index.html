@@ -35,7 +35,7 @@
     (function() {
       
       map = L.map('map').setView([51.505, -0.09], 13);
-      map.addGoogleMutant({labels: true, opacity: 1, minZoom: 5, labelOpacity: 0});
+      map.addGoogleMutant();
 
       map.whenReady(function () {
         img = L.distortableImageOverlay("example.jpg", {
