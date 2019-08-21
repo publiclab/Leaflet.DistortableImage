@@ -3,7 +3,7 @@ describe('L.DistortableImageOverlay', function() {
 
   beforeEach(function(done) {
     var mapContainer = L.DomUtil.create('div', '', document.body),
-      fullSize = [document.querySelector('html'), document.body, mapContainer];
+        fullSize = [document.querySelector('html'), document.body, mapContainer];
 
     map = L.map(mapContainer).setView([41.7896, -87.5996], 15);
 
@@ -54,36 +54,27 @@ describe('L.DistortableImageOverlay', function() {
   describe('#scaleBy', function() {
     it('Should not change image dimensions when passed a value of 1 or 0', function() {
       var img = overlay.getElement(),
-        dims = [
-          img.getBoundingClientRect().width,
-          img.getBoundingClientRect().height
-        ];
+          dims = [img.getBoundingClientRect().width, img.getBoundingClientRect().height];
 
       overlay.scaleBy(1);
 
-      var scaledDims = [
-        img.getBoundingClientRect().width,
-        img.getBoundingClientRect().height
-      ];
+      var scaledDims = [img.getBoundingClientRect().width, img.getBoundingClientRect().height];
       expect(dims).to.be.eql(scaledDims);
 
       overlay.scaleBy(0);
 
-      var scaledDims2 = [
-        img.getBoundingClientRect().width,
-        img.getBoundingClientRect().height
-      ];
+      var scaledDims2 = [img.getBoundingClientRect().width, img.getBoundingClientRect().height];
       expect(dims).to.be.eql(scaledDims2);
     });
 
     it('Should invert image dimensions when passed a negative value', function() {
       var c2 = overlay.getCorner(2),
-        c3 = overlay.getCorner(3);
+          c3 = overlay.getCorner(3);
 
       overlay.scaleBy(-1);
 
       var scaledC = overlay.getCorner(0),
-        scaledC1 = overlay.getCorner(1);
+          scaledC1 = overlay.getCorner(1);
 
       expect(Math.round(scaledC.lat)).to.equal(Math.round(c3.lat));
       expect(Math.round(scaledC.lng)).to.equal(Math.round(c3.lng));

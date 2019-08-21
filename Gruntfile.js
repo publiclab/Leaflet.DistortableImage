@@ -39,24 +39,24 @@ module.exports = function(grunt) {
           afterEach: false,
           chai: false,
           expect: false,
-          sinon: false,
-        },
+          sinon: false
+        }
       },
       source: {
-        src: ['src/**/*.js', 'package.json'],
+        src: ['src/**/*.js', 'package.json']
       },
       grunt: {
-        src: ['Gruntfile.js'],
-      },
+        src: ['Gruntfile.js']
+      }
     },
 
     karma: {
       development: {
-        configFile: 'test/karma.conf.js',
+        configFile: 'test/karma.conf.js'
       },
       test: {
-        configFile: 'test/karma.conf.js',
-      },
+        configFile: 'test/karma.conf.js'
+      }
     },
 
     // Minify SVGs from svg directory, output to svg-min
@@ -68,22 +68,22 @@ module.exports = function(grunt) {
             cwd: 'assets/icons/svg',
             src: ['*.svg'],
             dest: 'assets/icons/svg-min/',
-            ext: '.svg',
-          },
-        ],
+            ext: '.svg'
+          }
+        ]
       },
       options: {
         plugins: [
-          {removeViewBox: false},
-          {removeEmptyAttrs: false},
-          {removeTitle: true}, // "leaflet-toolbar" lets us specify the title attribute later
+          { removeViewBox: false },
+          { removeEmptyAttrs: false },
+          { removeTitle: true }, // "leaflet-toolbar" lets us specify the title attribute later
           {
             removeAttrs: {
-              attrs: ['xmlns', 'fill'],
-            },
-          },
-        ],
-      },
+              attrs: ['xmlns', 'fill']
+            }
+          }
+        ]
+      }
     },
 
     svg_sprite: {
@@ -100,21 +100,21 @@ module.exports = function(grunt) {
           mode: {
             symbol: {
               sprite: 'sprite.symbol.svg',
-              example: true,
-            },
-          },
-        },
-      },
+              example: true
+            }
+          }
+        }
+      }
     },
 
     watch: {
       options: {
-        livereload: true,
+        livereload: true
       },
       source: {
         files: ['src/**/*.js', 'test/**/*.js', 'Gruntfile.js'],
-        tasks: ['build:js'],
-      },
+        tasks: ['build:js']
+      }
     },
 
     concat: {
@@ -140,7 +140,7 @@ module.exports = function(grunt) {
           'src/edit/DistortableImage.Edit.js',
           'src/edit/DistortableCollection.Edit.js',
           'src/components/DistortableImage.Keymapper.js',
-          'src/edit/BoxSelector.js'
+          'src/mapmixins/*.js'
         ],
         dest: 'dist/leaflet.distortableimage.js'
       }

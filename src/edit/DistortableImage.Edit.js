@@ -49,8 +49,25 @@ L.DistortableImage.Edit = L.Handler.extend({
       3: L.point(0, 0),
     };
 
-    L.DomEvent.on(map, 'click', this._deselect, this);
-    L.DomEvent.on(overlay._image, 'click', this._select, this);
+    /** 
+     * custom events fired from DoubleClickLabels.js. Used to differentiate
+     * single / dblclick to not deselect images on map dblclick.
+     */
+    if (map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled()) {
+      L.DomEvent.on(map, 'singleclick', this._singleClick, this);
+    } else {
+      L.DomEvent.on(map, 'click', this._deselect, this);
+    }
+
+    L.DomEvent.on(map, {
+      singleclickon: this._singleClickListeners,
+      singleclickoff: this._resetClickListeners,
+    }, this);
+
+    L.DomEvent.on(overlay._image, {
+      click: this._select,
+      dblclick: this._nextMode
+    }, this);
 
     L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
   },
@@ -61,21 +78,12 @@ L.DistortableImage.Edit = L.Handler.extend({
         map = overlay._map,
         eventParents = overlay._eventParents;
 
-    L.DomEvent.off(map, 'click', this._deselect, this);
-    L.DomEvent.off(overlay._image, 'click', this._select, this);
-
     // First, check if dragging exists - it may be off due to locking
-    if (this.dragging) {
-      this.dragging.disable();
-    }
+    if (this.dragging) { this.dragging.disable(); }
     delete this.dragging;
 
-    if (this.toolbar) {
-      this._removeToolbar();
-    }
-    if (this.editing) {
-      this.editing.disable();
-    }
+    if (this.toolbar) { this._removeToolbar(); }
+    if (this.editing) { this.editing.disable(); }
 
     map.removeLayer(this._handles[this._mode]);
 
@@ -95,6 +103,22 @@ L.DistortableImage.Edit = L.Handler.extend({
         }
       }
     }
+
+    if (map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled()) {
+      L.DomEvent.off(map, 'singleclick', this._singleClick, this);
+    } else {
+      L.DomEvent.off(map, 'click', this._deselect, this);
+    }
+
+    L.DomEvent.off(map, {
+      singleclickon: this._singleClickListeners,
+      singleclickoff: this._resetClickListeners,
+    }, this);
+
+    L.DomEvent.off(overlay._image, {
+      click: this._select,
+      dblclick: this._nextMode
+    }, this);
 
     L.DomEvent.off(window, 'keydown', this._onKeyDown, this);
   },
@@ -154,9 +178,9 @@ L.DistortableImage.Edit = L.Handler.extend({
     };
   },
 
-  _appendHandlesandDragable: function(mode) {
-    var overlay = this._overlay;
-    var map = overlay._map;
+  _appendHandlesandDragable: function (mode) {
+    var overlay = this._overlay,
+        map = overlay._map;
 
     map.addLayer(this._handles[mode]);
 
@@ -240,7 +264,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _removeToolbar: function() {
     var overlay = this._overlay,
-      map = overlay._map;
+        map = overlay._map;
 
     if (this.toolbar) {
       map.removeLayer(this.toolbar);
@@ -289,14 +313,11 @@ L.DistortableImage.Edit = L.Handler.extend({
   _toggleRotateScale: function() {
     var map = this._overlay._map;
 
-    if (this._mode === 'lock') {
-      return;
-    }
+    if (this._mode === 'lock') { return; }
 
     map.removeLayer(this._handles[this._mode]);
 
-    /* Switch mode. */
-    if (this._mode === 'rotateScale') { this._mode = 'distort'; }
+    if (this._mode === 'rotateScale') { this._mode = 'distort'; } 
     else { this._mode = 'rotateScale'; }
 
     map.addLayer(this._handles[this._mode]);
@@ -307,17 +328,12 @@ L.DistortableImage.Edit = L.Handler.extend({
   _toggleScale: function() {
     var map = this._overlay._map;
 
-    if (this._mode === 'lock') {
-      return;
-    }
+    if (this._mode === 'lock') { return; }
 
     map.removeLayer(this._handles[this._mode]);
 
-    if (this._mode === 'scale') {
-      this._mode = 'distort';
-    } else {
-      this._mode = 'scale';
-    }
+    if (this._mode === 'scale') { this._mode = 'distort'; } 
+    else { this._mode = 'scale'; }
 
     map.addLayer(this._handles[this._mode]);
   },
@@ -325,9 +341,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   _toggleRotate: function() {
     var map = this._overlay._map;
 
-    if (this._mode === 'lock') {
-      return;
-    }
+    if (this._mode === 'lock') { return; }
 
     map.removeLayer(this._handles[this._mode]);
     if (this._mode === 'rotate') { this._mode = 'distort'; }
@@ -391,12 +405,31 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     map.removeLayer(this._handles[this._mode]);
 
-    if (this._mode === 'lock') { this._unlock();
-    } else { this._lock(); }
+    if (this._mode === 'lock') { this._unlock(); } 
+    else { this._lock(); }
 
     map.addLayer(this._handles[this._mode]);
 
     this._showToolbar();
+  },
+
+  _singleClick: function(e) {
+    if (e.deselect) { this._deselect(); } 
+    else { return; }
+  },
+
+  _singleClickListeners: function() {
+    var map = this._overlay._map;
+
+    L.DomEvent.on(map, 'singleclick', this._singleClick, this);
+    L.DomEvent.off(map, 'click', this._deselect, this);
+  },
+
+  _resetClickListeners: function () {
+    var map = this._overlay._map;
+
+    L.DomEvent.on(map, 'click', this._deselect, this);
+    L.DomEvent.off(map, 'singleclick', this._singleClick, this);
   },
 
   _select: function(e) {
@@ -416,9 +449,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _showMarkers: function() {
-    if (this._mode === 'lock') {
-      return;
-    }
+    if (this._mode === 'lock') { return; }
 
     if (this.toolbar && this.toolbar instanceof L.DistortableImage.PopupBar) {
       var currentHandle = this._handles[this._mode];
@@ -428,9 +459,7 @@ L.DistortableImage.Edit = L.Handler.extend({
         var opts = layer.options;
 
         layer.setOpacity(1);
-        if (drag) {
-          drag.enable();
-        }
+        if (drag) { drag.enable(); }
         if (opts.draggable) {
           opts.draggable = true;
         }
@@ -439,9 +468,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _hideMarkers: function() {
-    if (!this._handles) {
-      this._initHandles();
-    } // workaround for race condition w/ feature group
+    if (!this._handles) { this._initHandles(); } // workaround for race condition w/ feature group
 
     var mode = this._mode,
         currentHandle = this._handles[mode];
@@ -485,9 +512,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     var overlay = this._overlay,
         eventParents = overlay._eventParents;
 
-    if (overlay.options.suppressToolbar) {
-      return;
-    }
+    if (overlay.options.suppressToolbar) { return; }
 
     if (eventParents) {
       var eP = eventParents[Object.keys(eventParents)[0]];
@@ -533,14 +558,10 @@ L.DistortableImage.Edit = L.Handler.extend({
     var overlay = this._overlay,
         eventParents = overlay._eventParents;
 
-    if (this._mode === 'lock') {
-      return;
-    }
+    if (this._mode === 'lock') { return; }
 
     var choice = L.DomUtil.confirmDelete();
-    if (!choice) {
-      return;
-    }
+    if (!choice) { return; }
 
     this._removeToolbar();
 
@@ -635,5 +656,25 @@ L.DistortableImage.Edit = L.Handler.extend({
     // }
     // this.hidden = false;
     // this.setOpacity(1);
+  },
+
+  /** 
+    * need to attach a stop to img dblclick or it will propogate to
+    * the map and fire the handler that shows map location labels on map dblclick.
+    */
+  _nextMode: function(e) {
+    var overlay = this._overlay;
+    var eventParents = overlay._eventParents;
+
+    this._enableDragging();
+    this.enable();
+    this._toggleRotateScale();
+    if (eventParents) {
+      var eP = eventParents[Object.keys(eventParents)[0]];
+      if (eP && eP.anySelected()) {
+        this._deselect();
+      }
+    }
+    L.DomEvent.stop(e);
   },
 });

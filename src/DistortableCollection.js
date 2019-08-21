@@ -126,6 +126,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     this.eachLayer(function(layer) {
       var edit = layer.editing;
+
       edit._deselect();
 
       for (i = 0; i < 4; i++) {
@@ -164,8 +165,8 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   _calcCollectionFromPoints: function(cpd, overlay) {
-    var layersToMove = [];
-    var p = new L.Transformation(1, -cpd.x, 1, -cpd.y);
+    var layersToMove = [],
+        p = new L.Transformation(1, -cpd.x, 1, -cpd.y);
 
     this.eachLayer(function(layer) {
       if (

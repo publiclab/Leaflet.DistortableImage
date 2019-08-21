@@ -21,8 +21,15 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
     L.DomEvent.on(document, 'keydown', this._onKeyDown, this);
 
+    if (map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled()) {
+      L.DomEvent.on(map, 'singleclick', this._singleClick, this);
+    } else {
+      L.DomEvent.on(map, 'click', this._deselectAll, this);
+    }
+
     L.DomEvent.on(map, {
-      click: this._deselectAll,
+      singleclickon: this._singleClickListeners,
+      singleclickoff: this._resetClickListeners,
       boxzoomend: this._addSelections,
     }, this);
 
@@ -38,8 +45,15 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
     L.DomEvent.off(document, 'keydown', this._onKeyDown, this);
 
+    if (map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled()) {
+      L.DomEvent.off(map, 'singleclick', this._singleClick, this);
+    } else {
+      L.DomEvent.off(map, 'click', this._deselectAll, this);
+    }
+
     L.DomEvent.off(map, {
-      click: this._deselectAll,
+      singleclickon: this._singleClickListeners,
+      singleclickoff: this._resetClickListeners,
       boxzoomend: this._addSelections,
     }, this);
 
@@ -76,12 +90,29 @@ L.DistortableCollection.Edit = L.Handler.extend({
     }
   },
 
+  _singleClick: function (e) {
+    if (e.deselect) { this._deselectAll(e); } 
+    else { return; }
+  },
+
+  _singleClickListeners: function () {
+    var map = this._group._map;
+
+    L.DomEvent.on(map, 'singleclick', this._singleClick, this);
+    L.DomEvent.off(map, 'click', this._deselectAll, this);
+  },
+
+  _resetClickListeners: function () {
+    var map = this._group._map;
+
+    L.DomEvent.on(map, 'click', this._deselectAll, this);
+    L.DomEvent.off(map, 'singleclick', this._singleClick, this);
+  },
+
   _deselectAll: function(e) {
     var oe;
 
-    if (e) {
-      oe = e.originalEvent;
-    }
+    if (e) { oe = e.originalEvent; }
     /**
      * prevents image deselection following the 'boxzoomend' event - note 'shift' must not be released until dragging is complete
      * also prevents deselection following a click on a disabled img by differentiating it from the map
@@ -98,9 +129,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
     this._removeToolbar();
 
-    if (e) {
-      L.DomEvent.stopPropagation(e);
-    }
+    if (e) { L.DomEvent.stopPropagation(e); }
   },
 
   _unlockGroup: function() {
@@ -160,9 +189,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     var layersToRemove = this._group._toRemove();
     var n = layersToRemove.length;
 
-    if (n === 0) {
-      return;
-    }
+    if (n === 0) { return; }
 
     var choice = L.DomUtil.confirmDeletes(n);
 
@@ -175,9 +202,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
       }
     }
 
-    if (e) {
-      L.DomEvent.stopPropagation(e);
-    }
+    if (e) { L.DomEvent.stopPropagation(e); }
   },
 
   startExport: function(opts) {
