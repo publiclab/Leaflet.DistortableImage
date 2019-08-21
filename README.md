@@ -381,9 +381,9 @@ And the following custom handlers:
 
 <details><summary><code><b>doubleClickLabels</b>: this</code></summary>
   <ul>
-    <li>when location labels are added via <code>#addGoogleMutant</code>, this handler is enabled by defualt to allow toggling their visibility by double clicking on the map.</li>
+    <li>when location labels are added via <code>#addGoogleMutant</code>, this handler is enabled by default to allow toggling their visibility by double clicking on the map.</li>
     <li>afterwards, can be enabled / disabled during runtime via <a href="https://leafletjs.com/reference-1.5.0.html#handler">Leaflet's Handler API</a>.</li>
-    <li>overrides the map's default <a href="https://leafletjs.com/reference-1.5.0.html#map-doubleclickzoom"><code>doubleClickZoom</code></a> handler when enabled.</li>
+    <li>overrides the map's default <a href="https://leafletjs.com/reference-1.5.0.html#map-doubleclickzoom"><code>doubleClickZoom</code></a> handler when enabled. When disabled, automatically re-enables it.</li>
   </ul>
 </details>
 
@@ -398,13 +398,11 @@ We have made slight changes to a default Leaflet handler:
 <br><br>
 <details><summary><code><b>doubleClickZoom</b>: this</code></summary>
 <ul>
-  <li>Typically firing a <code>dblclick</code> on the map deselects any individually selected 
-  </li>
+  <li>This handler and <code>doubleClickLabels</code> time and fire a custom <code>singleclick</code> event on map click. It is fired after a 3ms timeout if the click doesn't become a doubleclick.</li>
+  <li>This allows our images to remain selected during associated double click events on the map (in this case zooming).</li>
+  <li>Our image classes listen for <code>singleclick</code> while either this or the other doubleClick handler is enabled.</li>
 </ul>
 </details>
-
-
-
 
 ---
 
