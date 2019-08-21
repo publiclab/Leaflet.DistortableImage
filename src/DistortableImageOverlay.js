@@ -14,7 +14,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
     this.edgeMinWidth = this.options.edgeMinWidth;
     this.editable = this.options.editable;
-    this.scale = 1;
     this._url = url;
     this.rotation = 0;
     // window.rotation = this.rotation;
