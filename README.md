@@ -376,12 +376,12 @@ We have extended Leaflet's `L.Map` to include a convenience method for this libr
   </ul>
 </details>
 <br>
-And the following handlers:
+And the following custom handlers:
 <br><br>
 
 <details><summary><code><b>doubleClickLabels</b>: this</code></summary>
   <ul>
-    <li>when location labels are added via <code>#addGoogleMutant</code>, this handler is enabled to allow toggling their visibility by double clicking on the map.</li>
+    <li>when location labels are added via <code>#addGoogleMutant</code>, this handler is enabled by defualt to allow toggling their visibility by double clicking on the map.</li>
     <li>afterwards, can be enabled / disabled during runtime via <a href="https://leafletjs.com/reference-1.5.0.html#handler">Leaflet's Handler API</a>.</li>
     <li>overrides the map's default <a href="https://leafletjs.com/reference-1.5.0.html#map-doubleclickzoom"><code>doubleClickZoom</code></a> handler when enabled.</li>
   </ul>
@@ -393,6 +393,18 @@ And the following handlers:
     <li>allows multiple images to be selected when <kbd>shift</kbd> + <code>drag</code>ing on the map in the multiple-image inerface.</li>
   </ul>
 </details>
+<br>
+We have made slight changes to a default Leaflet handler:
+<br><br>
+<details><summary><code><b>doubleClickZoom</b>: this</code></summary>
+<ul>
+  <li>
+  overrides the map's default <a href="https://leafletjs.com/reference-1.5.0.html#map-boxzoom"><code>boxZoom</code></a> handler.
+  </li>
+</ul>
+</details>
+
+
 
 
 ---
