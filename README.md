@@ -398,8 +398,7 @@ We have made slight changes to a default Leaflet handler:
 <br><br>
 <details><summary><code><b>doubleClickZoom</b>: this</code></summary>
 <ul>
-  <li>
-  overrides the map's default <a href="https://leafletjs.com/reference-1.5.0.html#map-boxzoom"><code>boxZoom</code></a> handler.
+  <li>Typically firing a <code>dblclick</code> on the map deselects any individually selected 
   </li>
 </ul>
 </details>
