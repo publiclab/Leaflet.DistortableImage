@@ -8,7 +8,7 @@ A Leaflet extension to distort images -- "rubbersheeting" -- for the [MapKnitter
 
 Advantages include:
 
-* It can handle over 100 images smoothly, even on a smartphone.
+* It can handle over 100 images smoothly, even on a smartphone
 * Images can be right-clicked and downloaded individually in their original state
 * CSS3 transforms are GPU-accelerated in most (all?) browsers, for a very smooth UI
 * No need to server-side generate raster GeoTiffs, tilesets, etc. in order to view distorted imagery layers
@@ -17,13 +17,7 @@ Advantages include:
 
 [Download as zip](https://github.com/publiclab/Leaflet.DistortableImage/releases) or clone the repo to get a local copy.
 
-Also available [on NPM](https://www.npmjs.com/package/leaflet-distortableimage) as `leaflet-distortableimage`
-
-The recommended Google satellite base layer can be integrated using this Leaflet plugin: https://gitlab.com/IvanSanchez/Leaflet.GridLayer.GoogleMutant
-
-Here's a screenshot:
-
-![screenshot](example.png)
+Also available on NPM as [leaflet-distortableimage](https://www.npmjs.com/package/leaflet-distortableimage).
 
 ## Setup
 
@@ -43,11 +37,25 @@ For the additional features in the [multiple image interface](#Multiple-Image-In
 
 ## Single Image Interface
 
-The simplest implementation is to create a map, then create an image instance of `L.distortableImageOverlay` and add it onto the map:
+The simplest implementation is to create a map, add our recommended `TileLayer` to it, then create an image instance of `L.distortableImageOverlay` and add it onto the map.
 
-```js
-// basic Leaflet map setup
+```JS
+// set the initial map center and zoom level
 map = L.map('map').setView([51.505, -0.09], 13);
+// add the Google Mutant layer
+map.addGoogleMutant();
+
+map.whenReady(function () {
+  // By default, 'img' will be placed centered on the map view specified above
+  img = L.distortableImageOverlay('example.png').addTo(map);
+});
+```
+
+<blockquote><b>Note</b>: If you have a different idea in mind, skip the <code>map.addGoogleMutant()</code> call and add your preferred <code>TileLayer</code> instead.
+
+For example, for a more standard looking map you can use:
+
+```JS
 L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.png', {
   maxZoom: 18,
   attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
@@ -55,12 +63,9 @@ L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.p
     'Imagery © <a href="http://mapbox.com">Mapbox</a>',
   id: 'examples.map-i86knfo3'
 }).addTo(map);
-
-// create an image and add it to the map
-img = L.distortableImageOverlay('example.png').addTo(map);
 ```
 
-By default, the image will be placed centered on the map view specified during initialization.
+</blockquote>
 
 **Options** available to pass during `L.DistortableImageOverlay` initialization:
 
@@ -273,214 +278,284 @@ Currently it supports multiple image selection and translations, and WIP we are 
 2. Or <kbd>shift</kbd> + `drag` to use our `BoxSelector` handler to select multiple at once.
 3. Or for touch devices, `touch` + `hold` (aka `longpress`).
 
-**How to un-multi-select:**
+**un-multi-select:**
 
 * In order to return to the single-image interface, where each `L.popup` toolbar only applies actions on the image it's attached to, you must toggle *all* images out of multi-select or...
 * ...Click on the map or hit the <kbd>esc</kbd> key to quickly deselect all images.
 * For the aforementioned 3 mutli-select methods, the `BoxSelector` method is the only one that doesn't also toggle _out_ of multi-select mode.
 
-<hr>
+---
 
 ## Toolbar Actions (& Keybindings)
 
-<hr>
+---
 
 ### Single Image Interface
 
-<hr>
+---
 
 Defaults:
 
 * **ToggleLock (<kbd>l</kbd>)**
-
-  * Toggles between [lock mode](#lock) and [distort mode](#distort-(_default_)).
-
+  * Toggles between `lock` mode and `distort` mode.
 * **ToggleRotateScale (<kbd>r</kbd>, <kbd>d</kbd>)**
-
-  * Toggles between [rotateScale](#rotateScale) and [distort mode](#distort-(_default_)).
-
+  * Toggles between `rotateScale` and `distort` mode.
 * **ToggleOrder (<kbd>j</kbd>, <kbd>k</kbd>)**
-
   * If you have multiple images, use this to switch an individual image's overlap back and forth into view. Employs [`bringToFront()`](https://leafletjs.com/reference-1.5.0.html\#imageoverlay-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.5.0.html#imageoverlay-bringtoback) from the Leaflet API.
-
 * **ToggleOutline (<kbd>o</kbd>)**
 * **ToggleTransparency (<kbd>t</kbd>)**
 * **Revert**
-
   * Restores the image to its original proportions and scale, but keeps its current rotation angle and location on the map intact.
-
 * **Export**
 * **Delete (<kbd>delete</kbd>, <kbd>backscpace</kbd>)**
-
   * Permanently deletes the image from the map.
 
  Addons:
 
 * **ToggleRotate** (<kbd>caps lock</kbd>):
-
-  * Toggles between [rotate mode](#rotate) and [distort mode](#distort-(_default_)).
+  * Toggles between `rotate` mode and `distort` mode.
   * Replaced as a default toolbar action by `ToggleRotateScale`, but still accessible via its hotkey, `mode`, and (WIP) custom toolbar actions API.
-
 * **ToggleScale** (<kbd>s</kbd>):
-
-  * Toggles between [scale mode](#scale) and [distort mode](#distort-(_default_)).
+  * Toggles between `scale` mode and `distort` mode.
   * Replaced as a default toolbar action by `ToggleRotateScale`, but still accessible via its hotkey, `mode`, and (WIP) custom toolbar actions API.
-
 * **EnableEXIF (WIP)**
 
-<hr>
+---
 
 ### Multiple Image Interface
 
-<hr>
+---
 
 Defaults:
 
-* **Exports**
-
+* **Exports** (WIP)
 * **Deletes (<kbd>delete</kbd>, <kbd>backspace</kbd>)**
-
   * Permanently deletes groups of selected images from the map. Uses a `confirm()` modal dialog.
-
 * **Locks** (<kbd>l</kbd>)
-
 * **Unlocks** (<kbd>u</kbd>)
 
 ## Quick API Reference
 
-<hr>
+---
+
+`L.Map`
+
+---
+
+We have extended Leaflet's `L.Map` to include a convenience method for this library:
+
+<details><summary><code><b>addGoogleMutant(<i>opts?</i> &#60;Mutant options>)</b>: this</code></summary>
+  <ul>
+    <li>adds a Google Mutant layer with location labels according to our recommended setup.</li>
+    <li>label visibility is toggled by double clicking on the map.</li>
+    <li><b>Mutant options</b>: {
+      <ul>
+        <li><i>labels</i>: &#60;boolean>, default: true</li>
+        <ul>
+          <li>If set to <code>false</code>, the mutant layer will not have location labels</li>
+        </ul>
+        <li><i>labelOpacity</i>: &#60;number 0, 1>, default: 0</li>
+        <ul>
+          <li>If set to <code>1</code>, labels will be initially visible</li>
+        </ul>
+        <li><i>mutantOpacity</i>: &#60;number 0..1>, default: 0.8</li>
+        <ul>
+          <li>Same as Leaflet's <code>L.TileLayer</code> <code>opacity</code> option</li>
+        </ul>
+        <li><i>maxZoom</i>: &#60;number 0..21>, default: 18</li>
+        <ul>
+          <li>Same as Leaflet's <code>L.TileLayer</code> <code>maxZoom</code> option, except has a maximum value of 21 because higher zoom levels on the mutant layer will result in an error being thrown.</li>
+          <li>The mutant layer will appear blurry for zoom levels exceeding 18.</li>
+        </ul>
+        <li><i>minZoom</i>: &#60;number 0..maxZoom>, default: 0</li>
+        <ul>
+          <li>Same as Leaflet's <code>L.TileLayer</code> <code>maxZoom</code> option</li>
+        </ul>
+      </ul>
+    }</li>
+  </ul>
+</details>
+<br>
+And the following custom handlers:
+<br><br>
+
+<details><summary><code><b>doubleClickLabels</b>: this</code></summary>
+  <ul>
+    <li>when location labels are added via <code>#addGoogleMutant</code>, this handler is enabled by default to allow toggling their visibility by double clicking on the map.</li>
+    <li>afterwards, can be enabled / disabled during runtime via <a href="https://leafletjs.com/reference-1.5.0.html#handler">Leaflet's Handler API</a>.</li>
+    <li>overrides the map's default <a href="https://leafletjs.com/reference-1.5.0.html#map-doubleclickzoom"><code>doubleClickZoom</code></a> handler when enabled. When disabled, automatically re-enables it.</li>
+  </ul>
+</details>
+
+<details><summary><code><b>boxSelector</b>: this</code></summary>
+  <ul>
+    <li>overrides the map's default <a href="https://leafletjs.com/reference-1.5.0.html#map-boxzoom"><code>boxZoom</code></a> handler.</li>
+    <li>allows multiple images to be selected when <kbd>shift</kbd> + <code>drag</code>ing on the map in the multiple-image inerface.</li>
+  </ul>
+</details>
+<br>
+We have made slight changes to a default Leaflet handler:
+<br><br>
+<details><summary><code><b>doubleClickZoom</b>: this</code></summary>
+<ul>
+  <li>This handler and <code>doubleClickLabels</code> time and fire a custom <code>singleclick</code> event on map click. It is fired after a 3ms timeout if the click doesn't become a doubleclick.</li>
+  <li>This allows our images to remain selected during associated double click events on the map (in this case zooming).</li>
+  <li>Our image classes listen for <code>singleclick</code> while either this or the other doubleClick handler is enabled.</li>
+</ul>
+</details>
+
+---
 
 `L.DistortableImageOverlay`
 
-<hr>
+---
 
 <details><summary><code><b>getCorner(<i>idx</i> &#60;number 0..3>)</b>: LatLng</code></summary>
- <ul><li>returns the coordinates of the image corner at <i>index</i>.</ul></li>
+  <ul><li>returns the coordinates of the image corner at <i>index</i>.</li></ul>
 </details>
 
 <details><summary><code><b>getCorners()</b>: 4 [LatLng, LatLng, LatLng, LatLng]</code></summary>
-  <ul><li>returns the coordinates of the image corners in NW, NE, SW, SE order.
+  <ul><li>returns the coordinates of the image corners in NW, NE, SW, SE order.</li></ul>
 </details>
 
 <details><summary><code><b>setCorner(<i>idx</i> &#60;number 0..3>, <i>LatLng</i>)</b>: this</code></summary>
-<ul><li>updates the coordinates of the image corner at <i>index</i> to <i>LatLng</i> and, where applicable, marker and toolbar positioning.</ul></li>
-<ul><li>We use this internally for <code>distort</code> mode.</ul></li>
+  <ul>
+    <li>updates the coordinates of the image corner at <i>index</i> to <i>LatLng</i> and, where applicable, marker and toolbar positioning.</li>
+    <li>we use this internally for <code>distort</code> mode.</li>
+  </ul>
 </details>
 
 <details><summary><code><b>setCorners(<i>corners</i>)</b>: this</code></summary>
-<ul><li>same as <code>#setCorner</code>, but takes in a "corners" object to update all 4 corners with only one UI update at the end.</ul></li>
-<ul><li> We use this internally for image translation, rotation, and scaling.</ul></li>
-<ul><li><i>corners</i>: { <i>keys</i>: &#60;number 0..4>, <i>values</i>: LatLng } <br><br>
-ex.
+  <ul>
+    <li>same as <code>#setCorner</code>, but takes in a "corners" object to update all 4 corners with only one UI update at the end.</li>
+    <li> we use this internally for image translation, rotation, and scaling.</li>
+    <li><i>corners</i>: { <i>keys</i>: &#60;number 0..4>, <i>values</i>: LatLng } <br>
+  ex.
 
 <pre>
-  var scaledCorners = {0: '', 1: '', 2: '', 3: ''},
-      i, p;
+var scaledCorners = {0: '', 1: '', 2: '', 3: ''},
+    i, p;
 
-  for (i = 0; i < 4; i++) {
-    p = map
-      .project(img.getCorner(i))
-      .subtract(center)
-      .multiplyBy(scale)
-      .add(center);
-    scaledCorners[i] = map.unproject(p);
-  }
+for (i = 0; i < 4; i++) {
+  p = map
+    .project(img.getCorner(i))
+    .subtract(center)
+    .multiplyBy(scale)
+    .add(center);
+  scaledCorners[i] = map.unproject(p);
+}
 
-  img.setCorners(scaledCorners);
-  </pre>
-</ul></li>
+img.setCorners(scaledCorners);
+</pre></li>
+  </ul>
 </details>
 
 <details><summary><code><b>getCenter()</b>: LatLng</code></summary>
-<ul><li>Calculates the centroid of the image.</ul></li>
+  <ul><li>calculates the centroid of the image.</li></ul>
 </details>
 
 <details><summary><code><b>scaleBy(<i>factor</i> &#60;number>)</b>: this</code></summary>
-<ul><li>scales the image by the given factor and calls <code>#setCorners</code>.</ul></li>
-<ul><li>a scale of 0 or 1 will leave the image unchanged - but 0 causes the function to automatically return</ul></li>
-<ul><li>a negative scale will invert the image and, depending on the factor, change its size</ul></li>
-<ul><li>ex. <code>img.scaleBy(0.5)</code></ul></li>
+  <ul>
+    <li>scales the image by the given factor and calls <code>#setCorners</code>.</li>
+    <li>a scale of 0 or 1 will leave the image unchanged - but 0 causes the function to automatically return.</li>
+    <li>a negative scale will invert the image and, depending on the factor, change its size.</li>
+    <li>ex. <code>img.scaleBy(0.5)</code></li>
+  </ul>
 </details>
 
 <details><summary><code><b>rotateBy(<i>rad</i> &#60;number>)</b>: this</code></summary>
-<ul><li>rotates the image by the given radian angle and calls <code>#setCorners</code>.</ul></li>
+  <ul><li>rotates the image by the given radian angle and calls <code>#setCorners</code>.</li></ul>
 </details>
 
-<hr>
+---
 
 `L.DistortableImageOverlay.Edit`
 
-<hr>
+---
 
 A handler that holds the keybindings and toolbar API for an image instance. It is always initialized with an instance of `L.DistortableImageOverlay`. Besides code organization, it provides the ability to `enable` and `disable` image editing using the Leaflet API.
 
 <blockquote><b>Note</b>: The main difference between the <code>enable</code> / <code>disable</code> runtime API and using the <code>editable</code> option during initialization is in runtime, neither individual image instaces nor the collection group get precedence over the other.</blockquote>
 
 <details><summary><code><b>enable()</b>: this</code></summary>
-<ul><li>Sets up the editing interface (makes the image interactive, adds markers and toolbar).</ul></li>
- <ul><li>Called internally by default (<a href="#editable">editable</a>), but unlike the option it can be used in runtime and is not ignored if there is a collection group. In fact...</ul></li>
- <ul><li>...An individual image can be enabled while the group is disabled. i.e. calling <code>img.editing.enable()</code> after <code>imgGroup.editing.disable()</code> is valid. In this case, the single image interface will be available on this image but not the multi-image interface.</ul></li>
+  <ul>
+    <li>Sets up the editing interface (makes the image interactive, adds markers and toolbar).</li>
+    <li>Called internally by default (<a href="#editable">editable</a>), but unlike the option it can be used in runtime and is not ignored if there is a collection group. In fact...</li>
+    <li>...An individual image can be enabled while the group is disabled. i.e. calling <code>img.editing.enable()</code> after <code>imgGroup.editing.disable()</code> is valid. In this case, the single image interface will be available on this image but not the multi-image interface.</li>
+  </ul>
 </details>
 
 <details><summary><code><b>disable()</b>: this</code></summary>
-<ul><li>Removes the editing interface (makes the image non-interactive, removes markers and toolbar).</ul></li>
-<ul><li>Called internally by default on image deletion.</ul></li>
-<ul><li>An individual image can be disabled while the group is enabled.</ul></li>
+  <ul>
+    <li>Removes the editing interface (makes the image non-interactive, removes markers and toolbar).</li>
+    <li>Called internally by default on image deletion.</li>
+    <li>An individual image can be disabled while the group is enabled.</li>
+  </ul>
 </details>
 
 <details><summary><code><b>enabled()</b>: Boolean</code></summary>
-<ul><li>Returns true if editing on the individual image instance is enabled.</ul></li>
-<ul><li><code>img.editing.enabled()</code></ul></li>
+  <ul>
+    <li>Returns true if editing on the individual image instance is enabled.</li>
+    <li><code>img.editing.enabled()</code></li>
+  </ul>
 </details>
 
-<hr>
+---
 
 `L.DistortableCollection`
 
 <details><summary><code><b>isSelected(<i>img</i> &#60;DistortableImageOverlay>)</b>: Boolean</code></summary>
-<ul><li>Returns true if the passed <code>DistortableImageOverlay</code> instance is multi-selected, i.e. its underlying <code>HTMLImageElement</code> has a class containing "selected".</ul></li>
+<ul><li>Returns true if the passed <code>DistortableImageOverlay</code> instance is multi-selected, i.e. its underlying <code>HTMLImageElement</code> has a class containing "selected".</li></ul>
 </details>
 
 <details><summary><code><b>anySelected()</b>: Boolean</code></summary>
-<ul><li>Returns true if any <code>DistortableImageOverlay</code> instances are mutli-selected.</ul></li>
+<ul><li>Returns true if any <code>DistortableImageOverlay</code> instances are mutli-selected.</li></ul>
 </details>
 
-<hr>
+---
 
 `L.DistortableCollection.Edit`
 
-<hr>
+---
 
 Same as `L.DistortableImage.Edit` but for the collection (`L.DistortableCollection`) instance.
 
 <details><summary><code><b>enable()</b>: this</code></summary>
-<ul><li>Sets up the multi-editing interface.</ul></li>
-<ul><li>Called internally by default, see <a href="#editable"> editable</a>.</ul></li>
-<ul><li>Calls each individual image's <code>#enable</code> method and then enables the multi-image interface.</ul></li>
+  <ul>
+    <li>Sets up the multi-editing interface.</li>
+    <li>Called internally by default, see <a href="#editable"> editable</a>.</li>
+    <li>Calls each individual image's <code>#enable</code> method and then enables the multi-image interface.</li>
+  </ul>
 </details>
 
 <details><summary><code><b>disable()</b>: this</code></summary>
-<ul><li>Removes the editing interface (makes the image non-interactive, removes markers and toolbar).</ul></li>
-<ul><li>Called internally by default on image group deletion, but can also be used for custom behavior.</ul></li>
-<ul><li>Calls each individual image's <code>#disable</code> method and disables the multi-image interface.</ul></li>
+  <ul>
+    <li>Removes the editing interface (makes the image non-interactive, removes markers and toolbar).</li>
+    <li>Called internally by default on image group deletion, but can also be used for custom behavior.</li>
+    <li>Calls each individual image's <code>#disable</code> method and disables the multi-image interface.</li>
+  </ul>
 </details>
 
 <details><summary><code><b>enabled()</b>: Boolean</code></summary>
-<ul><li>Returns true if editing on the collection instance is enabled.</ul></li>
-<ul><li><code>imgGroup.editing.enabled()</code></ul></li>
+  <ul>
+    <li>Returns true if editing on the collection instance is enabled.</li>
+    <li><code>imgGroup.editing.enabled()</code></li>
+  </ul>
 </details>
 
-<details><summary><code><b>removeTool(action)</b></code></summary>
-<ul><li>Removes the passed tool from the control toolbar in runtime.</ul></li>
-<ul><li>ex: <code>imgGroup.removeTool(Deletes)</code></ul></li>
+<details><summary><code><b>removeTool(<i>action</i> &#60;EditAction>)</b></code></summary>
+  <ul>
+    <li>Removes the passed tool from the control toolbar in runtime.</li>
+    <li>ex: <code>imgGroup.removeTool(Deletes)</code></li>
+  </ul>
 </details>
 
-<details><summary><code><b>addTool(action)</b></code></summary>
-<ul><li>Adds the passed tool to the end of the control toolbar in runtime. Returns false if the tool is not available or is already present.</ul></li>
+<details><summary><code><b>addTool(<i>action</i> &#60;EditAction>)</b></code></summary>
+<ul><li>Adds the passed tool to the end of the control toolbar in runtime. Returns false if the tool is not available or is already present.</li></ul>
 </details>
 
-<details><summary><code><b>hasTool(action)</b>: Boolean</code></summary>
-<ul><li>Checks if the tool is already present in the currently rendered control toolbar.</ul></li>
+<details><summary><code><b>hasTool(<i>action</i> &#60;EditAction>)</b>: Boolean</code></summary>
+<ul><li>Checks if the tool is already present in the currently rendered control toolbar.</li></ul>
 </details>
 
 ## Additional Components
