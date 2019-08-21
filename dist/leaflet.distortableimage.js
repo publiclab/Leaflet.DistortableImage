@@ -1453,20 +1453,35 @@ L.DistortAction = L.EditAction.extend({
 
 L.ExportAction = L.EditAction.extend({
   initialize: function(map, overlay, options) {
+    var tooltip;
+    
+    if (overlay._eventParents) {
+      L.DistortableImage.action_map.e = '_getExport';
+      tooltip = 'Export Image';
+    } else {
+      tooltip = 'Export Images';
+    }
+
     options = options || {};
     options.toolbarIcon = {
       svg: true,
       html: 'get_app',
-      tooltip: 'Export Image'
+      tooltip: tooltip
     };
 
-    L.DistortableImage.action_map.e = '_getExport';
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
   addHooks: function() {
     var edit = this._overlay.editing;
-    edit._getExport();
+
+    if (this._overlay._eventParents) { edit._getExport(); }
+    else { 
+      L.IconUtil.toggleXlink(this._link, 'get_app', 'spinner');
+      L.IconUtil.toggleTooltip(this._link, 'Export Images', 'Loading...'); 
+      L.IconUtil.addClassToSvg(this._link, 'loader');
+      edit.startExport();
+    }
   }
 });
 
@@ -1493,32 +1508,50 @@ L.GeolocateAction = L.EditAction.extend({
 L.LockAction = L.EditAction.extend({
   initialize: function(map, overlay, options) {
     var edit = overlay.editing,
-        use, className;
+        use, tooltip, className;
 
-    if (edit._mode === 'lock') {
+    /** 
+     * we can tell whether the overlay is an instance of `L.DistortableImageOverlay` or `L.DistortableCollection` bc only 
+     * the former should have `_eventParents` defined on it. From there we call the apporpriate keybindings and methods. 
+     * Aligning both classes w/ an `.edit` allowed us to have actions like this that can work w/ both interfaces.
+     */ 
+   
+    if (overlay._eventParents) {
+      L.DistortableImage.action_map.u = '_unlock';
+      L.DistortableImage.action_map.l = '_lock';
+      tooltip = 'Lock Mode';
+
+      if (edit._mode === 'lock') {
+        use = 'lock';
+        className = 'lock';
+      } else {
+        use = 'unlock';
+        className = 'unlock';
+      }
+
+    } else {
+      L.DistortableImage.group_action_map.l = '_lockGroup';
+      tooltip = 'Lock Images';
       use = 'lock';
       className = 'lock';
-    } else {
-      use = 'unlock';
-      className = 'unlock';
     }
 
     options = options || {};
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: 'Lock Mode',
+      tooltip: tooltip,
       className: className,
     };
 
-    L.DistortableImage.action_map.u = '_unlock';
-    L.DistortableImage.action_map.l = '_lock';
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
   addHooks: function() {
     var edit = this._overlay.editing;
-    edit._toggleLockMode();
+
+    if (this._overlay._eventParents) { edit._toggleLockMode(); }
+    else { edit._lockGroup(); }
   }
 });
 
@@ -1744,59 +1777,12 @@ L.distortableImage = L.DistortableImage;
 
 L.DistortableImage.group_action_map = {};
 
-var Exports = L.EditAction.extend({
+L.UnlocksAction = L.EditAction.extend({
   initialize: function(map, overlay, options) {
-    var use = 'get_app';
-
     options = options || {};
     options.toolbarIcon = {
       svg: true,
-      html: use,
-      tooltip: 'Export Images',
-    };
-
-    L.EditAction.prototype.initialize.call(this, map, overlay, options);
-  },
-
-  addHooks: function() {
-    var edit = this._overlay.editing;
-    L.IconUtil.toggleXlink(this._link, 'get_app', 'spinner');
-    L.IconUtil.toggleTitle(this._link, 'Export Images', 'Loading...');
-    L.IconUtil.addClassToSvg(this._link, 'loader');
-    L.DomEvent.off(this._link, 'click', this.enable, this);
-    edit.startExport();
-  },
-});
-
-var Locks = L.EditAction.extend({
-  initialize: function(map, overlay, options) {
-    var use = 'lock';
-
-    options = options || {};
-    options.toolbarIcon = {
-      svg: true,
-      html: use,
-      tooltip: 'Lock Images',
-    };
-
-    L.DistortableImage.group_action_map.l = '_lockGroup';
-    L.EditAction.prototype.initialize.call(this, map, overlay, options);
-  },
-
-  addHooks: function() {
-    var edit = this._overlay.editing;
-    edit._lockGroup();
-  },
-});
-
-var Unlocks = L.EditAction.extend({
-  initialize: function(map, overlay, options) {
-    var use = 'unlock';
-
-    options = options || {};
-    options.toolbarIcon = {
-      svg: true,
-      html: use,
+      html: 'unlock',
       tooltip: 'Unlock Images',
     };
 
@@ -1821,7 +1807,7 @@ L.distortableImage.controlBar = function(options) {
 
 /** addInitHooks run before onAdd */
 L.DistortableCollection.addInitHook(function() {
-  this.ACTIONS = [Exports, L.DeleteAction, Locks, Unlocks];
+  this.ACTIONS = [L.ExportAction, L.DeleteAction, L.LockAction, L.UnlocksAction];
 
   if (this.options.actions) {
     this.editActions = this.options.actions;
@@ -2647,6 +2633,8 @@ L.DistortableCollection.Edit = L.Handler.extend({
           map.removeLayer(edit._handles[edit._mode]);
           edit._unlock();
           edit._refreshPopupIcons();
+          // unlock updates the layer's handles; deselect to ensure they're hidden
+          edit._deselect();
         }
       }
     }, this);

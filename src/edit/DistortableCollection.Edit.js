@@ -138,6 +138,8 @@ L.DistortableCollection.Edit = L.Handler.extend({
           map.removeLayer(edit._handles[edit._mode]);
           edit._unlock();
           edit._refreshPopupIcons();
+          // unlock updates the layer's handles; deselect to ensure they're hidden
+          edit._deselect();
         }
       }
     }, this);
