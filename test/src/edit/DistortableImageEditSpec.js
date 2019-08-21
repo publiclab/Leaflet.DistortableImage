@@ -101,7 +101,7 @@ describe('L.DistortableImage.Edit', function() {
 			// then trigger _deselect
 			map.fire('click');
 
-			// we deselect after 3 ms to confirm the click wasn't a dblclick
+			// we deselect after 3ms to confirm the click wasn't a dblclick
 			setTimeout(function() {
 				expect(edit.toolbar).to.be.false;
 			}, 3000);

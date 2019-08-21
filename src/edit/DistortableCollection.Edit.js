@@ -21,8 +21,9 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
     L.DomEvent.on(document, 'keydown', this._onKeyDown, this);
 
+    // custom event fired from DoubleClickLabels.js
     L.DomEvent.on(map, {
-      click: this._deselectAll,
+      singleclick: this._singleClick,
       boxzoomend: this._addSelections,
     }, this);
 
@@ -39,7 +40,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     L.DomEvent.off(document, 'keydown', this._onKeyDown, this);
 
     L.DomEvent.off(map, {
-      click: this._deselectAll,
+      singleclick: this._singleClick,
       boxzoomend: this._addSelections,
     }, this);
 
@@ -74,6 +75,11 @@ L.DistortableCollection.Edit = L.Handler.extend({
     if (this._group.anySelected()) {
       this[handlerName].call(this);
     }
+  },
+
+  _singleClick: function (e) {
+    if (e.deselect) { this._deselectAll(e); } 
+    else { return; }
   },
 
   _deselectAll: function(e) {

@@ -2235,9 +2235,8 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _singleClick: function(e) {
-    if (e.deselect) {
-      this._deselect();
-    } else { return; }
+    if (e.deselect) { this._deselect(); } 
+    else { return; }
   },
 
   _select: function(e) {
@@ -2513,8 +2512,9 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
     L.DomEvent.on(document, 'keydown', this._onKeyDown, this);
 
+    // custom event fired from DoubleClickLabels.js
     L.DomEvent.on(map, {
-      click: this._deselectAll,
+      singleclick: this._singleClick,
       boxzoomend: this._addSelections,
     }, this);
 
@@ -2531,7 +2531,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     L.DomEvent.off(document, 'keydown', this._onKeyDown, this);
 
     L.DomEvent.off(map, {
-      click: this._deselectAll,
+      singleclick: this._singleClick,
       boxzoomend: this._addSelections,
     }, this);
 
@@ -2566,6 +2566,11 @@ L.DistortableCollection.Edit = L.Handler.extend({
     if (this._group.anySelected()) {
       this[handlerName].call(this);
     }
+  },
+
+  _singleClick: function (e) {
+    if (e.deselect) { this._deselectAll(e); } 
+    else { return; }
   },
 
   _deselectAll: function(e) {
@@ -3086,8 +3091,8 @@ L.Map.BoxSelector = L.Map.BoxZoom.extend({
 L.Map.addInitHook('addHandler', 'boxSelector', L.Map.BoxSelector);
 
 
-/** 
- * The 'doubleClickLabels' handler only runs instead of 'doubleClickZoom' when a googleMutant 
+/**
+ * The 'doubleClickLabels' handler only runs instead of 'doubleClickZoom' when a googleMutant
  * layer is added to the map using 'map.addGoogleMutant()' without the option labels: false.
  */
 
@@ -3097,21 +3102,23 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
 
     this._map.on({
       click: this._fireIfSingle,
-      dblclick: this._onDoubleClick
+      dblclick: this._onDoubleClick,
     }, this);
   },
 
   removeHooks: function() {
     this._map.off({
       click: this._fireIfSingle,
-      dblclick: this._onDoubleClick
+      dblclick: this._onDoubleClick,
     }, this);
   },
 
   enable: function() {
-    var map = this._map; 
+    var map = this._map;
 
-    if (this._enabled) { return this; }
+    if (this._enabled) {
+      return this;
+    }
 
     // dont enable 'doubleClickLabels' if the labels layer has not been added.
     if (!map._labels) {
@@ -3120,25 +3127,32 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
     }
 
     // disable 'doubleClickZoom' if 'doubleClickLabels' is enabled.
-    if (map.doubleClickZoom.enabled()) { map.doubleClickZoom.disable(); }
+    if (map.doubleClickZoom.enabled()) {
+      map.doubleClickZoom.disable();
+    }
 
     this._enabled = true;
     this.addHooks();
     return this;
   },
 
-  disable: function () {
+  disable: function() {
     var map = this._map;
-    
-    if (!this._enabled) { return this; }
 
-		this._enabled = false;
+    if (!this._enabled) {
+      return this;
+    }
+
+    this._enabled = false;
     this.removeHooks();
-    
+
     // enable 'doubleClickZoom' if 'doubleClickLabels' is disabled.
-    if (!map.doubleClickZoom.enabled()) { map.doubleClickZoom.enable(); }
-		return this;
-	},
+    if (!map.doubleClickZoom.enabled()) {
+      map.doubleClickZoom.enable();
+    }
+
+    return this;
+  },
 
   _fireIfSingle: function() {
     var map = this._map;
@@ -3147,14 +3161,14 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
     setTimeout(function() {
       if (map.clicked === 1) {
         map.clicked = 0;
-        map.fire('singleclick', { deselect: true });
+        map.fire('singleclick', {deselect: true});
       }
     }, 300);
   },
 
   _onDoubleClick: function() {
-    var map = this._map,
-        labels = map._labels;
+    var map = this._map;
+    var labels = map._labels;
 
     map.clicked = 0;
 
@@ -3165,22 +3179,26 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
       labels.options.opacity = 1;
       labels.setOpacity(1);
     }
-  }
+  },
 });
 
 L.Map.DoubleClickZoom.include({
   enable: function() {
-    if (this._enabled) { return this; }
-    
+    if (this._enabled) {
+      return this;
+    }
+
     // don't enable 'doubleClickZoom' unless 'doubleClickLabels' is disabled first
     if (this._map.doubleClickLabels) {
-      if (this._map.doubleClickLabels.enabled()) { return this; }
+      if (this._map.doubleClickLabels.enabled()) {
+        return this;
+      }
     }
 
     this._enabled = true;
     this.addHooks();
     return this;
-  }
+  },
 });
 
 L.Map.addInitHook('addHandler', 'doubleClickLabels', L.Map.DoubleClickLabels);
