@@ -51,7 +51,7 @@ describe('L.DistortableCollection.Edit', function () {
     });
 
     describe('#_deselectAll', function() {
-      it("Should remove the 'selected' class from all images", function() {
+      it('Should remove the \'selected\' class from all images', function() {
         var img = overlay.getElement(),
             img2 = overlay2.getElement();
 
@@ -64,7 +64,7 @@ describe('L.DistortableCollection.Edit', function () {
         expect(L.DomUtil.getClass(img2)).to.not.include('selected');
       });
 
-      it("Should hide all images' handles unless they're lock handles", function() {
+      it('Should hide all images\' handles unless they\'re lock handles', function() {
         var edit = overlay.editing,
             edit2 = overlay2.editing;
 

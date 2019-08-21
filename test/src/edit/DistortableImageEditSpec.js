@@ -52,8 +52,8 @@ describe('L.DistortableImage.Edit', function() {
     });
   });
 
-	describe("#_deselect", function () {
-		it("It should hide an unlocked image's handles by updating their opacity", function () {
+	describe('#_deselect', function () {
+		it('It should hide an unlocked image\'s handles by updating their opacity', function () {
 			var edit = overlay.editing;
 
 			edit.enable();
@@ -61,14 +61,14 @@ describe('L.DistortableImage.Edit', function() {
 			map.fire('click');
 
 			var handleState = [];
-			edit._handles["distort"].eachLayer(function (handle) {
+			edit._handles['distort'].eachLayer(function (handle) {
 				handleState.push(handle._icon.style.opacity)
 			});
 
-			expect(handleState).to.deep.equal(["0", "0", "0", "0"]);
+			expect(handleState).to.deep.equal(['0', '0', '0', '0']);
 		});
 
-		it("But it should not hide a locked image's handles", function () {
+		it('But it should not hide a locked image\'s handles', function () {
 			var edit = overlay.editing;
 
 			edit.enable();
@@ -78,15 +78,15 @@ describe('L.DistortableImage.Edit', function() {
 			map.fire('click');
 
 			var lockHandleState = [];
-			edit._handles["lock"].eachLayer(function (handle) {
+			edit._handles['lock'].eachLayer(function (handle) {
 				lockHandleState.push(handle._icon.style.opacity)
 			});
 
 			// opacity for lockHandles is unset because we never altered it to hide it as part of deselection
-			expect(lockHandleState).to.deep.equal(["", "", "", ""]);
+			expect(lockHandleState).to.deep.equal(['', '', '', '']);
 		});
 
-		it("Should remove an image's individual toolbar instance regardless of lock handles", function () {
+		it('Should remove an image\'s individual toolbar instance regardless of lock handles', function () {
 			var edit = overlay.editing,
 				img = overlay.getElement();
 
