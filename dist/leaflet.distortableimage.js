@@ -1400,6 +1400,7 @@ L.EditAction = L.Toolbar2.Action.extend({
 L.editAction = function(map, overlay, options) {
   return new L.EditAction(map, overlay, options);
 };
+
 L.DeleteAction = L.EditAction.extend({
   initialize: function(map, overlay, options) {
     var use = 'delete_forever';
