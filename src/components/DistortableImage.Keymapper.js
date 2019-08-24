@@ -125,7 +125,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
   _injectIconSet: function() {
     if (document.querySelector('#keymapper-iconset')) { return; }
 
-    var el = document.createElement('div');
+    var el = L.DomUtil.create('div', '');
     el.id = 'keymapper-iconset';
     el.setAttribute('hidden', 'hidden');
 
@@ -143,7 +143,7 @@ L.DistortableImage.Keymapper.addInitHook(function() {
     1
   );
 
-  if (L.DistortableImage.Keymapper.prototype._n === 1) {
+  if (L.DistortableImage.Keymapper.prototype._n === 1 && !L.Browser.mobile) {
     this.enable();
     this._injectIconSet();
   }
