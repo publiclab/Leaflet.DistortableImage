@@ -2980,7 +2980,7 @@ L.DistortableImage.Keymapper.addInitHook(function() {
     L.DistortableImage.Keymapper.prototype._n + 1 :
     1
   );
-
+  // dont enable keymapper for mobile
   if (L.DistortableImage.Keymapper.prototype._n === 1 && !L.Browser.mobile) {
     this.enable();
     this._injectIconSet();
