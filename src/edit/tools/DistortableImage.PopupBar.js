@@ -31,7 +31,7 @@ var ToggleTransparency = L.EditAction.extend({
     var editing = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'opacity_empty', 'opacity');
-    L.IconUtil.toggleTooltip(this._link,
+    L.IconUtil.toggleTitle(this._link,
         'Make Image Opaque',
         'Make Image Transparent');
     editing._toggleTransparency();
@@ -66,7 +66,7 @@ var ToggleOutline = L.EditAction.extend({
     var editing = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'border_clear', 'border_outer');
-    L.IconUtil.toggleTooltip(this._link, 'Remove Border', 'Add Border');
+    L.IconUtil.toggleTitle(this._link, 'Remove Border', 'Add Border');
     editing._toggleOutline();
   },
 });
@@ -121,7 +121,7 @@ var ToggleLock = L.EditAction.extend({
     var editing = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'unlock', 'lock');
-    L.IconUtil.toggleTooltip(this._link, 'Unlock', 'Lock');
+    L.IconUtil.toggleTitle(this._link, 'Unlock', 'Lock');
     editing._toggleLock();
   },
 });
@@ -155,7 +155,7 @@ var ToggleRotateScale = L.EditAction.extend({
     var editing = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'distort', 'crop_rotate');
-    L.IconUtil.toggleTooltip(this._link, 'Distort Image', 'Rotate+Scale Image');
+    L.IconUtil.toggleTitle(this._link, 'Distort Image', 'Rotate+Scale Image');
     editing._toggleRotateScale();
   },
 });
@@ -211,7 +211,7 @@ var ToggleOrder = L.EditAction.extend({
     var editing = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'flip_to_front', 'flip_to_back');
-    L.IconUtil.toggleTooltip(this._link, 'Stack to Front', 'Stack to Back');
+    L.IconUtil.toggleTitle(this._link, 'Stack to Front', 'Stack to Back');
     editing._toggleOrder();
   },
 });

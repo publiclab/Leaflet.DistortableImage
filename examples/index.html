@@ -44,6 +44,11 @@
           fullResolutionSrc: "large.jpg"
         }).addTo(map);
       });
+     
+      L.distortableImage.keymapper(map, {
+        position: 'topleft'
+      });
+ 
 
     })();
   </script>

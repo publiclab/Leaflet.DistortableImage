@@ -28,12 +28,12 @@ module.exports = {
 
        /* rules */
         "curly": ["error", "multi-line"],
-        "brace-style": ["error", "1tbs", { "allowSingleLine": true }],
+        "brace-style": ["error", "1tbs", {"allowSingleLine": true}],
         "block-spacing": ["error", "always"],
         "no-var": 0,
         "new-cap": 0,
         "guard-for-in": 0,
-        "max-len": 1,
+        "max-len": ["warn", {"ignoreComments": true}],
         "prefer-const": 1,
         "valid-jsdoc": 2
     }
