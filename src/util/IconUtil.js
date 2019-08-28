@@ -24,7 +24,7 @@ L.IconUtil = {
     }
   },
 
-  /** finds the use element and toggles its icon reference */
+  // finds the use element and toggles its icon reference
   toggleXlink: function(container, ref1, ref2) {
     if (!/^#/.test(ref1)) {
       ref1 = '#' + ref1;
