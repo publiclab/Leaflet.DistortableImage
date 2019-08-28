@@ -20,7 +20,7 @@ var Exports = L.EditAction.extend({
   addHooks: function() {
     var edit = this._overlay.editing;
     L.IconUtil.toggleXlink(this._link, 'get_app', 'spinner');
-    L.IconUtil.toggleTooltip(this._link, 'Export Images', 'Loading...');
+    L.IconUtil.toggleTitle(this._link, 'Export Images', 'Loading...');
     L.IconUtil.addClassToSvg(this._link, 'loader');
     L.DomEvent.off(this._link, 'click', this.enable, this);
     edit.startExport();
