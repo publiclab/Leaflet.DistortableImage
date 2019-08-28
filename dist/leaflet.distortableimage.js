@@ -100,10 +100,13 @@ L.IconUtil = {
     return false;
   },
 
-  toggleTooltip: function(container, title1, title2) {
-    var toggled = container.getAttribute('title') === title1 ?
-      title2 : title1;
+  toggleTitle: function(container, title1, title2) {
+    var toggled = container.getAttribute('title') === title1 ? title2 : title1;
+
     container.setAttribute('title', toggled);
+    if (container.hasAttribute('aria-label')) {
+      container.setAttribute('aria-label', toggled);
+    }
     return toggled;
   },
 };
@@ -1405,7 +1408,7 @@ var ToggleTransparency = L.EditAction.extend({
     var editing = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'opacity_empty', 'opacity');
-    L.IconUtil.toggleTooltip(this._link,
+    L.IconUtil.toggleTitle(this._link,
         'Make Image Opaque',
         'Make Image Transparent');
     editing._toggleTransparency();
@@ -1440,7 +1443,7 @@ var ToggleOutline = L.EditAction.extend({
     var editing = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'border_clear', 'border_outer');
-    L.IconUtil.toggleTooltip(this._link, 'Remove Border', 'Add Border');
+    L.IconUtil.toggleTitle(this._link, 'Remove Border', 'Add Border');
     editing._toggleOutline();
   },
 });
@@ -1495,7 +1498,7 @@ var ToggleLock = L.EditAction.extend({
     var editing = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'unlock', 'lock');
-    L.IconUtil.toggleTooltip(this._link, 'Unlock', 'Lock');
+    L.IconUtil.toggleTitle(this._link, 'Unlock', 'Lock');
     editing._toggleLock();
   },
 });
@@ -1529,7 +1532,7 @@ var ToggleRotateScale = L.EditAction.extend({
     var editing = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'distort', 'crop_rotate');
-    L.IconUtil.toggleTooltip(this._link, 'Distort Image', 'Rotate+Scale Image');
+    L.IconUtil.toggleTitle(this._link, 'Distort Image', 'Rotate+Scale Image');
     editing._toggleRotateScale();
   },
 });
@@ -1585,7 +1588,7 @@ var ToggleOrder = L.EditAction.extend({
     var editing = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'flip_to_front', 'flip_to_back');
-    L.IconUtil.toggleTooltip(this._link, 'Stack to Front', 'Stack to Back');
+    L.IconUtil.toggleTitle(this._link, 'Stack to Front', 'Stack to Back');
     editing._toggleOrder();
   },
 });
@@ -1743,7 +1746,7 @@ var Exports = L.EditAction.extend({
   addHooks: function() {
     var edit = this._overlay.editing;
     L.IconUtil.toggleXlink(this._link, 'get_app', 'spinner');
-    L.IconUtil.toggleTooltip(this._link, 'Export Images', 'Loading...');
+    L.IconUtil.toggleTitle(this._link, 'Export Images', 'Loading...');
     L.IconUtil.addClassToSvg(this._link, 'loader');
     L.DomEvent.off(this._link, 'click', this.enable, this);
     edit.startExport();
@@ -2840,78 +2843,79 @@ L.distortableImage = L.DistortableImage;
 L.DistortableImage.Keymapper = L.Handler.extend({
 
   options: {
-    position: 'topright'
+    position: 'topright',
   },
 
-  initialize: function (map, options) {
+  initialize: function(map, options) {
     this._map = map;
     L.setOptions(this, options);
   },
 
-  addHooks: function () {
+  addHooks: function() {
     if (!this._keymapper) {
-      this._toggler = this._toggleButton();
+      this._container = this._buildContainer();
       this._scrollWrapper = this._wrap();
-      this._setMapper(this._toggler, this._scrollWrapper);
+      this._toggler = this._createButton();
+      this._setMapper(this._container, this._scrollWrapper, this._toggler);
 
       L.DomEvent.on(this._toggler, 'click', this._toggleKeymapper, this);
 
-      L.DomEvent.on(this._scrollWrapper, {
-        click: L.DomEvent.stop,
-        mouseenter: this._disableMap,
-        mouseleave: this._enableMap,
-      }, this);
+      L.DomEvent.disableClickPropagation(this._container);
+      L.DomEvent.disableScrollPropagation(this._container);
     }
   },
 
-  removeHooks: function () { 
+  removeHooks: function() {
     if (this._keymapper) {
       L.DomEvent.off(this._toggler, 'click', this._toggleKeymapper, this);
 
-      L.DomEvent.off(this._scrollWrapper, {
-        click: L.DomEvent.stop,
-        mouseenter: this._disableMap,
-        mouseleave: this._enableMap,
-      }, this);
-     
       L.DomUtil.remove(this._toggler);
       L.DomUtil.remove(this._scrollWrapper);
-      L.DomUtil.remove(this._keymapper._container);
+      L.DomUtil.remove(this._container);
       this._keymapper = false;
-    } 
+    }
   },
 
-  _toggleButton: function () {
+  _buildContainer: function() {
+    var container = L.DomUtil.create('div', 'ldi-keymapper-hide');
+    container.setAttribute('id', 'ldi-keymapper');
+
+    var divider = L.DomUtil.create('br', 'divider');
+    container.appendChild(divider);
+
+    return container;
+  },
+
+  _createButton: function() {
     var toggler = L.DomUtil.create('a', '');
+    toggler.innerHTML = L.IconUtil.create('keyboard_open');
+
     toggler.setAttribute('id', 'toggle-keymapper');
     toggler.setAttribute('href', '#');
+    toggler.setAttribute('title', 'Show keymap');
+    // Will force screen readers like VoiceOver to read this as "Show keymap - button"
     toggler.setAttribute('role', 'button');
-    toggler.setAttribute('title', 'Show Keybindings');
-    toggler.innerHTML = L.IconUtil.create("keyboard_open");
+    toggler.setAttribute('aria-label', 'Show keymap');
 
     return toggler;
   },
 
-  _wrap: function () {
+  _wrap: function() {
     var wrap = L.DomUtil.create('div', '');
     wrap.setAttribute('id', 'keymapper-wrapper');
     wrap.style.display = 'none';
 
     return wrap;
   },
-  
-  _setMapper: function (button, wrap) {
-    this._keymapper = L.control({ position: this.options.position });
 
-    this._container = this._keymapper.onAdd = function () {
-      var el_wrapper = L.DomUtil.create('div', 'ldi-keymapper-hide');
-      el_wrapper.setAttribute('id', 'ldi-keymapper');
-      var divider = L.DomUtil.create('br', 'divider');
-      el_wrapper.appendChild(divider);
-      el_wrapper.appendChild(wrap);       
+  _setMapper: function(container, wrap, button) {
+    this._keymapper = L.control({position: this.options.position});
+
+    this._keymapper.onAdd = function() {
+      container.appendChild(wrap);
       wrap.insertAdjacentHTML(
-        'beforeend',
-        '<table><tbody>' +
+          'beforeend',
+          '<table><tbody>' +
           '<hr id="keymapper-hr">' +
           /* eslint-disable */
           '<tr><td><div class="left"><span>Stack up / down</span></div><div class="right"><kbd>j</kbd>\xa0<kbd>k</kbd></div></td></tr>' +
@@ -2926,45 +2930,40 @@ L.DistortableImage.Keymapper = L.Handler.extend({
           '</tbody></table>'
       );
       /* eslint-enable */
-      el_wrapper.appendChild(button);
-      return el_wrapper;
+      container.appendChild(button);
+      return container;
     };
 
     this._keymapper.addTo(this._map);
   },
 
-  _toggleKeymapper: function (e) {
-    L.DomEvent.stop(e);
-    var container = document.getElementById('ldi-keymapper');
-    var keymapWrap = document.getElementById('keymapper-wrapper');
+  _toggleKeymapper: function(e) {
+    e.preventDefault();
 
-    var newClass = container.className === 'ldi-keymapper leaflet-control' ? 'ldi-keymapper-hide leaflet-control' : 'ldi-keymapper leaflet-control';
-    var newStyle = keymapWrap.style.display === 'none' ? 'block' : 'none';
+    this._container.className = (
+      this._container.className === 'ldi-keymapper leaflet-control' ?
+        'ldi-keymapper-hide leaflet-control' :
+        'ldi-keymapper leaflet-control'
+    );
 
-    container.className = newClass;
-    keymapWrap.style.display = newStyle;
+    this._scrollWrapper.style.display = (
+      this._scrollWrapper.style.display === 'none' ? 'block' : 'none'
+    );
 
-    L.IconUtil.toggleTooltip(this._toggler, 'Show Keybindings', 'Hide Keybindings');
-    this._toggler.innerHTML = this._toggler.innerHTML === 'close' ? L.IconUtil.create('keyboard_open') : 'close';
+    this._toggler.innerHTML = (
+      this._toggler.innerHTML === 'close' ?
+        L.IconUtil.create('keyboard_open') :
+        'close'
+    );
+
+    L.IconUtil.toggleTitle(this._toggler, 'Show keymap', 'Hide keymap');
     L.DomUtil.toggleClass(this._toggler, 'close-icon');
-  },
-
-  _disableMap: function() {
-    this._map.scrollWheelZoom.disable();
-    this._map.dragging.disable();
-    this._map.doubleClickLabels.disable();
-  },
-  
-  _enableMap: function() {
-    this._map.scrollWheelZoom.enable();
-    this._map.dragging.enable();
-    this._map.doubleClickLabels.enable();
   },
 
   _injectIconSet: function() {
     if (document.querySelector('#keymapper-iconset')) { return; }
 
-    var el = document.createElement('div');
+    var el = L.DomUtil.create('div', '');
     el.id = 'keymapper-iconset';
     el.setAttribute('hidden', 'hidden');
 
@@ -2972,20 +2971,23 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     el.innerHTML = this._iconset;
 
     document.querySelector('.leaflet-control-container').appendChild(el);
-  }
+  },
 });
 
 L.DistortableImage.Keymapper.addInitHook(function() {
-  L.DistortableImage.Keymapper.prototype._n =
-    L.DistortableImage.Keymapper.prototype._n ? L.DistortableImage.Keymapper.prototype._n + 1 : 1;
-
-  if (L.DistortableImage.Keymapper.prototype._n === 1) {
+  L.DistortableImage.Keymapper.prototype._n = (
+    L.DistortableImage.Keymapper.prototype._n ?
+    L.DistortableImage.Keymapper.prototype._n + 1 :
+    1
+  );
+  // dont enable keymapper for mobile
+  if (L.DistortableImage.Keymapper.prototype._n === 1 && !L.Browser.mobile) {
     this.enable();
     this._injectIconSet();
   }
 });
 
-L.distortableImage.keymapper = function (map, options) {
+L.distortableImage.keymapper = function(map, options) {
   return new L.DistortableImage.Keymapper(map, options);
 };
 

@@ -42,10 +42,13 @@ L.IconUtil = {
     return false;
   },
 
-  toggleTooltip: function(container, title1, title2) {
-    var toggled = container.getAttribute('title') === title1 ?
-      title2 : title1;
+  toggleTitle: function(container, title1, title2) {
+    var toggled = container.getAttribute('title') === title1 ? title2 : title1;
+
     container.setAttribute('title', toggled);
+    if (container.hasAttribute('aria-label')) {
+      container.setAttribute('aria-label', toggled);
+    }
     return toggled;
   },
 };
