@@ -99,7 +99,9 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     this._keymapper.addTo(this._map);
   },
 
-  _toggleKeymapper: function() {
+  _toggleKeymapper: function(e) {
+    e.preventDefault();
+
     this._container.className = (
       this._container.className === 'ldi-keymapper leaflet-control' ?
         'ldi-keymapper-hide leaflet-control' :
