@@ -579,15 +579,17 @@ Adds a control onto the map which opens a keymapper legend showing the available
 
 ## Contributing
 
-This plugin has basic functionality, and is in production as part of MapKnitter, but there are [plenty of outstanding issues to resolve](https://github.com/publiclab/Leaflet.DistortableImage/issues). Please consider helping out!
+There are [plenty of outstanding issues to resolve](https://github.com/publiclab/Leaflet.DistortableImage/issues). Please consider helping out!
 
 1) This project uses `grunt` to do a lot of things, including concatenate source files from `/src/` to `/DistortableImageOverlay.js`:
 
 ```Bash
-#you may need to install grunt-cli first:
-$ npm install -g grunt-cli
+$ npm install
 
-#run in root dir, and it'll watch for changes and concatenate them on the fly
+# install Leaflet peer dependency only locally
+$ npm install leaflet --no-save
+
+# Grunt will watch for changes and concatenate them on the fly
 $ grunt
 ```
 
@@ -597,8 +599,9 @@ $ grunt
 $ grunt concat:dist
 ```
 
-3. _Optional_: We use SVG for our icon system. Please visit our wiki [SVG Icon System](https://github.com/publiclab/Leaflet.DistortableImage/wiki/SVG-Icon-System) if you are interested in making updates to them or just simply learning about our workflow. 
-****
+3. _Optional_: We use SVG for our icon system. Please visit our wiki [SVG Icon System](https://github.com/publiclab/Leaflet.DistortableImage/wiki/SVG-Icon-System) if you are interested in making updates to them or just simply learning about our workflow.
+
+---
 
 ### Contributors
 
@@ -608,5 +611,4 @@ $ grunt concat:dist
 * Sasha Boginsky, [@sashadev-sky](https://github.com/sashadev-sky)
 * Pranshu Srivastava, [@rexagod](https://github.com/rexagod)
 
-Many more at https://github.com/publiclab/Leaflet.DistortableImage/graphs/contributors
-﻿
+Many more at <https://github.com/publiclab/Leaflet.DistortableImage/graphs/contributors>
