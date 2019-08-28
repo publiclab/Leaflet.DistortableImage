@@ -2277,9 +2277,12 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _showMarkers: function() {
+    var overlay = this._overlay;
+
     if (this._mode === 'lock') { return; }
 
-    if (this.toolbar && this.toolbar instanceof L.DistortableImage.PopupBar) {
+    if ((this.toolbar && this.toolbar instanceof L.DistortableImage.PopupBar) ||
+         overlay.options.suppressToolbar) {
       var currentHandle = this._handles[this._mode];
 
       currentHandle.eachLayer(function(layer) {
