@@ -33,7 +33,7 @@ module.exports = {
         "no-var": 0,
         "new-cap": 0,
         "guard-for-in": 0,
-        "max-len": ["warn", {"ignoreComments": true}],
+        "max-len": ["warn", { "ignoreComments": true }],
         "prefer-const": 1,
         "valid-jsdoc": 2
     }

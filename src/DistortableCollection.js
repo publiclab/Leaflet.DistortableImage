@@ -116,7 +116,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
   _dragStartMultiple: function(e) {
     var overlay = e.target;
-    var edit = overlay.edit;
+    var edit = overlay.editing;
     var i;
 
     if (!this.isSelected(overlay) || !edit.enabled()) {
@@ -136,7 +136,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
   _dragMultiple: function(e) {
     var overlay = e.target;
-    var edit = overlay.edit;
+    var edit = overlay.editing;
     var map = this._map;
     var i;
 
