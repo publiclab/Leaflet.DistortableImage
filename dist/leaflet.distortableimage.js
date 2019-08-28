@@ -3310,7 +3310,7 @@ L.Map.include({
       labelOpacity: 0,
       mutantOpacity: 0.8,
       maxZoom: 18,
-      minZoom: 0
+      minZoom: 0,
     }, opts);
 
     if (opts.maxZoom > 21) { opts.maxZoom = 18; }
@@ -3318,7 +3318,7 @@ L.Map.include({
     this._googleMutant = L.tileLayer('http://mt0.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
       maxZoom: opts.maxZoom,
       minZoom: opts.minZoom,
-      opacity: opts.mutantOpacity
+      opacity: opts.mutantOpacity,
     }).addTo(this);
 
     if (opts.labels) { this._addLabels(opts); }
@@ -3338,11 +3338,11 @@ L.Map.include({
       opacity: opts.labelOpacity,
       maxZoom: opts.maxZoom,
       minZoom: opts.minZoom,
-      ext: 'png'
+      ext: 'png',
     }).addTo(this);
 
     this.doubleClickLabels.enable();
 
     return this;
-  }
+  },
 });
