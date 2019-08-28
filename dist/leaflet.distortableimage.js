@@ -2278,11 +2278,20 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _showMarkers: function() {
     var overlay = this._overlay;
+    var opts = overlay.options;
+    var eventParents = overlay._eventParents;
+    var toolbar = this.toolbar;
 
     if (this._mode === 'lock') { return; }
 
-    if ((this.toolbar && this.toolbar instanceof L.DistortableImage.PopupBar) ||
-         overlay.options.suppressToolbar) {
+    if (eventParents) {
+      var eP = eventParents[Object.keys(eventParents)[0]];
+      if (eP.anySelected()) {
+        return;
+      }
+    }
+
+    if ((toolbar && toolbar instanceof L.DistortableImage.PopupBar) || opts.suppressToolbar) {
       var currentHandle = this._handles[this._mode];
 
       currentHandle.eachLayer(function(layer) {
@@ -2322,6 +2331,8 @@ L.DistortableImage.Edit = L.Handler.extend({
     var corners = overlay.getCorners();
     var maxLat = -Infinity;
 
+    if (overlay.options.suppressToolbar) { return; }
+
     for (var i = 0; i < corners.length; i++) {
       if (corners[i].lat > maxLat) {
         maxLat = corners[i].lat;
@@ -2343,8 +2354,6 @@ L.DistortableImage.Edit = L.Handler.extend({
   _showToolbar: function() {
     var overlay = this._overlay;
     var eventParents = overlay._eventParents;
-
-    if (overlay.options.suppressToolbar) { return; }
 
     if (eventParents) {
       var eP = eventParents[Object.keys(eventParents)[0]];
@@ -2603,19 +2612,19 @@ L.DistortableCollection.Edit = L.Handler.extend({
     }
   },
 
-  _singleClick: function (e) {
+  _singleClick: function(e) {
     if (e.deselect) { this._deselectAll(e); } 
     else { return; }
   },
 
-  _singleClickListeners: function () {
+  _singleClickListeners: function() {
     var map = this._group._map;
 
     L.DomEvent.on(map, 'singleclick', this._singleClick, this);
     L.DomEvent.off(map, 'click', this._deselectAll, this);
   },
 
-  _resetClickListeners: function () {
+  _resetClickListeners: function() {
     var map = this._group._map;
 
     L.DomEvent.on(map, 'click', this._deselectAll, this);
@@ -2786,6 +2795,8 @@ L.DistortableCollection.Edit = L.Handler.extend({
   _addToolbar: function() {
     var group = this._group;
     var map = group._map;
+
+    if (group.options.suppressToolbar) { return; }
 
     try {
       if (!this.toolbar) {

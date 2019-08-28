@@ -37,23 +37,22 @@ For the additional features in the [multiple image interface](#Multiple-Image-In
 
 ## Single Image Interface
 
-The simplest implementation is to create a map, add our recommended `TileLayer` to it, then create an image instance of `L.distortableImageOverlay` and add it onto the map.
+The simplest implementation is to create a map with our recommended `TileLayer`, then create an `L.distortableImageOverlay` instance and add it onto the map.
 
 ```JS
 // set the initial map center and zoom level
 map = L.map('map').setView([51.505, -0.09], 13);
-// add the Google Mutant layer
+
+// adds a Google Satellite layer with a toner label overlay
 map.addGoogleMutant();
 
-map.whenReady(function () {
+map.whenReady(function() {
   // By default, 'img' will be placed centered on the map view specified above
   img = L.distortableImageOverlay('example.png').addTo(map);
 });
 ```
 
-<blockquote><b>Note</b>: If you have a different idea in mind, skip the <code>map.addGoogleMutant()</code> call and add your preferred <code>TileLayer</code> instead.
-
-For example, for a more standard looking map you can use:
+<b>Note</b>: <code>map.addGoogleMutant()</code> is just a convenience function for adding our recommended layer to the map. If you want a different baselayer, skip this line and add your preferred layer to the map as you normally would instead. For ex:
 
 ```JS
 L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.png', {
@@ -65,17 +64,14 @@ L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.p
 }).addTo(map);
 ```
 
-</blockquote>
-
 **Options** available to pass during `L.DistortableImageOverlay` initialization:
 
 * [actions](#Actions)
 * [corners](#corners)
 * [editable](#editable)
-* [selected](#selected)
-* [mode](#mode)
 * [fullResolutionSrc](#Full-resolution%20download)
-* [keymapper](#keymapper)
+* [mode](#mode)
+* [selected](#selected)
 * [suppressToolbar](#Suppress-Toolbar)
 
 ### Actions
@@ -139,40 +135,6 @@ For a scenario where you want to allow editing based on custom logic, you can pa
 
 <blockquote><b>Note</b>: when using the multiple image interface (<code>L.DistortableCollection</code>) this option will be ignored on individual <code>L.DistortableImageOverlay</code>instances and should instead be passed to the collection instance.</blockquote>
 
-### Selected
-
-`selected` (*optional*, default: false, value: *boolean*)
-
-By default, your image will initially appear on the screen as "unselected", meaning its toolbar and editing handles will not be visible. Interacting with the image, such as by clicking it, will make these components visible.
-
-Some developers prefer that an image initially appears as "selected" instead of "unselected". In this case, we provide an option to pass `selected: true`.
-
-Note: when working with the multi image interface, only the last overlay you pass `selected: true` to will appear with editing handles _and_ a toolbar.
-
-### Mode
-
-`mode` (*optional*, default: "distort", value: *string*)
-
-Each primary editing mode corresponds to a separate editing handle.
-
-This option sets the image's initial editing mode, meaning the corresponding editing handle will always appear first when you interact with the image.
-
-Values available to pass to `mode` are:
-
-* **distort** (_default_): Distortion via individually draggable corners.
-* **rotate**: Rotation only.
-* **scale**: Resize only.
-* **rotateScale**: Free transform. Combines the rotate and scale modes into one.
-* **lock**: Prevents any image actions (including those triggered from the toolbar, user gestures, and hotkeys) until the toolbar action ToggleLock is explicitly triggered (or its hotkey <kbd>l</kbd>).
-
-In the below example, the image will be initialiazed with "rotateScale" handles:
-
-```JS
-img = L.distortableImageOverlay("example.png", {
-  mode: "rotateScale",
-}).addTo(map);
-```
-
 ### Full-resolution download
 
 `fullResolutionSrc` (*optional*)
@@ -192,21 +154,57 @@ img = L.distortableImageOverlay('example.png', {
 }).addTo(map);
 ```
 
+### Mode
+
+`mode` (*optional*, default: "distort", value: *string*)
+
+Each primary editing mode corresponds to a separate editing handle.
+
+This option sets the image's initial editing mode, meaning the corresponding editing handle will always appear first when you interact with the image.
+
+Values available to pass to `mode` are:
+
+* **distort** (*default*): Distortion via individually draggable corners.
+* **rotate**: Rotation only.
+* **scale**: Resize only.
+* **rotateScale**: Free transform. Combines the rotate *nd scale modes into one.
+* **lock**: Prevents any image actions (including those triggered from the toolbar, user gestures, and hotkeys) until the toolbar action ToggleLock is explicitly triggered (or its hotkey <kbd>l</kbd>).
+
+In the below example, the image will be initialiazed with "rotateScale" handles:
+
+```JS
+img = L.distortableImageOverlay("example.png", {
+  mode: "rotateScale",
+}).addTo(map);
+```
+
+### Selected
+
+`selected` (*optional*, default: false, value: *boolean*)
+
+By default, your image will initially appear on the screen as "unselected", meaning its toolbar and editing handles will not be visible. Interacting with the image, such as by clicking it, will make these components visible.
+
+Some developers prefer that an image initially appears as "selected" instead of "unselected". In this case, we provide an option to pass `selected: true`.
+
+Note: when working with the multi image interface, only the last overlay you pass `selected: true` to will appear with editing handles _and_ a toolbar.
+
 ### Suppress Toolbar
 
 `suppressToolbar` (*optional*, default: false, value: *boolean*)
 
-To initialize an image without its toolbar, pass it `suppressToolbar: true`.
+To initialize an image without its `L.Popup` instance toolbar, pass it `suppressToolbar: true`.
 
-Typically, editing actions are triggered through our toolbar interface or our predefined keybindings. If disabling the toolbar, the developer will need to implement their own toolbar UI or just use the keybindings. (WIP API for doing this)
-
-This option will override other options related to the toolbar, such as [`selected: true`](#Selected)
+Typically, editing actions are triggered through our toolbar interface. If disabling the toolbar, the developer will need to implement their own toolbar UI connected to our actions (WIP API for doing this)
 
 ## Multiple Image Interface
 
 Our `DistortableCollection` class allows working with multiple images simultaneously. This interface builds on the single image interface.
 
-The setup is relatively similar - here is an example with two images:
+The setup is relatively similar. 
+
+Although not required, you will probably want to pass `corners` to individual images when adding multiple or they will be positioned on top of eachother.
+
+here is an example with two images:
 
 ```JS
 // 1. Instantiate map
@@ -237,14 +235,14 @@ imgGroup.addLayer(img);
 imgGroup.addLayer(img2);
 ```
 
-<blockquote><strong>Note</strong>: our <code>DistortableCollection</code> class uses event listeners internally (<code>layeradd</code>) to enable additional editing features on every image as it's added. This event is only triggered if we add the layers to the group dynamically. I.e. you must add the group to the map initially empty.</blockquote>
+<blockquote><strong>Note</strong>: You must instantiate a blank collection, then dynamically add layers to it like above. This is because <code>DistortableCollection</code> uses the <code>layeradd</code> event to enable additional editing features on images as they are added, and it is only triggered when they are added dynamically.</blockquote>
 
-Although not required, you will probably want to pass `corners` to individual images when adding multiple or they will be positioned on top of eachother.
 
 Options available to pass during `L.DistortableCollection` initialization:
 
 * [actions](#✤-Actions)
 * [editable](#✤-editable)
+* [supressToolbar](#✤-)
 
 ### ✤ Actions
 
@@ -267,6 +265,41 @@ To add / remove a tool from the toolbar at runtime, we have also added the metho
 `editable` (*optional*, default: true, value: *boolean*)
 
 See [editable](#editable).
+
+### ✤ Suppress Toolbar
+
+`suppressToolbar` (*optional*, default: false, value: *boolean*)
+
+Same as [suppressToolbar](#Suppress-Toolbar), but when using the multiple image interface you must also pass the option to the collection group to suppress its `L.Control` toolbar instance.
+
+This provides the developer with the flexibility to keep the popup toolbars, the control toolbar, both, or neither.
+
+For ex.
+
+```JS
+// suppress this images personal toolbar
+img = L.distortableImageOverlay(
+  'example.jpg', {
+    suppressToolbar: true,
+    corners: [
+      L.latLng(51.52, -0.14),
+      L.latLng(51.52,-0.10),
+      L.latLng(51.50, -0.14),
+      L.latLng(51.50,-0.10)
+    ],
+  });
+
+// suppress the other images personal toolbar
+img2 = L.distortableImageOverlay(
+  'example.jpg', {
+    suppressToolbar: true,
+  });
+
+// suppress collection toolbar accessed during multi-image selection
+imgGroup = L.distortableCollection({
+  supressToolbar: true,
+}).addTo(map);
+```
 
 ### UI and functionalities
 
