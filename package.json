@@ -30,6 +30,7 @@
   },
   "homepage": "https://github.com/publiclab/Leaflet.DistortableImage",
   "dependencies": {
+    "leaflet": "^1.5.1",
     "leaflet-toolbar": "0.4.0-alpha.2"
   },
   "devDependencies": {
