@@ -2860,8 +2860,8 @@ L.DistortableImage.Keymapper = L.Handler.extend({
 
       L.DomEvent.on(this._toggler, 'click', this._toggleKeymapper, this);
 
-      L.DomEvent.disableClickPropagation(this._scrollWrapper);
-      L.DomEvent.disableScrollPropagation(this._scrollWrapper);
+      L.DomEvent.disableClickPropagation(this._container);
+      L.DomEvent.disableScrollPropagation(this._container);
     }
   },
 
@@ -2937,9 +2937,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     this._keymapper.addTo(this._map);
   },
 
-  _toggleKeymapper: function(e) {
-    L.DomEvent.stop(e);
-
+  _toggleKeymapper: function() {
     this._container.className = (
       this._container.className === 'ldi-keymapper leaflet-control' ?
         'ldi-keymapper-hide leaflet-control' :
