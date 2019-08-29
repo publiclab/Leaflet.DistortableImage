@@ -39,8 +39,6 @@
 
       map.whenReady(function () {
         img = L.distortableImageOverlay("example.jpg", {
-          // (WIP) add a toolbarType field with values 'popup' (default) or 'control'
-          suppressToolbar: true,
           selected: true,
           fullResolutionSrc: "large.jpg"
         }).addTo(map);
