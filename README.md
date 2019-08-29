@@ -48,11 +48,11 @@ map.addGoogleMutant();
 
 map.whenReady(function() {
   // By default, 'img' will be placed centered on the map view specified above
-  img = L.distortableImageOverlay('example.png').addTo(map);
+  img = L.distortableImageOverlay('example.jpg').addTo(map);
 });
 ```
 
-<b>Note</b>: <code>map.addGoogleMutant()</code> is just a convenience function for adding our recommended layer to the map. If you want a different baselayer, skip this line and add your preferred layer to the map as you normally would instead. For ex:
+<b>Note</b>: <code>map.addGoogleMutant()</code> is just a convenience function for adding our recommended layer to the map. If you want a different baselayer, skip this line and add your preferred layer to the map as you normally would. For ex:
 
 ```JS
 L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.png', {
@@ -83,8 +83,8 @@ If you would like to overrwrite the default toolbar actions available for an ind
 For example, to overrwrite the toolbar to only include the `ToggleTransparency` and `Delete` actions, and also add on the additional `ToggleScale` action:
 
 ``` JS
-img = L.distortableImageOverlay('example.png', {
-  actions: [ToggleTransparency, ToggleScale, Delete]
+img = L.distortableImageOverlay('example.jpg', {
+  actions: [ToggleTransparency, ToggleScale, Delete],
 }).addTo(map);
 ```
 
@@ -103,13 +103,13 @@ They will be stored on the image. See the [Quick API Reference](#Quick-API-Refer
 Example:
 
 ```js
-img = L.distortableImageOverlay('example.png', {
+img = L.distortableImageOverlay('example.jpg', {
   corners: [
     L.latLng(51.52,-0.14),
     L.latLng(51.52,-0.10),
     L.latLng(51.50,-0.14),
     L.latLng(51.50,-0.10)
-  ]
+  ],
 }).addTo(map);
 
 // you can grab the initial corner positions
@@ -133,7 +133,7 @@ Internally, we use the image `load` event to trigger a call to `img.editing.enab
 
 For a scenario where you want to allow editing based on custom logic, you can pass `editable: false` and then write your own function with a call to `img.editing.enable()`. Other passed options such as `selected: true` and `mode` will still be applicable and applied then.
 
-<blockquote><b>Note</b>: when using the multiple image interface (<code>L.DistortableCollection</code>) this option will be ignored on individual <code>L.DistortableImageOverlay</code>instances and should instead be passed to the collection instance.</blockquote>
+<blockquote><b>Note</b>: when using the multiple image interface (<code>L.DistortableCollection</code>) this option will be ignored on individual <code>L.DistortableImageOverlay</code> instances and should instead be passed to the collection instance.</blockquote>
 
 ### Full-resolution download
 
@@ -149,8 +149,8 @@ We've added a GPU-accelerated means to generate a full resolution version of the
 When instantiating a Distortable Image, pass in a `fullResolutionSrc` option set to the url of the higher resolution image. This image will be used in full-res exporting.
 
 ```JS
-img = L.distortableImageOverlay('example.png', {
-  fullResolutionSrc: 'large.jpg'
+img = L.distortableImageOverlay('example.jpg', {
+  fullResolutionSrc: 'large.jpg',
 }).addTo(map);
 ```
 
@@ -167,14 +167,14 @@ Values available to pass to `mode` are:
 * **distort** (*default*): Distortion via individually draggable corners.
 * **rotate**: Rotation only.
 * **scale**: Resize only.
-* **rotateScale**: Free transform. Combines the rotate *nd scale modes into one.
-* **lock**: Prevents any image actions (including those triggered from the toolbar, user gestures, and hotkeys) until the toolbar action ToggleLock is explicitly triggered (or its hotkey <kbd>l</kbd>).
+* **rotateScale**: Free transform. Combines the rotate and scale modes into one.
+* **lock**: Locks the image in place. Prevents moving it via user gestures, toolbar actions, and hotkeys until the toolbar action ToggleLock is explicitly triggered (or its hotkey <kbd>l</kbd>).
 
 In the below example, the image will be initialiazed with "rotateScale" handles:
 
 ```JS
-img = L.distortableImageOverlay("example.png", {
-  mode: "rotateScale",
+img = L.distortableImageOverlay('example.jpg', {
+  mode: 'rotateScale',
 }).addTo(map);
 ```
 
@@ -200,7 +200,7 @@ Typically, editing actions are triggered through our toolbar interface. If disab
 
 Our `DistortableCollection` class allows working with multiple images simultaneously. This interface builds on the single image interface.
 
-The setup is relatively similar. 
+The setup is relatively similar.
 
 Although not required, you will probably want to pass `corners` to individual images when adding multiple or they will be positioned on top of eachother.
 
@@ -209,7 +209,7 @@ here is an example with two images:
 ```JS
 // 1. Instantiate map
 // 2. Instantiate images but this time *dont* add them directly to the map
-img = L.distortableImageOverlay('example.png', {
+img = L.distortableImageOverlay('example.jpg', {
   corners: [
     L.latLng(51.52, -0.14),
     L.latLng(51.52,-0.10),
@@ -218,7 +218,7 @@ img = L.distortableImageOverlay('example.png', {
   ],
 });
 
-img2 = L.distortableImageOverlay('example.png', {
+img2 = L.distortableImageOverlay('example.jpg', {
   corners: [
     L.latLng(51.51, -0.20),
     L.latLng(51.51,-0.16),
@@ -254,7 +254,7 @@ For example, to overrwrite the toolbar to only include the `Deletes` action:
 
 ```JS
 imgGroup = L.distortableCollection({
-  actions: [Deletes]
+  actions: [Deletes],
 }).addTo(map);
 ```
 
@@ -270,7 +270,7 @@ See [editable](#editable).
 
 `suppressToolbar` (*optional*, default: false, value: *boolean*)
 
-Same as [suppressToolbar](#Suppress-Toolbar), but when using the multiple image interface you must also pass the option to the collection group to suppress its `L.Control` toolbar instance.
+Same usage as [suppressToolbar](#Suppress-Toolbar), but for the collection group's `L.Control` toolbar instance.
 
 This provides the developer with the flexibility to keep the popup toolbars, the control toolbar, both, or neither.
 
@@ -278,22 +278,20 @@ For ex.
 
 ```JS
 // suppress this images personal toolbar
-img = L.distortableImageOverlay(
-  'example.jpg', {
-    suppressToolbar: true,
-    corners: [
-      L.latLng(51.52, -0.14),
-      L.latLng(51.52,-0.10),
-      L.latLng(51.50, -0.14),
-      L.latLng(51.50,-0.10)
-    ],
-  });
+img = L.distortableImageOverlay('example.jpg', {
+  suppressToolbar: true,
+  corners: [
+    L.latLng(51.52, -0.14),
+    L.latLng(51.52,-0.10),
+    L.latLng(51.50, -0.14),
+    L.latLng(51.50,-0.10)
+  ],
+});
 
 // suppress the other images personal toolbar
-img2 = L.distortableImageOverlay(
-  'example.jpg', {
-    suppressToolbar: true,
-  });
+img2 = L.distortableImageOverlay('example.jpg', {
+  suppressToolbar: true,
+});
 
 // suppress collection toolbar accessed during multi-image selection
 imgGroup = L.distortableCollection({
@@ -598,7 +596,7 @@ Same as `L.DistortableImage.Edit` but for the collection (`L.DistortableCollecti
 ```JS
 // add a position option with combinations of 'top', 'bottom', 'left' or 'right'
 L.distortableImage.keymapper(map, {
-  position: 'topleft'
+  position: 'topleft',
 });
 ```
 
