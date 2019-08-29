@@ -38,10 +38,9 @@
       map.addGoogleMutant();
 
       map.whenReady(function () {
-        img = L.distortableImageOverlay("example.jpg", {
-          // (WIP) add a toolbarType field with values 'popup' (default) or 'control'
+        img = L.distortableImageOverlay('example.jpg', {
           selected: true,
-          fullResolutionSrc: "large.jpg"
+          fullResolutionSrc: 'large.jpg',
         }).addTo(map);
       });
       
