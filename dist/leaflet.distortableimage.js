@@ -523,7 +523,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     var latLngToLayerPoint = L.bind(map.latLngToLayerPoint, map);
     var transformMatrix = this
         ._calculateProjectiveTransform(latLngToLayerPoint);
-    var topLeft = latLngToLayerPoint(this._corners[0]);
+    var topLeft = latLngToLayerPoint(this.getCorner(0));
     var warp = L.DomUtil.getMatrixString(transformMatrix);
     var translation = this._getTranslateString(topLeft);
 
@@ -571,25 +571,13 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return this._corners[i];
   },
 
-  /*
-   * Calculates the centroid of the image.
-   * See http://stackoverflow.com/questions/6149175/logical-question-given-corners-find-center-of-quadrilateral
-   */
-  getCenter: function(ll2c, c2ll) {
+  // image centroid calculation
+  getCenter: function() {
     var map = this._map;
-    var latLngToCartesian = ll2c ? ll2c : map.latLngToLayerPoint;
-    var cartesianToLatLng = c2ll ? c2ll : map.layerPointToLatLng;
-    var nw = latLngToCartesian.call(map, this.getCorner(0));
-    var ne = latLngToCartesian.call(map, this.getCorner(1));
-    var se = latLngToCartesian.call(map, this.getCorner(2));
-    var sw = latLngToCartesian.call(map, this.getCorner(3));
-    var nmid = nw.add(ne.subtract(nw).divideBy(2));
-    var smid = sw.add(se.subtract(sw).divideBy(2));
-
-    return cartesianToLatLng.call(
-        map,
-        nmid.add(smid.subtract(nmid).divideBy(2))
-    );
+    var reduce = this.getCorners().reduce(function(agg, corner) {
+      return agg.add(map.project(corner));
+    }, L.point(0, 0));
+    return map.unproject(reduce.divideBy(4));
   },
 
   // Use for translation calculations

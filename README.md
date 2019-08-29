@@ -482,7 +482,7 @@ img.setCorners(scaledCorners);
 </details>
 
 <details><summary><code><b>getCenter()</b>: LatLng</code></summary>
-  <ul><li>calculates the centroid of the image.</li></ul>
+  <ul><li>Returns the center (<a href="http://en.wikipedia.org/wiki/Centroid">centroid</a>) of the image.</li></ul>
 </details>
 
 <details><summary><code><b>scaleBy(<i>factor</i> &#60;number>)</b>: this</code></summary>
