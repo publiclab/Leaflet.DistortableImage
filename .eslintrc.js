@@ -28,7 +28,7 @@ module.exports = {
 
        /* rules */
         "curly": ["error", "multi-line"],
-        "brace-style": ["error", "1tbs", {"allowSingleLine": true}],
+        "brace-style": ["off", "1tbs", { "allowSingleLine": true }],
         "block-spacing": ["error", "always"],
         "no-var": 0,
         "new-cap": 0,
