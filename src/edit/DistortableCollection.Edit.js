@@ -90,19 +90,19 @@ L.DistortableCollection.Edit = L.Handler.extend({
     }
   },
 
-  _singleClick: function (e) {
-    if (e.deselect) { this._deselectAll(e); } 
+  _singleClick: function(e) {
+    if (e.deselect) { this._deselectAll(e); }
     else { return; }
   },
 
-  _singleClickListeners: function () {
+  _singleClickListeners: function() {
     var map = this._group._map;
 
     L.DomEvent.on(map, 'singleclick', this._singleClick, this);
     L.DomEvent.off(map, 'click', this._deselectAll, this);
   },
 
-  _resetClickListeners: function () {
+  _resetClickListeners: function() {
     var map = this._group._map;
 
     L.DomEvent.on(map, 'click', this._deselectAll, this);
@@ -273,6 +273,8 @@ L.DistortableCollection.Edit = L.Handler.extend({
   _addToolbar: function() {
     var group = this._group;
     var map = group._map;
+
+    if (group.options.suppressToolbar) { return; }
 
     try {
       if (!this.toolbar) {
