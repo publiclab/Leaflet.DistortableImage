@@ -2,6 +2,25 @@ beforeEach(function() {
   /* Make expect function available in all tests. */
   window.expect = chai.expect;
 });
+/*
+* Mouse Events is a dictionary of "Events" and their properties.
+* Other events include 'click', 'dblick', 'mouseup', 'mouseover', 'mouseout', 'mousemove'
+* Properties can take in propeties of initMouseEvents().
+ */
+ chai.mouseEvents = {
+  ShiftDown: {
+    type: "mousedown",
+    isShift: true
+  },
+  MouseDown: {
+    type: "mousedown",
+    isShift: false
+  },
+  Click: {
+    type: "click",
+    isShift: false
+  }
+}
 
 /* Chain global testing utilites below to chai*/
 
@@ -34,6 +53,15 @@ chai.simulateClick = function simulateClickFn(el) {
     return el.dispatchEvent(e);
   }
 };
+
+chai.simulateEvent = function simulateEventFn(el, event) {
+  if (document.createEvent) {
+    var e = document.createEvent('MouseEvents');
+    e.initMouseEvent(event.type, true, true, window, 0, 0, 0, 0, 0, false, false, event.isShift, false, 0, null);
+    return el.dispatchEvent(e);
+  }
+};
+
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
