@@ -377,8 +377,8 @@ We have extended Leaflet's `L.Map` to include a convenience method for this libr
 
 <details><summary><code><b>addGoogleMutant(<i>opts?</i> &#60;Mutant options>)</b>: this</code></summary>
   <ul>
-    <li>adds a Google Mutant layer with location labels according to our recommended setup.</li>
-    <li>label visibility is toggled by double clicking on the map.</li>
+    <li>Adds a Google Mutant layer with location labels according to our recommended setup.</li>
+    <li>Label visibility is toggled by double clicking on the map.</li>
     <li><b>Mutant options</b>: {
       <ul>
         <li><i>labels</i>: &#60;boolean>, default: true</li>
@@ -412,16 +412,16 @@ And the following custom handlers:
 
 <details><summary><code><b>doubleClickLabels</b>: this</code></summary>
   <ul>
-    <li>when location labels are added via <code>#addGoogleMutant</code>, this handler is enabled by default to allow toggling their visibility by double clicking on the map.</li>
-    <li>afterwards, can be enabled / disabled during runtime via <a href="https://leafletjs.com/reference-1.5.0.html#handler">Leaflet's Handler API</a>.</li>
-    <li>overrides the map's default <a href="https://leafletjs.com/reference-1.5.0.html#map-doubleclickzoom"><code>doubleClickZoom</code></a> handler when enabled. When disabled, automatically re-enables it.</li>
+    <li>When location labels are added via <code>#addGoogleMutant</code>, this handler is enabled by default to allow toggling their visibility by double clicking on the map.</li>
+    <li>Afterwards, can be enabled / disabled during runtime via <a href="https://leafletjs.com/reference-1.5.0.html#handler">Leaflet's Handler API</a>.</li>
+    <li>Overrides the map's default <a href="https://leafletjs.com/reference-1.5.0.html#map-doubleclickzoom"><code>doubleClickZoom</code></a> handler when enabled. When disabled, automatically re-enables it.</li>
   </ul>
 </details>
 
 <details><summary><code><b>boxSelector</b>: this</code></summary>
   <ul>
-    <li>overrides the map's default <a href="https://leafletjs.com/reference-1.5.0.html#map-boxzoom"><code>boxZoom</code></a> handler.</li>
-    <li>allows multiple images to be selected when <kbd>shift</kbd> + <code>drag</code>ing on the map in the multiple-image inerface.</li>
+    <li>Overrides the map's default <a href="https://leafletjs.com/reference-1.5.0.html#map-boxzoom"><code>boxZoom</code></a> handler.</li>
+    <li>Allows multiple images to be selected when <kbd>shift</kbd> + <code>drag</code>ing on the map in the multiple-image inerface.</li>
   </ul>
 </details>
 <br>
@@ -442,24 +442,24 @@ We have made slight changes to a default Leaflet handler:
 ---
 
 <details><summary><code><b>getCorner(<i>idx</i> &#60;number 0..3>)</b>: LatLng</code></summary>
-  <ul><li>returns the coordinates of the image corner at <i>index</i>.</li></ul>
+  <ul><li>Returns the coordinates of the image corner at <i>index</i>.</li></ul>
 </details>
 
 <details><summary><code><b>getCorners()</b>: 4 [LatLng, LatLng, LatLng, LatLng]</code></summary>
-  <ul><li>returns the coordinates of the image corners in NW, NE, SW, SE order.</li></ul>
+  <ul><li>Returns the coordinates of the image corners in NW, NE, SW, SE order.</li></ul>
 </details>
 
 <details><summary><code><b>setCorner(<i>idx</i> &#60;number 0..3>, <i>LatLng</i>)</b>: this</code></summary>
   <ul>
-    <li>updates the coordinates of the image corner at <i>index</i> to <i>LatLng</i> and, where applicable, marker and toolbar positioning.</li>
-    <li>we use this internally for <code>distort</code> mode.</li>
+    <li>Updates the coordinates of the image corner at <i>index</i> to <i>LatLng</i> and, where applicable, marker and toolbar positioning.</li>
+    <li>We use this internally for <code>distort</code> mode.</li>
   </ul>
 </details>
 
 <details><summary><code><b>setCorners(<i>corners</i>)</b>: this</code></summary>
   <ul>
-    <li>same as <code>#setCorner</code>, but takes in a "corners" object to update all 4 corners with only one UI update at the end.</li>
-    <li> we use this internally for image translation, rotation, and scaling.</li>
+    <li>Same as <code>#setCorner</code>, but takes in a "corners" object to update all 4 corners with only one UI update at the end.</li>
+    <li>We use this internally for image translation, rotation, and scaling.</li>
     <li><i>corners</i>: { <i>keys</i>: &#60;number 0..4>, <i>values</i>: LatLng } <br>
   ex.
 
@@ -487,15 +487,15 @@ img.setCorners(scaledCorners);
 
 <details><summary><code><b>scaleBy(<i>factor</i> &#60;number>)</b>: this</code></summary>
   <ul>
-    <li>scales the image by the given factor and calls <code>#setCorners</code>.</li>
-    <li>a scale of 0 or 1 will leave the image unchanged - but 0 causes the function to automatically return.</li>
-    <li>a negative scale will invert the image and, depending on the factor, change its size.</li>
-    <li>ex. <code>img.scaleBy(0.5)</code></li>
+    <li>Scales the image by the given factor and calls <code>#setCorners</code>.</li>
+    <li>A scale of 0 or 1 will leave the image unchanged - but 0 causes the function to automatically return.</li>
+    <li>A negative scale will invert the image and, depending on the factor, change its size.</li>
+    <li>Ex. <code>img.scaleBy(0.5)</code></li>
   </ul>
 </details>
 
 <details><summary><code><b>rotateBy(<i>rad</i> &#60;number>)</b>: this</code></summary>
-  <ul><li>rotates the image by the given radian angle and calls <code>#setCorners</code>.</li></ul>
+  <ul><li>Rotates the image by the given radian angle and calls <code>#setCorners</code>.</li></ul>
 </details>
 
 ---
@@ -586,7 +586,7 @@ Same as `L.DistortableImage.Edit` but for the collection (`L.DistortableCollecti
 </details>
 
 <details><summary><code><b>hasTool(<i>action</i> &#60;EditAction>)</b>: Boolean</code></summary>
-<ul><li>Checks if the tool is already present in the currently rendered control toolbar.</li></ul>
+<ul><li>Returns true if the tool is present in the currently rendered control toolbar.</li></ul>
 </details>
 
 ## Additional Components
