@@ -571,7 +571,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return this._corners[i];
   },
 
-  // image centroid calculation
+  // image (vertex) centroid calculation
   getCenter: function() {
     var map = this._map;
     var reduce = this.getCorners().reduce(function(agg, corner) {
