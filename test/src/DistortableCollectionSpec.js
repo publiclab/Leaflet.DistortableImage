@@ -63,8 +63,8 @@ describe('L.DistortableCollection', function() {
       var img = overlay.getElement(),
         img2 = overlay2.getElement();
 
-      chai.simulateShiftMousedown(img);
-      chai.simulateMousedown(img2);
+      chai.simulateEvent(img, chai.mouseEvents.ShiftMouseDown);
+      chai.simulateEvent(img2, chai.mouseEvents.MouseDown);
 
       expect(imgGroup.isSelected(overlay)).to.be.true;
       expect(imgGroup.isSelected(overlay2)).to.be.false;
@@ -76,8 +76,8 @@ describe('L.DistortableCollection', function() {
       var img = overlay.getElement(),
         img2 = overlay2.getElement();
 
-      chai.simulateMousedown(img);
-      chai.simulateMousedown(img2);
+      chai.simulateEvent(img, chai.mouseEvents.MouseDown);
+      chai.simulateEvent(img2, chai.mouseEvents.MouseDown);
 
       expect(imgGroup.isSelected(overlay)).to.be.false;
       expect(imgGroup.isSelected(overlay2)).to.be.false;
@@ -89,8 +89,8 @@ describe('L.DistortableCollection', function() {
       var img = overlay.getElement(),
         img2 = overlay2.getElement();
 
-      chai.simulateShiftMousedown(img);
-      chai.simulateShiftMousedown(img2);
+      chai.simulateEvent(img, chai.mouseEvents.ShiftMouseDown);
+      chai.simulateEvent(img2, chai.mouseEvents.ShiftMouseDown);
 
       expect(L.DomUtil.getClass(img)).to.include('selected');
       expect(L.DomUtil.getClass(img2)).to.include('selected');
@@ -100,7 +100,7 @@ describe('L.DistortableCollection', function() {
       var img = overlay.getElement();
 
       overlay.editing._toggleLock();
-      chai.simulateShiftMousedown(img);
+      chai.simulateEvent(img, chai.mouseEvents.ShiftMouseDown);
 
       expect(L.DomUtil.getClass(img)).to.include('selected');
     });
