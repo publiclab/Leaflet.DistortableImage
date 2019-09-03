@@ -231,10 +231,29 @@ var EnableEXIF = L.EditAction.extend({
   },
 
   addHooks: function() {
-    var image = this._overlay.getElement();
+    var overlay = this._overlay;
+    var exifable = new Image();
 
-    // eslint-disable-next-line new-cap
-    EXIF.getData(image, L.EXIF(image));
+    exifable.src = overlay._getFullResSrc();
+
+    exifable.id = exifable.id || 'tempId12345';
+    document.body.appendChild(exifable);
+
+    exifable.onload = function onLoadExifableImage() {
+      EXIF.getData(exifable, function() {
+        L.EXIF(this, overlay);
+      });
+    };
+
+    // new Promise(function(resolve, reject) {
+    //   resolve(EXIF.getData(image, function() {
+    //     if (confirm('Press OK to view EXIF metadata in console and geolocate the image.')) {
+    //       L.EXIF(this, overlay);
+    //     }
+    //   })).then(function(r) {
+    //     console.log(r);
+    //   });
+    // });
   },
 });
 
@@ -254,7 +273,7 @@ var Revert = L.EditAction.extend({
 
   addHooks: function() {
     this._overlay._revert();
-  }
+  },
 });
 
 var ToggleRotate = L.EditAction.extend({
@@ -289,7 +308,7 @@ var ToggleScale = L.EditAction.extend({
       html: use,
       tooltip: 'Scale Image',
     };
-    
+
     L.DistortableImage.action_map.s = '_toggleScale';
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
@@ -334,15 +353,16 @@ L.DistortableImageOverlay.addInitHook(function() {
     ToggleRotateScale,
     ToggleOrder,
     Revert,
+    EnableEXIF,
     Export,
     Delete,
   ];
 
-if (this.options.actions) { /* (`this` being DistortableImageOverlay, not the toolbar) */
+  if (this.options.actions) { /* (`this` being DistortableImageOverlay, not the toolbar) */
     this.editActions = this.options.actions;
   } else {
     this.editActions = this.ACTIONS;
   }
 
-  this.editing = new L.DistortableImage.Edit(this, { actions: this.editActions });
+  this.editing = new L.DistortableImage.Edit(this, {actions: this.editActions});
 });

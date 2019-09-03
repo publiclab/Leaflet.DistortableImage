@@ -251,6 +251,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this.edgeMinWidth = this.options.edgeMinWidth;
     this.editable = this.options.editable;
     this._url = url;
+    this._fullResolutionSrc = options.fullResolutionSrc || url;
     this.rotation = 0;
     // window.rotation = this.rotation;
   },
@@ -580,6 +581,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return map.unproject(reduce.divideBy(4));
   },
 
+  _getFullResSrc: function() {
+    return this._fullResolutionSrc;
+  },
+
   // Use for translation calculations
   // for translation the delta for 1 corner applies to all 4
   _calcCornerPointDelta: function() {
@@ -886,89 +891,86 @@ L.distortableCollection = function(id, options) {
   return new L.DistortableCollection(id, options);
 };
 
-/* eslint-disable no-unused-vars */
-L.EXIF = function getEXIFdata(img) {
+L.EXIF = function getEXIFdata(img, overlay) {
+  var GPS;
+  var lat;
+  var lng;
   if (Object.keys(EXIF.getAllTags(img)).length !== 0) {
     console.log(EXIF.getAllTags(img));
-    var GPS = EXIF.getAllTags(img);
-    var altitude;
-
-    /* If the lat/lng is available. */
-    if (
-      typeof GPS.GPSLatitude !== 'undefined' &&
-      typeof GPS.GPSLongitude !== 'undefined'
-    ) {
-      // sadly, encoded in [degrees,minutes,seconds]
-      // primitive value = GPS.GPSLatitude[x].numerator
-      var lat =
-        GPS.GPSLatitude[0] +
-        GPS.GPSLatitude[1] / 60 +
-        GPS.GPSLatitude[2] / 3600;
-      var lng =
-        GPS.GPSLongitude[0] +
-        GPS.GPSLongitude[1] / 60 +
-        GPS.GPSLongitude[2] / 3600;
-
-      if (GPS.GPSLatitudeRef !== 'N') {
-        lat = lat * -1;
-      }
-      if (GPS.GPSLongitudeRef === 'W') {
-        lng = lng * -1;
-      }
-    }
-
-    // Attempt to use GPS compass heading; will require
-    // some trig to calc corner points, which you can find below:
-
-    var angle = 0;
-    // "T" refers to "True north", so -90.
-    if (GPS.GPSImgDirectionRef === 'T') {
-      angle =
-        (Math.PI / 180) *
-        (GPS.GPSImgDirection.numerator / GPS.GPSImgDirection.denominator - 90);
-      // "M" refers to "Magnetic north"
-    } else if (GPS.GPSImgDirectionRef === 'M') {
-      angle =
-        (Math.PI / 180) *
-        (GPS.GPSImgDirection.numerator / GPS.GPSImgDirection.denominator - 90);
-    } else {
-      console.log('No compass data found');
-    }
-
-    console.log('Orientation:', GPS.Orientation);
-
-    /* If there is orientation data -- i.e. landscape/portrait etc */
-    if (GPS.Orientation === 6) {
-      // CCW
-      angle += (Math.PI / 180) * -90;
-    } else if (GPS.Orientation === 8) {
-      // CW
-      angle += (Math.PI / 180) * 90;
-    } else if (GPS.Orientation === 3) {
-      // 180
-      angle += (Math.PI / 180) * 180;
-    }
-
-    /* If there is altitude data */
-    if (
-      typeof GPS.GPSAltitude !== 'undefined' &&
-      typeof GPS.GPSAltitudeRef !== 'undefined'
-    ) {
-      // Attempt to use GPS altitude:
-      // (may eventually need to find EXIF field of view for correction)
-      if (
-        typeof GPS.GPSAltitude !== 'undefined' &&
-        typeof GPS.GPSAltitudeRef !== 'undefined'
-      ) {
-        altitude =
-          GPS.GPSAltitude.numerator / GPS.GPSAltitude.denominator +
-          GPS.GPSAltitudeRef;
-      } else {
-        altitude = 0; // none
-      }
-    }
+    GPS = EXIF.getAllTags(img);
   } else {
-    alert('EXIF initialized. Press again to view data in console.');
+    console.log('sorry no');
+  }
+  if (!GPS) {
+    console.log('sorry no GPS');
+    return;
+  }
+
+  if (typeof GPS.GPSLatitude !== 'undefined' && typeof GPS.GPSLongitude !== 'undefined') {
+    // sadly, encoded in [degrees,minutes,seconds]
+    // primitive value = GPS.GPSLatitude[x].numerator
+    lat =
+      GPS.GPSLatitude[0] +
+      GPS.GPSLatitude[1] / 60 +
+      GPS.GPSLatitude[2] / 3600;
+    lng =
+      GPS.GPSLongitude[0] +
+      GPS.GPSLongitude[1] / 60 +
+      GPS.GPSLongitude[2] / 3600;
+
+    if (GPS.GPSLatitudeRef !== 'N') {
+      lat = lat * -1;
+    }
+    if (GPS.GPSLongitudeRef === 'W') {
+      lng = lng * -1;
+    }
+  }
+
+  // Attempt to use GPS compass heading; will require
+  // some trig to calc corner points, which you can find below:
+
+  var angle = 0;
+  // "T" refers to "True north", so -90, "M" refers to "Magnetic north"
+  if (GPS.GPSImgDirectionRef === 'T' || GPS.GPSImgDirectionRef === 'M') {
+    angle =
+      (Math.PI / 180) *
+      (GPS.GPSImgDirection.numerator / GPS.GPSImgDirection.denominator - 90);
+  }
+
+  /* If there is orientation data -- i.e. landscape/portrait etc */
+  if (GPS.Orientation === 6) {
+    // CCW
+    angle += (Math.PI / 180) * -90;
+  } else if (GPS.Orientation === 8) {
+    // CW
+    angle += (Math.PI / 180) * 90;
+  } else if (GPS.Orientation === 3) {
+    // 180
+    angle += (Math.PI / 180) * 180;
+  }
+
+  if (lat && lng) {
+    var panTo = L.latLng(lat, lng);
+    console.log('lat:' + lat);
+    console.log('lng:' + lng);
+
+    var deltaX = overlay.getCorner(0).lng - overlay.getCorner(1).lng; // width
+    var deltaY = overlay.getCorner(0).lat - overlay.getCorner(2).lat; // height
+
+    //  _corners: array element holding a <LatLng> object ([])
+    //  changes made to _corners, unlike getCorners (value return only)
+    // will actually mutate corners, which is what we need to do
+
+    overlay._corners[0] = L.latLng(lat + deltaY / 2, lng + deltaX / 2);
+    overlay._corners[1] = L.latLng(lat + deltaY / 2, lng - deltaX / 2);
+    overlay._corners[2] = L.latLng(lat - deltaY / 2, lng + deltaX / 2);
+    overlay._corners[3] = L.latLng(lat - deltaY / 2, lng - deltaX / 2);
+
+    overlay.rotateBy(angle);
+
+    overlay._map.setView(panTo, 13);
+
+    return GPS;
   }
 };
 
@@ -1596,10 +1598,29 @@ var EnableEXIF = L.EditAction.extend({
   },
 
   addHooks: function() {
-    var image = this._overlay.getElement();
+    var overlay = this._overlay;
+    var exifable = new Image();
 
-    // eslint-disable-next-line new-cap
-    EXIF.getData(image, L.EXIF(image));
+    exifable.src = overlay._getFullResSrc();
+
+    exifable.id = exifable.id || 'tempId12345';
+    document.body.appendChild(exifable);
+
+    exifable.onload = function onLoadExifableImage() {
+      EXIF.getData(exifable, function() {
+        L.EXIF(this, overlay);
+      });
+    };
+
+    // new Promise(function(resolve, reject) {
+    //   resolve(EXIF.getData(image, function() {
+    //     if (confirm('Press OK to view EXIF metadata in console and geolocate the image.')) {
+    //       L.EXIF(this, overlay);
+    //     }
+    //   })).then(function(r) {
+    //     console.log(r);
+    //   });
+    // });
   },
 });
 
@@ -1619,7 +1640,7 @@ var Revert = L.EditAction.extend({
 
   addHooks: function() {
     this._overlay._revert();
-  }
+  },
 });
 
 var ToggleRotate = L.EditAction.extend({
@@ -1654,7 +1675,7 @@ var ToggleScale = L.EditAction.extend({
       html: use,
       tooltip: 'Scale Image',
     };
-    
+
     L.DistortableImage.action_map.s = '_toggleScale';
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
@@ -1699,17 +1720,18 @@ L.DistortableImageOverlay.addInitHook(function() {
     ToggleRotateScale,
     ToggleOrder,
     Revert,
+    EnableEXIF,
     Export,
     Delete,
   ];
 
-if (this.options.actions) { /* (`this` being DistortableImageOverlay, not the toolbar) */
+  if (this.options.actions) { /* (`this` being DistortableImageOverlay, not the toolbar) */
     this.editActions = this.options.actions;
   } else {
     this.editActions = this.ACTIONS;
   }
 
-  this.editing = new L.DistortableImage.Edit(this, { actions: this.editActions });
+  this.editing = new L.DistortableImage.Edit(this, {actions: this.editActions});
 });
 
 L.distortableImage = L.DistortableImage || {};
@@ -2438,7 +2460,7 @@ L.DistortableImage.Edit = L.Handler.extend({
       }
     };
 
-    downloadable.src = overlay.options.fullResolutionSrc || overlay._image.src;
+    downloadable.src = overlay.fullResolutionSrc || overlay.getElement().src;
   },
 
   /**
