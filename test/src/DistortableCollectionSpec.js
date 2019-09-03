@@ -63,7 +63,7 @@ describe('L.DistortableCollection', function() {
       var img = overlay.getElement(),
         img2 = overlay2.getElement();
 
-      chai.simulateEvent(img, chai.mouseEvents.ShiftDown);
+      chai.simulateEvent(img, chai.mouseEvents.ShiftMouseDown);
       chai.simulateEvent(img2, chai.mouseEvents.MouseDown);
 
       expect(imgGroup.isSelected(overlay)).to.be.true;
@@ -89,8 +89,8 @@ describe('L.DistortableCollection', function() {
       var img = overlay.getElement(),
         img2 = overlay2.getElement();
 
-      chai.simulateEvent(img, chai.mouseEvents.ShiftDown);
-      chai.simulateEvent(img2, chai.mouseEvents.ShiftDown);
+      chai.simulateEvent(img, chai.mouseEvents.ShiftMouseDown);
+      chai.simulateEvent(img2, chai.mouseEvents.ShiftMouseDown);
 
       expect(L.DomUtil.getClass(img)).to.include('selected');
       expect(L.DomUtil.getClass(img2)).to.include('selected');
@@ -100,7 +100,7 @@ describe('L.DistortableCollection', function() {
       var img = overlay.getElement();
 
       overlay.editing._toggleLock();
-      chai.simulateEvent(img, chai.mouseEvents.ShiftDown);
+      chai.simulateEvent(img, chai.mouseEvents.ShiftMouseDown);
 
       expect(L.DomUtil.getClass(img)).to.include('selected');
     });
