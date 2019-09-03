@@ -35,7 +35,7 @@ describe('L.DistortableImage.Edit', function() {
 
     edit.enable();
     // this test applies to a selected image
-    chai.simulateClick(img);
+    chai.simulateEvent(img, chai.mouseEvents.Click);
 
     overlay.setCorner(0, L.latLng(41.7934, -87.6252));
 
@@ -94,7 +94,7 @@ describe('L.DistortableImage.Edit', function() {
 			// switch to lock handles
 			edit._toggleLock();
 			// select the image to initially create its individual toolbar instance
-			chai.simulateClick(img);
+			chai.simulateEvent(img, chai.mouseEvents.Click);
 
 			expect(edit.toolbar).to.not.be.false
 
