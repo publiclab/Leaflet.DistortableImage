@@ -602,7 +602,7 @@ L.DistortableImage.Edit = L.Handler.extend({
       }
     };
 
-    downloadable.src = overlay.fullResolutionSrc || overlay.getElement().src;
+    downloadable.src = overlay._getFullResSrc();
   },
 
   /**

@@ -241,19 +241,17 @@ var EnableEXIF = L.EditAction.extend({
 
     exifable.onload = function onLoadExifableImage() {
       EXIF.getData(exifable, function() {
-        L.EXIF(this, overlay);
+        if (Object.keys(this.exifdata).length !== 0) {
+          if (Object.keys(this.exifdata).includes('GPSLatitude') && Object.keys(this.exifdata).includes('GPSLongitude')) {
+            L.EXIF(this, overlay);
+          } else {
+            alert('Only the following EXIF metadata is available:' + Object.keys(this.exifdata));
+          }
+        } else {
+          alert('Please provide a fullResolutionSrc containing EXIF metadata');
+        }
       });
     };
-
-    // new Promise(function(resolve, reject) {
-    //   resolve(EXIF.getData(image, function() {
-    //     if (confirm('Press OK to view EXIF metadata in console and geolocate the image.')) {
-    //       L.EXIF(this, overlay);
-    //     }
-    //   })).then(function(r) {
-    //     console.log(r);
-    //   });
-    // });
   },
 });
 

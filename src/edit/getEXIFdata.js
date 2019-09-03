@@ -1,36 +1,24 @@
 L.EXIF = function getEXIFdata(img, overlay) {
-  var GPS;
+  var GPS = img.exifdata;
   var lat;
   var lng;
-  if (Object.keys(EXIF.getAllTags(img)).length !== 0) {
-    console.log(EXIF.getAllTags(img));
-    GPS = EXIF.getAllTags(img);
-  } else {
-    console.log('sorry no');
-  }
-  if (!GPS) {
-    console.log('sorry no GPS');
-    return;
-  }
 
-  if (typeof GPS.GPSLatitude !== 'undefined' && typeof GPS.GPSLongitude !== 'undefined') {
-    // sadly, encoded in [degrees,minutes,seconds]
-    // primitive value = GPS.GPSLatitude[x].numerator
-    lat =
-      GPS.GPSLatitude[0] +
-      GPS.GPSLatitude[1] / 60 +
-      GPS.GPSLatitude[2] / 3600;
-    lng =
-      GPS.GPSLongitude[0] +
-      GPS.GPSLongitude[1] / 60 +
-      GPS.GPSLongitude[2] / 3600;
+  // sadly, encoded in [degrees,minutes,seconds]
+  // primitive value = GPS.GPSLatitude[x].numerator
+  lat =
+    GPS.GPSLatitude[0] +
+    GPS.GPSLatitude[1] / 60 +
+    GPS.GPSLatitude[2] / 3600;
+  lng =
+    GPS.GPSLongitude[0] +
+    GPS.GPSLongitude[1] / 60 +
+    GPS.GPSLongitude[2] / 3600;
 
-    if (GPS.GPSLatitudeRef !== 'N') {
-      lat = lat * -1;
-    }
-    if (GPS.GPSLongitudeRef === 'W') {
-      lng = lng * -1;
-    }
+  if (GPS.GPSLatitudeRef !== 'N') {
+    lat = lat * -1;
+  }
+  if (GPS.GPSLongitudeRef === 'W') {
+    lng = lng * -1;
   }
 
   // Attempt to use GPS compass heading; will require

@@ -892,38 +892,26 @@ L.distortableCollection = function(id, options) {
 };
 
 L.EXIF = function getEXIFdata(img, overlay) {
-  var GPS;
+  var GPS = img.exifdata;
   var lat;
   var lng;
-  if (Object.keys(EXIF.getAllTags(img)).length !== 0) {
-    console.log(EXIF.getAllTags(img));
-    GPS = EXIF.getAllTags(img);
-  } else {
-    console.log('sorry no');
-  }
-  if (!GPS) {
-    console.log('sorry no GPS');
-    return;
-  }
 
-  if (typeof GPS.GPSLatitude !== 'undefined' && typeof GPS.GPSLongitude !== 'undefined') {
-    // sadly, encoded in [degrees,minutes,seconds]
-    // primitive value = GPS.GPSLatitude[x].numerator
-    lat =
-      GPS.GPSLatitude[0] +
-      GPS.GPSLatitude[1] / 60 +
-      GPS.GPSLatitude[2] / 3600;
-    lng =
-      GPS.GPSLongitude[0] +
-      GPS.GPSLongitude[1] / 60 +
-      GPS.GPSLongitude[2] / 3600;
+  // sadly, encoded in [degrees,minutes,seconds]
+  // primitive value = GPS.GPSLatitude[x].numerator
+  lat =
+    GPS.GPSLatitude[0] +
+    GPS.GPSLatitude[1] / 60 +
+    GPS.GPSLatitude[2] / 3600;
+  lng =
+    GPS.GPSLongitude[0] +
+    GPS.GPSLongitude[1] / 60 +
+    GPS.GPSLongitude[2] / 3600;
 
-    if (GPS.GPSLatitudeRef !== 'N') {
-      lat = lat * -1;
-    }
-    if (GPS.GPSLongitudeRef === 'W') {
-      lng = lng * -1;
-    }
+  if (GPS.GPSLatitudeRef !== 'N') {
+    lat = lat * -1;
+  }
+  if (GPS.GPSLongitudeRef === 'W') {
+    lng = lng * -1;
   }
 
   // Attempt to use GPS compass heading; will require
@@ -1608,19 +1596,17 @@ var EnableEXIF = L.EditAction.extend({
 
     exifable.onload = function onLoadExifableImage() {
       EXIF.getData(exifable, function() {
-        L.EXIF(this, overlay);
+        if (Object.keys(this.exifdata).length !== 0) {
+          if (Object.keys(this.exifdata).includes('GPSLatitude') && Object.keys(this.exifdata).includes('GPSLongitude')) {
+            L.EXIF(this, overlay);
+          } else {
+            alert('Only the following EXIF metadata is available:' + Object.keys(this.exifdata));
+          }
+        } else {
+          alert('Please provide a fullResolutionSrc containing EXIF metadata');
+        }
       });
     };
-
-    // new Promise(function(resolve, reject) {
-    //   resolve(EXIF.getData(image, function() {
-    //     if (confirm('Press OK to view EXIF metadata in console and geolocate the image.')) {
-    //       L.EXIF(this, overlay);
-    //     }
-    //   })).then(function(r) {
-    //     console.log(r);
-    //   });
-    // });
   },
 });
 
@@ -2460,7 +2446,7 @@ L.DistortableImage.Edit = L.Handler.extend({
       }
     };
 
-    downloadable.src = overlay.fullResolutionSrc || overlay.getElement().src;
+    downloadable.src = overlay._getFullResSrc();
   },
 
   /**
