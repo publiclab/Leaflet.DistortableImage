@@ -240,18 +240,24 @@ var EnableEXIF = L.EditAction.extend({
     document.body.appendChild(exifable);
 
     exifable.onload = function onLoadExifableImage() {
-      EXIF.getData(exifable, function() {
-        if (Object.keys(this.exifdata).length !== 0) {
-          if (Object.keys(this.exifdata).includes('GPSLatitude') && Object.keys(this.exifdata).includes('GPSLongitude')) {
-            L.EXIF(this, overlay);
+      if (window && window.hasOwnProperty('EXIF')) {
+        EXIF.getData(exifable, function() {
+          if (Object.keys(this.exifdata).length !== 0) {
+            if (Object.keys(this.exifdata).includes('GPSLatitude') && Object.keys(this.exifdata).includes('GPSLongitude')) {
+              L.EXIF(this, overlay);
+            } else {
+              alert('Only the following EXIF metadata is available:' + Object.keys(this.exifdata));
+            }
           } else {
-            alert('Only the following EXIF metadata is available:' + Object.keys(this.exifdata));
+            alert('Please provide a fullResolutionSrc containing EXIF metadata');
           }
-        } else {
-          alert('Please provide a fullResolutionSrc containing EXIF metadata');
-        }
-      });
+        });
+      } else {
+        alert('window does not have property EXIF');
+      }
     };
+
+    L.DomUtil.remove(exifable);
   },
 });
 
