@@ -343,6 +343,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       ];
     }
 
+    this.setBounds(L.latLngBounds(this._corners));
+
     this._initialDimensions = {'height': imageHeight, 'width': imageWidth, 'offset': offset};
   },
 
@@ -377,7 +379,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     var edit = this.editing;
 
     this._corners[corner] = latlng;
-    this._reset();
+    
+    // this._reset();
+    this.setBounds(L.latLngBounds(this.getCorners()));
     this.fire('update');
 
     if (edit.toolbar && edit.toolbar instanceof L.DistortableImage.PopupBar) {
@@ -389,14 +393,27 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   setCorners: function(latlngObj) {
     var edit = this.editing;
+    var map = this._map;
+    var zoom = map.getZoom();
     var i = 0;
 
     for (var k in latlngObj) {
+      if ((zoom === 0 && (map.project(latlngObj[k]).y < 2 || map.project(latlngObj[k]).y >= 255)) ||
+          (zoom !== 0 && (map.project(latlngObj[k]).y / zoom < 2 || map.project(latlngObj[k]).y / Math.pow(2, zoom) >= 255))
+      ) {
+        // calling reset / update w/ the same corners bc it prevents a marker flicker for rotate
+        this.setBounds(L.latLngBounds(this.getCorners()));
+        this.fire('update');
+        return;
+      }
+    }
+
+    for (k in latlngObj) {
       this._corners[i] = latlngObj[k];
       i += 1;
     }
 
-    this._reset();
+    this.setBounds(L.latLngBounds(this.getCorners()));
     this.fire('update');
 
     if (edit.toolbar && edit.toolbar instanceof L.DistortableImage.PopupBar) {
@@ -1136,31 +1153,32 @@ L.RotateScaleHandle = L.EditHandle.extend({
   options: {
     TYPE: 'rotateScale',
     icon: L.icon({
-      // eslint-disable-next-line max-len
       iconUrl:
         'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAHiSURBVMXBa3HbShgA0PMp/1sCCo8oCEpgTaCXgIXAJiDzyCJoAUTm4UVQAns1Y8+snWnTvJyeE16hkjDgDrfoNTMKcpC9UPiLSo8JyetkjEHxjPCMyoS199kFoz8Iv1HpMaN3qWDCHoegOKkkRwnJpRmroHgiPFEZ8IBekzEGxQtUEhKSS/fB7Ew4U+lxcGkVZG9QWWPSFAxBcdK59KApuA+yNwp2uEdx1GN25sZJZULSfAtm77SlbNjju6MvG75u+WHRWVR6rDVjMPsgwYyVZl3pLTpHkyYHOx8syMiayaJzlDTZ9YyaZNFVkiYH2ZUEBcVJJXVImuz6Js3Qofe59pq7DoOTILu+g+a288mCouk7/1iH4qTS+2QdDppbV1ZJmrnDXnPnc5UOs2Z0fUmTuyBr+krvSioJyUmQO0dZM7mepMkWnaNRkyrJB6uskTSjxY3Fll8bvmJwlDb83FJ8gMqAB80uyBY3Trb82PAfvjj6vuHnluIdKgMeNXOwctK5NKBoHitrb1RJeHRp5Ux4ojLg0aWMHGQvUOkxIWkKVsHsTPiNSo8HDC5lZIsgO6n0uMUdRvQuFQxB8UR4RmXC2vvsgtEfhL+o9JiQvE7GGBTPCK9QSUjoMWgKDthjDrIX+h/k0I7gth6N5gAAAABJRU5ErkJggg==',
       iconSize: [32, 32],
-      iconAnchor: [16, 16]
-    })
+      iconAnchor: [16, 16],
+    }),
   },
 
   _onHandleDrag: function() {
-    var overlay = this._handled,
-        map = overlay._map,
-        edgeMinWidth = overlay.edgeMinWidth,
-        formerLatLng = overlay.getCorner(this._corner),
-        newLatLng = this.getLatLng(),
-        angle = this.calculateAngleDelta(formerLatLng, newLatLng),
-        scale = this._calculateScalingFactor(formerLatLng, newLatLng);
+    var overlay = this._handled;
+    var map = overlay._map;
+    var edgeMinWidth = overlay.edgeMinWidth;
+    var formerLatLng = overlay.getCorner(this._corner);
+    var newLatLng = this.getLatLng();
+    var angle = this.calculateAngleDelta(formerLatLng, newLatLng);
+    var scale = this._calculateScalingFactor(formerLatLng, newLatLng);
 
-    if (angle !== 0) { overlay.rotateBy(angle); }
+    if (angle !== 0) { 
+      overlay.rotateBy(angle); 
+    }
 
     if (!edgeMinWidth) { edgeMinWidth = 50; } /* just in case */
-    var corner1 = map.latLngToContainerPoint(overlay.getCorner(0)),
-        corner2 = map.latLngToContainerPoint(overlay.getCorner(1)),
-        w = Math.abs(corner1.x - corner2.x),
-        h = Math.abs(corner1.y - corner2.y),
-        distance = Math.sqrt(w * w + h * h);
+    var corner1 = map.latLngToContainerPoint(overlay.getCorner(0));
+    var corner2 = map.latLngToContainerPoint(overlay.getCorner(1));
+    var w = Math.abs(corner1.x - corner2.x);
+    var h = Math.abs(corner1.y - corner2.y);
+    var distance = Math.sqrt(w * w + h * h);
     if (distance > edgeMinWidth || scale > 1) {
       overlay.scaleBy(scale);
     } else {
@@ -1169,8 +1187,9 @@ L.RotateScaleHandle = L.EditHandle.extend({
   },
 
   updateHandle: function() {
+    // this._handled.setCorner(this._corner, )
     this.setLatLng(this._handled.getCorner(this._corner));
-  }
+  },
 });
 
 L.RotateHandle = L.EditHandle.extend({
@@ -1181,8 +1200,8 @@ L.RotateHandle = L.EditHandle.extend({
       iconUrl:
         'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAHiSURBVMXBa3HbShgA0PMp/1sCCo8oCEpgTaCXgIXAJiDzyCJoAUTm4UVQAns1Y8+snWnTvJyeE16hkjDgDrfoNTMKcpC9UPiLSo8JyetkjEHxjPCMyoS199kFoz8Iv1HpMaN3qWDCHoegOKkkRwnJpRmroHgiPFEZ8IBekzEGxQtUEhKSS/fB7Ew4U+lxcGkVZG9QWWPSFAxBcdK59KApuA+yNwp2uEdx1GN25sZJZULSfAtm77SlbNjju6MvG75u+WHRWVR6rDVjMPsgwYyVZl3pLTpHkyYHOx8syMiayaJzlDTZ9YyaZNFVkiYH2ZUEBcVJJXVImuz6Js3Qofe59pq7DoOTILu+g+a288mCouk7/1iH4qTS+2QdDppbV1ZJmrnDXnPnc5UOs2Z0fUmTuyBr+krvSioJyUmQO0dZM7mepMkWnaNRkyrJB6uskTSjxY3Fll8bvmJwlDb83FJ8gMqAB80uyBY3Trb82PAfvjj6vuHnluIdKgMeNXOwctK5NKBoHitrb1RJeHRp5Ux4ojLg0aWMHGQvUOkxIWkKVsHsTPiNSo8HDC5lZIsgO6n0uMUdRvQuFQxB8UR4RmXC2vvsgtEfhL+o9JiQvE7GGBTPCK9QSUjoMWgKDthjDrIX+h/k0I7gth6N5gAAAABJRU5ErkJggg==',
       iconSize: [32, 32],
-      iconAnchor: [16, 16]
-    })
+      iconAnchor: [16, 16],
+    }),
   },
 
   _onHandleDrag: function() {
@@ -2099,19 +2118,24 @@ L.DistortableImage.Edit = L.Handler.extend({
      * that we want when it calls L.DomUtil.setPosition.
      */
     this.dragging._updatePosition = function() {
-      var delta = this._newPos.subtract(map.latLngToLayerPoint(overlay._corners[0]));
+      // L.DomUtil.setPosition(overlay.getElement(), this._newPos);
+      var delta = this._newPos.subtract(map.latLngToLayerPoint(overlay.getCorner(0)));
+      window.detla = delta;
       var currentPoint;
+      var corners = {0: '', 1: '', 2: '', 3: ''};
       var i;
 
       this.fire('predrag');
 
       for (i = 0; i < 4; i++) {
-        currentPoint = map.latLngToLayerPoint(overlay._corners[i]);
-        overlay._corners[i] = map.layerPointToLatLng(currentPoint.add(delta));
+        currentPoint = map.latLngToLayerPoint(overlay.getCorner(i));
+        corners[i] = map.layerPointToLatLng(currentPoint.add(delta));
       }
 
-      overlay._reset();
-      overlay.fire('update');
+      overlay.setCorners(corners);
+
+      // overlay._reset();
+      // overlay.fire('update');
       overlay.fire('drag');
 
       this.fire('drag');

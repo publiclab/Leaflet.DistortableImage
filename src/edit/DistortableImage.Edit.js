@@ -266,19 +266,24 @@ L.DistortableImage.Edit = L.Handler.extend({
      * that we want when it calls L.DomUtil.setPosition.
      */
     this.dragging._updatePosition = function() {
-      var delta = this._newPos.subtract(map.latLngToLayerPoint(overlay._corners[0]));
+      // L.DomUtil.setPosition(overlay.getElement(), this._newPos);
+      var delta = this._newPos.subtract(map.latLngToLayerPoint(overlay.getCorner(0)));
+      window.detla = delta;
       var currentPoint;
+      var corners = {0: '', 1: '', 2: '', 3: ''};
       var i;
 
       this.fire('predrag');
 
       for (i = 0; i < 4; i++) {
-        currentPoint = map.latLngToLayerPoint(overlay._corners[i]);
-        overlay._corners[i] = map.layerPointToLatLng(currentPoint.add(delta));
+        currentPoint = map.latLngToLayerPoint(overlay.getCorner(i));
+        corners[i] = map.layerPointToLatLng(currentPoint.add(delta));
       }
 
-      overlay._reset();
-      overlay.fire('update');
+      overlay.setCorners(corners);
+
+      // overlay._reset();
+      // overlay.fire('update');
       overlay.fire('drag');
 
       this.fire('drag');

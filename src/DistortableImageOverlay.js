@@ -109,6 +109,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       ];
     }
 
+    this.setBounds(L.latLngBounds(this._corners));
+
     this._initialDimensions = {'height': imageHeight, 'width': imageWidth, 'offset': offset};
   },
 
@@ -143,7 +145,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     var edit = this.editing;
 
     this._corners[corner] = latlng;
-    this._reset();
+    
+    // this._reset();
+    this.setBounds(L.latLngBounds(this.getCorners()));
     this.fire('update');
 
     if (edit.toolbar && edit.toolbar instanceof L.DistortableImage.PopupBar) {
@@ -155,14 +159,27 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   setCorners: function(latlngObj) {
     var edit = this.editing;
+    var map = this._map;
+    var zoom = map.getZoom();
     var i = 0;
 
     for (var k in latlngObj) {
+      if ((zoom === 0 && (map.project(latlngObj[k]).y < 2 || map.project(latlngObj[k]).y >= 255)) ||
+          (zoom !== 0 && (map.project(latlngObj[k]).y / zoom < 2 || map.project(latlngObj[k]).y / Math.pow(2, zoom) >= 255))
+      ) {
+        // calling reset / update w/ the same corners bc it prevents a marker flicker for rotate
+        this.setBounds(L.latLngBounds(this.getCorners()));
+        this.fire('update');
+        return;
+      }
+    }
+
+    for (k in latlngObj) {
       this._corners[i] = latlngObj[k];
       i += 1;
     }
 
-    this._reset();
+    this.setBounds(L.latLngBounds(this.getCorners()));
     this.fire('update');
 
     if (edit.toolbar && edit.toolbar instanceof L.DistortableImage.PopupBar) {
