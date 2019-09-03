@@ -39,7 +39,7 @@
   
     (function () {
 
-       var trd = [33, 0];
+      var trd = [33, 0];
 
       map = L.map('map', {
         center: [33, 0],
@@ -64,8 +64,6 @@
 
       pane.appendChild(paneCorner);
 
-      // marker._icon.style.border = '1px solid blue';
-
       var crsMarker = L.marker(map.unproject([0, 0]), {
         icon: L.divIcon({
           className: 'crsMarker',
@@ -74,29 +72,25 @@
       }).addTo(map);
 
       var imageOffsetLine = L.polyline([[0, 0], [0, 0]], { color: 'skyblue' }).addTo(map);
-      var iconOffsetLine = L.polyline([[0, 0], [0, 0]], { color: 'blue' }).addTo(map);
 
       function info() {
         var pixelOrigin = map.getPixelOrigin();
         var imagePixelCoords = map.project(trd, map.getZoom());
-        // var markerAnchor = marker.options.icon.options.iconAnchor;
         var imageOffset = img._image._leaflet_pos;
 
         document.getElementById('info').innerHTML =
           '<div style="color: green">CRS origin: 0,0</div>' +
           '<div style="color: red">px origin: &Delta;' + pixelOrigin.x + ',' + pixelOrigin.y + '</div>' +
           '<div style="color: blue">image px coords:' + imagePixelCoords.x.toFixed(2) + ',' + imagePixelCoords.y.toFixed(2) + '</div>' +
-          // '<div style="color: blue">marker anchor: &Delta;' + markerAnchor[0] + ',' + markerAnchor[1] + '</div>' +
           '<div style="color: skyblue">image pane offset: &Delta;' + imageOffset.x + ',' + imageOffset.y + '</div>';
 
         imageOffsetLine.setLatLngs([map.unproject(pixelOrigin), map.unproject(pixelOrigin.add(imageOffset))]);
-        iconOffsetLine.setLatLngs([map.unproject(pixelOrigin.add(imageOffset)), map.unproject(pixelOrigin.add(imageOffset))]);
       }
 
-      map.on('load move moveend zoomend viewreset', info)
-
-      info();
-
+      L.DomEvent.on(img._image, 'load', function() {
+        map.on('load move moveend zoomend viewreset', info)
+        info();
+      });
     })();
   </script>
 </body>
