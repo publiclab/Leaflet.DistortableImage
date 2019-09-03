@@ -379,8 +379,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     var edit = this.editing;
 
     this._corners[corner] = latlng;
-    
-    // this._reset();
+
     this.setBounds(L.latLngBounds(this.getCorners()));
     this.fire('update');
 
@@ -433,7 +432,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       i += 1;
     }
 
-    this._reset();
+    this.setBounds(L.latLngBounds(this.getCorners()));
     this.fire('update');
 
     if (edit.toolbar && edit.toolbar instanceof L.DistortableImage.PopupBar) {
