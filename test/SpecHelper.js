@@ -5,7 +5,7 @@ beforeEach(function() {
 
 /* Chain global testing utilites below to chai*/
 
-    /*
+        /*
 	 * Mouse Events is a dictionary of "Events" and their properties. 
 	 * Other events include 'click', 'dblick', 'mouseup', 'mouseover', 'mouseout', 'mousemove'
 	 * Properties can take in properties of initMouseEvents().
