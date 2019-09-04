@@ -3155,7 +3155,7 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
         map.clicked = 0;
         map.fire('singleclick', L.extend(e, {type: 'singleclick'}));
       }
-    }, 300);
+    }, 250);
   },
 
   _onDoubleClick: function() {
@@ -3240,10 +3240,9 @@ L.Map.DoubleClickZoom.include({
     setTimeout(function() {
       if (map.clicked === 1) {
         map.clicked = 0;
-        // map.fire('singleclick', {deselect: true});
         map.fire('singleclick', L.extend(e, {type: 'singleclick'}));
       }
-    }, 300);
+    }, 250);
   },
 
   _onDoubleClick: function(e) {
