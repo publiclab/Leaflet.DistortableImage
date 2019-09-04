@@ -15,7 +15,6 @@ L.LockHandle = L.EditHandle.extend({
 
   updateHandle: function() {
     this.setLatLng(this._handled.getCorner(this._corner));
-    L.DomUtil.removeClass(this._handled.getElement(), 'selected');
   },
 
 });

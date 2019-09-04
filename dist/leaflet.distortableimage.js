@@ -1107,7 +1107,6 @@ L.LockHandle = L.EditHandle.extend({
 
   updateHandle: function() {
     this.setLatLng(this._handled.getCorner(this._corner));
-    L.DomUtil.removeClass(this._handled.getElement(), 'selected');
   },
 
 });
@@ -3142,8 +3141,12 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
     return this;
   },
 
-  _fireIfSingle: function() {
+  _fireIfSingle: function(e) {
     var map = this._map;
+    var eo = e.originalEvent;
+
+    // prevents deselection in case of box selector
+    if (eo && eo.shiftKey) { return; }
 
     map.clicked += 1;
     setTimeout(function() {
@@ -3225,8 +3228,12 @@ L.Map.DoubleClickZoom.include({
     return this;
   },
 
-  _fireIfSingle: function() {
+  _fireIfSingle: function(e) {
     var map = this._map;
+    var eo = e.originalEvent;
+
+    // prevents deselection in case of box selector
+    if (eo && eo.shiftKey) { return; }
 
     map.clicked += 1;
     setTimeout(function() {
