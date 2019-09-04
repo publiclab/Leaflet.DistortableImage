@@ -66,10 +66,10 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
     // prevents deselection in case of box selector
     if (eo && eo.shiftKey) { return; }
 
-    map.clicked += 1;
+    map._clicked += 1;
     setTimeout(function() {
-      if (map.clicked === 1) {
-        map.clicked = 0;
+      if (map._clicked === 1) {
+        map._clicked = 0;
         map.fire('singleclick', L.extend(e, {type: 'singleclick'}));
       }
     }, 250);
@@ -79,7 +79,7 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
     var map = this._map;
     var labels = map._labels;
 
-    map.clicked = 0;
+    map._clicked = 0;
 
     if (labels.options.opacity === 1) {
       labels.options.opacity = 0;
@@ -151,10 +151,10 @@ L.Map.DoubleClickZoom.include({
     // prevents deselection in case of box selector
     if (eo && eo.shiftKey) { return; }
 
-    map.clicked += 1;
+    map._clicked += 1;
     setTimeout(function() {
-      if (map.clicked === 1) {
-        map.clicked = 0;
+      if (map._clicked === 1) {
+        map._clicked = 0;
         map.fire('singleclick', L.extend(e, {type: 'singleclick'}));
       }
     }, 250);
@@ -163,7 +163,7 @@ L.Map.DoubleClickZoom.include({
   _onDoubleClick: function(e) {
     var map = this._map;
 
-    map.clicked = 0;
+    map._clicked = 0;
 
     var oldZoom = map.getZoom();
     var delta = map.options.zoomDelta;

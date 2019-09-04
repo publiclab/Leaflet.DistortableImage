@@ -602,7 +602,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   /**
-    * need to attach a stop to img dblclick or it will propogate to
+    * need to attach a stop to img dblclick or it will propagate to
     * the map and fire the handler that shows map location labels on map dblclick.
     */
   _nextMode: function(e) {
