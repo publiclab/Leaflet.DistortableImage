@@ -477,6 +477,21 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return this;
   },
 
+  dragBy: function(formerPoint, newPoint) {
+    var map = this._map;
+    var center = map.project(this.getCenter());
+    var i;
+    var p;
+    var diference = map.project(formerPoint).subtract(map.project(newPoint));
+
+    for (i = 0; i < 4; i++) {
+      p = map
+          .project(this.getCorner(i))
+          .subtract(diference);
+      this.setCorner(i, map.unproject(p));
+    }
+  },
+
   _revert: function() {
     var angle = this.rotation;
     var map = this._map;
@@ -1266,10 +1281,7 @@ L.DragHandle = L.EditHandle.extend({
 		formerLatLng = overlay.getCorner(this._corner),
 		newLatLng = this.getLatLng();
 		
-		overlay.editing._dragBy(formerLatLng, newLatLng);
-		
-		overlay.fire('update');
-		overlay.editing._updateToolbarPos();
+		overlay.dragBy(formerLatLng, newLatLng);
 	},
 
 	updateHandle: function() {
@@ -1277,7 +1289,6 @@ L.DragHandle = L.EditHandle.extend({
 	}
 	
 });
-
 /* this is the baseclass other IconSets inherit from,
 * we don't use it directly */
 L.IconSet = L.Class.extend({
@@ -1876,7 +1887,8 @@ L.DistortableImage.Edit = L.Handler.extend({
   initialize: function(overlay, options) {
     this._overlay = overlay;
     this._toggledImage = false;
-    /* Interaction modes. TODO - create API for limiting modes similar to toolbar actions API */
+    /* Interaction modes. TODO - create API for
+    * limiting modes similar to toolbar actions API */
     var modes = ['distort', 'lock', 'rotate', 'scale', 'rotateScale', 'drag'];
     this._mode = modes[modes.indexOf(overlay.options.mode)] || 'distort';
 
@@ -2106,23 +2118,6 @@ L.DistortableImage.Edit = L.Handler.extend({
         return false;
       }
     }, this);
-  },
-
-  _dragBy: function(formerPoint, newPoint) {
-    var overlay = this._overlay;
-    var map = overlay._map;
-    var center = map.project(overlay.getCenter());
-    var i;
-    var p;
-    var diference = map.project(formerPoint).subtract(map.project(newPoint));
-
-    for (i = 0; i < 4; i++) {
-      p = map
-          .project(overlay.getCorner(i))
-          .subtract(diference);
-      overlay.setCorner(i, map.unproject(p));
-    }
-    overlay._reset();
   },
 
   _removeToolbar: function() {

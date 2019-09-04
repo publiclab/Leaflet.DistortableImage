@@ -12,7 +12,8 @@ L.DistortableImage.Edit = L.Handler.extend({
   initialize: function(overlay, options) {
     this._overlay = overlay;
     this._toggledImage = false;
-    /* Interaction modes. TODO - create API for limiting modes similar to toolbar actions API */
+    /* Interaction modes. TODO - create API for
+    * limiting modes similar to toolbar actions API */
     var modes = ['distort', 'lock', 'rotate', 'scale', 'rotateScale', 'drag'];
     this._mode = modes[modes.indexOf(overlay.options.mode)] || 'distort';
 
@@ -242,23 +243,6 @@ L.DistortableImage.Edit = L.Handler.extend({
         return false;
       }
     }, this);
-  },
-
-  _dragBy: function(formerPoint, newPoint) {
-    var overlay = this._overlay;
-    var map = overlay._map;
-    var center = map.project(overlay.getCenter());
-    var i;
-    var p;
-    var diference = map.project(formerPoint).subtract(map.project(newPoint));
-
-    for (i = 0; i < 4; i++) {
-      p = map
-          .project(overlay.getCorner(i))
-          .subtract(diference);
-      overlay.setCorner(i, map.unproject(p));
-    }
-    overlay._reset();
   },
 
   _removeToolbar: function() {

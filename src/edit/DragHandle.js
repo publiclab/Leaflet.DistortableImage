@@ -14,10 +14,7 @@ L.DragHandle = L.EditHandle.extend({
 		formerLatLng = overlay.getCorner(this._corner),
 		newLatLng = this.getLatLng();
 		
-		overlay.editing._dragBy(formerLatLng, newLatLng);
-		
-		overlay.fire('update');
-		overlay.editing._updateToolbarPos();
+		overlay.dragBy(formerLatLng, newLatLng);
 	},
 
 	updateHandle: function() {
