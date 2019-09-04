@@ -3,10 +3,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   options: {
     alt: '',
     height: 200,
-		crossOrigin: true,
-		// todo: find ideal number to prevent distortions during RotateScale, and make it dynamic (remove hardcoding)
+    crossOrigin: true,
+    // todo: find ideal number to prevent distortions during RotateScale, and make it dynamic (remove hardcoding)
     edgeMinWidth: 50,
-    editable: true
+    editable: true,
   },
 
   initialize: function(url, options) {
@@ -23,12 +23,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     /* Copied from L.ImageOverlay */
     this._map = map;
 
-    if (!this._image) {
-      this._initImage();
-    }
-    if (!this._events) {
-      this._initEvents();
-    }
+    if (!this._image) { this._initImage(); }
+    if (!this._events) { this._initEvents(); }
 
     this.getPane().appendChild(this._image);
 
@@ -112,12 +108,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
         map.containerPointToLatLng(center.add(offset)),
       ];
     }
-    this._initialDimensions =
-      {
-        'height': imageHeight,
-        'width': imageWidth,
-        'offset': offset,
-      };
+
+    this._initialDimensions = {'height': imageHeight, 'width': imageWidth, 'offset': offset};
   },
 
   _initEvents: function() {
@@ -149,11 +141,11 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   setCorner: function(corner, latlng) {
     var edit = this.editing;
-    
+
     this._corners[corner] = latlng;
     this._reset();
     this.fire('update');
-    
+
     if (edit.toolbar && edit.toolbar instanceof L.DistortableImage.PopupBar) {
       edit._updateToolbarPos();
     }
@@ -162,8 +154,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   setCorners: function(latlngObj) {
-    var edit = this.editing,
-        i = 0;
+    var edit = this.editing;
+    var i = 0;
 
     for (var k in latlngObj) {
       this._corners[i] = latlngObj[k];
@@ -181,9 +173,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   setCornersFromPoints: function(pointsObj) {
-    var map = this._map,
-        edit =  this.editing,
-        i = 0;
+    var map = this._map;
+    var edit = this.editing;
+    var i = 0;
 
     for (var k in pointsObj) {
       this._corners[i] = map.layerPointToLatLng(pointsObj[k]);
@@ -192,7 +184,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
     this._reset();
     this.fire('update');
-    
+
     if (edit.toolbar && edit.toolbar instanceof L.DistortableImage.PopupBar) {
       edit._updateToolbarPos();
     }
@@ -201,19 +193,20 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   scaleBy: function(scale) {
-    var map = this._map,
-        center = map.project(this.getCenter()),
-        i, p,
-        scaledCorners = {0: '', 1: '', 2: '', 3: ''};
+    var map = this._map;
+    var center = map.project(this.getCenter());
+    var i;
+    var p;
+    var scaledCorners = {0: '', 1: '', 2: '', 3: ''};
 
     if (scale === 0) { return; }
 
     for (i = 0; i < 4; i++) {
       p = map
-        .project(this.getCorner(i))
-        .subtract(center)
-        .multiplyBy(scale)
-        .add(center);
+          .project(this.getCorner(i))
+          .subtract(center)
+          .multiplyBy(scale)
+          .add(center);
       scaledCorners[i] = map.unproject(p);
     }
 
@@ -223,16 +216,18 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   rotateBy: function(angle) {
-    var map = this._map,
-        center = map.project(this.getCenter()),
-        corners = {0: '', 1: '', 2: '', 3: ''},
-        i, p, q;
+    var map = this._map;
+    var center = map.project(this.getCenter());
+    var corners = {0: '', 1: '', 2: '', 3: ''};
+    var i;
+    var p;
+    var q;
 
     for (i = 0; i < 4; i++) {
       p = map.project(this.getCorner(i)).subtract(center);
       q = L.point(
-        Math.cos(angle) * p.x - Math.sin(angle) * p.y,
-        Math.sin(angle) * p.x + Math.cos(angle) * p.y
+          Math.cos(angle) * p.x - Math.sin(angle) * p.y,
+          Math.sin(angle) * p.x + Math.cos(angle) * p.y
       );
       corners[i] = map.unproject(q.add(center));
     }
@@ -247,17 +242,17 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   _revert: function() {
-    var angle = this.rotation,
-        map = this._map,
-        edit =  this.editing,
-        center = map.project(this.getCenter()),
-        offset = this._initialDimensions.offset,
-        corners = { 
-          0: map.unproject(center.subtract(offset)),
-          1: map.unproject(center.add(L.point(offset.x, -offset.y))),
-          2: map.unproject(center.add(L.point(-offset.x, offset.y))),
-          3: map.unproject(center.add(offset))
-        };
+    var angle = this.rotation;
+    var map = this._map;
+    var edit = this.editing;
+    var center = map.project(this.getCenter());
+    var offset = this._initialDimensions.offset;
+    var corners = {
+      0: map.unproject(center.subtract(offset)),
+      1: map.unproject(center.add(L.point(offset.x, -offset.y))),
+      2: map.unproject(center.add(L.point(-offset.x, offset.y))),
+      3: map.unproject(center.add(offset)),
+    };
 
     map.removeLayer(edit._handles[edit._mode]);
 
@@ -268,7 +263,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     map.addLayer(edit._handles[edit._mode]);
 
     this.rotation = angle;
-},
+  },
 
   /* Copied from Leaflet v0.7 https://github.com/Leaflet/Leaflet/blob/66282f14bcb180ec87d9818d9f3c9f75afd01b30/src/dom/DomUtil.js#L189-L199 */
   /* since L.DomUtil.getTranslateString() is deprecated in Leaflet v1.0 */
@@ -292,7 +287,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     var latLngToLayerPoint = L.bind(map.latLngToLayerPoint, map);
     var transformMatrix = this
         ._calculateProjectiveTransform(latLngToLayerPoint);
-    var topLeft = latLngToLayerPoint(this._corners[0]);
+    var topLeft = latLngToLayerPoint(this.getCorner(0));
     var warp = L.DomUtil.getMatrixString(transformMatrix);
     var translation = this._getTranslateString(topLeft);
 
@@ -340,25 +335,13 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return this._corners[i];
   },
 
-  /*
-   * Calculates the centroid of the image.
-   * See http://stackoverflow.com/questions/6149175/logical-question-given-corners-find-center-of-quadrilateral
-   */
-  getCenter: function(ll2c, c2ll) {
+  // image (vertex) centroid calculation
+  getCenter: function() {
     var map = this._map;
-    var latLngToCartesian = ll2c ? ll2c : map.latLngToLayerPoint;
-    var cartesianToLatLng = c2ll ? c2ll : map.layerPointToLatLng;
-    var nw = latLngToCartesian.call(map, this.getCorner(0));
-    var ne = latLngToCartesian.call(map, this.getCorner(1));
-    var se = latLngToCartesian.call(map, this.getCorner(2));
-    var sw = latLngToCartesian.call(map, this.getCorner(3));
-    var nmid = nw.add(ne.subtract(nw).divideBy(2));
-    var smid = sw.add(se.subtract(sw).divideBy(2));
-
-    return cartesianToLatLng.call(
-        map,
-        nmid.add(smid.subtract(nmid).divideBy(2))
-    );
+    var reduce = this.getCorners().reduce(function(agg, corner) {
+      return agg.add(map.project(corner));
+    }, L.point(0, 0));
+    return map.unproject(reduce.divideBy(4));
   },
 
   // Use for translation calculations

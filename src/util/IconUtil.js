@@ -24,7 +24,7 @@ L.IconUtil = {
     }
   },
 
-  /** finds the use element and toggles its icon reference */
+  // finds the use element and toggles its icon reference
   toggleXlink: function(container, ref1, ref2) {
     if (!/^#/.test(ref1)) {
       ref1 = '#' + ref1;
@@ -42,10 +42,13 @@ L.IconUtil = {
     return false;
   },
 
-  toggleTooltip: function(container, title1, title2) {
-    var toggled = container.getAttribute('title') === title1 ?
-      title2 : title1;
+  toggleTitle: function(container, title1, title2) {
+    var toggled = container.getAttribute('title') === title1 ? title2 : title1;
+
     container.setAttribute('title', toggled);
+    if (container.hasAttribute('aria-label')) {
+      container.setAttribute('aria-label', toggled);
+    }
     return toggled;
   },
 };

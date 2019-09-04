@@ -1,11 +1,12 @@
-L.Map.mergeOptions({boxSelector: true, boxZoom: false});
+L.Map.mergeOptions({
+  boxSelector: true,
+  boxZoom: false,
+});
 
-/*
- * primarily Leaflet 1.5.1 source code.
- * Overriden so that its a selection box
- * with our `L.DistortableCollection` class
- * instead of a zoom box.
- */
+/** 
+ * primarily Leaflet 1.5.1 source code. Overriden so that its a selection box with our `L.DistortableCollection` class 
+ * instead of a zoom box. 
+ * */
 L.Map.BoxSelector = L.Map.BoxZoom.extend({
   initialize: function(map) {
     this._map = map;
@@ -119,18 +120,17 @@ L.Map.BoxSelector = L.Map.BoxZoom.extend({
     this._resetStateTimeout = setTimeout(
         L.Util.bind(this._resetState, this), 0);
 
-    var bounds = new L.latLngBounds(
-        this._map.containerPointToLatLng(this._bounds.getBottomLeft()),
-        this._map.containerPointToLatLng(this._bounds.getTopRight())
+    var bounds = L.latLngBounds(
+      this._map.containerPointToLatLng(this._bounds.getBottomLeft()),
+      this._map.containerPointToLatLng(this._bounds.getTopRight())
     );
 
     // calls the `project` method but 1st updates the pixel origin - see https://github.com/publiclab/Leaflet.DistortableImage/pull/344
-    bounds = this._map.
-        _latLngBoundsToNewLayerBounds(
-            bounds, this._map.getZoom(), this._map.getCenter());
+    bounds = this._map._latLngBoundsToNewLayerBounds(bounds, this._map.getZoom(), this._map.getCenter());
 
     this._map.fire('boxzoomend', {boxZoomBounds: bounds});
   },
 });
 
 L.Map.addInitHook('addHandler', 'boxSelector', L.Map.BoxSelector);
+

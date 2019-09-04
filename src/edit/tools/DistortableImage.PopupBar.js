@@ -1,11 +1,13 @@
 L.DistortableImage = L.DistortableImage || {};
 L.distortableImage = L.DistortableImage;
 
+L.DistortableImage.action_map = {};
+
 var ToggleTransparency = L.EditAction.extend({
   initialize: function(map, overlay, options) {
     var edit = overlay.editing,
         use, tooltip;
-    
+
     if (edit._transparent) {
       use = 'opacity';
       tooltip = 'Make Image Opaque';
@@ -21,6 +23,7 @@ var ToggleTransparency = L.EditAction.extend({
       tooltip: tooltip,
     };
 
+    L.DistortableImage.action_map.t = '_toggleTransparency';
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
@@ -28,7 +31,7 @@ var ToggleTransparency = L.EditAction.extend({
     var editing = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'opacity_empty', 'opacity');
-    L.IconUtil.toggleTooltip(this._link,
+    L.IconUtil.toggleTitle(this._link,
         'Make Image Opaque',
         'Make Image Transparent');
     editing._toggleTransparency();
@@ -39,7 +42,7 @@ var ToggleOutline = L.EditAction.extend({
   initialize: function(map, overlay, options) {
     var edit = overlay.editing,
         use, tooltip;
-    
+
     if (edit._outlined) {
       use = 'border_clear';
       tooltip = 'Remove Border';
@@ -55,6 +58,7 @@ var ToggleOutline = L.EditAction.extend({
       tooltip: tooltip,
     };
 
+    L.DistortableImage.action_map.o = '_toggleOutline';
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
@@ -62,7 +66,7 @@ var ToggleOutline = L.EditAction.extend({
     var editing = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'border_clear', 'border_outer');
-    L.IconUtil.toggleTooltip(this._link, 'Remove Border', 'Add Border');
+    L.IconUtil.toggleTitle(this._link, 'Remove Border', 'Add Border');
     editing._toggleOutline();
   },
 });
@@ -78,6 +82,7 @@ var Delete = L.EditAction.extend({
       tooltip: 'Delete Image',
     };
 
+    L.DistortableImage.action_map.Backspace = '_removeOverlay'; // backspace windows / delete mac
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
@@ -108,6 +113,7 @@ var ToggleLock = L.EditAction.extend({
       tooltip: tooltip,
     };
 
+    L.DistortableImage.action_map.l = '_toggleLock';
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
@@ -115,7 +121,7 @@ var ToggleLock = L.EditAction.extend({
     var editing = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'unlock', 'lock');
-    L.IconUtil.toggleTooltip(this._link, 'Unlock', 'Lock');
+    L.IconUtil.toggleTitle(this._link, 'Unlock', 'Lock');
     editing._toggleLock();
   },
 });
@@ -140,6 +146,8 @@ var ToggleRotateScale = L.EditAction.extend({
       tooltip: tooltip,
     };
 
+    L.DistortableImage.action_map.d = '_toggleRotateScale';
+    L.DistortableImage.action_map.r = '_toggleRotateScale';
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
@@ -147,7 +155,7 @@ var ToggleRotateScale = L.EditAction.extend({
     var editing = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'distort', 'crop_rotate');
-    L.IconUtil.toggleTooltip(this._link, 'Distort Image', 'Rotate+Scale Image');
+    L.IconUtil.toggleTitle(this._link, 'Distort Image', 'Rotate+Scale Image');
     editing._toggleRotateScale();
   },
 });
@@ -163,6 +171,7 @@ var Export = L.EditAction.extend({
       tooltip: 'Export Image',
     };
 
+    L.DistortableImage.action_map.e = '_getExport';
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
@@ -193,6 +202,8 @@ var ToggleOrder = L.EditAction.extend({
       tooltip: tooltip,
     };
 
+    L.DistortableImage.action_map.j = '_toggleOrder';
+    L.DistortableImage.action_map.k = '_toggleOrder';
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
@@ -200,7 +211,7 @@ var ToggleOrder = L.EditAction.extend({
     var editing = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'flip_to_front', 'flip_to_back');
-    L.IconUtil.toggleTooltip(this._link, 'Stack to Front', 'Stack to Back');
+    L.IconUtil.toggleTitle(this._link, 'Stack to Front', 'Stack to Back');
     editing._toggleOrder();
   },
 });
@@ -257,6 +268,7 @@ var ToggleRotate = L.EditAction.extend({
       tooltip: 'Rotate Image',
     };
 
+    L.DistortableImage.action_map.CapsLock = '_toggleRotate';
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
@@ -277,7 +289,8 @@ var ToggleScale = L.EditAction.extend({
       html: use,
       tooltip: 'Scale Image',
     };
-
+    
+    L.DistortableImage.action_map.s = '_toggleScale';
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
@@ -325,8 +338,7 @@ L.DistortableImageOverlay.addInitHook(function() {
     Delete,
   ];
 
-  /* (`this` being DistortablemageOverlay, not the toolbar) */
-  if (this.options.actions) {
+if (this.options.actions) { /* (`this` being DistortableImageOverlay, not the toolbar) */
     this.editActions = this.options.actions;
   } else {
     this.editActions = this.ACTIONS;

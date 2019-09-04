@@ -15,17 +15,15 @@ L.DistortableImage.Keymapper = L.Handler.extend({
 
   addHooks: function() {
     if (!this._keymapper) {
-      this._toggler = this._toggleButton();
+      this._container = this._buildContainer();
       this._scrollWrapper = this._wrap();
-      this._setMapper(this._toggler, this._scrollWrapper);
+      this._toggler = this._createButton();
+      this._setMapper(this._container, this._scrollWrapper, this._toggler);
 
       L.DomEvent.on(this._toggler, 'click', this._toggleKeymapper, this);
 
-      L.DomEvent.on(this._scrollWrapper, {
-        click: L.DomEvent.stop,
-        mouseenter: this._disableMap,
-        mouseleave: this._enableMap,
-      }, this);
+      L.DomEvent.disableClickPropagation(this._container);
+      L.DomEvent.disableScrollPropagation(this._container);
     }
   },
 
@@ -33,26 +31,33 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     if (this._keymapper) {
       L.DomEvent.off(this._toggler, 'click', this._toggleKeymapper, this);
 
-      L.DomEvent.off(this._scrollWrapper, {
-        click: L.DomEvent.stop,
-        mouseenter: this._disableMap,
-        mouseleave: this._enableMap,
-      }, this);
-
       L.DomUtil.remove(this._toggler);
       L.DomUtil.remove(this._scrollWrapper);
-      L.DomUtil.remove(this._keymapper._container);
+      L.DomUtil.remove(this._container);
       this._keymapper = false;
     }
   },
 
-  _toggleButton: function() {
+  _buildContainer: function() {
+    var container = L.DomUtil.create('div', 'ldi-keymapper-hide');
+    container.setAttribute('id', 'ldi-keymapper');
+
+    var divider = L.DomUtil.create('br', 'divider');
+    container.appendChild(divider);
+
+    return container;
+  },
+
+  _createButton: function() {
     var toggler = L.DomUtil.create('a', '');
+    toggler.innerHTML = L.IconUtil.create('keyboard_open');
+
     toggler.setAttribute('id', 'toggle-keymapper');
     toggler.setAttribute('href', '#');
+    toggler.setAttribute('title', 'Show keymap');
+    // Will force screen readers like VoiceOver to read this as "Show keymap - button"
     toggler.setAttribute('role', 'button');
-    toggler.setAttribute('title', 'Show Keybindings');
-    toggler.innerHTML = L.IconUtil.create('keyboard_open');
+    toggler.setAttribute('aria-label', 'Show keymap');
 
     return toggler;
   },
@@ -65,15 +70,11 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     return wrap;
   },
 
-  _setMapper: function(button, wrap) {
+  _setMapper: function(container, wrap, button) {
     this._keymapper = L.control({position: this.options.position});
 
-    this._container = this._keymapper.onAdd = function() {
-      var elWrapper = L.DomUtil.create('div', 'ldi-keymapper-hide');
-      elWrapper.setAttribute('id', 'ldi-keymapper');
-      var divider = L.DomUtil.create('br', 'divider');
-      elWrapper.appendChild(divider);
-      elWrapper.appendChild(wrap);
+    this._keymapper.onAdd = function() {
+      container.appendChild(wrap);
       wrap.insertAdjacentHTML(
           'beforeend',
           '<table><tbody>' +
@@ -91,48 +92,40 @@ L.DistortableImage.Keymapper = L.Handler.extend({
           '</tbody></table>'
       );
       /* eslint-enable */
-      elWrapper.appendChild(button);
-      return elWrapper;
+      container.appendChild(button);
+      return container;
     };
 
     this._keymapper.addTo(this._map);
   },
 
   _toggleKeymapper: function(e) {
-    L.DomEvent.stop(e);
-    var container = document.getElementById('ldi-keymapper');
-    var keymapWrap = document.getElementById('keymapper-wrapper');
+    e.preventDefault();
 
-    var newClass = container.className === 'ldi-keymapper leaflet-control' ?
-      'ldi-keymapper-hide leaflet-control' : 'ldi-keymapper leaflet-control';
-    var newStyle = keymapWrap.style.display === 'none' ? 'block' : 'none';
+    this._container.className = (
+      this._container.className === 'ldi-keymapper leaflet-control' ?
+        'ldi-keymapper-hide leaflet-control' :
+        'ldi-keymapper leaflet-control'
+    );
 
-    container.className = newClass;
-    keymapWrap.style.display = newStyle;
+    this._scrollWrapper.style.display = (
+      this._scrollWrapper.style.display === 'none' ? 'block' : 'none'
+    );
 
-    L.IconUtil.toggleTooltip(this._toggler,
-        'Show Keybindings', 'Hide Keybindings');
-    this._toggler.innerHTML = this._toggler.innerHTML === 'close' ?
-      L.IconUtil.create('keyboard_open') : 'close';
+    this._toggler.innerHTML = (
+      this._toggler.innerHTML === 'close' ?
+        L.IconUtil.create('keyboard_open') :
+        'close'
+    );
+
+    L.IconUtil.toggleTitle(this._toggler, 'Show keymap', 'Hide keymap');
     L.DomUtil.toggleClass(this._toggler, 'close-icon');
   },
 
-  _disableMap: function() {
-    this._map.scrollWheelZoom.disable();
-    this._map.dragging.disable();
-  },
-
-  _enableMap: function() {
-    this._map.scrollWheelZoom.enable();
-    this._map.dragging.enable();
-  },
-
   _injectIconSet: function() {
-    if (document.querySelector('#keymapper-iconset')) {
-      return;
-    }
+    if (document.querySelector('#keymapper-iconset')) { return; }
 
-    var el = document.createElement('div');
+    var el = L.DomUtil.create('div', '');
     el.id = 'keymapper-iconset';
     el.setAttribute('hidden', 'hidden');
 
@@ -144,11 +137,13 @@ L.DistortableImage.Keymapper = L.Handler.extend({
 });
 
 L.DistortableImage.Keymapper.addInitHook(function() {
-  L.DistortableImage.Keymapper.prototype._n =
+  L.DistortableImage.Keymapper.prototype._n = (
     L.DistortableImage.Keymapper.prototype._n ?
-      L.DistortableImage.Keymapper.prototype._n + 1 : 1;
-
-  if (L.DistortableImage.Keymapper.prototype._n === 1) {
+    L.DistortableImage.Keymapper.prototype._n + 1 :
+    1
+  );
+  // dont enable keymapper for mobile
+  if (L.DistortableImage.Keymapper.prototype._n === 1 && !L.Browser.mobile) {
     this.enable();
     this._injectIconSet();
   }

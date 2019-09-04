@@ -1,49 +1,52 @@
 L.distortableImage = L.DistortableImage || {};
 L.distortableImage = L.DistortableImage;
 
-  var Exports = L.EditAction.extend({
-    initialize: function (map, overlay, options) {
-      var use = 'get_app';
-  
-      options = options || {};
-      options.toolbarIcon = {
-        svg: true,
-        html: use,
-        tooltip: 'Export Images'
-      };
+L.DistortableImage.group_action_map = {};
 
-      L.EditAction.prototype.initialize.call(this, map, overlay, options);
-    },
+var Exports = L.EditAction.extend({
+  initialize: function(map, overlay, options) {
+    var use = 'get_app';
 
-    addHooks: function () {
-      var edit = this._overlay.editing;
-      L.IconUtil.toggleXlink(this._link, 'get_app', 'spinner');
-      L.IconUtil.toggleTooltip(this._link, 'Export Images', 'Loading...');
-      L.IconUtil.addClassToSvg(this._link, 'loader');
-      L.DomEvent.off(this._link, 'click', this.enable, this);
-      edit.startExport();
-    }
-  });
+    options = options || {};
+    options.toolbarIcon = {
+      svg: true,
+      html: use,
+      tooltip: 'Export Images',
+    };
 
-  var Deletes = L.EditAction.extend({
-    initialize: function(map, overlay, options) {
-      var use = 'delete_forever';
+    L.EditAction.prototype.initialize.call(this, map, overlay, options);
+  },
 
-      options = options || {};
-      options.toolbarIcon = {
-        svg: true,
-        html: use,
-        tooltip: 'Delete Images'
-      };
+  addHooks: function() {
+    var edit = this._overlay.editing;
+    L.IconUtil.toggleXlink(this._link, 'get_app', 'spinner');
+    L.IconUtil.toggleTitle(this._link, 'Export Images', 'Loading...');
+    L.IconUtil.addClassToSvg(this._link, 'loader');
+    L.DomEvent.off(this._link, 'click', this.enable, this);
+    edit.startExport();
+  },
+});
 
-      L.EditAction.prototype.initialize.call(this, map, overlay, options);
-    },
+var Deletes = L.EditAction.extend({
+  initialize: function(map, overlay, options) {
+    var use = 'delete_forever';
 
-    addHooks: function() {
-      var edit = this._overlay.editing;
-      edit._removeGroup();
-    }
-  });
+    options = options || {};
+    options.toolbarIcon = {
+      svg: true,
+      html: use,
+      tooltip: 'Delete Images',
+    };
+
+    L.DistortableImage.group_action_map.Backspace = '_removeGroup'; // backspace windows / delete mac
+    L.EditAction.prototype.initialize.call(this, map, overlay, options);
+  },
+
+  addHooks: function() {
+    var edit = this._overlay.editing;
+    edit._removeGroup();
+  },
+});
 
 var Locks = L.EditAction.extend({
   initialize: function(map, overlay, options) {
@@ -56,13 +59,14 @@ var Locks = L.EditAction.extend({
       tooltip: 'Lock Images',
     };
 
+    L.DistortableImage.group_action_map.l = '_lockGroup';
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
-  addHooks: function () {
+  addHooks: function() {
     var edit = this._overlay.editing;
     edit._lockGroup();
-  }
+  },
 });
 
 var Unlocks = L.EditAction.extend({
@@ -76,13 +80,14 @@ var Unlocks = L.EditAction.extend({
       tooltip: 'Unlock Images',
     };
 
+    L.DistortableImage.group_action_map.u = '_unlockGroup';
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
-  addHooks: function () {
+  addHooks: function() {
     var edit = this._overlay.editing;
     edit._unlockGroup();
-  }
+  },
 });
 
 L.DistortableImage.ControlBar = L.Toolbar2.Control.extend({
@@ -101,7 +106,7 @@ L.distortableImage.controlBar = function(options) {
 };
 
 /** addInitHooks run before onAdd */
-L.DistortableCollection.addInitHook(function () {
+L.DistortableCollection.addInitHook(function() {
   this.ACTIONS = [Exports, Deletes, Locks, Unlocks];
 
   if (this.options.actions) {
@@ -110,5 +115,7 @@ L.DistortableCollection.addInitHook(function () {
     this.editActions = this.ACTIONS;
   }
 
-  this.editing = new L.DistortableCollection.Edit(this, { actions: this.editActions });
+  this.editing = new L.DistortableCollection.Edit(this, {
+    actions: this.editActions,
+  });
 });

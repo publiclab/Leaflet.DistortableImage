@@ -51,7 +51,7 @@ describe('L.DistortableCollection.Edit', function () {
     });
 
     describe('#_deselectAll', function() {
-      it("Should remove the 'selected' class from all images", function() {
+      it('Should remove the \'selected\' class from all images', function() {
         var img = overlay.getElement(),
             img2 = overlay2.getElement();
 
@@ -60,11 +60,14 @@ describe('L.DistortableCollection.Edit', function () {
 
         map.fire('click');
 
-        expect(L.DomUtil.getClass(img)).to.not.include('selected');
-        expect(L.DomUtil.getClass(img2)).to.not.include('selected');
+        // we deselect after 3ms to confirm the click wasn't a dblclick
+        setTimeout(function () {
+          expect(L.DomUtil.getClass(img)).to.not.include('selected');
+          expect(L.DomUtil.getClass(img2)).to.not.include('selected');
+        }, 3000);
       });
 
-      it("Should hide all images' handles unless they're lock handles", function() {
+      it('Should hide all images\' handles unless they\'re lock handles', function() {
         var edit = overlay.editing,
             edit2 = overlay2.editing;
 
@@ -74,19 +77,21 @@ describe('L.DistortableCollection.Edit', function () {
         // then trigger _deselectAll
         map.fire('click');
 
-        var distortHandleState = [];
-        edit._handles['distort'].eachLayer(function(handle) {
-          distortHandleState.push(handle._icon.style.opacity);
-        });
-
-        var lockHandleState = [];
-        edit2._handles['lock'].eachLayer(function(handle) {
-          lockHandleState.push(handle._icon.style.opacity);
-        });
-
-        expect(distortHandleState).to.deep.equal(['0', '0', '0', '0']);
-        // opacity for lockHandles is unset because we never altered it to hide it as part of deselection
-        expect(lockHandleState).to.deep.equal(['', '', '', '']);
+        setTimeout(function () {
+          var distortHandleState = [];
+          edit._handles['distort'].eachLayer(function (handle) {
+              distortHandleState.push(handle._icon.style.opacity);
+          });
+  
+          var lockHandleState = [];
+          edit2._handles['lock'].eachLayer(function (handle) {
+              lockHandleState.push(handle._icon.style.opacity);
+          });
+  
+          expect(distortHandleState).to.deep.equal(['0', '0', '0', '0']);
+          // opacity for lockHandles is unset because we never altered it to hide it as part of deselection
+          expect(lockHandleState).to.deep.equal(['', '', '', '']); 
+        }, 3000);
       });
 
       it("Should remove all images' individual toolbar instances regardless of lock handles", function() {
@@ -97,8 +102,8 @@ describe('L.DistortableCollection.Edit', function () {
         edit2._toggleLock();
 
         // select both images to initially create individual toolbar instances (single selection interface)
-        chai.simulateClick(overlay.getElement());
-        chai.simulateClick(overlay2.getElement());
+        chai.simulateEvent(overlay.getElement(), chai.mouseEvents.Click);
+        chai.simulateEvent(overlay2.getElement(), chai.mouseEvents.Click);
 
         expect(edit.toolbar).to.not.be.false;
         expect(edit2.toolbar).to.not.be.false;
@@ -106,8 +111,10 @@ describe('L.DistortableCollection.Edit', function () {
         // then trigger _deselectAll
         map.fire('click');
 
-        expect(edit.toolbar).to.be.false;
-        expect(edit2.toolbar).to.be.false;
+        setTimeout(function () {
+          expect(edit.toolbar).to.be.false;
+          expect(edit2.toolbar).to.be.false;
+        }, 3000);
       });
     });
 
@@ -116,8 +123,8 @@ describe('L.DistortableCollection.Edit', function () {
             expect(map._toolbars).to.be.empty;
 
             // need both bc simulated `mousedown`s don't fire `click` events afterwards like regular user generated `mousedown`s.
-            chai.simulateShiftMousedown(overlay.getElement());
-            chai.simulateClick(overlay.getElement());
+            chai.simulateEvent(overlay.getElement(), chai.mouseEvents.ShiftMouseDown);
+            chai.simulateEvent(overlay.getElement(), chai.mouseEvents.Click);
 
             expect(Object.keys(map._toolbars)).to.have.lengthOf(1);
         });
@@ -144,7 +151,7 @@ describe('L.DistortableCollection.Edit', function () {
     describe('#_removeToolbar', function () {
 
         beforeEach(function () { // multi-select the image and add the toolbar
-            chai.simulateShiftMousedown(overlay.getElement());
+            chai.simulateEvent(overlay.getElement(), chai.mouseEvents.ShiftMouseDown);
             imgGroup.editing._addToolbar();
 
             expect(Object.keys(map._toolbars)).to.have.lengthOf(1);
@@ -152,12 +159,14 @@ describe('L.DistortableCollection.Edit', function () {
         
         it('is invoked on map click', function () {
             map.fire("click");
-            expect(map._toolbars).to.be.empty;
+            setTimeout(function () {
+              expect(map._toolbars).to.be.empty;
+            }, 3000);
         });
 
         it('is invoked on command + mousedown when it toggles the image *out* of multi-select', function () {
             // deselecting the image removes the control toolbar
-            chai.simulateShiftMousedown(overlay.getElement());
+            chai.simulateEvent(overlay.getElement(), chai.mouseEvents.ShiftMouseDown);
             expect(map._toolbars).to.be.empty;
         });
 
@@ -175,8 +184,8 @@ describe('L.DistortableCollection.Edit', function () {
     describe('#_lockGroup', function() {
 
         beforeEach(function () {
-            chai.simulateShiftMousedown(overlay.getElement());
-            chai.simulateShiftMousedown(overlay3.getElement());
+            chai.simulateEvent(overlay.getElement(), chai.mouseEvents.ShiftMouseDown);
+            chai.simulateEvent(overlay3.getElement(), chai.mouseEvents.ShiftMouseDown);
             
             imgGroup.editing._lockGroup();
         });
@@ -204,9 +213,9 @@ describe('L.DistortableCollection.Edit', function () {
     describe('#_unlockGroup', function() {
 
         beforeEach(function () {
-            chai.simulateShiftMousedown(overlay.getElement());
-            chai.simulateShiftMousedown(overlay2.getElement());
-            chai.simulateShiftMousedown(overlay3.getElement());
+            chai.simulateEvent(overlay.getElement(), chai.mouseEvents.ShiftMouseDown);
+            chai.simulateEvent(overlay2.getElement(), chai.mouseEvents.ShiftMouseDown);
+            chai.simulateEvent(overlay3.getElement(), chai.mouseEvents.ShiftMouseDown);
 
             imgGroup.editing._lockGroup();
             expect(overlay.editing._mode).to.equal('lock');
@@ -227,8 +236,8 @@ describe('L.DistortableCollection.Edit', function () {
     describe('#_removeGroup', function () {
         
         beforeEach(function() { // multi-selects the images to add them to the feature group
-            chai.simulateShiftMousedown(overlay.getElement());
-            chai.simulateShiftMousedown(overlay3.getElement());
+            chai.simulateEvent(overlay.getElement(), chai.mouseEvents.ShiftMouseDown);
+            chai.simulateEvent(overlay3.getElement(), chai.mouseEvents.ShiftMouseDown);
         });
 
         it('removes a collection of layers that are multi-selected', function () {

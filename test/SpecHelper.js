@@ -5,35 +5,34 @@ beforeEach(function() {
 
 /* Chain global testing utilites below to chai*/
 
-    /*
-	 * simulate mouse events manually in the DOM on a passed element. 
-	 *   - (Most) useful parameters: 
-	 *      1) type: string - this is for 'mousedown'. Other options include 'click', 'dblick', 'mouseup', 'mouseover', 'mouseout', 'mousemove
-	 *      2) the booleans after the list of 0s simulate the presence (or lack of) the following keys (in order) during the mouse event: 'ctrlKey', 'altKey', 'shiftKey', 'metaKey' 
-	 */
-chai.simulateShiftMousedown = function simulateCommandMousedownFn(el) {
+chai.mouseEvents = {
+  ShiftMouseDown: {
+    type: 'mousedown',
+    isShift: true
+  },
+  MouseDown: {
+    type: 'mousedown',
+    isShift: false
+  },
+  Click: {
+    type: 'click',
+    isShift: false
+  },
+}
+
+/*
+ * Mouse Events is a dictionary of "Events" and their properties. 
+ * Other events include 'click', 'dblick', 'mouseup', 'mouseover', 'mouseout', 'mousemove'
+ * Properties can take in properties of initMouseEvents().
+ */
+chai.simulateEvent = function simulateEventFn(el, event) {
   if (document.createEvent) {
     var e = document.createEvent('MouseEvents');
-    e.initMouseEvent('mousedown', true, true, window, 0, 0, 0, 0, 0, false, false, true, false, 0, null);
+    e.initMouseEvent(event.type, true, true, window, 0, 0, 0, 0, 0, false, false, event.isShift, false, 0, null);
     return el.dispatchEvent(e);
   }
 };
 
-chai.simulateMousedown= function simulateMousedownFn(el) {
-  if (document.createEvent) {
-    var e = document.createEvent('MouseEvents');
-    e.initMouseEvent('mousedown', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-    return el.dispatchEvent(e);
-  }
-};
-
-chai.simulateClick = function simulateClickFn(el) {
-  if (document.createEvent) {
-    var e = document.createEvent('MouseEvents');
-    e.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-    return el.dispatchEvent(e);
-  }
-};
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
