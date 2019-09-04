@@ -391,7 +391,8 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _singleClick: function(e) {
-    if (e.deselect) { this._deselect(); }
+    console.log(e);
+    if (e.type === 'singleclick') { this._deselect(); }
     else { return; }
   },
 

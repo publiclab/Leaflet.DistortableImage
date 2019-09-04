@@ -91,7 +91,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
   },
 
   _singleClick: function(e) {
-    if (e.deselect) { this._deselectAll(e); }
+    if (e.type === 'singleclick') { this._deselectAll(e); }
     else { return; }
   },
 

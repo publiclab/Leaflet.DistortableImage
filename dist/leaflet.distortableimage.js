@@ -2226,7 +2226,8 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _singleClick: function(e) {
-    if (e.deselect) { this._deselect(); }
+    console.log(e);
+    if (e.type === 'singleclick') { this._deselect(); }
     else { return; }
   },
 
@@ -2549,7 +2550,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
   },
 
   _singleClick: function(e) {
-    if (e.deselect) { this._deselectAll(e); }
+    if (e.type === 'singleclick') { this._deselectAll(e); }
     else { return; }
   },
 
@@ -3152,7 +3153,7 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
     setTimeout(function() {
       if (map.clicked === 1) {
         map.clicked = 0;
-        map.fire('singleclick', {deselect: true});
+        map.fire('singleclick', L.extend(e, {type: 'singleclick'}));
       }
     }, 300);
   },
@@ -3239,7 +3240,8 @@ L.Map.DoubleClickZoom.include({
     setTimeout(function() {
       if (map.clicked === 1) {
         map.clicked = 0;
-        map.fire('singleclick', {deselect: true});
+        // map.fire('singleclick', {deselect: true});
+        map.fire('singleclick', L.extend(e, {type: 'singleclick'}));
       }
     }, 300);
   },
