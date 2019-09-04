@@ -6,8 +6,6 @@
 
 L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
   addHooks: function() {
-    this._map.clicked = 0;
-
     this._map.on({
       click: this._fireIfSingle,
       dblclick: this._onDoubleClick,
@@ -101,8 +99,6 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
  */
 L.Map.DoubleClickZoom.include({
   addHooks: function() {
-    this._map.clicked = 0;
-
     this._map.on({
       click: this._fireIfSingle,
       dblclick: this._onDoubleClick,
