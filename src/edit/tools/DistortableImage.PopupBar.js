@@ -231,10 +231,33 @@ var EnableEXIF = L.EditAction.extend({
   },
 
   addHooks: function() {
-    var image = this._overlay.getElement();
+    var overlay = this._overlay;
+    var exifable = new Image();
 
-    // eslint-disable-next-line new-cap
-    EXIF.getData(image, L.EXIF(image));
+    exifable.src = overlay._getFullResSrc();
+
+    exifable.id = exifable.id || 'tempId12345';
+    document.body.appendChild(exifable);
+
+    exifable.onload = function onLoadExifableImage() {
+      if (window && window.hasOwnProperty('EXIF')) {
+        EXIF.getData(exifable, function() {
+          if (Object.keys(this.exifdata).length !== 0) {
+            if (Object.keys(this.exifdata).includes('GPSLatitude') && Object.keys(this.exifdata).includes('GPSLongitude')) {
+              L.EXIF(this, overlay);
+            } else {
+              alert('Only the following EXIF metadata is available:' + Object.keys(this.exifdata));
+            }
+          } else {
+            alert('Please provide a fullResolutionSrc containing EXIF metadata');
+          }
+        });
+      } else {
+        alert('window does not have property EXIF');
+      }
+    };
+
+    L.DomUtil.remove(exifable);
   },
 });
 
@@ -254,7 +277,7 @@ var Revert = L.EditAction.extend({
 
   addHooks: function() {
     this._overlay._revert();
-  }
+  },
 });
 
 var ToggleRotate = L.EditAction.extend({
@@ -289,7 +312,7 @@ var ToggleScale = L.EditAction.extend({
       html: use,
       tooltip: 'Scale Image',
     };
-    
+
     L.DistortableImage.action_map.s = '_toggleScale';
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
@@ -334,15 +357,16 @@ L.DistortableImageOverlay.addInitHook(function() {
     ToggleRotateScale,
     ToggleOrder,
     Revert,
+    EnableEXIF,
     Export,
     Delete,
   ];
 
-if (this.options.actions) { /* (`this` being DistortableImageOverlay, not the toolbar) */
+  if (this.options.actions) { /* (`this` being DistortableImageOverlay, not the toolbar) */
     this.editActions = this.options.actions;
   } else {
     this.editActions = this.ACTIONS;
   }
 
-  this.editing = new L.DistortableImage.Edit(this, { actions: this.editActions });
+  this.editing = new L.DistortableImage.Edit(this, {actions: this.editActions});
 });

@@ -7,12 +7,13 @@ module.exports = function(config) {
     basePath: '../',
 
     plugins: [
+      require('glfx'),
+      require('exif-js'),
       require('mocha'),
       require('karma-mocha'),
       require('karma-coverage'),
       require('karma-mocha-reporter'),
       require('karma-phantomjs-launcher'),
-      require('glfx'),
       require('webgl-distort/dist/webgl-distort.js'),
     ],
 

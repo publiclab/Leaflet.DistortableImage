@@ -15,6 +15,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this.edgeMinWidth = this.options.edgeMinWidth;
     this.editable = this.options.editable;
     this._url = url;
+    this._fullResolutionSrc = options.fullResolutionSrc || url;
     this.rotation = 0;
     // window.rotation = this.rotation;
   },
@@ -342,6 +343,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       return agg.add(map.project(corner));
     }, L.point(0, 0));
     return map.unproject(reduce.divideBy(4));
+  },
+
+  _getFullResSrc: function() {
+    return this._fullResolutionSrc;
   },
 
   // Use for translation calculations
