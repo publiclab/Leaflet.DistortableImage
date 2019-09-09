@@ -52,8 +52,6 @@ L.DomUtil = L.extend(L.DomUtil, {
     return window.confirm('Are you sure? ' + n +
     ' ' + humanized + ' will be permanently deleted from the map.');
   },
-
-
 });
 
 L.IconUtil = {
@@ -1107,7 +1105,6 @@ L.LockHandle = L.EditHandle.extend({
 
   updateHandle: function() {
     this.setLatLng(this._handled.getCorner(this._corner));
-    L.DomUtil.removeClass(this._handled.getElement(), 'selected');
   },
 
 });
@@ -1898,15 +1895,14 @@ L.DistortableImage.Edit = L.Handler.extend({
      * custom events fired from DoubleClickLabels.js. Used to differentiate
      * single / dblclick to not deselect images on map dblclick.
      */
-    if (map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled()) {
-      L.DomEvent.on(map, 'singleclick', this._singleClick, this);
-    } else {
+    if (!(map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled())) {
       L.DomEvent.on(map, 'click', this._deselect, this);
     }
 
     L.DomEvent.on(map, {
       singleclickon: this._singleClickListeners,
       singleclickoff: this._resetClickListeners,
+      singleclick: this._singleClick,
     }, this);
 
     L.DomEvent.on(overlay._image, {
@@ -1944,15 +1940,14 @@ L.DistortableImage.Edit = L.Handler.extend({
       eP.editing._removeToolbar();
     }
 
-    if (map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled()) {
-      L.DomEvent.off(map, 'singleclick', this._singleClick, this);
-    } else {
+    if (!(map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled())) {
       L.DomEvent.off(map, 'click', this._deselect, this);
     }
 
     L.DomEvent.off(map, {
       singleclickon: this._singleClickListeners,
       singleclickoff: this._resetClickListeners,
+      singleclick: this._singleClick,
     }, this);
 
     L.DomEvent.off(overlay._image, {
@@ -2227,14 +2222,13 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _singleClick: function(e) {
-    if (e.deselect) { this._deselect(); }
+    if (e.type === 'singleclick') { this._deselect(); }
     else { return; }
   },
 
   _singleClickListeners: function() {
     var map = this._overlay._map;
 
-    L.DomEvent.on(map, 'singleclick', this._singleClick, this);
     L.DomEvent.off(map, 'click', this._deselect, this);
   },
 
@@ -2242,7 +2236,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     var map = this._overlay._map;
 
     L.DomEvent.on(map, 'click', this._deselect, this);
-    L.DomEvent.off(map, 'singleclick', this._singleClick, this);
   },
 
   _select: function(e) {
@@ -2442,7 +2435,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   /**
-    * need to attach a stop to img dblclick or it will propogate to
+    * need to attach a stop to img dblclick or it will propagate to
     * the map and fire the handler that shows map location labels on map dblclick.
     */
   _nextMode: function(e) {
@@ -2480,15 +2473,14 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
     L.DomEvent.on(document, 'keydown', this._onKeyDown, this);
 
-    if (map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled()) {
-      L.DomEvent.on(map, 'singleclick', this._singleClick, this);
-    } else {
+    if (!(map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled())) {
       L.DomEvent.on(map, 'click', this._deselectAll, this);
     }
 
     L.DomEvent.on(map, {
       singleclickon: this._singleClickListeners,
       singleclickoff: this._resetClickListeners,
+      singleclick: this._singleClick,
       boxzoomend: this._addSelections,
     }, this);
 
@@ -2504,15 +2496,14 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
     L.DomEvent.off(document, 'keydown', this._onKeyDown, this);
 
-    if (map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled()) {
-      L.DomEvent.off(map, 'singleclick', this._singleClick, this);
-    } else {
+    if (!(map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled())) {
       L.DomEvent.off(map, 'click', this._deselectAll, this);
     }
 
     L.DomEvent.off(map, {
       singleclickon: this._singleClickListeners,
       singleclickoff: this._resetClickListeners,
+      singleclick: this._singleClick,
       boxzoomend: this._addSelections,
     }, this);
 
@@ -2550,14 +2541,13 @@ L.DistortableCollection.Edit = L.Handler.extend({
   },
 
   _singleClick: function(e) {
-    if (e.deselect) { this._deselectAll(e); }
+    if (e.type === 'singleclick') { this._deselectAll(e); }
     else { return; }
   },
 
   _singleClickListeners: function() {
     var map = this._group._map;
 
-    L.DomEvent.on(map, 'singleclick', this._singleClick, this);
     L.DomEvent.off(map, 'click', this._deselectAll, this);
   },
 
@@ -2565,7 +2555,6 @@ L.DistortableCollection.Edit = L.Handler.extend({
     var map = this._group._map;
 
     L.DomEvent.on(map, 'click', this._deselectAll, this);
-    L.DomEvent.off(map, 'singleclick', this._singleClick, this);
   },
 
   _deselectAll: function(e) {
@@ -3087,8 +3076,6 @@ L.Map.addInitHook('addHandler', 'boxSelector', L.Map.BoxSelector);
 
 L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
   addHooks: function() {
-    this._map.clicked = 0;
-
     this._map.on({
       click: this._fireIfSingle,
       dblclick: this._onDoubleClick,
@@ -3142,23 +3129,27 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
     return this;
   },
 
-  _fireIfSingle: function() {
+  _fireIfSingle: function(e) {
     var map = this._map;
+    var eo = e.originalEvent;
 
-    map.clicked += 1;
+    // prevents deselection in case of box selector
+    if (eo && eo.shiftKey) { return; }
+
+    map._clicked += 1;
     setTimeout(function() {
-      if (map.clicked === 1) {
-        map.clicked = 0;
-        map.fire('singleclick', {deselect: true});
+      if (map._clicked === 1) {
+        map._clicked = 0;
+        map.fire('singleclick', L.extend(e, {type: 'singleclick'}));
       }
-    }, 300);
+    }, 250);
   },
 
   _onDoubleClick: function() {
     var map = this._map;
     var labels = map._labels;
 
-    map.clicked = 0;
+    map._clicked = 0;
 
     if (labels.options.opacity === 1) {
       labels.options.opacity = 0;
@@ -3178,8 +3169,6 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
  */
 L.Map.DoubleClickZoom.include({
   addHooks: function() {
-    this._map.clicked = 0;
-
     this._map.on({
       click: this._fireIfSingle,
       dblclick: this._onDoubleClick,
@@ -3225,22 +3214,26 @@ L.Map.DoubleClickZoom.include({
     return this;
   },
 
-  _fireIfSingle: function() {
+  _fireIfSingle: function(e) {
     var map = this._map;
+    var eo = e.originalEvent;
 
-    map.clicked += 1;
+    // prevents deselection in case of box selector
+    if (eo && eo.shiftKey) { return; }
+
+    map._clicked += 1;
     setTimeout(function() {
-      if (map.clicked === 1) {
-        map.clicked = 0;
-        map.fire('singleclick', {deselect: true});
+      if (map._clicked === 1) {
+        map._clicked = 0;
+        map.fire('singleclick', L.extend(e, {type: 'singleclick'}));
       }
-    }, 300);
+    }, 250);
   },
 
   _onDoubleClick: function(e) {
     var map = this._map;
 
-    map.clicked = 0;
+    map._clicked = 0;
 
     var oldZoom = map.getZoom();
     var delta = map.options.zoomDelta;
@@ -3257,6 +3250,9 @@ L.Map.DoubleClickZoom.include({
 L.Map.addInitHook('addHandler', 'doubleClickLabels', L.Map.DoubleClickLabels);
 
 L.Map.include({
+
+  _clicked: 0,
+
   addGoogleMutant: function(opts) {
     opts = this._mutantOptions = L.Util.extend({
       labels: true,

@@ -21,15 +21,14 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
     L.DomEvent.on(document, 'keydown', this._onKeyDown, this);
 
-    if (map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled()) {
-      L.DomEvent.on(map, 'singleclick', this._singleClick, this);
-    } else {
+    if (!(map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled())) {
       L.DomEvent.on(map, 'click', this._deselectAll, this);
     }
 
     L.DomEvent.on(map, {
       singleclickon: this._singleClickListeners,
       singleclickoff: this._resetClickListeners,
+      singleclick: this._singleClick,
       boxzoomend: this._addSelections,
     }, this);
 
@@ -45,15 +44,14 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
     L.DomEvent.off(document, 'keydown', this._onKeyDown, this);
 
-    if (map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled()) {
-      L.DomEvent.off(map, 'singleclick', this._singleClick, this);
-    } else {
+    if (!(map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled())) {
       L.DomEvent.off(map, 'click', this._deselectAll, this);
     }
 
     L.DomEvent.off(map, {
       singleclickon: this._singleClickListeners,
       singleclickoff: this._resetClickListeners,
+      singleclick: this._singleClick,
       boxzoomend: this._addSelections,
     }, this);
 
@@ -91,14 +89,13 @@ L.DistortableCollection.Edit = L.Handler.extend({
   },
 
   _singleClick: function(e) {
-    if (e.deselect) { this._deselectAll(e); }
+    if (e.type === 'singleclick') { this._deselectAll(e); }
     else { return; }
   },
 
   _singleClickListeners: function() {
     var map = this._group._map;
 
-    L.DomEvent.on(map, 'singleclick', this._singleClick, this);
     L.DomEvent.off(map, 'click', this._deselectAll, this);
   },
 
@@ -106,7 +103,6 @@ L.DistortableCollection.Edit = L.Handler.extend({
     var map = this._group._map;
 
     L.DomEvent.on(map, 'click', this._deselectAll, this);
-    L.DomEvent.off(map, 'singleclick', this._singleClick, this);
   },
 
   _deselectAll: function(e) {
