@@ -52,6 +52,4 @@ L.DomUtil = L.extend(L.DomUtil, {
     return window.confirm('Are you sure? ' + n +
     ' ' + humanized + ' will be permanently deleted from the map.');
   },
-
-
 });

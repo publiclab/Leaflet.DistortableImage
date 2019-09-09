@@ -1,4 +1,7 @@
 L.Map.include({
+
+  _clicked: 0,
+
   addGoogleMutant: function(opts) {
     opts = this._mutantOptions = L.Util.extend({
       labels: true,

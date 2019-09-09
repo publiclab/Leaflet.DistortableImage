@@ -62,15 +62,14 @@ L.DistortableImage.Edit = L.Handler.extend({
      * custom events fired from DoubleClickLabels.js. Used to differentiate
      * single / dblclick to not deselect images on map dblclick.
      */
-    if (map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled()) {
-      L.DomEvent.on(map, 'singleclick', this._singleClick, this);
-    } else {
+    if (!(map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled())) {
       L.DomEvent.on(map, 'click', this._deselect, this);
     }
 
     L.DomEvent.on(map, {
       singleclickon: this._singleClickListeners,
       singleclickoff: this._resetClickListeners,
+      singleclick: this._singleClick,
     }, this);
 
     L.DomEvent.on(overlay._image, {
@@ -108,15 +107,14 @@ L.DistortableImage.Edit = L.Handler.extend({
       eP.editing._removeToolbar();
     }
 
-    if (map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled()) {
-      L.DomEvent.off(map, 'singleclick', this._singleClick, this);
-    } else {
+    if (!(map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled())) {
       L.DomEvent.off(map, 'click', this._deselect, this);
     }
 
     L.DomEvent.off(map, {
       singleclickon: this._singleClickListeners,
       singleclickoff: this._resetClickListeners,
+      singleclick: this._singleClick,
     }, this);
 
     L.DomEvent.off(overlay._image, {
@@ -391,14 +389,13 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _singleClick: function(e) {
-    if (e.deselect) { this._deselect(); }
+    if (e.type === 'singleclick') { this._deselect(); }
     else { return; }
   },
 
   _singleClickListeners: function() {
     var map = this._overlay._map;
 
-    L.DomEvent.on(map, 'singleclick', this._singleClick, this);
     L.DomEvent.off(map, 'click', this._deselect, this);
   },
 
@@ -406,7 +403,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     var map = this._overlay._map;
 
     L.DomEvent.on(map, 'click', this._deselect, this);
-    L.DomEvent.off(map, 'singleclick', this._singleClick, this);
   },
 
   _select: function(e) {
@@ -606,7 +602,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   /**
-    * need to attach a stop to img dblclick or it will propogate to
+    * need to attach a stop to img dblclick or it will propagate to
     * the map and fire the handler that shows map location labels on map dblclick.
     */
   _nextMode: function(e) {

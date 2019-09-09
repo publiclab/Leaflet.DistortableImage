@@ -6,8 +6,6 @@
 
 L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
   addHooks: function() {
-    this._map.clicked = 0;
-
     this._map.on({
       click: this._fireIfSingle,
       dblclick: this._onDoubleClick,
@@ -61,23 +59,27 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
     return this;
   },
 
-  _fireIfSingle: function() {
+  _fireIfSingle: function(e) {
     var map = this._map;
+    var eo = e.originalEvent;
 
-    map.clicked += 1;
+    // prevents deselection in case of box selector
+    if (eo && eo.shiftKey) { return; }
+
+    map._clicked += 1;
     setTimeout(function() {
-      if (map.clicked === 1) {
-        map.clicked = 0;
-        map.fire('singleclick', {deselect: true});
+      if (map._clicked === 1) {
+        map._clicked = 0;
+        map.fire('singleclick', L.extend(e, {type: 'singleclick'}));
       }
-    }, 300);
+    }, 250);
   },
 
   _onDoubleClick: function() {
     var map = this._map;
     var labels = map._labels;
 
-    map.clicked = 0;
+    map._clicked = 0;
 
     if (labels.options.opacity === 1) {
       labels.options.opacity = 0;
@@ -97,8 +99,6 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
  */
 L.Map.DoubleClickZoom.include({
   addHooks: function() {
-    this._map.clicked = 0;
-
     this._map.on({
       click: this._fireIfSingle,
       dblclick: this._onDoubleClick,
@@ -144,22 +144,26 @@ L.Map.DoubleClickZoom.include({
     return this;
   },
 
-  _fireIfSingle: function() {
+  _fireIfSingle: function(e) {
     var map = this._map;
+    var eo = e.originalEvent;
 
-    map.clicked += 1;
+    // prevents deselection in case of box selector
+    if (eo && eo.shiftKey) { return; }
+
+    map._clicked += 1;
     setTimeout(function() {
-      if (map.clicked === 1) {
-        map.clicked = 0;
-        map.fire('singleclick', {deselect: true});
+      if (map._clicked === 1) {
+        map._clicked = 0;
+        map.fire('singleclick', L.extend(e, {type: 'singleclick'}));
       }
-    }, 300);
+    }, 250);
   },
 
   _onDoubleClick: function(e) {
     var map = this._map;
 
-    map.clicked = 0;
+    map._clicked = 0;
 
     var oldZoom = map.getZoom();
     var delta = map.options.zoomDelta;
