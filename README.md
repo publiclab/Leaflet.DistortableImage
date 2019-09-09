@@ -431,7 +431,6 @@ We have made slight changes to a default Leaflet handler:
 <ul>
   <li>This handler and <code>doubleClickLabels</code> time and fire a custom <code>singleclick</code> event on map click. It is fired after a 3ms timeout if the click doesn't become a doubleclick.</li>
   <li>This allows our images to remain selected during associated double click events on the map (in this case zooming).</li>
-  <li>Our image classes listen for <code>singleclick</code> while either this or the other doubleClick handler is enabled.</li>
 </ul>
 </details>
 
