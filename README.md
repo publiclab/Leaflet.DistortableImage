@@ -25,7 +25,7 @@ npm i leaflet-distortableimage
 
 ## Compatibility with Leaflet versions
 
-Compatible with Leaflet 1.0.0-beta1 and greater
+Compatible with Leaflet 1.0.0 and greater
 
 ## Setup
 
@@ -48,7 +48,7 @@ For the additional features in the [multiple image interface](#Multiple-Image-In
 
 The simplest implementation is to create a map with our recommended `TileLayer`, then create an `L.distortableImageOverlay` instance and add it onto the map.
 
-```JS
+```js
 // set the initial map center and zoom level
 map = L.map('map').setView([51.505, -0.09], 13);
 
@@ -63,7 +63,7 @@ map.whenReady(function() {
 
 <b>Note</b>: <code>map.addGoogleMutant()</code> is just a convenience function for adding our recommended layer to the map. If you want a different baselayer, skip this line and add your preferred layer to the map as you normally would. For ex:
 
-```JS
+```js
 L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.png', {
   maxZoom: 18,
   attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
@@ -91,7 +91,7 @@ If you would like to overrwrite the default toolbar actions available for an ind
 
 For example, to overrwrite the toolbar to only include the `ToggleTransparency` and `Delete` actions, and also add on the additional `ToggleScale` action:
 
-``` JS
+```js
 img = L.distortableImageOverlay('example.jpg', {
   actions: [ToggleTransparency, ToggleScale, Delete],
 }).addTo(map);
@@ -157,7 +157,7 @@ We've added a GPU-accelerated means to generate a full resolution version of the
 
 When instantiating a Distortable Image, pass in a `fullResolutionSrc` option set to the url of the higher resolution image. This image will be used in full-res exporting.
 
-```JS
+```js
 img = L.distortableImageOverlay('example.jpg', {
   fullResolutionSrc: 'large.jpg',
 }).addTo(map);
@@ -181,7 +181,7 @@ Values available to pass to `mode` are:
 
 In the below example, the image will be initialiazed with "rotateScale" handles:
 
-```JS
+```js
 img = L.distortableImageOverlay('example.jpg', {
   mode: 'rotateScale',
 }).addTo(map);
@@ -215,7 +215,7 @@ Although not required, you will probably want to pass `corners` to individual im
 
 here is an example with two images:
 
-```JS
+```js
 // 1. Instantiate map
 // 2. Instantiate images but this time *dont* add them directly to the map
 img = L.distortableImageOverlay('example.jpg', {
@@ -285,7 +285,7 @@ This provides the developer with the flexibility to keep the popup toolbars, the
 
 For ex.
 
-```JS
+```js
 // suppress this images personal toolbar
 img = L.distortableImageOverlay('example.jpg', {
   suppressToolbar: true,
@@ -651,4 +651,3 @@ $ grunt concat:dist
 * Pranshu Srivastava, [@rexagod](https://github.com/rexagod)
 
 Many more at https://github.com/publiclab/Leaflet.DistortableImage/graphs/contributors
-﻿
