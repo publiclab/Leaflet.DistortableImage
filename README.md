@@ -29,7 +29,8 @@ Compatible with Leaflet 1.0.0-beta1 and greater
 
 ## Setup
 
-* From the root directory, run `npm install`
+* From the root directory, run `npm install` and
+`npm install leaflet --no-save`
 
 ## Demo
 
