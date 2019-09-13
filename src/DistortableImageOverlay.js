@@ -161,7 +161,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     var map = this._map;
     var zoom = map.getZoom();
     var i = 0;
-
+    // this is to fix https://github.com/publiclab/Leaflet.DistortableImage/issues/402
     for (var k in latlngObj) {
       if ((zoom === 0 && (map.project(latlngObj[k]).y < 2 || map.project(latlngObj[k]).y >= 255)) ||
           (zoom !== 0 && (map.project(latlngObj[k]).y / zoom < 2 || map.project(latlngObj[k]).y / Math.pow(2, zoom) >= 255))

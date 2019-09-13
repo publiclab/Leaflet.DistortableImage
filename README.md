@@ -17,11 +17,19 @@ Advantages include:
 
 [Download as zip](https://github.com/publiclab/Leaflet.DistortableImage/releases) or clone the repo to get a local copy.
 
-Also available on NPM as [leaflet-distortableimage](https://www.npmjs.com/package/leaflet-distortableimage).
+Also available on NPM as [leaflet-distortableimage](https://www.npmjs.com/package/leaflet-distortableimage):
+
+```Bash
+npm i leaflet-distortableimage
+```
+
+## Compatibility with Leaflet versions
+
+Compatible with Leaflet 1.0.0-beta1 and greater
 
 ## Setup
 
-* From the root directory, run `npm install` or `sudo npm install`
+* From the root directory, run `npm install`
 
 ## Demo
 
