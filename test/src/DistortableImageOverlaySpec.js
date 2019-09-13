@@ -51,48 +51,48 @@ describe('L.DistortableImageOverlay', function() {
     });
   });
 
-  // describe('#scaleBy', function() {
-  //   it('Should not change image dimensions when passed a value of 1 or 0', function() {
-  //     var img = overlay.getElement(),
-  //         dims = [img.getBoundingClientRect().width, img.getBoundingClientRect().height];
+  describe('#scaleBy', function() {
+    it('Should not change image dimensions when passed a value of 1 or 0', function() {
+      var img = overlay.getElement(),
+          dims = [img.getBoundingClientRect().width, img.getBoundingClientRect().height];
 
-  //     overlay.scaleBy(1);
+      overlay.scaleBy(1);
 
-  //     var scaledDims = [img.getBoundingClientRect().width, img.getBoundingClientRect().height];
-  //     expect(dims).to.be.eql(scaledDims);
+      var scaledDims = [img.getBoundingClientRect().width, img.getBoundingClientRect().height];
+      expect(dims).to.be.eql(scaledDims);
 
-  //     overlay.scaleBy(0);
+      overlay.scaleBy(0);
 
-  //     var scaledDims2 = [img.getBoundingClientRect().width, img.getBoundingClientRect().height];
-  //     expect(dims).to.be.eql(scaledDims2);
-  //   });
+      var scaledDims2 = [img.getBoundingClientRect().width, img.getBoundingClientRect().height];
+      expect(dims).to.be.eql(scaledDims2);
+    });
 
-  //   it('Should invert image dimensions when passed a negative value', function() {
-  //     var c2 = overlay.getCorner(2),
-  //         c3 = overlay.getCorner(3);
+    it('Should invert image dimensions when passed a negative value', function() {
+      var c2 = overlay.getCorner(2),
+          c3 = overlay.getCorner(3);
 
-  //     overlay.scaleBy(-1);
+      overlay.scaleBy(-1);
 
-  //     var scaledC = overlay.getCorner(0),
-  //         scaledC1 = overlay.getCorner(1);
+      var scaledC = overlay.getCorner(0),
+          scaledC1 = overlay.getCorner(1);
 
-  //     expect(Math.round(scaledC.lat)).to.equal(Math.round(c3.lat));
-  //     expect(Math.round(scaledC.lng)).to.equal(Math.round(c3.lng));
-  //     expect(Math.round(scaledC1.lat)).to.equal(Math.round(c2.lat));
-  //     expect(Math.round(scaledC1.lng)).to.equal(Math.round(c2.lng));
-  //   });
+      expect(Math.round(scaledC.lat)).to.equal(Math.round(c3.lat));
+      expect(Math.round(scaledC.lng)).to.equal(Math.round(c3.lng));
+      expect(Math.round(scaledC1.lat)).to.equal(Math.round(c2.lat));
+      expect(Math.round(scaledC1.lng)).to.equal(Math.round(c2.lng));
+    });
 
-  //   it('Maintain image proportions when scaling', function() {
-  //     var w = overlay.getElement().getBoundingClientRect().width,
-  //         h = overlay.getElement().getBoundingClientRect().height;
+    it('Maintain image proportions when scaling', function() {
+      var w = overlay.getElement().getBoundingClientRect().width,
+          h = overlay.getElement().getBoundingClientRect().height;
 
-  //     overlay.scaleBy(0.5);
+      overlay.scaleBy(0.5);
 
-  //     var w2 = overlay.getElement().getBoundingClientRect().width,
-  //         h2 = overlay.getElement().getBoundingClientRect().height;
+      var w2 = overlay.getElement().getBoundingClientRect().width,
+          h2 = overlay.getElement().getBoundingClientRect().height;
 
-  //     expect(Math.round(w / 2)).to.be.equal(Math.round(w2));
-  //     expect(Math.round(h / 2)).to.be.equal(Math.round(h2));
-  //   });
-  // });
+      expect(Math.round(w / 2)).to.be.equal(Math.round(w2));
+      expect(Math.round(h / 2)).to.be.equal(Math.round(h2));
+    });
+  });
 });
