@@ -1,8 +1,8 @@
 L.OpacityAction = L.EditAction.extend({
   initialize: function(map, overlay, options) {
-    var edit = overlay.editing,
-      use,
-      tooltip;
+    var edit = overlay.editing;
+    var use;
+    var tooltip;
 
     if (edit._transparent) {
       use = 'opacity_empty';
@@ -16,7 +16,7 @@ L.OpacityAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: tooltip
+      tooltip: tooltip,
     };
 
     L.DistortableImage.action_map.o = '_toggleOpacity';
@@ -27,7 +27,7 @@ L.OpacityAction = L.EditAction.extend({
     var edit = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'opacity', 'opacity_empty');
-    L.IconUtil.toggleTooltip(this._link, 'Make Image Transparent', 'Make Image Opaque');
+    L.IconUtil.toggleTitle(this._link, 'Make Image Transparent', 'Make Image Opaque');
     edit._toggleOpacity();
-  }
+  },
 });

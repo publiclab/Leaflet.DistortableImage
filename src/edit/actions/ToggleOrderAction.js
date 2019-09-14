@@ -1,8 +1,8 @@
 L.ToggleOrderAction = L.EditAction.extend({
   initialize: function(map, overlay, options) {
-    var edit = overlay.editing,
-      use,
-      tooltip;
+    var edit = overlay.editing;
+    var use;
+    var tooltip;
 
     if (edit._toggledImage) {
       use = 'flip_to_back';
@@ -16,7 +16,7 @@ L.ToggleOrderAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: tooltip
+      tooltip: tooltip,
     };
 
     L.DistortableImage.action_map.j = '_stackUp';
@@ -28,7 +28,7 @@ L.ToggleOrderAction = L.EditAction.extend({
     var edit = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'flip_to_front', 'flip_to_back');
-    L.IconUtil.toggleTooltip(this._link, 'Stack to Front', 'Stack to Back');
+    L.IconUtil.toggleTitle(this._link, 'Stack to Front', 'Stack to Back');
     edit._toggleOrder();
-  }
+  },
 });

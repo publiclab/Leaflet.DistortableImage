@@ -5,7 +5,7 @@ L.ScaleAction = L.EditAction.extend({
       svg: true,
       html: 'scale',
       tooltip: 'Scale Image',
-      className: 'scale'
+      className: 'scale',
     };
 
     L.DistortableImage.action_map.s = '_scaleMode';
@@ -15,5 +15,5 @@ L.ScaleAction = L.EditAction.extend({
   addHooks: function() {
     var edit = this._overlay.editing;
     edit._scaleMode();
-  }
+  },
 });

@@ -5,7 +5,7 @@ L.RotateAction = L.EditAction.extend({
       svg: true,
       html: 'rotate',
       tooltip: 'Rotate Image',
-      className: 'rotate'
+      className: 'rotate',
     };
 
     L.DistortableImage.action_map.R = '_rotateMode';
@@ -15,5 +15,5 @@ L.RotateAction = L.EditAction.extend({
   addHooks: function() {
     var edit = this._overlay.editing;
     edit._rotateMode();
-  }
+  },
 });

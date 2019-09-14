@@ -61,19 +61,17 @@ describe('L.DistortableCollection.Edit', function() {
       map.fire('click');
 
       // we deselect after 3ms to confirm the click wasn't a dblclick
-      //     setTimeout(function () {
-      //       expect(L.DomUtil.getClass(img)).to.not.include('selected');
-      //       expect(L.DomUtil.getClass(img2)).to.not.include('selected');
-      //     }, 3000);
-      //   });
-
-      expect(L.DomUtil.getClass(img)).to.not.include('selected');
-      expect(L.DomUtil.getClass(img2)).to.not.include('selected');
+      setTimeout(function() {
+        expect(L.DomUtil.getClass(img)).to.not.include('selected');
+        expect(L.DomUtil.getClass(img2)).to.not.include('selected');
+      }, 3000);
     });
 
     it('Should hide all images\' handles unless they\'re lock handles', function() {
       var edit = overlay.editing;
       var edit2 = overlay2.editing;
+      var distortHandleState = [];
+      var lockHandleState = [];
 
       // turn on lock handles for one of the DistortableImageOverlay instances.
       edit2._toggleLockMode();
@@ -81,36 +79,19 @@ describe('L.DistortableCollection.Edit', function() {
       // then trigger _deselectAll
       map.fire('click');
 
-      //     setTimeout(function () {
-      //       var distortHandleState = [];
-      //       edit._handles['distort'].eachLayer(function (handle) {
-      //           distortHandleState.push(handle._icon.style.opacity);
-      //       });
+      setTimeout(function() {
+        edit._handles['distort'].eachLayer(function(handle) {
+          distortHandleState.push(handle._icon.style.opacity);
+        });
 
-      //       var lockHandleState = [];
-      //       edit2._handles['lock'].eachLayer(function (handle) {
-      //           lockHandleState.push(handle._icon.style.opacity);
-      //       });
+        edit2._handles['lock'].eachLayer(function(handle) {
+          lockHandleState.push(handle._icon.style.opacity);
+        });
 
-      //       expect(distortHandleState).to.deep.equal(['0', '0', '0', '0']);
-      //       // opacity for lockHandles is unset because we never altered it to hide it as part of deselection
-      //       expect(lockHandleState).to.deep.equal(['', '', '', '']);
-      //     }, 3000);
-      //   });
-
-      var distortHandleState = [];
-      edit._handles['distort'].eachLayer(function(handle) {
-        distortHandleState.push(handle._icon.style.opacity);
-      });
-
-      var lockHandleState = [];
-      edit2._handles['lock'].eachLayer(function(handle) {
-        lockHandleState.push(handle._icon.style.opacity);
-      });
-
-      expect(distortHandleState).to.deep.equal(['0', '0', '0', '0']);
-      // opacity for lockHandles is unset because we never altered it to hide it as part of deselection
-      expect(lockHandleState).to.deep.equal(['', '', '', '']);
+        expect(distortHandleState).to.deep.equal(['0', '0', '0', '0']);
+        // opacity for lockHandles is unset because we never altered it to hide it as part of deselection
+        expect(lockHandleState).to.deep.equal(['', '', '', '']);
+      }, 3000);
     });
 
     it('Should remove all images\' individual toolbar instances regardless of lock handles', function() {
@@ -120,8 +101,8 @@ describe('L.DistortableCollection.Edit', function() {
       edit2._toggleLockMode();
 
       // select both images to initially create individual toolbar instances (single selection interface)
-      // chai.simulateEvent(overlay.getElement(), chai.mouseEvents.Click);
-      // chai.simulateEvent(overlay2.getElement(), chai.mouseEvents.Click);
+      chai.simulateEvent(overlay.getElement(), chai.mouseEvents.Click);
+      chai.simulateEvent(overlay2.getElement(), chai.mouseEvents.Click);
 
       expect(edit.toolbar).to.not.be.false;
       expect(edit2.toolbar).to.not.be.false;
@@ -129,15 +110,10 @@ describe('L.DistortableCollection.Edit', function() {
       // then trigger _deselectAll
       map.fire('click');
 
-      // setTimeout(function () {
-      //   expect(edit.toolbar).to.be.false;
-      //   expect(edit2.toolbar).to.be.false;
-      // }, 3000);
-      //   });
-      // });
-
-      expect(edit.toolbar).to.be.false;
-      expect(edit2.toolbar).to.be.false;
+      setTimeout(function() {
+        expect(edit.toolbar).to.be.false;
+        expect(edit2.toolbar).to.be.false;
+      }, 3000);
     });
   });
 

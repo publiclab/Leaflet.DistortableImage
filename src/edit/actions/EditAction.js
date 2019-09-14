@@ -9,8 +9,8 @@ L.EditAction = L.Toolbar2.Action.extend({
       svg: false,
       html: '',
       className: '',
-      tooltip: ''
-    }
+      tooltip: '',
+    },
   },
 
   initialize: function(map, overlay, options) {
@@ -68,7 +68,7 @@ L.EditAction = L.Toolbar2.Action.extend({
     el.innerHTML = new L.ToolbarIconSet().render();
 
     document.querySelector('.leaflet-marker-pane').appendChild(el);
-  }
+  },
 });
 
 L.editAction = function(map, overlay, options) {

@@ -1,7 +1,7 @@
 L.ExportAction = L.EditAction.extend({
   initialize: function(map, overlay, options) {
     var tooltip;
-    
+
     if (overlay._eventParents) {
       L.DistortableImage.action_map.e = '_getExport';
       tooltip = 'Export Image';
@@ -13,7 +13,7 @@ L.ExportAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: 'get_app',
-      tooltip: tooltip
+      tooltip: tooltip,
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -23,11 +23,11 @@ L.ExportAction = L.EditAction.extend({
     var edit = this._overlay.editing;
 
     if (this._overlay._eventParents) { edit._getExport(); }
-    else { 
+    else {
       L.IconUtil.toggleXlink(this._link, 'get_app', 'spinner');
-      L.IconUtil.toggleTooltip(this._link, 'Export Images', 'Loading...'); 
+      L.IconUtil.toggleTitle(this._link, 'Export Images', 'Loading...');
       L.IconUtil.addClassToSvg(this._link, 'loader');
       edit.startExport();
     }
-  }
+  },
 });

@@ -1,8 +1,8 @@
 L.ToggleBorderAction = L.EditAction.extend({
   initialize: function(map, overlay, options) {
-    var edit = overlay.editing,
-        use,
-        tooltip;
+    var edit = overlay.editing;
+    var use;
+    var tooltip;
 
     if (edit._outlined) {
       use = 'border_outer';
@@ -16,7 +16,7 @@ L.ToggleBorderAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: tooltip
+      tooltip: tooltip,
     };
 
     L.DistortableImage.action_map.b = '_toggleBorder';
@@ -27,7 +27,7 @@ L.ToggleBorderAction = L.EditAction.extend({
     var edit = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'border_clear', 'border_outer');
-    L.IconUtil.toggleTooltip(this._link, 'Remove Border', 'Add Border');
+    L.IconUtil.toggleTitle(this._link, 'Remove Border', 'Add Border');
     edit._toggleBorder();
-  }
+  },
 });

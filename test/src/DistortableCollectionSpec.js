@@ -57,8 +57,8 @@ describe('L.DistortableCollection', function() {
 
   describe('#isSelected', function() {
     it('Should only return true if the image was selected using shift + mousedown', function() {
-      var img = overlay.getElement(),
-        img2 = overlay2.getElement();
+      var img = overlay.getElement();
+      var img2 = overlay2.getElement();
 
       chai.simulateEvent(img, chai.mouseEvents.ShiftMouseDown);
       chai.simulateEvent(img2, chai.mouseEvents.MouseDown);
@@ -70,8 +70,8 @@ describe('L.DistortableCollection', function() {
 
   describe('#anySelected', function() {
     it('Should return false if no selections were made with shift + mousedown', function() {
-      var img = overlay.getElement(),
-        img2 = overlay2.getElement();
+      var img = overlay.getElement();
+      var img2 = overlay2.getElement();
 
       chai.simulateEvent(img, chai.mouseEvents.MouseDown);
       chai.simulateEvent(img2, chai.mouseEvents.MouseDown);
@@ -83,8 +83,8 @@ describe('L.DistortableCollection', function() {
 
   describe('#_toggleMultiSelect', function() {
     it('Should allow multiple image selection on shift + click', function() {
-      var img = overlay.getElement(),
-        img2 = overlay2.getElement();
+      var img = overlay.getElement();
+      var img2 = overlay2.getElement();
 
       chai.simulateEvent(img, chai.mouseEvents.ShiftMouseDown);
       chai.simulateEvent(img2, chai.mouseEvents.ShiftMouseDown);
@@ -96,7 +96,7 @@ describe('L.DistortableCollection', function() {
     it('It should allow a locked image to be part of multiple image selection', function() {
       var img = overlay.getElement();
 
-      overlay.editing._toggleLock();
+      overlay.editing._toggleLockMode();
       chai.simulateEvent(img, chai.mouseEvents.ShiftMouseDown);
 
       expect(L.DomUtil.getClass(img)).to.include('selected');

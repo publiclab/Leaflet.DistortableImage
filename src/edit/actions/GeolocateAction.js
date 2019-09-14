@@ -4,9 +4,9 @@ L.GeolocateAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: 'explore',
-      tooltip: 'Geolocate Image'
+      tooltip: 'Geolocate Image',
     };
-    
+
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
@@ -15,5 +15,5 @@ L.GeolocateAction = L.EditAction.extend({
 
     // eslint-disable-next-line new-cap
     EXIF.getData(image, L.EXIF(image));
-  }
+  },
 });

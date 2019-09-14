@@ -100,11 +100,9 @@ describe('L.DistortableImage.Edit', function() {
       map.fire('click');
 
       // we deselect after 3ms to confirm the click wasn't a dblclick
-      // setTimeout(function() {
-      //   expect(edit.toolbar).to.be.false;
-      // }, 3000);
-
-      expect(edit.toolbar).to.be.false;
+      setTimeout(function() {
+        expect(edit.toolbar).to.be.false;
+      }, 3000);
     });
   });
 });

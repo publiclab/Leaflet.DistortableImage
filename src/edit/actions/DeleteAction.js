@@ -10,12 +10,12 @@ L.DeleteAction = L.EditAction.extend({
       tooltip = 'Delete Images';
       L.DistortableImage.group_action_map.Backspace = '_removeGroup'; // backspace windows / delete mac
     }
-  
+
     options = options || {};
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: tooltip
+      tooltip: tooltip,
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -26,5 +26,5 @@ L.DeleteAction = L.EditAction.extend({
 
     if (this._overlay._eventParents) { edit._removeOverlay(); }
     else { edit._removeGroup(); }
-  }
+  },
 });

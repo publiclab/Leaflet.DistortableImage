@@ -5,7 +5,7 @@ L.DistortAction = L.EditAction.extend({
       svg: true,
       html: 'distort',
       tooltip: 'Distort Image',
-      className: 'distort'
+      className: 'distort',
     };
 
     L.DistortableImage.action_map.d = '_distortMode';
@@ -15,5 +15,5 @@ L.DistortAction = L.EditAction.extend({
   addHooks: function() {
     var edit = this._overlay.editing;
     edit._distortMode();
-  }
+  },
 });

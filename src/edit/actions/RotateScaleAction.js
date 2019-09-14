@@ -5,7 +5,7 @@ L.RotateScaleAction = L.EditAction.extend({
       svg: true,
       html: 'crop_rotate',
       tooltip: 'Rotate+Scale Image',
-      className: 'rotateScale'
+      className: 'rotateScale',
     };
 
     L.DistortableImage.action_map.r = '_rotateScaleMode';
@@ -15,5 +15,5 @@ L.RotateScaleAction = L.EditAction.extend({
   addHooks: function() {
     var edit = this._overlay.editing;
     edit._rotateScaleMode();
-  }
+  },
 });

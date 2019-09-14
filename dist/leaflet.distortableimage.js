@@ -1335,8 +1335,8 @@ L.EditAction = L.Toolbar2.Action.extend({
       svg: false,
       html: '',
       className: '',
-      tooltip: ''
-    }
+      tooltip: '',
+    },
   },
 
   initialize: function(map, overlay, options) {
@@ -1394,7 +1394,7 @@ L.EditAction = L.Toolbar2.Action.extend({
     el.innerHTML = new L.ToolbarIconSet().render();
 
     document.querySelector('.leaflet-marker-pane').appendChild(el);
-  }
+  },
 });
 
 L.editAction = function(map, overlay, options) {
@@ -1413,12 +1413,12 @@ L.DeleteAction = L.EditAction.extend({
       tooltip = 'Delete Images';
       L.DistortableImage.group_action_map.Backspace = '_removeGroup'; // backspace windows / delete mac
     }
-  
+
     options = options || {};
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: tooltip
+      tooltip: tooltip,
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -1429,7 +1429,7 @@ L.DeleteAction = L.EditAction.extend({
 
     if (this._overlay._eventParents) { edit._removeOverlay(); }
     else { edit._removeGroup(); }
-  }
+  },
 });
 
 L.DistortAction = L.EditAction.extend({
@@ -1439,7 +1439,7 @@ L.DistortAction = L.EditAction.extend({
       svg: true,
       html: 'distort',
       tooltip: 'Distort Image',
-      className: 'distort'
+      className: 'distort',
     };
 
     L.DistortableImage.action_map.d = '_distortMode';
@@ -1449,13 +1449,13 @@ L.DistortAction = L.EditAction.extend({
   addHooks: function() {
     var edit = this._overlay.editing;
     edit._distortMode();
-  }
+  },
 });
 
 L.ExportAction = L.EditAction.extend({
   initialize: function(map, overlay, options) {
     var tooltip;
-    
+
     if (overlay._eventParents) {
       L.DistortableImage.action_map.e = '_getExport';
       tooltip = 'Export Image';
@@ -1467,7 +1467,7 @@ L.ExportAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: 'get_app',
-      tooltip: tooltip
+      tooltip: tooltip,
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -1477,13 +1477,13 @@ L.ExportAction = L.EditAction.extend({
     var edit = this._overlay.editing;
 
     if (this._overlay._eventParents) { edit._getExport(); }
-    else { 
+    else {
       L.IconUtil.toggleXlink(this._link, 'get_app', 'spinner');
-      L.IconUtil.toggleTooltip(this._link, 'Export Images', 'Loading...'); 
+      L.IconUtil.toggleTitle(this._link, 'Export Images', 'Loading...');
       L.IconUtil.addClassToSvg(this._link, 'loader');
       edit.startExport();
     }
-  }
+  },
 });
 
 L.GeolocateAction = L.EditAction.extend({
@@ -1492,9 +1492,9 @@ L.GeolocateAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: 'explore',
-      tooltip: 'Geolocate Image'
+      tooltip: 'Geolocate Image',
     };
-    
+
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
@@ -1503,20 +1503,22 @@ L.GeolocateAction = L.EditAction.extend({
 
     // eslint-disable-next-line new-cap
     EXIF.getData(image, L.EXIF(image));
-  }
+  },
 });
 
 L.LockAction = L.EditAction.extend({
   initialize: function(map, overlay, options) {
-    var edit = overlay.editing,
-        use, tooltip, className;
+    var edit = overlay.editing;
+    var use;
+    var tooltip;
+    var className;
 
-    /** 
+    /**
      * we can tell whether the overlay is an instance of `L.DistortableImageOverlay` or `L.DistortableCollection` bc only 
      * the former should have `_eventParents` defined on it. From there we call the apporpriate keybindings and methods. 
      * Aligning both classes w/ an `.edit` allowed us to have actions like this that can work w/ both interfaces.
-     */ 
-   
+     */
+
     if (overlay._eventParents) {
       L.DistortableImage.action_map.u = '_unlock';
       L.DistortableImage.action_map.l = '_lock';
@@ -1529,7 +1531,6 @@ L.LockAction = L.EditAction.extend({
         use = 'unlock';
         className = 'unlock';
       }
-
     } else {
       L.DistortableImage.group_action_map.l = '_lockGroup';
       tooltip = 'Lock Images';
@@ -1553,14 +1554,14 @@ L.LockAction = L.EditAction.extend({
 
     if (this._overlay._eventParents) { edit._toggleLockMode(); }
     else { edit._lockGroup(); }
-  }
+  },
 });
 
 L.OpacityAction = L.EditAction.extend({
   initialize: function(map, overlay, options) {
-    var edit = overlay.editing,
-      use,
-      tooltip;
+    var edit = overlay.editing;
+    var use;
+    var tooltip;
 
     if (edit._transparent) {
       use = 'opacity_empty';
@@ -1574,7 +1575,7 @@ L.OpacityAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: tooltip
+      tooltip: tooltip,
     };
 
     L.DistortableImage.action_map.o = '_toggleOpacity';
@@ -1585,9 +1586,9 @@ L.OpacityAction = L.EditAction.extend({
     var edit = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'opacity', 'opacity_empty');
-    L.IconUtil.toggleTooltip(this._link, 'Make Image Transparent', 'Make Image Opaque');
+    L.IconUtil.toggleTitle(this._link, 'Make Image Transparent', 'Make Image Opaque');
     edit._toggleOpacity();
-  }
+  },
 });
 
 L.RevertAction = L.EditAction.extend({
@@ -1596,15 +1597,15 @@ L.RevertAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: 'restore',
-      tooltip: 'Restore Original Image Dimensions'
+      tooltip: 'Restore Original Image Dimensions',
     };
-    
+
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
   addHooks: function() {
     this._overlay._revert();
-  }
+  },
 });
 
 L.RotateAction = L.EditAction.extend({
@@ -1614,7 +1615,7 @@ L.RotateAction = L.EditAction.extend({
       svg: true,
       html: 'rotate',
       tooltip: 'Rotate Image',
-      className: 'rotate'
+      className: 'rotate',
     };
 
     L.DistortableImage.action_map.R = '_rotateMode';
@@ -1624,7 +1625,7 @@ L.RotateAction = L.EditAction.extend({
   addHooks: function() {
     var edit = this._overlay.editing;
     edit._rotateMode();
-  }
+  },
 });
 
 L.RotateScaleAction = L.EditAction.extend({
@@ -1634,7 +1635,7 @@ L.RotateScaleAction = L.EditAction.extend({
       svg: true,
       html: 'crop_rotate',
       tooltip: 'Rotate+Scale Image',
-      className: 'rotateScale'
+      className: 'rotateScale',
     };
 
     L.DistortableImage.action_map.r = '_rotateScaleMode';
@@ -1644,7 +1645,7 @@ L.RotateScaleAction = L.EditAction.extend({
   addHooks: function() {
     var edit = this._overlay.editing;
     edit._rotateScaleMode();
-  }
+  },
 });
 
 L.ScaleAction = L.EditAction.extend({
@@ -1654,7 +1655,7 @@ L.ScaleAction = L.EditAction.extend({
       svg: true,
       html: 'scale',
       tooltip: 'Scale Image',
-      className: 'scale'
+      className: 'scale',
     };
 
     L.DistortableImage.action_map.s = '_scaleMode';
@@ -1664,14 +1665,14 @@ L.ScaleAction = L.EditAction.extend({
   addHooks: function() {
     var edit = this._overlay.editing;
     edit._scaleMode();
-  }
+  },
 });
 
 L.ToggleBorderAction = L.EditAction.extend({
   initialize: function(map, overlay, options) {
-    var edit = overlay.editing,
-        use,
-        tooltip;
+    var edit = overlay.editing;
+    var use;
+    var tooltip;
 
     if (edit._outlined) {
       use = 'border_outer';
@@ -1685,7 +1686,7 @@ L.ToggleBorderAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: tooltip
+      tooltip: tooltip,
     };
 
     L.DistortableImage.action_map.b = '_toggleBorder';
@@ -1696,16 +1697,16 @@ L.ToggleBorderAction = L.EditAction.extend({
     var edit = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'border_clear', 'border_outer');
-    L.IconUtil.toggleTooltip(this._link, 'Remove Border', 'Add Border');
+    L.IconUtil.toggleTitle(this._link, 'Remove Border', 'Add Border');
     edit._toggleBorder();
-  }
+  },
 });
 
 L.ToggleOrderAction = L.EditAction.extend({
   initialize: function(map, overlay, options) {
-    var edit = overlay.editing,
-      use,
-      tooltip;
+    var edit = overlay.editing;
+    var use;
+    var tooltip;
 
     if (edit._toggledImage) {
       use = 'flip_to_back';
@@ -1719,7 +1720,7 @@ L.ToggleOrderAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: use,
-      tooltip: tooltip
+      tooltip: tooltip,
     };
 
     L.DistortableImage.action_map.j = '_stackUp';
@@ -1731,9 +1732,9 @@ L.ToggleOrderAction = L.EditAction.extend({
     var edit = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'flip_to_front', 'flip_to_back');
-    L.IconUtil.toggleTooltip(this._link, 'Stack to Front', 'Stack to Back');
+    L.IconUtil.toggleTitle(this._link, 'Stack to Front', 'Stack to Back');
     edit._toggleOrder();
-  }
+  },
 });
 
 L.DistortableImage = L.DistortableImage || {};
