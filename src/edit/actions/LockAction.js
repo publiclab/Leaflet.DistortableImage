@@ -6,8 +6,8 @@ L.LockAction = L.EditAction.extend({
     var className;
 
     /**
-     * we can tell whether the overlay is an instance of `L.DistortableImageOverlay` or `L.DistortableCollection` bc only 
-     * the former should have `_eventParents` defined on it. From there we call the apporpriate keybindings and methods. 
+     * we can tell whether the overlay is an instance of `L.DistortableImageOverlay` or `L.DistortableCollection` bc only
+     * the former should have `_eventParents` defined on it. From there we call the apporpriate keybindings and methods.
      * Aligning both classes w/ an `.edit` allowed us to have actions like this that can work w/ both interfaces.
      */
 
@@ -16,7 +16,7 @@ L.LockAction = L.EditAction.extend({
       L.DistortableImage.action_map.l = '_lock';
       tooltip = 'Lock Mode';
 
-      if (edit._mode === 'lock') {
+      if (edit.mode === 'lock') {
         use = 'lock';
         className = 'lock';
       } else {

@@ -160,7 +160,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     return layerArr.filter(function(layer) {
       var edit = layer.editing;
-      return (this.isSelected(layer) && edit._mode !== 'lock');
+      return (this.isSelected(layer) && edit.mode !== 'lock');
     }, this);
   },
 
@@ -171,7 +171,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     this.eachLayer(function(layer) {
       if (
         layer !== overlay &&
-        layer.editing._mode !== 'lock' &&
+        layer.editing.mode !== 'lock' &&
         this.isSelected(layer)
       ) {
         layer._cpd = {};

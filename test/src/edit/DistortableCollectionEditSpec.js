@@ -188,15 +188,15 @@ describe('L.DistortableCollection.Edit', function() {
     });
 
     it('it only puts the multi-selected images in lock mode', function() {
-      expect(overlay.editing._mode).to.equal('lock');
-      expect(overlay3.editing._mode).to.equal('lock');
+      expect(overlay.editing.mode).to.equal('lock');
+      expect(overlay3.editing.mode).to.equal('lock');
 
-      expect(overlay2.editing._mode).to.not.equal('lock');
+      expect(overlay2.editing.mode).to.not.equal('lock');
     });
 
     it('does not toggle lock mode', function() {
       imgGroup.editing._lockGroup();
-      expect(overlay.editing._mode).to.equal('lock');
+      expect(overlay.editing.mode).to.equal('lock');
     });
 
     it('prevents images in that group from being dragged', function() {
@@ -214,18 +214,18 @@ describe('L.DistortableCollection.Edit', function() {
       chai.simulateEvent(overlay3.getElement(), chai.mouseEvents.ShiftMouseDown);
 
       imgGroup.editing._lockGroup();
-      expect(overlay.editing._mode).to.equal('lock');
+      expect(overlay.editing.mode).to.equal('lock');
     });
 
     it('it removes the multi-selected images from lock mode', function() {
       imgGroup.editing._unlockGroup();
-      expect(overlay.editing._mode).to.not.equal('lock');
+      expect(overlay.editing.mode).to.not.equal('lock');
     });
 
     it('does not toggle lock mode', function() {
       imgGroup.editing._unlockGroup();
       imgGroup.editing._unlockGroup();
-      expect(overlay.editing._mode).to.not.equal('lock');
+      expect(overlay.editing.mode).to.not.equal('lock');
     });
   });
 

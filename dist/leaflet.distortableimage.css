@@ -165,13 +165,13 @@ a.leaflet-toolbar-icon:active .ldi-icon {
 }
 
 a.leaflet-toolbar-icon.rotate.selected-mode,
-a.leaflet-toolbar-icon.rotateScale.selected-mode {
+a.leaflet-toolbar-icon.freeScale.selected-mode {
   background-color: rgba(251, 18, 14, 0.75);
   border: inset 0.5px lightgray;
 }
 
 a.leaflet-toolbar-icon.rotate.selected-mode .ldi-icon,
-a.leaflet-toolbar-icon.rotateScale.selected-mode .ldi-icon {
+a.leaflet-toolbar-icon.freeScale.selected-mode .ldi-icon {
   fill: white;
 }
 

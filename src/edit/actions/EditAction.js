@@ -45,7 +45,7 @@ L.EditAction = L.Toolbar2.Action.extend({
       L.DomUtil.addClass(this._link, iconOptions.className);
     }
 
-    if (iconOptions.className === this._overlay.editing._mode) {
+    if (iconOptions.className === this._overlay.editing.mode) {
       L.DomUtil.addClass(this._link, 'selected-mode');
     } else {
       L.DomUtil.removeClass(this._link, 'selected-mode');
