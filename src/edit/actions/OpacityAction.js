@@ -20,12 +20,7 @@ L.OpacityAction = L.EditAction.extend({
       className: edit.mode === 'lock' ? 'disabled' : '',
     };
 
-    // conditional for disabling keybindings for this action when the image is locked.
-    if (edit.mode !== 'lock') {
-      L.DistortableImage.action_map.o = '_toggleOpacity';
-    } else {
-      L.DistortableImage.action_map.o = '';
-    }
+    L.DistortableImage.action_map.o = edit.mode === 'lock' ? '' : '_toggleOpacity';
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },

@@ -3,7 +3,10 @@ L.DeleteAction = L.EditAction.extend({
     var edit = overlay.editing;
     var use = 'delete_forever';
     var tooltip;
-
+    /**
+      * we can tell whether the overlay is an instance of `L.DistortableImageOverlay` or `L.DistortableCollection` bc only
+      * the former should have `parentGroup` defined on it. From there we call the apporpriate keybindings and methods.
+      */
     if (edit.parentGroup) {
       tooltip = 'Delete Image';
       // backspace windows / delete mac

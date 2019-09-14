@@ -20,7 +20,9 @@ L.BorderAction = L.EditAction.extend({
       className: edit.mode === 'lock' ? 'disabled' : '',
     };
 
+    // conditional for disabling keybindings for this action when the image is locked.
     L.DistortableImage.action_map.b = edit.mode === 'lock' ? '' : '_toggleBorder';
+
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 

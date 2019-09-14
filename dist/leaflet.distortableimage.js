@@ -1427,7 +1427,9 @@ L.BorderAction = L.EditAction.extend({
       className: edit.mode === 'lock' ? 'disabled' : '',
     };
 
+    // conditional for disabling keybindings for this action when the image is locked.
     L.DistortableImage.action_map.b = edit.mode === 'lock' ? '' : '_toggleBorder';
+
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
@@ -1445,7 +1447,10 @@ L.DeleteAction = L.EditAction.extend({
     var edit = overlay.editing;
     var use = 'delete_forever';
     var tooltip;
-
+    /**
+      * we can tell whether the overlay is an instance of `L.DistortableImageOverlay` or `L.DistortableCollection` bc only
+      * the former should have `parentGroup` defined on it. From there we call the apporpriate keybindings and methods.
+      */
     if (edit.parentGroup) {
       tooltip = 'Delete Image';
       // backspace windows / delete mac
@@ -1580,12 +1585,6 @@ L.LockAction = L.EditAction.extend({
     var tooltip;
     var className;
 
-    /**
-     * we can tell whether the overlay is an instance of `L.DistortableImageOverlay` or `L.DistortableCollection` bc only
-     * the former should have `_eventParents` defined on it. From there we call the apporpriate keybindings and methods.
-     * Aligning both classes w/ an `.edit` allowed us to have actions like this that can work w/ both interfaces.
-     */
-
     if (edit.parentGroup) {
       L.DistortableImage.action_map.u = '_unlock';
       L.DistortableImage.action_map.l = '_lock';
@@ -1646,12 +1645,7 @@ L.OpacityAction = L.EditAction.extend({
       className: edit.mode === 'lock' ? 'disabled' : '',
     };
 
-    // conditional for disabling keybindings for this action when the image is locked.
-    if (edit.mode !== 'lock') {
-      L.DistortableImage.action_map.o = '_toggleOpacity';
-    } else {
-      L.DistortableImage.action_map.o = '';
-    }
+    L.DistortableImage.action_map.o = edit.mode === 'lock' ? '' : '_toggleOpacity';
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
@@ -1747,14 +1741,8 @@ L.StackAction = L.EditAction.extend({
       className: edit.mode === 'lock' ? 'disabled' : '',
     };
 
-    // conditional for disabling keybindings for this action when the image is locked.
-    if (edit.mode !== 'lock') {
-      L.DistortableImage.action_map.j = '_stackUp';
-      L.DistortableImage.action_map.k = '_stackDown';
-    } else {
-      L.DistortableImage.action_map.j = '';
-      L.DistortableImage.action_map.k = '';
-    }
+    L.DistortableImage.action_map.j = edit.mode === 'lock' ? '' : '_stackUp';
+    L.DistortableImage.action_map.k = edit.mode === 'lock' ? '' : '_stackDown';
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },

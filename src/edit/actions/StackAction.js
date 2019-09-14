@@ -20,14 +20,8 @@ L.StackAction = L.EditAction.extend({
       className: edit.mode === 'lock' ? 'disabled' : '',
     };
 
-    // conditional for disabling keybindings for this action when the image is locked.
-    if (edit.mode !== 'lock') {
-      L.DistortableImage.action_map.j = '_stackUp';
-      L.DistortableImage.action_map.k = '_stackDown';
-    } else {
-      L.DistortableImage.action_map.j = '';
-      L.DistortableImage.action_map.k = '';
-    }
+    L.DistortableImage.action_map.j = edit.mode === 'lock' ? '' : '_stackUp';
+    L.DistortableImage.action_map.k = edit.mode === 'lock' ? '' : '_stackDown';
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },

@@ -107,7 +107,6 @@ Note that this can manipulate shape and dimensions of your image.
 
 The corners should be passed as an array of `L.latLng` objects in NW, NE, SW, SE order (in a "Z" shape).
 
-
 They will be stored on the image. See the [Quick API Reference](#Quick-API-Reference) for their getter and setter methods.
 
 Example:
@@ -178,7 +177,7 @@ Values available to pass to `mode` are:
 * **rotate**: Rotation only.
 * **scale**: Resize only.
 * **freeRotate**: Combines the rotate and scale modes into one.
-* **lock**: Locks the image in place. Prevents moving it via user gestures, and disables all toolbar actions / hotkeys that are not associated with a mode.
+* **lock**: Locks the image in place. Prevents moving it via user gestures, and disables all toolbar actions / hotkeys that are not associated with a mode. Exception: `L.ExportAction` will still be enabled.
 
 In the below example, the image will be initialiazed with "freeRotate" handles:
 
