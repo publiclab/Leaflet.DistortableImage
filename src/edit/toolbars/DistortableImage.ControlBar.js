@@ -41,7 +41,5 @@ L.DistortableCollection.addInitHook(function() {
     this.editActions = this.ACTIONS;
   }
 
-  this.editing = new L.DistortableCollection.Edit(this, {
-    actions: this.editActions,
-  });
+  this.editing = new L.DistortableCollection.Edit(this, {actions: this.editActions});
 });

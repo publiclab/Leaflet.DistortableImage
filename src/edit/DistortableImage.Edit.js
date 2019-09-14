@@ -293,7 +293,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (m === 'scale' || !this.hasTool(L.ScaleAction)) { return; }
 
     map.removeLayer(this._handles[m]);
-    
+
     this.mode = 'scale';
     map.addLayer(this._handles[this.mode]);
     this._addToolbar();
@@ -358,7 +358,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     var opacity;
     var outline;
 
-    if (!this.hasTool(L.ToggleBorderAction)) { return; }
+    if (!this.hasTool(L.BorderAction)) { return; }
 
     this._outlined = !this._outlined;
     outline = this._outlined ? this.options.outline : 'none';
@@ -378,7 +378,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   // compare this to using overlay zIndex
   _toggleOrder: function() {
-    if (!this.hasTool(L.EditAction.ToggleOrder)) { return; }
+    if (!this.hasTool(L.StackAction)) { return; }
     if (this._toggledImage) { this._stackUp(); }
     else { this._stackDown(); }
     this._addToolbar();
@@ -465,7 +465,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   _stackUp: function() {
     var t = this._toggledImage;
 
-    if (!t || !this.hasTool(L.ToggleOrderAction)) { return; }
+    if (!t || !this.hasTool(L.StackAction)) { return; }
 
     this._toggledImage = false;
     this._overlay.bringToFront();
@@ -475,7 +475,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   _stackDown: function() {
     var t = this._toggledImage;
 
-    if (t || !this.hasTool(L.ToggleOrderAction)) { return; }
+    if (t || !this.hasTool(L.StackAction)) { return; }
     this._toggledImage = true;
     this._overlay.bringToBack();
     this._addToolbar();

@@ -1401,6 +1401,40 @@ L.editAction = function(map, overlay, options) {
   return new L.EditAction(map, overlay, options);
 };
 
+L.BorderAction = L.EditAction.extend({
+  initialize: function(map, overlay, options) {
+    var edit = overlay.editing;
+    var use;
+    var tooltip;
+
+    if (edit._outlined) {
+      use = 'border_outer';
+      tooltip = 'Remove Border';
+    } else {
+      use = 'border_clear';
+      tooltip = 'Add Border';
+    }
+
+    options = options || {};
+    options.toolbarIcon = {
+      svg: true,
+      html: use,
+      tooltip: tooltip,
+    };
+
+    L.DistortableImage.action_map.b = '_toggleBorder';
+    L.EditAction.prototype.initialize.call(this, map, overlay, options);
+  },
+
+  addHooks: function() {
+    var edit = this._overlay.editing;
+
+    L.IconUtil.toggleXlink(this._link, 'border_clear', 'border_outer');
+    L.IconUtil.toggleTitle(this._link, 'Remove Border', 'Add Border');
+    edit._toggleBorder();
+  },
+});
+
 L.DeleteAction = L.EditAction.extend({
   initialize: function(map, overlay, options) {
     var use = 'delete_forever';
@@ -1668,41 +1702,7 @@ L.ScaleAction = L.EditAction.extend({
   },
 });
 
-L.ToggleBorderAction = L.EditAction.extend({
-  initialize: function(map, overlay, options) {
-    var edit = overlay.editing;
-    var use;
-    var tooltip;
-
-    if (edit._outlined) {
-      use = 'border_outer';
-      tooltip = 'Remove Border';
-    } else {
-      use = 'border_clear';
-      tooltip = 'Add Border';
-    }
-
-    options = options || {};
-    options.toolbarIcon = {
-      svg: true,
-      html: use,
-      tooltip: tooltip,
-    };
-
-    L.DistortableImage.action_map.b = '_toggleBorder';
-    L.EditAction.prototype.initialize.call(this, map, overlay, options);
-  },
-
-  addHooks: function() {
-    var edit = this._overlay.editing;
-
-    L.IconUtil.toggleXlink(this._link, 'border_clear', 'border_outer');
-    L.IconUtil.toggleTitle(this._link, 'Remove Border', 'Add Border');
-    edit._toggleBorder();
-  },
-});
-
-L.ToggleOrderAction = L.EditAction.extend({
+L.StackAction = L.EditAction.extend({
   initialize: function(map, overlay, options) {
     var edit = overlay.editing;
     var use;
@@ -1761,8 +1761,8 @@ L.DistortableImageOverlay.addInitHook(function() {
     L.FreeRotateAction,
     L.LockAction,
     L.OpacityAction,
-    L.ToggleBorderAction,
-    L.ToggleOrderAction,
+    L.BorderAction,
+    L.StackAction,
     L.RevertAction,
     L.ExportAction,
     L.DeleteAction,
@@ -1820,9 +1820,7 @@ L.DistortableCollection.addInitHook(function() {
     this.editActions = this.ACTIONS;
   }
 
-  this.editing = new L.DistortableCollection.Edit(this, {
-    actions: this.editActions,
-  });
+  this.editing = new L.DistortableCollection.Edit(this, {actions: this.editActions});
 });
 
 /* eslint-disable valid-jsdoc */
@@ -2120,7 +2118,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (m === 'scale' || !this.hasTool(L.ScaleAction)) { return; }
 
     map.removeLayer(this._handles[m]);
-    
+
     this.mode = 'scale';
     map.addLayer(this._handles[this.mode]);
     this._addToolbar();
@@ -2185,7 +2183,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     var opacity;
     var outline;
 
-    if (!this.hasTool(L.ToggleBorderAction)) { return; }
+    if (!this.hasTool(L.BorderAction)) { return; }
 
     this._outlined = !this._outlined;
     outline = this._outlined ? this.options.outline : 'none';
@@ -2205,7 +2203,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   // compare this to using overlay zIndex
   _toggleOrder: function() {
-    if (!this.hasTool(L.EditAction.ToggleOrder)) { return; }
+    if (!this.hasTool(L.StackAction)) { return; }
     if (this._toggledImage) { this._stackUp(); }
     else { this._stackDown(); }
     this._addToolbar();
@@ -2292,7 +2290,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   _stackUp: function() {
     var t = this._toggledImage;
 
-    if (!t || !this.hasTool(L.ToggleOrderAction)) { return; }
+    if (!t || !this.hasTool(L.StackAction)) { return; }
 
     this._toggledImage = false;
     this._overlay.bringToFront();
@@ -2302,7 +2300,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   _stackDown: function() {
     var t = this._toggledImage;
 
-    if (t || !this.hasTool(L.ToggleOrderAction)) { return; }
+    if (t || !this.hasTool(L.StackAction)) { return; }
     this._toggledImage = true;
     this._overlay.bringToBack();
     this._addToolbar();

@@ -162,7 +162,7 @@ describe('L.DistortableCollection.Edit', function() {
       }, 3000);
     });
 
-    it('is invoked on command + mousedown when it toggles the image *out* of multi-select', function() {
+    it('is invoked on shift + mousedown when it toggles the image *out* of multi-select', function() {
       // deselecting the image removes the control toolbar
       chai.simulateEvent(overlay.getElement(), chai.mouseEvents.ShiftMouseDown);
       expect(map._toolbars).to.be.empty;

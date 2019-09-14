@@ -1,4 +1,4 @@
-L.ToggleBorderAction = L.EditAction.extend({
+L.BorderAction = L.EditAction.extend({
   initialize: function(map, overlay, options) {
     var edit = overlay.editing;
     var use;

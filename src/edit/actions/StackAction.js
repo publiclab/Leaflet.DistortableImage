@@ -1,4 +1,4 @@
-L.ToggleOrderAction = L.EditAction.extend({
+L.StackAction = L.EditAction.extend({
   initialize: function(map, overlay, options) {
     var edit = overlay.editing;
     var use;
