@@ -85,15 +85,15 @@ L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.p
 
 ### Actions
 
-* `actions` (*optional*, default: [ToggleTransparency, ToggleOutline, ToggleLock, ToggleRotateScale, ToggleOrder, Revert, Export, Delete], value: *array*)
+* `actions` (*optional*, default: [`L.ScaleAction`, `L.DistortAction`, `L.RotateAction`, `L.FreeRotateAction`, `L.LockAction`, `L.OpacityAction`, `L.BorderAction`, `L.StackAction`, `L.ExportAction`, `L.DeleteAction`], value: *array*)
 
 If you would like to overrwrite the default toolbar actions available for an individual image's `L.Popup` toolbar, pass an array with the actions you want. Reference the available values [here](#Single-Image-Interface).
 
-For example, to overrwrite the toolbar to only include the `ToggleTransparency` and `Delete` actions, and also add on the additional `ToggleScale` action:
+For example, to overrwrite the toolbar to only include `L.OpacityAction` and `L.DeleteAction` , and also add on an additional non-default like `L.RevertAction`:
 
 ```js
 img = L.distortableImageOverlay('example.jpg', {
-  actions: [ToggleTransparency, ToggleScale, Delete],
+  actions: [L.OpacityAction, L.DeleteAction, L.RevertAction],
 }).addTo(map);
 ```
 
@@ -101,11 +101,12 @@ img = L.distortableImageOverlay('example.jpg', {
 
 * `corners` (*optional*, default: an array of `LatLang`s that position the image on the center of the map, value: *array*)
 
-Allows you to set an image's position on the map manually (somewhere other than center).
+Allows you to set an image's position on the map manually (somewhere other than the center default).
 
-They should be passed as an array of `L.latLng` objects in NW, NE, SW, SE order (in a "Z" shape).
+Note that this can manipulate shape and dimensions of your image.
 
-This will not have an effect on the map view, but it will determine the shape and dimensions of the rendered image.
+The corners should be passed as an array of `L.latLng` objects in NW, NE, SW, SE order (in a "Z" shape).
+
 
 They will be stored on the image. See the [Quick API Reference](#Quick-API-Reference) for their getter and setter methods.
 
@@ -176,8 +177,8 @@ Values available to pass to `mode` are:
 * **distort** (*default*): Distortion via individually draggable corners.
 * **rotate**: Rotation only.
 * **scale**: Resize only.
-* **freeRotate**: Free transform. Combines the rotate and scale modes into one.
-* **lock**: Locks the image in place. Prevents moving it via user gestures, toolbar actions, and hotkeys until the toolbar action ToggleLock is explicitly triggered (or its hotkey <kbd>l</kbd>).
+* **freeRotate**: Combines the rotate and scale modes into one.
+* **lock**: Locks the image in place. Prevents moving it via user gestures, and disables all toolbar actions / hotkeys that are not associated with a mode.
 
 In the below example, the image will be initialiazed with "freeRotate" handles:
 
