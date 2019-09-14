@@ -1745,7 +1745,7 @@ L.DistortableImage.action_map = {};
 L.DistortableImage.PopupBar = L.Toolbar2.Popup.extend({
   options: {
     anchor: [0, -10],
-  }
+  },
 });
 
 L.distortableImage.popupBar = function(latlng, options) {
@@ -1755,25 +1755,28 @@ L.distortableImage.popupBar = function(latlng, options) {
 L.DistortableImageOverlay.addInitHook(function() {
   /** Default actions */
   this.ACTIONS = [
-    L.FreeRotateAction,
+    L.ScaleAction,
     L.DistortAction,
+    L.RotateAction,
+    L.FreeRotateAction,
     L.LockAction,
     L.OpacityAction,
     L.ToggleBorderAction,
     L.ToggleOrderAction,
     L.RevertAction,
     L.ExportAction,
-    L.DeleteAction
+    L.DeleteAction,
   ];
 
-if (this.options.actions) { /* (`this` being DistortableImageOverlay, not the toolbar) */
+  if (this.options.actions) { /* (`this` being DistortableImageOverlay, not the toolbar) */
     this.editActions = this.options.actions;
   } else {
     this.editActions = this.ACTIONS;
   }
 
-  this.editing = new L.DistortableImage.Edit(this, { actions: this.editActions });
+  this.editing = new L.DistortableImage.Edit(this, {actions: this.editActions});
 });
+
 L.distortableImage = L.DistortableImage || {};
 L.distortableImage = L.DistortableImage;
 
@@ -1831,7 +1834,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     opacity: 0.7,
     outline: '1px solid red',
     keymap: L.distortableImage.action_map,
-    modes: ['distort', 'rotate', 'scale', 'freeRotate', 'lock'],
+    modes: ['scale', 'distort', 'rotate', 'freeRotate', 'lock'],
   },
 
   initialize: function(overlay, options) {
@@ -2110,18 +2113,16 @@ L.DistortableImage.Edit = L.Handler.extend({
     };
   },
 
-  _freeRotateMode: function() {
+  _scaleMode: function() {
     var map = this._overlay._map;
     var m = this.mode;
 
-    if (m === 'lock' || m === 'freeRotate') { return; }
-    if (!this.hasTool(L.FreeRotateAction)) { return; }
+    if (m === 'scale' || !this.hasTool(L.ScaleAction)) { return; }
 
     map.removeLayer(this._handles[m]);
-
-    this.mode = 'freeRotate';
+    
+    this.mode = 'scale';
     map.addLayer(this._handles[this.mode]);
-
     this._addToolbar();
   },
 
@@ -2129,8 +2130,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     var map = this._overlay._map;
     var m = this.mode;
 
-    if (m === 'lock' || m === 'distort') { return; }
-    if (!this.hasTool(L.DistortAction)) { return; }
+    if (m === 'distort' || !this.hasTool(L.DistortAction)) { return; }
 
     map.removeLayer(this._handles[m]);
 
@@ -2139,25 +2139,11 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._addToolbar();
   },
 
-  _scaleMode: function() {
-    var map = this._overlay._map;
-    var m = this.mode;
-
-    if (m === 'lock' || m === 'scale') { return; }
-    if (!this.hasTool(L.ScaleAction)) { return; }
-
-    map.removeLayer(this._handles[m]);
-    this.mode = 'scale';
-    map.addLayer(this._handles[this.mode]);
-    this._addToolbar();
-  },
-
   _rotateMode: function() {
     var map = this._overlay._map;
     var m = this.mode;
 
-    if (m === 'lock' || m === 'rotate') { return; }
-    if (!this.hasTool(L.RotateAction)) { return; }
+    if (m === 'rotate' || !this.hasTool(L.RotateAction)) { return; }
 
     map.removeLayer(this._handles[m]);
 
@@ -2166,13 +2152,24 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._addToolbar();
   },
 
+  _freeRotateMode: function() {
+    var map = this._overlay._map;
+    var m = this.mode;
+
+    if (m === 'freeRotate' || !this.hasTool(L.FreeRotateAction)) { return; }
+
+    map.removeLayer(this._handles[m]);
+
+    this.mode = 'freeRotate';
+    map.addLayer(this._handles[this.mode]);
+    this._addToolbar();
+  },
+
   _toggleOpacity: function() {
     var image = this._overlay.getElement();
     var opacity;
 
-    if (!this.hasTool(L.OpacityAction)) {
-      return;
-    }
+    if (!this.hasTool(L.OpacityAction)) { return; }
 
     this._transparent = !this._transparent;
     opacity = this._transparent ? this.options.opacity : 1;
@@ -2209,14 +2206,6 @@ L.DistortableImage.Edit = L.Handler.extend({
   // compare this to using overlay zIndex
   _toggleOrder: function() {
     if (!this.hasTool(L.EditAction.ToggleOrder)) { return; }
-
-    // if (this._toggledImage) {
-    //   this._toggledImage = false;
-    //   this._overlay.bringToFront();
-    // } else {
-    //   this._toggledImage = true;
-    //   this._overlay.bringToBack();
-    // }
     if (this._toggledImage) { this._stackUp(); }
     else { this._stackDown(); }
     this._addToolbar();
