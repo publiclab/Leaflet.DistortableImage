@@ -4,7 +4,7 @@ L.DeleteAction = L.EditAction.extend({
     var use = 'delete_forever';
     var tooltip;
 
-    if (!edit._eventParents) {
+    if (edit.parentGroup) {
       tooltip = 'Delete Image';
       L.DistortableImage.action_map.Backspace = '_removeOverlay'; // backspace windows / delete mac
     } else {
@@ -26,7 +26,7 @@ L.DeleteAction = L.EditAction.extend({
   addHooks: function() {
     var edit = this._overlay.editing;
 
-    if (!edit._eventParents) { edit._removeOverlay(); }
+    if (edit.parentGroup) { edit._removeOverlay(); }
     else { edit._removeGroup(); }
   },
 });

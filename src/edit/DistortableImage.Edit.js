@@ -384,7 +384,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _removeOverlay: function() {
     var overlay = this._overlay;
-    var eventParents = overlay._eventParents;
+    var eP = this.parentGroup;
     var m = this.mode;
 
     if (m === 'lock' || !this.hasTool(L.DeleteAction)) { return; }
@@ -394,8 +394,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this._removeToolbar();
 
-    if (eventParents) {
-      var eP = eventParents[Object.keys(eventParents)[0]];
+    if (eP) {
       eP.removeLayer(overlay);
     } else {
       overlay._map.removeLayer(overlay);
@@ -536,7 +535,9 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _deselect: function() {
+    // var eP = this.parentGroup;
     this._selected = false;
+    // if (eP) { eP.editing._removeToolbar(); }
     this._removeToolbar();
     if (this.mode !== 'lock') {
       this._hideMarkers();

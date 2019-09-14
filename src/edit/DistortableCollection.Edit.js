@@ -123,7 +123,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
     this._removeToolbar();
 
-    if (e) { L.DomEvent.stopPropagation(e); }
+    // if (e) { L.DomEvent.stopPropagation(e); }
   },
 
   _unlockGroup: function() {
@@ -166,9 +166,8 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
     this._group.eachLayer(function(layer) {
       var edit = layer.editing;
-      if (edit._selected) {
-        edit._deselect();
-      }
+
+      if (edit._selected) { edit._deselect(); }
 
       var imgBounds = L.latLngBounds(layer.getCorner(2), layer.getCorner(1));
       imgBounds = map._latLngBoundsToNewLayerBounds(imgBounds, map.getZoom(), map.getCenter());
@@ -270,22 +269,16 @@ L.DistortableCollection.Edit = L.Handler.extend({
     var group = this._group;
     var map = group._map;
 
-    if (group.options.suppressToolbar) { return; }
+    if (group.options.suppressToolbar || this.toolbar) { return; }
 
-    try {
-      if (!this.toolbar) {
-        this.toolbar = L.distortableImage.controlBar({
-          actions: this.editActions,
-          position: 'topleft',
-        }).addTo(map, group);
-        this.fire('toolbar:created');
-      }
-    } catch (e) { }
+    this.toolbar = L.distortableImage.controlBar({
+      actions: this.editActions,
+      position: 'topleft',
+    }).addTo(map, group);
   },
 
   _removeToolbar: function() {
     var map = this._group._map;
-
     if (this.toolbar) {
       map.removeLayer(this.toolbar);
       this.toolbar = false;

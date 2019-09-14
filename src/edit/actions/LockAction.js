@@ -11,7 +11,7 @@ L.LockAction = L.EditAction.extend({
      * Aligning both classes w/ an `.edit` allowed us to have actions like this that can work w/ both interfaces.
      */
 
-    if (!edit._eventParents) {
+    if (edit.parentGroup) {
       L.DistortableImage.action_map.u = '_unlock';
       L.DistortableImage.action_map.l = '_lock';
       tooltip = 'Lock Mode';
@@ -44,7 +44,7 @@ L.LockAction = L.EditAction.extend({
   addHooks: function() {
     var edit = this._overlay.editing;
 
-    if (!edit._eventParents) { edit._toggleLockMode(); }
+    if (edit.parentGroup) { edit._toggleLockMode(); }
     else { edit._lockGroup(); }
   },
 });

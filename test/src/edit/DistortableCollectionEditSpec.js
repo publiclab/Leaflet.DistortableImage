@@ -155,28 +155,28 @@ describe('L.DistortableCollection.Edit', function() {
       expect(Object.keys(map._toolbars)).to.have.lengthOf(1);
     });
 
-    // it('is invoked on map click', function() {
-    //   map.fire('click');
-    //   setTimeout(function() {
-    //     expect(map._toolbars).to.be.empty;
-    //   }, 3000);
-    // });
+    it('is invoked on map click', function() {
+      map.fire('click');
+      setTimeout(function() {
+        expect(map._toolbars).to.be.empty;
+      }, 3000);
+    });
 
-    // it('is invoked on shift + mousedown when it toggles the image *out* of multi-select', function() {
-    //   // deselecting the image removes the control toolbar
-    //   chai.simulateEvent(overlay.getElement(), chai.mouseEvents.ShiftMouseDown);
-    //   expect(map._toolbars).to.be.empty;
-    // });
+    it('is invoked on shift + mousedown when it toggles the image *out* of multi-select', function() {
+      // deselecting the image removes the control toolbar
+      chai.simulateEvent(overlay.getElement(), chai.mouseEvents.ShiftMouseDown);
+      expect(map._toolbars).to.be.empty;
+    });
 
-    // it('it removes a control toolbar from the map', function() {
-    //   imgGroup.editing._removeToolbar();
-    //   expect(map._toolbars).to.be.empty;
-    // });
+    it('it removes a control toolbar from the map', function() {
+      imgGroup.editing._removeToolbar();
+      expect(map._toolbars).to.be.empty;
+    });
 
-    // it('it returns false if there was no control toolbar to remove', function() {
-    //   expect(imgGroup.editing._removeToolbar()).to.not.be.false;
-    //   expect(imgGroup.editing._removeToolbar()).to.be.false;
-    // });
+    it('it returns false if there was no control toolbar to remove', function() {
+      expect(imgGroup.editing._removeToolbar()).to.not.be.false;
+      expect(imgGroup.editing._removeToolbar()).to.be.false;
+    });
   });
 
   describe('#_lockGroup', function() {

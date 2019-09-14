@@ -47,13 +47,10 @@ L.EditAction = L.Toolbar2.Action.extend({
     if (className) {
       L.DomUtil.addClass(this._link, className);
       if (className === 'disabled') { L.DomUtil.addClass(this._icon, className); }
-      if (edit.modes.indexOf(className) !== -1) {
-        this._link.setAttribute('id', 'mode');
-        if (className === edit.mode) {
-          L.DomUtil.addClass(this._link, 'selected-mode');
-        } else {
-          L.DomUtil.removeClass(this._link, 'selected-mode');
-        }
+      if (className === edit.mode) {
+        L.DomUtil.addClass(this._link, 'selected-mode');
+      } else {
+        L.DomUtil.removeClass(this._link, 'selected-mode');
       }
     }
 

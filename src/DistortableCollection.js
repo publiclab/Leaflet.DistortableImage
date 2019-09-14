@@ -111,7 +111,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
       }
     }, this);
 
-    L.DomEvent.stopPropagation(e);
+    // L.DomEvent.stopPropagation(e);
   },
 
   _dragStartMultiple: function(e) {
@@ -129,7 +129,8 @@ L.DistortableCollection = L.FeatureGroup.extend({
       edit._deselect();
 
       for (i = 0; i < 4; i++) {
-        layer._dragStartPoints[i] = layer._map.latLngToLayerPoint(layer.getCorner(i));
+        var c = layer.getCorner(i);
+        layer._dragStartPoints[i] = layer._map.latLngToLayerPoint(c);
       }
     });
   },

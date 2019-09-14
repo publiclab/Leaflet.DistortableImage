@@ -148,22 +148,6 @@ input.ldi {
   background-color: #efefef;
 }
 
-a.leaflet-toolbar-icon:active .ldi-icon {
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    margin-left: -10px;
-    border-radius: 100%;
-    background-color: #000;
-    background-color: rgba(0, 0, 0, 0.05);
-    transform: scale(1);
-    transform-origin: 50%;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.15s ease-in 0s, transform 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.1s;
-    opacity: 0.1;
-}
-
 a.leaflet-toolbar-icon.rotate.selected-mode,
 a.leaflet-toolbar-icon.freeRotate.selected-mode {
   background-color: rgba(251, 18, 14, 0.75);

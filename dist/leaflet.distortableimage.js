@@ -774,7 +774,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
       }
     }, this);
 
-    L.DomEvent.stopPropagation(e);
+    // L.DomEvent.stopPropagation(e);
   },
 
   _dragStartMultiple: function(e) {
@@ -792,7 +792,8 @@ L.DistortableCollection = L.FeatureGroup.extend({
       edit._deselect();
 
       for (i = 0; i < 4; i++) {
-        layer._dragStartPoints[i] = layer._map.latLngToLayerPoint(layer.getCorner(i));
+        var c = layer.getCorner(i);
+        layer._dragStartPoints[i] = layer._map.latLngToLayerPoint(c);
       }
     });
   },
@@ -1373,13 +1374,10 @@ L.EditAction = L.Toolbar2.Action.extend({
     if (className) {
       L.DomUtil.addClass(this._link, className);
       if (className === 'disabled') { L.DomUtil.addClass(this._icon, className); }
-      if (edit.modes.indexOf(className) !== -1) {
-        this._link.setAttribute('id', 'mode');
-        if (className === edit.mode) {
-          L.DomUtil.addClass(this._link, 'selected-mode');
-        } else {
-          L.DomUtil.removeClass(this._link, 'selected-mode');
-        }
+      if (className === edit.mode) {
+        L.DomUtil.addClass(this._link, 'selected-mode');
+      } else {
+        L.DomUtil.removeClass(this._link, 'selected-mode');
       }
     }
 
@@ -1448,7 +1446,7 @@ L.DeleteAction = L.EditAction.extend({
     var use = 'delete_forever';
     var tooltip;
 
-    if (!edit._eventParents) {
+    if (edit.parentGroup) {
       tooltip = 'Delete Image';
       L.DistortableImage.action_map.Backspace = '_removeOverlay'; // backspace windows / delete mac
     } else {
@@ -1470,7 +1468,7 @@ L.DeleteAction = L.EditAction.extend({
   addHooks: function() {
     var edit = this._overlay.editing;
 
-    if (!edit._eventParents) { edit._removeOverlay(); }
+    if (edit.parentGroup) { edit._removeOverlay(); }
     else { edit._removeGroup(); }
   },
 });
@@ -1500,7 +1498,7 @@ L.ExportAction = L.EditAction.extend({
     var edit = overlay.editing;
     var tooltip;
 
-    if (!edit._eventParents) {
+    if (edit.parentGroup) {
       L.DistortableImage.action_map.e = '_getExport';
       tooltip = 'Export Image';
     } else {
@@ -1522,7 +1520,7 @@ L.ExportAction = L.EditAction.extend({
   addHooks: function() {
     var edit = this._overlay.editing;
 
-    if (!edit._eventParents) { edit._getExport(); }
+    if (edit.parentGroup) { edit._getExport(); }
     else {
       L.IconUtil.toggleXlink(this._link, 'get_app', 'spinner');
       L.IconUtil.toggleTitle(this._link, 'Export Images', 'Loading...');
@@ -1588,7 +1586,7 @@ L.LockAction = L.EditAction.extend({
      * Aligning both classes w/ an `.edit` allowed us to have actions like this that can work w/ both interfaces.
      */
 
-    if (!edit._eventParents) {
+    if (edit.parentGroup) {
       L.DistortableImage.action_map.u = '_unlock';
       L.DistortableImage.action_map.l = '_lock';
       tooltip = 'Lock Mode';
@@ -1621,7 +1619,7 @@ L.LockAction = L.EditAction.extend({
   addHooks: function() {
     var edit = this._overlay.editing;
 
-    if (!edit._eventParents) { edit._toggleLockMode(); }
+    if (edit.parentGroup) { edit._toggleLockMode(); }
     else { edit._lockGroup(); }
   },
 });
@@ -2226,7 +2224,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _removeOverlay: function() {
     var overlay = this._overlay;
-    var eventParents = overlay._eventParents;
+    var eP = this.parentGroup;
     var m = this.mode;
 
     if (m === 'lock' || !this.hasTool(L.DeleteAction)) { return; }
@@ -2236,8 +2234,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this._removeToolbar();
 
-    if (eventParents) {
-      var eP = eventParents[Object.keys(eventParents)[0]];
+    if (eP) {
       eP.removeLayer(overlay);
     } else {
       overlay._map.removeLayer(overlay);
@@ -2378,7 +2375,9 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _deselect: function() {
+    // var eP = this.parentGroup;
     this._selected = false;
+    // if (eP) { eP.editing._removeToolbar(); }
     this._removeToolbar();
     if (this.mode !== 'lock') {
       this._hideMarkers();
@@ -2642,7 +2641,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
     this._removeToolbar();
 
-    if (e) { L.DomEvent.stopPropagation(e); }
+    // if (e) { L.DomEvent.stopPropagation(e); }
   },
 
   _unlockGroup: function() {
@@ -2685,9 +2684,8 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
     this._group.eachLayer(function(layer) {
       var edit = layer.editing;
-      if (edit._selected) {
-        edit._deselect();
-      }
+
+      if (edit._selected) { edit._deselect(); }
 
       var imgBounds = L.latLngBounds(layer.getCorner(2), layer.getCorner(1));
       imgBounds = map._latLngBoundsToNewLayerBounds(imgBounds, map.getZoom(), map.getCenter());
@@ -2789,22 +2787,16 @@ L.DistortableCollection.Edit = L.Handler.extend({
     var group = this._group;
     var map = group._map;
 
-    if (group.options.suppressToolbar) { return; }
+    if (group.options.suppressToolbar || this.toolbar) { return; }
 
-    try {
-      if (!this.toolbar) {
-        this.toolbar = L.distortableImage.controlBar({
-          actions: this.editActions,
-          position: 'topleft',
-        }).addTo(map, group);
-        this.fire('toolbar:created');
-      }
-    } catch (e) { }
+    this.toolbar = L.distortableImage.controlBar({
+      actions: this.editActions,
+      position: 'topleft',
+    }).addTo(map, group);
   },
 
   _removeToolbar: function() {
     var map = this._group._map;
-
     if (this.toolbar) {
       map.removeLayer(this.toolbar);
       this.toolbar = false;
@@ -3008,9 +3000,9 @@ L.Map.mergeOptions({
   boxZoom: false,
 });
 
-/** 
+/** \
  * primarily Leaflet 1.5.1 source code. Overriden so that its a selection box with our `L.DistortableCollection` class 
- * instead of a zoom box. 
+ * instead of a zoom box. \
  * */
 L.Map.BoxSelector = L.Map.BoxZoom.extend({
   initialize: function(map) {
