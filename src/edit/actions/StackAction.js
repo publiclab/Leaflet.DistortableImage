@@ -17,6 +17,7 @@ L.StackAction = L.EditAction.extend({
       svg: true,
       html: use,
       tooltip: tooltip,
+      className: edit.mode === 'lock' ? 'disabled' : '',
     };
 
     L.DistortableImage.action_map.j = '_stackUp';

@@ -1,9 +1,10 @@
 L.DeleteAction = L.EditAction.extend({
   initialize: function(map, overlay, options) {
+    var edit = overlay.editing;
     var use = 'delete_forever';
     var tooltip;
 
-    if (overlay._eventParents) {
+    if (!edit._eventParents) {
       tooltip = 'Delete Image';
       L.DistortableImage.action_map.Backspace = '_removeOverlay'; // backspace windows / delete mac
     } else {
@@ -16,6 +17,7 @@ L.DeleteAction = L.EditAction.extend({
       svg: true,
       html: use,
       tooltip: tooltip,
+      className: edit.mode === 'lock' ? 'disabled' : '',
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -24,7 +26,7 @@ L.DeleteAction = L.EditAction.extend({
   addHooks: function() {
     var edit = this._overlay.editing;
 
-    if (this._overlay._eventParents) { edit._removeOverlay(); }
+    if (!edit._eventParents) { edit._removeOverlay(); }
     else { edit._removeGroup(); }
   },
 });

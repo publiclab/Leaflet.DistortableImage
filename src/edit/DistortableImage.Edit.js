@@ -196,14 +196,13 @@ L.DistortableImage.Edit = L.Handler.extend({
   _onKeyDown: function(e) {
     var keymap = this.options.keymap;
     var handlerName = keymap[e.key];
-    var overlay = this._overlay;
+    var ov = this._overlay;
     var eP = this.parentGroup;
 
     if (eP && eP.anySelected()) { return; }
 
-    if (this[handlerName] !== undefined && !this._overlay.options.suppressToolbar) {
+    if (this[handlerName] !== undefined && !ov.options.suppressToolbar) {
       if (this._selected && this.toolbar) {
-      // if (this._selected) {
         this[handlerName].call(this);
       }
     }
@@ -296,7 +295,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this.mode = 'scale';
     map.addLayer(this._handles[this.mode]);
-    this._addToolbar();
+    this._refresh();
   },
 
   _distortMode: function() {
@@ -309,7 +308,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this.mode = 'distort';
     map.addLayer(this._handles[this.mode]);
-    this._addToolbar();
+    this._refresh();
   },
 
   _rotateMode: function() {
@@ -322,7 +321,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this.mode = 'rotate';
     map.addLayer(this._handles[this.mode]);
-    this._addToolbar();
+    this._refresh();
   },
 
   _freeRotateMode: function() {
@@ -335,7 +334,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this.mode = 'freeRotate';
     map.addLayer(this._handles[this.mode]);
-    this._addToolbar();
+    this._refresh();
   },
 
   _toggleOpacity: function() {
@@ -350,7 +349,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     L.DomUtil.setOpacity(image, opacity);
     image.setAttribute('opacity', opacity);
 
-    this._addToolbar();
+    this._refresh();
   },
 
   _toggleBorder: function() {
@@ -368,7 +367,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     image.style.outline = outline;
 
-    this._addToolbar();
+    this._refresh();
   },
 
   _toggleLockMode: function() {
@@ -381,7 +380,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (!this.hasTool(L.StackAction)) { return; }
     if (this._toggledImage) { this._stackUp(); }
     else { this._stackDown(); }
-    this._addToolbar();
   },
 
   _removeOverlay: function() {
@@ -469,7 +467,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this._toggledImage = false;
     this._overlay.bringToFront();
-    this._addToolbar();
+    this._refresh();
   },
 
   _stackDown: function() {
@@ -478,7 +476,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (t || !this.hasTool(L.StackAction)) { return; }
     this._toggledImage = true;
     this._overlay.bringToBack();
-    this._addToolbar();
+    this._refresh();
   },
 
   _unlock: function() {
@@ -492,7 +490,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     this.mode = 'distort';
     this._enableDragging();
     map.addLayer(this._handles[this.mode]);
-    this._addToolbar();
+    this._refresh();
   },
 
   _lock: function() {
@@ -509,7 +507,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
     delete this.dragging;
     map.addLayer(this._handles[this.mode]);
-    this._addToolbar();
+    this._refresh();
   },
 
   _singleClick: function(e) {
@@ -582,11 +580,11 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _addToolbar: function() {
-    var overlay = this._overlay;
+    var ov = this._overlay;
     var eP = this.parentGroup;
-    var map = overlay._map;
+    var map = ov._map;
     // Find the topmost point on the image.
-    var corners = overlay.getCorners();
+    var corners = ov.getCorners();
     var maxLat = -Infinity;
 
     if (eP && eP.anySelected()) {
@@ -594,7 +592,7 @@ L.DistortableImage.Edit = L.Handler.extend({
       return;
     }
 
-    if (overlay.options.suppressToolbar) { return; }
+    if (ov.options.suppressToolbar || this.toolbar) { return; }
 
     for (var i = 0; i < corners.length; i++) {
       if (corners[i].lat > maxLat) {
@@ -603,20 +601,26 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
 
     // Longitude is based on the centroid of the image.
-    var raisedPoint = overlay.getCenter();
+    var raisedPoint = ov.getCenter();
     raisedPoint.lat = maxLat;
 
     try {
       this.toolbar = L.distortableImage.popupBar(raisedPoint, {
         actions: this.editActions,
-      }).addTo(map, overlay);
-      overlay.fire('toolbar:created');
+      }).addTo(map, ov);
+      ov.fire('toolbar:created');
     } catch (e) { }
   },
 
-  _refreshPopupIcons: function() {
+  _backgroundRefresh: function() {
+    if (this.toolbar) { this._removeToolbar(); }
     this._addToolbar();
     this._removeToolbar();
+  },
+
+  _refresh: function() {
+    if (this.toolbar) { this._removeToolbar(); }
+    this._addToolbar();
   },
 
   _updateToolbarPos: function() {
@@ -661,8 +665,12 @@ L.DistortableImage.Edit = L.Handler.extend({
     this.mode = this.modes[nextIdx];
 
     map.addLayer(this._handles[this.mode]);
-    this._addToolbar();
+    this._refresh();
 
     L.DomEvent.stop(e);
   },
 });
+
+L.distortableImage.edit = function(overlay, options) {
+  return new L.DistortableImage.Edit(overlay, options);
+};

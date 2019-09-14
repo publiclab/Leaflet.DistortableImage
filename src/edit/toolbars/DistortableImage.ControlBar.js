@@ -33,13 +33,14 @@ L.distortableImage.controlBar = function(options) {
 
 /** addInitHooks run before onAdd */
 L.DistortableCollection.addInitHook(function() {
-  this.ACTIONS = [L.ExportAction, L.DeleteAction, L.LockAction, L.UnlocksAction];
+  this.ACTIONS = [
+    L.ExportAction,
+    L.DeleteAction,
+    L.LockAction,
+    L.UnlocksAction,
+  ];
 
-  if (this.options.actions) {
-    this.editActions = this.options.actions;
-  } else {
-    this.editActions = this.ACTIONS;
-  }
+  var a = this.options.actions ? this.options.actions : this.ACTIONS;
 
-  this.editing = new L.DistortableCollection.Edit(this, {actions: this.editActions});
+  this.editing = L.distortableCollection.edit(this, {actions: a});
 });

@@ -79,9 +79,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     var keymap = this.options.keymap;
     var handlerName = keymap[e.key];
 
-    if (!this[handlerName]) {
-      return;
-    }
+    if (!this[handlerName]) { return; }
 
     if (this._group.anySelected()) {
       this[handlerName].call(this);
@@ -137,7 +135,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
         if (edit.mode === 'lock') {
           map.removeLayer(edit._handles[edit.mode]);
           edit._unlock();
-          edit._refreshPopupIcons();
+          edit._backgroundRefresh();
           // unlock updates the layer's handles; deselect to ensure they're hidden
           edit._deselect();
         }
@@ -154,7 +152,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
         if (edit.mode !== 'lock') {
           edit._lock();
           map.addLayer(edit._handles[edit.mode]);
-          edit._refreshPopupIcons();
+          edit._backgroundRefresh();
           // map.addLayer also deselects the image, so we reselect here
           L.DomUtil.addClass(layer.getElement(), 'selected');
         }
@@ -325,3 +323,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     }, this);
   },
 });
+
+L.distortableCollection.edit = function(group, options) {
+  return new L.DistortableCollection.Edit(group, options);
+};

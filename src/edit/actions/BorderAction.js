@@ -17,6 +17,7 @@ L.BorderAction = L.EditAction.extend({
       svg: true,
       html: use,
       tooltip: tooltip,
+      className: edit.mode === 'lock' ? 'disabled' : '',
     };
 
     L.DistortableImage.action_map.b = '_toggleBorder';

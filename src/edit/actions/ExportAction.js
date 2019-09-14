@@ -1,11 +1,13 @@
 L.ExportAction = L.EditAction.extend({
   initialize: function(map, overlay, options) {
+    var edit = overlay.editing;
     var tooltip;
 
-    if (overlay._eventParents) {
+    if (!edit._eventParents) {
       L.DistortableImage.action_map.e = '_getExport';
       tooltip = 'Export Image';
     } else {
+      L.DistortableImage.group_action_map.e = 'startExport';
       tooltip = 'Export Images';
     }
 
@@ -14,6 +16,7 @@ L.ExportAction = L.EditAction.extend({
       svg: true,
       html: 'get_app',
       tooltip: tooltip,
+      className: edit.mode === 'lock' ? 'disabled' : '',
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -22,7 +25,7 @@ L.ExportAction = L.EditAction.extend({
   addHooks: function() {
     var edit = this._overlay.editing;
 
-    if (this._overlay._eventParents) { edit._getExport(); }
+    if (!edit._eventParents) { edit._getExport(); }
     else {
       L.IconUtil.toggleXlink(this._link, 'get_app', 'spinner');
       L.IconUtil.toggleTitle(this._link, 'Export Images', 'Loading...');

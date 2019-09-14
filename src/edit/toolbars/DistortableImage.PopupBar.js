@@ -24,16 +24,12 @@ L.DistortableImageOverlay.addInitHook(function() {
     L.OpacityAction,
     L.BorderAction,
     L.StackAction,
-    L.RevertAction,
     L.ExportAction,
     L.DeleteAction,
   ];
 
-  if (this.options.actions) { /* (`this` being DistortableImageOverlay, not the toolbar) */
-    this.editActions = this.options.actions;
-  } else {
-    this.editActions = this.ACTIONS;
-  }
+  var a = this.options.actions ? this.options.actions : this.ACTIONS;
 
-  this.editing = new L.DistortableImage.Edit(this, {actions: this.editActions});
+  this.editing = L.distortableImage.edit(this, {actions: a});
 });
+

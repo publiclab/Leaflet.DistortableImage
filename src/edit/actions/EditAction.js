@@ -25,6 +25,8 @@ L.EditAction = L.Toolbar2.Action.extend({
 
   _createIcon: function(toolbar, container, args) {
     var iconOptions = this.options.toolbarIcon;
+    var className = iconOptions.className;
+    var edit = this._overlay.editing;
 
     this.toolbar = toolbar;
     this._icon = L.DomUtil.create('li', '', container);
@@ -41,14 +43,18 @@ L.EditAction = L.Toolbar2.Action.extend({
     this._link.setAttribute('role', 'button');
 
     L.DomUtil.addClass(this._link, this.constructor.baseClass);
-    if (iconOptions.className) {
-      L.DomUtil.addClass(this._link, iconOptions.className);
-    }
 
-    if (iconOptions.className === this._overlay.editing.mode) {
-      L.DomUtil.addClass(this._link, 'selected-mode');
-    } else {
-      L.DomUtil.removeClass(this._link, 'selected-mode');
+    if (className) {
+      L.DomUtil.addClass(this._link, className);
+      if (className === 'disabled') { L.DomUtil.addClass(this._icon, className); }
+      if (edit.modes.indexOf(className) !== -1) {
+        this._link.setAttribute('id', 'mode');
+        if (className === edit.mode) {
+          L.DomUtil.addClass(this._link, 'selected-mode');
+        } else {
+          L.DomUtil.removeClass(this._link, 'selected-mode');
+        }
+      }
     }
 
     L.DomEvent.on(this._link, 'click', this.enable, this);

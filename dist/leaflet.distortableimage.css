@@ -191,6 +191,15 @@ a.leaflet-toolbar-icon.lock.selected-mode {
   border: inset 0.5px lightgray;
 }
 
+li.disabled {
+  cursor: auto;
+}
+
+a.leaflet-toolbar-icon.disabled {
+  filter: grayscale(1);
+  pointer-events: none;
+}
+
 a.leaflet-toolbar-icon.lock.selected-mode .ldi-icon {
   fill: white;
 }
