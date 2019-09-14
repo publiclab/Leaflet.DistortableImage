@@ -176,14 +176,14 @@ Values available to pass to `mode` are:
 * **distort** (*default*): Distortion via individually draggable corners.
 * **rotate**: Rotation only.
 * **scale**: Resize only.
-* **freeScale**: Free transform. Combines the rotate and scale modes into one.
+* **freeRotate**: Free transform. Combines the rotate and scale modes into one.
 * **lock**: Locks the image in place. Prevents moving it via user gestures, toolbar actions, and hotkeys until the toolbar action ToggleLock is explicitly triggered (or its hotkey <kbd>l</kbd>).
 
-In the below example, the image will be initialiazed with "freeScale" handles:
+In the below example, the image will be initialiazed with "freeRotate" handles:
 
 ```js
 img = L.distortableImageOverlay('example.jpg', {
-  mode: 'freeScale',
+  mode: 'freeRotate',
 }).addTo(map);
 ```
 
@@ -339,7 +339,7 @@ Defaults:
 * **ToggleLock (<kbd>l</kbd>)**
   * Toggles between `lock` mode and `distort` mode.
 * **ToggleRotateScale (<kbd>r</kbd>, <kbd>d</kbd>)**
-  * Toggles between `freeScale` and `distort` mode.
+  * Toggles between `freeRotate` and `distort` mode.
 * **ToggleOrder (<kbd>j</kbd>, <kbd>k</kbd>)**
   * If you have multiple images, use this to switch an individual image's overlap back and forth into view. Employs [`bringToFront()`](https://leafletjs.com/reference-1.5.0.html\#imageoverlay-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.5.0.html#imageoverlay-bringtoback) from the Leaflet API.
 * **ToggleOutline (<kbd>o</kbd>)**

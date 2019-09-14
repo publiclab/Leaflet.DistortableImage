@@ -42,10 +42,10 @@ describe('L.DistortableImage.Edit', function() {
       expect(handle.getLatLng()).to.be.closeToLatLng(corners[handle._corner]);
     });
 
-    edit._freeScaleMode();
+    edit._freeRotateMode();
 
-    /* After we toggle modes, the freeScaleHandles are on the map and should be synced. */
-    edit._freeScaleHandles.eachLayer(function(handle) {
+    /* After we toggle modes, the freeRotateHandles are on the map and should be synced. */
+    edit._freeRotateHandles.eachLayer(function(handle) {
       expect(handle.getLatLng()).to.be.closeToLatLng(corners[handle._corner]);
     });
   });

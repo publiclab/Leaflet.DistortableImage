@@ -1,6 +1,6 @@
 L.RotateScaleHandle = L.EditHandle.extend({
   options: {
-    TYPE: 'freeScale',
+    TYPE: 'freeRotate',
     icon: L.icon({
       iconUrl:
         // eslint-disable-next-line max-len

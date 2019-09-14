@@ -60,7 +60,7 @@
               L.latLng(51.49, -0.21),
               L.latLng(51.49,-0.17)
             ],
-            mode: 'freeScale'
+            mode: 'freeRotate'
           });
 
         img3 = L.distortableImageOverlay(
@@ -75,7 +75,7 @@
 
         img4 = L.distortableImageOverlay(
           'example.jpg', {
-            actions: [L.RotateAction, L.FreeScaleAction, L.ScaleAction, L.DistortAction, L.LockAction, L.OpacityAction, L.DeleteAction],
+            actions: [L.RotateAction, L.FreeRotateAction, L.ScaleAction, L.DistortAction, L.LockAction, L.OpacityAction, L.DeleteAction],
             corners: [
               L.latLng(51.51, -0.07),
               L.latLng(51.51,-0.03),

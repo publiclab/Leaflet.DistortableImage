@@ -7,7 +7,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     opacity: 0.7,
     outline: '1px solid red',
     keymap: L.distortableImage.action_map,
-    modes: ['distort', 'rotate', 'scale', 'freeScale', 'lock'],
+    modes: ['distort', 'rotate', 'scale', 'freeRotate', 'lock'],
   },
 
   initialize: function(overlay, options) {
@@ -160,15 +160,15 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
 
     // handle includes rotate AND scale
-    this._freeScaleHandles = L.layerGroup();
+    this._freeRotateHandles = L.layerGroup();
     for (i = 0; i < 4; i++) {
-      this._freeScaleHandles.addLayer(new L.RotateScaleHandle(overlay, i));
+      this._freeRotateHandles.addLayer(new L.RotateScaleHandle(overlay, i));
     }
 
     this._handles = {
       lock: this._lockHandles,
       distort: this._distortHandles,
-      freeScale: this._freeScaleHandles,
+      freeRotate: this._freeRotateHandles,
       scale: this._scaleHandles,
       rotate: this._rotateHandles,
     };
@@ -286,16 +286,16 @@ L.DistortableImage.Edit = L.Handler.extend({
     };
   },
 
-  _freeScaleMode: function() {
+  _freeRotateMode: function() {
     var map = this._overlay._map;
     var m = this.mode;
 
-    if (m === 'lock' || m === 'freeScale') { return; }
-    if (!this.hasTool(L.FreeScaleAction)) { return; }
+    if (m === 'lock' || m === 'freeRotate') { return; }
+    if (!this.hasTool(L.FreeRotateAction)) { return; }
 
     map.removeLayer(this._handles[m]);
 
-    this.mode = 'freeScale';
+    this.mode = 'freeRotate';
     map.addLayer(this._handles[this.mode]);
 
     this._addToolbar();

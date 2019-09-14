@@ -8,7 +8,7 @@ L.RotateAction = L.EditAction.extend({
       className: 'rotate',
     };
 
-    L.DistortableImage.action_map.R = '_rotateMode';
+    L.DistortableImage.action_map.r = '_rotateMode';
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
