@@ -773,8 +773,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
         this._toggleMultiSelect(e, edit);
       }
     }, this);
-
-    // L.DomEvent.stopPropagation(e);
   },
 
   _dragStartMultiple: function(e) {
@@ -2024,7 +2022,8 @@ L.DistortableImage.Edit = L.Handler.extend({
      * that we want when it calls L.DomUtil.setPosition.
      */
     this.dragging._updatePosition = function() {
-      var delta = this._newPos.subtract(map.latLngToLayerPoint(overlay.getCorner(0)));
+      var topLeft = overlay.getCorner(0);
+      var delta = this._newPos.subtract(map.latLngToLayerPoint(topLeft));
       var currentPoint;
       var corners = {0: '', 1: '', 2: '', 3: ''};
       var i;
@@ -2129,6 +2128,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _toggleLockMode: function() {
+    if (!this.hasTool(L.LockAction)) { return; }
     if (this.mode === 'lock') { this._unlock(); }
     else { this._lock(); }
   },
@@ -2152,11 +2152,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this._removeToolbar();
 
-    if (eP) {
-      eP.removeLayer(overlay);
-    } else {
-      overlay._map.removeLayer(overlay);
-    }
+    if (eP) { eP.removeLayer(overlay); }
+    else { overlay._map.removeLayer(overlay); }
   },
 
   // Based on https://github.com/publiclab/mapknitter/blob/8d94132c81b3040ae0d0b4627e685ff75275b416/app/assets/javascripts/mapknitter/Map.js#L47-L82
@@ -2293,9 +2290,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _deselect: function() {
-    // var eP = this.parentGroup;
     this._selected = false;
-    // if (eP) { eP.editing._removeToolbar(); }
     this._removeToolbar();
     if (this.mode !== 'lock') {
       this._hideMarkers();
@@ -2918,9 +2913,9 @@ L.Map.mergeOptions({
   boxZoom: false,
 });
 
-/** \
- * primarily Leaflet 1.5.1 source code. Overriden so that its a selection box with our `L.DistortableCollection` class 
- * instead of a zoom box. \
+/**
+ * primarily Leaflet 1.5.1 source code. Overriden so that it's a selection box used with
+ * our `L.DistortableCollection` class instead of a zoom box.
  * */
 L.Map.BoxSelector = L.Map.BoxZoom.extend({
   initialize: function(map) {
@@ -3020,15 +3015,12 @@ L.Map.BoxSelector = L.Map.BoxZoom.extend({
   },
 
   _onMouseUp: function(e) {
-    if (e.which !== 1 && e.button !== 1) {
-      return;
-    }
+    if (e.which !== 1 && e.button !== 1) { return; }
 
     this._finish();
 
-    if (!this._moved) {
-      return;
-    }
+    if (!this._moved) { return; }
+
     // Postpone to next JS tick so internal click event handling
     // still see it as "moved".
     this._clearDeferredResetState();
@@ -3036,8 +3028,8 @@ L.Map.BoxSelector = L.Map.BoxZoom.extend({
         L.Util.bind(this._resetState, this), 0);
 
     var bounds = L.latLngBounds(
-      this._map.containerPointToLatLng(this._bounds.getBottomLeft()),
-      this._map.containerPointToLatLng(this._bounds.getTopRight())
+        this._map.containerPointToLatLng(this._bounds.getBottomLeft()),
+        this._map.containerPointToLatLng(this._bounds.getTopRight())
     );
 
     // calls the `project` method but 1st updates the pixel origin - see https://github.com/publiclab/Leaflet.DistortableImage/pull/344

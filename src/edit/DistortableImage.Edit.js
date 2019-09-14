@@ -266,7 +266,8 @@ L.DistortableImage.Edit = L.Handler.extend({
      * that we want when it calls L.DomUtil.setPosition.
      */
     this.dragging._updatePosition = function() {
-      var delta = this._newPos.subtract(map.latLngToLayerPoint(overlay.getCorner(0)));
+      var topLeft = overlay.getCorner(0);
+      var delta = this._newPos.subtract(map.latLngToLayerPoint(topLeft));
       var currentPoint;
       var corners = {0: '', 1: '', 2: '', 3: ''};
       var i;
@@ -371,6 +372,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _toggleLockMode: function() {
+    if (!this.hasTool(L.LockAction)) { return; }
     if (this.mode === 'lock') { this._unlock(); }
     else { this._lock(); }
   },
@@ -394,11 +396,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this._removeToolbar();
 
-    if (eP) {
-      eP.removeLayer(overlay);
-    } else {
-      overlay._map.removeLayer(overlay);
-    }
+    if (eP) { eP.removeLayer(overlay); }
+    else { overlay._map.removeLayer(overlay); }
   },
 
   // Based on https://github.com/publiclab/mapknitter/blob/8d94132c81b3040ae0d0b4627e685ff75275b416/app/assets/javascripts/mapknitter/Map.js#L47-L82
@@ -535,9 +534,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _deselect: function() {
-    // var eP = this.parentGroup;
     this._selected = false;
-    // if (eP) { eP.editing._removeToolbar(); }
     this._removeToolbar();
     if (this.mode !== 'lock') {
       this._hideMarkers();

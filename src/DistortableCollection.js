@@ -110,8 +110,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
         this._toggleMultiSelect(e, edit);
       }
     }, this);
-
-    // L.DomEvent.stopPropagation(e);
   },
 
   _dragStartMultiple: function(e) {

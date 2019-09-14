@@ -3,9 +3,9 @@ L.Map.mergeOptions({
   boxZoom: false,
 });
 
-/** \
- * primarily Leaflet 1.5.1 source code. Overriden so that its a selection box with our `L.DistortableCollection` class 
- * instead of a zoom box. \
+/**
+ * primarily Leaflet 1.5.1 source code. Overriden so that it's a selection box used with
+ * our `L.DistortableCollection` class instead of a zoom box.
  * */
 L.Map.BoxSelector = L.Map.BoxZoom.extend({
   initialize: function(map) {
@@ -105,15 +105,12 @@ L.Map.BoxSelector = L.Map.BoxZoom.extend({
   },
 
   _onMouseUp: function(e) {
-    if (e.which !== 1 && e.button !== 1) {
-      return;
-    }
+    if (e.which !== 1 && e.button !== 1) { return; }
 
     this._finish();
 
-    if (!this._moved) {
-      return;
-    }
+    if (!this._moved) { return; }
+
     // Postpone to next JS tick so internal click event handling
     // still see it as "moved".
     this._clearDeferredResetState();
@@ -121,8 +118,8 @@ L.Map.BoxSelector = L.Map.BoxZoom.extend({
         L.Util.bind(this._resetState, this), 0);
 
     var bounds = L.latLngBounds(
-      this._map.containerPointToLatLng(this._bounds.getBottomLeft()),
-      this._map.containerPointToLatLng(this._bounds.getTopRight())
+        this._map.containerPointToLatLng(this._bounds.getBottomLeft()),
+        this._map.containerPointToLatLng(this._bounds.getTopRight())
     );
 
     // calls the `project` method but 1st updates the pixel origin - see https://github.com/publiclab/Leaflet.DistortableImage/pull/344

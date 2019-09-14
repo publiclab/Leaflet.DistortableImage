@@ -350,7 +350,7 @@ Defaults:
 * **L.OpacityAction (<kbd>o</kbd>)**
 * **L.ExportAction (<kbd>e</kbd>)**
 * **L.DeleteAction (<kbd>backscpace</kbd>, <kbd>delete</kbd>)**
-  * Permanently deletes the image from the map.
+  * Permanently deletes the image from the map. Uses a `confirm()` modal dialog.
   * windows `backspace` / mac `delete`
 
  Addons:
@@ -367,11 +367,13 @@ Defaults:
 
 Defaults:
 
-* **Exports** (WIP)
+* **L.ExportAction (<kbd>e</kbd>)** (WIP)
 * **L.DeleteAction (<kbd>backscpace</kbd>, <kbd>delete</kbd>)**
-  * Permanently deletes groups of selected images from the map. Uses a `confirm()` modal dialog.
-* **Locks** (<kbd>l</kbd>)
-* **Unlocks** (<kbd>u</kbd>)
+  * Permanently deletes a group of images from the map.
+* **L.LockAction (<kbd>l</kbd>)**
+  * Sets `lock` mode for a group of images.
+* **L.UnlockAction (<kbd>U</kbd>)**
+  * Removes `lock` mode for a group of images.
 
 ## Quick API Reference
 
