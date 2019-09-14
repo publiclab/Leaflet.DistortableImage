@@ -20,7 +20,7 @@ L.BorderAction = L.EditAction.extend({
       className: edit.mode === 'lock' ? 'disabled' : '',
     };
 
-    L.DistortableImage.action_map.b = '_toggleBorder';
+    L.DistortableImage.action_map.b = edit.mode === 'lock' ? '' : '_toggleBorder';
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 

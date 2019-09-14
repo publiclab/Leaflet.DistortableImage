@@ -1427,7 +1427,7 @@ L.BorderAction = L.EditAction.extend({
       className: edit.mode === 'lock' ? 'disabled' : '',
     };
 
-    L.DistortableImage.action_map.b = '_toggleBorder';
+    L.DistortableImage.action_map.b = edit.mode === 'lock' ? '' : '_toggleBorder';
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
@@ -1448,10 +1448,11 @@ L.DeleteAction = L.EditAction.extend({
 
     if (edit.parentGroup) {
       tooltip = 'Delete Image';
-      L.DistortableImage.action_map.Backspace = '_removeOverlay'; // backspace windows / delete mac
+      // backspace windows / delete mac
+      L.DistortableImage.action_map.Backspace = edit.mode === 'lock' ? '' : '_removeOverlay';
     } else {
       tooltip = 'Delete Images';
-      L.DistortableImage.group_action_map.Backspace = '_removeGroup'; // backspace windows / delete mac
+      L.DistortableImage.group_action_map.Backspace = edit.mode === 'lock' ? '' : '_removeGroup';
     }
 
     options = options || {};
@@ -1511,7 +1512,6 @@ L.ExportAction = L.EditAction.extend({
       svg: true,
       html: 'get_app',
       tooltip: tooltip,
-      className: edit.mode === 'lock' ? 'disabled' : '',
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -1646,7 +1646,13 @@ L.OpacityAction = L.EditAction.extend({
       className: edit.mode === 'lock' ? 'disabled' : '',
     };
 
-    L.DistortableImage.action_map.o = '_toggleOpacity';
+    // conditional for disabling keybindings for this action when the image is locked.
+    if (edit.mode !== 'lock') {
+      L.DistortableImage.action_map.o = '_toggleOpacity';
+    } else {
+      L.DistortableImage.action_map.o = '';
+    }
+
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
@@ -1741,8 +1747,15 @@ L.StackAction = L.EditAction.extend({
       className: edit.mode === 'lock' ? 'disabled' : '',
     };
 
-    L.DistortableImage.action_map.j = '_stackUp';
-    L.DistortableImage.action_map.k = '_stackDown';
+    // conditional for disabling keybindings for this action when the image is locked.
+    if (edit.mode !== 'lock') {
+      L.DistortableImage.action_map.j = '_stackUp';
+      L.DistortableImage.action_map.k = '_stackDown';
+    } else {
+      L.DistortableImage.action_map.j = '';
+      L.DistortableImage.action_map.k = '';
+    }
+
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
@@ -1977,11 +1990,9 @@ L.DistortableImage.Edit = L.Handler.extend({
     var overlay = this._overlay;
     var i;
 
-    this._lockHandles = L.layerGroup();
+    this._scaleHandles = L.layerGroup();
     for (i = 0; i < 4; i++) {
-      this._lockHandles.addLayer(
-          new L.LockHandle(overlay, i, {draggable: false})
-      );
+      this._scaleHandles.addLayer(new L.ScaleHandle(overlay, i));
     }
 
     this._distortHandles = L.layerGroup();
@@ -1994,23 +2005,25 @@ L.DistortableImage.Edit = L.Handler.extend({
       this._rotateHandles.addLayer(new L.RotateHandle(overlay, i));
     }
 
-    this._scaleHandles = L.layerGroup();
-    for (i = 0; i < 4; i++) {
-      this._scaleHandles.addLayer(new L.ScaleHandle(overlay, i));
-    }
-
     // handle includes rotate AND scale
     this._freeRotateHandles = L.layerGroup();
     for (i = 0; i < 4; i++) {
       this._freeRotateHandles.addLayer(new L.RotateScaleHandle(overlay, i));
     }
 
+    this._lockHandles = L.layerGroup();
+    for (i = 0; i < 4; i++) {
+      this._lockHandles.addLayer(
+          new L.LockHandle(overlay, i, {draggable: false})
+      );
+    }
+
     this._handles = {
-      lock: this._lockHandles,
-      distort: this._distortHandles,
-      freeRotate: this._freeRotateHandles,
       scale: this._scaleHandles,
+      distort: this._distortHandles,
       rotate: this._rotateHandles,
+      freeRotate: this._freeRotateHandles,
+      lock: this._lockHandles,
     };
   },
 

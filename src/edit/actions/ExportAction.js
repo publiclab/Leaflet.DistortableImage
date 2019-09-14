@@ -16,7 +16,6 @@ L.ExportAction = L.EditAction.extend({
       svg: true,
       html: 'get_app',
       tooltip: tooltip,
-      className: edit.mode === 'lock' ? 'disabled' : '',
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);

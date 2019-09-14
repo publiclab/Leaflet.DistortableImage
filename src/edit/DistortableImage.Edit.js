@@ -137,11 +137,9 @@ L.DistortableImage.Edit = L.Handler.extend({
     var overlay = this._overlay;
     var i;
 
-    this._lockHandles = L.layerGroup();
+    this._scaleHandles = L.layerGroup();
     for (i = 0; i < 4; i++) {
-      this._lockHandles.addLayer(
-          new L.LockHandle(overlay, i, {draggable: false})
-      );
+      this._scaleHandles.addLayer(new L.ScaleHandle(overlay, i));
     }
 
     this._distortHandles = L.layerGroup();
@@ -154,23 +152,25 @@ L.DistortableImage.Edit = L.Handler.extend({
       this._rotateHandles.addLayer(new L.RotateHandle(overlay, i));
     }
 
-    this._scaleHandles = L.layerGroup();
-    for (i = 0; i < 4; i++) {
-      this._scaleHandles.addLayer(new L.ScaleHandle(overlay, i));
-    }
-
     // handle includes rotate AND scale
     this._freeRotateHandles = L.layerGroup();
     for (i = 0; i < 4; i++) {
       this._freeRotateHandles.addLayer(new L.RotateScaleHandle(overlay, i));
     }
 
+    this._lockHandles = L.layerGroup();
+    for (i = 0; i < 4; i++) {
+      this._lockHandles.addLayer(
+          new L.LockHandle(overlay, i, {draggable: false})
+      );
+    }
+
     this._handles = {
-      lock: this._lockHandles,
-      distort: this._distortHandles,
-      freeRotate: this._freeRotateHandles,
       scale: this._scaleHandles,
+      distort: this._distortHandles,
       rotate: this._rotateHandles,
+      freeRotate: this._freeRotateHandles,
+      lock: this._lockHandles,
     };
   },
 
