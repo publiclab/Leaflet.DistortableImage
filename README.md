@@ -207,7 +207,7 @@ Typically, editing actions are triggered through our toolbar interface. If disab
 
 ## Multiple Image Interface
 
-Our `DistortableCollection` class allows working with multiple images simultaneously. This interface builds on the single image interface.
+Our `DistortableCollection` class builds on the single image interface to allow working with multiple images simultaneously.
 
 The setup is relatively similar.
 
@@ -244,7 +244,7 @@ imgGroup.addLayer(img);
 imgGroup.addLayer(img2);
 ```
 
-<blockquote><strong>Note</strong>: You must instantiate a blank collection, then dynamically add layers to it like above. This is because <code>DistortableCollection</code> uses the <code>layeradd</code> event to enable additional editing features on images as they are added, and it is only triggered when they are added dynamically.</blockquote>
+<blockquote><strong>Note</strong>: You must instantiate a blank collection, then dynamically add layers to it like above. This is because <code>DistortableCollection</code> internally uses the <code>layeradd</code> event to enable additional editing features on images as they are added, and it is only triggered when they are added dynamically.</blockquote>
 
 
 Options available to pass during `L.DistortableCollection` initialization:
@@ -255,15 +255,15 @@ Options available to pass during `L.DistortableCollection` initialization:
 
 ### ✤ Actions
 
-* `actions` (*optional*, default: [Exports, Deletes, Locks, Unlocks], value: *array*)
+* `actions` (*optional*, default: [`L.ExportAction`, `L.DeleteAction`, `L.LockAction`, `L.UnlocksAction`], value: *array*)
 
 Overrwrite the default toolbar actions for an image collection's `L.Control` toolbar. Reference the available values [here](#Multiple-Image-Interface).
 
-For example, to overrwrite the toolbar to only include the `Deletes` action:
+For example, to overrwrite the toolbar to only include the `L.DeleteAction`:
 
 ```JS
 imgGroup = L.distortableCollection({
-  actions: [Deletes],
+  actions: [L.DeleteAction],
 }).addTo(map);
 ```
 
@@ -310,18 +310,18 @@ imgGroup = L.distortableCollection({
 
 ### UI and functionalities
 
-Currently it supports multiple image selection and translations, and WIP we are working on porting all editing tools to work for it, such as transparency, etc. Image distortions still use the single-image interface.
+Currently it supports multiple image selection and translations, and WIP we are working on porting all editing tools to work for it, such as opacity, etc. Image distortions (via modes) still use the single-image interface.
 
 **multi-select:** A single toolbar instance (using `L.control`) renders the set of tools available to use on collections of images.
 
 1. Multi-selection works with <kbd>shift</kbd> + `click` to toggle an individual image's inclusion in this interface.
-2. Or <kbd>shift</kbd> + `drag` to use our `BoxSelector` handler to select multiple at once.
+2. Or <kbd>shift</kbd> + `drag` to use our `L.Map.BoxSelector` handler to select multiple at once.
 3. Or for touch devices, `touch` + `hold` (aka `longpress`).
 
 **un-multi-select:**
 
-* In order to return to the single-image interface, where each `L.popup` toolbar only applies actions on the image it's attached to, you must toggle *all* images out of multi-select or...
-* ...Click on the map or hit the <kbd>esc</kbd> key to quickly deselect all images.
+* In order to return to the single-image interface, where each `L.popup` toolbar only applies actions on the image it's attached to, you must toggle *all* images out of multi-select with `shift` + click, or...
+* ...Click on the map or hit the <kbd>esc</kbd> key to quickly deselect.
 * For the aforementioned 3 mutli-select methods, the `BoxSelector` method is the only one that doesn't also toggle _out_ of multi-select mode.
 
 ---
@@ -336,29 +336,28 @@ Currently it supports multiple image selection and translations, and WIP we are 
 
 Defaults:
 
-* **ToggleLock (<kbd>l</kbd>)**
+* **L.ScaleAction** (<kbd>s</kbd>):
+  * Sets `scale` mode.
+* **L.RotateAction** (<kbd>r</kbd>):
+  * Sets `rotate` mode.
+* **L.FreeRotateAction (<kbd>f</kbd>)**
+  * Sets `freeRotate` mode.
+* **L.LockAction (<kbd>l</kbd>, <kbd>u</kbd>)**
   * Toggles between `lock` mode and `distort` mode.
-* **ToggleRotateScale (<kbd>r</kbd>, <kbd>d</kbd>)**
-  * Toggles between `freeRotate` and `distort` mode.
-* **ToggleOrder (<kbd>j</kbd>, <kbd>k</kbd>)**
-  * If you have multiple images, use this to switch an individual image's overlap back and forth into view. Employs [`bringToFront()`](https://leafletjs.com/reference-1.5.0.html\#imageoverlay-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.5.0.html#imageoverlay-bringtoback) from the Leaflet API.
-* **ToggleOutline (<kbd>o</kbd>)**
-* **ToggleTransparency (<kbd>t</kbd>)**
-* **Revert**
-  * Restores the image to its original proportions and scale, but keeps its current rotation angle and location on the map intact.
-* **Export**
-* **Delete (<kbd>delete</kbd>, <kbd>backscpace</kbd>)**
+* **L.StackAction (<kbd>j</kbd>, <kbd>k</kbd>)**
+  * Switch an image's overlap compared to neighboring images back and forth into view. Employs [`bringToFront()`](https://leafletjs.com/reference-1.5.0.html\#imageoverlay-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.5.0.html#imageoverlay-bringtoback) from the Leaflet API.
+* **L.BorderAction (<kbd>b</kbd>)**
+* **L.OpacityAction (<kbd>o</kbd>)**
+* **L.ExportAction (<kbd>e</kbd>)**
+* **L.DeleteAction (<kbd>backscpace</kbd>, <kbd>delete</kbd>)**
   * Permanently deletes the image from the map.
+  * windows `backspace` / mac `delete`
 
  Addons:
 
-* **ToggleRotate** (<kbd>caps lock</kbd>):
-  * Toggles between `rotate` mode and `distort` mode.
-  * Replaced as a default toolbar action by `ToggleRotateScale`, but still accessible via its hotkey, `mode`, and (WIP) custom toolbar actions API.
-* **ToggleScale** (<kbd>s</kbd>):
-  * Toggles between `scale` mode and `distort` mode.
-  * Replaced as a default toolbar action by `ToggleRotateScale`, but still accessible via its hotkey, `mode`, and (WIP) custom toolbar actions API.
-* **EnableEXIF (WIP)**
+* **L.GeolocateAction (WIP)**
+* **L.RevertAction (WIP)**
+  * Restores the image to its original proportions and scale, but keeps its current rotation angle and location on the map intact.
 
 ---
 
@@ -369,7 +368,7 @@ Defaults:
 Defaults:
 
 * **Exports** (WIP)
-* **Deletes (<kbd>delete</kbd>, <kbd>backspace</kbd>)**
+* **L.DeleteAction (<kbd>backscpace</kbd>, <kbd>delete</kbd>)**
   * Permanently deletes groups of selected images from the map. Uses a `confirm()` modal dialog.
 * **Locks** (<kbd>l</kbd>)
 * **Unlocks** (<kbd>u</kbd>)
