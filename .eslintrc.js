@@ -1,11 +1,11 @@
 module.exports = {
     "env": {
-        "browser": true,
+      "browser": true,
     },
     "extends": "google",
     "globals": {
-        "Atomics": "readonly",
-        "SharedArrayBuffer": "readonly"
+      "Atomics": "readonly",
+      "SharedArrayBuffer": "readonly"
     },
     "parserOptions": {
         "ecmaVersion": 2018
@@ -35,6 +35,6 @@ module.exports = {
         "guard-for-in": 0,
         "max-len": ["warn", { "ignoreComments": true }],
         "prefer-const": 1,
-        "valid-jsdoc": 2
+        "valid-jsdoc": 0
     }
 };

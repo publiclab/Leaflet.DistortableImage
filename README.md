@@ -540,6 +540,13 @@ A handler that holds the keybindings and toolbar API for an image instance. It i
   </ul>
 </details>
 
+<details><summary><code><b>enabled()</b>: Boolean</code></summary>
+  <ul>
+    <li>Returns true if editing on the individual image instance is enabled.</li>
+    <li><code>img.editing.enabled()</code></li>
+  </ul>
+</details>
+
 ---
 
 `L.DistortableCollection`

@@ -765,6 +765,8 @@ L.DistortableCollection = L.FeatureGroup.extend({
         this._toggleMultiSelect(e, edit);
       }
     }, this);
+
+    if (e) { L.DomEvent.stopPropagation(e); }
   },
 
   _dragStartMultiple: function(e) {
@@ -1822,7 +1824,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     L.DomEvent.on(overlay._image, {
       click: this._select,
-      dblclick: this._nextMode,
+      dblclick: this.nextMode,
     }, this);
 
     L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
@@ -1867,7 +1869,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     L.DomEvent.off(overlay._image, {
       click: this._select,
-      dblclick: this._nextMode,
+      dblclick: this.nextMode,
     }, this);
 
     L.DomEvent.off(window, 'keydown', this._onKeyDown, this);
@@ -2397,12 +2399,12 @@ L.DistortableImage.Edit = L.Handler.extend({
     * need to attach a stop to img dblclick or it will propagate to
     * the map and fire the handler that shows map location labels on map dblclick.
     */
-  _nextMode: function(e) {
+  nextMode: function(e) {
     var map = this._overlay._map;
     var eP = this.parentGroup;
     var m = this.mode;
 
-    if (eP && eP.anySelected()) { return; }
+    if ((eP && eP.anySelected()) || !this.enabled()) { return false; }
 
     map.removeLayer(this._handles[m]);
 
@@ -2413,7 +2415,9 @@ L.DistortableImage.Edit = L.Handler.extend({
     map.addLayer(this._handles[this.mode]);
     this._refresh();
 
-    L.DomEvent.stop(e);
+    if (e) { L.DomEvent.stop(e); }
+
+    return this.mode;
   },
 });
 

@@ -9,16 +9,15 @@ module.exports = function(config) {
     plugins: [
       require('mocha'),
       require('karma-mocha'),
+      require('karma-sinon'),
       require('karma-coverage'),
       require('karma-mocha-reporter'),
       require('karma-phantomjs-launcher'),
-      require('glfx'),
-      require('webgl-distort/dist/webgl-distort.js'),
     ],
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['mocha'],
+    frameworks: ['mocha', 'sinon'],
 
     // list of files / patterns to load in the browser
     files: [
@@ -44,8 +43,7 @@ module.exports = function(config) {
       'src/iconsets/ToolbarIconSet.js',
       'src/edit/actions/EditAction.js',
       'src/edit/actions/*.js',
-      'src/edit/toolbars/DistortableImage.PopupBar.js',
-      'src/edit/toolbars/DistortableImage.ControlBar.js',
+      'src/edit/toolbars/*',
       'src/edit/DistortableImage.Edit.js',
       'src/edit/DistortableCollection.Edit.js',
       'src/components/DistortableImage.Keymapper.js',
