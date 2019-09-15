@@ -1,5 +1,4 @@
 node_modules
-test/src/util
-test/src/*Spec.js
+test/*
 Gruntfile.js
 dist
