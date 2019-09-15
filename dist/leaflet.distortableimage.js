@@ -1189,7 +1189,7 @@ L.DistortHandle = L.EditHandle.extend({
   },
 });
 
-L.RotateScaleHandle = L.EditHandle.extend({
+L.FreeRotateHandle = L.EditHandle.extend({
   options: {
     TYPE: 'freeRotate',
     icon: L.icon({
@@ -2049,6 +2049,11 @@ L.DistortableImage.Edit = L.Handler.extend({
       this._dragHandles.addLayer(new L.DragHandle(overlay, i));
     }
 
+    this._dragHandles = L.layerGroup();
+    for (i = 0; i < 4; i++) {
+      this._dragHandles.addLayer(new L.DragHandle(overlay, i));
+    }
+    
     this._handles = {
       drag: this._dragHandles,
       scale: this._scaleHandles,
@@ -2148,6 +2153,23 @@ L.DistortableImage.Edit = L.Handler.extend({
     overlay.setCorners(transCorners);
   },
 
+  _dragBy: function (formerPoint, newPoint) {
+	  var overlay = this._overlay,
+	  	map = overlay._map,
+		center = map.project(overlay.getCenter()),
+		i,
+		p,
+		diference = map.project (formerPoint).subtract (map.project (newPoint));
+	  
+	  for (i = 0; i < 4; i++) {
+        p = map
+          .project(overlay.getCorner(i))
+          .subtract(diference);
+        overlay.setCorner(i, map.unproject(p));
+      }
+	  overlay._reset();	  
+  },
+  
   _enableDragging: function() {
     var overlay = this._overlay;
     var map = overlay._map;
