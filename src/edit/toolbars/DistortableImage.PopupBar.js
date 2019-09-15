@@ -16,10 +16,6 @@ L.DistortableImage.PopupBar = L.Toolbar2.Popup.extend({
   addHooks: function(map, ov) {
     this.map = map;
     this.ov = ov;
-
-    this.on({
-      keypress: this._onKeyPress,
-    });
   },
 
   tools: function() {
@@ -38,12 +34,6 @@ L.DistortableImage.PopupBar = L.Toolbar2.Popup.extend({
       }
     }
     return false;
-  },
-
-  removeHooks: function() {
-    this.off({
-      keypress: this._onKeyPress,
-    });
   },
 });
 
