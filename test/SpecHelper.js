@@ -18,10 +18,6 @@ chai.mouseEvents = {
     type: 'click',
     isShift: false,
   },
-  ShiftClick: {
-    type: 'click',
-    isShift: true,
-  },
   Dblclick: {
     type: 'dblclick',
     isShift: false,
