@@ -20,8 +20,8 @@ L.StackAction = L.EditAction.extend({
       className: edit.mode === 'lock' ? 'disabled' : '',
     };
 
-    L.DistortableImage.action_map.j = edit.mode === 'lock' ? '' : '_stackUp';
-    L.DistortableImage.action_map.k = edit.mode === 'lock' ? '' : '_stackDown';
+    L.DistortableImage.action_map.q = edit.mode === 'lock' ? '' : '_stackUp';
+    L.DistortableImage.action_map.a = edit.mode === 'lock' ? '' : '_stackDown';
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
