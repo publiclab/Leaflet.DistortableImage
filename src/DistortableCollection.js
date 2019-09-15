@@ -172,7 +172,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     this.eachLayer(function(layer) {
       if (
         layer !== overlay &&
-        layer.editing.mode !== 'lock' &&
+        layer.editing._mode !== 'lock' &&
         this.isSelected(layer)
       ) {
         layer._cpd = {};
