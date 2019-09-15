@@ -76,8 +76,8 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     this._keymapper.onAdd = function() {
       container.appendChild(wrap);
       wrap.insertAdjacentHTML(
-        'beforeend',
-        '<table><tbody>' +
+          'beforeend',
+          '<table><tbody>' +
           '<hr id="keymapper-hr">' +
           /* eslint-disable */
           '<tr><td><div class="left"><span>Rotate Mode</span></div><div class="right"><kbd>R</kbd></div></td></tr>' +
