@@ -340,16 +340,16 @@ Defaults:
   * Sets `scale` mode.
 * **L.RotateAction** (<kbd>r</kbd>):
   * Sets `rotate` mode.
-* **L.FreeRotateAction (<kbd>f</kbd>)**
+* **L.FreeRotateAction** (<kbd>f</kbd>)
   * Sets `freeRotate` mode.
-* **L.LockAction (<kbd>l</kbd>, <kbd>u</kbd>)**
+* **L.LockAction** (<kbd>l</kbd>, <kbd>u</kbd>)
   * Toggles between `lock` mode and `distort` mode.
-* **L.StackAction (<kbd>j</kbd>, <kbd>k</kbd>)**
+* **L.StackAction** (<kbd>j</kbd>, <kbd>k</kbd>)
   * Switch an image's overlap compared to neighboring images back and forth into view. Employs [`bringToFront()`](https://leafletjs.com/reference-1.5.0.html\#imageoverlay-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.5.0.html#imageoverlay-bringtoback) from the Leaflet API.
-* **L.BorderAction (<kbd>b</kbd>)**
-* **L.OpacityAction (<kbd>o</kbd>)**
-* **L.ExportAction (<kbd>e</kbd>)**
-* **L.DeleteAction (<kbd>backscpace</kbd>, <kbd>delete</kbd>)**
+* **L.BorderAction** (<kbd>b</kbd>)
+* **L.OpacityAction** (<kbd>o</kbd>)
+* **L.ExportAction** (<kbd>e</kbd>)
+* **L.DeleteAction** (<kbd>backscpace</kbd>, <kbd>delete</kbd>)
   * Permanently deletes the image from the map. Uses a `confirm()` modal dialog.
   * windows `backspace` / mac `delete`
 
@@ -367,13 +367,13 @@ Defaults:
 
 Defaults:
 
-* **L.ExportAction (<kbd>e</kbd>)** (WIP)
-* **L.DeleteAction (<kbd>backscpace</kbd>, <kbd>delete</kbd>)**
+* **L.ExportAction** (<kbd>e</kbd>) (WIP)
+* **L.DeleteAction** (<kbd>backscpace</kbd>, <kbd>delete</kbd>)
   * Permanently deletes a group of images from the map.
-* **L.LockAction (<kbd>l</kbd>)**
+* **L.LockAction** (<kbd>l</kbd>)
   * Sets `lock` mode for a group of images.
-* **L.UnlockAction (<kbd>U</kbd>)**
-  * Removes `lock` mode for a group of images.
+* **L.UnlocksAction** (<kbd>u</kbd>)
+  * Unsets `lock` mode for a group of images.
 
 ## Quick API Reference
 

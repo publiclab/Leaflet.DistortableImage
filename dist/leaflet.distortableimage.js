@@ -2133,7 +2133,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _removeOverlay: function() {
-    var overlay = this._overlay;
+    var ov = this._overlay;
     var eP = this.parentGroup;
     var m = this.mode;
 
@@ -2144,8 +2144,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this._removeToolbar();
 
-    if (eP) { eP.removeLayer(overlay); }
-    else { overlay._map.removeLayer(overlay); }
+    if (eP) { eP.removeLayer(ov); }
+    else { ov._map.removeLayer(ov); }
   },
 
   // Based on https://github.com/publiclab/mapknitter/blob/8d94132c81b3040ae0d0b4627e685ff75275b416/app/assets/javascripts/mapknitter/Map.js#L47-L82
@@ -2159,7 +2159,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     var downloadable = new Image();
 
     downloadable.id = downloadable.id || 'tempId12345';
-    $('body').append(downloadable);
+    document.body.appendChild(downloadable);
 
     downloadable.onload = function onLoadDownloadableImage() {
       var height = downloadable.height;
@@ -2190,7 +2190,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
       // run once warping is complete
       downloadable.onload = function() {
-        $(downloadable).remove();
+        L.DomUtil.remove(downloadable);
       };
 
       if (window && window.hasOwnProperty('warpWebGl')) {
@@ -2835,7 +2835,8 @@ L.DistortableImage.Keymapper = L.Handler.extend({
           '<tr><td><div class="left"><span>Add / Remove Image Border</span></div><div class="right"><kbd>b</kbd></div></td></tr>' +
           '<tr><td><div class="left"><span>Toggle Opacity</span></div><div class="right"><kbd>o</kbd></div></td></tr>' +
           '<tr><td><div class="left"><span>Deselect All</span></div><div class="right"><kbd>esc</kbd></div></td></tr>' +
-          '<tr><td><div class="left"><span>Delete Image</span></div><div class="right"><kbd>delete</kbd>\xa0<kbd>backspace</kbd></div></td></tr>' +
+          '<tr><td><div class="left"><span>Delete Image(s)</span></div><div class="right"><kbd>delete</kbd>\xa0<kbd>backspace</kbd></div></td></tr>' +
+          '<tr><td><div class="left"><span>Export Image(s)</span></div><div class="right"><kbd>e</kbd></div></td></tr>' +
           '</tbody></table>'
       );
       /* eslint-enable */
