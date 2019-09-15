@@ -2633,7 +2633,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
     this._removeToolbar();
 
-    // if (e) { L.DomEvent.stopPropagation(e); }
+    if (e) { L.DomEvent.stopPropagation(e); }
   },
 
   _unlockGroup: function() {
