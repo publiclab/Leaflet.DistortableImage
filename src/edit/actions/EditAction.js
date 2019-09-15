@@ -1,5 +1,9 @@
-L.EditAction = L.Toolbar2.Action.extend({
+L.DistortableImage = L.DistortableImage || {};
+L.distortableImage = L.DistortableImage;
 
+L.DistortableImage.action_map = {};
+
+L.EditAction = L.Toolbar2.Action.extend({
   options: {
     toolbarIcon: {
       svg: false,
@@ -21,6 +25,8 @@ L.EditAction = L.Toolbar2.Action.extend({
 
   _createIcon: function(toolbar, container, args) {
     var iconOptions = this.options.toolbarIcon;
+    var className = iconOptions.className;
+    var edit = this._overlay.editing;
 
     this.toolbar = toolbar;
     this._icon = L.DomUtil.create('li', '', container);
@@ -37,8 +43,15 @@ L.EditAction = L.Toolbar2.Action.extend({
     this._link.setAttribute('role', 'button');
 
     L.DomUtil.addClass(this._link, this.constructor.baseClass);
-    if (iconOptions.className) {
-      L.DomUtil.addClass(this._link, iconOptions.className);
+
+    if (className) {
+      L.DomUtil.addClass(this._link, className);
+      if (className === 'disabled') { L.DomUtil.addClass(this._icon, className); }
+      if (className === edit._mode) {
+        L.DomUtil.addClass(this._link, 'selected-mode');
+      } else {
+        L.DomUtil.removeClass(this._link, 'selected-mode');
+      }
     }
 
     L.DomEvent.on(this._link, 'click', this.enable, this);
@@ -61,3 +74,6 @@ L.EditAction = L.Toolbar2.Action.extend({
   },
 });
 
+L.editAction = function(map, overlay, options) {
+  return new L.EditAction(map, overlay, options);
+};

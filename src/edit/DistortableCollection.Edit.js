@@ -79,9 +79,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     var keymap = this.options.keymap;
     var handlerName = keymap[e.key];
 
-    if (!this[handlerName]) {
-      return;
-    }
+    if (!this[handlerName]) { return; }
 
     if (this._group.anySelected()) {
       this[handlerName].call(this);
@@ -129,30 +127,24 @@ L.DistortableCollection.Edit = L.Handler.extend({
   },
 
   _unlockGroup: function() {
-    var map = this._group._map;
-
     this._group.eachLayer(function(layer) {
       if (this._group.isSelected(layer)) {
         var edit = layer.editing;
         if (edit._mode === 'lock') {
-          map.removeLayer(edit._handles[edit._mode]);
           edit._unlock();
-          edit._refreshPopupIcons();
+          // unlock updates the layer's handles; deselect to ensure they're hidden
+          edit._deselect();
         }
       }
     }, this);
   },
 
   _lockGroup: function() {
-    var map = this._group._map;
-
     this._group.eachLayer(function(layer) {
       if (this._group.isSelected(layer) ) {
         var edit = layer.editing;
         if (edit._mode !== 'lock') {
           edit._lock();
-          map.addLayer(edit._handles[edit._mode]);
-          edit._refreshPopupIcons();
           // map.addLayer also deselects the image, so we reselect here
           L.DomUtil.addClass(layer.getElement(), 'selected');
         }
@@ -166,9 +158,8 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
     this._group.eachLayer(function(layer) {
       var edit = layer.editing;
-      if (edit._selected) {
-        edit._deselect();
-      }
+
+      if (edit._selected) { edit._deselect(); }
 
       var imgBounds = L.latLngBounds(layer.getCorner(2), layer.getCorner(1));
       imgBounds = map._latLngBoundsToNewLayerBounds(imgBounds, map.getZoom(), map.getCenter());
@@ -270,22 +261,16 @@ L.DistortableCollection.Edit = L.Handler.extend({
     var group = this._group;
     var map = group._map;
 
-    if (group.options.suppressToolbar) { return; }
+    if (group.options.suppressToolbar || this.toolbar) { return; }
 
-    try {
-      if (!this.toolbar) {
-        this.toolbar = L.distortableImage.controlBar({
-          actions: this.editActions,
-          position: 'topleft',
-        }).addTo(map, group);
-        this.fire('toolbar:created');
-      }
-    } catch (e) { }
+    this.toolbar = L.distortableImage.controlBar({
+      actions: this.editActions,
+      position: 'topleft',
+    }).addTo(map, group);
   },
 
   _removeToolbar: function() {
     var map = this._group._map;
-
     if (this.toolbar) {
       map.removeLayer(this.toolbar);
       this.toolbar = false;
@@ -323,3 +308,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     }, this);
   },
 });
+
+L.distortableCollection.edit = function(group, options) {
+  return new L.DistortableCollection.Edit(group, options);
+};

@@ -8,16 +8,20 @@ beforeEach(function() {
 chai.mouseEvents = {
   ShiftMouseDown: {
     type: 'mousedown',
-    isShift: true
+    isShift: true,
   },
   MouseDown: {
     type: 'mousedown',
-    isShift: false
+    isShift: false,
   },
   Click: {
     type: 'click',
-    isShift: false
+    isShift: false,
   },
+  Dblclick: {
+    type: 'dblclick',
+    isShift: false,
+  }
 }
 
 /*
