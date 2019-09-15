@@ -7,7 +7,7 @@ L.RevertAction = L.EditAction.extend({
       svg: true,
       html: 'restore',
       tooltip: 'Restore Original Image Dimensions',
-      className: edit.mode === 'lock' ? 'disabled' : '',
+      className: edit._mode === 'lock' ? 'disabled' : '',
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);

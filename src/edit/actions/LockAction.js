@@ -3,25 +3,18 @@ L.LockAction = L.EditAction.extend({
     var edit = overlay.editing;
     var use;
     var tooltip;
-    var className;
 
     if (edit.parentGroup) {
       L.DistortableImage.action_map.u = '_unlock';
       L.DistortableImage.action_map.l = '_lock';
       tooltip = 'Lock Mode';
 
-      if (edit.mode === 'lock') {
-        use = 'lock';
-        className = 'lock';
-      } else {
-        use = 'unlock';
-        className = 'unlock';
-      }
+      if (edit._mode === 'lock') { use = 'lock'; }
+      else { use = 'unlock'; }
     } else {
       L.DistortableImage.group_action_map.l = '_lockGroup';
       tooltip = 'Lock Images';
       use = 'lock';
-      className = 'lock';
     }
 
     options = options || {};
@@ -29,7 +22,7 @@ L.LockAction = L.EditAction.extend({
       svg: true,
       html: use,
       tooltip: tooltip,
-      className: className,
+      className: 'lock',
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);

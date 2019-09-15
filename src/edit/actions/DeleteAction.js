@@ -10,10 +10,10 @@ L.DeleteAction = L.EditAction.extend({
     if (edit.parentGroup) {
       tooltip = 'Delete Image';
       // backspace windows / delete mac
-      L.DistortableImage.action_map.Backspace = edit.mode === 'lock' ? '' : '_removeOverlay';
+      L.DistortableImage.action_map.Backspace = edit._mode === 'lock' ? '' : '_removeOverlay';
     } else {
       tooltip = 'Delete Images';
-      L.DistortableImage.group_action_map.Backspace = edit.mode === 'lock' ? '' : '_removeGroup';
+      L.DistortableImage.group_action_map.Backspace = edit._mode === 'lock' ? '' : '_removeGroup';
     }
 
     options = options || {};
@@ -21,7 +21,7 @@ L.DeleteAction = L.EditAction.extend({
       svg: true,
       html: use,
       tooltip: tooltip,
-      className: edit.mode === 'lock' ? 'disabled' : '',
+      className: edit._mode === 'lock' ? 'disabled' : '',
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);

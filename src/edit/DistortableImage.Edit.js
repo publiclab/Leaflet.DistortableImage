@@ -15,8 +15,8 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._toggledImage = false;
     /* Interaction modes. TODO - create API for
     * limiting modes similar to toolbar actions API */
-    this.modes = this.options.modes;
-    this.mode = this.modes[this.modes.indexOf(overlay.options.mode)] || 'distort';
+    this._modes = this.options.modes;
+    this._mode = this._modes[this._modes.indexOf(overlay.options.mode)] || 'distort';
     this._selected = this._overlay.options.selected || false;
     this._transparent = false;
     this._outlined = false;
@@ -37,7 +37,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this._initHandles();
 
-    this._appendHandlesandDragable(this.mode);
+    this._appendHandlesandDragable(this._mode);
 
     this.editActions = this.options.actions;
 
@@ -74,7 +74,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     L.DomEvent.on(overlay._image, {
       click: this._select,
-      dblclick: this.nextMode,
+      dblclick: this._nextMode,
     }, this);
 
     L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
@@ -93,7 +93,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (this.toolbar) { this._removeToolbar(); }
     if (this.editing) { this.editing.disable(); }
 
-    map.removeLayer(this._handles[this.mode]);
+    map.removeLayer(this._handles[this._mode]);
 
     /**
      * ensures if you disable an image while it is multi-selected
@@ -119,7 +119,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     L.DomEvent.off(overlay._image, {
       click: this._select,
-      dblclick: this.nextMode,
+      dblclick: this._nextMode,
     }, this);
 
     L.DomEvent.off(window, 'keydown', this._onKeyDown, this);
@@ -287,55 +287,29 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _scaleMode: function() {
-    var map = this._overlay._map;
-    var m = this.mode;
-
-    if (m === 'scale' || !this.hasTool(L.ScaleAction)) { return; }
-
-    map.removeLayer(this._handles[m]);
-
-    this.mode = 'scale';
-    map.addLayer(this._handles[this.mode]);
-    this._refresh();
+    if (!this.hasTool(L.ScaleAction)) { return; }
+    this._setMode('scale');
   },
 
   _distortMode: function() {
-    var map = this._overlay._map;
-    var m = this.mode;
-
-    if (m === 'distort' || !this.hasTool(L.DistortAction)) { return; }
-
-    map.removeLayer(this._handles[m]);
-
-    this.mode = 'distort';
-    map.addLayer(this._handles[this.mode]);
-    this._refresh();
+    if (!this.hasTool(L.DistortAction)) { return; }
+    this._setMode('distort');
   },
 
   _rotateMode: function() {
-    var map = this._overlay._map;
-    var m = this.mode;
-
-    if (m === 'rotate' || !this.hasTool(L.RotateAction)) { return; }
-
-    map.removeLayer(this._handles[m]);
-
-    this.mode = 'rotate';
-    map.addLayer(this._handles[this.mode]);
-    this._refresh();
+    if (!this.hasTool(L.RotateAction)) { return; }
+    this._setMode('rotate');
   },
 
   _freeRotateMode: function() {
-    var map = this._overlay._map;
-    var m = this.mode;
+    if (!this.hasTool(L.FreeRotateAction)) { return; }
+    this._setMode('freeRotate');
+  },
 
-    if (m === 'freeRotate' || !this.hasTool(L.FreeRotateAction)) { return; }
-
-    map.removeLayer(this._handles[m]);
-
-    this.mode = 'freeRotate';
-    map.addLayer(this._handles[this.mode]);
-    this._refresh();
+  _toggleLockMode: function() {
+    if (!this.hasTool(L.LockAction)) { return; }
+    if (this._mode === 'lock') { this._unlock(); }
+    else { this._lock(); }
   },
 
   _toggleOpacity: function() {
@@ -371,12 +345,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._refresh();
   },
 
-  _toggleLockMode: function() {
-    if (!this.hasTool(L.LockAction)) { return; }
-    if (this.mode === 'lock') { this._unlock(); }
-    else { this._lock(); }
-  },
-
   // compare this to using overlay zIndex
   _toggleOrder: function() {
     if (!this.hasTool(L.StackAction)) { return; }
@@ -387,7 +355,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   _removeOverlay: function() {
     var ov = this._overlay;
     var eP = this.parentGroup;
-    var m = this.mode;
+    var m = this._mode;
 
     if (m === 'lock' || !this.hasTool(L.DeleteAction)) { return; }
 
@@ -479,32 +447,32 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _unlock: function() {
     var map = this._overlay._map;
-    var m = this.mode;
+    var m = this._mode;
 
     if (m !== 'lock' || !this.hasTool(L.LockAction)) { return; }
 
     map.removeLayer(this._handles[m]);
 
-    this.mode = 'distort';
+    this._mode = 'distort';
     this._enableDragging();
-    map.addLayer(this._handles[this.mode]);
+    map.addLayer(this._handles[this._mode]);
     this._refresh();
   },
 
   _lock: function() {
     var map = this._overlay._map;
-    var m = this.mode;
+    var m = this._mode;
 
     if (m === 'lock' || !this.hasTool(L.LockAction)) { return; }
 
     map.removeLayer(this._handles[m]);
 
-    this.mode = 'lock';
+    this._mode = 'lock';
     if (this.dragging) {
       this.dragging.disable();
+      delete this.dragging;
     }
-    delete this.dragging;
-    map.addLayer(this._handles[this.mode]);
+    map.addLayer(this._handles[this._mode]);
     this._refresh();
   },
 
@@ -536,17 +504,17 @@ L.DistortableImage.Edit = L.Handler.extend({
   _deselect: function() {
     this._selected = false;
     this._removeToolbar();
-    if (this.mode !== 'lock') {
+    if (this._mode !== 'lock') {
       this._hideMarkers();
     }
   },
 
   _showMarkers: function() {
     var eP = this.parentGroup;
-    var m = this.mode;
+    var m = this._mode;
 
     // mutli-image interface doesn't have markers so check if its on & return early if true
-    if (m === 'lock' || (eP && eP.anySelected())) { return; }
+    if (eP && eP.anySelected()) { return; }
 
     var currentHandle = this._handles[m];
 
@@ -564,7 +532,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     // workaround for race condition w/ feature group
     if (!this._handles) { this._initHandles(); }
 
-    var m = this.mode;
+    var m = this._mode;
     var currentHandle = this._handles[m];
 
     currentHandle.eachLayer(function(layer) {
@@ -645,29 +613,46 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
   },
 
+  getMode: function() {
+    return this._mode;
+  },
+
+  _setMode: function(newMode) {
+    var map = this._overlay._map;
+    var eP = this.parentGroup;
+    var m = this._mode;
+
+    if ((eP && eP.anySelected()) || !this.enabled()) { return false; }
+    if (newMode === m || !this.toolbar) { return false; }
+
+    this.toolbar.clickTool(newMode);
+
+    if (this._modes.indexOf(newMode) !== -1) {
+      if (m === 'lock' && !this.dragging) { this._enableDragging(); }
+      map.removeLayer(this._handles[m]);
+      this._mode = newMode;
+      map.addLayer(this._handles[this._mode]);
+    }
+    this._refresh();
+
+    return this;
+  },
+
   /**
     * need to attach a stop to img dblclick or it will propagate to
     * the map and fire the handler that shows map location labels on map dblclick.
     */
-  nextMode: function(e) {
-    var map = this._overlay._map;
-    var eP = this.parentGroup;
-    var m = this.mode;
-
-    if ((eP && eP.anySelected()) || !this.enabled()) { return false; }
-
-    map.removeLayer(this._handles[m]);
-
-    var idx = this.modes.indexOf(m);
-    var nextIdx = (idx + 1) % this.modes.length;
-    this.mode = this.modes[nextIdx];
-
-    map.addLayer(this._handles[this.mode]);
-    this._refresh();
+  _nextMode: function(e) {
+    var m = this._mode;
+    var idx = this._modes.indexOf(m);
+    var nextIdx = (idx + 1) % this._modes.length;
+    var newMode = this._modes[nextIdx];
 
     if (e) { L.DomEvent.stop(e); }
 
-    return this.mode;
+    if (this._modes.indexOf(newMode) !== -1) {
+      return this._setMode(newMode);
+    } else { return false; }
   },
 });
 

@@ -270,13 +270,13 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       3: map.unproject(center.add(offset)),
     };
 
-    map.removeLayer(edit._handles[edit.mode]);
+    map.removeLayer(edit._handles[edit._mode]);
 
     this.setCorners(corners);
 
     if (angle !== 0) { this.rotateBy(L.TrigUtil.degreesToRadians(360 - angle)); }
 
-    map.addLayer(edit._handles[edit.mode]);
+    map.addLayer(edit._handles[edit._mode]);
 
     this.rotation = angle;
   },

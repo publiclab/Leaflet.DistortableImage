@@ -161,7 +161,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     return layerArr.filter(function(layer) {
       var edit = layer.editing;
-      return (this.isSelected(layer) && edit.mode !== 'lock');
+      return (this.isSelected(layer) && edit._mode !== 'lock');
     }, this);
   },
 

@@ -1,7 +1,6 @@
 describe('L.DistortableImage.Edit', function() {
   var map;
   var overlay;
-  var spy;
 
   beforeEach(function(done) {
     map = L.map(L.DomUtil.create('div', '', document.body)).setView([41.7896, -87.5996], 15);
@@ -107,23 +106,22 @@ describe('L.DistortableImage.Edit', function() {
     });
   });
 
-  describe('#nextMode', function () {
+  describe('#_nextMode', function () {
     beforeEach(function () {
       overlay.editing.enable();
     });
 
     it('Should update images mode to the "next" (depending on developer) mode on dblclick', function() {
       var edit = overlay.editing;
-      var modes = edit.modes;
-      var img = overlay.getElement();
+      var modes = edit._modes;
 
-      edit._freeRotateMode();
-      expect(edit.mode).to.equal('freeRotate');
-      var idx = modes.indexOf('freeRotate');
+      edit._mode = 'distort'
+      var idx = modes.indexOf('distort');
 
-      chai.simulateEvent(img, chai.mouseEvents.Dblclick);
-      var newIdx = modes.indexOf(edit.mode)
-      expect(newIdx).to.equal((idx + 1) % modes.length)
+      var newIdx = modes.indexOf(edit._nextMode()._mode)
+      setTimeout(function () {
+        expect(newIdx).to.equal((idx + 1) % modes.length)
+      }, 3000);
     });
 
     it('Will update to next mode even when current mode is \'lock\'', function() {
@@ -131,13 +129,13 @@ describe('L.DistortableImage.Edit', function() {
       var img = overlay.getElement();
 
       edit._lock();
-      expect(edit.mode).to.equal('lock');
+      expect(edit._mode).to.equal('lock');
       
       chai.simulateEvent(img, chai.mouseEvents.Dblclick);
-      expect(edit.mode).to.not.equal('lock');
+      expect(edit._mode).to.not.equal('lock');
     });
 
-    it("It prevents dblclick events from propagating to the map", function () {
+    it('It prevents dblclick events from propagating to the map', function() {
       var overlaySpy = sinon.spy();
       var mapSpy = sinon.spy();
 
@@ -145,29 +143,26 @@ describe('L.DistortableImage.Edit', function() {
       map.on('dblclick', mapSpy);
       
       overlay.fire('dblclick');
-      expect(overlay.editing.nextMode).to.have.been.called;
+      expect(overlay.editing._nextMode).to.have.been.called;
       expect(L.DomEvent.stop).to.have.been.called;
 
       expect(overlaySpy.called).to.be.true;
       expect(mapSpy.notCalled).to.be.true;
     });
 
-    it('Will return false when the image is disabled or is multi-selected', function () {
+    it('Will return false when the image is disabled or is multi-selected', function() {
       var edit = overlay.editing;
       var img = overlay.getElement();
 
-      expect(edit.nextMode()).to.not.be.false
-
       edit.disable();
-      expect(edit.nextMode()).to.be.false
+      expect(edit._nextMode()).to.be.false
 
       edit.enable();
-      expect(edit.nextMode()).to.not.be.false
 
       chai.simulateEvent(img, chai.mouseEvents.ShiftMouseDown);
       setTimeout(function () {
         expect(L.DomUtil.getClass(img)).to.include('selected');
-        expect(edit.nextMode()).to.be.false
+        expect(edit._nextMode()).to.be.false
       }, 3000);
     });
   });

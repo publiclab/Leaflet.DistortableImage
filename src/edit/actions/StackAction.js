@@ -17,11 +17,11 @@ L.StackAction = L.EditAction.extend({
       svg: true,
       html: use,
       tooltip: tooltip,
-      className: edit.mode === 'lock' ? 'disabled' : '',
+      className: edit._mode === 'lock' ? 'disabled' : '',
     };
 
-    L.DistortableImage.action_map.q = edit.mode === 'lock' ? '' : '_stackUp';
-    L.DistortableImage.action_map.a = edit.mode === 'lock' ? '' : '_stackDown';
+    L.DistortableImage.action_map.q = edit._mode === 'lock' ? '' : '_stackUp';
+    L.DistortableImage.action_map.a = edit._mode === 'lock' ? '' : '_stackDown';
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },

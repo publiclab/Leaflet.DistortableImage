@@ -85,7 +85,7 @@ L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.p
 
 ### Actions
 
-* `actions` (*optional*, default: [`L.ScaleAction`, `L.DistortAction`, `L.RotateAction`, `L.FreeRotateAction`, `L.LockAction`, `L.OpacityAction`, `L.BorderAction`, `L.StackAction`, `L.ExportAction`, `L.DeleteAction`], value: *array*)
+* `actions` (*optional*, default: [`L.ScaleAction`, `L.DistortAction`, `L.RotateAction`, `L.FreeRotateAction`, `L.LockAction`, `L.OpacityAction`, `L.BorderAction`, `L.ExportAction`, `L.DeleteAction`], value: *array*)
 
 If you would like to overrwrite the default toolbar actions available for an individual image's `L.Popup` toolbar, pass an array with the actions you want. Reference the available values [here](#Single-Image-Interface).
 
@@ -177,7 +177,7 @@ Values available to pass to `mode` are:
 * **rotate**: Rotation only.
 * **scale**: Resize only.
 * **freeRotate**: Combines the rotate and scale modes into one.
-* **lock**: Locks the image in place. Prevents moving it via user gestures, and disables all toolbar actions / hotkeys that are not associated with a mode. Exception: `L.ExportAction` will still be enabled.
+* **lock**: Locks the image in place. Disables any user gestures, toolbar actions, or hotkeys that are not associated with mode. Exception: `L.ExportAction` will still be enabled.
 
 In the below example, the image will be initialiazed with "freeRotate" handles:
 
@@ -344,8 +344,6 @@ Defaults:
   * Sets `freeRotate` mode.
 * **L.LockAction** (<kbd>l</kbd>, <kbd>u</kbd>)
   * Toggles between `lock` mode and `distort` mode.
-* **L.StackAction** (<kbd>j</kbd>, <kbd>k</kbd>)
-  * Switch an image's overlap compared to neighboring images back and forth into view. Employs [`bringToFront()`](https://leafletjs.com/reference-1.5.0.html\#imageoverlay-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.5.0.html#imageoverlay-bringtoback) from the Leaflet API.
 * **L.BorderAction** (<kbd>b</kbd>)
 * **L.OpacityAction** (<kbd>o</kbd>)
 * **L.ExportAction** (<kbd>e</kbd>)
@@ -354,7 +352,8 @@ Defaults:
   * windows `backspace` / mac `delete`
 
  Addons:
-
+* **L.StackAction** (<kbd>q</kbd>, <kbd>a</kbd>)
+  * Switch an image's overlap compared to neighboring images back and forth into view. Employs [`bringToFront()`](https://leafletjs.com/reference-1.5.0.html\#imageoverlay-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.5.0.html#imageoverlay-bringtoback) from the Leaflet API.
 * **L.GeolocateAction (WIP)**
 * **L.RevertAction (WIP)**
   * Restores the image to its original proportions and scale, but keeps its current rotation angle and location on the map intact.
@@ -540,10 +539,9 @@ A handler that holds the keybindings and toolbar API for an image instance. It i
   </ul>
 </details>
 
-<details><summary><code><b>enabled()</b>: Boolean</code></summary>
+<details><summary><code><b>getMode()</b>: String</code></summary>
   <ul>
-    <li>Returns true if editing on the individual image instance is enabled.</li>
-    <li><code>img.editing.enabled()</code></li>
+    <li>Returns the current <code>mode</code> of the image.</li>
   </ul>
 </details>
 

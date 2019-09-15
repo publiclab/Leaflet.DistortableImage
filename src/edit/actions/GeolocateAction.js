@@ -7,7 +7,7 @@ L.GeolocateAction = L.EditAction.extend({
       svg: true,
       html: 'explore',
       tooltip: 'Geolocate Image',
-      className: edit.mode === 'lock' ? 'disabled' : '',
+      className: edit._mode === 'lock' ? 'disabled' : '',
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);

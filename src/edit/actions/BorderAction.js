@@ -17,11 +17,11 @@ L.BorderAction = L.EditAction.extend({
       svg: true,
       html: use,
       tooltip: tooltip,
-      className: edit.mode === 'lock' ? 'disabled' : '',
+      className: edit._mode === 'lock' ? 'disabled' : '',
     };
 
     // conditional for disabling keybindings for this action when the image is locked.
-    L.DistortableImage.action_map.b = edit.mode === 'lock' ? '' : '_toggleBorder';
+    L.DistortableImage.action_map.b = edit._mode === 'lock' ? '' : '_toggleBorder';
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
