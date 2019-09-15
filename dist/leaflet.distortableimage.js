@@ -2318,11 +2318,15 @@ L.DistortableImage.Edit = L.Handler.extend({
     var map = ov._map;
     var m = this._mode;
 
+
     if (m !== 'lock' || !this.hasTool(L.LockAction)) { return; }
 
     map.removeLayer(this._handles[m]);
-
-    this._mode = ov.options.mode;
+    if (ov.options.mode === 'lock') {
+      this._mode = 'distort';
+    } else {
+      this._mode = ov.options.mode;
+    }
     this._enableDragging();
     map.addLayer(this._handles[this._mode]);
     this._refresh();
@@ -2352,13 +2356,11 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _singleClickListeners: function() {
     var map = this._overlay._map;
-
     L.DomEvent.off(map, 'click', this._deselect, this);
   },
 
   _resetClickListeners: function() {
     var map = this._overlay._map;
-
     L.DomEvent.on(map, 'click', this._deselect, this);
   },
 
@@ -2383,7 +2385,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     var m = this._mode;
 
     // mutli-image interface doesn't have markers so check if its on & return early if true
-    if (eP && eP.anySelected()) { return; }
+    if (this._mode === 'lock' || eP && eP.anySelected()) { return; }
 
     var currentHandle = this._handles[m];
 
