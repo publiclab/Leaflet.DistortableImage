@@ -578,12 +578,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     } catch (e) { }
   },
 
-  _backgroundRefresh: function() {
-    if (this.toolbar) { this._removeToolbar(); }
-    this._addToolbar();
-    this._removeToolbar();
-  },
-
   _refresh: function() {
     if (this.toolbar) { this._removeToolbar(); }
     this._addToolbar();

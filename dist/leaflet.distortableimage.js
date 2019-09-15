@@ -2441,12 +2441,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     } catch (e) { }
   },
 
-  _backgroundRefresh: function() {
-    if (this.toolbar) { this._removeToolbar(); }
-    this._addToolbar();
-    this._removeToolbar();
-  },
-
   _refresh: function() {
     if (this.toolbar) { this._removeToolbar(); }
     this._addToolbar();
@@ -2652,15 +2646,11 @@ L.DistortableCollection.Edit = L.Handler.extend({
   },
 
   _unlockGroup: function() {
-    var map = this._group._map;
-
     this._group.eachLayer(function(layer) {
       if (this._group.isSelected(layer)) {
         var edit = layer.editing;
         if (edit._mode === 'lock') {
-          map.removeLayer(edit._handles[edit._mode]);
           edit._unlock();
-          edit._backgroundRefresh();
           // unlock updates the layer's handles; deselect to ensure they're hidden
           edit._deselect();
         }
@@ -2669,15 +2659,11 @@ L.DistortableCollection.Edit = L.Handler.extend({
   },
 
   _lockGroup: function() {
-    var map = this._group._map;
-
     this._group.eachLayer(function(layer) {
       if (this._group.isSelected(layer) ) {
         var edit = layer.editing;
         if (edit._mode !== 'lock') {
           edit._lock();
-          map.addLayer(edit._handles[edit._mode]);
-          edit._backgroundRefresh();
           // map.addLayer also deselects the image, so we reselect here
           L.DomUtil.addClass(layer.getElement(), 'selected');
         }
