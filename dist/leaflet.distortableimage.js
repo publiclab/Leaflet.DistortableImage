@@ -583,6 +583,21 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return this;
   },
 
+  dragBy: function(formerPoint, newPoint) {
+    var map = this._map;
+    var center = map.project(this.getCenter());
+    var i;
+    var p;
+    var diference = map.project(formerPoint).subtract(map.project(newPoint));
+
+    for (i = 0; i < 4; i++) {
+      p = map
+          .project(this.getCorner(i))
+          .subtract(diference);
+      this.setCorner(i, map.unproject(p));
+    }
+  },
+
   _revert: function() {
     var a = this.rotation;
     var map = this._map;
@@ -1189,7 +1204,30 @@ L.DistortHandle = L.EditHandle.extend({
   },
 });
 
-L.FreeRotateHandle = L.EditHandle.extend({
+L.DragHandle = L.EditHandle.extend({
+  options: {
+    TYPE: 'drag',
+    icon: L.icon({
+      iconUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAsVJREFUeNrMVztLXEEUvnNVFAVBAhY2aRKbTZEHJNpYabuNjSgYg/GxdsmPSJkUAa/ZdVEX8mgWYVutbHxAHkVskjQBuUUgBISVhCQk3wnfwMlk1rusN1wHPubOzJlzvjlz5sxc01Ma/hUEwQnwDIjqc7uvgv9YYO86qgIwCXQbdNTlQ8kcCBHgBch8TcloF6oJGr6phk6EQAkfdz3zvgDr9Mr7Fg1fptEZoM8jsmrokpfsiIFO4IIjuE2v1EDmR4LRdlR5Gh51hj8D34ABtm8YTtqna0TgklIw5CgQguKxIojEjmFROg/MKQO27NkFAB+4wAPouGUJiIvWKHwbAxX2XyWRKWkqhT+pbJntJZJuUzISW0+5hW+obxrVBsfvoH/dqCCJuU97GBh2VteLSiYvArmErT8EVoAK9Bw7enbpVYmvAQlyowYforrH5jXL2rPHI/TKONDB7u9AlavdaTBPvPmazUeQuy8f7UomUgTEwIJPEQ3sQGE/6ll2l9H/KcEzBcfWn2IclluM3DpddJxSHujlFkscbUPvmB0LHVnLrId7nlaZVkEc6QGXQI1MAwZcWmVRHeNaQwJMMiU2cwy4s7p/RJ2ckpvIQs+cIs+5GzitloLKHUV3MPREuXbTOKO91dX387gGTONxIgEWm+E61FFrpcyqXLHsEwiDjEsjAksqw5XPoL9MHVrn6QR4q+XZrDaR4RoWzq2ymafuRA/Mq1stSsHLVkcbdf9VjOcx8ZH3+SFWcCWlVPyWuUBOwUWdC1wP5NVjYiXFWLO69PZ6CRTUY6KSIoEKdf6T3IzzgHxnsyHctNBEkmn6Oob8ExUDg/ahGybd177cDjzH5xHwgDiSvoS7I/LZyvxJZj0wod7tkX5G0XVC7rEyLhfLJjBGbKoLLEfZWObyKeZ6oY82g+yf5Zn/mJyHX7PMf04z/T3/LcAAu4E6iiyJqf0AAAAASUVORK5CYII=',
+      iconSize: [32, 32],
+      iconAnchor: [16, 16],
+    })
+  },
+
+  _onHandleDrag: function() {
+    var overlay = this._handled;
+    var formerLatLng = overlay.getCorner(this._corner);
+    var newLatLng = this.getLatLng();
+
+    overlay.dragBy(formerLatLng, newLatLng);
+  },
+
+  updateHandle: function() {
+    this.setLatLng(this._handled.getCorner(this._corner));
+  },
+});
+
+L.RotateScaleHandle = L.EditHandle.extend({
   options: {
     TYPE: 'freeRotate',
     icon: L.icon({
@@ -1926,7 +1964,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     opacity: 0.7,
     outline: '1px solid red',
     keymap: L.distortableImage.action_map,
-    modes: ['scale', 'distort', 'rotate', 'freeRotate', 'lock'],
+    modes: ['scale', 'distort', 'rotate', 'freeRotate', 'lock', 'drag'],
   },
 
   initialize: function(overlay, options) {
@@ -2049,11 +2087,6 @@ L.DistortableImage.Edit = L.Handler.extend({
       this._dragHandles.addLayer(new L.DragHandle(overlay, i));
     }
 
-    this._dragHandles = L.layerGroup();
-    for (i = 0; i < 4; i++) {
-      this._dragHandles.addLayer(new L.DragHandle(overlay, i));
-    }
-    
     this._handles = {
       drag: this._dragHandles,
       scale: this._scaleHandles,
@@ -2153,23 +2186,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     overlay.setCorners(transCorners);
   },
 
-  _dragBy: function (formerPoint, newPoint) {
-	  var overlay = this._overlay,
-	  	map = overlay._map,
-		center = map.project(overlay.getCenter()),
-		i,
-		p,
-		diference = map.project (formerPoint).subtract (map.project (newPoint));
-	  
-	  for (i = 0; i < 4; i++) {
-        p = map
-          .project(overlay.getCorner(i))
-          .subtract(diference);
-        overlay.setCorner(i, map.unproject(p));
-      }
-	  overlay._reset();	  
-  },
-  
   _enableDragging: function() {
     var overlay = this._overlay;
     var map = overlay._map;
@@ -3140,7 +3156,9 @@ L.Map.BoxCollector = L.Map.BoxZoom.extend({
   },
 
   _onMouseUp: function(e) {
-    if (e.which !== 1 && e.button !== 1) { return; }
+    if (e.which !== 1 && e.button !== 1) {
+      return;
+    }
 
     this._finish();
 

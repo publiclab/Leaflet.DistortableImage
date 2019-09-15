@@ -105,7 +105,9 @@ L.Map.BoxCollector = L.Map.BoxZoom.extend({
   },
 
   _onMouseUp: function(e) {
-    if (e.which !== 1 && e.button !== 1) { return; }
+    if (e.which !== 1 && e.button !== 1) {
+      return;
+    }
 
     this._finish();
 
