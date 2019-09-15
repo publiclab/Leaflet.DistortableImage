@@ -16,7 +16,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     /* Interaction modes. TODO - create API for
     * limiting modes similar to toolbar actions API */
     this._modes = this.options.modes;
-    this._mode = this._modes[this._modes.indexOf(overlay.options.mode)] || 'distort';
+    this._mode = this._modes[this._modes.indexOf(overlay.options.mode)];
     this._selected = this._overlay.options.selected || false;
     this._transparent = false;
     this._outlined = false;
@@ -446,14 +446,15 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _unlock: function() {
-    var map = this._overlay._map;
+    var ov = this._overlay;
+    var map = ov._map;
     var m = this._mode;
 
     if (m !== 'lock' || !this.hasTool(L.LockAction)) { return; }
 
     map.removeLayer(this._handles[m]);
 
-    this._mode = 'distort';
+    this._mode = ov.options.mode;
     this._enableDragging();
     map.addLayer(this._handles[this._mode]);
     this._refresh();

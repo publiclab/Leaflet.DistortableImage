@@ -241,6 +241,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     // todo: find ideal number to prevent distortions during RotateScale, and make it dynamic (remove hardcoding)
     edgeMinWidth: 50,
     editable: true,
+    mode: 'distort',
   },
 
   initialize: function(url, options) {
@@ -345,7 +346,11 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
     this.setBounds(L.latLngBounds(this._corners));
 
-    this._initialDimensions = {'height': imageHeight, 'width': imageWidth, 'offset': offset};
+    this._initialDimensions = {
+      'height': imageHeight,
+      'width': imageWidth,
+      'offset': offset,
+    };
   },
 
   _initEvents: function() {
@@ -492,7 +497,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   _revert: function() {
-    var angle = this.rotation;
+    var a = this.rotation;
     var map = this._map;
     var edit = this.editing;
     var center = map.project(this.getCenter());
@@ -508,11 +513,11 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
     this.setCorners(corners);
 
-    if (angle !== 0) { this.rotateBy(L.TrigUtil.degreesToRadians(360 - angle)); }
+    if (a !== 0) { this.rotateBy(L.TrigUtil.degreesToRadians(360 - a)); }
 
     map.addLayer(edit._handles[edit._mode]);
 
-    this.rotation = angle;
+    this.rotation = a;
   },
 
   /* Copied from Leaflet v0.7 https://github.com/Leaflet/Leaflet/blob/66282f14bcb180ec87d9818d9f3c9f75afd01b30/src/dom/DomUtil.js#L189-L199 */
@@ -1879,7 +1884,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     /* Interaction modes. TODO - create API for
     * limiting modes similar to toolbar actions API */
     this._modes = this.options.modes;
-    this._mode = this._modes[this._modes.indexOf(overlay.options.mode)] || 'distort';
+    this._mode = this._modes[this._modes.indexOf(overlay.options.mode)];
     this._selected = this._overlay.options.selected || false;
     this._transparent = false;
     this._outlined = false;
@@ -2309,14 +2314,15 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _unlock: function() {
-    var map = this._overlay._map;
+    var ov = this._overlay;
+    var map = ov._map;
     var m = this._mode;
 
     if (m !== 'lock' || !this.hasTool(L.LockAction)) { return; }
 
     map.removeLayer(this._handles[m]);
 
-    this._mode = 'distort';
+    this._mode = ov.options.mode;
     this._enableDragging();
     map.addLayer(this._handles[this._mode]);
     this._refresh();
