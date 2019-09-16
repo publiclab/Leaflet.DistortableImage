@@ -1,6 +1,7 @@
 describe('L.DistortableImage.Edit', function() {
   var map;
   var overlay;
+  var ov2;
 
   beforeEach(function(done) {
     map = L.map(L.DomUtil.create('div', '', document.body)).setView([41.7896, -87.5996], 15);
@@ -14,16 +15,28 @@ describe('L.DistortableImage.Edit', function() {
       ],
     }).addTo(map);
 
+    ov2 = L.distortableImageOverlay('/examples/example.png', {
+      corners: [
+        L.latLng(41.7934, -87.6052),
+        L.latLng(41.7934, -87.5852),
+        L.latLng(41.7834, -87.5852),
+        L.latLng(41.7834, -87.6052),
+      ],
+      suppressToolbar: true,
+    }).addTo(map);
+
     /* Forces the image to load before any tests are run. */
-    L.DomEvent.on(overlay._image, 'load', function() { done(); });
+    L.DomEvent.on(ov2._image, 'load', function() { done(); });
 
     afterEach(function() {
       L.DomUtil.remove(overlay);
+      L.DomUtil.remove(ov2);
     });
   });
 
   it('Should be initialized along with each instance of L.DistortableImageOverlay.', function() {
     expect(overlay.editing).to.be.an.instanceOf(L.DistortableImage.Edit);
+    expect(ov2.editing).to.be.an.instanceOf(L.DistortableImage.Edit);
   });
 
   it('Should keep handles on the map in sync with the corners of the image.', function() {
@@ -106,33 +119,33 @@ describe('L.DistortableImage.Edit', function() {
     });
   });
 
-  describe('#_nextMode', function () {
-    beforeEach(function () {
+  describe('#nextMode', function () {
+    beforeEach(function() {
       overlay.editing.enable();
+      overlay._pick();
     });
 
-    it('Should update images mode to the "next" (depending on developer) mode on dblclick', function() {
+    it('Should update image\'s mode to the next in its modes array', function() {
       var edit = overlay.editing;
-      var modes = edit._modes;
+      var modes = edit.getModes();
 
       edit._mode = 'distort'
       var idx = modes.indexOf('distort');
 
-      var newIdx = modes.indexOf(edit._nextMode()._mode)
-      setTimeout(function () {
-        expect(newIdx).to.equal((idx + 1) % modes.length)
-      }, 3000);
+      var newIdx = modes.indexOf(edit.nextMode()._mode)
+      expect(newIdx).to.equal((idx + 1) % modes.length)
     });
 
-    it('Will update to next mode even when current mode is \'lock\'', function() {
+    it('Will only update if the image is selected, or nextMode was triggerd by dblclick', function() {
       var edit = overlay.editing;
-      var img = overlay.getElement();
 
-      edit._lock();
-      expect(edit._mode).to.equal('lock');
-      
-      chai.simulateEvent(img, chai.mouseEvents.Dblclick);
-      expect(edit._mode).to.not.equal('lock');
+      overlay._unpick();
+      expect(edit.nextMode()).to.be.false
+
+      chai.simulateEvent(overlay.getElement(), chai.mouseEvents.Dblclick);
+      setTimeout(function () {
+        expect(edit.nextMode()).to.be.ok
+      }, 3000);
     });
 
     it('It prevents dblclick events from propagating to the map', function() {
@@ -143,27 +156,55 @@ describe('L.DistortableImage.Edit', function() {
       map.on('dblclick', mapSpy);
       
       overlay.fire('dblclick');
-      expect(overlay.editing._nextMode).to.have.been.called;
-      expect(L.DomEvent.stop).to.have.been.called;
 
-      expect(overlaySpy.called).to.be.true;
-      expect(mapSpy.notCalled).to.be.true;
-    });
-
-    it('Will return false when the image is disabled or is multi-selected', function() {
-      var edit = overlay.editing;
-      var img = overlay.getElement();
-
-      edit.disable();
-      expect(edit._nextMode()).to.be.false
-
-      edit.enable();
-
-      chai.simulateEvent(img, chai.mouseEvents.ShiftMouseDown);
       setTimeout(function () {
-        expect(L.DomUtil.getClass(img)).to.include('selected');
-        expect(edit._nextMode()).to.be.false
+        expect(overlay.editing.nextMode).to.have.been.called;
+        expect(L.DomEvent.stop).to.have.been.called;
+
+        expect(overlaySpy.called).to.be.true;
+        expect(mapSpy.notCalled).to.be.true;
       }, 3000);
     });
+
+    it('Should call #setMode', function () {
+      var overlaySpy = sinon.spy();
+      overlay.on('dblclick', overlaySpy);
+
+      overlay.fire('dblclick');
+      expect(overlay.editing.setMode).to.have.been.called;
+    });
+
+    it('Will still update the mode of an initialized image with suppressToolbar: true', function() {
+      ov2._pick();
+      expect(ov2.editing.toolbar).to.be.undefined
+      expect(ov2.editing.nextMode()).to.be.ok
+    })
+  });
+
+  describe('#setMode', function() {
+    it('Will return false if the passed value is not in the image\'s modes array', function() {
+      var edit = overlay.editing;
+      overlay._pick();
+      expect(edit.setMode('lock')).to.be.ok
+      expect(edit.setMode('blah')).to.be.false
+    });
+
+    it('Will return false if the image is not selected', function() {
+      var edit = overlay.editing;
+      expect(edit.setMode('lock')).to.be.false
+    });
+
+    it('Will return false if the passed mode is already the images mode', function() {
+      var edit = overlay.editing;
+      overlay._pick();
+      expect(edit.setMode('lock')).to.be.ok
+      expect(edit.setMode('lock')).to.be.false
+    });
+
+    it('Will still update the mode of an initialized image with suppressToolbar: true', function () {
+      ov2._pick();
+      expect(ov2.editing.toolbar).to.be.undefined
+      expect(ov2.editing.setMode('lock')).to.be.ok
+    })
   });
 });

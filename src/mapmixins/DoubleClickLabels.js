@@ -1,4 +1,3 @@
-/* eslint-disable valid-jsdoc */
 /**
  * The 'doubleClickLabels' handler only runs instead of 'doubleClickZoom' when a googleMutant
  * layer is added to the map using 'map.addGoogleMutant()' without the option labels: false.

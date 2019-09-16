@@ -42,7 +42,7 @@ And watch this GIF demo:
 
 To test the code, open `index.html` in your browser and click and drag the markers on the edges of the image. The image will show perspectival distortions.
 
-For the additional features in the [multiple image interface](#Multiple-Image-Interface), open `select.html` and use <kbd>shift</kbd> + click on an image or <kbd>shift</kbd> + drag on the map to "multi-select" images. For touch screens, touch + hold the image.
+For the additional features in the [multiple image interface](#Multiple-Image-Interface), open `select.html` and use <kbd>shift</kbd> + click on an image or <kbd>shift</kbd> + drag on the map to "multi-select" (collect) images. For touch screens, touch + hold the image.
 
 ## Single Image Interface
 
@@ -61,17 +61,7 @@ map.whenReady(function() {
 });
 ```
 
-<b>Note</b>: <code>map.addGoogleMutant()</code> is just a convenience function for adding our recommended layer to the map. If you want a different baselayer, skip this line and add your preferred layer to the map as you normally would. For ex:
-
-```js
-L.tileLayer('https://{s}.tiles.mapbox.com/v3/anishshah101.ipm9j6em/{z}/{x}/{y}.png', {
-  maxZoom: 18,
-  attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-    '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-    'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-  id: 'examples.map-i86knfo3'
-}).addTo(map);
-```
+<b>Note</b>: <code>map.addGoogleMutant()</code> is a convenience function for adding our recommended layer to the map. If you want a different baselayer, skip this line and add your preferred setup instead.
 
 **Options** available to pass during `L.DistortableImageOverlay` initialization:
 
@@ -103,7 +93,7 @@ img = L.distortableImageOverlay('example.jpg', {
 
 Allows you to set an image's position on the map manually (somewhere other than the center default).
 
-Note that this can manipulate shape and dimensions of your image.
+Note that this can manipulate the shape and dimensions of your image.
 
 The corners should be passed as an array of `L.latLng` objects in NW, NE, SW, SE order (in a "Z" shape).
 
@@ -140,7 +130,7 @@ JSON.stringify(img.getCorners())
 
 Internally, we use the image `load` event to trigger a call to `img.editing.enable()`, which sets up the editing interface (makes the image interactive, adds markers and toolbar).
 
-For a scenario where you want to allow editing based on custom logic, you can pass `editable: false` and then write your own function with a call to `img.editing.enable()`. Other passed options such as `selected: true` and `mode` will still be applicable and applied then.
+If you want to enable editing based on custom logic instead, you can pass `editable: false` and then write your own function with a call to `img.editing.enable()`. Other passed options such as `selected: true` and `mode` will still be applicable and applied then.
 
 <blockquote><b>Note</b>: when using the multiple image interface (<code>L.DistortableCollection</code>) this option will be ignored on individual <code>L.DistortableImageOverlay</code> instances and should instead be passed to the collection instance.</blockquote>
 
@@ -191,11 +181,11 @@ img = L.distortableImageOverlay('example.jpg', {
 
 `selected` (*optional*, default: false, value: *boolean*)
 
-By default, your image will initially appear on the screen as "unselected", meaning its toolbar and editing handles will not be visible. Interacting with the image, such as by clicking it, will make these components visible.
+By default, your image will initially appear on the screen as "unselected" - no toolbar, markers, etc. Interacting with it will make them visible.
 
-Some developers prefer that an image initially appears as "selected" instead of "unselected". In this case, we provide an option to pass `selected: true`.
+If you prefer that an image initially appears as selected instead, pass `selected: true`.
 
-Note: when working with the multi image interface, only the last overlay you pass `selected: true` to will appear with editing handles _and_ a toolbar.
+Note: when working with the multi-image interface, only the last overlay you pass `selected: true` to will appear with editing handles _and_ a toolbar.
 
 ### Suppress Toolbar
 
@@ -213,7 +203,7 @@ The setup is relatively similar.
 
 Although not required, you will probably want to pass `corners` to individual images when adding multiple or they will be positioned on top of eachother.
 
-here is an example with two images:
+Here is an example with two images:
 
 ```js
 // 1. Instantiate map
@@ -312,17 +302,17 @@ imgGroup = L.distortableCollection({
 
 Currently it supports multiple image selection and translations, and WIP we are working on porting all editing tools to work for it, such as opacity, etc. Image distortions (via modes) still use the single-image interface.
 
-**multi-select:** A single toolbar instance (using `L.control`) renders the set of tools available to use on collections of images.
+**collect:** A single toolbar instance (using `L.control`) renders the set of tools available to use on collections of images.
 
 1. Multi-selection works with <kbd>shift</kbd> + `click` to toggle an individual image's inclusion in this interface.
-2. Or <kbd>shift</kbd> + `drag` to use our `L.Map.BoxSelector` handler to select multiple at once.
+2. Or <kbd>shift</kbd> + `drag` to use our `L.Map.BoxCollector` handler to select multiple at once.
 3. Or for touch devices, `touch` + `hold` (aka `longpress`).
 
-**un-multi-select:**
+**decollect:**
 
 * In order to return to the single-image interface, where each `L.popup` toolbar only applies actions on the image it's attached to, you must toggle *all* images out of multi-select with `shift` + click, or...
-* ...Click on the map or hit the <kbd>esc</kbd> key to quickly deselect.
-* For the aforementioned 3 mutli-select methods, the `BoxSelector` method is the only one that doesn't also toggle _out_ of multi-select mode.
+* ...Click on the map or hit the <kbd>esc</kbd> key to quickly decollect all.
+* For the aforementioned 3 mutli-select methods, the `BoxCollector` method is the only one that doesn't also toggle _out_ of multi-select mode.
 
 ---
 
@@ -343,8 +333,9 @@ Defaults:
 * **L.FreeRotateAction** (<kbd>f</kbd>)
   * Sets `freeRotate` mode.
 * **L.LockAction** (<kbd>l</kbd>, <kbd>u</kbd>)
-  * Toggles between `lock` mode and `distort` mode.
+  * Toggles between `lock` mode and the initially set default mode (`distort` by default).
 * **L.BorderAction** (<kbd>b</kbd>)
+  * Toggles a thin border around the overlay.
 * **L.OpacityAction** (<kbd>o</kbd>)
 * **L.ExportAction** (<kbd>e</kbd>)
 * **L.DeleteAction** (<kbd>backscpace</kbd>, <kbd>delete</kbd>)
@@ -368,11 +359,11 @@ Defaults:
 
 * **L.ExportAction** (<kbd>e</kbd>) (WIP)
 * **L.DeleteAction** (<kbd>backscpace</kbd>, <kbd>delete</kbd>)
-  * Permanently deletes a group of images from the map.
+  * Permanently deletes a collection of images from the map.
 * **L.LockAction** (<kbd>l</kbd>)
-  * Sets `lock` mode for a group of images.
+  * Sets `lock` mode for a collection of images.
 * **L.UnlocksAction** (<kbd>u</kbd>)
-  * Unsets `lock` mode for a group of images.
+  * Unsets `lock` mode for a collection of images.
 
 ## Quick API Reference
 
@@ -430,7 +421,7 @@ And the following custom handlers:
 <details><summary><code><b>boxSelector</b>: this</code></summary>
   <ul>
     <li>Overrides the map's default <a href="https://leafletjs.com/reference-1.5.0.html#map-boxzoom"><code>boxZoom</code></a> handler.</li>
-    <li>Allows multiple images to be selected when <kbd>shift</kbd> + <code>drag</code>ing on the map in the multiple-image inerface.</li>
+    <li>Allows multiple images to be collected when <kbd>shift</kbd> + <code>drag</code>ing on the map in the multiple-image inerface.</li>
   </ul>
 </details>
 <br>
@@ -506,6 +497,10 @@ img.setCorners(scaledCorners);
   <ul><li>Rotates the image by the given radian angle and calls <code>#setCorners</code>.</li></ul>
 </details>
 
+<details><summary><code><b>isPicked()</b>: Boolean</code></summary>
+  <ul><li>Returns true if the individual image instance is <code>selected</code>.</li></ul>
+</details>
+
 ---
 
 `L.DistortableImageOverlay.Edit`
@@ -541,7 +536,22 @@ A handler that holds the keybindings and toolbar API for an image instance. It i
 
 <details><summary><code><b>getMode()</b>: String</code></summary>
   <ul>
-    <li>Returns the current <code>mode</code> of the image.</li>
+    <li>Returns the current <code>mode</code> of the image if it's picked, otherwise returns false.</li>
+  </ul>
+</details>
+
+<details><summary><code><b>nextMode()</b>: this</code></summary>
+  <ul>
+    <li>Sets the mode of the image to the next one in the <code>
+    modes</code> array by passing it to <code>#setMode.</code></li>
+    <li>If the image is not picked or <code>modes</code> only has 1 mode, it will instead return false.</li>
+    <li>We use this internally to iterate through an image's editing modes easily on <code>dblclick</code>, but you can call it programmatically if you find a need. Note that <code>dblclick</code> also picks the image (given it's not disabled or multi-selected, etc.)</li>
+  </ul>
+</details>
+
+<details><summary><code><b>setMode(<i>mode</i> &#60;string>)</b>: this</code></summary>
+  <ul>
+    <li>Sets the  <code>mode</code> of the image to the passed one given that it is in the  <code>modes </code> array, it is not already the current mode, and the image is picked. Otherwise returns false.</li>
   </ul>
 </details>
 
@@ -549,12 +559,12 @@ A handler that holds the keybindings and toolbar API for an image instance. It i
 
 `L.DistortableCollection`
 
-<details><summary><code><b>isSelected(<i>img</i> &#60;DistortableImageOverlay>)</b>: Boolean</code></summary>
-<ul><li>Returns true if the passed <code>DistortableImageOverlay</code> instance is multi-selected, i.e. its underlying <code>HTMLImageElement</code> has a class containing "selected".</li></ul>
+<details><summary><code><b>isCollected(<i>img</i> &#60;DistortableImageOverlay>)</b>: Boolean</code></summary>
+<ul><li>Returns true if the passed <code>L.DistortableImageOverlay</code> instance is collected, i.e. its underlying <code>HTMLImageElement</code> has a class containing "selected".</li></ul>
 </details>
 
-<details><summary><code><b>anySelected()</b>: Boolean</code></summary>
-<ul><li>Returns true if any <code>DistortableImageOverlay</code> instances are mutli-selected.</li></ul>
+<details><summary><code><b>anyCollected()</b>: Boolean</code></summary>
+<ul><li>Returns true if any <code>L.DistortableImageOverlay</code> instances are collected.</li></ul>
 </details>
 
 ---

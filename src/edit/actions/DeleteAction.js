@@ -7,7 +7,7 @@ L.DeleteAction = L.EditAction.extend({
       * we can tell whether the overlay is an instance of `L.DistortableImageOverlay` or `L.DistortableCollection` bc only
       * the former should have `parentGroup` defined on it. From there we call the apporpriate keybindings and methods.
       */
-    if (edit.parentGroup) {
+    if (edit instanceof L.DistortableImage.Edit) {
       tooltip = 'Delete Image';
       // backspace windows / delete mac
       L.DistortableImage.action_map.Backspace = edit._mode === 'lock' ? '' : '_removeOverlay';
@@ -30,7 +30,7 @@ L.DeleteAction = L.EditAction.extend({
   addHooks: function() {
     var edit = this._overlay.editing;
 
-    if (edit.parentGroup) { edit._removeOverlay(); }
+    if (edit instanceof L.DistortableImage.Edit) { edit._removeOverlay(); }
     else { edit._removeGroup(); }
   },
 });
