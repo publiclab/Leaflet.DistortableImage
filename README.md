@@ -501,16 +501,6 @@ img.setCorners(scaledCorners);
   <ul><li>Returns true if the individual image instance is <code>selected</code>.</li></ul>
 </details>
 
-<details><summary><code><b>pick()</b>: this</code></summary>
-<ul><li>Selects the individual image instance and adds markers and toolbar when applicable.</li></ul>
-<ul><li>Returns false for disabled images.</li></ul>
-</details>
-
-<details><summary><code><b>unpick()</b>: this</code></summary>
-<ul><li>Deselects the individual image instance and removes markers and toolbar when applicable.</li></ul>
-<ul><li>Returns false for disabled images.</li></ul>
-</details>
-
 ---
 
 `L.DistortableImageOverlay.Edit`

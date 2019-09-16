@@ -66,7 +66,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
     this.fire('add');
 
-    L.DomEvent.on(this._image, 'click', this.pick, this);
+    L.DomEvent.on(this._image, 'click', this._pick, this);
     L.DomEvent.on(map, {
       singleclickon: this._singleClickListeners,
       singleclickoff: this._resetClickListeners,
@@ -77,18 +77,18 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
      * single / dblclick to not deselect images on map dblclick.
      */
     if (!(map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled())) {
-      L.DomEvent.on(map, 'click', this.unpick, this);
+      L.DomEvent.on(map, 'click', this._unpick, this);
     }
   },
 
   onRemove: function(map) {
-    L.DomEvent.off(this._image, 'click', this.pick, this);
+    L.DomEvent.off(this._image, 'click', this._pick, this);
     L.DomEvent.off(map, {
       singleclickon: this._singleClickListeners,
       singleclickoff: this._resetClickListeners,
       singleclick: this._singleClick,
     }, this);
-    L.DomEvent.off(map, 'click', this.unpick, this);
+    L.DomEvent.off(map, 'click', this._unpick, this);
 
     if (this.editing) { this.editing.disable(); }
     this.fire('remove');
@@ -167,25 +167,25 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   _singleClick: function(e) {
-    if (e.type === 'singleclick') { this.unpick(); }
+    if (e.type === 'singleclick') { this._unpick(); }
     else { return; }
   },
 
   _singleClickListeners: function() {
     var map = this._map;
-    L.DomEvent.off(map, 'click', this.unpick, this);
+    L.DomEvent.off(map, 'click', this._unpick, this);
   },
 
   _resetClickListeners: function() {
     var map = this._map;
-    L.DomEvent.on(map, 'click', this.unpick, this);
+    L.DomEvent.on(map, 'click', this._unpick, this);
   },
 
   isPicked: function() {
     return this._selected;
   },
 
-  unpick: function() {
+  _unpick: function() {
     var edit = this.editing;
     if (!edit.enabled()) { return false; }
 
@@ -198,7 +198,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return this;
   },
 
-  pick: function(e) {
+  _pick: function(e) {
     var edit = this.editing;
 
     if (!edit.enabled()) { return false; }
@@ -208,7 +208,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     edit._showMarkers();
 
     if (e) {
-      if (L.DomUtil.hasClass(e.target, 'collected')) { this.unpick(); }
+      if (L.DomUtil.hasClass(e.target, 'collected')) { this._unpick(); }
       L.DomEvent.stopPropagation(e);
     }
     return this;
