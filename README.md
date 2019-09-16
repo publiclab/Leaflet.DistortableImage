@@ -511,11 +511,9 @@ img.setCorners(scaledCorners);
 </details>
 
 <details><summary><code><b>pick()</b>: this</code></summary>
-  <ul><li>Returns true if the individual image instance is <code>selected</code>.</li></ul>
 </details>
 
 <details><summary><code><b>unpick()</b>: this</code></summary>
-  <ul><li>Returns true if the individual image instance is <code>selected</code>.</li></ul>
 </details>
 
 ---
