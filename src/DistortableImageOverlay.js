@@ -8,6 +8,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     edgeMinWidth: 50,
     editable: true,
     mode: 'distort',
+    selected: false,
   },
 
   initialize: function(url, options) {
@@ -15,38 +16,34 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
     this.edgeMinWidth = this.options.edgeMinWidth;
     this.editable = this.options.editable;
+    this._selected = this.options.selected;
     this._url = url;
     this.rotation = 0;
     // window.rotation = this.rotation;
   },
 
   onAdd: function(map) {
-    /* Copied from L.ImageOverlay */
     this._map = map;
-
     if (!this._image) { this._initImage(); }
     if (!this._events) { this._initEvents(); }
 
     this.getPane().appendChild(this._image);
 
     map.on('viewreset', this._reset, this);
-    /* End copied from L.ImageOverlay */
 
-    /* Use provided corners if available */
     if (this.options.corners) {
       this._corners = this.options.corners;
       if (map.options.zoomAnimation && L.Browser.any3d) {
         map.on('zoomanim', this._animateZoom, this);
       }
 
-      /* This reset happens before image load; it allows
-       * us to place the image on the map earlier with
-       * "guessed" dimensions. */
+      /* This reset happens before image load; it allows us to place the
+       * image on the map earlier with "guessed" dimensions.
+       */
       this._reset();
     }
 
-    /* Have to wait for the image to load because
-     * we need to access its width and height. */
+    // Have to wait for the image to load because need to access its w/h
     L.DomEvent.on(this._image, 'load', function() {
       this._initImageDimensions();
       this._reset();
@@ -59,17 +56,40 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       /** if there is a featureGroup, only its editable option matters */
       var eventParents = this._eventParents;
       if (eventParents) {
-        var eP = eventParents[Object.keys(eventParents)[0]];
-        if (eP.editable) { this.editing.enable(); }
+        this.eP = eventParents[Object.keys(eventParents)[0]];
+        if (this.eP.editable) { this.editing.enable(); }
       } else {
         if (this.editable) { this.editing.enable(); }
+        this.eP = false;
       }
     }, this);
 
     this.fire('add');
+
+    L.DomEvent.on(this._image, 'click', this._pick, this);
+    L.DomEvent.on(map, {
+      singleclickon: this._singleClickListeners,
+      singleclickoff: this._resetClickListeners,
+      singleclick: this._singleClick,
+    }, this);
+    /**
+     * custom events fired from DoubleClickLabels.js. Used to differentiate
+     * single / dblclick to not deselect images on map dblclick.
+     */
+    if (!(map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled())) {
+      L.DomEvent.on(map, 'click', this._unpick, this);
+    }
   },
 
   onRemove: function(map) {
+    L.DomEvent.off(this._image, 'click', this._pick, this);
+    L.DomEvent.off(map, {
+      singleclickon: this._singleClickListeners,
+      singleclickoff: this._resetClickListeners,
+      singleclick: this._singleClick,
+    }, this);
+    L.DomEvent.off(map, 'click', this._unpick, this);
+
     if (this.editing) { this.editing.disable(); }
     this.fire('remove');
 
@@ -144,6 +164,54 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       containerPoint: containerPoint,
       originalEvent: event,
     });
+  },
+
+  _singleClick: function(e) {
+    if (e.type === 'singleclick') { this._unpick(); }
+    else { return; }
+  },
+
+  _singleClickListeners: function() {
+    var map = this._map;
+    L.DomEvent.off(map, 'click', this._unpick, this);
+  },
+
+  _resetClickListeners: function() {
+    var map = this._map;
+    L.DomEvent.on(map, 'click', this._unpick, this);
+  },
+
+  isPicked: function() {
+    return this._selected;
+  },
+
+  _unpick: function() {
+    var edit = this.editing;
+    if (!edit.enabled()) { return false; }
+
+    edit._removeToolbar();
+    if (edit._mode !== 'lock') {
+      edit._hideMarkers();
+    }
+
+    this._selected = false;
+    return this;
+  },
+
+  _pick: function(e) {
+    var edit = this.editing;
+
+    if (!edit.enabled()) { return false; }
+
+    this._selected = true;
+    edit._addToolbar();
+    edit._showMarkers();
+
+    if (e) {
+      if (L.DomUtil.hasClass(e.target, 'collected')) { this._unpick(); }
+      L.DomEvent.stopPropagation(e);
+    }
+    return this;
   },
 
   setCorner: function(corner, latlng) {

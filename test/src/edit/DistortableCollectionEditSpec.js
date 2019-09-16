@@ -50,20 +50,20 @@ describe('L.DistortableCollection.Edit', function() {
     imgGroup.removeLayer(overlay3);
   });
 
-  describe('#_deselectAll', function() {
+  describe('#_decollectAll', function() {
     it('Should remove the \'selected\' class from all images', function() {
       var img = overlay.getElement();
       var img2 = overlay2.getElement();
 
-      L.DomUtil.addClass(img, 'selected');
-      L.DomUtil.addClass(img2, 'selected');
+      L.DomUtil.addClass(img, 'collected');
+      L.DomUtil.addClass(img2, 'collected');
 
       map.fire('click');
 
       // we deselect after 3ms to confirm the click wasn't a dblclick
       setTimeout(function() {
-        expect(L.DomUtil.getClass(img)).to.not.include('selected');
-        expect(L.DomUtil.getClass(img2)).to.not.include('selected');
+        expect(L.DomUtil.getClass(img)).to.not.include('collected');
+        expect(L.DomUtil.getClass(img2)).to.not.include('collected');
       }, 3000);
     });
 
@@ -76,7 +76,7 @@ describe('L.DistortableCollection.Edit', function() {
       // turn on lock handles for one of the DistortableImageOverlay instances.
       edit2._toggleLockMode();
 
-      // then trigger _deselectAll
+      // then trigger _decollectAll
       map.fire('click');
 
       setTimeout(function() {
@@ -107,7 +107,7 @@ describe('L.DistortableCollection.Edit', function() {
       expect(edit.toolbar).to.not.be.false;
       expect(edit2.toolbar).to.not.be.false;
 
-      // then trigger _deselectAll
+      // then trigger _decollectAll
       map.fire('click');
 
       setTimeout(function() {

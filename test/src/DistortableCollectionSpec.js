@@ -55,7 +55,7 @@ describe('L.DistortableCollection', function() {
     expect(map.hasLayer(overlay3)).to.be.true;
   });
 
-  describe('#isSelected', function() {
+  describe('#isCollected', function() {
     it('Should only return true if the image was selected using shift + mousedown', function() {
       var img = overlay.getElement();
       var img2 = overlay2.getElement();
@@ -63,12 +63,12 @@ describe('L.DistortableCollection', function() {
       chai.simulateEvent(img, chai.mouseEvents.ShiftMouseDown);
       chai.simulateEvent(img2, chai.mouseEvents.MouseDown);
 
-      expect(imgGroup.isSelected(overlay)).to.be.true;
-      expect(imgGroup.isSelected(overlay2)).to.be.false;
+      expect(imgGroup.isCollected(overlay)).to.be.true;
+      expect(imgGroup.isCollected(overlay2)).to.be.false;
     });
   });
 
-  describe('#anySelected', function() {
+  describe('#anyCollected', function() {
     it('Should return false if no selections were made with shift + mousedown', function() {
       var img = overlay.getElement();
       var img2 = overlay2.getElement();
@@ -76,12 +76,12 @@ describe('L.DistortableCollection', function() {
       chai.simulateEvent(img, chai.mouseEvents.MouseDown);
       chai.simulateEvent(img2, chai.mouseEvents.MouseDown);
 
-      expect(imgGroup.isSelected(overlay)).to.be.false;
-      expect(imgGroup.isSelected(overlay2)).to.be.false;
+      expect(imgGroup.isCollected(overlay)).to.be.false;
+      expect(imgGroup.isCollected(overlay2)).to.be.false;
     });
   });
 
-  describe('#_toggleMultiSelect', function() {
+  describe('#_toggleMultiCollect', function() {
     it('Should allow multiple image selection on shift + click', function() {
       var img = overlay.getElement();
       var img2 = overlay2.getElement();
@@ -89,8 +89,8 @@ describe('L.DistortableCollection', function() {
       chai.simulateEvent(img, chai.mouseEvents.ShiftMouseDown);
       chai.simulateEvent(img2, chai.mouseEvents.ShiftMouseDown);
 
-      expect(L.DomUtil.getClass(img)).to.include('selected');
-      expect(L.DomUtil.getClass(img2)).to.include('selected');
+      expect(L.DomUtil.getClass(img)).to.include('collected');
+      expect(L.DomUtil.getClass(img2)).to.include('collected');
     });
 
     it('It should allow a locked image to be part of multiple image selection', function() {
@@ -99,7 +99,7 @@ describe('L.DistortableCollection', function() {
       overlay.editing._toggleLockMode();
       chai.simulateEvent(img, chai.mouseEvents.ShiftMouseDown);
 
-      expect(L.DomUtil.getClass(img)).to.include('selected');
+      expect(L.DomUtil.getClass(img)).to.include('collected');
     });
   });
 });

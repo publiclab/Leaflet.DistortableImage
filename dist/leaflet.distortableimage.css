@@ -2,7 +2,7 @@
   pointer-events: all !important;
 }
 
-.ldi img.leaflet-image-layer.selected {
+.ldi img.leaflet-image-layer.collected {
   box-shadow: 0px 0px 0px 12px #ffea00;
 }
 
