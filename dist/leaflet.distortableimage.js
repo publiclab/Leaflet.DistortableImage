@@ -420,6 +420,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   unpick: function() {
     var edit = this.editing;
+    if (!edit.enabled()) { return false; }
 
     edit._removeToolbar();
     if (edit._mode !== 'lock') {
@@ -432,6 +433,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   pick: function(e) {
     var edit = this.editing;
+
+    if (!edit.enabled()) { return false; }
 
     this._selected = true;
     edit._addToolbar();
