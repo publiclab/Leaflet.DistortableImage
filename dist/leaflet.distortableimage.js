@@ -290,8 +290,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       /** if there is a featureGroup, only its editable option matters */
       var eventParents = this._eventParents;
       if (eventParents) {
-        var eP = eventParents[Object.keys(eventParents)[0]];
-        if (eP.editable) { this.editing.enable(); }
+        this.eP = eventParents[Object.keys(eventParents)[0]];
+        if (this.eP.editable) { this.editing.enable(); }
       } else {
         if (this.editable) { this.editing.enable(); }
       }
@@ -765,7 +765,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
 
     L.DomEvent.on(layer._image, {
-      mousedown: this._deselectOthers,
+      mousedown: this._decollectOthers,
       /* Enable longpress for multi select for touch devices. */
       contextmenu: this._longPressMultiSelect,
     }, this);
@@ -780,7 +780,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
 
     L.DomEvent.off(layer._image, {
-      mousedown: this._deselectOthers,
+      mousedown: this._decollectOthers,
       contextmenu: this._longPressMultiSelect,
     }, this);
   },
@@ -813,25 +813,24 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return layerArr.some(this.isCollected.bind(this));
   },
 
-  _toggleMultiSelect: function(e, edit) {
+  _toggleMultiCollect: function(e, layer) {
     if (e.shiftKey) {
       /** conditional prevents disabled images from flickering multi-select mode */
-      if (edit.enabled()) { L.DomUtil.toggleClass(e.target, 'selected'); }
+      if (layer.editing.enabled()) { L.DomUtil.toggleClass(e.target, 'selected'); }
     }
 
-    if (this.anyCollected()) { edit._deselect(); }
+    if (this.anyCollected()) { layer.unpick(); }
     else { this.editing._removeToolbar(); }
   },
 
-  _deselectOthers: function(e) {
+  _decollectOthers: function(e) {
     if (!this.editable) { return; }
 
     this.eachLayer(function(layer) {
-      var edit = layer.editing;
       if (layer.getElement() !== e.target) {
         layer.unpick();
       } else {
-        this._toggleMultiSelect(e, edit);
+        this._toggleMultiCollect(e, layer);
       }
     }, this);
 
@@ -1946,7 +1945,6 @@ L.DistortableImage.Edit = L.Handler.extend({
   /* Run on image selection. */
   addHooks: function() {
     var overlay = this._overlay;
-    var eventParents = overlay._eventParents;
 
     /* bring the selected image into view */
     overlay.bringToFront();
@@ -1968,11 +1966,7 @@ L.DistortableImage.Edit = L.Handler.extend({
       3: L.point(0, 0),
     };
 
-    if (eventParents) {
-      var eP = eventParents[Object.keys(eventParents)[0]];
-      if (eP) { this.parentGroup = eP; }
-      else { this.parentGroup = false; }
-    }
+    this.parentGroup = overlay.eP ? overlay.eP : false;
 
     L.DomEvent.on(overlay._image, {
       dblclick: this.nextMode,
@@ -2512,11 +2506,13 @@ L.DistortableImage.Edit = L.Handler.extend({
     var newMode = this._modes[nextIdx];
 
     if (e) {
-      if (eP && !eP.anyCollected()) {
-        eP.editing._deselectAll(e);
-        this._overlay.pick();
-        L.DomEvent.stop(e);
+      if (eP) {
+        eP._decollectOthers(e);
+        if (!eP.anyCollected()) {
+          this._overlay.pick();
+        }
       }
+      L.DomEvent.stop(e);
     }
 
     return this.setMode(newMode);
@@ -2539,7 +2535,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     this._group = group;
     L.setOptions(this, options);
 
-    L.distortableImage.group_action_map.Escape = '_deselectAll';
+    L.distortableImage.group_action_map.Escape = '_decollectAll';
   },
 
   addHooks: function() {
@@ -2551,7 +2547,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     L.DomEvent.on(document, 'keydown', this._onKeyDown, this);
 
     if (!(map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled())) {
-      L.DomEvent.on(map, 'click', this._deselectAll, this);
+      L.DomEvent.on(map, 'click', this._decollectAll, this);
     }
 
     L.DomEvent.on(map, {
@@ -2574,7 +2570,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     L.DomEvent.off(document, 'keydown', this._onKeyDown, this);
 
     if (!(map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled())) {
-      L.DomEvent.off(map, 'click', this._deselectAll, this);
+      L.DomEvent.off(map, 'click', this._decollectAll, this);
     }
 
     L.DomEvent.off(map, {
@@ -2584,7 +2580,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
       boxzoomend: this._addSelections,
     }, this);
 
-    this._deselectAll();
+    this._decollectAll();
     this._group.editable = false;
     this._group.eachLayer(function(layer) {
       layer.editing.disable();
@@ -2616,23 +2612,23 @@ L.DistortableCollection.Edit = L.Handler.extend({
   },
 
   _singleClick: function(e) {
-    if (e.type === 'singleclick') { this._deselectAll(e); }
+    if (e.type === 'singleclick') { this._decollectAll(e); }
     else { return; }
   },
 
   _singleClickListeners: function() {
     var map = this._group._map;
 
-    L.DomEvent.off(map, 'click', this._deselectAll, this);
+    L.DomEvent.off(map, 'click', this._decollectAll, this);
   },
 
   _resetClickListeners: function() {
     var map = this._group._map;
 
-    L.DomEvent.on(map, 'click', this._deselectAll, this);
+    L.DomEvent.on(map, 'click', this._decollectAll, this);
   },
 
-  _deselectAll: function(e) {
+  _decollectAll: function(e) {
     var oe;
 
     if (e) { oe = e.originalEvent; }

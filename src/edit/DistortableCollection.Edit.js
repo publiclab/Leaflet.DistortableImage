@@ -10,7 +10,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     this._group = group;
     L.setOptions(this, options);
 
-    L.distortableImage.group_action_map.Escape = '_deselectAll';
+    L.distortableImage.group_action_map.Escape = '_decollectAll';
   },
 
   addHooks: function() {
@@ -22,7 +22,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     L.DomEvent.on(document, 'keydown', this._onKeyDown, this);
 
     if (!(map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled())) {
-      L.DomEvent.on(map, 'click', this._deselectAll, this);
+      L.DomEvent.on(map, 'click', this._decollectAll, this);
     }
 
     L.DomEvent.on(map, {
@@ -45,7 +45,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     L.DomEvent.off(document, 'keydown', this._onKeyDown, this);
 
     if (!(map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled())) {
-      L.DomEvent.off(map, 'click', this._deselectAll, this);
+      L.DomEvent.off(map, 'click', this._decollectAll, this);
     }
 
     L.DomEvent.off(map, {
@@ -55,7 +55,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
       boxzoomend: this._addSelections,
     }, this);
 
-    this._deselectAll();
+    this._decollectAll();
     this._group.editable = false;
     this._group.eachLayer(function(layer) {
       layer.editing.disable();
@@ -87,23 +87,23 @@ L.DistortableCollection.Edit = L.Handler.extend({
   },
 
   _singleClick: function(e) {
-    if (e.type === 'singleclick') { this._deselectAll(e); }
+    if (e.type === 'singleclick') { this._decollectAll(e); }
     else { return; }
   },
 
   _singleClickListeners: function() {
     var map = this._group._map;
 
-    L.DomEvent.off(map, 'click', this._deselectAll, this);
+    L.DomEvent.off(map, 'click', this._decollectAll, this);
   },
 
   _resetClickListeners: function() {
     var map = this._group._map;
 
-    L.DomEvent.on(map, 'click', this._deselectAll, this);
+    L.DomEvent.on(map, 'click', this._decollectAll, this);
   },
 
-  _deselectAll: function(e) {
+  _decollectAll: function(e) {
     var oe;
 
     if (e) { oe = e.originalEvent; }

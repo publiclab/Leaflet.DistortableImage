@@ -56,8 +56,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       /** if there is a featureGroup, only its editable option matters */
       var eventParents = this._eventParents;
       if (eventParents) {
-        var eP = eventParents[Object.keys(eventParents)[0]];
-        if (eP.editable) { this.editing.enable(); }
+        this.eP = eventParents[Object.keys(eventParents)[0]];
+        if (this.eP.editable) { this.editing.enable(); }
       } else {
         if (this.editable) { this.editing.enable(); }
       }
