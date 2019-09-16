@@ -81,7 +81,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
     if (!this[handlerName]) { return; }
 
-    if (this._group.anySelected()) {
+    if (this._group.anyCollected()) {
       this[handlerName].call(this);
     }
   },
@@ -116,9 +116,8 @@ L.DistortableCollection.Edit = L.Handler.extend({
     }
 
     this._group.eachLayer(function(layer) {
-      var edit = layer.editing;
       L.DomUtil.removeClass(layer.getElement(), 'selected');
-      edit._deselect();
+      layer.unpick();
     });
 
     this._removeToolbar();
@@ -128,12 +127,12 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
   _unlockGroup: function() {
     this._group.eachLayer(function(layer) {
-      if (this._group.isSelected(layer)) {
+      if (this._group.isCollected(layer)) {
         var edit = layer.editing;
         if (edit._mode === 'lock') {
           edit._unlock();
           // unlock updates the layer's handles; deselect to ensure they're hidden
-          edit._deselect();
+          layer.unpick();
         }
       }
     }, this);
@@ -141,7 +140,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
   _lockGroup: function() {
     this._group.eachLayer(function(layer) {
-      if (this._group.isSelected(layer) ) {
+      if (this._group.isCollected(layer) ) {
         var edit = layer.editing;
         if (edit._mode !== 'lock') {
           edit._lock();
@@ -159,7 +158,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     this._group.eachLayer(function(layer) {
       var edit = layer.editing;
 
-      if (edit._selected) { edit._deselect(); }
+      if (layer.isPicked()) { layer.unpick(); }
 
       var imgBounds = L.latLngBounds(layer.getCorner(2), layer.getCorner(1));
       imgBounds = map._latLngBoundsToNewLayerBounds(imgBounds, map.getZoom(), map.getCenter());
@@ -184,7 +183,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
       layersToRemove.forEach(function(layer) {
         this._group.removeLayer(layer);
       }, this);
-      if (!this._group.anySelected()) {
+      if (!this._group.anyCollected()) {
         this._removeToolbar();
       }
     }

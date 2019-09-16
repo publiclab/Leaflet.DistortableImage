@@ -541,7 +541,22 @@ A handler that holds the keybindings and toolbar API for an image instance. It i
 
 <details><summary><code><b>getMode()</b>: String</code></summary>
   <ul>
-    <li>Returns the current <code>mode</code> of the image.</li>
+    <li>Returns the current <code>mode</code> of the image if it is <code>_selected</code>, otherwise returns false.</li>
+  </ul>
+</details>
+
+<details><summary><code><b>nextMode()</b>: this</code></summary>
+  <ul>
+    <li>Sets the mode of the image to the next one in the <code>
+    modes</code> array by passing it to <code>#setMode.</code></li>
+    <li>If the image is not selected according to <code>img.editing._selected</code> or <code>modes</code> only has 1 mode, it will instead return false.</li>
+    <li>We use this internally to iterate through an image's editing modes easily on <code>dblclick</code>, but you can call it programmatically if you find a need. Note that <code>dblclick</code> also selects the image (given it's not disabled or multi-selected, etc.)</li>
+  </ul>
+</details>
+
+<details><summary><code><b>setMode(<i>mode</i> &#60;string>)</b>: this</code></summary>
+  <ul>
+    <li>Sets the  <code>mode</code> of the image to the passed one given that it is in the  <code>modes </code> array, it is not already the current mode, and the image is  <code>_selected </code>. Otherwise returns false.</li>
   </ul>
 </details>
 
@@ -549,11 +564,11 @@ A handler that holds the keybindings and toolbar API for an image instance. It i
 
 `L.DistortableCollection`
 
-<details><summary><code><b>isSelected(<i>img</i> &#60;DistortableImageOverlay>)</b>: Boolean</code></summary>
+<details><summary><code><b>isCollected(<i>img</i> &#60;DistortableImageOverlay>)</b>: Boolean</code></summary>
 <ul><li>Returns true if the passed <code>DistortableImageOverlay</code> instance is multi-selected, i.e. its underlying <code>HTMLImageElement</code> has a class containing "selected".</li></ul>
 </details>
 
-<details><summary><code><b>anySelected()</b>: Boolean</code></summary>
+<details><summary><code><b>anyCollected()</b>: Boolean</code></summary>
 <ul><li>Returns true if any <code>DistortableImageOverlay</code> instances are mutli-selected.</li></ul>
 </details>
 

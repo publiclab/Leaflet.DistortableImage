@@ -70,8 +70,8 @@ L.DistortableCollection = L.FeatureGroup.extend({
       var edit = layer.editing;
       if (layer.getElement() === e.target && edit.enabled()) {
         L.DomUtil.toggleClass(layer.getElement(), 'selected');
-        if (this.anySelected()) {
-          edit._deselect();
+        if (this.anyCollected()) {
+          layer.unpick();
           this.editing._addToolbar();
         } else {
           this.editing._removeToolbar();
@@ -80,13 +80,13 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
   },
 
-  isSelected: function(overlay) {
+  isCollected: function(overlay) {
     return L.DomUtil.hasClass(overlay.getElement(), 'selected');
   },
 
-  anySelected: function() {
+  anyCollected: function() {
     var layerArr = this.getLayers();
-    return layerArr.some(this.isSelected.bind(this));
+    return layerArr.some(this.isCollected.bind(this));
   },
 
   _toggleMultiSelect: function(e, edit) {
@@ -95,7 +95,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
       if (edit.enabled()) { L.DomUtil.toggleClass(e.target, 'selected'); }
     }
 
-    if (this.anySelected()) { edit._deselect(); }
+    if (this.anyCollected()) { edit._deselect(); }
     else { this.editing._removeToolbar(); }
   },
 
@@ -105,7 +105,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     this.eachLayer(function(layer) {
       var edit = layer.editing;
       if (layer.getElement() !== e.target) {
-        edit._deselect();
+        layer.unpick();
       } else {
         this._toggleMultiSelect(e, edit);
       }
@@ -119,15 +119,12 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var edit = overlay.editing;
     var i;
 
-    if (!this.isSelected(overlay) || !edit.enabled()) {
+    if (!this.isCollected(overlay) || !edit.enabled()) {
       return;
     }
 
     this.eachLayer(function(layer) {
-      var edit = layer.editing;
-
-      edit._deselect();
-
+      layer.unpick();
       for (i = 0; i < 4; i++) {
         var c = layer.getCorner(i);
         layer._dragStartPoints[i] = layer._map.latLngToLayerPoint(c);
@@ -141,7 +138,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var map = this._map;
     var i;
 
-    if (!this.isSelected(overlay) || !edit.enabled()) {
+    if (!this.isCollected(overlay) || !edit.enabled()) {
       return;
     }
 
@@ -161,7 +158,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     return layerArr.filter(function(layer) {
       var edit = layer.editing;
-      return (this.isSelected(layer) && edit._mode !== 'lock');
+      return (this.isCollected(layer) && edit._mode !== 'lock');
     }, this);
   },
 
@@ -173,7 +170,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
       if (
         layer !== overlay &&
         layer.editing._mode !== 'lock' &&
-        this.isSelected(layer)
+        this.isCollected(layer)
       ) {
         layer._cpd = {};
 
@@ -213,7 +210,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     json.images = [];
 
     this.eachLayer(function(layer) {
-      if (this.isSelected(layer)) {
+      if (this.isCollected(layer)) {
         var sections = layer._image.src.split('/');
         var filename = sections[sections.length-1];
         var zc = layer.getCorners();

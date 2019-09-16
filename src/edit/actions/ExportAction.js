@@ -3,7 +3,7 @@ L.ExportAction = L.EditAction.extend({
     var edit = overlay.editing;
     var tooltip;
 
-    if (edit.parentGroup) {
+    if (edit instanceof L.DistortableImage.Edit) {
       L.DistortableImage.action_map.e = '_getExport';
       tooltip = 'Export Image';
     } else {
@@ -24,7 +24,7 @@ L.ExportAction = L.EditAction.extend({
   addHooks: function() {
     var edit = this._overlay.editing;
 
-    if (edit.parentGroup) { edit._getExport(); }
+    if (edit instanceof L.DistortableImage.Edit) { edit._getExport(); }
     else {
       L.IconUtil.toggleXlink(this._link, 'get_app', 'spinner');
       L.IconUtil.toggleTitle(this._link, 'Export Images', 'Loading...');
