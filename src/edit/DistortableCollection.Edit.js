@@ -116,7 +116,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     }
 
     this._group.eachLayer(function(layer) {
-      L.DomUtil.removeClass(layer.getElement(), 'selected');
+      L.DomUtil.removeClass(layer.getElement(), 'collected');
       layer.unpick();
     });
 
@@ -145,7 +145,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
         if (edit._mode !== 'lock') {
           edit._lock();
           // map.addLayer also deselects the image, so we reselect here
-          L.DomUtil.addClass(layer.getElement(), 'selected');
+          L.DomUtil.addClass(layer.getElement(), 'collected');
         }
       }
     }, this);
@@ -166,7 +166,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
         if (!this.toolbar) {
           this._addToolbar();
         }
-        L.DomUtil.addClass(layer.getElement(), 'selected');
+        L.DomUtil.addClass(layer.getElement(), 'collected');
       }
     }, this);
   },

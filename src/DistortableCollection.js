@@ -69,7 +69,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     this.eachLayer(function(layer) {
       var edit = layer.editing;
       if (layer.getElement() === e.target && edit.enabled()) {
-        L.DomUtil.toggleClass(layer.getElement(), 'selected');
+        L.DomUtil.toggleClass(layer.getElement(), 'collected');
         if (this.anyCollected()) {
           layer.unpick();
           this.editing._addToolbar();
@@ -81,7 +81,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   isCollected: function(overlay) {
-    return L.DomUtil.hasClass(overlay.getElement(), 'selected');
+    return L.DomUtil.hasClass(overlay.getElement(), 'collected');
   },
 
   anyCollected: function() {
@@ -92,7 +92,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
   _toggleMultiCollect: function(e, layer) {
     if (e.shiftKey) {
       /** conditional prevents disabled images from flickering multi-select mode */
-      if (layer.editing.enabled()) { L.DomUtil.toggleClass(e.target, 'selected'); }
+      if (layer.editing.enabled()) { L.DomUtil.toggleClass(e.target, 'collected'); }
     }
 
     if (this.anyCollected()) { layer.unpick(); }

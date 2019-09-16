@@ -294,6 +294,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
         if (this.eP.editable) { this.editing.enable(); }
       } else {
         if (this.editable) { this.editing.enable(); }
+        this.eP = false;
       }
     }, this);
 
@@ -441,7 +442,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     edit._showMarkers();
 
     if (e) {
-      if (L.DomUtil.hasClass(e.target, 'selected')) { this.unpick(); }
+      if (L.DomUtil.hasClass(e.target, 'collected')) { this.unpick(); }
       L.DomEvent.stopPropagation(e);
     }
     return this;
@@ -796,7 +797,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     this.eachLayer(function(layer) {
       var edit = layer.editing;
       if (layer.getElement() === e.target && edit.enabled()) {
-        L.DomUtil.toggleClass(layer.getElement(), 'selected');
+        L.DomUtil.toggleClass(layer.getElement(), 'collected');
         if (this.anyCollected()) {
           layer.unpick();
           this.editing._addToolbar();
@@ -808,7 +809,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   isCollected: function(overlay) {
-    return L.DomUtil.hasClass(overlay.getElement(), 'selected');
+    return L.DomUtil.hasClass(overlay.getElement(), 'collected');
   },
 
   anyCollected: function() {
@@ -819,7 +820,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
   _toggleMultiCollect: function(e, layer) {
     if (e.shiftKey) {
       /** conditional prevents disabled images from flickering multi-select mode */
-      if (layer.editing.enabled()) { L.DomUtil.toggleClass(e.target, 'selected'); }
+      if (layer.editing.enabled()) { L.DomUtil.toggleClass(e.target, 'collected'); }
     }
 
     if (this.anyCollected()) { layer.unpick(); }
@@ -1996,8 +1997,8 @@ L.DistortableImage.Edit = L.Handler.extend({
      * ensures if you disable an image while it is multi-selected
      * additional deselection logic is run
      */
-    if (L.DomUtil.hasClass(overlay.getElement(), 'selected')) {
-      L.DomUtil.removeClass(overlay.getElement(), 'selected');
+    if (L.DomUtil.hasClass(overlay.getElement(), 'collected')) {
+      L.DomUtil.removeClass(overlay.getElement(), 'collected');
     }
 
     if (eP && (!eP.anyCollected() && eP.editing.toolbar)) {
@@ -2644,7 +2645,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     }
 
     this._group.eachLayer(function(layer) {
-      L.DomUtil.removeClass(layer.getElement(), 'selected');
+      L.DomUtil.removeClass(layer.getElement(), 'collected');
       layer.unpick();
     });
 
@@ -2673,7 +2674,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
         if (edit._mode !== 'lock') {
           edit._lock();
           // map.addLayer also deselects the image, so we reselect here
-          L.DomUtil.addClass(layer.getElement(), 'selected');
+          L.DomUtil.addClass(layer.getElement(), 'collected');
         }
       }
     }, this);
@@ -2694,7 +2695,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
         if (!this.toolbar) {
           this._addToolbar();
         }
-        L.DomUtil.addClass(layer.getElement(), 'selected');
+        L.DomUtil.addClass(layer.getElement(), 'collected');
       }
     }, this);
   },

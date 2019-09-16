@@ -89,8 +89,8 @@ describe('L.DistortableCollection', function() {
       chai.simulateEvent(img, chai.mouseEvents.ShiftMouseDown);
       chai.simulateEvent(img2, chai.mouseEvents.ShiftMouseDown);
 
-      expect(L.DomUtil.getClass(img)).to.include('selected');
-      expect(L.DomUtil.getClass(img2)).to.include('selected');
+      expect(L.DomUtil.getClass(img)).to.include('collected');
+      expect(L.DomUtil.getClass(img2)).to.include('collected');
     });
 
     it('It should allow a locked image to be part of multiple image selection', function() {
@@ -99,7 +99,7 @@ describe('L.DistortableCollection', function() {
       overlay.editing._toggleLockMode();
       chai.simulateEvent(img, chai.mouseEvents.ShiftMouseDown);
 
-      expect(L.DomUtil.getClass(img)).to.include('selected');
+      expect(L.DomUtil.getClass(img)).to.include('collected');
     });
   });
 });

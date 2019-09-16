@@ -55,15 +55,15 @@ describe('L.DistortableCollection.Edit', function() {
       var img = overlay.getElement();
       var img2 = overlay2.getElement();
 
-      L.DomUtil.addClass(img, 'selected');
-      L.DomUtil.addClass(img2, 'selected');
+      L.DomUtil.addClass(img, 'collected');
+      L.DomUtil.addClass(img2, 'collected');
 
       map.fire('click');
 
       // we deselect after 3ms to confirm the click wasn't a dblclick
       setTimeout(function() {
-        expect(L.DomUtil.getClass(img)).to.not.include('selected');
-        expect(L.DomUtil.getClass(img2)).to.not.include('selected');
+        expect(L.DomUtil.getClass(img)).to.not.include('collected');
+        expect(L.DomUtil.getClass(img2)).to.not.include('collected');
       }, 3000);
     });
 

@@ -75,8 +75,8 @@ L.DistortableImage.Edit = L.Handler.extend({
      * ensures if you disable an image while it is multi-selected
      * additional deselection logic is run
      */
-    if (L.DomUtil.hasClass(overlay.getElement(), 'selected')) {
-      L.DomUtil.removeClass(overlay.getElement(), 'selected');
+    if (L.DomUtil.hasClass(overlay.getElement(), 'collected')) {
+      L.DomUtil.removeClass(overlay.getElement(), 'collected');
     }
 
     if (eP && (!eP.anyCollected() && eP.editing.toolbar)) {

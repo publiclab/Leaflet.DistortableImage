@@ -60,6 +60,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
         if (this.eP.editable) { this.editing.enable(); }
       } else {
         if (this.editable) { this.editing.enable(); }
+        this.eP = false;
       }
     }, this);
 
@@ -207,7 +208,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     edit._showMarkers();
 
     if (e) {
-      if (L.DomUtil.hasClass(e.target, 'selected')) { this.unpick(); }
+      if (L.DomUtil.hasClass(e.target, 'collected')) { this.unpick(); }
       L.DomEvent.stopPropagation(e);
     }
     return this;
