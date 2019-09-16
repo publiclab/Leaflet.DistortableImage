@@ -29,7 +29,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
       singleclickon: this._singleClickListeners,
       singleclickoff: this._resetClickListeners,
       singleclick: this._singleClick,
-      boxzoomend: this._addSelections,
+      boxzoomend: this._addCollections,
     }, this);
 
     this._group.editable = true;
@@ -52,7 +52,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
       singleclickon: this._singleClickListeners,
       singleclickoff: this._resetClickListeners,
       singleclick: this._singleClick,
-      boxzoomend: this._addSelections,
+      boxzoomend: this._addCollections,
     }, this);
 
     this._decollectAll();
@@ -151,7 +151,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     }, this);
   },
 
-  _addSelections: function(e) {
+  _addCollections: function(e) {
     var box = e.boxZoomBounds;
     var map = this._group._map;
 

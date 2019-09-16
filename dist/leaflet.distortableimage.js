@@ -2554,7 +2554,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
       singleclickon: this._singleClickListeners,
       singleclickoff: this._resetClickListeners,
       singleclick: this._singleClick,
-      boxzoomend: this._addSelections,
+      boxzoomend: this._addCollections,
     }, this);
 
     this._group.editable = true;
@@ -2577,7 +2577,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
       singleclickon: this._singleClickListeners,
       singleclickoff: this._resetClickListeners,
       singleclick: this._singleClick,
-      boxzoomend: this._addSelections,
+      boxzoomend: this._addCollections,
     }, this);
 
     this._decollectAll();
@@ -2676,7 +2676,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     }, this);
   },
 
-  _addSelections: function(e) {
+  _addCollections: function(e) {
     var box = e.boxZoomBounds;
     var map = this._group._map;
 
@@ -2995,15 +2995,15 @@ L.distortableImage.keymapper = function(map, options) {
 };
 
 L.Map.mergeOptions({
-  boxSelector: true,
+  boxCollector: true,
   boxZoom: false,
 });
 
 /**
- * primarily Leaflet 1.5.1 source code. Overriden so that it's a selection box used with
+ * primarily Leaflet 1.5.1 source code. Overriden so that it's a collection box used with
  * our `L.DistortableCollection` class instead of a zoom box.
  * */
-L.Map.BoxSelector = L.Map.BoxZoom.extend({
+L.Map.BoxCollector = L.Map.BoxZoom.extend({
   initialize: function(map) {
     this._map = map;
     this._container = map._container;
@@ -3125,7 +3125,7 @@ L.Map.BoxSelector = L.Map.BoxZoom.extend({
   },
 });
 
-L.Map.addInitHook('addHandler', 'boxSelector', L.Map.BoxSelector);
+L.Map.addInitHook('addHandler', 'boxCollector', L.Map.BoxCollector);
 
 
 /**

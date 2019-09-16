@@ -1,13 +1,13 @@
 L.Map.mergeOptions({
-  boxSelector: true,
+  boxCollector: true,
   boxZoom: false,
 });
 
 /**
- * primarily Leaflet 1.5.1 source code. Overriden so that it's a selection box used with
+ * primarily Leaflet 1.5.1 source code. Overriden so that it's a collection box used with
  * our `L.DistortableCollection` class instead of a zoom box.
  * */
-L.Map.BoxSelector = L.Map.BoxZoom.extend({
+L.Map.BoxCollector = L.Map.BoxZoom.extend({
   initialize: function(map) {
     this._map = map;
     this._container = map._container;
@@ -129,5 +129,5 @@ L.Map.BoxSelector = L.Map.BoxZoom.extend({
   },
 });
 
-L.Map.addInitHook('addHandler', 'boxSelector', L.Map.BoxSelector);
+L.Map.addInitHook('addHandler', 'boxCollector', L.Map.BoxCollector);
 

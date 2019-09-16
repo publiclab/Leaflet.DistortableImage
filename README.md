@@ -315,14 +315,14 @@ Currently it supports multiple image selection and translations, and WIP we are 
 **multi-select:** A single toolbar instance (using `L.control`) renders the set of tools available to use on collections of images.
 
 1. Multi-selection works with <kbd>shift</kbd> + `click` to toggle an individual image's inclusion in this interface.
-2. Or <kbd>shift</kbd> + `drag` to use our `L.Map.BoxSelector` handler to select multiple at once.
+2. Or <kbd>shift</kbd> + `drag` to use our `L.Map.BoxCollector` handler to select multiple at once.
 3. Or for touch devices, `touch` + `hold` (aka `longpress`).
 
 **un-multi-select:**
 
 * In order to return to the single-image interface, where each `L.popup` toolbar only applies actions on the image it's attached to, you must toggle *all* images out of multi-select with `shift` + click, or...
 * ...Click on the map or hit the <kbd>esc</kbd> key to quickly deselect.
-* For the aforementioned 3 mutli-select methods, the `BoxSelector` method is the only one that doesn't also toggle _out_ of multi-select mode.
+* For the aforementioned 3 mutli-select methods, the `BoxCollector` method is the only one that doesn't also toggle _out_ of multi-select mode.
 
 ---
 
@@ -430,7 +430,7 @@ And the following custom handlers:
 <details><summary><code><b>boxSelector</b>: this</code></summary>
   <ul>
     <li>Overrides the map's default <a href="https://leafletjs.com/reference-1.5.0.html#map-boxzoom"><code>boxZoom</code></a> handler.</li>
-    <li>Allows multiple images to be selected when <kbd>shift</kbd> + <code>drag</code>ing on the map in the multiple-image inerface.</li>
+    <li>Allows multiple images to be collected when <kbd>shift</kbd> + <code>drag</code>ing on the map in the multiple-image inerface.</li>
   </ul>
 </details>
 <br>
@@ -506,6 +506,18 @@ img.setCorners(scaledCorners);
   <ul><li>Rotates the image by the given radian angle and calls <code>#setCorners</code>.</li></ul>
 </details>
 
+<details><summary><code><b>isPicked()</b>: Boolean</code></summary>
+  <ul><li>Returns true if the individual image instance is <code>selected</code>.</li></ul>
+</details>
+
+<details><summary><code><b>pick()</b>: this</code></summary>
+  <ul><li>Returns true if the individual image instance is <code>selected</code>.</li></ul>
+</details>
+
+<details><summary><code><b>unpick()</b>: this</code></summary>
+  <ul><li>Returns true if the individual image instance is <code>selected</code>.</li></ul>
+</details>
+
 ---
 
 `L.DistortableImageOverlay.Edit`
@@ -541,7 +553,7 @@ A handler that holds the keybindings and toolbar API for an image instance. It i
 
 <details><summary><code><b>getMode()</b>: String</code></summary>
   <ul>
-    <li>Returns the current <code>mode</code> of the image if it is <code>_selected</code>, otherwise returns false.</li>
+    <li>Returns the current <code>mode</code> of the image if it's picked, otherwise returns false.</li>
   </ul>
 </details>
 
@@ -549,14 +561,14 @@ A handler that holds the keybindings and toolbar API for an image instance. It i
   <ul>
     <li>Sets the mode of the image to the next one in the <code>
     modes</code> array by passing it to <code>#setMode.</code></li>
-    <li>If the image is not selected according to <code>img.editing._selected</code> or <code>modes</code> only has 1 mode, it will instead return false.</li>
-    <li>We use this internally to iterate through an image's editing modes easily on <code>dblclick</code>, but you can call it programmatically if you find a need. Note that <code>dblclick</code> also selects the image (given it's not disabled or multi-selected, etc.)</li>
+    <li>If the image is not picked or <code>modes</code> only has 1 mode, it will instead return false.</li>
+    <li>We use this internally to iterate through an image's editing modes easily on <code>dblclick</code>, but you can call it programmatically if you find a need. Note that <code>dblclick</code> also picks the image (given it's not disabled or multi-selected, etc.)</li>
   </ul>
 </details>
 
 <details><summary><code><b>setMode(<i>mode</i> &#60;string>)</b>: this</code></summary>
   <ul>
-    <li>Sets the  <code>mode</code> of the image to the passed one given that it is in the  <code>modes </code> array, it is not already the current mode, and the image is  <code>_selected </code>. Otherwise returns false.</li>
+    <li>Sets the  <code>mode</code> of the image to the passed one given that it is in the  <code>modes </code> array, it is not already the current mode, and the image is picked. Otherwise returns false.</li>
   </ul>
 </details>
 
@@ -565,11 +577,11 @@ A handler that holds the keybindings and toolbar API for an image instance. It i
 `L.DistortableCollection`
 
 <details><summary><code><b>isCollected(<i>img</i> &#60;DistortableImageOverlay>)</b>: Boolean</code></summary>
-<ul><li>Returns true if the passed <code>DistortableImageOverlay</code> instance is multi-selected, i.e. its underlying <code>HTMLImageElement</code> has a class containing "selected".</li></ul>
+<ul><li>Returns true if the passed <code>L.DistortableImageOverlay</code> instance is collected, i.e. its underlying <code>HTMLImageElement</code> has a class containing "selected".</li></ul>
 </details>
 
 <details><summary><code><b>anyCollected()</b>: Boolean</code></summary>
-<ul><li>Returns true if any <code>DistortableImageOverlay</code> instances are mutli-selected.</li></ul>
+<ul><li>Returns true if any <code>L.DistortableImageOverlay</code> instances are collected.</li></ul>
 </details>
 
 ---
