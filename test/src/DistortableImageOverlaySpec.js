@@ -43,6 +43,59 @@ describe('L.DistortableImageOverlay', function() {
     });
   });
 
+  describe('#pick', function() {
+    it('Allows programmatically selecting a single image', function() {
+      expect(overlay._selected).to.be.false
+      expect(overlay.editing.toolbar).to.be.undefined
+      
+      overlay.pick();
+
+      setTimeout(function() {
+        expect(overlay._selected).to.be.true
+        expect(overlay.editing.toolbar).to.be.true
+      }, 3000);
+    });
+
+    it('Returns false if image editing is disabled', function() {
+      overlay.editing.disable();
+      expect(overlay.pick()).to.be.false
+      expect(overlay._selected).to.be.false
+      expect(overlay.editing.toolbar).to.be.undefined
+    });
+    
+    it('Returns false if the multiple image editing interface is on', function() {
+      L.DomUtil.addClass(overlay._image, 'collected');
+      expect(overlay.pick()).to.be.false
+      expect(overlay._selected).to.be.false
+      expect(overlay.editing.toolbar).to.be.false
+    });
+  });
+
+  describe('#unpick', function() {
+    beforeEach(function () { // select the image
+      overlay.pick();
+      setTimeout(function() {
+        expect(overlay._selected).to.be.true
+      }, 3000);
+    });
+
+    it('Allows programmatically deselecting a single image', function() {
+      overlay.unpick();
+      expect(overlay._selected).to.be.false
+    });
+
+    it('Returns false if image editing is disabled', function() {
+      overlay.editing.disable();
+      expect(overlay.unpick()).to.be.false
+      expect(overlay._selected).to.be.false
+    });
+
+    it('Returns false if image is not picked', function() {
+      expect(overlay.unpick()).to.be.ok
+      expect(overlay.unpick()).to.be.false
+    });
+  });
+
   describe('#getCenter', function() {
     it('Should return the center when the outline of the image is a rectangle', function() {
       var center = overlay.getCenter();

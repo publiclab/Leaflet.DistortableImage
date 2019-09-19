@@ -89,7 +89,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return layerArr.some(this.isCollected.bind(this));
   },
 
-  _toggleMultiCollect: function(e, layer) {
+  _toggleCollected: function(e, layer) {
     if (e.shiftKey) {
       /** conditional prevents disabled images from flickering multi-select mode */
       if (layer.editing.enabled()) {
@@ -108,7 +108,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
       if (layer.getElement() !== e.target) {
         layer.unpick();
       } else {
-        this._toggleMultiCollect(e, layer);
+        this._toggleCollected(e, layer);
       }
     }, this);
 

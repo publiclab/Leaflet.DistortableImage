@@ -835,7 +835,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return layerArr.some(this.isCollected.bind(this));
   },
 
-  _toggleMultiCollect: function(e, layer) {
+  _toggleCollected: function(e, layer) {
     if (e.shiftKey) {
       /** conditional prevents disabled images from flickering multi-select mode */
       if (layer.editing.enabled()) {
@@ -854,7 +854,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
       if (layer.getElement() !== e.target) {
         layer.unpick();
       } else {
-        this._toggleMultiCollect(e, layer);
+        this._toggleCollected(e, layer);
       }
     }, this);
 
@@ -2011,8 +2011,8 @@ L.DistortableImage.Edit = L.Handler.extend({
   disable: function() {
     if (!this._enabled) { return this; }
 
-    this._enabled = false;
     this._overlay.unpick();
+    this._enabled = false;
     this.removeHooks();
     return this;
   },

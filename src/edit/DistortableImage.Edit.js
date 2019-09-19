@@ -86,8 +86,8 @@ L.DistortableImage.Edit = L.Handler.extend({
   disable: function() {
     if (!this._enabled) { return this; }
 
-    this._enabled = false;
     this._overlay.unpick();
+    this._enabled = false;
     this.removeHooks();
     return this;
   },
