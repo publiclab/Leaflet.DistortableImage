@@ -87,7 +87,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (!this._enabled) { return this; }
 
     this._enabled = false;
-    this._overlay._unpick();
+    this._overlay.unpick();
     this.removeHooks();
     return this;
   },
@@ -441,7 +441,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _deselect: function() {
-    this._overlay._unpick();
+    this._overlay.unpick();
   },
 
   _showMarkers: function() {
@@ -582,9 +582,9 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     if (e) {
       if (eP) {
-        eP._decollectOthers(e);
+        eP._deselectOthers(e);
         if (!eP.anyCollected()) {
-          this._overlay._pick();
+          this._overlay.pick();
         }
       }
       L.DomEvent.stop(e);

@@ -41,7 +41,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
 
     L.DomEvent.on(layer._image, {
-      mousedown: this._decollectOthers,
+      mousedown: this._deselectOthers,
       /* Enable longpress for multi select for touch devices. */
       contextmenu: this._longPressMultiSelect,
     }, this);
@@ -56,7 +56,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
 
     L.DomEvent.off(layer._image, {
-      mousedown: this._decollectOthers,
+      mousedown: this._deselectOthers,
       contextmenu: this._longPressMultiSelect,
     }, this);
   },
@@ -71,7 +71,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
       if (layer.getElement() === e.target && edit.enabled()) {
         L.DomUtil.toggleClass(layer.getElement(), 'collected');
         if (this.anyCollected()) {
-          layer._unpick();
+          layer.unpick();
           this.editing._addToolbar();
         } else {
           this.editing._removeToolbar();
@@ -97,16 +97,16 @@ L.DistortableCollection = L.FeatureGroup.extend({
       }
     }
 
-    if (this.anyCollected()) { layer._unpick(); }
+    if (this.anyCollected()) { layer.unpick(); }
     else { this.editing._removeToolbar(); }
   },
 
-  _decollectOthers: function(e) {
+  _deselectOthers: function(e) {
     if (!this.editable) { return; }
 
     this.eachLayer(function(layer) {
       if (layer.getElement() !== e.target) {
-        layer._unpick();
+        layer.unpick();
       } else {
         this._toggleMultiCollect(e, layer);
       }
