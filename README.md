@@ -157,9 +157,7 @@ img = L.distortableImageOverlay('example.jpg', {
 
 `mode` (*optional*, default: "distort", value: *string*)
 
-Each primary editing mode corresponds to a separate editing handle.
-
-This option sets the image's initial editing mode, meaning the corresponding editing handle will always appear first when you interact with the image.
+This option sets the image's initial editing mode, meaning the corresponding editing handles will always appear first when you interact with the image.
 
 Values available to pass to `mode` are:
 
@@ -181,7 +179,7 @@ img = L.distortableImageOverlay('example.jpg', {
 
 `selected` (*optional*, default: false, value: *boolean*)
 
-By default, your image will initially appear on the screen as "unselected" - no toolbar, markers, etc. Interacting with it will make them visible.
+By default, your image will initially appear on the screen as unselected (no toolbar or markers). Interacting with it will make them visible.
 
 If you prefer that an image initially appears as selected instead, pass `selected: true`.
 
@@ -506,7 +504,17 @@ img.setCorners(scaledCorners);
 </details>
 
 <details><summary><code><b>isPicked()</b>: Boolean</code></summary>
-  <ul><li>Returns true if the individual image instance is <code>selected</code>.</li></ul>
+  <ul><li>Returns true if the individual image instance is selected.</li></ul>
+</details>
+
+<details><summary><code><b>pick()</b>: this</code></summary>
+  <ul><li>Programmatically select an image.</li></ul>
+  <ul><li>If its editing handler is disabled or the multiple image interface is on (<code>imgGroup.anyCollected()</code> returns true), instead just returns false.</li></ul>
+</details>
+
+<details><summary><code><b>unpick()</b>: this</code></summary>
+  <ul><li>Programmatically de-selects an image.</li></ul>
+  <ul><li>If its editing handler is disabled or it is not currently selected (<code>!img.isPicked()</code>), instead just returns false.</li></ul>
 </details>
 
 ---

@@ -1,7 +1,6 @@
 L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   options: {
-    alt: '',
     height: 200,
     crossOrigin: true,
     // todo: find ideal number to prevent distortions during RotateScale, and make it dynamic (remove hardcoding)
@@ -24,7 +23,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   onAdd: function(map) {
     this._map = map;
-    if (!this._image) { this._initImage(); }
+    if (!this._image) { L.ImageOverlay.prototype._initImage.call(this); }
     if (!this._events) { this._initEvents(); }
 
     this.getPane().appendChild(this._image);
@@ -94,14 +93,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this.fire('remove');
 
     L.ImageOverlay.prototype.onRemove.call(this, map);
-  },
-
-  _initImage: function() {
-    L.ImageOverlay.prototype._initImage.call(this);
-
-    L.extend(this._image, {
-      alt: this.options.alt,
-    });
   },
 
   _initImageDimensions: function() {
