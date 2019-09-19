@@ -43,12 +43,12 @@ describe('L.DistortableImageOverlay', function() {
     });
   });
 
-  describe('#pick', function() {
+  describe('#select', function() {
     it('Allows programmatically selecting a single image', function() {
       expect(overlay._selected).to.be.false
       expect(overlay.editing.toolbar).to.be.undefined
       
-      overlay.pick();
+      overlay.select();
 
       setTimeout(function() {
         expect(overlay._selected).to.be.true
@@ -56,51 +56,61 @@ describe('L.DistortableImageOverlay', function() {
       }, 3000);
     });
 
+    it('Is invoked on image click', function () {
+      overlay.getElement().click();
+      expect(overlay.pick).to.have.been.called;
+    });
+
     it('Returns false if image editing is disabled', function() {
       overlay.editing.disable();
-      expect(overlay.pick()).to.be.false
+      expect(overlay.select()).to.be.false
       expect(overlay._selected).to.be.false
       expect(overlay.editing.toolbar).to.be.undefined
     });
     
     it('Returns false if the multiple image editing interface is on', function() {
       L.DomUtil.addClass(overlay._image, 'collected');
-      expect(overlay.pick()).to.be.false
+      expect(overlay.select()).to.be.false
       expect(overlay._selected).to.be.false
       expect(overlay.editing.toolbar).to.be.false
     });
   });
 
-  describe('#unpick', function() {
+  describe('#deselect', function() {
     beforeEach(function () { // select the image
-      overlay.pick();
+      overlay.select();
       setTimeout(function() {
         expect(overlay._selected).to.be.true
       }, 3000);
     });
 
     it('Allows programmatically deselecting a single image', function() {
-      overlay.unpick();
+      overlay.deselect();
       expect(overlay._selected).to.be.false
+    });
+
+    it('Is invoked on map click', function() {
+      map.fire('click');
+      expect(overlay.unpick).to.have.been.called;
     });
 
     it('Returns false if image editing is disabled', function() {
       overlay.editing.disable();
-      expect(overlay.unpick()).to.be.false
+      expect(overlay.deselect()).to.be.false
       expect(overlay._selected).to.be.false
     });
 
     it('Returns false if image is not picked', function() {
-      expect(overlay.unpick()).to.be.ok
-      expect(overlay.unpick()).to.be.false
+      expect(overlay.deselect()).to.be.ok
+      expect(overlay.deselect()).to.be.false
     });
   });
 
-  describe('#isPicked', function () {
+  describe('#isSelected', function () {
     it('Only returns true for a selected image', function () {
-      expect(overlay.isPicked()).to.be.false
-      overlay.pick();
-      expect(overlay.isPicked()).to.be.true
+      expect(overlay.isSelected()).to.be.false
+      overlay.select();
+      expect(overlay.isSelected()).to.be.true
     });
   });
 

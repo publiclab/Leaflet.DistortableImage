@@ -122,7 +122,7 @@ describe('L.DistortableImage.Edit', function() {
   describe('#nextMode', function () {
     beforeEach(function() {
       overlay.editing.enable();
-      overlay.pick();
+      overlay.select();
     });
 
     it('Should update image\'s mode to the next in its modes array', function() {
@@ -139,7 +139,7 @@ describe('L.DistortableImage.Edit', function() {
     it('Will only update if the image is selected, or nextMode was triggerd by dblclick', function() {
       var edit = overlay.editing;
 
-      overlay.unpick();
+      overlay.deselect();
       expect(edit.nextMode()).to.be.false
 
       chai.simulateEvent(overlay.getElement(), chai.mouseEvents.Dblclick);
@@ -175,7 +175,7 @@ describe('L.DistortableImage.Edit', function() {
     });
 
     it('Will still update the mode of an initialized image with suppressToolbar: true', function() {
-      ov2.pick();
+      ov2.select();
       expect(ov2.editing.toolbar).to.be.undefined
       expect(ov2.editing.nextMode()).to.be.ok
     })
@@ -184,7 +184,7 @@ describe('L.DistortableImage.Edit', function() {
   describe('#setMode', function() {
     it('Will return false if the passed value is not in the image\'s modes array', function() {
       var edit = overlay.editing;
-      overlay.pick();
+      overlay.select();
       expect(edit.setMode('lock')).to.be.ok
       expect(edit.setMode('blah')).to.be.false
     });
@@ -196,13 +196,13 @@ describe('L.DistortableImage.Edit', function() {
 
     it('Will return false if the passed mode is already the images mode', function() {
       var edit = overlay.editing;
-      overlay.pick();
+      overlay.select();
       expect(edit.setMode('lock')).to.be.ok
       expect(edit.setMode('lock')).to.be.false
     });
 
     it('Will still update the mode of an initialized image with suppressToolbar: true', function () {
-      ov2.pick();
+      ov2.select();
       expect(ov2.editing.toolbar).to.be.undefined
       expect(ov2.editing.setMode('lock')).to.be.ok
     })

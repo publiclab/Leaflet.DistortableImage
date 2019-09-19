@@ -117,7 +117,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
     this._group.eachLayer(function(layer) {
       L.DomUtil.removeClass(layer.getElement(), 'collected');
-      layer.unpick();
+      layer.deselect();
     });
 
     this._removeToolbar();
@@ -132,7 +132,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
         if (edit._mode === 'lock') {
           edit._unlock();
           // unlock updates the layer's handles; deselect to ensure they're hidden
-          layer.unpick();
+          layer.deselect();
         }
       }
     }, this);
@@ -158,7 +158,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     this._group.eachLayer(function(layer) {
       var edit = layer.editing;
 
-      if (layer.isPicked()) { layer.unpick(); }
+      if (layer.isSelected()) { layer.deselect(); }
 
       var imgBounds = L.latLngBounds(layer.getCorner(2), layer.getCorner(1));
       imgBounds = map._latLngBoundsToNewLayerBounds(imgBounds, map.getZoom(), map.getCenter());

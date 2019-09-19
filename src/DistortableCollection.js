@@ -71,7 +71,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
       if (layer.getElement() === e.target && edit.enabled()) {
         L.DomUtil.toggleClass(layer.getElement(), 'collected');
         if (this.anyCollected()) {
-          layer.unpick();
+          layer.deselect();
           this.editing._addToolbar();
         } else {
           this.editing._removeToolbar();
@@ -97,7 +97,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
       }
     }
 
-    if (this.anyCollected()) { layer.unpick(); }
+    if (this.anyCollected()) { layer.deselect(); }
     else { this.editing._removeToolbar(); }
   },
 
@@ -106,7 +106,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     this.eachLayer(function(layer) {
       if (layer.getElement() !== e.target) {
-        layer.unpick();
+        layer.deselect();
       } else {
         this._toggleCollected(e, layer);
       }
@@ -124,7 +124,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     this.eachLayer(function(layer) {
       layer._dragStartPoints = {};
-      layer._unpick();
+      layer.deselect();
       for (i = 0; i < 4; i++) {
         var c = layer.getCorner(i);
         layer._dragStartPoints[i] = map.latLngToLayerPoint(c);

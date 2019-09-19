@@ -416,10 +416,10 @@ And the following custom handlers:
   </ul>
 </details>
 
-<details><summary><code><b>boxSelector</b>: this</code></summary>
+<details><summary><code><b>boxCollector</b>: this</code></summary>
   <ul>
     <li>Overrides the map's default <a href="https://leafletjs.com/reference-1.5.0.html#map-boxzoom"><code>boxZoom</code></a> handler.</li>
-    <li>Allows multiple images to be collected when <kbd>shift</kbd> + <code>drag</code>ing on the map in the multiple-image inerface.</li>
+    <li>Allows multiple images to be collected when <kbd>shift</kbd> + <code>drag</code>ing on the map for the multiple image interface.</li>
   </ul>
 </details>
 <br>
@@ -503,18 +503,24 @@ img.setCorners(scaledCorners);
   <ul><li>Rotates the image by the given radian angle and calls <code>#setCorners</code>.</li></ul>
 </details>
 
-<details><summary><code><b>isPicked()</b>: Boolean</code></summary>
+<details><summary><code><b>isSelected()</b>: Boolean</code></summary>
   <ul><li>Returns true if the individual image instance is selected.</li></ul>
 </details>
 
-<details><summary><code><b>pick()</b>: this</code></summary>
-  <ul><li>Programmatically select an image.</li></ul>
-  <ul><li>If its editing handler is disabled or the multiple image interface is on (<code>imgGroup.anyCollected()</code> returns true), instead just returns false.</li></ul>
+<details><summary><code><b>select()</b>: this</code></summary>
+  <ul>
+    <li>Selects an individual image instance.</li>
+    <li>If its editing handler is disabled or the multiple image interface is on (<code>imgGroup.anyCollected()</code> returns true), instead just returns false.</li>
+    <li>Internally invoked on image <code>click</code>.</li>
+  </ul>
 </details>
 
-<details><summary><code><b>unpick()</b>: this</code></summary>
-  <ul><li>Programmatically de-selects an image.</li></ul>
-  <ul><li>If its editing handler is disabled or it is not currently selected (<code>!img.isPicked()</code>), instead just returns false.</li></ul>
+<details><summary><code><b>deselect()</b>: this</code></summary>
+  <ul>
+    <li>Deselects an individual image instance.</li>
+    <li>If its editing handler is disabled or it is not currently selected, instead just returns false.</li>
+    <li>Internally invoked on map <code>click</code>.</li>
+  </ul>
 </details>
 
 ---
