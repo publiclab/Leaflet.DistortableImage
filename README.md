@@ -300,17 +300,18 @@ imgGroup = L.distortableCollection({
 
 Currently it supports multiple image selection and translations, and WIP we are working on porting all editing tools to work for it, such as opacity, etc. Image distortions (via modes) still use the single-image interface.
 
-**collect:** A single toolbar instance (using `L.control`) renders the set of tools available to use on collections of images.
+A single toolbar instance (using `L.control`) renders the set of tools available to use on collections of images.
 
-1. Multi-selection works with <kbd>shift</kbd> + `click` to toggle an individual image's inclusion in this interface.
-2. Or <kbd>shift</kbd> + `drag` to use our `L.Map.BoxCollector` handler to select multiple at once.
-3. Or for touch devices, `touch` + `hold` (aka `longpress`).
+**collect**:
+
+1. Collect an indvidiual image with <kbd>shift</kbd> + `click`.
+2. Or for touch devices, `touch` + `hold` (aka `longpress`).
+3. Collect multiple images at once with <kbd>shift</kbd> + `drag` (Uses our `L.Map.BoxCollector`).
 
 **decollect:**
 
-* In order to return to the single-image interface, where each `L.popup` toolbar only applies actions on the image it's attached to, you must toggle *all* images out of multi-select with `shift` + click, or...
+* In order to return to the single-image interface, where each `L.popup` toolbar only applies actions on the image it's attached to, you must toggle *all* images out of collection with `shift` + click / `touch` + `hold`, or...
 * ...Click on the map or hit the <kbd>esc</kbd> key to quickly decollect all.
-* For the aforementioned 3 mutli-select methods, the `BoxCollector` method is the only one that doesn't also toggle _out_ of multi-select mode.
 
 ---
 
@@ -438,6 +439,8 @@ We have made slight changes to a default Leaflet handler:
 
 ---
 
+An individual image instance that can have transformation methods called on it and can be "selected".
+
 <details><summary><code><b>getCorner(<i>idx</i> &#60;number 0..3>)</b>: LatLng</code></summary>
   <ul><li>Returns the coordinates of the image corner at <i>index</i>.</li></ul>
 </details>
@@ -519,7 +522,7 @@ img.setCorners(scaledCorners);
   <ul>
     <li>Deselects an individual image instance.</li>
     <li>If its editing handler is disabled or it is not currently selected, instead just returns false.</li>
-    <li>Internally invoked on map <code>click</code>.</li>
+    <li>Internally invoked on map <code>click</code> and image collect.</li>
   </ul>
 </details>
 
@@ -580,6 +583,10 @@ A handler that holds the keybindings and toolbar API for an image instance. It i
 ---
 
 `L.DistortableCollection`
+
+---
+
+A collection instance made up of a group of images. Images can be "collected" in this interface and a "collected" image is never also "selected".
 
 <details><summary><code><b>isCollected(<i>img</i> &#60;DistortableImageOverlay>)</b>: Boolean</code></summary>
 <ul><li>Returns true if the passed <code>L.DistortableImageOverlay</code> instance is collected, i.e. its underlying <code>HTMLImageElement</code> has a class containing "selected".</li></ul>
