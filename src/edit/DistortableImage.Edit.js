@@ -267,6 +267,11 @@ L.DistortableImage.Edit = L.Handler.extend({
     };
   },
 
+  _dragMode: function() {
+    if (!this.hasTool(L.DragAction)) { return; }
+    this.setMode('drag');
+  },
+
   _scaleMode: function() {
     if (!this.hasTool(L.ScaleAction)) { return; }
     this.setMode('scale');

@@ -1595,6 +1595,26 @@ L.DistortAction = L.EditAction.extend({
   },
 });
 
+L.DragAction = L.EditAction.extend({
+  initialize: function(map, overlay, options) {
+    options = options || {};
+    options.toolbarIcon = {
+      svg: true,
+      html: 'drag',
+      tooltip: 'Drag Only Image',
+      className: 'drag'
+    };
+
+    L.DistortableImage.action_map.D = '_dragMode';
+    L.EditAction.prototype.initialize.call(this, map, overlay, options);
+  },
+
+  addHooks: function() {
+    var edit = this._overlay.editing;
+    edit._dragMode();
+  }
+});
+
 L.ExportAction = L.EditAction.extend({
   initialize: function(map, overlay, options) {
     var edit = overlay.editing;
@@ -2223,6 +2243,11 @@ L.DistortableImage.Edit = L.Handler.extend({
 
       this.fire('drag');
     };
+  },
+
+  _dragMode: function() {
+    if (!this.hasTool(L.DragAction)) { return; }
+    this.setMode('drag');
   },
 
   _scaleMode: function() {
@@ -2978,6 +3003,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
           '<tr><td><div class="left"><span>RotateScale Mode</span></div><div class="right"><kbd>r</kbd></div></td></tr>' +
           '<tr><td><div class="left"><span>Scale Mode</span></div><div class="right"><kbd>s</kbd></div></td></tr>' +
           '<tr><td><div class="left"><span>Distort Mode</span></div><div class="right"><kbd>d</kbd></div></td></tr>' +
+          '<tr><td><div class="left"><span>Drag Mode</span></div><div class="right"><kbd>D</kbd></div></td></tr>' +   
           '<tr><td><div class="left"><span>Lock (Mode) / Unlock Image</span></div><div class="right"><kbd>l</kbd>\xa0<kbd>u</kbd></div></td></tr>' +
           '<tr><td><div class="left"><span>Stack up / down</span></div><div class="right"><kbd>q</kbd>\xa0<kbd>a</kbd></div></td></tr>' +
           '<tr><td><div class="left"><span>Add / Remove Image Border</span></div><div class="right"><kbd>b</kbd></div></td></tr>' +
