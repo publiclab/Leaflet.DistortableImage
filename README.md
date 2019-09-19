@@ -529,7 +529,7 @@ A handler that holds the keybindings and toolbar API for an image instance. It i
 
 <details><summary><code><b>enable()</b>: this</code></summary>
   <ul>
-    <li>Sets up the editing interface (makes the image interactive, adds markers and toolbar).</li>
+    <li>Sets up the editing interface (makes the image interactive).</li>
     <li>Called internally by default (<a href="#editable">editable</a>), but unlike the option it can be used in runtime and is not ignored if there is a collection group. In fact...</li>
     <li>...An individual image can be enabled while the group is disabled. i.e. calling <code>img.editing.enable()</code> after <code>imgGroup.editing.disable()</code> is valid. In this case, the single image interface will be available on this image but not the multi-image interface.</li>
   </ul>
@@ -537,7 +537,7 @@ A handler that holds the keybindings and toolbar API for an image instance. It i
 
 <details><summary><code><b>disable()</b>: this</code></summary>
   <ul>
-    <li>Removes the editing interface (makes the image non-interactive, removes markers and toolbar).</li>
+    <li>Deselects the image, and disables its editing interface (makes it non-interactive).</li>
     <li>Called internally by default on image deletion.</li>
     <li>An individual image can be disabled while the group is enabled.</li>
   </ul>

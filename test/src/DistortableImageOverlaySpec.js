@@ -96,6 +96,14 @@ describe('L.DistortableImageOverlay', function() {
     });
   });
 
+  describe('#isPicked', function () {
+    it('Only returns true for a selected image', function () {
+      expect(overlay.isPicked()).to.be.false
+      overlay.pick();
+      expect(overlay.isPicked()).to.be.true
+    });
+  });
+
   describe('#getCenter', function() {
     it('Should return the center when the outline of the image is a rectangle', function() {
       var center = overlay.getCenter();
