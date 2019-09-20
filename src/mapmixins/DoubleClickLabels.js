@@ -41,7 +41,7 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
     var map = this._map;
     var labels = map._labels;
 
-    this._cancelSingleClick();
+    // this._cancelSingleClick();
 
     map._clicked = 0;
 

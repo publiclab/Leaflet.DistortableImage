@@ -66,9 +66,9 @@ L.Map.DoubleClickZoom.include({
     this._singleClickTimeout = setTimeout(function() {
       if (map._clicked === 1) {
         map._clicked = 0;
-        if (eo && !eo._stopped) {
-          map.fire('singleclick', L.extend(e, {type: 'singleclick'}));
-        }
+        // if (eo && !eo._stopped) {
+        map.fire('singleclick', L.extend(e, {type: 'singleclick'}));
+        // }
       }
     }, 250);
   },
@@ -85,7 +85,7 @@ L.Map.DoubleClickZoom.include({
 
     map._clicked = 0;
 
-    this._cancelSingleClick();
+    // this._cancelSingleClick();
 
     var oldZoom = map.getZoom();
     var delta = map.options.zoomDelta;
