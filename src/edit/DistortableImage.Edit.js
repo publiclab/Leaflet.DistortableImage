@@ -216,7 +216,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     /* Hide toolbars and markers while dragging; click will re-show it */
     this.dragging.on('dragstart', function() {
       overlay.fire('dragstart');
-      console.log("hi");
       this._removeToolbar();
     }, this);
 
