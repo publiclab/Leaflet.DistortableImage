@@ -1,6 +1,8 @@
 /* eslint-disable max-len */
 L.Map.include({
 
+  _singleClickTimeout: null,
+
   _clicked: 0,
 
   addGoogleMutant: function(opts) {

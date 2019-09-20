@@ -258,7 +258,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   onAdd: function(map) {
     this._map = map;
     if (!this._image) { L.ImageOverlay.prototype._initImage.call(this); }
-    if (!this._events) { this._initEvents(); }
 
     this.getPane().appendChild(this._image);
 
@@ -312,6 +311,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     if (!(map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled())) {
       L.DomEvent.on(map, 'click', this.deselect, this);
     }
+
+    this.fire('add');
   },
 
   onRemove: function(map) {
@@ -364,32 +365,24 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     };
   },
 
-  _initEvents: function() {
-    this._events = ['click'];
-
-    for (var i = 0, l = this._events.length; i < l; i++) {
-      L.DomEvent.on(this._image, this._events[i], this._fireMouseEvent, this);
-    }
-  },
-
   /* See src/layer/vector/Path.SVG.js in the Leaflet source. */
-  _fireMouseEvent: function(event) {
-    if (!this.hasEventListeners(event.type)) {
-      return;
-    }
+  // _fireMouseEvent: function(event) {
+  //   if (!this.hasEventListeners(event.type)) {
+  //     return;
+  //   }
 
-    var map = this._map;
-    var containerPoint = map.mouseEventToContainerPoint(event);
-    var layerPoint = map.containerPointToLayerPoint(containerPoint);
-    var latlng = map.layerPointToLatLng(layerPoint);
+  //   var map = this._map;
+  //   var containerPoint = map.mouseEventToContainerPoint(event);
+  //   var layerPoint = map.containerPointToLayerPoint(containerPoint);
+  //   var latlng = map.layerPointToLatLng(layerPoint);
 
-    this.fire(event.type, {
-      latlng: latlng,
-      layerPoint: layerPoint,
-      containerPoint: containerPoint,
-      originalEvent: event,
-    });
-  },
+  //   this.fire(event.type, {
+  //     latlng: latlng,
+  //     layerPoint: layerPoint,
+  //     containerPoint: containerPoint,
+  //     originalEvent: event,
+  //   });
+  // },
 
   _singleClick: function(e) {
     if (e.type === 'singleclick') { this.deselect(); }
@@ -2514,7 +2507,7 @@ L.DistortableImage.Edit = L.Handler.extend({
           this._overlay.select();
         }
       }
-      L.DomEvent.stop(e);
+      // L.DomEvent.stop(e);
     }
 
     return this.setMode(newMode);
@@ -2620,13 +2613,11 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
   _singleClickListeners: function() {
     var map = this._group._map;
-
     L.DomEvent.off(map, 'click', this._decollectAll, this);
   },
 
   _resetClickListeners: function() {
     var map = this._group._map;
-
     L.DomEvent.on(map, 'click', this._decollectAll, this);
   },
 
@@ -2996,177 +2987,119 @@ L.distortableImage.keymapper = function(map, options) {
   return new L.DistortableImage.Keymapper(map, options);
 };
 
-/* eslint-disable max-len */
-L.Map.include({
-
-  _clicked: 0,
-
-  addGoogleMutant: function(opts) {
-    var url = 'http://mt0.google.com/vt/lyrs=s&x={x}&y={y}&z={z}';
-
-    opts = this.mutantOptions = L.extend({
-      mutantOpacity: 0.8,
-      maxZoom: 18,
-      minZoom: 0,
-      labels: true,
-      labelOpacity: 1,
-      doubleClickLabels: true,
-    }, opts);
-
-    if (opts.maxZoom > 21) { opts.maxZoom = 18; }
-
-    if (!opts.labels) {
-      this.mutantOptions = L.extend(this.mutantOptions, {
-        labelOpacity: opts.labels ? 1 : undefined,
-        doubleClickLabels: opts.labels ? true : undefined,
-      });
-    }
-
-    this._googleMutant = L.tileLayer(url, {
-      maxZoom: opts.maxZoom,
-      minZoom: opts.minZoom,
-      opacity: opts.mutantOpacity,
-    }).addTo(this);
-
-    if (opts.labels) { this._addLabels(opts); }
-    // disables and removes from map - shouldn't have this handler at all if there
-    // are no labels to toggle
-    else {
-      this.doubleClickLabels.disable();
-      this.doubleClickZoom.enable();
-      this.doubleClickLabels = undefined;
-    }
-
-    return this;
-  },
-
-  _addLabels: function(opts) {
-    var url = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner-labels/{z}/{x}/{y}{r}.{ext}';
-
-    if (opts.labelOpacity !== 0 && opts.labelOpacity !== 1) {
-      opts.labelOpacity = 1;
-    }
-
-    this._labels = L.tileLayer(url, {
-      attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      subdomains: 'abcd',
-      interactive: false,
-      opacity: opts.labelOpacity,
-      maxZoom: opts.maxZoom,
-      minZoom: opts.minZoom,
-      ext: 'png',
-    }).addTo(this);
-
-    // disables but keeps on map (can re-enable)
-    if (!this.mutantOptions.doubleClickLabels) {
-      this.doubleClickLabels.disable();
-      this.doubleClickZoom.enable();
-    }
-
-    return this;
-  },
-});
-
 /**
  * L.Map.DoubleClickZoom from leaflet 1.5.1, overrwritten so that it fires a
  * `singleclick` event to avoiding deselecting images on doubleclick.
  */
-L.Map.DoubleClickZoom.include({
-  addHooks: function() {
-    this._map.on({
-      click: this._fireIfSingle,
-      dblclick: this._onDoubleClick,
-    }, this);
-  },
+// L.Map.DoubleClickZoom.include({
+//   addHooks: function() {
+//     // this._singleClickTimeout = null;
 
-  removeHooks: function() {
-    this._map.off({
-      click: this._fireIfSingle,
-      dblclick: this._onDoubleClick,
-    }, this);
-  },
+//     // L.DomEvent.on(this._map, {
+//     //   click: this._scheduleSingleClick,
+//     //   dblclick: this._onDoubleClick,
+//     // }, this);
+//     this._map.on({
+//       click: this._scheduleSingleClick,
+//       dblclick: this._onDoubleClick,
+//       dbltap: this._onDoubleClick,
+//     }, this);
+//   },
 
-  enable: function() {
-    if (this._enabled) { return this; }
+//   removeHooks: function() {
+//     this._map.singleClickTimeout = null;
 
-    // don't enable 'doubleClickZoom' unless 'doubleClickLabels' is disabled first
-    if (this._map.doubleClickLabels) {
-      if (this._map.doubleClickLabels.enabled()) {
-        return false;
-      }
-    }
+//     this._map.off({
+//       click: this._scheduleSingleClick,
+//       dblclick: this._onDoubleClick,
+//       dbltap: this._onDoubleClick,
+//     }, this);
+//   },
 
-    this._map.fire('singleclickon');
+//   enable: function() {
+//     var map = this._map;
 
-    this._enabled = true;
-    this.addHooks();
-    return this;
-  },
+//     if (this._enabled) { return this; }
 
-  disable: function() {
-    if (!this._enabled) { return this; }
+//     // don't enable 'doubleClickZoom' unless 'doubleClickLabels' is disabled first
+//     if (map.doubleClickLabels) {
+//       if (map.doubleClickLabels.enabled()) {
+//         return false;
+//       }
+//     }
 
-    // if L.Map.DoubleClickLabels is disabled as well, collection/instance classes
-    // will stop listening for `singleclick` and start just listening for `click`.
-    this._map.fire('singleclickoff');
+//     map.fire('singleclickon');
 
-    this._enabled = false;
-    this.removeHooks();
-    return this;
-  },
+//     this._enabled = true;
+//     this.addHooks();
+//     return this;
+//   },
 
-  _clearSingleClickTimeout: function() {
-    if (this._singleClickTimeout) {
-      clearTimeout(this._singleClickTimeout);
-      this._singleClickTimeout = null;
-    }
-  },
+//   disable: function() {
+//     if (!this._enabled) { return this; }
 
-  _fireIfSingle: function(e) {
-    var map = this._map;
-    var eo = e.originalEvent;
+//     // if L.Map.DoubleClickLabels is disabled as well, collection/instance classes
+//     // will stop listening for `singleclick` and start just listening for `click`.
+//     this._map.fire('singleclickoff');
 
-    // prevents deselection in case of box selector
-    if (eo && eo.shiftKey) { return; }
+//     this._enabled = false;
+//     this.removeHooks();
+//     return this;
+//   },
 
-    this._clearSingleClickTimeout();
+//   _clearSingleClickTimeout: function() {
+//     if (this._map._singleClickTimeout !== null) {
+//       console.log('clearclicktimeout');
+//       clearTimeout(this._map._singleClickTimeout);
+//       this._map._singleClickTimeout = null;
+//     }
+//   },
 
-    map._clicked += 1;
-    this._singleClickTimeout = setTimeout(function() {
-      if (map._clicked === 1) {
-        map._clicked = 0;
-        // if (eo && !eo._stopped) {
-        map.fire('singleclick', L.extend(e, {type: 'singleclick'}));
-        // }
-      }
-    }, 250);
-  },
+//   _scheduleSingleClick: function(e) {
+//     var oe = e.originalEvent;
+//     var map = this._map;
 
-  _cancelSingleClick: function() {
-    // This timeout is key to workaround an issue where double-click events
-    // are fired in this order on some touch browsers: ['click', 'dblclick', 'click']
-    // instead of ['click', 'click', 'dblclick']
-    setTimeout(this._clearSingleClickTimeout.bind(this), 0);
-  },
+//     // prevents deselection in case of box selector
+//     if (oe && oe.shiftKey) { return; }
 
-  _onDoubleClick: function(e) {
-    var map = this._map;
+//     console.log('singleclick');
+//     this._clearSingleClickTimeout();
 
-    map._clicked = 0;
+//     // this._singleClickTimeout = (
+//     // setTimeout(L.bind(this._fireSingleClick, e, this), 250)
+//     // );
+//     this._map._singleClickTimeout = setTimeout(function() {
+//       // if (oe && !oe._stopped) {
+//       map.fire('singleclick', L.extend(e, {type: 'singleclick'}));
+//       // }
+//     }, 250);
+//   },
 
-    // this._cancelSingleClick();
+//   _cancelSingleClick: function() {
+//     // This timeout is key to workaround an issue where double-click events
+//     // are fired in this order on some touch browsers: ['click', 'dblclick', 'click']
+//     // instead of ['click', 'click', 'dblclick']
+//     setTimeout(L.bind(this._clearSingleClickTimeout, this), 0);
+//   },
 
-    var oldZoom = map.getZoom();
-    var delta = map.options.zoomDelta;
-    var zoom = e.originalEvent.shiftKey ? oldZoom - delta : oldZoom + delta;
+//   _onDoubleClick: function(e) {
+//     var map = this._map;
 
-    if (map.options.doubleClickZoom === 'center') {
-      map.setZoom(zoom);
-    } else {
-      map.setZoomAround(e.containerPoint, zoom);
-    }
-  },
-});
+//     console.log('doubleclick');
+
+//     this._cancelSingleClick();
+
+//     var oldZoom = map.getZoom();
+//     var delta = map.options.zoomDelta;
+//     var zoom = e.originalEvent.shiftKey ? oldZoom - delta : oldZoom + delta;
+
+//     if (map.options.doubleClickZoom === 'center') {
+//       map.setZoom(zoom);
+//     } else {
+//       map.setZoomAround(e.containerPoint, zoom);
+//     }
+//   },
+// });
 
 L.Map.mergeOptions({
   boxCollector: true,
@@ -3304,6 +3237,8 @@ L.Map.addInitHook('addHandler', 'boxCollector', L.Map.BoxCollector);
 
 L.Map.mergeOptions({
   doubleClickLabels: true,
+  tap: true,
+  doubleTap: true,
 });
 
 /**
@@ -3311,18 +3246,142 @@ L.Map.mergeOptions({
  * is used unless the options 'labels: false' or 'doubleClickZoom: false` were passed to it.
  */
 
+// L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
+//   // addHooks: function() {
+//   // this._singleClickTimeout = null;
+
+//   //   this._map.on({
+//   //     click: this._scheduleSingleClick,
+//   //     dblclick: this._onDoubleClick,
+//   //   }, this);
+//   // },
+
+//   // removeHooks: function() {
+//   //   this._singleClickTimeout = null;
+
+//   //   this._map.off({
+//   //     click: this._scheduleSingleClick,
+//   //     dblclick: this._onDoubleClick,
+//   //   }, this);
+//   // },
+
+//   enable: function() {
+//     var map = this._map;
+
+//     if (this._enabled) { return this; }
+
+//     // disable 'doubleClickZoom' if enabling 'doubleClickLabels'
+//     if (map.doubleClickZoom.enabled()) {
+//       map.doubleClickZoom.disable();
+//     }
+
+//     // signify to collection/instance classes to listen for 'singleclick'
+//     this._map.fire('singleclickon');
+
+//     this._enabled = true;
+//     this.addHooks();
+//     this.addHooks();
+//     return this;
+//   },
+
+//   disable: function() {
+//     if (!this._enabled) { return this; }
+
+//     this._map.fire('singleclickoff');
+
+//     this._enabled = false;
+//     this.removeHooks();
+
+//     return this;
+//   },
+
+//   // _clearSingleClickTimeout: function() {
+//   //   if (this._singleClickTimeout !== null) {
+//   //     console.log('clearclicktimeout');
+//   //     clearTimeout(this._singleClickTimeout);
+//   //     this._singleClickTimeout = null;
+//   //   }
+//   // },
+
+//   // _scheduleSingleClick: function(e) {
+//   //   var oe = e.originalEvent;
+//   //   var map = this._map;
+
+//   //   // prevents deselection in case of box selector
+//   //   if (oe && oe.shiftKey) { return; }
+
+//   //   console.log('singleclick');
+//   //   this._clearSingleClickTimeout();
+
+//   //   // this._singleClickTimeout = (
+//   //   // setTimeout(L.bind(this._fireSingleClick, e, this), 250)
+//   //   // );
+//   //   this._singleClickTimeout = setTimeout(function() {
+//   //     // if (oe && !oe._stopped) {
+//   //     map.fire('singleclick', L.extend(e, {type: 'singleclick'}));
+//   //     // }
+//   //   }, 250);
+//   // },
+
+//   // _cancelSingleClick: function() {
+//   //   // This timeout is key to workaround an issue where double-click events
+//   //   // are fired in this order on some touch browsers: ['click', 'dblclick', 'click']
+//   //   // instead of ['click', 'click', 'dblclick']
+//   //   setTimeout(L.bind(this._clearSingleClickTimeout, this), 0);
+//   // },
+
+//   _onDoubleClick: function() {
+//     var map = this._map;
+//     var labels = map._labels;
+
+//     console.log('doubleclick');
+
+//     this._cancelSingleClick();
+
+//     if (labels.options.opacity === 1) {
+//       labels.options.opacity = 0;
+//       labels.setOpacity(0);
+//     } else {
+//       labels.options.opacity = 1;
+//       labels.setOpacity(1);
+//     }
+//   },
+// });
+
+// L.Map.addInitHook('addHandler', 'doubleClickLabels', L.Map.DoubleClickLabels);
 L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
+  addHooks: function() {
+    L.DomEvent.on(this._map, {
+      // pointerdown: this._fireIfSingle,
+      click: this._fireIfSingle,
+      dblclick: this._onDoubleClick,
+    }, this);
+  },
+
+  removeHooks: function() {
+    // this._map.off({
+    //   click: this._fireIfSingle,
+    //   dblclick: this._onDoubleClick,
+    // }, this);
+    L.DomEvent.on(this._map, {
+      // tap: this._fireIfSingle,
+      // pointerdown: this._fireIfSingle,
+      click: this._fireIfSingle,
+      dblclick: this._onDoubleClick,
+    }, this);
+  },
+
   enable: function() {
     var map = this._map;
 
     if (this._enabled) { return this; }
 
-    // disable 'doubleClickZoom' if enabling 'doubleClickLabels'
+    // disable 'doubleClickZoom' if 'doubleClickLabels' is enabled.
     if (map.doubleClickZoom.enabled()) {
       map.doubleClickZoom.disable();
     }
 
-    // signify to collection/instance classes to listen for 'singleclick'
+    // signify to collection/instance classes to re-enable 'singleclick' listeners
     this._map.fire('singleclickon');
 
     this._enabled = true;
@@ -3331,23 +3390,45 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
   },
 
   disable: function() {
-    if (!this._enabled) { return this; }
+    // var map = this._map;
 
-    this._map.fire('singleclickoff');
+    if (!this._enabled) { return this; }
 
     this._enabled = false;
     this.removeHooks();
 
+    // // enable 'doubleClickZoom' if 'doubleClickLabels' is disabled.
+    // if (!map.doubleClickZoom.enabled()) {
+    //   map.doubleClickZoom.enable();
+    // }
+
     return this;
+  },
+
+  _fireIfSingle: function(e) {
+    var map = this._map;
+    var eo = e.originalEvent;
+
+    // prevents deselection in case of box selector
+    if (eo && eo.shiftKey) { return; }
+
+    map._clicked += 1;
+    this._map._clickTimeout = setTimeout(function() {
+      if (map._clicked === 1) {
+        map._clicked = 0;
+        map.fire('singleclick', {type: 'singleclick'});
+      }
+    }, 250);
   },
 
   _onDoubleClick: function() {
     var map = this._map;
     var labels = map._labels;
 
-    // this._cancelSingleClick();
-
-    map._clicked = 0;
+    setTimeout(function() {
+      map._clicked = 0;
+      clearTimeout(map._clickTimeout);
+    }, 0);
 
     if (labels.options.opacity === 1) {
       labels.options.opacity = 0;
@@ -3359,4 +3440,164 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
   },
 });
 
+/**
+ * a little repetitive, but here we overrwrite the L.Map.DoubleClickZoom
+ * handler so that in case L.Map.DoubleClickLabels is disabled, this handler
+ * will fire a `singleclick` event that our collection and overlay classes
+ * both listen for. Bonus: now DoubleClickZoom doesn't deselect our images either.
+ */
+L.Map.DoubleClickZoom.include({
+  addHooks: function() {
+    this._map.on({
+      click: this._fireIfSingle,
+      dblclick: this._onDoubleClick,
+    }, this);
+  },
+
+  removeHooks: function() {
+    this._map.off({
+      click: this._fireIfSingle,
+      dblclick: this._onDoubleClick,
+    }, this);
+  },
+
+  enable: function() {
+    if (this._enabled) { return this; }
+
+    // don't enable 'doubleClickZoom' unless 'doubleClickLabels' is disabled first
+    if (this._map.doubleClickLabels) {
+      if (this._map.doubleClickLabels.enabled()) {
+        return this;
+      }
+    }
+
+    this._map.fire('singleclickon');
+
+    this._enabled = true;
+    this.addHooks();
+    return this;
+  },
+
+  /**
+   * if L.Map.DoubleClickZoom is disabled as well, we fire one more custom event
+   * to signify to our collection and instance classes to stop listening for `singleclick`
+   * and start just listening for `click`.
+   */
+  disable: function() {
+    if (!this._enabled) { return this; }
+
+    this._map.fire('singleclickoff');
+
+    this._enabled = false;
+    this.removeHooks();
+    return this;
+  },
+
+  _fireIfSingle: function(e) {
+    var map = this._map;
+    var eo = e.originalEvent;
+
+    // prevents deselection in case of box selector
+    if (eo && eo.shiftKey) { return; }
+
+    map._clicked += 1;
+    setTimeout(function() {
+      if (map._clicked === 1) {
+        map._clicked = 0;
+        map.fire('singleclick', L.extend(e, {type: 'singleclick'}));
+      }
+    }, 250);
+  },
+
+  _onDoubleClick: function(e) {
+    var map = this._map;
+
+    map._clicked = 0;
+
+    var oldZoom = map.getZoom();
+    var delta = map.options.zoomDelta;
+    var zoom = e.originalEvent.shiftKey ? oldZoom - delta : oldZoom + delta;
+
+    if (map.options.doubleClickZoom === 'center') {
+      map.setZoom(zoom);
+    } else {
+      map.setZoomAround(e.containerPoint, zoom);
+    }
+  },
+});
+
 L.Map.addInitHook('addHandler', 'doubleClickLabels', L.Map.DoubleClickLabels);
+
+
+/* eslint-disable max-len */
+L.Map.include({
+
+  _singleClickTimeout: null,
+
+  _clicked: 0,
+
+  addGoogleMutant: function(opts) {
+    var url = 'http://mt0.google.com/vt/lyrs=s&x={x}&y={y}&z={z}';
+
+    opts = this.mutantOptions = L.extend({
+      mutantOpacity: 0.8,
+      maxZoom: 18,
+      minZoom: 0,
+      labels: true,
+      labelOpacity: 1,
+      doubleClickLabels: true,
+    }, opts);
+
+    if (opts.maxZoom > 21) { opts.maxZoom = 18; }
+
+    if (!opts.labels) {
+      this.mutantOptions = L.extend(this.mutantOptions, {
+        labelOpacity: opts.labels ? 1 : undefined,
+        doubleClickLabels: opts.labels ? true : undefined,
+      });
+    }
+
+    this._googleMutant = L.tileLayer(url, {
+      maxZoom: opts.maxZoom,
+      minZoom: opts.minZoom,
+      opacity: opts.mutantOpacity,
+    }).addTo(this);
+
+    if (opts.labels) { this._addLabels(opts); }
+    // disables and removes from map - shouldn't have this handler at all if there
+    // are no labels to toggle
+    else {
+      this.doubleClickLabels.disable();
+      this.doubleClickZoom.enable();
+      this.doubleClickLabels = undefined;
+    }
+
+    return this;
+  },
+
+  _addLabels: function(opts) {
+    var url = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner-labels/{z}/{x}/{y}{r}.{ext}';
+
+    if (opts.labelOpacity !== 0 && opts.labelOpacity !== 1) {
+      opts.labelOpacity = 1;
+    }
+
+    this._labels = L.tileLayer(url, {
+      attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      subdomains: 'abcd',
+      interactive: false,
+      opacity: opts.labelOpacity,
+      maxZoom: opts.maxZoom,
+      minZoom: opts.minZoom,
+      ext: 'png',
+    }).addTo(this);
+
+    // disables but keeps on map (can re-enable)
+    if (!this.mutantOptions.doubleClickLabels) {
+      this.doubleClickLabels.disable();
+      this.doubleClickZoom.enable();
+    }
+
+    return this;
+  },
+});

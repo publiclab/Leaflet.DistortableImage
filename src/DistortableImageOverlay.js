@@ -24,7 +24,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   onAdd: function(map) {
     this._map = map;
     if (!this._image) { L.ImageOverlay.prototype._initImage.call(this); }
-    if (!this._events) { this._initEvents(); }
 
     this.getPane().appendChild(this._image);
 
@@ -78,6 +77,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     if (!(map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled())) {
       L.DomEvent.on(map, 'click', this.deselect, this);
     }
+
+    this.fire('add');
   },
 
   onRemove: function(map) {
@@ -130,32 +131,24 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     };
   },
 
-  _initEvents: function() {
-    this._events = ['click'];
-
-    for (var i = 0, l = this._events.length; i < l; i++) {
-      L.DomEvent.on(this._image, this._events[i], this._fireMouseEvent, this);
-    }
-  },
-
   /* See src/layer/vector/Path.SVG.js in the Leaflet source. */
-  _fireMouseEvent: function(event) {
-    if (!this.hasEventListeners(event.type)) {
-      return;
-    }
+  // _fireMouseEvent: function(event) {
+  //   if (!this.hasEventListeners(event.type)) {
+  //     return;
+  //   }
 
-    var map = this._map;
-    var containerPoint = map.mouseEventToContainerPoint(event);
-    var layerPoint = map.containerPointToLayerPoint(containerPoint);
-    var latlng = map.layerPointToLatLng(layerPoint);
+  //   var map = this._map;
+  //   var containerPoint = map.mouseEventToContainerPoint(event);
+  //   var layerPoint = map.containerPointToLayerPoint(containerPoint);
+  //   var latlng = map.layerPointToLatLng(layerPoint);
 
-    this.fire(event.type, {
-      latlng: latlng,
-      layerPoint: layerPoint,
-      containerPoint: containerPoint,
-      originalEvent: event,
-    });
-  },
+  //   this.fire(event.type, {
+  //     latlng: latlng,
+  //     layerPoint: layerPoint,
+  //     containerPoint: containerPoint,
+  //     originalEvent: event,
+  //   });
+  // },
 
   _singleClick: function(e) {
     if (e.type === 'singleclick') { this.deselect(); }

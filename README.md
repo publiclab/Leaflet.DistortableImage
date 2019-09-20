@@ -434,10 +434,11 @@ And the following custom handlers:
   </ul>
 </details>
 <br>
-We have made slight changes to a default Leaflet handler:
+We have made changes to a default Leaflet handler:
 <br><br>
 <details><summary><code><b>doubleClickZoom</b>: this</code></summary>
 <ul>
+  <li>This handler may not be <code>enabled</code> (and will return false) while the <code>doubleClickLabels</code> handler is <code>enabled</code>.</li>  
   <li>This handler and <code>doubleClickLabels</code> time and fire a custom <code>singleclick</code> event on map click. It is fired after a 3ms timeout if the click doesn't become a doubleclick.</li>
   <li>This allows our images to remain selected during associated double click events on the map (in this case zooming).</li>
 </ul>
