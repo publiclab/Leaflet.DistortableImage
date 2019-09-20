@@ -229,21 +229,13 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return this;
   },
 
-  _cornerExceedsNorthLimit: function(zoom, corner) {
+  _cornerExceedsMapLats: function(zoom, corner) {
     var map = this._map;
-    var cornerY = map.project(corner).y;
+    var cornerY = map.project(corner, zoom).y;
+    var lowerLimit = map.project(map.getBounds()._southWest, zoom);
+    var upperLimit = map.project(map.getBounds()._northEast, zoom);
 
-    return zoom === 0 && (cornerY < 2 || cornerY >= 255);
-  },
-
-  _cornerExceedsSouthLimit: function(zoom, corner) {
-    var map = this._map;
-    var cornerY = map.project(corner).y;
-
-    return (
-      zoom !== 0 &&
-      (cornerY / zoom < 2 || cornerY / Math.pow(2, zoom) >= 255)
-    );
+    return cornerY <= upperLimit.y || cornerY >= lowerLimit.y;
   },
 
   setCorners: function(latlngObj) {
@@ -253,9 +245,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     var i = 0;
     // this is to fix https://github.com/publiclab/Leaflet.DistortableImage/issues/402
     for (var k in latlngObj) {
-      if (this._cornerExceedsNorthLimit(zoom, latlngObj[k]) ||
-          this._cornerExceedsSouthLimit(zoom, latlngObj[k])
-      ) {
+      if (this._cornerExceedsMapLats(zoom, latlngObj[k])) {
         // calling reset / update w/ the same corners bc it prevents a marker flicker for rotate
         this.setBounds(L.latLngBounds(this.getCorners()));
         this.fire('update');
@@ -286,9 +276,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
     for (var k in pointsObj) {
       var corner = map.layerPointToLatLng(pointsObj[k]);
-      if (this._cornerExceedsNorthLimit(zoom, corner) ||
-          this._cornerExceedsSouthLimit(zoom, corner)
-      ) {
+
+      if (this._cornerExceedsMapLats(zoom, corner)) {
         // calling reset / update w/ the same corners bc it prevents a marker flicker for rotate
         this.setBounds(L.latLngBounds(this.getCorners()));
         this.fire('update');
