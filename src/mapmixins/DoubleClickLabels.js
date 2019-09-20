@@ -3,8 +3,8 @@ L.Map.mergeOptions({
 });
 
 /**
- * The 'doubleClickLabels' handler only runs instead of 'doubleClickZoom' when a googleMutant
- * layer is added to the map using 'map.addGoogleMutant()' without the option labels: false.
+ * The 'doubleClickLabels' handler replaces 'doubleClickZoom' by default when #addGoogleMutant is used
+ * unless the options 'labels: false' or 'doubleClickZoom: false` were passed to it.
  */
 
 L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
@@ -13,7 +13,7 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
 
     if (this._enabled) { return this; }
 
-    // disable 'doubleClickZoom' if 'doubleClickLabels' is enabled.
+    // disable 'doubleClickZoom' if enabling 'doubleClickLabels'
     if (map.doubleClickZoom.enabled()) {
       map.doubleClickZoom.disable();
     }
