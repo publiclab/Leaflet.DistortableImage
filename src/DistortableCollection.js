@@ -92,7 +92,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
   _toggleMultiCollect: function(e, layer) {
     if (e.shiftKey) {
       /** conditional prevents disabled images from flickering multi-select mode */
-      if (layer.editing.enabled()) { L.DomUtil.toggleClass(e.target, 'collected'); }
+      if (layer.editing.enabled()) {
+        L.DomUtil.toggleClass(e.target, 'collected');
+      }
     }
 
     if (this.anyCollected()) { layer._unpick(); }
@@ -169,8 +171,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var p = new L.Transformation(1, -cpd.x, 1, -cpd.y);
 
     this.eachLayer(function(layer) {
-      if (
-        layer !== overlay &&
+      if (layer !== overlay &&
         layer.editing._mode !== 'lock' &&
         this.isCollected(layer)
       ) {
