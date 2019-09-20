@@ -3,8 +3,8 @@ L.Map.mergeOptions({
 });
 
 /**
- * The 'doubleClickLabels' handler replaces 'doubleClickZoom' by default when #addGoogleMutant is used
- * unless the options 'labels: false' or 'doubleClickZoom: false` were passed to it.
+ * The 'doubleClickLabels' handler replaces 'doubleClickZoom' by default if #addGoogleMutant
+ * is used unless the options 'labels: false' or 'doubleClickZoom: false` were passed to it.
  */
 
 L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({

@@ -3018,7 +3018,7 @@ L.Map.include({
     if (!opts.labels) {
       this.mutantOptions = L.extend(this.mutantOptions, {
         labelOpacity: opts.labels ? 1 : undefined,
-        doubleClickLabels: opts.labels,
+        doubleClickLabels: opts.labels ? true : undefined,
       });
     }
 
@@ -3068,9 +3068,8 @@ L.Map.include({
 });
 
 /**
- * we overrwrite the L.Map.DoubleClickZoom handler so that in case
- * L.Map.DoubleClickLabels is disabled, it will also will fire a `singleclick`
- * event so that images are not deselected on DoubleClickZoom either.
+ * L.Map.DoubleClickZoom from leaflet 1.5.1, overrwritten so that it fires a
+ * `singleclick` event to avoiding deselecting images on doubleclick.
  */
 L.Map.DoubleClickZoom.include({
   addHooks: function() {
@@ -3104,14 +3103,11 @@ L.Map.DoubleClickZoom.include({
     return this;
   },
 
-  /**
-   * if L.Map.DoubleClickZoom is disabled as well, we fire one more custom event
-   * to signify to our collection and instance classes to stop listening for `singleclick`
-   * and start just listening for `click`.
-   */
   disable: function() {
     if (!this._enabled) { return this; }
 
+    // if L.Map.DoubleClickLabels is disabled as well, collection/instance classes
+    // will stop listening for `singleclick` and start just listening for `click`.
     this._map.fire('singleclickoff');
 
     this._enabled = false;
@@ -3311,8 +3307,8 @@ L.Map.mergeOptions({
 });
 
 /**
- * The 'doubleClickLabels' handler replaces 'doubleClickZoom' by default when #addGoogleMutant is used
- * unless the options 'labels: false' or 'doubleClickZoom: false` were passed to it.
+ * The 'doubleClickLabels' handler replaces 'doubleClickZoom' by default if #addGoogleMutant
+ * is used unless the options 'labels: false' or 'doubleClickZoom: false` were passed to it.
  */
 
 L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({

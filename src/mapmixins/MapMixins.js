@@ -20,7 +20,7 @@ L.Map.include({
     if (!opts.labels) {
       this.mutantOptions = L.extend(this.mutantOptions, {
         labelOpacity: opts.labels ? 1 : undefined,
-        doubleClickLabels: opts.labels,
+        doubleClickLabels: opts.labels ? true : undefined,
       });
     }
 

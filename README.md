@@ -404,7 +404,7 @@ We have extended Leaflet's `L.Map` to include a convenience method for this libr
         <li><code>doubleClickLabels</code> (default: true, value: <i>boolean</i>)</li>
         <ul>
           <li>Label visibility (opacity) is toggled between 0 and 1 on map <code>dblclick</code>. To turn this functionality off, set this option to false.</li>
-          <li>Set to <code>false</code> if <code>labels: false</code> is also passed.</li>
+          <li>Set to <code>undefined</code> if <code>labels: false</code> is also passed.</li>
         </ul>
       </ul>
     </li>
@@ -417,9 +417,12 @@ And the following custom handlers:
 
 <details><summary><code><b>doubleClickLabels</b>: this</code></summary>
   <ul>
-    <li>Enabled by default on <code>#addGoogleMutant</code> unless the options <code>labels: false</code> or <code>doubleClickLabels: false</code> are passed to it.</li>
     <li>Allows toggling label visibility on map <code>dblclick</code>.</li>
-    <li>Can always be enabled/disabled during runtime via <a href="https://leafletjs.com/reference-1.5.0.html#handler">Leaflet's Handler API</a>.</li>
+    <li>Enabled by default on <code>#addGoogleMutant</code> unless the options <code>labels: false</code> or <code>doubleClickLabels: false</code> are passed to it.</li>
+    <ul>
+      <li>If <code>labels: false</code> passed, removed from map altogether.</li>
+      <li>If there are labels present but <code>doubleClickLabels: false</code> was passed, just disabled and can always be enabled during runtime via <a href="https://leafletjs.com/reference-1.5.0.html#handler">Leaflet's Handler API</a>.</li>
+    </ul>
     <li>Disables the map's default <a href="https://leafletjs.com/reference-1.5.0.html#map-doubleclickzoom"><code>doubleClickZoom</code></a> handler when enabled.</li>
   </ul>
 </details>

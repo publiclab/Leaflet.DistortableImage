@@ -1,7 +1,6 @@
 /**
- * we overrwrite the L.Map.DoubleClickZoom handler so that in case
- * L.Map.DoubleClickLabels is disabled, it will also will fire a `singleclick`
- * event so that images are not deselected on DoubleClickZoom either.
+ * L.Map.DoubleClickZoom from leaflet 1.5.1, overrwritten so that it fires a
+ * `singleclick` event to avoiding deselecting images on doubleclick.
  */
 L.Map.DoubleClickZoom.include({
   addHooks: function() {
@@ -35,14 +34,11 @@ L.Map.DoubleClickZoom.include({
     return this;
   },
 
-  /**
-   * if L.Map.DoubleClickZoom is disabled as well, we fire one more custom event
-   * to signify to our collection and instance classes to stop listening for `singleclick`
-   * and start just listening for `click`.
-   */
   disable: function() {
     if (!this._enabled) { return this; }
 
+    // if L.Map.DoubleClickLabels is disabled as well, collection/instance classes
+    // will stop listening for `singleclick` and start just listening for `click`.
     this._map.fire('singleclickoff');
 
     this._enabled = false;
