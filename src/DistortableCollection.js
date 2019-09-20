@@ -116,6 +116,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
   _dragStartMultiple: function(e) {
     var overlay = e.target;
     var edit = overlay.editing;
+    var map = this._map;
     var i;
 
     if (!this.isCollected(overlay) || !edit.enabled()) {
@@ -123,10 +124,11 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }
 
     this.eachLayer(function(layer) {
+      layer._dragStartPoints = {};
       layer._unpick();
       for (i = 0; i < 4; i++) {
         var c = layer.getCorner(i);
-        layer._dragStartPoints[i] = layer._map.latLngToLayerPoint(c);
+        layer._dragStartPoints[i] = map.latLngToLayerPoint(c);
       }
     });
   },
@@ -144,7 +146,8 @@ L.DistortableCollection = L.FeatureGroup.extend({
     overlay._dragPoints = {};
 
     for (i = 0; i < 4; i++) {
-      overlay._dragPoints[i] = map.latLngToLayerPoint(overlay.getCorner(i));
+      var c = overlay.getCorner(i);
+      overlay._dragPoints[i] = map.latLngToLayerPoint(c);
     }
 
     var cpd = overlay._calcCornerPointDelta();

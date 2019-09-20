@@ -463,8 +463,9 @@ We have made slight changes to a default Leaflet handler:
   ex.
 
 <pre>
-var scaledCorners = {0: '', 1: '', 2: '', 3: ''},
-    i, p;
+var scaledCorners = {};
+var i;
+var p;
 
 for (i = 0; i < 4; i++) {
   p = map
@@ -483,7 +484,7 @@ img.setCorners(scaledCorners);
 <details><summary><code><b>setCornersFromPoints(<i>PointCorners</i>)</b>: this</code></summary>
   <ul>
      <li>Same as <code>#setCorners</code>, but takes in a "corners" object made up of <code>Point</code>s instead of <code>LatLng</code>s.</li>
-    <li><b>PointCorners</b>: { <i>keys</i>: &#60;number 0..4>, <i>values</i>: Point } <br>
+    <li><b>PointCorners</b>: { <i>keys</i>: &#60;number 0..4>, <i>values</i>: Point }
   </ul>
 </details>
 

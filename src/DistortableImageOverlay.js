@@ -316,7 +316,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     var center = map.project(this.getCenter());
     var i;
     var p;
-    var scaledCorners = {0: '', 1: '', 2: '', 3: ''};
+    var scaledCorners = {};
 
     if (scale === 0) { return; }
 
@@ -337,7 +337,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   rotateBy: function(angle) {
     var map = this._map;
     var center = map.project(this.getCenter());
-    var corners = {0: '', 1: '', 2: '', 3: ''};
+    var corners = {};
     var i;
     var p;
     var q;
