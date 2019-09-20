@@ -287,7 +287,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     for (var k in pointsObj) {
       var corner = map.layerPointToLatLng(pointsObj[k]);
       if (this._cornerExceedsNorthLimit(zoom, corner) ||
-        this._cornerExceedsSouthLimit(zoom, corner)
+          this._cornerExceedsSouthLimit(zoom, corner)
       ) {
         // calling reset / update w/ the same corners bc it prevents a marker flicker for rotate
         this.setBounds(L.latLngBounds(this.getCorners()));

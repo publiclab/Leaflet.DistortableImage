@@ -521,7 +521,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     for (var k in pointsObj) {
       var corner = map.layerPointToLatLng(pointsObj[k]);
       if (this._cornerExceedsNorthLimit(zoom, corner) ||
-        this._cornerExceedsSouthLimit(zoom, corner)
+          this._cornerExceedsSouthLimit(zoom, corner)
       ) {
         // calling reset / update w/ the same corners bc it prevents a marker flicker for rotate
         this.setBounds(L.latLngBounds(this.getCorners()));
@@ -929,10 +929,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var p = new L.Transformation(1, -cpd.x, 1, -cpd.y);
 
     this.eachLayer(function(layer) {
-      if (
-        layer !== overlay &&
-        layer.editing._mode !== 'lock' &&
-        this.isCollected(layer)
+      if (layer !== overlay &&
+          layer.editing._mode !== 'lock' &&
+          this.isCollected(layer)
       ) {
         layer._cpd = {};
 
@@ -1504,6 +1503,7 @@ L.editAction = function(map, overlay, options) {
 L.BorderAction = L.EditAction.extend({
   initialize: function(map, overlay, options) {
     var edit = overlay.editing;
+    var mode = edit._mode;
     var use;
     var tooltip;
 
@@ -1520,11 +1520,11 @@ L.BorderAction = L.EditAction.extend({
       svg: true,
       html: use,
       tooltip: tooltip,
-      className: edit._mode === 'lock' ? 'disabled' : '',
+      className: mode === 'lock' ? 'disabled' : '',
     };
 
     // conditional for disabling keybindings for this action when the image is locked.
-    L.DistortableImage.action_map.b = edit._mode === 'lock' ? '' : '_toggleBorder';
+    L.DistortableImage.action_map.b = mode === 'lock' ? '' : '_toggleBorder';
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
@@ -1550,10 +1550,14 @@ L.DeleteAction = L.EditAction.extend({
     if (edit instanceof L.DistortableImage.Edit) {
       tooltip = 'Delete Image';
       // backspace windows / delete mac
-      L.DistortableImage.action_map.Backspace = edit._mode === 'lock' ? '' : '_removeOverlay';
+      L.DistortableImage.action_map.Backspace = (
+        edit._mode === 'lock' ? '' : '_removeOverlay'
+      );
     } else {
       tooltip = 'Delete Images';
-      L.DistortableImage.group_action_map.Backspace = edit._mode === 'lock' ? '' : '_removeGroup';
+      L.DistortableImage.group_action_map.Backspace = (
+        edit._mode === 'lock' ? '' : '_removeGroup'
+      );
     }
 
     options = options || {};
@@ -1715,6 +1719,7 @@ L.LockAction = L.EditAction.extend({
 L.OpacityAction = L.EditAction.extend({
   initialize: function(map, overlay, options) {
     var edit = overlay.editing;
+    var mode = edit._mode;
     var use;
     var tooltip;
 
@@ -1731,10 +1736,10 @@ L.OpacityAction = L.EditAction.extend({
       svg: true,
       html: use,
       tooltip: tooltip,
-      className: edit._mode === 'lock' ? 'disabled' : '',
+      className: mode === 'lock' ? 'disabled' : '',
     };
 
-    L.DistortableImage.action_map.o = edit._mode === 'lock' ? '' : '_toggleOpacity';
+    L.DistortableImage.action_map.o = mode === 'lock' ? '' : '_toggleOpacity';
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
