@@ -859,13 +859,14 @@ L.DistortableCollection = L.FeatureGroup.extend({
   _dragStartMultiple: function(e) {
     var overlay = e.target;
     var map = this._map;
+    var i;
 
     if (!this.isCollected(overlay)) { return; }
 
     this.eachLayer(function(layer) {
       layer._dragStartPoints = {};
       layer._unpick();
-      for (var i = 0; i < 4; i++) {
+      for (i = 0; i < 4; i++) {
         var c = layer.getCorner(i);
         layer._dragStartPoints[i] = map.latLngToLayerPoint(c);
       }
@@ -905,10 +906,11 @@ L.DistortableCollection = L.FeatureGroup.extend({
   _updateCollectionFromPoints: function(delta, overlay) {
     var layersToMove = this._toMove(overlay);
     var p = new L.Transformation(1, -delta.x, 1, -delta.y);
+    var i;
 
     layersToMove.forEach(function(layer) {
       var movedPoints = {};
-      for (var i = 0; i < 4; i++) {
+      for (i = 0; i < 4; i++) {
         movedPoints[i] = p.transform(layer._dragStartPoints[i]);
       }
       layer.setCornersFromPoints(movedPoints);
