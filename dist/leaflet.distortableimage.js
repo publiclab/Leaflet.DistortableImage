@@ -686,12 +686,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return map.unproject(reduce.divideBy(4));
   },
 
-  // Use for translation calculations
-  // for translation the delta for 1 corner applies to all 4
-  _calcCornerPointDelta: function() {
-    return this._dragStartPoints[0].subtract(this._dragPoints[0]);
-  },
-
   _calcCenterTwoCornerPoints: function(topLeft, topRight) {
     var toolPoint = {x: '', y: ''};
 
@@ -864,18 +858,16 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
   _dragStartMultiple: function(e) {
     var overlay = e.target;
-    var edit = overlay.editing;
     var map = this._map;
-    var i;
 
-    if (!this.isCollected(overlay) || !edit.enabled()) {
-      return;
-    }
+    if (!this.isCollected(overlay)) { return; }
 
-    this.eachLayer(function(layer) {
+    var layersToMove = this._toMove(overlay);
+
+    layersToMove.forEach(function(layer) {
       layer._dragStartPoints = {};
       layer._unpick();
-      for (i = 0; i < 4; i++) {
+      for (var i = 0; i < 4; i++) {
         var c = layer.getCorner(i);
         layer._dragStartPoints[i] = map.latLngToLayerPoint(c);
       }
@@ -886,65 +878,43 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var overlay = e.target;
     var edit = overlay.editing;
     var map = this._map;
-    var i;
 
-    if (!this.isCollected(overlay) || !edit.enabled()) {
-      return;
-    }
+    if (!this.isCollected(overlay)) { return; }
 
-    overlay._dragPoints = {};
+    var topLeft = map.latLngToLayerPoint(overlay.getCorner(0));
+    var delta = edit.dragging._startPos.subtract(topLeft);
 
-    for (i = 0; i < 4; i++) {
-      var c = overlay.getCorner(i);
-      overlay._dragPoints[i] = map.latLngToLayerPoint(c);
-    }
-
-    var cpd = overlay._calcCornerPointDelta();
-
-    this._updateCollectionFromPoints(cpd, overlay);
+    this._updateCollectionFromPoints(delta, overlay);
   },
 
   _toRemove: function() {
     var layerArr = this.getLayers();
 
     return layerArr.filter(function(layer) {
-      var edit = layer.editing;
-      return (this.isCollected(layer) && edit._mode !== 'lock');
+      var mode = layer.editing._mode;
+      return (this.isCollected(layer) && mode !== 'lock');
     }, this);
   },
 
-  _calcCollectionFromPoints: function(cpd, overlay) {
-    var layersToMove = [];
-    var p = new L.Transformation(1, -cpd.x, 1, -cpd.y);
+  _toMove: function(overlay) {
+    var layerArr = this.getLayers();
 
-    this.eachLayer(function(layer) {
-      if (layer !== overlay &&
-          layer.editing._mode !== 'lock' &&
-          this.isCollected(layer)
-      ) {
-        layer._cpd = {};
-
-        layer._cpd.val0 = p.transform(layer._dragStartPoints[0]);
-        layer._cpd.val1 = p.transform(layer._dragStartPoints[1]);
-        layer._cpd.val2 = p.transform(layer._dragStartPoints[2]);
-        layer._cpd.val3 = p.transform(layer._dragStartPoints[3]);
-
-        layersToMove.push(layer);
-      }
+    return layerArr.filter(function(layer) {
+      var mode = layer.editing._mode;
+      return layer !== overlay && this.isCollected(layer) && mode !== 'lock';
     }, this);
-
-    return layersToMove;
   },
 
-  /**
-   * @param {number} cpd (=== cornerPointDelta)
-   * @param {object} overlay
-   */
-  _updateCollectionFromPoints: function(cpd, overlay) {
-    var layersToMove = this._calcCollectionFromPoints(cpd, overlay);
+  _updateCollectionFromPoints: function(delta, overlay) {
+    var layersToMove = this._toMove(overlay);
+    var p = new L.Transformation(1, -delta.x, 1, -delta.y);
 
     layersToMove.forEach(function(layer) {
-      layer.setCornersFromPoints(layer._cpd);
+      var movedPoints = {};
+      for (var i = 0; i < 4; i++) {
+        movedPoints[i] = p.transform(layer._dragStartPoints[i]);
+      }
+      layer.setCornersFromPoints(movedPoints);
     });
   },
 
@@ -2167,6 +2137,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     /* Hide toolbars and markers while dragging; click will re-show it */
     this.dragging.on('dragstart', function() {
       overlay.fire('dragstart');
+      console.log("hi");
       this._removeToolbar();
     }, this);
 

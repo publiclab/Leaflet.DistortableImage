@@ -452,12 +452,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return map.unproject(reduce.divideBy(4));
   },
 
-  // Use for translation calculations
-  // for translation the delta for 1 corner applies to all 4
-  _calcCornerPointDelta: function() {
-    return this._dragStartPoints[0].subtract(this._dragPoints[0]);
-  },
-
   _calcCenterTwoCornerPoints: function(topLeft, topRight) {
     var toolPoint = {x: '', y: ''};
 
