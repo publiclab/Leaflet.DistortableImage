@@ -52,7 +52,16 @@
 
       img = L.distortableImageOverlay('../examples/example.jpg', {
         selected: true,
-      }).addTo(map);
+      });
+
+      img2 = L.distortableImageOverlay('../examples/example.jpg', {
+        selected: true,
+      });
+
+      imgGroup = L.distortableCollection().addTo(map);
+
+      imgGroup.addLayer(img);
+      imgGroup.addLayer(img2);
 
       var pane = map.getPane('overlayPane')
 

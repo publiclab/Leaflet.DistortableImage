@@ -455,16 +455,17 @@ We have made slight changes to a default Leaflet handler:
   </ul>
 </details>
 
-<details><summary><code><b>setCorners(<i>corners</i>)</b>: this</code></summary>
+<details><summary><code><b>setCorners(<i>LatLngCorners</i>)</b>: this</code></summary>
   <ul>
-    <li>Same as <code>#setCorner</code>, but takes in a "corners" object to update all 4 corners with only one UI update at the end.</li>
+    <li>Same as <code>#setCorner</code>, but takes in a "corners" object made up of <code>LatLng</code>s to update all 4 corners with only one UI update at the end.</li>
     <li>We use this internally for image translation, rotation, and scaling.</li>
-    <li><i>corners</i>: { <i>keys</i>: &#60;number 0..4>, <i>values</i>: LatLng } <br>
+    <li><b>LatLngCorners</b>: { <i>keys</i>: &#60;number 0..4>, <i>values</i>: LatLng } <br>
   ex.
 
 <pre>
-var scaledCorners = {0: '', 1: '', 2: '', 3: ''},
-    i, p;
+var scaledCorners = {};
+var i;
+var p;
 
 for (i = 0; i < 4; i++) {
   p = map
@@ -477,6 +478,13 @@ for (i = 0; i < 4; i++) {
 
 img.setCorners(scaledCorners);
 </pre></li>
+  </ul>
+</details>
+
+<details><summary><code><b>setCornersFromPoints(<i>PointCorners</i>)</b>: this</code></summary>
+  <ul>
+     <li>Same as <code>#setCorners</code>, but takes in a "corners" object made up of <code>Point</code>s instead of <code>LatLng</code>s.</li>
+    <li><b>PointCorners</b>: { <i>keys</i>: &#60;number 0..4>, <i>values</i>: Point }
   </ul>
 </details>
 

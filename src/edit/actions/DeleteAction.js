@@ -10,10 +10,14 @@ L.DeleteAction = L.EditAction.extend({
     if (edit instanceof L.DistortableImage.Edit) {
       tooltip = 'Delete Image';
       // backspace windows / delete mac
-      L.DistortableImage.action_map.Backspace = edit._mode === 'lock' ? '' : '_removeOverlay';
+      L.DistortableImage.action_map.Backspace = (
+        edit._mode === 'lock' ? '' : '_removeOverlay'
+      );
     } else {
       tooltip = 'Delete Images';
-      L.DistortableImage.group_action_map.Backspace = edit._mode === 'lock' ? '' : '_removeGroup';
+      L.DistortableImage.group_action_map.Backspace = (
+        edit._mode === 'lock' ? '' : '_removeGroup'
+      );
     }
 
     options = options || {};

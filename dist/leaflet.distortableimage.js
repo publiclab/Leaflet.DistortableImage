@@ -463,16 +463,23 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return this;
   },
 
+  _cornerExceedsMapLats: function(zoom, corner) {
+    var map = this._map;
+    var cornerY = map.project(corner, zoom).y;
+    var lowerLimit = map.project(map.getBounds()._southWest, zoom);
+    var upperLimit = map.project(map.getBounds()._northEast, zoom);
+
+    return cornerY <= upperLimit.y || cornerY >= lowerLimit.y;
+  },
+
   setCorners: function(latlngObj) {
-    var edit = this.editing;
     var map = this._map;
     var zoom = map.getZoom();
+    var edit = this.editing;
     var i = 0;
     // this is to fix https://github.com/publiclab/Leaflet.DistortableImage/issues/402
     for (var k in latlngObj) {
-      if ((zoom === 0 && (map.project(latlngObj[k]).y < 2 || map.project(latlngObj[k]).y >= 255)) ||
-          (zoom !== 0 && (map.project(latlngObj[k]).y / zoom < 2 || map.project(latlngObj[k]).y / Math.pow(2, zoom) >= 255))
-      ) {
+      if (this._cornerExceedsMapLats(zoom, latlngObj[k])) {
         // calling reset / update w/ the same corners bc it prevents a marker flicker for rotate
         this.setBounds(L.latLngBounds(this.getCorners()));
         this.fire('update');
@@ -497,10 +504,22 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   setCornersFromPoints: function(pointsObj) {
     var map = this._map;
+    var zoom = map.getZoom();
     var edit = this.editing;
     var i = 0;
 
     for (var k in pointsObj) {
+      var corner = map.layerPointToLatLng(pointsObj[k]);
+
+      if (this._cornerExceedsMapLats(zoom, corner)) {
+        // calling reset / update w/ the same corners bc it prevents a marker flicker for rotate
+        this.setBounds(L.latLngBounds(this.getCorners()));
+        this.fire('update');
+        return;
+      }
+    }
+
+    for (k in pointsObj) {
       this._corners[i] = map.layerPointToLatLng(pointsObj[k]);
       i += 1;
     }
@@ -520,7 +539,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     var center = map.project(this.getCenter());
     var i;
     var p;
-    var scaledCorners = {0: '', 1: '', 2: '', 3: ''};
+    var scaledCorners = {};
 
     if (scale === 0) { return; }
 
@@ -541,7 +560,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   rotateBy: function(angle) {
     var map = this._map;
     var center = map.project(this.getCenter());
-    var corners = {0: '', 1: '', 2: '', 3: ''};
+    var corners = {};
     var i;
     var p;
     var q;
@@ -665,12 +684,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       return agg.add(map.project(corner));
     }, L.point(0, 0));
     return map.unproject(reduce.divideBy(4));
-  },
-
-  // Use for translation calculations
-  // for translation the delta for 1 corner applies to all 4
-  _calcCornerPointDelta: function() {
-    return this._dragStartPoints[0].subtract(this._dragPoints[0]);
   },
 
   _calcCenterTwoCornerPoints: function(topLeft, topRight) {
@@ -820,7 +833,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
   _toggleMultiCollect: function(e, layer) {
     if (e.shiftKey) {
       /** conditional prevents disabled images from flickering multi-select mode */
-      if (layer.editing.enabled()) { L.DomUtil.toggleClass(e.target, 'collected'); }
+      if (layer.editing.enabled()) {
+        L.DomUtil.toggleClass(e.target, 'collected');
+      }
     }
 
     if (this.anyCollected()) { layer._unpick(); }
@@ -843,85 +858,62 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
   _dragStartMultiple: function(e) {
     var overlay = e.target;
-    var edit = overlay.editing;
+    var map = this._map;
     var i;
 
-    if (!this.isCollected(overlay) || !edit.enabled()) {
-      return;
-    }
+    if (!this.isCollected(overlay)) { return; }
 
     this.eachLayer(function(layer) {
+      layer._dragStartPoints = {};
       layer._unpick();
       for (i = 0; i < 4; i++) {
         var c = layer.getCorner(i);
-        layer._dragStartPoints[i] = layer._map.latLngToLayerPoint(c);
+        layer._dragStartPoints[i] = map.latLngToLayerPoint(c);
       }
     });
   },
 
   _dragMultiple: function(e) {
     var overlay = e.target;
-    var edit = overlay.editing;
     var map = this._map;
-    var i;
 
-    if (!this.isCollected(overlay) || !edit.enabled()) {
-      return;
-    }
+    if (!this.isCollected(overlay)) { return; }
 
-    overlay._dragPoints = {};
+    var topLeft = map.latLngToLayerPoint(overlay.getCorner(0));
+    var delta = overlay._dragStartPoints[0].subtract(topLeft);
 
-    for (i = 0; i < 4; i++) {
-      overlay._dragPoints[i] = map.latLngToLayerPoint(overlay.getCorner(i));
-    }
-
-    var cpd = overlay._calcCornerPointDelta();
-
-    this._updateCollectionFromPoints(cpd, overlay);
+    this._updateCollectionFromPoints(delta, overlay);
   },
 
   _toRemove: function() {
     var layerArr = this.getLayers();
 
     return layerArr.filter(function(layer) {
-      var edit = layer.editing;
-      return (this.isCollected(layer) && edit._mode !== 'lock');
+      var mode = layer.editing._mode;
+      return (this.isCollected(layer) && mode !== 'lock');
     }, this);
   },
 
-  _calcCollectionFromPoints: function(cpd, overlay) {
-    var layersToMove = [];
-    var p = new L.Transformation(1, -cpd.x, 1, -cpd.y);
+  _toMove: function(overlay) {
+    var layerArr = this.getLayers();
 
-    this.eachLayer(function(layer) {
-      if (
-        layer !== overlay &&
-        layer.editing._mode !== 'lock' &&
-        this.isCollected(layer)
-      ) {
-        layer._cpd = {};
-
-        layer._cpd.val0 = p.transform(layer._dragStartPoints[0]);
-        layer._cpd.val1 = p.transform(layer._dragStartPoints[1]);
-        layer._cpd.val2 = p.transform(layer._dragStartPoints[2]);
-        layer._cpd.val3 = p.transform(layer._dragStartPoints[3]);
-
-        layersToMove.push(layer);
-      }
+    return layerArr.filter(function(layer) {
+      var mode = layer.editing._mode;
+      return layer !== overlay && this.isCollected(layer) && mode !== 'lock';
     }, this);
-
-    return layersToMove;
   },
 
-  /**
-   * @param {number} cpd (=== cornerPointDelta)
-   * @param {object} overlay
-   */
-  _updateCollectionFromPoints: function(cpd, overlay) {
-    var layersToMove = this._calcCollectionFromPoints(cpd, overlay);
+  _updateCollectionFromPoints: function(delta, overlay) {
+    var layersToMove = this._toMove(overlay);
+    var p = new L.Transformation(1, -delta.x, 1, -delta.y);
+    var i;
 
     layersToMove.forEach(function(layer) {
-      layer.setCornersFromPoints(layer._cpd);
+      var movedPoints = {};
+      for (i = 0; i < 4; i++) {
+        movedPoints[i] = p.transform(layer._dragStartPoints[i]);
+      }
+      layer.setCornersFromPoints(movedPoints);
     });
   },
 
@@ -1469,6 +1461,7 @@ L.editAction = function(map, overlay, options) {
 L.BorderAction = L.EditAction.extend({
   initialize: function(map, overlay, options) {
     var edit = overlay.editing;
+    var mode = edit._mode;
     var use;
     var tooltip;
 
@@ -1485,11 +1478,11 @@ L.BorderAction = L.EditAction.extend({
       svg: true,
       html: use,
       tooltip: tooltip,
-      className: edit._mode === 'lock' ? 'disabled' : '',
+      className: mode === 'lock' ? 'disabled' : '',
     };
 
     // conditional for disabling keybindings for this action when the image is locked.
-    L.DistortableImage.action_map.b = edit._mode === 'lock' ? '' : '_toggleBorder';
+    L.DistortableImage.action_map.b = mode === 'lock' ? '' : '_toggleBorder';
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
@@ -1515,10 +1508,14 @@ L.DeleteAction = L.EditAction.extend({
     if (edit instanceof L.DistortableImage.Edit) {
       tooltip = 'Delete Image';
       // backspace windows / delete mac
-      L.DistortableImage.action_map.Backspace = edit._mode === 'lock' ? '' : '_removeOverlay';
+      L.DistortableImage.action_map.Backspace = (
+        edit._mode === 'lock' ? '' : '_removeOverlay'
+      );
     } else {
       tooltip = 'Delete Images';
-      L.DistortableImage.group_action_map.Backspace = edit._mode === 'lock' ? '' : '_removeGroup';
+      L.DistortableImage.group_action_map.Backspace = (
+        edit._mode === 'lock' ? '' : '_removeGroup'
+      );
     }
 
     options = options || {};
@@ -1680,6 +1677,7 @@ L.LockAction = L.EditAction.extend({
 L.OpacityAction = L.EditAction.extend({
   initialize: function(map, overlay, options) {
     var edit = overlay.editing;
+    var mode = edit._mode;
     var use;
     var tooltip;
 
@@ -1696,10 +1694,10 @@ L.OpacityAction = L.EditAction.extend({
       svg: true,
       html: use,
       tooltip: tooltip,
-      className: edit._mode === 'lock' ? 'disabled' : '',
+      className: mode === 'lock' ? 'disabled' : '',
     };
 
-    L.DistortableImage.action_map.o = edit._mode === 'lock' ? '' : '_toggleOpacity';
+    L.DistortableImage.action_map.o = mode === 'lock' ? '' : '_toggleOpacity';
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
@@ -1963,13 +1961,6 @@ L.DistortableImage.Edit = L.Handler.extend({
       this._addToolbar();
     }
 
-    this._overlay._dragStartPoints = {
-      0: L.point(0, 0),
-      1: L.point(0, 0),
-      2: L.point(0, 0),
-      3: L.point(0, 0),
-    };
-
     this.parentGroup = overlay.eP ? overlay.eP : false;
 
     L.DomEvent.on(overlay._image, {
@@ -2157,7 +2148,7 @@ L.DistortableImage.Edit = L.Handler.extend({
       var topLeft = overlay.getCorner(0);
       var delta = this._newPos.subtract(map.latLngToLayerPoint(topLeft));
       var currentPoint;
-      var corners = {0: '', 1: '', 2: '', 3: ''};
+      var corners = {};
       var i;
 
       this.fire('predrag');

@@ -1,6 +1,7 @@
 L.OpacityAction = L.EditAction.extend({
   initialize: function(map, overlay, options) {
     var edit = overlay.editing;
+    var mode = edit._mode;
     var use;
     var tooltip;
 
@@ -17,10 +18,10 @@ L.OpacityAction = L.EditAction.extend({
       svg: true,
       html: use,
       tooltip: tooltip,
-      className: edit._mode === 'lock' ? 'disabled' : '',
+      className: mode === 'lock' ? 'disabled' : '',
     };
 
-    L.DistortableImage.action_map.o = edit._mode === 'lock' ? '' : '_toggleOpacity';
+    L.DistortableImage.action_map.o = mode === 'lock' ? '' : '_toggleOpacity';
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },

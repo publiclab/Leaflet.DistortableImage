@@ -229,16 +229,23 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return this;
   },
 
+  _cornerExceedsMapLats: function(zoom, corner) {
+    var map = this._map;
+    var cornerY = map.project(corner, zoom).y;
+    var lowerLimit = map.project(map.getBounds()._southWest, zoom);
+    var upperLimit = map.project(map.getBounds()._northEast, zoom);
+
+    return cornerY <= upperLimit.y || cornerY >= lowerLimit.y;
+  },
+
   setCorners: function(latlngObj) {
-    var edit = this.editing;
     var map = this._map;
     var zoom = map.getZoom();
+    var edit = this.editing;
     var i = 0;
     // this is to fix https://github.com/publiclab/Leaflet.DistortableImage/issues/402
     for (var k in latlngObj) {
-      if ((zoom === 0 && (map.project(latlngObj[k]).y < 2 || map.project(latlngObj[k]).y >= 255)) ||
-          (zoom !== 0 && (map.project(latlngObj[k]).y / zoom < 2 || map.project(latlngObj[k]).y / Math.pow(2, zoom) >= 255))
-      ) {
+      if (this._cornerExceedsMapLats(zoom, latlngObj[k])) {
         // calling reset / update w/ the same corners bc it prevents a marker flicker for rotate
         this.setBounds(L.latLngBounds(this.getCorners()));
         this.fire('update');
@@ -263,10 +270,22 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   setCornersFromPoints: function(pointsObj) {
     var map = this._map;
+    var zoom = map.getZoom();
     var edit = this.editing;
     var i = 0;
 
     for (var k in pointsObj) {
+      var corner = map.layerPointToLatLng(pointsObj[k]);
+
+      if (this._cornerExceedsMapLats(zoom, corner)) {
+        // calling reset / update w/ the same corners bc it prevents a marker flicker for rotate
+        this.setBounds(L.latLngBounds(this.getCorners()));
+        this.fire('update');
+        return;
+      }
+    }
+
+    for (k in pointsObj) {
       this._corners[i] = map.layerPointToLatLng(pointsObj[k]);
       i += 1;
     }
@@ -286,7 +305,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     var center = map.project(this.getCenter());
     var i;
     var p;
-    var scaledCorners = {0: '', 1: '', 2: '', 3: ''};
+    var scaledCorners = {};
 
     if (scale === 0) { return; }
 
@@ -307,7 +326,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   rotateBy: function(angle) {
     var map = this._map;
     var center = map.project(this.getCenter());
-    var corners = {0: '', 1: '', 2: '', 3: ''};
+    var corners = {};
     var i;
     var p;
     var q;
@@ -431,12 +450,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       return agg.add(map.project(corner));
     }, L.point(0, 0));
     return map.unproject(reduce.divideBy(4));
-  },
-
-  // Use for translation calculations
-  // for translation the delta for 1 corner applies to all 4
-  _calcCornerPointDelta: function() {
-    return this._dragStartPoints[0].subtract(this._dragPoints[0]);
   },
 
   _calcCenterTwoCornerPoints: function(topLeft, topRight) {

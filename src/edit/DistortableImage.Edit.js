@@ -41,13 +41,6 @@ L.DistortableImage.Edit = L.Handler.extend({
       this._addToolbar();
     }
 
-    this._overlay._dragStartPoints = {
-      0: L.point(0, 0),
-      1: L.point(0, 0),
-      2: L.point(0, 0),
-      3: L.point(0, 0),
-    };
-
     this.parentGroup = overlay.eP ? overlay.eP : false;
 
     L.DomEvent.on(overlay._image, {
@@ -235,7 +228,7 @@ L.DistortableImage.Edit = L.Handler.extend({
       var topLeft = overlay.getCorner(0);
       var delta = this._newPos.subtract(map.latLngToLayerPoint(topLeft));
       var currentPoint;
-      var corners = {0: '', 1: '', 2: '', 3: ''};
+      var corners = {};
       var i;
 
       this.fire('predrag');
