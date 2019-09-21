@@ -212,22 +212,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
   },
 
-  _dragBy: function(formerPoint, newPoint) {
-    var overlay = this._overlay;
-    var map = overlay._map;
-    var i;
-    var p;
-    var transCorners = {};
-    var delta = map.project(formerPoint).subtract(map.project(newPoint));
-
-    for (i = 0; i < 4; i++) {
-      p = map.project(overlay.getCorner(i)).subtract(delta);
-      transCorners[i] = map.unproject(p);
-    }
-
-    overlay.setCorners(transCorners);
-  },
-
   _enableDragging: function() {
     var overlay = this._overlay;
     var map = overlay._map;
