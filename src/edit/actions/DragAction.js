@@ -4,8 +4,8 @@ L.DragAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: 'drag',
-      tooltip: 'Drag Only Image',
-      className: 'drag'
+      tooltip: 'Drag Image',
+      className: 'drag',
     };
 
     L.DistortableImage.action_map.D = '_dragMode';
@@ -15,5 +15,5 @@ L.DragAction = L.EditAction.extend({
   addHooks: function() {
     var edit = this._overlay.editing;
     edit._dragMode();
-  }
+  },
 });

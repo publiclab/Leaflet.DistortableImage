@@ -351,7 +351,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   dragBy: function(formerPoint, newPoint) {
     var map = this._map;
-    var center = map.project(this.getCenter());
     var i;
     var p;
     var diference = map.project(formerPoint).subtract(map.project(newPoint));

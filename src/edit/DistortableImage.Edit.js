@@ -6,7 +6,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     opacity: 0.7,
     outline: '1px solid red',
     keymap: L.distortableImage.action_map,
-    modes: ['scale', 'distort', 'rotate', 'freeRotate', 'lock', 'drag'],
+    modes: ['drag', 'scale', 'distort', 'rotate', 'freeRotate', 'lock'],
   },
 
   initialize: function(overlay, options) {
