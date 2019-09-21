@@ -1074,29 +1074,24 @@ L.EditHandle = L.Marker.extend({
   },
 
   _bindListeners: function() {
-    this.on(
-        {
-          dragstart: this._onHandleDragStart,
-          drag: this._onHandleDrag,
-          dragend: this._onHandleDragEnd,
-        },
-        this
-    );
+    this.on({
+      contextmenu: L.DomEvent.stop,
+      dragstart: this._onHandleDragStart,
+      drag: this._onHandleDrag,
+      dragend: this._onHandleDragEnd,
+    }, this);
 
     this._handled._map.on('zoomend', this.updateHandle, this);
-
     this._handled.on('update', this.updateHandle, this);
   },
 
   _unbindListeners: function() {
-    this.off(
-        {
-          dragstart: this._onHandleDragStart,
-          drag: this._onHandleDrag,
-          dragend: this._onHandleDragEnd,
-        },
-        this
-    );
+    this.off({
+      contextmenu: L.DomEvent.stop,
+      dragstart: this._onHandleDragStart,
+      drag: this._onHandleDrag,
+      dragend: this._onHandleDragEnd,
+    }, this);
 
     this._handled._map.off('zoomend', this.updateHandle, this);
     this._handled.off('update', this.updateHandle, this);
@@ -1116,8 +1111,7 @@ L.EditHandle = L.Marker.extend({
     return Math.sqrt(newRadiusSquared / formerRadiusSquared);
   },
 
-  /* Distance between two points in cartesian space,
-  * squared (distance formula). */
+  /* Distance between two points in cartesian space, squared (distance formula). */
   _d2: function(a, b) {
     var dx = a.x - b.x;
     var dy = a.y - b.y;
@@ -1134,12 +1128,12 @@ L.EditHandle = L.Marker.extend({
     var formerPoint = map.latLngToLayerPoint(latlngA);
     var newPoint = map.latLngToLayerPoint(latlngB);
 
-    var initialAngle = Math.
-        atan2(
-            centerPoint.y - formerPoint.y, centerPoint.x - formerPoint.x);
-    var newAngle = Math.
-        atan2(
-            centerPoint.y - newPoint.y, centerPoint.x - newPoint.x);
+    var initialAngle = (
+      Math.atan2(centerPoint.y - formerPoint.y, centerPoint.x - formerPoint.x)
+    );
+    var newAngle = (
+      Math.atan2(centerPoint.y - newPoint.y, centerPoint.x - newPoint.x)
+    );
 
     return newAngle - initialAngle;
   },
