@@ -1,4 +1,4 @@
-# Public Lab Code of Conduct
+# Public Lab Code of Conduct 
 
 _Public Lab, 55 Cromwell Street, 1C, Providence, RI 02907_
 
