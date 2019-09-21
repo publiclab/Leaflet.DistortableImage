@@ -3301,8 +3301,6 @@ L.Map.addInitHook('addHandler', 'doubleClickLabels', L.Map.DoubleClickLabels);
 /* eslint-disable max-len */
 L.Map.include({
 
-  _singleClickTimeout: null,
-
   _clicked: 0,
 
   addGoogleMutant: function(opts) {
@@ -3368,37 +3366,5 @@ L.Map.include({
     }
 
     return this;
-  },
-
-  _fireDOMEventNoPreclick: function(e, type, targets) {
-    if (e._stopped) { return; }
-
-    // Find the layer the event is propagating from and its parents.
-    targets = (targets || []).concat(this._findEventTargets(e, type));
-
-    if (!targets.length) { return; }
-
-    var target = targets[0];
-    if (type === 'contextmenu' && target.listens(type, true)) {
-      L.DomEvent.preventDefault(e);
-    }
-
-    var data = {
-      originalEvent: e,
-    };
-
-    if (e.type !== 'keypress' && e.type !== 'keydown' && e.type !== 'keyup') {
-      var isMarker = target.getLatLng && (!target._radius || target._radius <= 10);
-      data.containerPoint = isMarker ?
-        this.latLngToContainerPoint(target.getLatLng()) : this.mouseEventToContainerPoint(e);
-      data.layerPoint = this.containerPointToLayerPoint(data.containerPoint);
-      data.latlng = isMarker ? target.getLatLng() : this.layerPointToLatLng(data.layerPoint);
-    }
-
-    for (var i = 0; i < targets.length; i++) {
-      targets[i].fire(type, data, true);
-      if (data.originalEvent._stopped ||
-        (targets[i].options.bubblingMouseEvents === false && L.Util.indexOf(this._mouseEvents, type) !== -1)) { return; }
-    }
   },
 });
