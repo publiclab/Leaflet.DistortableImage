@@ -81,11 +81,13 @@ describe('L.DistortableCollection.Edit', function() {
 
       setTimeout(function() {
         edit._handles['distort'].eachLayer(function(handle) {
-          distortHandleState.push(handle._icon.style.opacity);
+          var icon = handle.getElement();
+          distortHandleState.push(L.DomUtil.getStyle(icon, 'opacity'));
         });
 
         edit2._handles['lock'].eachLayer(function(handle) {
-          lockHandleState.push(handle._icon.style.opacity);
+          var icon = handle.getElement();
+          lockHandleState.push(L.DomUtil.getStyle(icon, 'opacity'));
         });
 
         expect(distortHandleState).to.deep.equal(['0', '0', '0', '0']);
