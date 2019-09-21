@@ -353,14 +353,15 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     var map = this._map;
     var i;
     var p;
-    var diference = map.project(formerPoint).subtract(map.project(newPoint));
+    var transCorners = {};
+    var delta = map.project(formerPoint).subtract(map.project(newPoint));
 
     for (i = 0; i < 4; i++) {
-      p = map
-          .project(this.getCorner(i))
-          .subtract(diference);
-      this.setCorner(i, map.unproject(p));
+      p = map.project(this.getCorner(i)).subtract(delta);
+      transCorners[i] = map.unproject(p);
     }
+
+    this.setCorners(transCorners);
   },
 
   _revert: function() {
