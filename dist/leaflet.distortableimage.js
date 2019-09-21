@@ -365,25 +365,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     };
   },
 
-  /* See src/layer/vector/Path.SVG.js in the Leaflet source. */
-  // _fireMouseEvent: function(event) {
-  //   if (!this.hasEventListeners(event.type)) {
-  //     return;
-  //   }
-
-  //   var map = this._map;
-  //   var containerPoint = map.mouseEventToContainerPoint(event);
-  //   var layerPoint = map.containerPointToLayerPoint(containerPoint);
-  //   var latlng = map.layerPointToLatLng(layerPoint);
-
-  //   this.fire(event.type, {
-  //     latlng: latlng,
-  //     layerPoint: layerPoint,
-  //     containerPoint: containerPoint,
-  //     originalEvent: event,
-  //   });
-  // },
-
   _singleClick: function(e) {
     if (e.type === 'singleclick') { this.deselect(); }
     else { return; }
@@ -2988,118 +2969,105 @@ L.distortableImage.keymapper = function(map, options) {
 };
 
 /**
- * L.Map.DoubleClickZoom from leaflet 1.5.1, overrwritten so that it fires a
- * `singleclick` event to avoiding deselecting images on doubleclick.
+ * `L.Map.DoubleClickZoom` from leaflet 1.5.1, overrwritten so that it
+ * 1)fires a `singleclick` event to avoid deselecting images on `dblclick`.
+ * 2) Maintains a mutually exclusive relationship with the map's `DoubleClickLabels` handler
  */
-// L.Map.DoubleClickZoom.include({
-//   addHooks: function() {
-//     // this._singleClickTimeout = null;
 
-//     // L.DomEvent.on(this._map, {
-//     //   click: this._scheduleSingleClick,
-//     //   dblclick: this._onDoubleClick,
-//     // }, this);
-//     this._map.on({
-//       click: this._scheduleSingleClick,
-//       dblclick: this._onDoubleClick,
-//       dbltap: this._onDoubleClick,
-//     }, this);
-//   },
+L.Map.DoubleClickZoom.include({
+  addHooks: function() {
+    this._map.on({
+      click: this._fireIfSingle,
+      dblclick: this._onDoubleClick,
+    }, this);
+  },
 
-//   removeHooks: function() {
-//     this._map.singleClickTimeout = null;
+  removeHooks: function() {
+    this._map.off({
+      click: this._fireIfSingle,
+      dblclick: this._onDoubleClick,
+    }, this);
+  },
 
-//     this._map.off({
-//       click: this._scheduleSingleClick,
-//       dblclick: this._onDoubleClick,
-//       dbltap: this._onDoubleClick,
-//     }, this);
-//   },
+  enable: function() {
+    if (this._enabled) { return this; }
 
-//   enable: function() {
-//     var map = this._map;
+    // don't enable 'doubleClickZoom' unless 'doubleClickLabels' is disabled first
+    if (this._map.doubleClickLabels) {
+      if (this._map.doubleClickLabels.enabled()) {
+        return this;
+      }
+    }
 
-//     if (this._enabled) { return this; }
+    // signify to collection/instance classes to turn on 'singleclick' listeners
+    this._map.fire('singleclickon');
 
-//     // don't enable 'doubleClickZoom' unless 'doubleClickLabels' is disabled first
-//     if (map.doubleClickLabels) {
-//       if (map.doubleClickLabels.enabled()) {
-//         return false;
-//       }
-//     }
+    this._enabled = true;
+    this.addHooks();
+    return this;
+  },
 
-//     map.fire('singleclickon');
+  disable: function() {
+    if (!this._enabled) { return this; }
 
-//     this._enabled = true;
-//     this.addHooks();
-//     return this;
-//   },
+    // signify to collection/instance safe to swap 'singleclick' listeners with 'click' listeners.
+    this._map.fire('singleclickoff');
 
-//   disable: function() {
-//     if (!this._enabled) { return this; }
+    this._enabled = false;
+    this.removeHooks();
+    return this;
+  },
 
-//     // if L.Map.DoubleClickLabels is disabled as well, collection/instance classes
-//     // will stop listening for `singleclick` and start just listening for `click`.
-//     this._map.fire('singleclickoff');
+  _fireIfSingle: function(e) {
+    var map = this._map;
+    var oe = e.originalEvent;
 
-//     this._enabled = false;
-//     this.removeHooks();
-//     return this;
-//   },
+    // prevents deselection in case of box selector
+    if (oe && oe.shiftKey) { return; }
 
-//   _clearSingleClickTimeout: function() {
-//     if (this._map._singleClickTimeout !== null) {
-//       console.log('clearclicktimeout');
-//       clearTimeout(this._map._singleClickTimeout);
-//       this._map._singleClickTimeout = null;
-//     }
-//   },
+    map._clicked += 1;
+    this._map._clickTimeout = setTimeout(function() {
+      if (map._clicked === 1) {
+        map._clicked = 0;
+        map.fire('singleclick', {type: 'singleclick'});
+      } else {
+        // manually fire doubleclick event only for touch screens
+        if (L.Browser.touch) {
+          if (!L.Browser.pointer) {
+            // in `DoubleClickLabels.js`, we just do map.fire('dblclick') bc `_onDoublClick` doesn't use the
+            // passed "e" (for now). To generate a 'real' DOM event that will have all of its corresponding core
+            // properties (originalEvent, latlng, etc.), use Leaflet's `#map._fireDOMEvent` (Leaflet 1.5.1 source)
+            map._fireDOMEvent(oe, 'dblclick', [map]);
+          } else if (oe && oe.sourceCapabilities.firesTouchEvents) {
+            map._fireDOMEvent(oe, 'dblclick', [map]);
+          }
+        }
+      }
+    }, 250);
+  },
 
-//   _scheduleSingleClick: function(e) {
-//     var oe = e.originalEvent;
-//     var map = this._map;
+  _onDoubleClick: function(e) {
+    var map = this._map;
+    var oe = e.originalEvent;
 
-//     // prevents deselection in case of box selector
-//     if (oe && oe.shiftKey) { return; }
+    setTimeout(function() {
+      map._clicked = 0;
+      clearTimeout(map._clickTimeout);
+    }, 0);
 
-//     console.log('singleclick');
-//     this._clearSingleClickTimeout();
+    if (!oe) { return false; }
 
-//     // this._singleClickTimeout = (
-//     // setTimeout(L.bind(this._fireSingleClick, e, this), 250)
-//     // );
-//     this._map._singleClickTimeout = setTimeout(function() {
-//       // if (oe && !oe._stopped) {
-//       map.fire('singleclick', L.extend(e, {type: 'singleclick'}));
-//       // }
-//     }, 250);
-//   },
+    var oldZoom = map.getZoom();
+    var delta = map.options.zoomDelta;
+    var zoom = oe.shiftKey ? oldZoom - delta : oldZoom + delta;
 
-//   _cancelSingleClick: function() {
-//     // This timeout is key to workaround an issue where double-click events
-//     // are fired in this order on some touch browsers: ['click', 'dblclick', 'click']
-//     // instead of ['click', 'click', 'dblclick']
-//     setTimeout(L.bind(this._clearSingleClickTimeout, this), 0);
-//   },
-
-//   _onDoubleClick: function(e) {
-//     var map = this._map;
-
-//     console.log('doubleclick');
-
-//     this._cancelSingleClick();
-
-//     var oldZoom = map.getZoom();
-//     var delta = map.options.zoomDelta;
-//     var zoom = e.originalEvent.shiftKey ? oldZoom - delta : oldZoom + delta;
-
-//     if (map.options.doubleClickZoom === 'center') {
-//       map.setZoom(zoom);
-//     } else {
-//       map.setZoomAround(e.containerPoint, zoom);
-//     }
-//   },
-// });
+    if (map.options.doubleClickZoom === 'center') {
+      map.setZoom(zoom);
+    } else {
+      map.setZoomAround(e.containerPoint, zoom);
+    }
+  },
+});
 
 L.Map.mergeOptions({
   boxCollector: true,
@@ -3234,138 +3202,25 @@ L.Map.BoxCollector = L.Map.BoxZoom.extend({
 
 L.Map.addInitHook('addHandler', 'boxCollector', L.Map.BoxCollector);
 
-
 L.Map.mergeOptions({
   doubleClickLabels: true,
-  tap: true,
-  doubleTap: true,
 });
 
 /**
- * The 'doubleClickLabels' handler replaces 'doubleClickZoom' by default if #addGoogleMutant
+ * The `doubleClickLabels` handler replaces `doubleClickZoom` by default if `#addGoogleMutant`
  * is used unless the options 'labels: false' or 'doubleClickZoom: false` were passed to it.
  */
 
-// L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
-//   // addHooks: function() {
-//   // this._singleClickTimeout = null;
-
-//   //   this._map.on({
-//   //     click: this._scheduleSingleClick,
-//   //     dblclick: this._onDoubleClick,
-//   //   }, this);
-//   // },
-
-//   // removeHooks: function() {
-//   //   this._singleClickTimeout = null;
-
-//   //   this._map.off({
-//   //     click: this._scheduleSingleClick,
-//   //     dblclick: this._onDoubleClick,
-//   //   }, this);
-//   // },
-
-//   enable: function() {
-//     var map = this._map;
-
-//     if (this._enabled) { return this; }
-
-//     // disable 'doubleClickZoom' if enabling 'doubleClickLabels'
-//     if (map.doubleClickZoom.enabled()) {
-//       map.doubleClickZoom.disable();
-//     }
-
-//     // signify to collection/instance classes to listen for 'singleclick'
-//     this._map.fire('singleclickon');
-
-//     this._enabled = true;
-//     this.addHooks();
-//     this.addHooks();
-//     return this;
-//   },
-
-//   disable: function() {
-//     if (!this._enabled) { return this; }
-
-//     this._map.fire('singleclickoff');
-
-//     this._enabled = false;
-//     this.removeHooks();
-
-//     return this;
-//   },
-
-//   // _clearSingleClickTimeout: function() {
-//   //   if (this._singleClickTimeout !== null) {
-//   //     console.log('clearclicktimeout');
-//   //     clearTimeout(this._singleClickTimeout);
-//   //     this._singleClickTimeout = null;
-//   //   }
-//   // },
-
-//   // _scheduleSingleClick: function(e) {
-//   //   var oe = e.originalEvent;
-//   //   var map = this._map;
-
-//   //   // prevents deselection in case of box selector
-//   //   if (oe && oe.shiftKey) { return; }
-
-//   //   console.log('singleclick');
-//   //   this._clearSingleClickTimeout();
-
-//   //   // this._singleClickTimeout = (
-//   //   // setTimeout(L.bind(this._fireSingleClick, e, this), 250)
-//   //   // );
-//   //   this._singleClickTimeout = setTimeout(function() {
-//   //     // if (oe && !oe._stopped) {
-//   //     map.fire('singleclick', L.extend(e, {type: 'singleclick'}));
-//   //     // }
-//   //   }, 250);
-//   // },
-
-//   // _cancelSingleClick: function() {
-//   //   // This timeout is key to workaround an issue where double-click events
-//   //   // are fired in this order on some touch browsers: ['click', 'dblclick', 'click']
-//   //   // instead of ['click', 'click', 'dblclick']
-//   //   setTimeout(L.bind(this._clearSingleClickTimeout, this), 0);
-//   // },
-
-//   _onDoubleClick: function() {
-//     var map = this._map;
-//     var labels = map._labels;
-
-//     console.log('doubleclick');
-
-//     this._cancelSingleClick();
-
-//     if (labels.options.opacity === 1) {
-//       labels.options.opacity = 0;
-//       labels.setOpacity(0);
-//     } else {
-//       labels.options.opacity = 1;
-//       labels.setOpacity(1);
-//     }
-//   },
-// });
-
-// L.Map.addInitHook('addHandler', 'doubleClickLabels', L.Map.DoubleClickLabels);
 L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
   addHooks: function() {
     L.DomEvent.on(this._map, {
-      // pointerdown: this._fireIfSingle,
       click: this._fireIfSingle,
       dblclick: this._onDoubleClick,
     }, this);
   },
 
   removeHooks: function() {
-    // this._map.off({
-    //   click: this._fireIfSingle,
-    //   dblclick: this._onDoubleClick,
-    // }, this);
-    L.DomEvent.on(this._map, {
-      // tap: this._fireIfSingle,
-      // pointerdown: this._fireIfSingle,
+    L.DomEvent.off(this._map, {
       click: this._fireIfSingle,
       dblclick: this._onDoubleClick,
     }, this);
@@ -3381,7 +3236,6 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
       map.doubleClickZoom.disable();
     }
 
-    // signify to collection/instance classes to re-enable 'singleclick' listeners
     this._map.fire('singleclickon');
 
     this._enabled = true;
@@ -3390,33 +3244,35 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
   },
 
   disable: function() {
-    // var map = this._map;
-
     if (!this._enabled) { return this; }
 
     this._enabled = false;
     this.removeHooks();
-
-    // // enable 'doubleClickZoom' if 'doubleClickLabels' is disabled.
-    // if (!map.doubleClickZoom.enabled()) {
-    //   map.doubleClickZoom.enable();
-    // }
 
     return this;
   },
 
   _fireIfSingle: function(e) {
     var map = this._map;
-    var eo = e.originalEvent;
+    var oe = e.originalEvent;
 
     // prevents deselection in case of box selector
-    if (eo && eo.shiftKey) { return; }
+    if (oe && oe.shiftKey) { return; }
 
     map._clicked += 1;
     this._map._clickTimeout = setTimeout(function() {
       if (map._clicked === 1) {
         map._clicked = 0;
         map.fire('singleclick', {type: 'singleclick'});
+      } else {
+        // manually fire doubleclick event only for touch screens
+        if (L.Browser.touch) {
+          if (!L.Browser.pointer) {
+            map.fire('dblclick');
+          } else if (oe && oe.sourceCapabilities.firesTouchEvents) {
+            map.fire('dblclick');
+          }
+        }
       }
     }, 250);
   },
@@ -3440,94 +3296,7 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
   },
 });
 
-/**
- * a little repetitive, but here we overrwrite the L.Map.DoubleClickZoom
- * handler so that in case L.Map.DoubleClickLabels is disabled, this handler
- * will fire a `singleclick` event that our collection and overlay classes
- * both listen for. Bonus: now DoubleClickZoom doesn't deselect our images either.
- */
-L.Map.DoubleClickZoom.include({
-  addHooks: function() {
-    this._map.on({
-      click: this._fireIfSingle,
-      dblclick: this._onDoubleClick,
-    }, this);
-  },
-
-  removeHooks: function() {
-    this._map.off({
-      click: this._fireIfSingle,
-      dblclick: this._onDoubleClick,
-    }, this);
-  },
-
-  enable: function() {
-    if (this._enabled) { return this; }
-
-    // don't enable 'doubleClickZoom' unless 'doubleClickLabels' is disabled first
-    if (this._map.doubleClickLabels) {
-      if (this._map.doubleClickLabels.enabled()) {
-        return this;
-      }
-    }
-
-    this._map.fire('singleclickon');
-
-    this._enabled = true;
-    this.addHooks();
-    return this;
-  },
-
-  /**
-   * if L.Map.DoubleClickZoom is disabled as well, we fire one more custom event
-   * to signify to our collection and instance classes to stop listening for `singleclick`
-   * and start just listening for `click`.
-   */
-  disable: function() {
-    if (!this._enabled) { return this; }
-
-    this._map.fire('singleclickoff');
-
-    this._enabled = false;
-    this.removeHooks();
-    return this;
-  },
-
-  _fireIfSingle: function(e) {
-    var map = this._map;
-    var eo = e.originalEvent;
-
-    // prevents deselection in case of box selector
-    if (eo && eo.shiftKey) { return; }
-
-    map._clicked += 1;
-    setTimeout(function() {
-      if (map._clicked === 1) {
-        map._clicked = 0;
-        map.fire('singleclick', L.extend(e, {type: 'singleclick'}));
-      }
-    }, 250);
-  },
-
-  _onDoubleClick: function(e) {
-    var map = this._map;
-
-    map._clicked = 0;
-
-    var oldZoom = map.getZoom();
-    var delta = map.options.zoomDelta;
-    var zoom = e.originalEvent.shiftKey ? oldZoom - delta : oldZoom + delta;
-
-    if (map.options.doubleClickZoom === 'center') {
-      map.setZoom(zoom);
-    } else {
-      map.setZoomAround(e.containerPoint, zoom);
-    }
-  },
-});
-
 L.Map.addInitHook('addHandler', 'doubleClickLabels', L.Map.DoubleClickLabels);
-
 
 /* eslint-disable max-len */
 L.Map.include({
@@ -3599,5 +3368,37 @@ L.Map.include({
     }
 
     return this;
+  },
+
+  _fireDOMEventNoPreclick: function(e, type, targets) {
+    if (e._stopped) { return; }
+
+    // Find the layer the event is propagating from and its parents.
+    targets = (targets || []).concat(this._findEventTargets(e, type));
+
+    if (!targets.length) { return; }
+
+    var target = targets[0];
+    if (type === 'contextmenu' && target.listens(type, true)) {
+      L.DomEvent.preventDefault(e);
+    }
+
+    var data = {
+      originalEvent: e,
+    };
+
+    if (e.type !== 'keypress' && e.type !== 'keydown' && e.type !== 'keyup') {
+      var isMarker = target.getLatLng && (!target._radius || target._radius <= 10);
+      data.containerPoint = isMarker ?
+        this.latLngToContainerPoint(target.getLatLng()) : this.mouseEventToContainerPoint(e);
+      data.layerPoint = this.containerPointToLayerPoint(data.containerPoint);
+      data.latlng = isMarker ? target.getLatLng() : this.layerPointToLatLng(data.layerPoint);
+    }
+
+    for (var i = 0; i < targets.length; i++) {
+      targets[i].fire(type, data, true);
+      if (data.originalEvent._stopped ||
+        (targets[i].options.bubblingMouseEvents === false && L.Util.indexOf(this._mouseEvents, type) !== -1)) { return; }
+    }
   },
 });

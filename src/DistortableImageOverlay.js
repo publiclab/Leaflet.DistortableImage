@@ -131,25 +131,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     };
   },
 
-  /* See src/layer/vector/Path.SVG.js in the Leaflet source. */
-  // _fireMouseEvent: function(event) {
-  //   if (!this.hasEventListeners(event.type)) {
-  //     return;
-  //   }
-
-  //   var map = this._map;
-  //   var containerPoint = map.mouseEventToContainerPoint(event);
-  //   var layerPoint = map.containerPointToLayerPoint(containerPoint);
-  //   var latlng = map.layerPointToLatLng(layerPoint);
-
-  //   this.fire(event.type, {
-  //     latlng: latlng,
-  //     layerPoint: layerPoint,
-  //     containerPoint: containerPoint,
-  //     originalEvent: event,
-  //   });
-  // },
-
   _singleClick: function(e) {
     if (e.type === 'singleclick') { this.deselect(); }
     else { return; }
