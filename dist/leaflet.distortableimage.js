@@ -3213,14 +3213,14 @@ L.Map.mergeOptions({
 
 L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
   addHooks: function() {
-    L.DomEvent.on(this._map, {
+    this._map.on({
       click: this._fireIfSingle,
       dblclick: this._onDoubleClick,
     }, this);
   },
 
   removeHooks: function() {
-    L.DomEvent.off(this._map, {
+    this._map.off({
       click: this._fireIfSingle,
       dblclick: this._onDoubleClick,
     }, this);
