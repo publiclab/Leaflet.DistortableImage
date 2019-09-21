@@ -2488,7 +2488,7 @@ L.DistortableImage.Edit = L.Handler.extend({
           this._overlay.select();
         }
       }
-      // L.DomEvent.stop(e);
+      L.DomEvent.stop(e);
     }
 
     return this.setMode(newMode);

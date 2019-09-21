@@ -136,17 +136,17 @@ describe('L.DistortableImage.Edit', function() {
       expect(newIdx).to.equal((idx + 1) % modes.length)
     });
 
-    // it('Will only update if the image is selected, or nextMode was triggerd by dblclick', function() {
-    //   var edit = overlay.editing;
+    it('Will only update if the image is selected, or nextMode was triggerd by dblclick', function() {
+      var edit = overlay.editing;
 
-    //   overlay.deselect();
-    //   expect(edit.nextMode()).to.be.false
+      overlay.deselect();
+      expect(edit.nextMode()).to.be.false
 
-    //   chai.simulateEvent(overlay.getElement(), chai.mouseEvents.Dblclick);
-    //   setTimeout(function () {
-    //     expect(edit.nextMode()).to.be.ok
-    //   }, 3000);
-    // });
+      chai.simulateEvent(overlay.getElement(), chai.mouseEvents.Dblclick);
+      setTimeout(function () {
+        expect(edit.nextMode()).to.be.ok
+      }, 3000);
+    });
 
     it('It prevents dblclick events from propagating to the map', function() {
       var overlaySpy = sinon.spy();
