@@ -96,6 +96,11 @@ L.DistortableImage.Edit = L.Handler.extend({
     var overlay = this._overlay;
     var i;
 
+    this._dragHandles = L.layerGroup();
+    for (i = 0; i < 4; i++) {
+      this._dragHandles.addLayer(new L.DragHandle(overlay, i));
+    }
+
     this._scaleHandles = L.layerGroup();
     for (i = 0; i < 4; i++) {
       this._scaleHandles.addLayer(new L.ScaleHandle(overlay, i));
@@ -122,11 +127,6 @@ L.DistortableImage.Edit = L.Handler.extend({
       this._lockHandles.addLayer(
           new L.LockHandle(overlay, i, {draggable: false})
       );
-    }
-
-    this._dragHandles = L.layerGroup();
-    for (i = 0; i < 4; i++) {
-      this._dragHandles.addLayer(new L.DragHandle(overlay, i));
     }
 
     this._handles = {
