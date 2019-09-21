@@ -129,11 +129,6 @@ L.DistortableImage.Edit = L.Handler.extend({
       );
     }
 
-    this._dragHandles = L.layerGroup();
-    for (i = 0; i < 4; i++) {
-      this._dragHandles.addLayer(new L.DragHandle(overlay, i));
-    }
-
     this._handles = {
       drag: this._dragHandles,
       scale: this._scaleHandles,
