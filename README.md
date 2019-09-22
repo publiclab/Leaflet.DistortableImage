@@ -522,7 +522,7 @@ img.setCorners(scaledCorners);
   <ul>
     <li>Deselects an individual image instance.</li>
     <li>If its editing handler is disabled or it is not currently selected, instead just returns false.</li>
-    <li>Internally invoked on map <code>click</code> and image collect.</li>
+    <li>Internally invoked on map <code>click</code> and image collect (<kbd>shift</kbd> + <code>click</code>).</li>
   </ul>
 </details>
 
