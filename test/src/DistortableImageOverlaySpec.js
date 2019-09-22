@@ -56,9 +56,18 @@ describe('L.DistortableImageOverlay', function() {
       }, 3000);
     });
 
-    it('Is invoked on image click', function () {
+    it('Is also invoked on image click', function() {
       overlay.getElement().click();
-      expect(overlay.pick).to.have.been.called;
+      expect(overlay.select).to.have.been.called;
+    });
+
+    it('Locked images can be selected', function() {
+      overlay.editing._lock();
+      overlay.getElement().click();
+      setTimeout(function () {
+        expect(overlay._selected).to.be.true
+        expect(overlay.editing.toolbar).to.be.true
+      }, 3000);
     });
 
     it('Returns false if image editing is disabled', function() {
@@ -117,15 +126,14 @@ describe('L.DistortableImageOverlay', function() {
   describe('#getCenter', function() {
     it('Should return the center when the outline of the image is a rectangle', function() {
       var center = overlay.getCenter();
-
       expect(center).to.be.closeToLatLng(L.latLng(41.7884, -87.5952));
     });
   });
 
   describe('#scaleBy', function() {
     it('Should not change image dimensions when passed a value of 1 or 0', function() {
-      var img = overlay.getElement(),
-          dims = [img.getBoundingClientRect().width, img.getBoundingClientRect().height];
+      var img = overlay.getElement();
+      var dims = [img.getBoundingClientRect().width, img.getBoundingClientRect().height];
 
       overlay.scaleBy(1);
 
@@ -139,13 +147,13 @@ describe('L.DistortableImageOverlay', function() {
     });
 
     it('Should invert image dimensions when passed a negative value', function() {
-      var c2 = overlay.getCorner(2),
-          c3 = overlay.getCorner(3);
+      var c2 = overlay.getCorner(2);
+      var c3 = overlay.getCorner(3);
 
       overlay.scaleBy(-1);
 
-      var scaledC = overlay.getCorner(0),
-          scaledC1 = overlay.getCorner(1);
+      var scaledC = overlay.getCorner(0);
+      var scaledC1 = overlay.getCorner(1);
 
       expect(Math.round(scaledC.lat)).to.equal(Math.round(c3.lat));
       expect(Math.round(scaledC.lng)).to.equal(Math.round(c3.lng));
@@ -154,16 +162,12 @@ describe('L.DistortableImageOverlay', function() {
     });
 
     it('Maintain image proportions when scaling', function() {
-      var w = overlay.getElement().getBoundingClientRect().width,
-          h = overlay.getElement().getBoundingClientRect().height;
+      var center = overlay.getCenter();
 
       overlay.scaleBy(0.5);
 
-      var w2 = overlay.getElement().getBoundingClientRect().width,
-          h2 = overlay.getElement().getBoundingClientRect().height;
-
-      expect(Math.round(w / 2)).to.be.equal(Math.round(w2));
-      expect(Math.round(h / 2)).to.be.equal(Math.round(h2));
+      expect(Math.round(overlay.getCenter().lat)).to.be.equal(Math.round(center.lat));
+      expect(Math.round(overlay.getCenter().lng)).to.be.equal(Math.round(center.lng));
     });
   });
 });
