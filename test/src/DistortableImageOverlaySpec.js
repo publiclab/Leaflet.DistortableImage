@@ -65,6 +65,7 @@ describe('L.DistortableImageOverlay', function() {
       overlay.editing._lock();
       overlay.getElement().click();
       setTimeout(function () {
+        expect(overlay.editing.getMode()).to.eql('lock');
         expect(overlay._selected).to.be.true
         expect(overlay.editing.toolbar).to.be.true
       }, 3000);
@@ -100,7 +101,7 @@ describe('L.DistortableImageOverlay', function() {
 
     it('Is invoked on map click', function() {
       map.fire('click');
-      expect(overlay.unpick).to.have.been.called;
+      expect(overlay.deselect).to.have.been.called;
     });
 
     it('Returns false if image editing is disabled', function() {
@@ -109,7 +110,7 @@ describe('L.DistortableImageOverlay', function() {
       expect(overlay._selected).to.be.false
     });
 
-    it('Returns false if image is not picked', function() {
+    it('Returns false if image is not selected', function() {
       expect(overlay.deselect()).to.be.ok
       expect(overlay.deselect()).to.be.false
     });
@@ -138,12 +139,12 @@ describe('L.DistortableImageOverlay', function() {
       overlay.scaleBy(1);
 
       var scaledDims = [img.getBoundingClientRect().width, img.getBoundingClientRect().height];
-      expect(dims).to.be.eql(scaledDims);
+      expect(dims).to.eql(scaledDims);
 
       overlay.scaleBy(0);
 
       var scaledDims2 = [img.getBoundingClientRect().width, img.getBoundingClientRect().height];
-      expect(dims).to.be.eql(scaledDims2);
+      expect(dims).to.eql(scaledDims2);
     });
 
     it('Should invert image dimensions when passed a negative value', function() {
@@ -166,8 +167,8 @@ describe('L.DistortableImageOverlay', function() {
 
       overlay.scaleBy(0.5);
 
-      expect(Math.round(overlay.getCenter().lat)).to.be.equal(Math.round(center.lat));
-      expect(Math.round(overlay.getCenter().lng)).to.be.equal(Math.round(center.lng));
+      expect(Math.round(overlay.getCenter().lat)).to.equal(Math.round(center.lat));
+      expect(Math.round(overlay.getCenter().lng)).to.equal(Math.round(center.lng));
     });
   });
 });

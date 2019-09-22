@@ -561,7 +561,7 @@ A handler that holds the keybindings and toolbar API for an image instance. It i
 
 <details><summary><code><b>getMode()</b>: String</code></summary>
   <ul>
-    <li>Returns the current <code>mode</code> of the image if it's picked, otherwise returns false.</li>
+    <li>Returns the current <code>mode</code> of the image if it's selected, otherwise returns false.</li>
   </ul>
 </details>
 
@@ -569,14 +569,14 @@ A handler that holds the keybindings and toolbar API for an image instance. It i
   <ul>
     <li>Sets the mode of the image to the next one in the <code>
     modes</code> array by passing it to <code>#setMode.</code></li>
-    <li>If the image is not picked or <code>modes</code> only has 1 mode, it will instead return false.</li>
-    <li>We use this internally to iterate through an image's editing modes easily on <code>dblclick</code>, but you can call it programmatically if you find a need. Note that <code>dblclick</code> also picks the image (given it's not disabled or multi-selected, etc.)</li>
+    <li>If the image is not selected or <code>modes</code> only has 1 mode, it will instead return false.</li>
+    <li>We use this internally to iterate through an image's editing modes easily on <code>dblclick</code>, but you can call it programmatically if you find a need. Note that <code>dblclick</code> also selects the image (given it's not disabled or collected)</li>
   </ul>
 </details>
 
 <details><summary><code><b>setMode(<i>mode</i> &#60;string>)</b>: this</code></summary>
   <ul>
-    <li>Sets the  <code>mode</code> of the image to the passed one given that it is in the  <code>modes </code> array, it is not already the current mode, and the image is picked. Otherwise returns false.</li>
+    <li>Sets the  <code>mode</code> of the image to the passed one given that it is in the  <code>modes </code> array, it is not already the current mode, and the image is selcted. Otherwise returns false.</li>
   </ul>
 </details>
 
