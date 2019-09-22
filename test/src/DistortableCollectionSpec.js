@@ -81,7 +81,7 @@ describe('L.DistortableCollection', function() {
     });
   });
 
-  describe('#_toggleMultiCollect', function() {
+  describe('#_toggleCollected', function() {
     it('Should allow multiple image selection on shift + click', function() {
       var img = overlay.getElement();
       var img2 = overlay2.getElement();

@@ -37,7 +37,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this.editActions = this.options.actions;
 
-    if (overlay.isPicked() && !overlay.options.suppressToolbar) {
+    if (overlay.isSelected() && !overlay.options.suppressToolbar) {
       this._addToolbar();
     }
 
@@ -86,8 +86,8 @@ L.DistortableImage.Edit = L.Handler.extend({
   disable: function() {
     if (!this._enabled) { return this; }
 
+    this._overlay.deselect();
     this._enabled = false;
-    this._overlay._unpick();
     this.removeHooks();
     return this;
   },
@@ -146,7 +146,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     map.addLayer(this._handles[mode]);
 
     if (mode !== 'lock') {
-      if (!overlay.isPicked()) {
+      if (!overlay.isSelected()) {
         this._handles[mode].eachLayer(function(layer) {
           layer.setOpacity(0);
           layer.dragging.disable();
@@ -167,7 +167,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (eP && eP.anyCollected()) { return; }
 
     if (this[handlerName] !== undefined && !ov.options.suppressToolbar) {
-      if (ov.isPicked() && this.toolbar) {
+      if (ov.isSelected() && this.toolbar) {
         this[handlerName].call(this);
       }
     }
@@ -452,7 +452,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _deselect: function() {
-    this._overlay._unpick();
+    this._overlay.deselect();
   },
 
   _showMarkers: function() {
@@ -554,7 +554,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   getMode: function() {
-    if (!this._overlay.isPicked()) { return false; }
+    if (!this._overlay.isSelected()) { return false; }
     return this._mode;
   },
 
@@ -567,7 +567,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     var map = ov._map;
     var m = this._mode;
 
-    if (newMode === m || !ov.isPicked()) { return false; }
+    if (newMode === m || !ov.isSelected()) { return false; }
     if (this._modes.indexOf(newMode) !== -1) {
       if (this.toolbar) { this.toolbar.clickTool(newMode); }
       if (m === 'lock' && !this.dragging) { this._enableDragging(); }
@@ -593,9 +593,9 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     if (e) {
       if (eP) {
-        eP._decollectOthers(e);
+        eP._deselectOthers(e);
         if (!eP.anyCollected()) {
-          this._overlay._pick();
+          this._overlay.select();
         }
       }
       L.DomEvent.stop(e);

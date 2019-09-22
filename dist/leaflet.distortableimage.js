@@ -235,7 +235,6 @@ L.TrigUtil = {
 L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   options: {
-    alt: '',
     height: 200,
     crossOrigin: true,
     // todo: find ideal number to prevent distortions during RotateScale, and make it dynamic (remove hardcoding)
@@ -258,7 +257,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   onAdd: function(map) {
     this._map = map;
-    if (!this._image) { this._initImage(); }
+    if (!this._image) { L.ImageOverlay.prototype._initImage.call(this); }
     if (!this._events) { this._initEvents(); }
 
     this.getPane().appendChild(this._image);
@@ -300,7 +299,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
     this.fire('add');
 
-    L.DomEvent.on(this._image, 'click', this._pick, this);
+    L.DomEvent.on(this._image, 'click', this.select, this);
     L.DomEvent.on(map, {
       singleclickon: this._singleClickListeners,
       singleclickoff: this._resetClickListeners,
@@ -311,31 +310,23 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
      * single / dblclick to not deselect images on map dblclick.
      */
     if (!(map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled())) {
-      L.DomEvent.on(map, 'click', this._unpick, this);
+      L.DomEvent.on(map, 'click', this.deselect, this);
     }
   },
 
   onRemove: function(map) {
-    L.DomEvent.off(this._image, 'click', this._pick, this);
+    L.DomEvent.off(this._image, 'click', this.select, this);
     L.DomEvent.off(map, {
       singleclickon: this._singleClickListeners,
       singleclickoff: this._resetClickListeners,
       singleclick: this._singleClick,
     }, this);
-    L.DomEvent.off(map, 'click', this._unpick, this);
+    L.DomEvent.off(map, 'click', this.deselect, this);
 
     if (this.editing) { this.editing.disable(); }
     this.fire('remove');
 
     L.ImageOverlay.prototype.onRemove.call(this, map);
-  },
-
-  _initImage: function() {
-    L.ImageOverlay.prototype._initImage.call(this);
-
-    L.extend(this._image, {
-      alt: this.options.alt,
-    });
   },
 
   _initImageDimensions: function() {
@@ -401,27 +392,27 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   _singleClick: function(e) {
-    if (e.type === 'singleclick') { this._unpick(); }
+    if (e.type === 'singleclick') { this.deselect(); }
     else { return; }
   },
 
   _singleClickListeners: function() {
     var map = this._map;
-    L.DomEvent.off(map, 'click', this._unpick, this);
+    L.DomEvent.off(map, 'click', this.deselect, this);
   },
 
   _resetClickListeners: function() {
     var map = this._map;
-    L.DomEvent.on(map, 'click', this._unpick, this);
+    L.DomEvent.on(map, 'click', this.deselect, this);
   },
 
-  isPicked: function() {
+  isSelected: function() {
     return this._selected;
   },
 
-  _unpick: function() {
+  deselect: function() {
     var edit = this.editing;
-    if (!edit.enabled()) { return false; }
+    if (!edit.enabled() || !this.isSelected()) { return false; }
 
     edit._removeToolbar();
     if (edit._mode !== 'lock') {
@@ -432,20 +423,34 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return this;
   },
 
-  _pick: function(e) {
+  select: function(e) {
     var edit = this.editing;
 
+    if (e) { L.DomEvent.stopPropagation(e); }
     if (!edit.enabled()) { return false; }
+
+    // this ensures deselection of all other images, allowing us to keep collection group optional
+    this._programmaticGrouping();
 
     this._selected = true;
     edit._addToolbar();
     edit._showMarkers();
 
-    if (e) {
-      if (L.DomUtil.hasClass(e.target, 'collected')) { this._unpick(); }
-      L.DomEvent.stopPropagation(e);
+    // we run the selection logic 1st anyway because the collection group's _addToolbar method depends on it
+    if (L.DomUtil.hasClass(this._image, 'collected')) {
+      this.deselect();
+      return false;
     }
+
     return this;
+  },
+
+  _programmaticGrouping: function() {
+    this._map.eachLayer(function(layer) {
+      if (layer instanceof L.DistortableImageOverlay) {
+        layer.deselect();
+      }
+    });
   },
 
   setCorner: function(corner, latlng) {
@@ -797,7 +802,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
 
     L.DomEvent.on(layer._image, {
-      mousedown: this._decollectOthers,
+      mousedown: this._deselectOthers,
       /* Enable longpress for multi select for touch devices. */
       contextmenu: this._longPressMultiSelect,
     }, this);
@@ -812,7 +817,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
 
     L.DomEvent.off(layer._image, {
-      mousedown: this._decollectOthers,
+      mousedown: this._deselectOthers,
       contextmenu: this._longPressMultiSelect,
     }, this);
   },
@@ -827,7 +832,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
       if (layer.getElement() === e.target && edit.enabled()) {
         L.DomUtil.toggleClass(layer.getElement(), 'collected');
         if (this.anyCollected()) {
-          layer._unpick();
+          layer.deselect();
           this.editing._addToolbar();
         } else {
           this.editing._removeToolbar();
@@ -845,7 +850,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return layerArr.some(this.isCollected.bind(this));
   },
 
-  _toggleMultiCollect: function(e, layer) {
+  _toggleCollected: function(e, layer) {
     if (e.shiftKey) {
       /** conditional prevents disabled images from flickering multi-select mode */
       if (layer.editing.enabled()) {
@@ -853,18 +858,18 @@ L.DistortableCollection = L.FeatureGroup.extend({
       }
     }
 
-    if (this.anyCollected()) { layer._unpick(); }
+    if (this.anyCollected()) { layer.deselect(); }
     else { this.editing._removeToolbar(); }
   },
 
-  _decollectOthers: function(e) {
+  _deselectOthers: function(e) {
     if (!this.editable) { return; }
 
     this.eachLayer(function(layer) {
       if (layer.getElement() !== e.target) {
-        layer._unpick();
+        layer.deselect();
       } else {
-        this._toggleMultiCollect(e, layer);
+        this._toggleCollected(e, layer);
       }
     }, this);
 
@@ -880,7 +885,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     this.eachLayer(function(layer) {
       layer._dragStartPoints = {};
-      layer._unpick();
+      layer.deselect();
       for (i = 0; i < 4; i++) {
         var c = layer.getCorner(i);
         layer._dragStartPoints[i] = map.latLngToLayerPoint(c);
@@ -2017,7 +2022,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this.editActions = this.options.actions;
 
-    if (overlay.isPicked() && !overlay.options.suppressToolbar) {
+    if (overlay.isSelected() && !overlay.options.suppressToolbar) {
       this._addToolbar();
     }
 
@@ -2066,8 +2071,8 @@ L.DistortableImage.Edit = L.Handler.extend({
   disable: function() {
     if (!this._enabled) { return this; }
 
+    this._overlay.deselect();
     this._enabled = false;
-    this._overlay._unpick();
     this.removeHooks();
     return this;
   },
@@ -2126,7 +2131,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     map.addLayer(this._handles[mode]);
 
     if (mode !== 'lock') {
-      if (!overlay.isPicked()) {
+      if (!overlay.isSelected()) {
         this._handles[mode].eachLayer(function(layer) {
           layer.setOpacity(0);
           layer.dragging.disable();
@@ -2147,7 +2152,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (eP && eP.anyCollected()) { return; }
 
     if (this[handlerName] !== undefined && !ov.options.suppressToolbar) {
-      if (ov.isPicked() && this.toolbar) {
+      if (ov.isSelected() && this.toolbar) {
         this[handlerName].call(this);
       }
     }
@@ -2432,7 +2437,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _deselect: function() {
-    this._overlay._unpick();
+    this._overlay.deselect();
   },
 
   _showMarkers: function() {
@@ -2534,7 +2539,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   getMode: function() {
-    if (!this._overlay.isPicked()) { return false; }
+    if (!this._overlay.isSelected()) { return false; }
     return this._mode;
   },
 
@@ -2547,7 +2552,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     var map = ov._map;
     var m = this._mode;
 
-    if (newMode === m || !ov.isPicked()) { return false; }
+    if (newMode === m || !ov.isSelected()) { return false; }
     if (this._modes.indexOf(newMode) !== -1) {
       if (this.toolbar) { this.toolbar.clickTool(newMode); }
       if (m === 'lock' && !this.dragging) { this._enableDragging(); }
@@ -2573,9 +2578,9 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     if (e) {
       if (eP) {
-        eP._decollectOthers(e);
+        eP._deselectOthers(e);
         if (!eP.anyCollected()) {
-          this._overlay._pick();
+          this._overlay.select();
         }
       }
       L.DomEvent.stop(e);
@@ -2708,7 +2713,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
     this._group.eachLayer(function(layer) {
       L.DomUtil.removeClass(layer.getElement(), 'collected');
-      layer._unpick();
+      layer.deselect();
     });
 
     this._removeToolbar();
@@ -2723,7 +2728,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
         if (edit._mode === 'lock') {
           edit._unlock();
           // unlock updates the layer's handles; deselect to ensure they're hidden
-          layer._unpick();
+          layer.deselect();
         }
       }
     }, this);
@@ -2749,7 +2754,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     this._group.eachLayer(function(layer) {
       var edit = layer.editing;
 
-      if (layer.isPicked()) { layer._unpick(); }
+      if (layer.isSelected()) { layer.deselect(); }
 
       var imgBounds = L.latLngBounds(layer.getCorner(2), layer.getCorner(1));
       imgBounds = map._latLngBoundsToNewLayerBounds(imgBounds, map.getZoom(), map.getCenter());

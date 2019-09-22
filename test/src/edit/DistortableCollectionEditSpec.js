@@ -94,24 +94,20 @@ describe('L.DistortableCollection.Edit', function() {
       }, 3000);
     });
 
-    it('Should remove all images\' individual toolbar instances regardless of lock handles', function() {
-      var edit = overlay.editing;
+    it('Should remove an image\'s individual toolbar instances regardless of lock handles', function() {
       var edit2 = overlay2.editing;
 
       edit2._toggleLockMode();
 
-      // select both images to initially create individual toolbar instances (single selection interface)
-      chai.simulateEvent(overlay.getElement(), chai.mouseEvents.Click);
+      // select image to initially create individual toolbar instance (single selection interface)
       chai.simulateEvent(overlay2.getElement(), chai.mouseEvents.Click);
 
-      expect(edit.toolbar).to.not.be.false;
       expect(edit2.toolbar).to.not.be.false;
 
       // then trigger _decollectAll
       map.fire('click');
 
       setTimeout(function() {
-        expect(edit.toolbar).to.be.false;
         expect(edit2.toolbar).to.be.false;
       }, 3000);
     });
