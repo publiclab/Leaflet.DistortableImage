@@ -43,38 +43,118 @@ describe('L.DistortableImageOverlay', function() {
     });
   });
 
+  describe('#select', function() {
+    it('Allows programmatically selecting a single image', function() {
+      expect(overlay._selected).to.be.false
+      expect(overlay.editing.toolbar).to.be.undefined
+      
+      overlay.select();
+
+      setTimeout(function() {
+        expect(overlay._selected).to.be.true
+        expect(overlay.editing.toolbar).to.be.true
+      }, 3000);
+    });
+
+    it('Is also invoked on image click', function() {
+      overlay.getElement().click();
+      expect(overlay.select).to.have.been.called;
+    });
+
+    it('Locked images can be selected', function() {
+      overlay.editing._lock();
+      overlay.getElement().click();
+      setTimeout(function () {
+        expect(overlay.editing.getMode()).to.eql('lock');
+        expect(overlay._selected).to.be.true
+        expect(overlay.editing.toolbar).to.be.true
+      }, 3000);
+    });
+
+    it('Returns false if image editing is disabled', function() {
+      overlay.editing.disable();
+      expect(overlay.select()).to.be.false
+      expect(overlay._selected).to.be.false
+      expect(overlay.editing.toolbar).to.be.undefined
+    });
+    
+    it('Returns false if the multiple image editing interface is on', function() {
+      L.DomUtil.addClass(overlay._image, 'collected');
+      expect(overlay.select()).to.be.false
+      expect(overlay._selected).to.be.false
+      expect(overlay.editing.toolbar).to.be.false
+    });
+  });
+
+  describe('#deselect', function() {
+    beforeEach(function () { // select the image
+      overlay.select();
+      setTimeout(function() {
+        expect(overlay._selected).to.be.true
+      }, 3000);
+    });
+
+    it('Allows programmatically deselecting a single image', function() {
+      overlay.deselect();
+      expect(overlay._selected).to.be.false
+    });
+
+    it('Is invoked on map click', function() {
+      map.fire('click');
+      expect(overlay.deselect).to.have.been.called;
+    });
+
+    it('Returns false if image editing is disabled', function() {
+      overlay.editing.disable();
+      expect(overlay.deselect()).to.be.false
+      expect(overlay._selected).to.be.false
+    });
+
+    it('Returns false if image is not selected', function() {
+      expect(overlay.deselect()).to.be.ok
+      expect(overlay.deselect()).to.be.false
+    });
+  });
+
+  describe('#isSelected', function () {
+    it('Only returns true for a selected image', function () {
+      expect(overlay.isSelected()).to.be.false
+      overlay.select();
+      expect(overlay.isSelected()).to.be.true
+    });
+  });
+
   describe('#getCenter', function() {
     it('Should return the center when the outline of the image is a rectangle', function() {
       var center = overlay.getCenter();
-
       expect(center).to.be.closeToLatLng(L.latLng(41.7884, -87.5952));
     });
   });
 
   describe('#scaleBy', function() {
     it('Should not change image dimensions when passed a value of 1 or 0', function() {
-      var img = overlay.getElement(),
-          dims = [img.getBoundingClientRect().width, img.getBoundingClientRect().height];
+      var img = overlay.getElement();
+      var dims = [img.getBoundingClientRect().width, img.getBoundingClientRect().height];
 
       overlay.scaleBy(1);
 
       var scaledDims = [img.getBoundingClientRect().width, img.getBoundingClientRect().height];
-      expect(dims).to.be.eql(scaledDims);
+      expect(dims).to.eql(scaledDims);
 
       overlay.scaleBy(0);
 
       var scaledDims2 = [img.getBoundingClientRect().width, img.getBoundingClientRect().height];
-      expect(dims).to.be.eql(scaledDims2);
+      expect(dims).to.eql(scaledDims2);
     });
 
     it('Should invert image dimensions when passed a negative value', function() {
-      var c2 = overlay.getCorner(2),
-          c3 = overlay.getCorner(3);
+      var c2 = overlay.getCorner(2);
+      var c3 = overlay.getCorner(3);
 
       overlay.scaleBy(-1);
 
-      var scaledC = overlay.getCorner(0),
-          scaledC1 = overlay.getCorner(1);
+      var scaledC = overlay.getCorner(0);
+      var scaledC1 = overlay.getCorner(1);
 
       expect(Math.round(scaledC.lat)).to.equal(Math.round(c3.lat));
       expect(Math.round(scaledC.lng)).to.equal(Math.round(c3.lng));
@@ -83,16 +163,12 @@ describe('L.DistortableImageOverlay', function() {
     });
 
     it('Maintain image proportions when scaling', function() {
-      var w = overlay.getElement().getBoundingClientRect().width,
-          h = overlay.getElement().getBoundingClientRect().height;
+      var center = overlay.getCenter();
 
       overlay.scaleBy(0.5);
 
-      var w2 = overlay.getElement().getBoundingClientRect().width,
-          h2 = overlay.getElement().getBoundingClientRect().height;
-
-      expect(Math.round(w / 2)).to.be.equal(Math.round(w2));
-      expect(Math.round(h / 2)).to.be.equal(Math.round(h2));
+      expect(Math.round(overlay.getCenter().lat)).to.equal(Math.round(center.lat));
+      expect(Math.round(overlay.getCenter().lng)).to.equal(Math.round(center.lng));
     });
   });
 });

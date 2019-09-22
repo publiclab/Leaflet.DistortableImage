@@ -41,7 +41,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
 
     L.DomEvent.on(layer._image, {
-      mousedown: this._decollectOthers,
+      mousedown: this._deselectOthers,
       /* Enable longpress for multi select for touch devices. */
       contextmenu: this._longPressMultiSelect,
     }, this);
@@ -56,7 +56,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
 
     L.DomEvent.off(layer._image, {
-      mousedown: this._decollectOthers,
+      mousedown: this._deselectOthers,
       contextmenu: this._longPressMultiSelect,
     }, this);
   },
@@ -71,7 +71,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
       if (layer.getElement() === e.target && edit.enabled()) {
         L.DomUtil.toggleClass(layer.getElement(), 'collected');
         if (this.anyCollected()) {
-          layer._unpick();
+          layer.deselect();
           this.editing._addToolbar();
         } else {
           this.editing._removeToolbar();
@@ -89,7 +89,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return layerArr.some(this.isCollected.bind(this));
   },
 
-  _toggleMultiCollect: function(e, layer) {
+  _toggleCollected: function(e, layer) {
     if (e.shiftKey) {
       /** conditional prevents disabled images from flickering multi-select mode */
       if (layer.editing.enabled()) {
@@ -97,18 +97,18 @@ L.DistortableCollection = L.FeatureGroup.extend({
       }
     }
 
-    if (this.anyCollected()) { layer._unpick(); }
+    if (this.anyCollected()) { layer.deselect(); }
     else { this.editing._removeToolbar(); }
   },
 
-  _decollectOthers: function(e) {
+  _deselectOthers: function(e) {
     if (!this.editable) { return; }
 
     this.eachLayer(function(layer) {
       if (layer.getElement() !== e.target) {
-        layer._unpick();
+        layer.deselect();
       } else {
-        this._toggleMultiCollect(e, layer);
+        this._toggleCollected(e, layer);
       }
     }, this);
 
@@ -124,7 +124,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     this.eachLayer(function(layer) {
       layer._dragStartPoints = {};
-      layer._unpick();
+      layer.deselect();
       for (i = 0; i < 4; i++) {
         var c = layer.getCorner(i);
         layer._dragStartPoints[i] = map.latLngToLayerPoint(c);
