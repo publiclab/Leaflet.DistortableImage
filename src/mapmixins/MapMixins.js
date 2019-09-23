@@ -34,8 +34,8 @@ L.Map.include({
     // disables and removes from map - shouldn't have this handler at all if there
     // are no labels to toggle
     else {
-      this.doubleClickLabels.disable();
-      this.doubleClickZoom.enable();
+      // this.doubleClickLabels.disable();
+      // this.doubleClickZoom.enable();
       this.doubleClickLabels = undefined;
     }
 
@@ -60,11 +60,16 @@ L.Map.include({
     }).addTo(this);
 
     // disables but keeps on map (can re-enable)
-    if (!this.mutantOptions.doubleClickLabels) {
-      this.doubleClickLabels.disable();
-      this.doubleClickZoom.enable();
+    if (this.mutantOptions.doubleClickLabels) {
+      this.doubleClickLabels.enable();
+      // this.doubleClickZoom.enable();
     }
 
     return this;
   },
+});
+
+L.Map.addInitHook(function() {
+  this.doubleClickLabels.disable();
+  this.doubleClickZoom.enable();
 });

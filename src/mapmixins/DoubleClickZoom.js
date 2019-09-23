@@ -1,6 +1,6 @@
 /**
  * `L.Map.DoubleClickZoom` from leaflet 1.5.1, overrwritten so that it
- * 1)fires a `singleclick` event to avoid deselecting images on `dblclick`.
+ * 1) Fires a `singleclick` event to avoid deselecting images on `dblclick`.
  * 2) Maintains a mutually exclusive relationship with the map's `DoubleClickLabels` handler
  */
 
@@ -61,7 +61,7 @@ L.Map.DoubleClickZoom.include({
         map._clicked = 0;
         map.fire('singleclick', {type: 'singleclick'});
       } else {
-        // manually fire doubleclick event only for touch screens
+        // manually fire doubleclick event only for touch screens that don't natively fire it
         if (L.Browser.touch) {
           if (oe && oe.sourceCapabilities.firesTouchEvents) {
             // in `DoubleClickLabels.js`, we just do map.fire('dblclick') bc `_onDoublClick` doesn't use the

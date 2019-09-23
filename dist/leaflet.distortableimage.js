@@ -2964,7 +2964,7 @@ L.distortableImage.keymapper = function(map, options) {
 
 /**
  * `L.Map.DoubleClickZoom` from leaflet 1.5.1, overrwritten so that it
- * 1)fires a `singleclick` event to avoid deselecting images on `dblclick`.
+ * 1) Fires a `singleclick` event to avoid deselecting images on `dblclick`.
  * 2) Maintains a mutually exclusive relationship with the map's `DoubleClickLabels` handler
  */
 
@@ -3025,7 +3025,7 @@ L.Map.DoubleClickZoom.include({
         map._clicked = 0;
         map.fire('singleclick', {type: 'singleclick'});
       } else {
-        // manually fire doubleclick event only for touch screens
+        // manually fire doubleclick event only for touch screens that don't natively fire it
         if (L.Browser.touch) {
           if (oe && oe.sourceCapabilities.firesTouchEvents) {
             // in `DoubleClickLabels.js`, we just do map.fire('dblclick') bc `_onDoublClick` doesn't use the
@@ -3257,7 +3257,7 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
         map._clicked = 0;
         map.fire('singleclick', {type: 'singleclick'});
       } else {
-        // manually fire doubleclick event only for touch screens
+        // manually fire doubleclick event only for touch screens that don't natively fire it
         if (L.Browser.touch) {
           if (oe && oe.sourceCapabilities.firesTouchEvents) {
             map.fire('dblclick');
@@ -3275,6 +3275,8 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
       map._clicked = 0;
       clearTimeout(map._clickTimeout);
     }, 0);
+
+    if (!labels) { return; }
 
     if (labels.options.opacity === 1) {
       labels.options.opacity = 0;
@@ -3324,8 +3326,8 @@ L.Map.include({
     // disables and removes from map - shouldn't have this handler at all if there
     // are no labels to toggle
     else {
-      this.doubleClickLabels.disable();
-      this.doubleClickZoom.enable();
+      // this.doubleClickLabels.disable();
+      // this.doubleClickZoom.enable();
       this.doubleClickLabels = undefined;
     }
 
@@ -3350,11 +3352,16 @@ L.Map.include({
     }).addTo(this);
 
     // disables but keeps on map (can re-enable)
-    if (!this.mutantOptions.doubleClickLabels) {
-      this.doubleClickLabels.disable();
-      this.doubleClickZoom.enable();
+    if (this.mutantOptions.doubleClickLabels) {
+      this.doubleClickLabels.enable();
+      // this.doubleClickZoom.enable();
     }
 
     return this;
   },
+});
+
+L.Map.addInitHook(function() {
+  this.doubleClickLabels.disable();
+  this.doubleClickZoom.enable();
 });

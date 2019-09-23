@@ -61,7 +61,7 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
         map._clicked = 0;
         map.fire('singleclick', {type: 'singleclick'});
       } else {
-        // manually fire doubleclick event only for touch screens
+        // manually fire doubleclick event only for touch screens that don't natively fire it
         if (L.Browser.touch) {
           if (oe && oe.sourceCapabilities.firesTouchEvents) {
             map.fire('dblclick');
@@ -79,6 +79,8 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
       map._clicked = 0;
       clearTimeout(map._clickTimeout);
     }, 0);
+
+    if (!labels) { return; }
 
     if (labels.options.opacity === 1) {
       labels.options.opacity = 0;
