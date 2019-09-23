@@ -14,6 +14,6 @@ L.RotateAction = L.EditAction.extend({
 
   addHooks: function() {
     var edit = this._overlay.editing;
-    edit._rotateMode();
+    edit.setMode('rotate');
   },
 });

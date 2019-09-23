@@ -55,7 +55,8 @@ L.DistortableImageOverlay.addInitHook(function() {
     L.DeleteAction,
   ];
 
-  var m = {
+  // all possible modes
+  L.DistortableImage.Edit.MODES = {
     'scale': L.ScaleAction,
     'distort': L.DistortAction,
     'rotate': L.RotateAction,
@@ -65,6 +66,6 @@ L.DistortableImageOverlay.addInitHook(function() {
 
   var a = this.options.actions ? this.options.actions : this.ACTIONS;
 
-  this.editing = L.distortableImage.edit(this, {actions: a, modes: m});
+  this.editing = L.distortableImage.edit(this, {actions: a});
 });
 

@@ -14,6 +14,6 @@ L.ScaleAction = L.EditAction.extend({
 
   addHooks: function() {
     var edit = this._overlay.editing;
-    edit._scaleMode();
+    edit.setMode('scale');
   },
 });

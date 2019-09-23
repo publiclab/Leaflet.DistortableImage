@@ -14,6 +14,6 @@ L.FreeRotateAction = L.EditAction.extend({
 
   addHooks: function() {
     var edit = this._overlay.editing;
-    edit._freeRotateMode();
+    edit.setMode('freeRotate');
   },
 });

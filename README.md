@@ -196,6 +196,8 @@ img = L.distortableImageOverlay('example.jpg', {
 }).addTo(map);
 ```
 
+Likewise, it is possible to remove or add `actions` during runtime (`addTool`, `removeTool`), and if those actions are modes it will remove / add the `mode`.
+
 ### Selected
 
 `selected` (*optional*, default: false, value: *boolean*)
@@ -626,6 +628,7 @@ A handler that holds the keybindings and toolbar API for an image instance. It i
 <details><summary><code><b>removeTool(<i>action</i> &#60;EditAction>)</b>: this</code></summary>
   <ul>
     <li>Removes the passed tool from the chosen image's popup toolbar in runtime.</li>
+    <li>If the tool is also a <code>mode</code>, removes that mode / its handles and sets the new mode to the next available one or to <code>''</code> if there are no other modes.</li>
     <li>Returns false if the tool is not present in the toolbar.</li>
     <li>ex: <code>img.editing.removeTool(L.BorderAction)</code></li>
   </ul>
@@ -634,6 +637,7 @@ A handler that holds the keybindings and toolbar API for an image instance. It i
 <details><summary><code><b>addTool(<i>action</i> &#60;EditAction>)</b>: this</code></summary>
 <ul>
   <li>Adds the passed tool to the end of the chosen image's popup toolbar in runtime.</li>
+   <li>If the tool is also a <code>mode</code>, adds that mode to the image and updates the <code>modes</code> and <code>handles</code> arrays to include it.</li>
   <li>Returns false if the tool is not available or is already present.</li>
   </ul>
 </details>
