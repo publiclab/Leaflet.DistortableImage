@@ -434,7 +434,7 @@ And the following custom handlers:
   </ul>
 </details>
 <br>
-We have made changes to a default Leaflet handler:
+We have slightly changed a default Leaflet handler:
 <br><br>
 <details><summary><code><b>doubleClickZoom</b>: this</code></summary>
 <ul>
