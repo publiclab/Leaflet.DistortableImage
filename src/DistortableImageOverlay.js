@@ -23,7 +23,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   onAdd: function(map) {
     this._map = map;
-    if (!this._image) { L.ImageOverlay.prototype._initImage.call(this); }
+    if (!this._image) { this._initImage(); }
 
     map.on('viewreset', this._reset, this);
 
