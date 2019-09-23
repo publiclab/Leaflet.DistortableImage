@@ -2,8 +2,8 @@ describe('L.DistortableImageOverlay', function() {
   var map, overlay;
 
   beforeEach(function(done) {
-    var mapContainer = L.DomUtil.create('div', '', document.body),
-        fullSize = [document.querySelector('html'), document.body, mapContainer];
+    var mapContainer = L.DomUtil.create('div', '', document.body);
+    var fullSize = [document.querySelector('html'), document.body, mapContainer];
 
     map = L.map(mapContainer).setView([41.7896, -87.5996], 15);
 
@@ -18,8 +18,8 @@ describe('L.DistortableImageOverlay', function() {
         L.latLng(41.7934, -87.6052),
         L.latLng(41.7934, -87.5852),
         L.latLng(41.7834, -87.6052),
-        L.latLng(41.7834, -87.5852)
-      ]
+        L.latLng(41.7834, -87.5852),
+      ],
     }).addTo(map);
 
     /* Forces the image to load before any tests are run. */
@@ -102,6 +102,61 @@ describe('L.DistortableImageOverlay', function() {
     it('Is invoked on map click', function() {
       map.fire('click');
       expect(overlay.deselect).to.have.been.called;
+    });
+
+    it('It should hide an unlocked image\'s handles by updating their opacity', function () {
+      var edit = overlay.editing;
+
+      // then trigger deselect
+      map.fire('click');
+
+      var handleState = [];
+      edit._handles['distort'].eachLayer(function (handle) {
+        var icon = handle.getElement();
+        handleState.push(L.DomUtil.getStyle(icon, 'opacity'));
+      });
+
+      setTimeout(function() {
+        expect(handleState).to.deep.equal(['0', '0', '0', '0']);
+      }, 3000);
+    });
+
+    it('But it should not hide a locked image\'s handles', function () {
+      var edit = overlay.editing;
+
+      // switch to lock handles
+      edit._toggleLockMode();
+      // then trigger _deselect
+      map.fire('click');
+
+      var lockHandleState = [];
+      edit._handles['lock'].eachLayer(function (handle) {
+        var icon = handle.getElement();
+        lockHandleState.push(L.DomUtil.getStyle(icon, 'opacity'));
+      });
+
+      expect(lockHandleState).to.deep.equal(['1', '1', '1', '1']);
+    });
+
+    it('Should remove an image\'s individual toolbar instance regardless of lock handles', function () {
+      var edit = overlay.editing;
+      var img = overlay.getElement();
+
+      edit.enable();
+      // switch to lock handles
+      edit._toggleLockMode();
+      // select the image to initially create its individual toolbar instance
+      chai.simulateEvent(img, chai.mouseEvents.Click);
+
+      expect(edit.toolbar).to.not.be.false;
+
+      // then trigger _deselect
+      map.fire('click');
+
+      // we deselect after 3ms to confirm the click wasn't a dblclick
+      setTimeout(function () {
+        expect(edit.toolbar).to.be.false;
+      }, 3000);
     });
 
     it('Returns false if image editing is disabled', function() {

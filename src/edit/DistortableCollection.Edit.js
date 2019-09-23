@@ -157,11 +157,13 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
     this._group.eachLayer(function(layer) {
       var edit = layer.editing;
+      var zoom = map.getZoom();
+      var center = map.getCenter();
 
       if (layer.isSelected()) { layer.deselect(); }
 
       var imgBounds = L.latLngBounds(layer.getCorner(2), layer.getCorner(1));
-      imgBounds = map._latLngBoundsToNewLayerBounds(imgBounds, map.getZoom(), map.getCenter());
+      imgBounds = map._latLngBoundsToNewLayerBounds(imgBounds, zoom, center);
       if (box.intersects(imgBounds) && edit.enabled()) {
         if (!this.toolbar) {
           this._addToolbar();
@@ -289,13 +291,14 @@ L.DistortableCollection.Edit = L.Handler.extend({
       this._removeToolbar();
       this.editActions.push(value);
       this._addToolbar();
+      return this;
     } else {
       return false;
     }
   },
 
   removeTool: function(value) {
-    this.editActions.some(function(item, idx) {
+    var matched = this.editActions.some(function(item, idx) {
       if (this.editActions[idx] === value) {
         this._removeToolbar();
         this.editActions.splice(idx, 1);
@@ -305,6 +308,8 @@ L.DistortableCollection.Edit = L.Handler.extend({
         return false;
       }
     }, this);
+    if (matched) { return this; }
+    else { return false; }
   },
 });
 

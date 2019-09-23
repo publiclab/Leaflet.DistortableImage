@@ -63,63 +63,6 @@ describe('L.DistortableImage.Edit', function() {
     });
   });
 
-  describe('#_deselect', function() {
-    it('It should hide an unlocked image\'s handles by updating their opacity', function() {
-      var edit = overlay.editing;
-
-      edit.enable();
-      // then trigger _deselect
-      map.fire('click');
-
-      var handleState = [];
-      edit._handles['distort'].eachLayer(function(handle) {
-        var icon = handle.getElement();
-        handleState.push(L.DomUtil.getStyle(icon, 'opacity'));
-      });
-
-      expect(handleState).to.deep.equal(['0', '0', '0', '0']);
-    });
-
-    it('But it should not hide a locked image\'s handles', function() {
-      var edit = overlay.editing;
-
-      edit.enable();
-      // switch to lock handles
-      edit._toggleLockMode();
-      // then trigger _deselect
-      map.fire('click');
-
-      var lockHandleState = [];
-      edit._handles['lock'].eachLayer(function(handle) {
-        var icon = handle.getElement();
-        lockHandleState.push(L.DomUtil.getStyle(icon, 'opacity'));
-      });
-
-      expect(lockHandleState).to.deep.equal(['1', '1', '1', '1']);
-    });
-
-    it('Should remove an image\'s individual toolbar instance regardless of lock handles', function() {
-      var edit = overlay.editing;
-      var img = overlay.getElement();
-
-      edit.enable();
-      // switch to lock handles
-      edit._toggleLockMode();
-      // select the image to initially create its individual toolbar instance
-      chai.simulateEvent(img, chai.mouseEvents.Click);
-
-      expect(edit.toolbar).to.not.be.false;
-
-      // then trigger _deselect
-      map.fire('click');
-
-      // we deselect after 3ms to confirm the click wasn't a dblclick
-      setTimeout(function() {
-        expect(edit.toolbar).to.be.false;
-      }, 3000);
-    });
-  });
-
   describe('#nextMode', function () {
     beforeEach(function() {
       overlay.editing.enable();
@@ -128,7 +71,7 @@ describe('L.DistortableImage.Edit', function() {
 
     it('Should update image\'s mode to the next in its modes array', function() {
       var edit = overlay.editing;
-      var modes = edit.getModes();
+      var modes = Object.keys(edit.getModes());
 
       edit._mode = 'distort'
       var idx = modes.indexOf('distort');
@@ -207,5 +150,43 @@ describe('L.DistortableImage.Edit', function() {
       expect(ov2.editing.toolbar).to.be.undefined
       expect(ov2.editing.setMode('lock')).to.be.ok
     })
+  });
+
+  describe('#addTool', function() {
+    it('Adds the passed tool to the end of the toolbar array', function() {
+      var edit = overlay.editing;
+      var tool = L.StackAction;
+
+      expect(edit.hasTool(tool)).to.be.false
+      edit.addTool(tool);
+      expect(edit.hasTool(tool)).to.be.true
+    });
+
+    it('Does not add a tool that is already present', function() {
+      var edit = overlay.editing;
+      var tool = L.StackAction;
+
+      expect(edit.addTool(tool)).to.be.ok
+      expect(edit.addTool(tool)).to.be.false
+    });
+  });
+
+  describe('#removeTool', function() {
+    it('Removes the passed tool from the toolbar', function() {
+      var edit = overlay.editing;
+      var tool = L.BorderAction;
+
+      expect(edit.hasTool(tool)).to.be.true
+      edit.removeTool(tool);
+      expect(edit.hasTool(tool)).to.be.false
+    });
+
+    it('Returns false if the tool is not in the toolbar', function() {
+      var edit = overlay.editing;
+      var tool = L.StackAction;
+
+      expect(edit.hasTool(tool)).to.be.false
+      expect(edit.removeTool(tool)).to.be.false
+    });
   });
 });

@@ -70,6 +70,7 @@ map.whenReady(function() {
 * [editable](#editable)
 * [fullResolutionSrc](#Full-resolution%20download)
 * [mode](#mode)
+* [modes](#modes)
 * [selected](#selected)
 * [suppressToolbar](#Suppress-Toolbar)
 
@@ -175,6 +176,27 @@ img = L.distortableImageOverlay('example.jpg', {
 }).addTo(map);
 ```
 
+If you select a <code>mode</code> that is removed or just not available, your image will just be assigned the first available mode on initialization.
+
+<hr>
+
+**Limiting modes:**
+
+<hr>
+
+Each <code>mode</code> is just a special type of action (enabled by default in the toolbar), so to ensure that these are always in sync, the <code>modes</code> available on a specific image instance are limited to the actions available on it. <strong>To remove a mode, limit its corresponding action using the <code>actions</code> option during initialization.</strong> This holds true even when <code>suppressToolbar: true</code> is passed.</blockquote>
+
+In the below example, the image will be initialiazed with `'freeRotate'` handles, and limit its available modes to `'freeRotate'` and `'scale'`.
+
+* We also remember to add the normal toolbar actions we will want:
+
+```js
+img = L.distortableImageOverlay('example.jpg', {
+  mode: 'freeRotate',
+  actions: [L.FreeRotateAction, L.ScaleAction, L.BorderAction, L.OpacityAction],
+}).addTo(map);
+```
+
 ### Selected
 
 `selected` (*optional*, default: false, value: *boolean*)
@@ -191,7 +213,7 @@ Note: when working with the multi-image interface, only the last overlay you pas
 
 To initialize an image without its `L.Popup` instance toolbar, pass it `suppressToolbar: true`.
 
-Typically, editing actions are triggered through our toolbar interface. If disabling the toolbar, the developer will need to implement their own toolbar UI connected to our actions (WIP API for doing this)
+Typically, editing actions are triggered through our toolbar interface. If disabling the toolbar, the developer will need to implement their own toolbar UI connected to our actions.
 
 ## Multiple Image Interface
 
@@ -325,6 +347,8 @@ A single toolbar instance (using `L.control`) renders the set of tools available
 
 Defaults:
 
+* **L.DistortAction** (<kbd>d</kbd>):
+  * Sets `distort` mode.
 * **L.ScaleAction** (<kbd>s</kbd>):
   * Sets `scale` mode.
 * **L.RotateAction** (<kbd>r</kbd>):
@@ -332,7 +356,7 @@ Defaults:
 * **L.FreeRotateAction** (<kbd>f</kbd>)
   * Sets `freeRotate` mode.
 * **L.LockAction** (<kbd>l</kbd>, <kbd>u</kbd>)
-  * Toggles between `lock` mode and the initially set default mode (`distort` by default).
+  * Toggles between `lock` mode and the initially set default mode (`distort` by default or in the case that default is `lock`).
 * **L.BorderAction** (<kbd>b</kbd>)
   * Toggles a thin border around the overlay.
 * **L.OpacityAction** (<kbd>o</kbd>)
@@ -575,7 +599,13 @@ A handler that holds the keybindings and toolbar API for an image instance. It i
 
 <details><summary><code><b>getMode()</b>: String</code></summary>
   <ul>
-    <li>Returns the current <code>mode</code> of the image if it's selected, otherwise returns false.</li>
+    <li>Returns the current <code>mode</code> of the image if it's editing interface is enabled, otherwise returns false.</li>
+  </ul>
+</details>
+
+<details><summary><code><b>getModes()</b>: Hash</code></summary>
+  <ul>
+    <li>Returns the modes available on an image instance.</li>
   </ul>
 </details>
 
@@ -590,8 +620,27 @@ A handler that holds the keybindings and toolbar API for an image instance. It i
 
 <details><summary><code><b>setMode(<i>mode</i> &#60;string>)</b>: this</code></summary>
   <ul>
-    <li>Sets the  <code>mode</code> of the image to the passed one given that it is in the  <code>modes </code> array, it is not already the current mode, and the image is selcted. Otherwise returns false.</li>
+    <li>Sets the  <code>mode</code> of the image to the passed one given that it is in the  <code>modes</code> array, it is not already the current mode, and the image is selected. Otherwise returns false.</li>
   </ul>
+</details>
+
+<details><summary><code><b>removeTool(<i>action</i> &#60;EditAction>)</b>: this</code></summary>
+  <ul>
+    <li>Removes the passed tool from the chosen image's popup toolbar in runtime.</li>
+    <li>Returns false if the tool is not present in the toolbar.</li>
+    <li>ex: <code>img.editing.removeTool(L.BorderAction)</code></li>
+  </ul>
+</details>
+
+<details><summary><code><b>addTool(<i>action</i> &#60;EditAction>)</b>: this</code></summary>
+<ul>
+  <li>Adds the passed tool to the end of the chosen image's popup toolbar in runtime.</li>
+  <li>Returns false if the tool is not available or is already present.</li>
+  </ul>
+</details>
+
+<details><summary><code><b>hasTool(<i>action</i> &#60;EditAction>)</b>: Boolean</code></summary>
+<ul><li>Returns true if the tool is present in the currently rendered popup toolbar.</li></ul>
 </details>
 
 ---
@@ -641,15 +690,19 @@ Same as `L.DistortableImage.Edit` but for the collection (`L.DistortableCollecti
   </ul>
 </details>
 
-<details><summary><code><b>removeTool(<i>action</i> &#60;EditAction>)</b></code></summary>
+<details><summary><code><b>removeTool(<i>action</i> &#60;EditAction>)</b>: this</code></summary>
   <ul>
     <li>Removes the passed tool from the control toolbar in runtime.</li>
-    <li>ex: <code>imgGroup.removeTool(Deletes)</code></li>
+    <li>Returns false if the tool is not present in the toolbar.</li>
+    <li>ex: <code>imgGroup.editing.removeTool(L.DeleteAction)</code></li>
   </ul>
 </details>
 
-<details><summary><code><b>addTool(<i>action</i> &#60;EditAction>)</b></code></summary>
-<ul><li>Adds the passed tool to the end of the control toolbar in runtime. Returns false if the tool is not available or is already present.</li></ul>
+<details><summary><code><b>addTool(<i>action</i> &#60;EditAction>)</b>: this</code></summary>
+  <ul>
+    <li>Adds the passed tool to the end of the control toolbar in runtime. Returns false if the tool is not available or is already present.</li>
+    <li>Returns false if the tool is not available or is already present.</li>
+  </ul>
 </details>
 
 <details><summary><code><b>hasTool(<i>action</i> &#60;EditAction>)</b>: Boolean</code></summary>
