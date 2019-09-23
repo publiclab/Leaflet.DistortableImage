@@ -70,7 +70,6 @@ map.whenReady(function() {
 * [editable](#editable)
 * [fullResolutionSrc](#Full-resolution%20download)
 * [mode](#mode)
-* [modes](#modes)
 * [selected](#selected)
 * [suppressToolbar](#Suppress-Toolbar)
 
