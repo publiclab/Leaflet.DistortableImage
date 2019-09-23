@@ -63,12 +63,10 @@ L.Map.DoubleClickZoom.include({
       } else {
         // manually fire doubleclick event only for touch screens
         if (L.Browser.touch) {
-          if (!L.Browser.pointer) {
+          if (oe && oe.sourceCapabilities.firesTouchEvents) {
             // in `DoubleClickLabels.js`, we just do map.fire('dblclick') bc `_onDoublClick` doesn't use the
             // passed "e" (for now). To generate a 'real' DOM event that will have all of its corresponding core
             // properties (originalEvent, latlng, etc.), use Leaflet's `#map._fireDOMEvent` (Leaflet 1.5.1 source)
-            map._fireDOMEvent(oe, 'dblclick', [map]);
-          } else if (oe && oe.sourceCapabilities.firesTouchEvents) {
             map._fireDOMEvent(oe, 'dblclick', [map]);
           }
         }
