@@ -54,7 +54,7 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
     }, 250);
   },
 
-  _onDoubleClick: function(e) {
+  _onDoubleClick: function() {
     var map = this._map;
     var labels = map._labels;
 
