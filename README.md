@@ -377,32 +377,38 @@ We have extended Leaflet's `L.Map` to include a convenience method for this libr
 <details><summary><code><b>addGoogleMutant(<i>opts?</i> &#60;Mutant options>)</b>: this</code></summary>
   <ul>
     <li>Adds a Google Mutant layer with location labels according to our recommended setup.</li>
-    <li>Label visibility is toggled by double clicking on the map.</li>
-    <li><b>Mutant options</b>: {
+    <li><code><b>Mutant options: {[mutantOpacity][, maxZoom][, minZoom][, labels][, labelOpacity][, doubleClickLabels]}</b></code>
       <ul>
-        <li><i>labels</i>: &#60;boolean>, default: true</li>
+        <li><code>mutantOpacity</code> (default 0.8, value: <i>number 0..1</i>)</li>
         <ul>
-          <li>If set to <code>false</code>, the mutant layer will not have location labels</li>
+          <li>Same as Leaflet's <code>L.TileLayer</code> <code>opacity</code> option.</li>
         </ul>
-        <li><i>labelOpacity</i>: &#60;number 0, 1>, default: 0</li>
-        <ul>
-          <li>If set to <code>1</code>, labels will be initially visible</li>
-        </ul>
-        <li><i>mutantOpacity</i>: &#60;number 0..1>, default: 0.8</li>
-        <ul>
-          <li>Same as Leaflet's <code>L.TileLayer</code> <code>opacity</code> option</li>
-        </ul>
-        <li><i>maxZoom</i>: &#60;number 0..21>, default: 18</li>
+        <li><code>maxZoom</code> (default: 18, value: <i>number 0..21</i>)</li>
         <ul>
           <li>Same as Leaflet's <code>L.TileLayer</code> <code>maxZoom</code> option, except has a maximum value of 21 because higher zoom levels on the mutant layer will result in an error being thrown.</li>
           <li>The mutant layer will appear blurry for zoom levels exceeding 18.</li>
         </ul>
-        <li><i>minZoom</i>: &#60;number 0..maxZoom>, default: 0</li>
+        <li><code>minZoom</code> (default: 0, value: <i>number 0..maxZoom</i>)</li>
         <ul>
-          <li>Same as Leaflet's <code>L.TileLayer</code> <code>maxZoom</code> option</li>
+          <li>Same as Leaflet's <code>L.TileLayer</code> <code>minZoom</code> option.</li>
+        </ul>
+        <li><code>labels</code> (default: true, value: <i>boolean</i>)</li>
+        <ul>
+          <li>If set to <code>false</code>, the mutant layer will not have location labels.</li>
+        </ul>
+        <li><code>labelOpacity</code> (default: 1, value: <i>number 0, 1</i>)</li>
+        <ul>
+          <li>If set to <code>0</code>, labels will be initially invisible.</li>
+          <li>Set to <code>undefined</code> if <code>labels: false</code> is also passed.</li>
+        </ul>
+        <li><code>doubleClickLabels</code> (default: true, value: <i>boolean</i>)</li>
+        <ul>
+          <li>Label visibility (opacity) is toggled between 0 and 1 on map <code>dblclick</code>. To turn this functionality off, set this option to false.</li>
+          <li>Set to <code>undefined</code> if <code>labels: false</code> is also passed.</li>
         </ul>
       </ul>
-    }</li>
+    </li>
+    <li>Mutant options are saved on the map and accessible during runtime as <code>map.mutantOptions.</code></li>
   </ul>
 </details>
 <br>
@@ -411,9 +417,13 @@ And the following custom handlers:
 
 <details><summary><code><b>doubleClickLabels</b>: this</code></summary>
   <ul>
-    <li>When location labels are added via <code>#addGoogleMutant</code>, this handler is enabled by default to allow toggling their visibility by double clicking on the map.</li>
-    <li>Afterwards, can be enabled / disabled during runtime via <a href="https://leafletjs.com/reference-1.5.0.html#handler">Leaflet's Handler API</a>.</li>
-    <li>Overrides the map's default <a href="https://leafletjs.com/reference-1.5.0.html#map-doubleclickzoom"><code>doubleClickZoom</code></a> handler when enabled. When disabled, automatically re-enables it.</li>
+    <li>Allows toggling label visibility on map <code>dblclick</code>.</li>
+    <li>Enabled by default on <code>#addGoogleMutant</code> unless the options <code>labels: false</code> or <code>doubleClickLabels: false</code> are passed to it.</li>
+    <ul>
+      <li>If <code>labels: false</code> passed, removed from map altogether.</li>
+      <li>If there are labels present but <code>doubleClickLabels: false</code> was passed, just disabled and can always be enabled during runtime via <a href="https://leafletjs.com/reference-1.5.0.html#handler">Leaflet's Handler API</a>.</li>
+    </ul>
+    <li>Disables the map's default <a href="https://leafletjs.com/reference-1.5.0.html#map-doubleclickzoom"><code>doubleClickZoom</code></a> handler when enabled.</li>
   </ul>
 </details>
 
@@ -424,14 +434,18 @@ And the following custom handlers:
   </ul>
 </details>
 <br>
-We have made slight changes to a default Leaflet handler:
+We have slightly changed a default Leaflet handler:
 <br><br>
 <details><summary><code><b>doubleClickZoom</b>: this</code></summary>
 <ul>
-  <li>This handler and <code>doubleClickLabels</code> time and fire a custom <code>singleclick</code> event on map click. It is fired after a 3ms timeout if the click doesn't become a doubleclick.</li>
-  <li>This allows our images to remain selected during associated double click events on the map (in this case zooming).</li>
+  <li>This handler may not be <code>enabled</code> (and will return false) while the <code>doubleClickLabels</code> handler is <code>enabled</code>.</li>  
+  <li>This handler and <code>doubleClickLabels</code> time and fire a custom <code>singleclick</code> event on map click.</li>
 </ul>
 </details>
+
+<br>
+
+<blockquote>Our "doubleClick" handlers mentioned above use a custom <strong><code>singleclick</code></strong> event to run logic on map <code>dblclick</code> while allowing the images on the map to remain <code>selected</code>. You can read more about the implications of this and how to disable it on our wiki <a href="https://github.com/publiclab/Leaflet.DistortableImage/wiki/The-singleclick-event">"singleclick event"</a>.</blockquote>
 
 ---
 

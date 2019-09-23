@@ -93,14 +93,14 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
   _singleClickListeners: function() {
     var map = this._group._map;
-
     L.DomEvent.off(map, 'click', this._decollectAll, this);
+    L.DomEvent.on(map, 'singleclick', this._decollectAll, this);
   },
 
   _resetClickListeners: function() {
     var map = this._group._map;
-
     L.DomEvent.on(map, 'click', this._decollectAll, this);
+    L.DomEvent.off(map, 'singleclick', this._decollectAll, this);
   },
 
   _decollectAll: function(e) {

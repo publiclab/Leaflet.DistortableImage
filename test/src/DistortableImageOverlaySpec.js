@@ -162,10 +162,8 @@ describe('L.DistortableImageOverlay', function() {
       expect(Math.round(scaledC1.lng)).to.equal(Math.round(c2.lng));
     });
 
-    it('Maintain image proportions when scaling', function() {
+    it('Maintains image proportions when scaling', function() {
       var center = overlay.getCenter();
-
-      overlay.scaleBy(0.5);
 
       expect(Math.round(overlay.getCenter().lat)).to.equal(Math.round(center.lat));
       expect(Math.round(overlay.getCenter().lng)).to.equal(Math.round(center.lng));
