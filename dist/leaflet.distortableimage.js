@@ -2117,7 +2117,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this._updateHandle();
 
-    if (!this.isMode('lock')) {
+    if (!this.isMode('lock') && this.currentHandle) {
       if (!overlay.isSelected()) {
         this.currentHandle.eachLayer(function(layer) {
           layer.setOpacity(0);
@@ -2157,6 +2157,7 @@ L.DistortableImage.Edit = L.Handler.extend({
           this[handler].call(this);
         }
       }
+      if (!this._overlay.isSelected()) { this._removeToolbar(); }
       return this;
     } else {
       return false;
@@ -2188,6 +2189,7 @@ L.DistortableImage.Edit = L.Handler.extend({
         return false;
       }
     }, this);
+    if (!this._overlay.isSelected()) { this._removeToolbar(); }
     if (matched) { return this; }
     else { return false; }
   },
@@ -2195,13 +2197,15 @@ L.DistortableImage.Edit = L.Handler.extend({
   // set the mode to the next mode or if that was the last one remove all
   // handles and set them and mode to ''
   _nextOrNada: function(mode) {
+    var ov = this._overlay;
+
     if (this.getMode() === mode) {
       if (this.getModes().length === 1) {
         this.nextMode();
       } else {
-        this._overlay._map.removeLayer(this.currentHandle);
+        ov._map.removeLayer(this.currentHandle);
         this._mode = '';
-        this._handles = '';
+        this.currentHandle = '';
       }
     }
   },
@@ -2399,20 +2403,14 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     if (!this.isMode('lock') || !this.hasTool(L.LockAction)) { return; }
 
-    map.removeLayer(this.currentHandle);
-    if (ov.options.mode === 'lock') {
-      this._overlay._map.removeLayer(this.currentHandle);
+    if (this.currentHandle) { map.removeLayer(this.currentHandle); }
+    if (ov.options.mode === 'lock' || !this.hasMode(ov.options.mode)) {
       this._mode = '';
-      this._handles = '';
+      this.currentHandle = '';
     } else {
-      if (this.hasMode(ov.options.mode)) {
-        this.setMode(ov.options.mode);
-      } else {
-        this._overlay._map.removeLayer(this.currentHandle);
-        this._mode = '';
-        this._handles = '';
-      }
+      this._mode = ov.options.mode;
     }
+
     this._enableDragging();
     this._updateHandle();
     this._refresh();
@@ -2423,7 +2421,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     if (this.isMode('lock') || !this.hasTool(L.LockAction)) { return; }
 
-    map.removeLayer(this.currentHandle);
+    if (this.currentHandle) { map.removeLayer(this.currentHandle); }
 
     this._mode = 'lock';
     if (this.dragging) {
@@ -2443,6 +2441,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     // mutli-image interface doesn't have markers so check if its on & return early if true
     if (this.isMode('lock') || (eP && eP.anyCollected())) { return; }
+    if (!this.currentHandle) { return; }
 
     this.currentHandle.eachLayer(function(layer) {
       var drag = layer.dragging;
@@ -2457,6 +2456,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   _hideMarkers: function() {
     // workaround for race condition w/ feature group
     if (!this._handles) { this._initHandles(); }
+    if (!this.currentHandle) { return; }
 
     this.currentHandle.eachLayer(function(layer) {
       var drag = layer.dragging;
@@ -2538,6 +2538,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   isMode: function(mode) {
+    if (!this.enabled()) { return false; }
     return this._mode === mode;
   },
 
@@ -2558,11 +2559,13 @@ L.DistortableImage.Edit = L.Handler.extend({
     var ov = this._overlay;
     var map = ov._map;
 
-    if (newMode === this.getMode() || !this.enabled()) { return false; }
+    if (this.isMode(newMode)) { return false; }
+    if (!this.enabled() || !ov.isSelected()) { return false; }
+
     if (this.hasMode(newMode)) {
       if (this.toolbar) { this.toolbar.clickTool(newMode); }
       if (this.isMode('lock') && !this.dragging) { this._enableDragging(); }
-      map.removeLayer(this.currentHandle);
+      if (this.currentHandle) { map.removeLayer(this.currentHandle); }
       this._mode = newMode;
       this._updateHandle();
       this._refresh();

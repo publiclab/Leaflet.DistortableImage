@@ -610,11 +610,23 @@ A handler that holds the keybindings and toolbar API for an image instance. It i
   </ul>
 </details>
 
+<details><summary><code><b>isMode(<i>mode</i> &#60;string>)</b>: Boolean</code></summary>
+  <ul>
+    <li>Returns true if the passed mode is the image's current mode and image editing is enabled.</li>
+  </ul>
+</details>
+
+<details><summary><code><b>hasMode(<i>mode</i> &#60;string>)</b>: Boolean</code></summary>
+  <ul>
+    <li>Returns true if the passed mode is available for the image.</li>
+  </ul>
+</details>
+
 <details><summary><code><b>nextMode()</b>: this</code></summary>
   <ul>
     <li>Sets the mode of the image to the next one in the <code>
     modes</code> array by passing it to <code>#setMode.</code></li>
-    <li>If the image is not selected or <code>modes</code> only has 1 mode, it will instead return false.</li>
+    <li>Returns false if the image only has 1 mode available on it.</li>
     <li>We use this internally to iterate through an image's editing modes easily on <code>dblclick</code>, but you can call it programmatically if you find a need. Note that <code>dblclick</code> also selects the image (given it's not disabled or collected)</li>
   </ul>
 </details>

@@ -139,12 +139,14 @@ describe('L.DistortableImage.Edit', function() {
 
     it('Will return false if the passed mode is already the images mode', function() {
       var edit = overlay.editing;
+      overlay.select();
       edit.setMode('distort');
       expect(edit.setMode('lock')).to.be.ok
       expect(edit.setMode('lock')).to.be.false
     });
 
     it('Will still update the mode of an initialized image with suppressToolbar: true', function () {
+      ov2.select();
       expect(ov2.editing.toolbar).to.be.undefined
       expect(ov2.editing.setMode('lock')).to.be.ok
     })
@@ -199,7 +201,7 @@ describe('L.DistortableImage.Edit', function() {
       }
 
       expect(edit.getMode()).to.eql('');
-      expect(edit._handles).to.eql('');
+      expect(edit._handles).to.be.empty;
       expect(edit.getModes()).to.be.empty;
     });
 
