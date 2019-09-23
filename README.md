@@ -445,7 +445,7 @@ We have slightly changed a default Leaflet handler:
 
 <br>
 
-<blockquote>Our "doubleClick" handlers mentioned above use a custom <strong><code>singleclick</code></strong> event to run logic on map <code>dblclick</code> while allowing the images on the map to remain <code>selected</code>. You can read more about the implications of this and how to disable it on our wiki <a href="https://github.com/publiclab/Leaflet.DistortableImage/wiki/The-singleclick-event">"The singleclick event"</a>.</blockquote>
+<blockquote>Our "doubleClick" handlers mentioned above use a custom <strong><code>singleclick</code></strong> event to run logic on map <code>dblclick</code> while allowing the images on the map to remain <code>selected</code>. You can read more about the implications of this and how to disable it on our wiki <a href="https://github.com/publiclab/Leaflet.DistortableImage/wiki/The-singleclick-event">"singleclick event"</a>.</blockquote>
 
 ---
 
