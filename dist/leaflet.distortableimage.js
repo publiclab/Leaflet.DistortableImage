@@ -259,8 +259,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this._map = map;
     if (!this._image) { L.ImageOverlay.prototype._initImage.call(this); }
 
-    this.getPane().appendChild(this._image);
-
     map.on('viewreset', this._reset, this);
 
     if (this.options.corners) {
@@ -268,15 +266,11 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       if (map.options.zoomAnimation && L.Browser.any3d) {
         map.on('zoomanim', this._animateZoom, this);
       }
-
-      /* This reset happens before image load; it allows us to place the
-       * image on the map earlier with "guessed" dimensions.
-       */
-      this._reset();
     }
 
     // Have to wait for the image to load because need to access its w/h
     L.DomEvent.on(this._image, 'load', function() {
+      this.getPane().appendChild(this._image);
       this._initImageDimensions();
       this._reset();
       /* Initialize default corners if not already set */
@@ -296,14 +290,13 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       }
     }, this);
 
-    this.fire('add');
-
     L.DomEvent.on(this._image, 'click', this.select, this);
     L.DomEvent.on(map, {
       singleclickon: this._singleClickListeners,
       singleclickoff: this._resetClickListeners,
       singleclick: this._singleClick,
     }, this);
+
     /**
      * custom events fired from DoubleClickLabels.js. Used to differentiate
      * single / dblclick to not deselect images on map dblclick.
@@ -3260,7 +3253,7 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
         map.fire('singleclick', {type: 'singleclick'});
       } else {
         // manually fire doubleclick event only for touch screens
-        if (L.Browser.touch) {
+        if (L.Browser.touch && L.Browser.chrome) {
           if (!L.Browser.pointer) {
             map.fire('dblclick');
           } else if (oe && oe.sourceCapabilities.firesTouchEvents) {
