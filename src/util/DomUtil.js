@@ -52,11 +52,4 @@ L.DomUtil = L.extend(L.DomUtil, {
     return window.confirm('Are you sure? ' + n +
     ' ' + humanized + ' will be permanently deleted from the map.');
   },
-
-  browserFiresNativeDblClick: function(e) {
-    // See https://github.com/w3c/pointerevents/issues/171
-    // Note however, that Chrome stopped firing native dblclick for
-    // touch since that issue was written.
-    return (L.Browser.ie || e.pointerType === 'mouse');
-  },
 });

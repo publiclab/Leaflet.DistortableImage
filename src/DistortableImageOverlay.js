@@ -132,11 +132,13 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   _singleClickListeners: function() {
     var map = this._map;
     L.DomEvent.off(map, 'click', this.deselect, this);
+    L.DomEvent.on(map, 'singleclick', this.deselect, this);
   },
 
   _resetClickListeners: function() {
     var map = this._map;
     L.DomEvent.on(map, 'click', this.deselect, this);
+    L.DomEvent.off(map, 'singleclick', this.deselect, this);
   },
 
   isSelected: function() {

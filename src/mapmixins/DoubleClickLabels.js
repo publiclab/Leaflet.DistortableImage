@@ -6,22 +6,7 @@ L.Map.mergeOptions({
  * The `doubleClickLabels` handler replaces `doubleClickZoom` by default if `#addGoogleMutant`
  * is used unless the options 'labels: false' or 'doubleClickZoom: false` were passed to it.
  */
-
 L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
-  addHooks: function() {
-    this._map.on({
-      click: this._fireIfSingle,
-      dblclick: this._onDoubleClick,
-    }, this);
-  },
-
-  removeHooks: function() {
-    this._map.off({
-      click: this._fireIfSingle,
-      dblclick: this._onDoubleClick,
-    }, this);
-  },
-
   enable: function() {
     var map = this._map;
 
@@ -62,16 +47,14 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
         map.fire('singleclick', {type: 'singleclick'});
       } else {
         // manually fire doubleclick event only for touch screens that don't natively fire it
-        if (L.Browser.touch) {
-          if (oe && oe.sourceCapabilities.firesTouchEvents) {
-            map.fire('dblclick');
-          }
+        if (L.Browser.touch && (oe && oe.sourceCapabilities.firesTouchEvents)) {
+          map.fire('dblclick');
         }
       }
     }, 250);
   },
 
-  _onDoubleClick: function() {
+  _onDoubleClick: function(e) {
     var map = this._map;
     var labels = map._labels;
 

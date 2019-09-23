@@ -3,7 +3,6 @@
  * 1) Fires a `singleclick` event to avoid deselecting images on `dblclick`.
  * 2) Maintains a mutually exclusive relationship with the map's `DoubleClickLabels` handler
  */
-
 L.Map.DoubleClickZoom.include({
   addHooks: function() {
     this._map.on({
@@ -62,13 +61,11 @@ L.Map.DoubleClickZoom.include({
         map.fire('singleclick', {type: 'singleclick'});
       } else {
         // manually fire doubleclick event only for touch screens that don't natively fire it
-        if (L.Browser.touch) {
-          if (oe && oe.sourceCapabilities.firesTouchEvents) {
-            // in `DoubleClickLabels.js`, we just do map.fire('dblclick') bc `_onDoublClick` doesn't use the
-            // passed "e" (for now). To generate a 'real' DOM event that will have all of its corresponding core
-            // properties (originalEvent, latlng, etc.), use Leaflet's `#map._fireDOMEvent` (Leaflet 1.5.1 source)
-            map._fireDOMEvent(oe, 'dblclick', [map]);
-          }
+        if (L.Browser.touch && (oe && oe.sourceCapabilities.firesTouchEvents)) {
+          // in `DoubleClickLabels.js`, we just do map.fire('dblclick') bc `_onDoublClick` doesn't use the
+          // passed "e" (for now). To generate a 'real' DOM event that will have all of its corresponding core
+          // properties (originalEvent, latlng, etc.), use Leaflet's `#map._fireDOMEvent` (Leaflet 1.5.1 source)
+          map._fireDOMEvent(oe, 'dblclick', [map]);
         }
       }
     }, 250);

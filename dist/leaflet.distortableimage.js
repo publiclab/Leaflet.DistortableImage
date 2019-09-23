@@ -52,13 +52,6 @@ L.DomUtil = L.extend(L.DomUtil, {
     return window.confirm('Are you sure? ' + n +
     ' ' + humanized + ' will be permanently deleted from the map.');
   },
-
-  browserFiresNativeDblClick: function(e) {
-    // See https://github.com/w3c/pointerevents/issues/171
-    // Note however, that Chrome stopped firing native dblclick for
-    // touch since that issue was written.
-    return (L.Browser.ie || e.pointerType === 'mouse');
-  },
 });
 
 L.IconUtil = {
@@ -373,11 +366,13 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   _singleClickListeners: function() {
     var map = this._map;
     L.DomEvent.off(map, 'click', this.deselect, this);
+    L.DomEvent.on(map, 'singleclick', this.deselect, this);
   },
 
   _resetClickListeners: function() {
     var map = this._map;
     L.DomEvent.on(map, 'click', this.deselect, this);
+    L.DomEvent.off(map, 'singleclick', this.deselect, this);
   },
 
   isSelected: function() {
@@ -2967,7 +2962,6 @@ L.distortableImage.keymapper = function(map, options) {
  * 1) Fires a `singleclick` event to avoid deselecting images on `dblclick`.
  * 2) Maintains a mutually exclusive relationship with the map's `DoubleClickLabels` handler
  */
-
 L.Map.DoubleClickZoom.include({
   addHooks: function() {
     this._map.on({
@@ -3026,13 +3020,11 @@ L.Map.DoubleClickZoom.include({
         map.fire('singleclick', {type: 'singleclick'});
       } else {
         // manually fire doubleclick event only for touch screens that don't natively fire it
-        if (L.Browser.touch) {
-          if (oe && oe.sourceCapabilities.firesTouchEvents) {
-            // in `DoubleClickLabels.js`, we just do map.fire('dblclick') bc `_onDoublClick` doesn't use the
-            // passed "e" (for now). To generate a 'real' DOM event that will have all of its corresponding core
-            // properties (originalEvent, latlng, etc.), use Leaflet's `#map._fireDOMEvent` (Leaflet 1.5.1 source)
-            map._fireDOMEvent(oe, 'dblclick', [map]);
-          }
+        if (L.Browser.touch && (oe && oe.sourceCapabilities.firesTouchEvents)) {
+          // in `DoubleClickLabels.js`, we just do map.fire('dblclick') bc `_onDoublClick` doesn't use the
+          // passed "e" (for now). To generate a 'real' DOM event that will have all of its corresponding core
+          // properties (originalEvent, latlng, etc.), use Leaflet's `#map._fireDOMEvent` (Leaflet 1.5.1 source)
+          map._fireDOMEvent(oe, 'dblclick', [map]);
         }
       }
     }, 250);
@@ -3202,22 +3194,7 @@ L.Map.mergeOptions({
  * The `doubleClickLabels` handler replaces `doubleClickZoom` by default if `#addGoogleMutant`
  * is used unless the options 'labels: false' or 'doubleClickZoom: false` were passed to it.
  */
-
 L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
-  addHooks: function() {
-    this._map.on({
-      click: this._fireIfSingle,
-      dblclick: this._onDoubleClick,
-    }, this);
-  },
-
-  removeHooks: function() {
-    this._map.off({
-      click: this._fireIfSingle,
-      dblclick: this._onDoubleClick,
-    }, this);
-  },
-
   enable: function() {
     var map = this._map;
 
@@ -3258,16 +3235,14 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
         map.fire('singleclick', {type: 'singleclick'});
       } else {
         // manually fire doubleclick event only for touch screens that don't natively fire it
-        if (L.Browser.touch) {
-          if (oe && oe.sourceCapabilities.firesTouchEvents) {
-            map.fire('dblclick');
-          }
+        if (L.Browser.touch && (oe && oe.sourceCapabilities.firesTouchEvents)) {
+          map.fire('dblclick');
         }
       }
     }, 250);
   },
 
-  _onDoubleClick: function() {
+  _onDoubleClick: function(e) {
     var map = this._map;
     var labels = map._labels;
 

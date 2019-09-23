@@ -439,10 +439,13 @@ We have made changes to a default Leaflet handler:
 <details><summary><code><b>doubleClickZoom</b>: this</code></summary>
 <ul>
   <li>This handler may not be <code>enabled</code> (and will return false) while the <code>doubleClickLabels</code> handler is <code>enabled</code>.</li>  
-  <li>This handler and <code>doubleClickLabels</code> time and fire a custom <code>singleclick</code> event on map click. It is fired after a 3ms timeout if the click doesn't become a doubleclick.</li>
-  <li>This allows our images to remain selected during associated double click events on the map (in this case zooming).</li>
+  <li>This handler and <code>doubleClickLabels</code> time and fire a custom <code>singleclick</code> event on map click.</li>
 </ul>
 </details>
+
+<br>
+
+<blockquote>Our "doubleClick" handlers mentioned above use a custom <strong><code>singleclick</code></strong> event to run logic on map <code>dblclick</code> while allowing the images on the map to remain <code>selected</code>. You can read more about the implications of this and how to disable it on our wiki <a href="https://github.com/publiclab/Leaflet.DistortableImage/wiki/The-singleclick-event">"The singleclick event"</a>.</blockquote>
 
 ---
 
