@@ -129,7 +129,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     this._group.eachLayer(function(layer) {
       if (this._group.isCollected(layer)) {
         var edit = layer.editing;
-        if (edit._mode === 'lock') {
+        if (edit.isMode('lock')) {
           edit._unlock();
           // unlock updates the layer's handles; deselect to ensure they're hidden
           layer.deselect();
@@ -142,7 +142,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     this._group.eachLayer(function(layer) {
       if (this._group.isCollected(layer) ) {
         var edit = layer.editing;
-        if (edit._mode !== 'lock') {
+        if (!edit.isMode('lock')) {
           edit._lock();
           // map.addLayer also deselects the image, so we reselect here
           L.DomUtil.addClass(layer.getElement(), 'collected');

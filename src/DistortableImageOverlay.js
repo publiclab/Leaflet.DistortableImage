@@ -150,7 +150,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     if (!edit.enabled() || !this.isSelected()) { return false; }
 
     edit._removeToolbar();
-    if (edit._mode !== 'lock') {
+    if (edit.getMode() !== 'lock') {
       edit._hideMarkers();
     }
 
@@ -172,7 +172,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     edit._showMarkers();
 
     // we run the selection logic 1st anyway because the collection group's _addToolbar method depends on it
-    if (L.DomUtil.hasClass(this._image, 'collected')) {
+    if (L.DomUtil.hasClass(this.getElement(), 'collected')) {
       this.deselect();
       return false;
     }
@@ -336,13 +336,13 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       3: map.unproject(center.add(offset)),
     };
 
-    map.removeLayer(edit._handles[edit._mode]);
+    edit._hideMarkers();
 
     this.setCorners(corners);
 
     if (a !== 0) { this.rotateBy(L.TrigUtil.degreesToRadians(360 - a)); }
 
-    map.addLayer(edit._handles[edit._mode]);
+    edit._showMarkers();
 
     this.rotation = a;
   },

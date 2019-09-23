@@ -79,7 +79,7 @@ describe('L.DistortableImageOverlay', function() {
     });
     
     it('Returns false if the multiple image editing interface is on', function() {
-      L.DomUtil.addClass(overlay._image, 'collected');
+      L.DomUtil.addClass(overlay.getElement(), 'collected');
       expect(overlay.select()).to.be.false
       expect(overlay._selected).to.be.false
       expect(overlay.editing.toolbar).to.be.false
@@ -111,7 +111,7 @@ describe('L.DistortableImageOverlay', function() {
       map.fire('click');
 
       var handleState = [];
-      edit._handles['distort'].eachLayer(function (handle) {
+      edit.currentHandle.eachLayer(function(handle) {
         var icon = handle.getElement();
         handleState.push(L.DomUtil.getStyle(icon, 'opacity'));
       });
@@ -130,7 +130,7 @@ describe('L.DistortableImageOverlay', function() {
       map.fire('click');
 
       var lockHandleState = [];
-      edit._handles['lock'].eachLayer(function (handle) {
+      edit.currentHandle.eachLayer(function (handle) {
         var icon = handle.getElement();
         lockHandleState.push(L.DomUtil.getStyle(icon, 'opacity'));
       });

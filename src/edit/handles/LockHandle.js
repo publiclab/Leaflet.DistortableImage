@@ -16,5 +16,8 @@ L.LockHandle = L.EditHandle.extend({
   updateHandle: function() {
     this.setLatLng(this._handled.getCorner(this._corner));
   },
-
 });
+
+L.lockHandle = function(overlay, idx, options) {
+  return new L.LockHandle(overlay, idx, options);
+};
