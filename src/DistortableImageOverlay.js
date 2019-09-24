@@ -23,10 +23,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   onAdd: function(map) {
     this._map = map;
-    if (!this._image) { L.ImageOverlay.prototype._initImage.call(this); }
-    if (!this._events) { this._initEvents(); }
-
-    this.getPane().appendChild(this._image);
+    if (!this._image) { this._initImage(); }
 
     map.on('viewreset', this._reset, this);
 
@@ -35,15 +32,11 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       if (map.options.zoomAnimation && L.Browser.any3d) {
         map.on('zoomanim', this._animateZoom, this);
       }
-
-      /* This reset happens before image load; it allows us to place the
-       * image on the map earlier with "guessed" dimensions.
-       */
-      this._reset();
     }
 
     // Have to wait for the image to load because need to access its w/h
     L.DomEvent.on(this._image, 'load', function() {
+      this.getPane().appendChild(this._image);
       this._initImageDimensions();
       this._reset();
       /* Initialize default corners if not already set */
@@ -63,14 +56,13 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       }
     }, this);
 
-    this.fire('add');
-
     L.DomEvent.on(this._image, 'click', this.select, this);
     L.DomEvent.on(map, {
       singleclickon: this._singleClickListeners,
       singleclickoff: this._resetClickListeners,
       singleclick: this._singleClick,
     }, this);
+
     /**
      * custom events fired from DoubleClickLabels.js. Used to differentiate
      * single / dblclick to not deselect images on map dblclick.
@@ -78,6 +70,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     if (!(map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled())) {
       L.DomEvent.on(map, 'click', this.deselect, this);
     }
+
+    this.fire('add');
   },
 
   onRemove: function(map) {
@@ -130,33 +124,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     };
   },
 
-  _initEvents: function() {
-    this._events = ['click'];
-
-    for (var i = 0, l = this._events.length; i < l; i++) {
-      L.DomEvent.on(this._image, this._events[i], this._fireMouseEvent, this);
-    }
-  },
-
-  /* See src/layer/vector/Path.SVG.js in the Leaflet source. */
-  _fireMouseEvent: function(event) {
-    if (!this.hasEventListeners(event.type)) {
-      return;
-    }
-
-    var map = this._map;
-    var containerPoint = map.mouseEventToContainerPoint(event);
-    var layerPoint = map.containerPointToLayerPoint(containerPoint);
-    var latlng = map.layerPointToLatLng(layerPoint);
-
-    this.fire(event.type, {
-      latlng: latlng,
-      layerPoint: layerPoint,
-      containerPoint: containerPoint,
-      originalEvent: event,
-    });
-  },
-
   _singleClick: function(e) {
     if (e.type === 'singleclick') { this.deselect(); }
     else { return; }
@@ -165,11 +132,13 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   _singleClickListeners: function() {
     var map = this._map;
     L.DomEvent.off(map, 'click', this.deselect, this);
+    L.DomEvent.on(map, 'singleclick', this.deselect, this);
   },
 
   _resetClickListeners: function() {
     var map = this._map;
     L.DomEvent.on(map, 'click', this.deselect, this);
+    L.DomEvent.off(map, 'singleclick', this.deselect, this);
   },
 
   isSelected: function() {

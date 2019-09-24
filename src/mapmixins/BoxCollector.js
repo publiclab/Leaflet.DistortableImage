@@ -132,4 +132,3 @@ L.Map.BoxCollector = L.Map.BoxZoom.extend({
 });
 
 L.Map.addInitHook('addHandler', 'boxCollector', L.Map.BoxCollector);
-

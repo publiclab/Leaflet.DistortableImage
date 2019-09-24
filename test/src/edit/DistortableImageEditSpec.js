@@ -73,7 +73,8 @@ describe('L.DistortableImage.Edit', function() {
 
       var handleState = [];
       edit._handles['distort'].eachLayer(function(handle) {
-        handleState.push(handle._icon.style.opacity);
+        var icon = handle.getElement();
+        handleState.push(L.DomUtil.getStyle(icon, 'opacity'));
       });
 
       expect(handleState).to.deep.equal(['0', '0', '0', '0']);
@@ -90,11 +91,11 @@ describe('L.DistortableImage.Edit', function() {
 
       var lockHandleState = [];
       edit._handles['lock'].eachLayer(function(handle) {
-        lockHandleState.push(handle._icon.style.opacity);
+        var icon = handle.getElement();
+        lockHandleState.push(L.DomUtil.getStyle(icon, 'opacity'));
       });
 
-      // opacity for lockHandles is unset because we never altered it to hide it as part of deselection
-      expect(lockHandleState).to.deep.equal(['', '', '', '']);
+      expect(lockHandleState).to.deep.equal(['1', '1', '1', '1']);
     });
 
     it('Should remove an image\'s individual toolbar instance regardless of lock handles', function() {

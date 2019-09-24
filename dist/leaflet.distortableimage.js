@@ -257,10 +257,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   onAdd: function(map) {
     this._map = map;
-    if (!this._image) { L.ImageOverlay.prototype._initImage.call(this); }
-    if (!this._events) { this._initEvents(); }
-
-    this.getPane().appendChild(this._image);
+    if (!this._image) { this._initImage(); }
 
     map.on('viewreset', this._reset, this);
 
@@ -269,15 +266,11 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       if (map.options.zoomAnimation && L.Browser.any3d) {
         map.on('zoomanim', this._animateZoom, this);
       }
-
-      /* This reset happens before image load; it allows us to place the
-       * image on the map earlier with "guessed" dimensions.
-       */
-      this._reset();
     }
 
     // Have to wait for the image to load because need to access its w/h
     L.DomEvent.on(this._image, 'load', function() {
+      this.getPane().appendChild(this._image);
       this._initImageDimensions();
       this._reset();
       /* Initialize default corners if not already set */
@@ -297,14 +290,13 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       }
     }, this);
 
-    this.fire('add');
-
     L.DomEvent.on(this._image, 'click', this.select, this);
     L.DomEvent.on(map, {
       singleclickon: this._singleClickListeners,
       singleclickoff: this._resetClickListeners,
       singleclick: this._singleClick,
     }, this);
+
     /**
      * custom events fired from DoubleClickLabels.js. Used to differentiate
      * single / dblclick to not deselect images on map dblclick.
@@ -312,6 +304,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     if (!(map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled())) {
       L.DomEvent.on(map, 'click', this.deselect, this);
     }
+
+    this.fire('add');
   },
 
   onRemove: function(map) {
@@ -364,33 +358,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     };
   },
 
-  _initEvents: function() {
-    this._events = ['click'];
-
-    for (var i = 0, l = this._events.length; i < l; i++) {
-      L.DomEvent.on(this._image, this._events[i], this._fireMouseEvent, this);
-    }
-  },
-
-  /* See src/layer/vector/Path.SVG.js in the Leaflet source. */
-  _fireMouseEvent: function(event) {
-    if (!this.hasEventListeners(event.type)) {
-      return;
-    }
-
-    var map = this._map;
-    var containerPoint = map.mouseEventToContainerPoint(event);
-    var layerPoint = map.containerPointToLayerPoint(containerPoint);
-    var latlng = map.layerPointToLatLng(layerPoint);
-
-    this.fire(event.type, {
-      latlng: latlng,
-      layerPoint: layerPoint,
-      containerPoint: containerPoint,
-      originalEvent: event,
-    });
-  },
-
   _singleClick: function(e) {
     if (e.type === 'singleclick') { this.deselect(); }
     else { return; }
@@ -399,11 +366,13 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   _singleClickListeners: function() {
     var map = this._map;
     L.DomEvent.off(map, 'click', this.deselect, this);
+    L.DomEvent.on(map, 'singleclick', this.deselect, this);
   },
 
   _resetClickListeners: function() {
     var map = this._map;
     L.DomEvent.on(map, 'click', this.deselect, this);
+    L.DomEvent.off(map, 'singleclick', this.deselect, this);
   },
 
   isSelected: function() {
@@ -1115,29 +1084,24 @@ L.EditHandle = L.Marker.extend({
   },
 
   _bindListeners: function() {
-    this.on(
-        {
-          dragstart: this._onHandleDragStart,
-          drag: this._onHandleDrag,
-          dragend: this._onHandleDragEnd,
-        },
-        this
-    );
+    this.on({
+      contextmenu: L.DomEvent.stop,
+      dragstart: this._onHandleDragStart,
+      drag: this._onHandleDrag,
+      dragend: this._onHandleDragEnd,
+    }, this);
 
     this._handled._map.on('zoomend', this.updateHandle, this);
-
     this._handled.on('update', this.updateHandle, this);
   },
 
   _unbindListeners: function() {
-    this.off(
-        {
-          dragstart: this._onHandleDragStart,
-          drag: this._onHandleDrag,
-          dragend: this._onHandleDragEnd,
-        },
-        this
-    );
+    this.off({
+      contextmenu: L.DomEvent.stop,
+      dragstart: this._onHandleDragStart,
+      drag: this._onHandleDrag,
+      dragend: this._onHandleDragEnd,
+    }, this);
 
     this._handled._map.off('zoomend', this.updateHandle, this);
     this._handled.off('update', this.updateHandle, this);
@@ -1157,8 +1121,7 @@ L.EditHandle = L.Marker.extend({
     return Math.sqrt(newRadiusSquared / formerRadiusSquared);
   },
 
-  /* Distance between two points in cartesian space,
-  * squared (distance formula). */
+  /* Distance between two points in cartesian space, squared (distance formula). */
   _d2: function(a, b) {
     var dx = a.x - b.x;
     var dy = a.y - b.y;
@@ -1175,12 +1138,12 @@ L.EditHandle = L.Marker.extend({
     var formerPoint = map.latLngToLayerPoint(latlngA);
     var newPoint = map.latLngToLayerPoint(latlngB);
 
-    var initialAngle = Math.
-        atan2(
-            centerPoint.y - formerPoint.y, centerPoint.x - formerPoint.x);
-    var newAngle = Math.
-        atan2(
-            centerPoint.y - newPoint.y, centerPoint.x - newPoint.x);
+    var initialAngle = (
+      Math.atan2(centerPoint.y - formerPoint.y, centerPoint.x - formerPoint.x)
+    );
+    var newAngle = (
+      Math.atan2(centerPoint.y - newPoint.y, centerPoint.x - newPoint.x)
+    );
 
     return newAngle - initialAngle;
   },
@@ -1470,7 +1433,9 @@ L.EditAction = L.Toolbar2.Action.extend({
 
     if (className) {
       L.DomUtil.addClass(this._link, className);
-      if (className === 'disabled') { L.DomUtil.addClass(this._icon, className); }
+      if (className === 'disabled') {
+        L.DomUtil.addClass(this._icon, className);
+      }
       if (className === edit._mode) {
         L.DomUtil.addClass(this._link, 'selected-mode');
       } else {
@@ -2689,14 +2654,14 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
   _singleClickListeners: function() {
     var map = this._group._map;
-
     L.DomEvent.off(map, 'click', this._decollectAll, this);
+    L.DomEvent.on(map, 'singleclick', this._decollectAll, this);
   },
 
   _resetClickListeners: function() {
     var map = this._group._map;
-
     L.DomEvent.on(map, 'click', this._decollectAll, this);
+    L.DomEvent.off(map, 'singleclick', this._decollectAll, this);
   },
 
   _decollectAll: function(e) {
@@ -3066,6 +3031,102 @@ L.distortableImage.keymapper = function(map, options) {
   return new L.DistortableImage.Keymapper(map, options);
 };
 
+/**
+ * `L.Map.DoubleClickZoom` from leaflet 1.5.1, overrwritten so that it
+ * 1) Fires a `singleclick` event to avoid deselecting images on `dblclick`.
+ * 2) Maintains a mutually exclusive relationship with the map's `DoubleClickLabels` handler
+ */
+L.Map.DoubleClickZoom.include({
+  addHooks: function() {
+    this._map.on({
+      click: this._fireIfSingle,
+      dblclick: this._onDoubleClick,
+    }, this);
+  },
+
+  removeHooks: function() {
+    this._map.off({
+      click: this._fireIfSingle,
+      dblclick: this._onDoubleClick,
+    }, this);
+  },
+
+  enable: function() {
+    if (this._enabled) { return this; }
+
+    // don't enable 'doubleClickZoom' unless 'doubleClickLabels' is disabled first
+    if (this._map.doubleClickLabels) {
+      if (this._map.doubleClickLabels.enabled()) {
+        return this;
+      }
+    }
+
+    // signify to collection/instance classes to turn on 'singleclick' listeners
+    this._map.fire('singleclickon');
+
+    this._enabled = true;
+    this.addHooks();
+    return this;
+  },
+
+  disable: function() {
+    if (!this._enabled) { return this; }
+
+    // signify to collection/instance safe to swap 'singleclick' listeners with 'click' listeners.
+    this._map.fire('singleclickoff');
+
+    this._enabled = false;
+    this.removeHooks();
+    return this;
+  },
+
+  _fireIfSingle: function(e) {
+    var map = this._map;
+    var oe = e.originalEvent;
+
+    // prevents deselection in case of box selector
+    if (oe && oe.shiftKey) { return; }
+
+    map._clicked += 1;
+    this._map._clickTimeout = setTimeout(function() {
+      if (map._clicked === 1) {
+        map._clicked = 0;
+        map.fire('singleclick', {type: 'singleclick'});
+      } else {
+        // manually fire doubleclick event only for touch screens that don't natively fire it
+        if (L.Browser.touch && (oe && oe.sourceCapabilities.firesTouchEvents)) {
+          // in `DoubleClickLabels.js`, we just do map.fire('dblclick') bc `_onDoublClick` doesn't use the
+          // passed "e" (for now). To generate a 'real' DOM event that will have all of its corresponding core
+          // properties (originalEvent, latlng, etc.), use Leaflet's `#map._fireDOMEvent` (Leaflet 1.5.1 source)
+          map._fireDOMEvent(oe, 'dblclick', [map]);
+        }
+      }
+    }, 250);
+  },
+
+  _onDoubleClick: function(e) {
+    var map = this._map;
+    var oe = e.originalEvent;
+
+    setTimeout(function() {
+      map._clicked = 0;
+      clearTimeout(map._clickTimeout);
+    }, 0);
+
+    if (!oe) { return false; }
+
+    var oldZoom = map.getZoom();
+    var delta = map.options.zoomDelta;
+    var zoom = oe.shiftKey ? oldZoom - delta : oldZoom + delta;
+
+    if (map.options.doubleClickZoom === 'center') {
+      map.setZoom(zoom);
+    } else {
+      map.setZoomAround(e.containerPoint, zoom);
+    }
+  },
+});
+
 L.Map.mergeOptions({
   boxCollector: true,
   boxZoom: false,
@@ -3201,44 +3262,25 @@ L.Map.BoxCollector = L.Map.BoxZoom.extend({
 
 L.Map.addInitHook('addHandler', 'boxCollector', L.Map.BoxCollector);
 
+L.Map.mergeOptions({
+  doubleClickLabels: true,
+});
 
 /**
- * The 'doubleClickLabels' handler only runs instead of 'doubleClickZoom' when a googleMutant
- * layer is added to the map using 'map.addGoogleMutant()' without the option labels: false.
+ * The `doubleClickLabels` handler replaces `doubleClickZoom` by default if `#addGoogleMutant`
+ * is used unless the options 'labels: false' or 'doubleClickZoom: false` were passed to it.
  */
-
 L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
-  addHooks: function() {
-    this._map.on({
-      click: this._fireIfSingle,
-      dblclick: this._onDoubleClick,
-    }, this);
-  },
-
-  removeHooks: function() {
-    this._map.off({
-      click: this._fireIfSingle,
-      dblclick: this._onDoubleClick,
-    }, this);
-  },
-
   enable: function() {
     var map = this._map;
 
     if (this._enabled) { return this; }
-
-    // dont enable 'doubleClickLabels' if the labels layer has not been added.
-    if (!map._labels) {
-      this._enabled = false;
-      return this;
-    }
 
     // disable 'doubleClickZoom' if 'doubleClickLabels' is enabled.
     if (map.doubleClickZoom.enabled()) {
       map.doubleClickZoom.disable();
     }
 
-    // signify to collection/instance classes to re-enable 'singleclick' listeners
     this._map.fire('singleclickon');
 
     this._enabled = true;
@@ -3247,33 +3289,31 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
   },
 
   disable: function() {
-    var map = this._map;
-
     if (!this._enabled) { return this; }
 
     this._enabled = false;
     this.removeHooks();
-
-    // enable 'doubleClickZoom' if 'doubleClickLabels' is disabled.
-    if (!map.doubleClickZoom.enabled()) {
-      map.doubleClickZoom.enable();
-    }
 
     return this;
   },
 
   _fireIfSingle: function(e) {
     var map = this._map;
-    var eo = e.originalEvent;
+    var oe = e.originalEvent;
 
     // prevents deselection in case of box selector
-    if (eo && eo.shiftKey) { return; }
+    if (oe && oe.shiftKey) { return; }
 
     map._clicked += 1;
-    setTimeout(function() {
+    this._map._clickTimeout = setTimeout(function() {
       if (map._clicked === 1) {
         map._clicked = 0;
-        map.fire('singleclick', L.extend(e, {type: 'singleclick'}));
+        map.fire('singleclick', {type: 'singleclick'});
+      } else {
+        // manually fire doubleclick event only for touch screens that don't natively fire it
+        if (L.Browser.touch && (oe && oe.sourceCapabilities.firesTouchEvents)) {
+          map.fire('dblclick');
+        }
       }
     }, 250);
   },
@@ -3282,7 +3322,12 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
     var map = this._map;
     var labels = map._labels;
 
-    map._clicked = 0;
+    setTimeout(function() {
+      map._clicked = 0;
+      clearTimeout(map._clickTimeout);
+    }, 0);
+
+    if (!labels) { return; }
 
     if (labels.options.opacity === 1) {
       labels.options.opacity = 0;
@@ -3294,126 +3339,57 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
   },
 });
 
-/**
- * a little repetitive, but here we overrwrite the L.Map.DoubleClickZoom
- * handler so that in case L.Map.DoubleClickLabels is disabled, this handler
- * will fire a `singleclick` event that our collection and overlay classes
- * both listen for. Bonus: now DoubleClickZoom doesn't deselect our images either.
- */
-L.Map.DoubleClickZoom.include({
-  addHooks: function() {
-    this._map.on({
-      click: this._fireIfSingle,
-      dblclick: this._onDoubleClick,
-    }, this);
-  },
-
-  removeHooks: function() {
-    this._map.off({
-      click: this._fireIfSingle,
-      dblclick: this._onDoubleClick,
-    }, this);
-  },
-
-  enable: function() {
-    if (this._enabled) { return this; }
-
-    // don't enable 'doubleClickZoom' unless 'doubleClickLabels' is disabled first
-    if (this._map.doubleClickLabels) {
-      if (this._map.doubleClickLabels.enabled()) {
-        return this;
-      }
-    }
-
-    this._map.fire('singleclickon');
-
-    this._enabled = true;
-    this.addHooks();
-    return this;
-  },
-
-  /**
-   * if L.Map.DoubleClickZoom is disabled as well, we fire one more custom event
-   * to signify to our collection and instance classes to stop listening for `singleclick`
-   * and start just listening for `click`.
-   */
-  disable: function() {
-    if (!this._enabled) { return this; }
-
-    this._map.fire('singleclickoff');
-
-    this._enabled = false;
-    this.removeHooks();
-    return this;
-  },
-
-  _fireIfSingle: function(e) {
-    var map = this._map;
-    var eo = e.originalEvent;
-
-    // prevents deselection in case of box selector
-    if (eo && eo.shiftKey) { return; }
-
-    map._clicked += 1;
-    setTimeout(function() {
-      if (map._clicked === 1) {
-        map._clicked = 0;
-        map.fire('singleclick', L.extend(e, {type: 'singleclick'}));
-      }
-    }, 250);
-  },
-
-  _onDoubleClick: function(e) {
-    var map = this._map;
-
-    map._clicked = 0;
-
-    var oldZoom = map.getZoom();
-    var delta = map.options.zoomDelta;
-    var zoom = e.originalEvent.shiftKey ? oldZoom - delta : oldZoom + delta;
-
-    if (map.options.doubleClickZoom === 'center') {
-      map.setZoom(zoom);
-    } else {
-      map.setZoomAround(e.containerPoint, zoom);
-    }
-  },
-});
-
 L.Map.addInitHook('addHandler', 'doubleClickLabels', L.Map.DoubleClickLabels);
 
+/* eslint-disable max-len */
 L.Map.include({
 
   _clicked: 0,
 
   addGoogleMutant: function(opts) {
-    opts = this._mutantOptions = L.Util.extend({
-      labels: true,
-      labelOpacity: 0,
+    var url = 'http://mt0.google.com/vt/lyrs=s&x={x}&y={y}&z={z}';
+
+    opts = this.mutantOptions = L.extend({
       mutantOpacity: 0.8,
       maxZoom: 18,
       minZoom: 0,
+      labels: true,
+      labelOpacity: 1,
+      doubleClickLabels: true,
     }, opts);
 
     if (opts.maxZoom > 21) { opts.maxZoom = 18; }
 
-    this._googleMutant = L.tileLayer('http://mt0.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+    if (!opts.labels) {
+      this.mutantOptions = L.extend(this.mutantOptions, {
+        labelOpacity: opts.labels ? 1 : undefined,
+        doubleClickLabels: opts.labels ? true : undefined,
+      });
+    }
+
+    this._googleMutant = L.tileLayer(url, {
       maxZoom: opts.maxZoom,
       minZoom: opts.minZoom,
       opacity: opts.mutantOpacity,
     }).addTo(this);
 
     if (opts.labels) { this._addLabels(opts); }
+    // shouldn't have this handler at all if there are no labels to toggle
+    else {
+      this.doubleClickLabels = undefined;
+    }
 
     return this;
   },
 
   _addLabels: function(opts) {
+    var url = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner-labels/{z}/{x}/{y}{r}.{ext}';
+
     if (opts.labelOpacity !== 0 && opts.labelOpacity !== 1) {
-      opts.labelOpacity = 0;
+      opts.labelOpacity = 1;
     }
 
-    this._labels = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-labels/{z}/{x}/{y}{r}.{ext}', {
+    this._labels = L.tileLayer(url, {
       attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       subdomains: 'abcd',
       interactive: false,
@@ -3423,8 +3399,16 @@ L.Map.include({
       ext: 'png',
     }).addTo(this);
 
-    this.doubleClickLabels.enable();
+    if (this.mutantOptions.doubleClickLabels) {
+      this.doubleClickLabels.enable();
+    }
 
     return this;
   },
+});
+// start off with doubleClickZoom enabled, doubleClickLabels can later be enabled instead
+// during initialization
+L.Map.addInitHook(function() {
+  this.doubleClickLabels.disable();
+  this.doubleClickZoom.enable();
 });

@@ -35,6 +35,7 @@ module.exports = function(config) {
       'src/DistortableImageOverlay.js',
       'src/DistortableCollection.js',
       'src/edit/getEXIFdata.js',
+      'src/mapmixins/DoubleClickZoom.js',
       'src/mapmixins/*.js',
       'src/edit/handles/EditHandle.js',
       'src/edit/handles/*.js',
