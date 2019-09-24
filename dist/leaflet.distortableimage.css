@@ -3,15 +3,12 @@
 }
 
 .ldi .leaflet-pane .leaflet-overlay-pane .wrapper-wrapper {
+  -webkit-filter: drop-shadow(2px 4px 6px black);
   filter: drop-shadow(2px 4px 6px black);
 }
 
-.ldi .leaflet-pane .leaflet-overlay-pane .wrapper-wrapper.lock {
+.ldi .leaflet-pane .leaflet-overlay-pane .wrapper-wrapper .lock {
   filter: none;
-}
-
-.ldi .leaflet-pane .leaflet-overlay-pane .wrapper-wrapper.lock img {
-  filter: url(#drop-shadow);
 }
 
 .ldi-icon {
