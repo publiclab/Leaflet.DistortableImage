@@ -44,8 +44,6 @@ L.DistortableCollection.Edit = L.Handler.extend({
     var map = group._map;
 
     L.DomEvent.off(document, 'keydown', this._onKeyDown, this);
-    // var anim = document.querySelector('.distort-warp');
-    // L.DomEvent.off(anim, 'animationiteration', this._listen(), this);
 
     if (!(map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled())) {
       L.DomEvent.off(map, 'click', this._decollectAll, this);
