@@ -5,4 +5,3 @@ todo.txt
 *.swo
 package-lock.json
 .DS_Store
-/.project
