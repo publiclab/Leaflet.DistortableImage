@@ -114,6 +114,10 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (!this._modes[this._mode]) {
       this._mode = Object.keys(this._modes)[0];
     }
+
+    if (this.isMode('lock')) {
+      L.DomUtil.addClass(this._overlay.getElement(), 'lock');
+    }
   },
 
   _initHandles: function() {
@@ -204,16 +208,14 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this._updateHandle();
 
-    if (!this.isMode('lock') && this.currentHandle) {
-      if (!overlay.isSelected()) {
-        this.currentHandle.eachLayer(function(layer) {
-          layer.setOpacity(0);
-          layer.dragging.disable();
-          layer.options.draggable = false;
-        });
-      }
+    if (!overlay.isSelected() && this.currentHandle) {
+      this.currentHandle.eachLayer(function(layer) {
+        layer.setOpacity(0);
+        layer.dragging.disable();
+        layer.options.draggable = false;
+      });
 
-      this._enableDragging();
+      if (!this.isMode('lock')) { this._enableDragging(); }
     }
   },
 
@@ -498,19 +500,22 @@ L.DistortableImage.Edit = L.Handler.extend({
       this._mode = ov.options.mode;
     }
 
+    L.DomUtil.removeClass(ov.getElement(), 'lock');
+
     this._enableDragging();
-    this._updateHandle();
     this._refresh();
   },
 
   _lock: function() {
-    var map = this._overlay._map;
+    var ov = this._overlay;
+    var map = ov._map;
 
     if (this.isMode('lock') || !this.hasTool(L.LockAction)) { return; }
 
     if (this.currentHandle) { map.removeLayer(this.currentHandle); }
 
     this._mode = 'lock';
+    L.DomUtil.addClass(ov.getElement(), 'lock');
     if (this.dragging) {
       this.dragging.disable();
       delete this.dragging;
@@ -527,8 +532,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     var eP = this.parentGroup;
 
     // mutli-image interface doesn't have markers so check if its on & return early if true
-    if (this.isMode('lock') || (eP && eP.anyCollected())) { return; }
-    if (!this.currentHandle) { return; }
+    if (!this.currentHandle || (eP && eP.anyCollected())) { return; }
 
     this.currentHandle.eachLayer(function(layer) {
       var drag = layer.dragging;
@@ -549,7 +553,7 @@ L.DistortableImage.Edit = L.Handler.extend({
       var drag = layer.dragging;
       var opts = layer.options;
 
-      if (!this.isMode('lock')) { layer.setOpacity(0); }
+      layer.setOpacity(0);
       if (drag) { drag.disable(); }
       if (opts.draggable) { opts.draggable = false; }
     }, this);

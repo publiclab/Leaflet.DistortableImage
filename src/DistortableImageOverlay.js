@@ -36,7 +36,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
     // Have to wait for the image to load because need to access its w/h
     L.DomEvent.on(this._image, 'load', function() {
-      this.getPane().appendChild(this._image);
+      // To apply the drop shadow to a container element. Setting it directly on img results in bugs.
+      var wrap2 = document.querySelector('.wrapper-wrapper');
+      wrap2.appendChild(this._image);
       this._initImageDimensions();
       this._reset();
       /* Initialize default corners if not already set */
@@ -147,13 +149,11 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   deselect: function() {
     var edit = this.editing;
+
     if (!edit.enabled() || !this.isSelected()) { return false; }
 
     edit._removeToolbar();
-    if (edit.getMode() !== 'lock') {
-      edit._hideMarkers();
-    }
-
+    edit._hideMarkers();
     this._selected = false;
     return this;
   },
@@ -477,4 +477,8 @@ L.Map.addInitHook(function() {
   if (!L.DomUtil.hasClass(this.getContainer(), 'ldi')) {
     L.DomUtil.addClass(this.getContainer(), 'ldi');
   }
+
+  this.wrap2 = document.createElement('div');
+  this.wrap2.className = 'wrapper-wrapper';
+  this.getPane('overlayPane').appendChild(this.wrap2);
 });

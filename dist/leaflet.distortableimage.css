@@ -2,8 +2,16 @@
   pointer-events: all !important;
 }
 
-.ldi img.leaflet-image-layer.collected {
-  box-shadow: 0px 0px 0px 12px #ffea00;
+.ldi .leaflet-pane .leaflet-overlay-pane .wrapper-wrapper {
+  filter: drop-shadow(2px 4px 6px black);
+}
+
+.ldi .leaflet-pane .leaflet-overlay-pane .wrapper-wrapper.lock {
+  filter: none;
+}
+
+.ldi .leaflet-pane .leaflet-overlay-pane .wrapper-wrapper.lock img {
+  filter: url(#drop-shadow);
 }
 
 .ldi-icon {

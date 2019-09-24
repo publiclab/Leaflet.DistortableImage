@@ -38,11 +38,14 @@ L.DistortableCollection.Edit = L.Handler.extend({
     });
   },
 
+
   removeHooks: function() {
     var group = this._group;
     var map = group._map;
 
     L.DomEvent.off(document, 'keydown', this._onKeyDown, this);
+    // var anim = document.querySelector('.distort-warp');
+    // L.DomEvent.off(anim, 'animationiteration', this._listen(), this);
 
     if (!(map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled())) {
       L.DomEvent.off(map, 'click', this._decollectAll, this);
@@ -117,6 +120,10 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
     this._group.eachLayer(function(layer) {
       L.DomUtil.removeClass(layer.getElement(), 'collected');
+      if (layer._collectedAnim) {
+        layer._collectedAnim.currentTime = 0;
+        layer._collectedAnim.pause();
+      }
       layer.deselect();
     });
 
@@ -169,6 +176,11 @@ L.DistortableCollection.Edit = L.Handler.extend({
           this._addToolbar();
         }
         L.DomUtil.addClass(layer.getElement(), 'collected');
+        var anim = layer._collectedAnim;
+        if (anim && anim.playState === 'paused') {
+          layer._collectedAnim.play();
+          layer._collectedAnim.startTime = this._group._otherSelected() || layer._collectedAnim.currentTime / 3000;
+        }
       }
     }, this);
   },

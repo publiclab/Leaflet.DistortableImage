@@ -45,6 +45,16 @@ L.DistortableCollection = L.FeatureGroup.extend({
       /* Enable longpress for multi select for touch devices. */
       contextmenu: this._longPressMultiSelect,
     }, this);
+
+    layer._collectedAnim = layer.getElement().animate({
+      filter: ['none', 'drop-shadow(0 0 .75rem #ffea00)', 'none']}, {
+      duration: 3000,
+      fill: 'none',
+      easing: 'ease-in',
+      iterations: Infinity,
+    });
+
+    layer._collectedAnim.pause();
   },
 
   _removeEvents: function(e) {
@@ -70,11 +80,19 @@ L.DistortableCollection = L.FeatureGroup.extend({
       var edit = layer.editing;
       if (layer.getElement() === e.target && edit.enabled()) {
         L.DomUtil.toggleClass(layer.getElement(), 'collected');
-        if (this.anyCollected()) {
+        if (L.DomUtil.hasClass(layer.getElement(), 'collected')) {
           layer.deselect();
           this.editing._addToolbar();
+          if (layer._collectedAnim) {
+            layer._collectedAnim.play();
+            layer._collectedAnim.startTime = this._otherSelected() || layer._collectedAnim.currentTime / 3000;
+          }
         } else {
           this.editing._removeToolbar();
+          if (layer._collectedAnim) {
+            layer._collectedAnim.currentTime = 0;
+            layer._collectedAnim.pause();
+          }
         }
       }
     }, this);
@@ -94,6 +112,14 @@ L.DistortableCollection = L.FeatureGroup.extend({
       /** conditional prevents disabled images from flickering multi-select mode */
       if (layer.editing.enabled()) {
         L.DomUtil.toggleClass(e.target, 'collected');
+        if (L.DomUtil.hasClass(e.target, 'collected')) {
+          layer._collectedAnim.play();
+          // layer._collectedAnim.currentTime = layer._collectedAnim.currentTime / 3000;
+          layer._collectedAnim.startTime = this._otherSelected() || layer._collectedAnim.currentTime / 3000;
+        } else {
+          layer._collectedAnim.currentTime = 0;
+          layer._collectedAnim.pause();
+        }
       }
     }
 
@@ -113,6 +139,15 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
 
     if (e) { L.DomEvent.stopPropagation(e); }
+  },
+
+  _otherSelected: function() {
+    this.eachLayer(function(layer) {
+      if (layer._collectedAnim) {
+        return layer._collectedAnim.currentTime;
+      }
+    });
+    return false;
   },
 
   _dragStartMultiple: function(e) {
@@ -157,7 +192,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var layerArr = this.getLayers();
 
     return layerArr.filter(function(layer) {
-      var mode = layer.editing._mode;
+      var mode = layer.editing.getMode();
       return layer !== overlay && this.isCollected(layer) && mode !== 'lock';
     }, this);
   },
@@ -220,3 +255,4 @@ L.DistortableCollection = L.FeatureGroup.extend({
 L.distortableCollection = function(id, options) {
   return new L.DistortableCollection(id, options);
 };
+

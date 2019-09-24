@@ -270,7 +270,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
     // Have to wait for the image to load because need to access its w/h
     L.DomEvent.on(this._image, 'load', function() {
-      this.getPane().appendChild(this._image);
+      // To apply the drop shadow to a container element. Setting it directly on img results in bugs.
+      var wrap2 = document.querySelector('.wrapper-wrapper');
+      wrap2.appendChild(this._image);
       this._initImageDimensions();
       this._reset();
       /* Initialize default corners if not already set */
@@ -381,13 +383,11 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   deselect: function() {
     var edit = this.editing;
+
     if (!edit.enabled() || !this.isSelected()) { return false; }
 
     edit._removeToolbar();
-    if (edit.getMode() !== 'lock') {
-      edit._hideMarkers();
-    }
-
+    edit._hideMarkers();
     this._selected = false;
     return this;
   },
@@ -711,6 +711,10 @@ L.Map.addInitHook(function() {
   if (!L.DomUtil.hasClass(this.getContainer(), 'ldi')) {
     L.DomUtil.addClass(this.getContainer(), 'ldi');
   }
+
+  this.wrap2 = document.createElement('div');
+  this.wrap2.className = 'wrapper-wrapper';
+  this.getPane('overlayPane').appendChild(this.wrap2);
 });
 
 L.DistortableCollection = L.FeatureGroup.extend({
@@ -760,6 +764,16 @@ L.DistortableCollection = L.FeatureGroup.extend({
       /* Enable longpress for multi select for touch devices. */
       contextmenu: this._longPressMultiSelect,
     }, this);
+
+    layer._collectedAnim = layer.getElement().animate({
+      filter: ['none', 'drop-shadow(0 0 .75rem #ffea00)', 'none']}, {
+      duration: 3000,
+      fill: 'none',
+      easing: 'ease-in',
+      iterations: Infinity,
+    });
+
+    layer._collectedAnim.pause();
   },
 
   _removeEvents: function(e) {
@@ -785,11 +799,19 @@ L.DistortableCollection = L.FeatureGroup.extend({
       var edit = layer.editing;
       if (layer.getElement() === e.target && edit.enabled()) {
         L.DomUtil.toggleClass(layer.getElement(), 'collected');
-        if (this.anyCollected()) {
+        if (L.DomUtil.hasClass(layer.getElement(), 'collected')) {
           layer.deselect();
           this.editing._addToolbar();
+          if (layer._collectedAnim) {
+            layer._collectedAnim.play();
+            layer._collectedAnim.startTime = this._otherSelected() || layer._collectedAnim.currentTime / 3000;
+          }
         } else {
           this.editing._removeToolbar();
+          if (layer._collectedAnim) {
+            layer._collectedAnim.currentTime = 0;
+            layer._collectedAnim.pause();
+          }
         }
       }
     }, this);
@@ -809,6 +831,14 @@ L.DistortableCollection = L.FeatureGroup.extend({
       /** conditional prevents disabled images from flickering multi-select mode */
       if (layer.editing.enabled()) {
         L.DomUtil.toggleClass(e.target, 'collected');
+        if (L.DomUtil.hasClass(e.target, 'collected')) {
+          layer._collectedAnim.play();
+          // layer._collectedAnim.currentTime = layer._collectedAnim.currentTime / 3000;
+          layer._collectedAnim.startTime = this._otherSelected() || layer._collectedAnim.currentTime / 3000;
+        } else {
+          layer._collectedAnim.currentTime = 0;
+          layer._collectedAnim.pause();
+        }
       }
     }
 
@@ -828,6 +858,15 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
 
     if (e) { L.DomEvent.stopPropagation(e); }
+  },
+
+  _otherSelected: function() {
+    this.eachLayer(function(layer) {
+      if (layer._collectedAnim) {
+        return layer._collectedAnim.currentTime;
+      }
+    });
+    return false;
   },
 
   _dragStartMultiple: function(e) {
@@ -872,7 +911,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var layerArr = this.getLayers();
 
     return layerArr.filter(function(layer) {
-      var mode = layer.editing._mode;
+      var mode = layer.editing.getMode();
       return layer !== overlay && this.isCollected(layer) && mode !== 'lock';
     }, this);
   },
@@ -935,6 +974,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 L.distortableCollection = function(id, options) {
   return new L.DistortableCollection(id, options);
 };
+
 
 /* eslint-disable no-unused-vars */
 L.EXIF = function getEXIFdata(img) {
@@ -2027,6 +2067,10 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (!this._modes[this._mode]) {
       this._mode = Object.keys(this._modes)[0];
     }
+
+    if (this.isMode('lock')) {
+      L.DomUtil.addClass(this._overlay.getElement(), 'lock');
+    }
   },
 
   _initHandles: function() {
@@ -2117,16 +2161,14 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this._updateHandle();
 
-    if (!this.isMode('lock') && this.currentHandle) {
-      if (!overlay.isSelected()) {
-        this.currentHandle.eachLayer(function(layer) {
-          layer.setOpacity(0);
-          layer.dragging.disable();
-          layer.options.draggable = false;
-        });
-      }
+    if (!overlay.isSelected() && this.currentHandle) {
+      this.currentHandle.eachLayer(function(layer) {
+        layer.setOpacity(0);
+        layer.dragging.disable();
+        layer.options.draggable = false;
+      });
 
-      this._enableDragging();
+      if (!this.isMode('lock')) { this._enableDragging(); }
     }
   },
 
@@ -2411,19 +2453,22 @@ L.DistortableImage.Edit = L.Handler.extend({
       this._mode = ov.options.mode;
     }
 
+    L.DomUtil.removeClass(ov.getElement(), 'lock');
+
     this._enableDragging();
-    this._updateHandle();
     this._refresh();
   },
 
   _lock: function() {
-    var map = this._overlay._map;
+    var ov = this._overlay;
+    var map = ov._map;
 
     if (this.isMode('lock') || !this.hasTool(L.LockAction)) { return; }
 
     if (this.currentHandle) { map.removeLayer(this.currentHandle); }
 
     this._mode = 'lock';
+    L.DomUtil.addClass(ov.getElement(), 'lock');
     if (this.dragging) {
       this.dragging.disable();
       delete this.dragging;
@@ -2440,8 +2485,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     var eP = this.parentGroup;
 
     // mutli-image interface doesn't have markers so check if its on & return early if true
-    if (this.isMode('lock') || (eP && eP.anyCollected())) { return; }
-    if (!this.currentHandle) { return; }
+    if (!this.currentHandle || (eP && eP.anyCollected())) { return; }
 
     this.currentHandle.eachLayer(function(layer) {
       var drag = layer.dragging;
@@ -2462,7 +2506,7 @@ L.DistortableImage.Edit = L.Handler.extend({
       var drag = layer.dragging;
       var opts = layer.options;
 
-      if (!this.isMode('lock')) { layer.setOpacity(0); }
+      layer.setOpacity(0);
       if (drag) { drag.disable(); }
       if (opts.draggable) { opts.draggable = false; }
     }, this);
@@ -2644,11 +2688,14 @@ L.DistortableCollection.Edit = L.Handler.extend({
     });
   },
 
+
   removeHooks: function() {
     var group = this._group;
     var map = group._map;
 
     L.DomEvent.off(document, 'keydown', this._onKeyDown, this);
+    // var anim = document.querySelector('.distort-warp');
+    // L.DomEvent.off(anim, 'animationiteration', this._listen(), this);
 
     if (!(map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled())) {
       L.DomEvent.off(map, 'click', this._decollectAll, this);
@@ -2723,6 +2770,10 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
     this._group.eachLayer(function(layer) {
       L.DomUtil.removeClass(layer.getElement(), 'collected');
+      if (layer._collectedAnim) {
+        layer._collectedAnim.currentTime = 0;
+        layer._collectedAnim.pause();
+      }
       layer.deselect();
     });
 
@@ -2775,6 +2826,11 @@ L.DistortableCollection.Edit = L.Handler.extend({
           this._addToolbar();
         }
         L.DomUtil.addClass(layer.getElement(), 'collected');
+        var anim = layer._collectedAnim;
+        if (anim && anim.playState === 'paused') {
+          layer._collectedAnim.play();
+          layer._collectedAnim.startTime = this._group._otherSelected() || layer._collectedAnim.currentTime / 3000;
+        }
       }
     }, this);
   },
