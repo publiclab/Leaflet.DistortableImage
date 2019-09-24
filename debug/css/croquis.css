@@ -1,0 +1,206 @@
+@charset "ISO-8859-1";
+ 
+/* ============================================================
+  RESET
+============================================================ */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	box-sizing: border-box;
+	border-spacing: 0;
+}
+
+td {
+	cursor: pointer;
+}
+
+/* ------- Utilitats --------- */
+.div_Row {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+}
+
+.hr_Form {
+	width: 50%;
+	color: rgba(255,255,255,0.4);
+	border-color: rgba(255,255,255,0.4);
+	margin: 0.3em 0em 0.7em 0em;
+}
+
+.border-gray {
+	border: 1px solid rgba(255,255,255,0.4);
+}
+/* ------- Utilitats --------- */
+
+body {
+	display: block;
+	position: relative;
+    height: 100vh;
+  	width: 100vw;
+	top: 0;
+	left: 0;
+	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#010101+53,010101+53,959595+100 */
+	background: #010101; /* Old browsers */
+	background: -moz-linear-gradient(-45deg,  #010101 53%, #010101 53%, #959595 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(-45deg,  #010101 53%,#010101 53%,#959595 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(135deg,  #010101 53%,#010101 53%,#959595 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#010101', endColorstr='#959595',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+    overflow: visible;
+    background-repeat: no-repeat;
+	background-attachment: fixed;
+}
+
+#seccio_cro {
+	display: inline-flex;
+	flex-direction: column;
+	flex-wrap: wrap;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: calc(100vw);
+    height: calc(100vh);
+    overflow-x: hidden;
+    overflow-y: hidden;
+    box-sizing: border-box;
+}
+
+#sec_Croquis {
+    height: calc(100vh);
+}
+
+/* elements */
+.pl_Cro_vehicles {
+	/* max-width: 100px; */
+	max-height: 100px;
+	color: blue;
+	margin-right: 1em;
+}
+
+.pl_Cro_dibuix {
+    transition:all .08s linear;
+	position:relative;
+    border:0px;
+    margin:7.5px 5px;
+	-webkit-box-shadow: 
+	0px 0px 10px 0px rgba(0, 0, 0, 0.1),
+	0px 10px 10px 0px rgba(0, 0, 0, 0.2) !important;
+	-moz-box-shadow: 
+	0px 0px 10px 0px rgba(0, 0, 0,0.1),
+	0px 10px 10px 0px rgba(0, 0, 0,0.2) !important;
+	box-shadow: 
+	0px 0px 10px 0px rgba(0, 0, 0,0.1),
+	0px 10px 10px 0px rgba(0, 0, 0,0.2) !important;
+}
+
+.pl_Cro_dibuix:hover {
+	box-sizing: border-box;
+	border: 3px solid blue;
+	-webkit-box-shadow: 0px 10px 10px 0px rgba(0, 40, 150, 0.5) !important;
+	-moz-box-shadow: 0px 10px 10px 0px rgba(0, 40, 150,0.5) !important;
+	box-shadow: 0px 10px 10px 0px rgba(0, 40, 150,0.5) !important;
+}
+
+.pl_Cro_dibuix:active {
+    top:9px;
+}
+
+.cro-fa-button {
+	margin-top: 5px;
+	font-size: 1.5em;
+	line-height: 1em;
+	text-align: center;
+}
+
+.border-red {
+	border: 1px solid red;
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari 3.1+ */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Firefox 2+ */
+  -ms-user-select: none; /* IE 10+ */
+  user-select: none; /* Standard syntax */
+
+}
+
+.peu_cro {
+	z-index: 3;
+	background-color: #0040FF;
+    position: fixed; 
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 32px;
+}
+
+.peu_cro p {
+  	margin: 7px 0px;
+	font: bold 14px Verdana;
+	color: #FFF;
+}
+
+#etiqueta_peu {
+	cursor: default;
+	/* display:inline-block; */
+	float: left;
+	text-align: center;
+	font: bold 14px Verdana;
+	color: #FFF;
+}
+
+.alertV {
+	border: 3px solid red;
+}
+
+.alertB {
+	border: 3px solid blue;
+}
+
+.alertG {
+	border: 3px solid green;
+}
+
+.close {
+	z-index: 800 !important;
+}

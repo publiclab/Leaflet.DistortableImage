@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta charset="utf-8"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+		<script src="https://rawgit.com/jonathantneal/svg4everybody/master/dist/svg4everybody.js"></script>
+		<script>svg4everybody();</script>
+		<title>SVG &lt;symbol&gt; sprite preview | svg-sprite</title>
+		<style>@charset "UTF-8";body{padding:0;margin:0;color:#666;background:#fafafa;font-family:Arial,Helvetica,sans-serif;font-size:1em;line-height:1.4}header{display:block;padding:3em 3em 2em 3em;background-color:#fff}header p{margin:2em 0 0 0}section{border-top:1px solid #eee;padding:2em 3em 0 3em}section ul{margin:0;padding:0}section li{display:inline;display:inline-block;background-color:#fff;position:relative;margin:0 2em 2em 0;vertical-align:top;border:1px solid #ccc;padding:1em 1em 3em 1em;cursor:default}.icon-box{margin:0;width:144px;height:144px;position:relative;background:#ccc url("data:image/gif;base64,R0lGODlhDAAMAIAAAMzMzP///yH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS4wLWMwNjEgNjQuMTQwOTQ5LCAyMDEwLzEyLzA3LTEwOjU3OjAxICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1LjEgV2luZG93cyIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozQjk4OTI0MUY5NTIxMUUyQkJDMEI5NEFEM0Y1QTYwQyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozQjk4OTI0MkY5NTIxMUUyQkJDMEI5NEFEM0Y1QTYwQyI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjNCOTg5MjNGRjk1MjExRTJCQkMwQjk0QUQzRjVBNjBDIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjNCOTg5MjQwRjk1MjExRTJCQkMwQjk0QUQzRjVBNjBDIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2djX1tXU09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWko6KhoJ+enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0c3JxcG9ubWxramloZ2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVEQ0JBQD8+PTw7Ojk4NzY1NDMyMTAvLi0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUUExIREA8ODQwLCgkIBwYFBAMCAQAAIfkEAAAAAAAsAAAAAAwADAAAAhaEH6mHmmzcgzJAUG/NVGrfOZ8YLlABADs=") top left repeat;border:1px solid #ccc;display:table-cell;vertical-align:middle;text-align:center}.icon{display:inline;display:inline-block}h1{margin-top:0}h2{margin:0;padding:0;font-size:1em;font-weight:normal;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:absolute;left:1em;right:1em;bottom:1em}footer{display:block;margin:0;padding:0 3em 3em 3em}footer p{margin:0;font-size:.7em}footer a{color:#0f7595;margin-left:0}</style>
+		
+<!--
+	
+Sprite shape dimensions
+====================================================================================================
+You will need to set the sprite shape dimensions via CSS when you use them as inline SVG, otherwise
+they would become a huge 100% in size. You may use the following dimension classes for doing so.
+They might well be outsourced to an external stylesheet of course.
+
+-->
+
+<style type="text/css">
+	.svg-border_clear-dims { width: 18px; height: 18px; }
+	.svg-border_outer-dims { width: 18px; height: 18px; }
+	.svg-crop_rotate-dims { width: 18px; height: 18px; }
+	.svg-delete_forever-dims { width: 18px; height: 18px; }
+	.svg-explore-dims { width: 18px; height: 18px; }
+	.svg-flip_to_back-dims { width: 18px; height: 18px; }
+	.svg-flip_to_front-dims { width: 18px; height: 18px; }
+	.svg-get_app-dims { width: 18px; height: 18px; }
+	.svg-lock-dims { width: 18px; height: 18px; }
+	.svg-opacity-dims { width: 18px; height: 18px; }
+	.svg-opacity-empty-dims { width: 14px; height: 18px; }
+	.svg-restore-dims { width: 18px; height: 18px; }
+	.svg-transform-dims { width: 18px; height: 18px; }
+	.svg-unlock-dims { width: 18px; height: 18px; }
+</style>
+<!--
+====================================================================================================
+-->
+
+	</head>
+	<body>
+	
+<!--
+	
+Inline <symbol> SVG sprite
+====================================================================================================
+This is an inlined version of the generated SVG sprite. The single images may be <use>d everywhere
+below within this document. Please see
+
+	https://github.com/jkphl/svg-sprite/blob/master/docs/configuration.md#defs--symbol-mode
+
+for further details on how to create this embeddable sprite variant.
+
+-->
+
+<svg width="0" height="0" style="position:absolute">
+		<symbol viewBox="0 0 18 18" id="border_clear" xmlns="http://www.w3.org/2000/svg"><path fill="#0078A8" d="M5.25 3.75h1.5v-1.5h-1.5v1.5zm0 6h1.5v-1.5h-1.5v1.5zm0 6h1.5v-1.5h-1.5v1.5zm3-3h1.5v-1.5h-1.5v1.5zm0 3h1.5v-1.5h-1.5v1.5zm-6 0h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm6 6h1.5v-1.5h-1.5v1.5zm6 3h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm0 6h1.5v-1.5h-1.5v1.5zm0-9h1.5v-1.5h-1.5v1.5zm-6 0h1.5v-1.5h-1.5v1.5zm6-4.5v1.5h1.5v-1.5h-1.5zm-6 1.5h1.5v-1.5h-1.5v1.5zm3 12h1.5v-1.5h-1.5v1.5zm0-6h1.5v-1.5h-1.5v1.5zm0-6h1.5v-1.5h-1.5v1.5z"/></symbol>
+		<symbol viewBox="0 0 18 18" id="border_outer" xmlns="http://www.w3.org/2000/svg"><path fill="#0078A8" d="M9.75 5.25h-1.5v1.5h1.5v-1.5zm0 3h-1.5v1.5h1.5v-1.5zm3 0h-1.5v1.5h1.5v-1.5zm-10.5-6v13.5h13.5V2.25H2.25zm12 12H3.75V3.75h10.5v10.5zm-4.5-3h-1.5v1.5h1.5v-1.5zm-3-3h-1.5v1.5h1.5v-1.5z"/></symbol>
+		<symbol viewBox="0 0 18 18" id="crop_rotate" xmlns="http://www.w3.org/2000/svg"><path fill="#0078A8" d="M5.603 16.117C3.15 14.947 1.394 12.57 1.125 9.75H0C.383 14.37 4.245 18 8.963 18c.172 0 .33-.015.495-.023L6.6 15.113l-.997 1.005zM9.037 0c-.172 0-.33.015-.495.03L11.4 2.888l.998-.998a7.876 7.876 0 0 1 4.477 6.36H18C17.617 3.63 13.755 0 9.037 0zM12 10.5h1.5V6A1.5 1.5 0 0 0 12 4.5H7.5V6H12v4.5zM6 12V3H4.5v1.5H3V6h1.5v6A1.5 1.5 0 0 0 6 13.5h6V15h1.5v-1.5H15V12H6z"/></symbol>
+		<symbol viewBox="0 0 18 18" id="delete_forever" xmlns="http://www.w3.org/2000/svg"><path fill="#c10d0d" d="M4.5 14.25c0 .825.675 1.5 1.5 1.5h6c.825 0 1.5-.675 1.5-1.5v-9h-9v9zm1.845-5.34l1.058-1.058L9 9.443l1.59-1.59 1.058 1.058-1.59 1.59 1.59 1.59-1.058 1.058L9 11.558l-1.59 1.59-1.058-1.058 1.59-1.59-1.597-1.59zM11.625 3l-.75-.75h-3.75l-.75.75H3.75v1.5h10.5V3h-2.625z"/></symbol>
+		<symbol viewBox="0 0 18 18" id="explore" xmlns="http://www.w3.org/2000/svg"><path fill="#0078A8" d="M9 1.5C4.86 1.5 1.5 4.86 1.5 9c0 4.14 3.36 7.5 7.5 7.5 4.14 0 7.5-3.36 7.5-7.5 0-4.14-3.36-7.5-7.5-7.5zM9 15c-3.308 0-6-2.693-6-6 0-3.308 2.692-6 6-6 3.307 0 6 2.692 6 6 0 3.307-2.693 6-6 6zm-4.125-1.875l5.633-2.617 2.617-5.633-5.633 2.617-2.617 5.633zM9 8.175c.457 0 .825.367.825.825A.823.823 0 0 1 9 9.825.823.823 0 0 1 8.175 9c0-.457.367-.825.825-.825z"/></symbol>
+		<symbol viewBox="0 0 18 18" id="flip_to_back" xmlns="http://www.w3.org/2000/svg"><path fill="#0078A8" d="M6.75 5.25h-1.5v1.5h1.5v-1.5zm0 3h-1.5v1.5h1.5v-1.5zm0-6a1.5 1.5 0 0 0-1.5 1.5h1.5v-1.5zm3 9h-1.5v1.5h1.5v-1.5zm4.5-9v1.5h1.5c0-.825-.675-1.5-1.5-1.5zm-4.5 0h-1.5v1.5h1.5v-1.5zm-3 10.5v-1.5h-1.5a1.5 1.5 0 0 0 1.5 1.5zm7.5-3h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm0 6c.825 0 1.5-.675 1.5-1.5h-1.5v1.5zm-10.5-7.5h-1.5v9a1.5 1.5 0 0 0 1.5 1.5h9v-1.5h-9v-9zm7.5-1.5h1.5v-1.5h-1.5v1.5zm0 9h1.5v-1.5h-1.5v1.5z"/></symbol>
+		<symbol viewBox="0 0 18 18" id="flip_to_front" xmlns="http://www.w3.org/2000/svg"><path fill="#0078A8" d="M2.25 9.75h1.5v-1.5h-1.5v1.5zm0 3h1.5v-1.5h-1.5v1.5zm1.5 3v-1.5h-1.5a1.5 1.5 0 0 0 1.5 1.5zm-1.5-9h1.5v-1.5h-1.5v1.5zm9 9h1.5v-1.5h-1.5v1.5zm3-13.5h-7.5a1.5 1.5 0 0 0-1.5 1.5v7.5a1.5 1.5 0 0 0 1.5 1.5h7.5c.825 0 1.5-.675 1.5-1.5v-7.5c0-.825-.675-1.5-1.5-1.5zm0 9h-7.5v-7.5h7.5v7.5zm-6 4.5h1.5v-1.5h-1.5v1.5zm-3 0h1.5v-1.5h-1.5v1.5z"/></symbol>
+		<symbol viewBox="0 0 18 18" id="get_app" xmlns="http://www.w3.org/2000/svg"><path fill="#058dc4" d="M14.662 6.95h-3.15v-4.5H6.787v4.5h-3.15L9.15 12.2l5.512-5.25zM3.637 13.7v1.5h11.025v-1.5H3.637z"/></symbol>
+		<symbol viewBox="0 0 18 18" id="lock" xmlns="http://www.w3.org/2000/svg"><path fill="#0078A8" d="M13.5 6h-.75V4.5C12.75 2.43 11.07.75 9 .75 6.93.75 5.25 2.43 5.25 4.5V6H4.5C3.675 6 3 6.675 3 7.5V15c0 .825.675 1.5 1.5 1.5h9c.825 0 1.5-.675 1.5-1.5V7.5c0-.825-.675-1.5-1.5-1.5zM6.75 4.5A2.247 2.247 0 0 1 9 2.25a2.247 2.247 0 0 1 2.25 2.25V6h-4.5V4.5zM13.5 15h-9V7.5h9V15zM9 12.75c.825 0 1.5-.675 1.5-1.5s-.675-1.5-1.5-1.5-1.5.675-1.5 1.5.675 1.5 1.5 1.5z"/></symbol>
+		<symbol viewBox="0 0 18 18" id="opacity" xmlns="http://www.w3.org/2000/svg"><path fill="#0078A8" d="M13.245 6L9 1.763 4.755 6A6.015 6.015 0 0 0 3 10.23c0 1.5.585 3.082 1.755 4.252a5.993 5.993 0 0 0 8.49 0A6.066 6.066 0 0 0 15 10.23c0-1.5-.585-3.06-1.755-4.23zM4.5 10.5c.008-1.5.465-2.453 1.32-3.3L9 3.952l3.18 3.285c.855.84 1.313 1.763 1.32 3.263h-9z"/></symbol>
+		<symbol viewBox="0 0 14 18" id="opacity-empty" xmlns="http://www.w3.org/2000/svg"><path fill="#0078A8" stroke="#0078A8" stroke-width="1.7" d="M10.708 6.25A5.113 5.113 0 0 1 12.2 9.846c0 1.275-.497 2.62-1.492 3.614a5.094 5.094 0 0 1-7.216 0A5.156 5.156 0 0 1 2 9.846c0-1.275.497-2.601 1.492-3.596L7.1 2.648l3.608 3.602zm0 0L7.1 2.648 3.492 6.25A5.113 5.113 0 0 0 2 9.846c0 1.275.497 2.62 1.492 3.614a5.094 5.094 0 0 0 7.216 0A5.156 5.156 0 0 0 12.2 9.846a5.113 5.113 0 0 0-1.492-3.596z"/></symbol>
+		<symbol viewBox="0 0 18 18" id="restore" xmlns="http://www.w3.org/2000/svg"><path fill="#058dc4" d="M15.67 3.839a.295.295 0 0 0-.22.103l-5.116 3.249V4.179a.342.342 0 0 0-.193-.315.29.29 0 0 0-.338.078L3.806 7.751v-4.63h-.002l.002-.022c0-.277-.204-.502-.456-.502h-.873V2.6c-.253 0-.457.225-.457.503l.002.026v10.883h.005c.021.257.217.454.452.455l.016-.002h.822c.013.001.025.004.038.004.252 0 .457-.225.457-.502a.505.505 0 0 0-.006-.068V9.318l6.001 3.811a.288.288 0 0 0 .332.074.34.34 0 0 0 .194-.306V9.878l5.12 3.252a.288.288 0 0 0 .332.073.34.34 0 0 0 .194-.306V4.18a.358.358 0 0 0-.09-.24.296.296 0 0 0-.218-.1z"/></symbol>
+		<symbol viewBox="0 0 18 18" id="transform" xmlns="http://www.w3.org/2000/svg"><path fill="#0078A8" d="M16.5 13.5V12H6V3h1.5L5.25.75 3 3h1.5v1.5h-3V6h3v6c0 .825.675 1.5 1.5 1.5h6V15h-1.5l2.25 2.25L15 15h-1.5v-1.5h3zM7.5 6H12v4.5h1.5V6c0-.825-.675-1.5-1.5-1.5H7.5V6z"/></symbol>
+		<symbol viewBox="0 0 18 18" id="unlock" xmlns="http://www.w3.org/2000/svg"><path fill="#0078A8" d="M13.5 6h-.75V4.5C12.75 2.43 11.07.75 9 .75 6.93.75 5.25 2.43 5.25 4.5h1.5A2.247 2.247 0 0 1 9 2.25a2.247 2.247 0 0 1 2.25 2.25V6H4.5C3.675 6 3 6.675 3 7.5V15c0 .825.675 1.5 1.5 1.5h9c.825 0 1.5-.675 1.5-1.5V7.5c0-.825-.675-1.5-1.5-1.5zm0 9h-9V7.5h9V15zM9 12.75c.825 0 1.5-.675 1.5-1.5s-.675-1.5-1.5-1.5-1.5.675-1.5 1.5.675 1.5 1.5 1.5z"/></symbol>
+</svg>
+
+<!--
+====================================================================================================
+-->
+		
+		<header>
+			<h1>SVG <code>&lt;symbol&gt;</code> sprite preview</h1>
+			<p>This preview features two methods of using the generated sprite in conjunction with inline SVG. Please have a look at the HTML source for further details and be aware of the following constraints:</p>
+			<ul>
+				<li>Your browser has to <a href="http://caniuse.com/#feat=svg-html5" target="_blank">support inline SVG</a> for these techniques to work.</li>
+				<li>The embedded sprite (A) slightly differs from the generated external one. Please <a href="https://github.com/jkphl/svg-sprite/blob/master/docs/configuration.md#defs--symbol-mode" target="_blank">see the documentation</a> for details on how to create such an embeddable sprite.</li>
+				<li>Internet Explorer up to version 11 doesn't support external sprites for use with inline SVG. For IE 9-11, you may polyfill this functionality with <a href="https://github.com/jonathantneal/svg4everybody" target="_blank">SVG for Everybody</a>.</li>
+			</ul>
+		</header>
+		<section>
+
+<!--
+	
+A) Inline SVG with embedded sprite
+====================================================================================================
+These SVG images make use of fragment identifiers (IDs) and are extracted out of the inline sprite
+embedded above. They may be styled via CSS.
+
+-->
+
+			<h3>A) Inline SVG with embedded sprite</h3>
+			<ul>
+
+				<li title="border_clear">
+					<div class="icon-box">
+						
+						<!-- border_clear -->
+						<svg class="svg-border_clear-dims">
+							<use xlink:href="#border_clear"></use>
+						</svg>
+						
+					</div>
+					<h2>border_clear</h2>
+				</li>
+				<li title="border_outer">
+					<div class="icon-box">
+						
+						<!-- border_outer -->
+						<svg class="svg-border_outer-dims">
+							<use xlink:href="#border_outer"></use>
+						</svg>
+						
+					</div>
+					<h2>border_outer</h2>
+				</li>
+				<li title="crop_rotate">
+					<div class="icon-box">
+						
+						<!-- crop_rotate -->
+						<svg class="svg-crop_rotate-dims">
+							<use xlink:href="#crop_rotate"></use>
+						</svg>
+						
+					</div>
+					<h2>crop_rotate</h2>
+				</li>
+				<li title="delete_forever">
+					<div class="icon-box">
+						
+						<!-- delete_forever -->
+						<svg class="svg-delete_forever-dims">
+							<use xlink:href="#delete_forever"></use>
+						</svg>
+						
+					</div>
+					<h2>delete_forever</h2>
+				</li>
+				<li title="explore">
+					<div class="icon-box">
+						
+						<!-- explore -->
+						<svg class="svg-explore-dims">
+							<use xlink:href="#explore"></use>
+						</svg>
+						
+					</div>
+					<h2>explore</h2>
+				</li>
+				<li title="flip_to_back">
+					<div class="icon-box">
+						
+						<!-- flip_to_back -->
+						<svg class="svg-flip_to_back-dims">
+							<use xlink:href="#flip_to_back"></use>
+						</svg>
+						
+					</div>
+					<h2>flip_to_back</h2>
+				</li>
+				<li title="flip_to_front">
+					<div class="icon-box">
+						
+						<!-- flip_to_front -->
+						<svg class="svg-flip_to_front-dims">
+							<use xlink:href="#flip_to_front"></use>
+						</svg>
+						
+					</div>
+					<h2>flip_to_front</h2>
+				</li>
+				<li title="get_app">
+					<div class="icon-box">
+						
+						<!-- get_app -->
+						<svg class="svg-get_app-dims">
+							<use xlink:href="#get_app"></use>
+						</svg>
+						
+					</div>
+					<h2>get_app</h2>
+				</li>
+				<li title="lock">
+					<div class="icon-box">
+						
+						<!-- lock -->
+						<svg class="svg-lock-dims">
+							<use xlink:href="#lock"></use>
+						</svg>
+						
+					</div>
+					<h2>lock</h2>
+				</li>
+				<li title="opacity">
+					<div class="icon-box">
+						
+						<!-- opacity -->
+						<svg class="svg-opacity-dims">
+							<use xlink:href="#opacity"></use>
+						</svg>
+						
+					</div>
+					<h2>opacity</h2>
+				</li>
+				<li title="opacity-empty">
+					<div class="icon-box">
+						
+						<!-- opacity-empty -->
+						<svg class="svg-opacity-empty-dims">
+							<use xlink:href="#opacity-empty"></use>
+						</svg>
+						
+					</div>
+					<h2>opacity-empty</h2>
+				</li>
+				<li title="restore">
+					<div class="icon-box">
+						
+						<!-- restore -->
+						<svg class="svg-restore-dims">
+							<use xlink:href="#restore"></use>
+						</svg>
+						
+					</div>
+					<h2>restore</h2>
+				</li>
+				<li title="transform">
+					<div class="icon-box">
+						
+						<!-- transform -->
+						<svg class="svg-transform-dims">
+							<use xlink:href="#transform"></use>
+						</svg>
+						
+					</div>
+					<h2>transform</h2>
+				</li>
+				<li title="unlock">
+					<div class="icon-box">
+						
+						<!-- unlock -->
+						<svg class="svg-unlock-dims">
+							<use xlink:href="#unlock"></use>
+						</svg>
+						
+					</div>
+					<h2>unlock</h2>
+				</li>
+			</ul>
+
+<!--
+====================================================================================================
+-->
+
+		</section>
+		<section>
+
+<!--
+	
+B) Inline SVG with external sprite (IE 9-11 with polyfill only)
+====================================================================================================
+These SVG images make use of an URL + fragment identifiers (IDs) and refer to the regular external
+SVG sprite. They may be styled via CSS. (IE 9-11 with polyfill only)
+
+-->
+
+			<h3>B) Inline SVG with external sprite (IE 9-11 with polyfill only)</h3>
+			<ul>
+				
+				<li title="border_clear">
+					<div class="icon-box">
+						
+						<!-- border_clear -->
+						<svg class="svg-border_clear-dims">
+							<use xlink:href="sprite.symbol.svg#border_clear"></use>
+						</svg>
+						
+					</div>
+					<h2>border_clear</h2>
+				</li>
+				<li title="border_outer">
+					<div class="icon-box">
+						
+						<!-- border_outer -->
+						<svg class="svg-border_outer-dims">
+							<use xlink:href="sprite.symbol.svg#border_outer"></use>
+						</svg>
+						
+					</div>
+					<h2>border_outer</h2>
+				</li>
+				<li title="crop_rotate">
+					<div class="icon-box">
+						
+						<!-- crop_rotate -->
+						<svg class="svg-crop_rotate-dims">
+							<use xlink:href="sprite.symbol.svg#crop_rotate"></use>
+						</svg>
+						
+					</div>
+					<h2>crop_rotate</h2>
+				</li>
+				<li title="delete_forever">
+					<div class="icon-box">
+						
+						<!-- delete_forever -->
+						<svg class="svg-delete_forever-dims">
+							<use xlink:href="sprite.symbol.svg#delete_forever"></use>
+						</svg>
+						
+					</div>
+					<h2>delete_forever</h2>
+				</li>
+				<li title="explore">
+					<div class="icon-box">
+						
+						<!-- explore -->
+						<svg class="svg-explore-dims">
+							<use xlink:href="sprite.symbol.svg#explore"></use>
+						</svg>
+						
+					</div>
+					<h2>explore</h2>
+				</li>
+				<li title="flip_to_back">
+					<div class="icon-box">
+						
+						<!-- flip_to_back -->
+						<svg class="svg-flip_to_back-dims">
+							<use xlink:href="sprite.symbol.svg#flip_to_back"></use>
+						</svg>
+						
+					</div>
+					<h2>flip_to_back</h2>
+				</li>
+				<li title="flip_to_front">
+					<div class="icon-box">
+						
+						<!-- flip_to_front -->
+						<svg class="svg-flip_to_front-dims">
+							<use xlink:href="sprite.symbol.svg#flip_to_front"></use>
+						</svg>
+						
+					</div>
+					<h2>flip_to_front</h2>
+				</li>
+				<li title="get_app">
+					<div class="icon-box">
+						
+						<!-- get_app -->
+						<svg class="svg-get_app-dims">
+							<use xlink:href="sprite.symbol.svg#get_app"></use>
+						</svg>
+						
+					</div>
+					<h2>get_app</h2>
+				</li>
+				<li title="lock">
+					<div class="icon-box">
+						
+						<!-- lock -->
+						<svg class="svg-lock-dims">
+							<use xlink:href="sprite.symbol.svg#lock"></use>
+						</svg>
+						
+					</div>
+					<h2>lock</h2>
+				</li>
+				<li title="opacity">
+					<div class="icon-box">
+						
+						<!-- opacity -->
+						<svg class="svg-opacity-dims">
+							<use xlink:href="sprite.symbol.svg#opacity"></use>
+						</svg>
+						
+					</div>
+					<h2>opacity</h2>
+				</li>
+				<li title="opacity-empty">
+					<div class="icon-box">
+						
+						<!-- opacity-empty -->
+						<svg class="svg-opacity-empty-dims">
+							<use xlink:href="sprite.symbol.svg#opacity-empty"></use>
+						</svg>
+						
+					</div>
+					<h2>opacity-empty</h2>
+				</li>
+				<li title="restore">
+					<div class="icon-box">
+						
+						<!-- restore -->
+						<svg class="svg-restore-dims">
+							<use xlink:href="sprite.symbol.svg#restore"></use>
+						</svg>
+						
+					</div>
+					<h2>restore</h2>
+				</li>
+				<li title="transform">
+					<div class="icon-box">
+						
+						<!-- transform -->
+						<svg class="svg-transform-dims">
+							<use xlink:href="sprite.symbol.svg#transform"></use>
+						</svg>
+						
+					</div>
+					<h2>transform</h2>
+				</li>
+				<li title="unlock">
+					<div class="icon-box">
+						
+						<!-- unlock -->
+						<svg class="svg-unlock-dims">
+							<use xlink:href="sprite.symbol.svg#unlock"></use>
+						</svg>
+						
+					</div>
+					<h2>unlock</h2>
+				</li>
+			</ul>
+
+<!--
+====================================================================================================
+-->
+
+		</section>
+		<footer>
+			<p>Generated at Sun, 30 Jun 2019 21:17:39 GMT by <a href="https://github.com/jkphl/svg-sprite" target="_blank">svg-sprite</a>.</p>
+		</footer>
+	</body>
+</html>

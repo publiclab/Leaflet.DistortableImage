@@ -1,0 +1,256 @@
+.ldi .leaflet-pane .leaflet-overlay-pane img {
+  pointer-events: all !important;
+}
+
+.ldi img.leaflet-image-layer.selected {
+  box-shadow: 0px 0px 0px 12px #ffea00;
+}
+
+.ldi-icon {
+  width: 18px;
+  height: 18px;
+  vertical-align: middle;
+  fill: #0078A8;
+}
+
+.ldi-icon.ldi-delete_forever {
+  fill: #c10d0d;
+}
+
+.ldi-icon.ldi-keyboard_open {
+  fill: black;
+}
+
+input.ldi {
+  position:absolute;
+  top:-100px;
+}
+
+.ldi .leaflet-toolbar-icon {
+  box-sizing: initial;
+}
+
+.ldi .leaflet-toolbar-tip {
+  box-sizing: border-box;
+}
+
+.ldi-keymapper {
+  background-color: rgba(255, 255, 255, 1);
+  color: black;
+  padding: 8px;
+  font-size: 13px;
+  letter-spacing: 0.2px;
+  line-height: 1.3;
+  height: auto;
+  width: 235px;
+  border-radius: 21px;
+  overflow: hidden;
+}
+
+.ldi #keymapper-wrapper {
+  position: relative;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: 186px;
+  min-height: 186px;
+}
+
+.ldi .left {
+  width: 46%;
+}
+
+.ldi .left span {
+  overflow-wrap: break-word;
+}
+
+.ldi .right {
+  display: flex;
+  max-width: 40%;
+  flex-wrap: wrap;
+  margin-left: 20px;
+  align-items: flex-start;
+}
+
+.ldi #keymapper-hr {
+  transform: rotate(90deg);
+  position: relative;
+  transform-origin: 0px;
+  left: 50%;
+  margin: -2px;
+  width: 200%;
+}
+
+.ldi-keymapper tr {
+  display: block;
+}
+
+.ldi-keymapper td {
+  padding: 0.2rem;
+  display: flex;
+  width: 100%;
+}
+
+.ldi-keymapper kbd {
+  padding: 0.2rem 0.4rem;
+  color: black; 
+  background-color: rgb(247, 247, 247);
+  border-radius: 3px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -moz-box-shadow: 0 1px 0px rgba(0, 0, 0, 0.2), 0 0 0 2px #ffffff inset;
+  -webkit-box-shadow: 0 1px 0px rgba(0, 0, 0, 0.2), 0 0 0 2px #ffffff inset;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, .2), 0 2px 0 0 rgba(255, 255, 255, .7) inset;
+  text-shadow: 0 0.5px 0 #fff;
+}
+
+#toggle-keymapper {
+  background-color: #fff;
+  padding: 0px;
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  right: 16px;
+  cursor: pointer;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  border: 2px solid rgba(184, 178, 173, 0.9);
+  line-height: 30px;
+}
+
+#toggle-keymapper:hover {
+  background-color: #f4f4f4;
+}
+
+.close-icon#toggle-keymapper {
+  text-transform: uppercase;
+  width: 254px;
+  font-size: 11px;
+  border: 1px solid lightgray;
+  margin: 0;
+  padding: 0;
+  background-color: whitesmoke;
+  border-radius: 0;
+  border-bottom-left-radius: 21px;
+  border-bottom-right-radius: 21px;
+  position: relative;
+  height: 21px;
+  line-height: 22px;
+  color: gray;
+  top: 10px;
+  left: -10px
+}
+
+.close-icon#toggle-keymapper:hover {
+  background-color: #efefef;
+}
+
+a.leaflet-toolbar-icon[title='Loading...'] {
+  background-color: whitesmoke;
+}
+
+.ldi-icon.loader {
+  -webkit-animation: ldi-spin 1.1s infinite;
+  animation: ldi-spin 1.1s infinite;
+  fill: black;
+  width: 22px;
+  height: 22px;
+  cursor: default;
+}
+
+@keyframes ldi-spin {
+  0% {
+    -webkit-transform: rotate(0);
+    transform: rotate(0);
+  }
+  10% {
+    -webkit-transform: rotate(36deg);
+    transform: rotate(36deg);
+  }
+  20% {
+    -webkit-transform: rotate(72deg);
+    transform: rotate(72deg);
+  }
+  30% {
+    -webkit-transform: rotate(108deg);
+    transform: rotate(108deg);
+  }
+  40% {
+    -webkit-transform: rotate(144deg);
+    transform: rotate(144deg);
+  }
+  50% {
+    -webkit-transform: rotate(180deg);
+    transform: rotate(180deg);
+  }
+  60% {
+    -webkit-transform: rotate(216deg);
+    transform: rotate(216deg);
+  }
+  70% {
+    -webkit-transform: rotate(252deg);
+    transform: rotate(252deg);
+  }
+  80% {
+    -webkit-transform: rotate(288deg);
+    transform: rotate(288deg);
+  }
+  90% {
+    -webkit-transform: rotate(324deg);
+    transform: rotate(324deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+@-webkit-keyframes ldi-spin {
+    0% {
+    -webkit-transform: rotate(0);
+    transform: rotate(0);
+  }
+  10% {
+    -webkit-transform: rotate(36deg);
+    transform: rotate(36deg);
+  }
+  20% {
+    -webkit-transform: rotate(72deg);
+    transform: rotate(72deg);
+  }
+  30% {
+    -webkit-transform: rotate(108deg);
+    transform: rotate(108deg);
+  }
+  40% {
+    -webkit-transform: rotate(144deg);
+    transform: rotate(144deg);
+  }
+  50% {
+    -webkit-transform: rotate(180deg);
+    transform: rotate(180deg);
+  }
+  60% {
+    -webkit-transform: rotate(216deg);
+    transform: rotate(216deg);
+  }
+  70% {
+    -webkit-transform: rotate(252deg);
+    transform: rotate(252deg);
+  }
+  80% {
+    -webkit-transform: rotate(288deg);
+    transform: rotate(288deg);
+  }
+  90% {
+    -webkit-transform: rotate(324deg);
+    transform: rotate(324deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}

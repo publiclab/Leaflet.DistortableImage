@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+		<meta name="description" content="Eina per ala confecció de croquis en accident de trànsit"/>
+		<!--<base href="http://www.example.com/page.html"> -->
+		<title>Dissenyador de croquis per a accident de trànsit</title>
+	
+		<link rel="stylesheet" href="css/croquis.css"/>
+		
+		<!-- Llibreries en general -->
+		<link rel="stylesheet" href="plugins/bootstrap.min.css"/>
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+		<!-- include a theme -->
+		<!-- <link rel="stylesheet" href="plugins/themes/default.min.css" /> -->
+		<link rel="stylesheet" href="plugins/alertify.min.css" />
+		
+		<!-- Leaflet CSS-->
+		<link rel="stylesheet" href="plugins/leaflet/leaflet.css" media="screen" title="no title">
+		<!-- Leaflet plug-ins-->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css">
+		<link rel="stylesheet" href="plugins/Leaflet.MapCenterCoord/L.Control.MapCenterCoord.css">
+		<link rel="stylesheet" href="plugins/Leaflet.sidebar/L.Control.Sidebar.css">
+		<link rel="stylesheet" href="plugins/Leaflet.Toolbar/leaflet.toolbar.min.css">
+		<link rel="stylesheet" href="plugins/Leaflet.DistortableImage/leaflet.distortableimage.css" media="screen"   title="no title">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.11.4/css/alertify.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.11.4/css/themes/default.min.css" />
+		
+		<!-- Llibreries en general -->
+		<script src="plugins/jquery.min.js"></script>
+		<script src="plugins/bootstrap.min.js"></script>
+		<script src="plugins/popper.min.js"></script>
+		<script src="plugins/alertify.min.js"></script>
+		<script src="plugins/loadingoverlay.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.11.4/alertify.min.js"></script>
+		
+		<!-- Mobile-detect -->
+		<script src="https://cdn.jsdelivr.net/npm/mobile-detect@1.4.3/mobile-detect.min.js"></script>
+
+		<!-- Proj4js -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.5.0/proj4.js"></script>
+
+     	<!-- leaflet -->
+		<script src="plugins/leaflet/leaflet.js" type="text/javascript" charset="utf-8"></script>
+		<!-- Leaflet plug-ins -->
+	    <script src="plugins/proj4leaflet.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js"></script>
+		<script src="plugins/Leaflet.MapCenterCoord/L.Control.MapCenterCoord.js"></script>
+		<script src="plugins/Leaflet.sidebar/L.Control.Sidebar.js"></script>
+		<script src="plugins/Leaflet.Toolbar/leaflet.toolbar.min.js"></script>
+		<script src="plugins/Leaflet.DistortableImage/leaflet.distortableimage.js"></script>
+		<script src="plugins/Leaflet.easyPrint/bundle.js"></script>
+		
+		
+	</head>
+
+	<body>
+		<section  id="seccio_cro" class="seccio_cro w-100 border border-danger">
+			<div class="container-fluid h-100">
+				<div class="row d-flex flex-row flex-wrap h-100 justify-content-center">
+				
+					<div id="sec_Croquis" class="col-12 h-100 border border-primary">
+					</div>
+
+					<div class="container-fluid w-100 pl_Cro_barra" id="pl_Cro_barra_vehicles">
+						<div class="row w-100">
+							<h4 class="col-10 h4 font-weight-bold">Vehicles:</h4>
+							<img class="pl_Cro_dibuix btn pl_Cro_vehicles" src="svg/vehicles/pl_Cro_elements_vehicles_Cotxe_m.svg" alt="pl_Cro_elements_vehicles_Cotxe_m.svg">
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		
+		<script type="text/javascript">
+			var sec_Croquis = null;
+	
+			var pl_Mobile = null;
+			var isMobile = null;
+
+			function inicialitzar () {
+			    sec_Croquis = document.querySelector("#sec_Croquis");
+			    pl_Mobile = new MobileDetect(window.navigator.userAgent);
+			    isMobile = pl_Mobile.mobile() || pl_Mobile.tablet();
+			 }
+	
+			$(document).ready(function () {
+	
+			    inicialitzar ();   
+					
+				var map;
+			
+				var pl_Cro_bt_vehicles;
+
+				map = L.map('sec_Croquis', {
+			 		center: { lat: 41.72950, lng: 1.83130 },
+					zoom: 18,
+				    minZoom: 1,
+				    maxZoom: 18,
+					continuousWorld: true,
+					worldCopyJump: false,
+					attributionControl: false,
+					boxZoom: false,
+				}).setView([51.505, -0.09], 13);
+
+				map.addGoogleMutant();
+				var layers = [];
+			    map.eachLayer (function (layer) {layers.push (layer)})
+	
+			  	var other = L.layerGroup ([], {
+			    	layers: "other",
+			        transparent: true,
+			        format: "image/png",
+			        minZoom: 1,
+			        maxZoom: 18,
+		   		});
+			  	map.addLayer(other);
+			    
+	
+			    var baseMaps = {
+			    		"Base": layers[0],
+					};
+			    
+				var overlayMaps = {
+		    		"Names": layers[1],
+			        "Other": other,
+			    };
+				
+			    var controlLayers = L.control.layers(baseMaps, overlayMaps);
+			    controlLayers.addTo(map);
+			    
+			    // Elements de la UI
+			        
+			    pl_Cro_bt_vehicles = L.easyButton('<i id="pl_Cro_bt_vehicles" class="fas fa-car cro-fa-button"></i>', function(btn, map){
+			        amagarBarresTotes (pl_Cro_barra_vehicles, function () {
+			            pl_Cro_barra_vehicles.toggle ();
+			        });
+			    }).addTo( map );
+	
+			    // Accions
+			    if (isMobile) {map.locate();}; 
+			    
+			    // Barres laterals
+			    // Barra vehicles
+			    var pl_Cro_barra_vehicles = L.control.sidebar('pl_Cro_barra_vehicles', {
+			        position: 'right',
+			        closeButton: true,
+			        autoPan: false,
+			    });
+			    map.addControl(pl_Cro_barra_vehicles);
+			    
+			    function amagarBarresTotes (t_barra, crida) {
+			        let flg_crida = false;
+			        if (t_barra != pl_Cro_barra_vehicles && pl_Cro_barra_vehicles.isVisible ()) {pl_Cro_barra_vehicles.toggle (); flg_crida = true;};
+			        if (crida) {crida ();};
+			    }
+	
+			    $(".pl_Cro_vehicles").on ("click", function () {
+			        let dibuix = L.distortableImageOverlay($(this).attr ("src"), {
+			            height: 150,
+			            edgeMinWidth: 0,
+			            crossOrigin: false,
+			            actions: [L.DragAction, L.RotateAction, L.OpacityAction, L.RevertAction, L.DeleteAction],
+			            selected: true,
+			            mode: "rotate",
+			            modes: ["rotate, drag"],
+			            keymapper: false,
+			            pane: "overlayPane",
+			            className: "pl_elements pl_vehicles",
+			          }).addTo(other);
+			          
+			    })
+			});
+
+		</script>
+		
+	</body>
+</html>
