@@ -2,3 +2,4 @@ node_modules
 test/*
 Gruntfile.js
 dist
+assets/polyfill/
