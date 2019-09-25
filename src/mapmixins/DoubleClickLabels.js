@@ -54,9 +54,20 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
     }, 250);
   },
 
-  _onDoubleClick: function() {
+  _onDoubleClick: function(e) {
     var map = this._map;
     var labels = map._labels;
+    var oe;
+
+    if (e) { oe = e.originalEvent; }
+    /**
+     * we have a 'dblclick' handler on the image to iterate through its modes, but bc doubleTap is broken
+     * in Leaflet and we have to custom fire the event, I don't know how stop its propagation. So this
+     * line informs this method that this dblclick actually happened for the image.
+     */
+    if (oe && oe.target instanceof HTMLImageElement) {
+      return;
+    }
 
     setTimeout(function() {
       map._clicked = 0;

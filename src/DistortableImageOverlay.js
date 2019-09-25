@@ -18,12 +18,15 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this._selected = this.options.selected;
     this._url = url;
     this.rotation = 0;
+    this._clicked = 0;
+    this._clickTimeout2 = null;
     // window.rotation = this.rotation;
   },
 
   onAdd: function(map) {
     this._map = map;
     if (!this._image) { this._initImage(); }
+    if (!this._events) { this._initEvents(); }
 
     map.on('viewreset', this._reset, this);
 
@@ -158,8 +161,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   select: function(e) {
+    var map = this._map;
     var edit = this.editing;
     var img = this.getElement();
+
     if (e) { L.DomEvent.stopPropagation(e); }
 
     if (!edit.enabled()) { return false; }
@@ -175,6 +180,21 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     if (L.DomUtil.hasClass(img, 'collected') || (e && e.shiftKey)) {
       this.deselect();
       return false;
+    }
+
+    if (e) {
+      var src = e.sourceCapabilities;
+      if (L.Browser.touch && (src && src.firesTouchEvents)) {
+        map._clicked += 1;
+        this._map._clickTimeout = setTimeout(L.bind(function() {
+          if (map._clicked === 1) {
+            map._clicked = 0;
+          } else {
+            map._stamp = L.Util.stamp(this); // allows us to access later exactly which overlay fire the event
+            map._fireDOMEvent(e, 'dblclick');
+          }
+        }, this), 350);
+      }
     }
 
     return this;

@@ -252,12 +252,15 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this._selected = this.options.selected;
     this._url = url;
     this.rotation = 0;
+    this._clicked = 0;
+    this._clickTimeout2 = null;
     // window.rotation = this.rotation;
   },
 
   onAdd: function(map) {
     this._map = map;
     if (!this._image) { this._initImage(); }
+    if (!this._events) { this._initEvents(); }
 
     map.on('viewreset', this._reset, this);
 
@@ -392,8 +395,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   select: function(e) {
+    var map = this._map;
     var edit = this.editing;
     var img = this.getElement();
+
     if (e) { L.DomEvent.stopPropagation(e); }
 
     if (!edit.enabled()) { return false; }
@@ -409,6 +414,21 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     if (L.DomUtil.hasClass(img, 'collected') || (e && e.shiftKey)) {
       this.deselect();
       return false;
+    }
+
+    if (e) {
+      var src = e.sourceCapabilities;
+      if (L.Browser.touch && (src && src.firesTouchEvents)) {
+        map._clicked += 1;
+        this._map._clickTimeout = setTimeout(L.bind(function() {
+          if (map._clicked === 1) {
+            map._clicked = 0;
+          } else {
+            map._stamp = L.Util.stamp(this); // allows us to access later exactly which overlay fire the event
+            map._fireDOMEvent(e, 'dblclick');
+          }
+        }, this), 350);
+      }
     }
 
     return this;
@@ -2051,6 +2071,8 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._mode = overlay.options.mode;
     this._transparent = false;
     this._outlined = false;
+    this._clicked = 0;
+    window._clicked = this._clicked;
 
     L.setOptions(this, options);
 
@@ -2060,6 +2082,8 @@ L.DistortableImage.Edit = L.Handler.extend({
   /* Run on image selection. */
   addHooks: function() {
     var overlay = this._overlay;
+    var map = overlay._map;
+    var img = overlay.getElement();
 
     /* bring the selected image into view */
     overlay.bringToFront();
@@ -2076,21 +2100,19 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this.parentGroup = overlay.eP ? overlay.eP : false;
 
-    L.DomEvent.on(overlay._image, {
-      dblclick: this.nextMode,
-    }, this);
-
     L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
+    L.DomEvent.on(map, 'dblclick', this._catchAndFire, this);
+    L.DomEvent.on(img, 'dblclick', this.nextMode, this);
   },
 
   /* Run on image deselection. */
   removeHooks: function() {
     var overlay = this._overlay;
+    var map = overlay._map;
+    var img = overlay.getElement();
     var eP = this.parentGroup;
 
-    // First, check if dragging exists - it may be off due to locking
-    if (this.dragging) { this.dragging.disable(); }
-    delete this.dragging;
+    this._disableDragging();
     if (this.toolbar) { this._removeToolbar(); }
 
     for (var handle in this._handles) {
@@ -2108,11 +2130,9 @@ L.DistortableImage.Edit = L.Handler.extend({
       eP.editing._removeToolbar();
     }
 
-    L.DomEvent.off(overlay._image, {
-      dblclick: this.nextMode,
-    }, this);
-
     L.DomEvent.off(window, 'keydown', this._onKeyDown, this);
+    L.DomEvent.off(map, 'dblclick', this._catchAndFire, this);
+    L.DomEvent.off(img, 'dblclick', this.nextMode, this);
   },
 
   disable: function() {
@@ -2321,6 +2341,13 @@ L.DistortableImage.Edit = L.Handler.extend({
     };
   },
 
+  _disableDragging: function() {
+    if (this.dragging) {
+      this.dragging.disable();
+      delete this.dragging;
+    }
+  },
+
   _scaleMode: function() {
     this.setMode('scale');
   },
@@ -2499,10 +2526,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     if (this.currentHandle) { map.removeLayer(this.currentHandle); }
     this._mode = 'lock';
-    if (this.dragging) {
-      this.dragging.disable();
-      delete this.dragging;
-    }
+    this._disableDragging();
     this._updateHandle();
     this._refresh();
   },
@@ -2607,6 +2631,26 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
   },
 
+  // this event catches fakely generated map doubleclicks on touchscreens and calls
+  // nextMode on the original overlay that fired it, accessed via a stamp given to it
+  // right before the doubleclick is fired. (see L.DistortableImageOverlay 'select')
+  _catchAndFire: function(e) {
+    var map = this._overlay._map;
+    var ov = map._layers[map._stamp];
+    var oe;
+
+    if (e) { oe = e.originalEvent; }
+
+    if (oe && oe.target instanceof HTMLImageElement) {
+      setTimeout(function() {
+        map._clicked = 0;
+        clearTimeout(map._clickTimeout);
+      }, 0);
+
+      ov.editing.nextMode(e);
+    }
+  },
+
   _updateHandle: function() {
     var ov = this._overlay;
     var map = ov._map;
@@ -2648,6 +2692,7 @@ L.DistortableImage.Edit = L.Handler.extend({
       if (this.isMode('lock') && !this.dragging) { this._enableDragging(); }
       if (this.currentHandle) { map.removeLayer(this.currentHandle); }
       this._mode = newMode;
+      if (this.isMode('lock') && this.dragging) { this._disableDragging(); }
       this._updateHandle();
       this._refresh();
       return this;
@@ -2894,9 +2939,8 @@ L.DistortableCollection.Edit = L.Handler.extend({
           if (edit.currentHandle) { map.removeLayer(edit.currentHandle); }
           // our collection group has unlock mode but our instances just consider it no mode ('')
           edit._mode = newMode === 'unlock' ? '' : newMode;
-          if (edit.isMode('lock') && edit.dragging) {
-            edit.dragging.disable();
-            delete edit.dragging;
+          if (edit.isMode('lock')) {
+            edit._disableDragging();
           }
           edit._updateHandle();
         }
@@ -3274,7 +3318,17 @@ L.Map.DoubleClickZoom.include({
 
   _onDoubleClick: function(e) {
     var map = this._map;
-    var oe = e.originalEvent;
+    var oe;
+
+    if (e) { oe = e.originalEvent; }
+    /**
+     * we have a 'dblclick' handler on the image to iterate through its modes, but bc doubleTap is broken
+     * in Leaflet and we have to custom fire the event, I don't know how stop its propagation. So this
+     * line informs this method that this dblclick actually happened for the image.
+     */
+    if (oe && oe.target instanceof HTMLImageElement) {
+      return;
+    }
 
     setTimeout(function() {
       map._clicked = 0;
@@ -3484,9 +3538,20 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
     }, 250);
   },
 
-  _onDoubleClick: function() {
+  _onDoubleClick: function(e) {
     var map = this._map;
     var labels = map._labels;
+    var oe;
+
+    if (e) { oe = e.originalEvent; }
+    /**
+     * we have a 'dblclick' handler on the image to iterate through its modes, but bc doubleTap is broken
+     * in Leaflet and we have to custom fire the event, I don't know how stop its propagation. So this
+     * line informs this method that this dblclick actually happened for the image.
+     */
+    if (oe && oe.target instanceof HTMLImageElement) {
+      return;
+    }
 
     setTimeout(function() {
       map._clicked = 0;

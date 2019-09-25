@@ -42,21 +42,18 @@ describe('L.DistortableImage.Edit', function() {
   it('Should keep handles on the map in sync with the corners of the image.', function() {
     var corners = overlay.getCorners();
     var edit = overlay.editing;
-    var img = overlay.getElement();
 
     edit.enable();
     // this test applies to a selected image
-    chai.simulateEvent(img, chai.mouseEvents.Click);
-
+    simulateEvent(overlay.getElement(), 'click');
+    
     overlay.setCorner(0, L.latLng(41.7934, -87.6252));
-
     /* Warp handles are currently on the map; they should have been updated. */
     edit.currentHandle.eachLayer(function(handle) {
       expect(handle.getLatLng()).to.be.closeToLatLng(corners[handle._corner]);
     });
 
     edit.setMode('freeRotate');
-
     /* After we toggle modes, the freeRotateHandles are on the map and should be synced. */
     edit.currentHandle.eachLayer(function(handle) {
       expect(handle.getLatLng()).to.be.closeToLatLng(corners[handle._corner]);
@@ -76,50 +73,41 @@ describe('L.DistortableImage.Edit', function() {
       edit.setMode('distort');
       var idx = modes.indexOf('distort');
 
-      var newIdx = modes.indexOf(edit.nextMode()._mode)
-      expect(newIdx).to.equal((idx + 1) % modes.length)
+      var newIdx = modes.indexOf(edit.nextMode()._mode);
+      expect(newIdx).to.equal((idx + 1) % modes.length);
     });
 
     it('Will also select the image when triggerd by dblclick', function() {
       overlay.deselect();
-      expect(overlay.isSelected()).to.be.false
+      expect(overlay.isSelected()).to.be.false;
 
-      chai.simulateEvent(overlay.getElement(), chai.mouseEvents.Dblclick);
+      simulateEvent(overlay.getElement(), 'dblclick');
       setTimeout(function () {
-        expect(overlay.isSelected()).to.be.true
+        expect(overlay.isSelected()).to.be.true;
       }, 3000);
     });
 
     it('It prevents dblclick events from propagating to the map', function() {
-      var overlaySpy = sinon.spy();
-      var mapSpy = sinon.spy();
-
-      overlay.on('dblclick', overlaySpy);
-      map.on('dblclick', mapSpy);
-      
-      overlay.fire('dblclick');
-
-      setTimeout(function () {
-        expect(overlay.editing.nextMode).to.have.been.called;
-        expect(L.DomEvent.stop).to.have.been.called;
-
-        expect(overlaySpy.called).to.be.true;
-        expect(mapSpy.notCalled).to.be.true;
-      }, 3000);
+      var mapListen = sinon.spy();
+      map.on('dblcick', mapListen);
+      simulateEvent(overlay.getElement(), 'dblclick');
+      expect(mapListen.called).not.to.be.ok;
     });
 
     it('Should call #setMode', function () {
-      var overlaySpy = sinon.spy();
-      overlay.on('dblclick', overlaySpy);
+      var edit = overlay.editing;
+      var spy = sinon.spy(edit, 'setMode');
+      simulateEvent(overlay.getElement(), 'dblclick');
+      expect(spy.called).to.be.ok;
 
-      overlay.fire('dblclick');
-      expect(overlay.editing.setMode).to.have.been.called;
+      edit.setMode.restore();
     });
 
     it('Will still update the mode of an initialized image with suppressToolbar: true', function() {
+      var edit = ov2.editing;
       ov2.select();
-      expect(ov2.editing.toolbar).to.be.undefined
-      expect(ov2.editing.nextMode()).to.be.ok
+      expect(edit.toolbar).to.be.undefined;
+      expect(edit.nextMode()).to.be.ok;
     })
   });
 
@@ -127,28 +115,29 @@ describe('L.DistortableImage.Edit', function() {
     it('Will return false if the passed value is not in the image\'s modes array', function() {
       var edit = overlay.editing;
       overlay.select();
-      expect(edit.setMode('lock')).to.be.ok
-      expect(edit.setMode('blah')).to.be.false
+      expect(edit.setMode('lock')).to.be.ok;
+      expect(edit.setMode('blah')).to.be.false;
     });
 
     it('Will return false if image editing is not enabled', function() {
       var edit = overlay.editing;
       edit.disable();
-      expect(edit.setMode('lock')).to.be.false
+      expect(edit.setMode('lock')).to.be.false;
     });
 
     it('Will return false if the passed mode is already the images mode', function() {
       var edit = overlay.editing;
       overlay.select();
       edit.setMode('distort');
-      expect(edit.setMode('lock')).to.be.ok
-      expect(edit.setMode('lock')).to.be.false
+      expect(edit.setMode('lock')).to.be.ok;
+      expect(edit.setMode('lock')).to.be.false;
     });
 
     it('Will still update the mode of an initialized image with suppressToolbar: true', function () {
+      var edit = ov2.editing;
       ov2.select();
-      expect(ov2.editing.toolbar).to.be.undefined
-      expect(ov2.editing.setMode('lock')).to.be.ok
+      expect(edit.toolbar).to.be.undefined;
+      expect(edit.setMode('lock')).to.be.ok;
     })
   });
 
@@ -156,18 +145,16 @@ describe('L.DistortableImage.Edit', function() {
     it('Adds the passed tool to the end of the toolbar array', function() {
       var edit = overlay.editing;
       var tool = L.StackAction;
-
-      expect(edit.hasTool(tool)).to.be.false
+      expect(edit.hasTool(tool)).to.be.false;
       edit.addTool(tool);
-      expect(edit.hasTool(tool)).to.be.true
+      expect(edit.hasTool(tool)).to.be.true;
     });
 
     it('Does not add a tool that is already present', function() {
       var edit = overlay.editing;
       var tool = L.StackAction;
-
-      expect(edit.addTool(tool)).to.be.ok
-      expect(edit.addTool(tool)).to.be.false
+      expect(edit.addTool(tool)).to.be.ok;
+      expect(edit.addTool(tool)).to.be.false;
     });
   });
 
@@ -175,41 +162,35 @@ describe('L.DistortableImage.Edit', function() {
     it('Removes the passed tool from the toolbar', function() {
       var edit = overlay.editing;
       var tool = L.BorderAction;
-
-      expect(edit.hasTool(tool)).to.be.true
+      expect(edit.hasTool(tool)).to.be.true;
       edit.removeTool(tool);
-      expect(edit.hasTool(tool)).to.be.false
+      expect(edit.hasTool(tool)).to.be.false;
     });
 
     it('Updates the modes & handles object if the removed tool is also a mode', function () {
       var edit = overlay.editing;
       var tool = L.ScaleAction;
-
-      expect(edit.hasTool(tool)).to.be.true
-      expect(edit.getModes()).to.include.all.keys('scale');
-      expect(edit._handles).to.include.all.keys('scale');
+      expect(edit.hasMode('scale')).to.be.true;
       edit.removeTool(tool);
-      expect(edit.hasTool(tool)).to.be.false
-      expect(edit.getModes()).to.not.have.all.keys('scale');
-      expect(edit._handles).to.not.have.all.keys('scale');
+      expect(edit.hasMode('scale')).to.be.false;
     });
 
     it('If the mode removed was the last it sets mode to empty string', function () {
       var edit = overlay.editing;
+
       for (var mode in L.DistortableImage.Edit.MODES) {
         edit.removeTool(L.DistortableImage.Edit.MODES[mode]);
-        delete edit._modes[mode];
       }
 
       expect(edit.getModes()).to.be.empty;
+      expect(edit.getMode()).to.eql('');
     });
 
     it('Returns false if the tool is not in the toolbar', function() {
-      var edit = overlay.editing;
       var tool = L.StackAction;
-
-      expect(edit.hasTool(tool)).to.be.false
-      expect(edit.removeTool(tool)).to.be.false
+      var edit = overlay.editing;
+      expect(edit.hasTool(tool)).to.be.false;
+      expect(edit.removeTool(tool)).to.be.false;
     });
   });
 });

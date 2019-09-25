@@ -207,9 +207,8 @@ L.DistortableCollection.Edit = L.Handler.extend({
           if (edit.currentHandle) { map.removeLayer(edit.currentHandle); }
           // our collection group has unlock mode but our instances just consider it no mode ('')
           edit._mode = newMode === 'unlock' ? '' : newMode;
-          if (edit.isMode('lock') && edit.dragging) {
-            edit.dragging.disable();
-            delete edit.dragging;
+          if (edit.isMode('lock')) {
+            edit._disableDragging();
           }
           edit._updateHandle();
         }
