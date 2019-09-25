@@ -194,10 +194,6 @@ a.leaflet-toolbar-icon.disabled {
   pointer-events: none;
 }
 
-/* a.leaflet-toolbar-icon.lock.selected-mode .ldi-icon {
-  fill: white;
-} */
-
 a.leaflet-toolbar-icon[title='Loading...'] {
   background-color: whitesmoke;
   pointer-events: none;

@@ -616,7 +616,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   hasMode: function(mode) {
-    return this._modes[mode];
+    return !!this._modes[mode];
   },
 
   getModes: function() {

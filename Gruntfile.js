@@ -120,6 +120,7 @@ module.exports = function(grunt) {
     concat: {
       dist: {
         src: [
+          'assets/polyfill/*.js',
           'src/util/*.js',
           'src/DistortableImageOverlay.js',
           'src/DistortableCollection.js',

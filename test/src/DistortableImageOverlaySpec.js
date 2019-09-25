@@ -109,8 +109,7 @@ describe('L.DistortableImageOverlay', function() {
 
     it('It should hide an unlocked image\'s handles by updating their opacity', function () {
       var edit = overlay.editing;
-      // then trigger deselect
-      map.fire('click');
+      map.fire('click');  // trigger deselect
 
       setTimeout(function() {
         edit.currentHandle.eachLayer(function(handle) {
@@ -122,8 +121,7 @@ describe('L.DistortableImageOverlay', function() {
 
     it('But it should not hide a locked image\'s handles', function () {
       var edit = overlay.editing;
-      // switch to lock handles
-      edit._lock();
+      edit._lock(); // switch to lock handles
       map.fire('click');
 
       edit.currentHandle.eachLayer(function(handle) {
