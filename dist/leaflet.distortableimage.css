@@ -2,14 +2,15 @@
   pointer-events: all !important;
 }
 
-.ldi .leaflet-pane .leaflet-overlay-pane .wrapper-wrapper {
-  -webkit-filter: drop-shadow(2px 4px 6px black);
-  filter: drop-shadow(2px 4px 6px black);
-}
+/* .ldi .leaflet-pane .leaflet-overlay-pane .wrapper {
+  -webkit-filter: drop-shadow(2px 4px 6px #282323c9);
+  filter: drop-shadow(2px 4px 6px #282323c9);
+} */
 
-.ldi .leaflet-pane .leaflet-overlay-pane .wrapper-wrapper .lock {
-  filter: none;
-}
+/* .ldi .leaflet-pane .leaflet-overlay-pane .wrapper.lock {
+  -webkit-filter: contrast(0.8);
+  filter: contrast(0.8);
+} */
 
 .ldi-icon {
   width: 18px;
@@ -159,25 +160,29 @@ a.leaflet-toolbar-icon.freeRotate.selected-mode {
   border: inset 0.5px lightgray;
 }
 
-a.leaflet-toolbar-icon.rotate.selected-mode .ldi-icon,
-a.leaflet-toolbar-icon.freeRotate.selected-mode .ldi-icon {
-  fill: white;
-}
-
 a.leaflet-toolbar-icon.distort.selected-mode,
 a.leaflet-toolbar-icon.scale.selected-mode {
   background-color: hsla(239, 97%, 55%, 0.75);
   border: inset 0.5px lightgray;
 }
 
-a.leaflet-toolbar-icon.distort.selected-mode .ldi-icon,
-a.leaflet-toolbar-icon.scale.selected-mode .ldi-icon {
-  fill: white;
-}
-
 a.leaflet-toolbar-icon.lock.selected-mode {
   background-color: hsla(0, 0%, 1%, 0.7490196078431373);
   border: inset 0.5px lightgray;
+}
+
+a.leaflet-toolbar-icon.unlock.selected-mode {
+  background-color: hsla(54, 100%, 50%, 0.65);
+  border: inset 0.5px lightgray;
+}
+
+a.leaflet-toolbar-icon.rotate.selected-mode .ldi-icon,
+a.leaflet-toolbar-icon.freeRotate.selected-mode .ldi-icon,
+a.leaflet-toolbar-icon.distort.selected-mode .ldi-icon,
+a.leaflet-toolbar-icon.scale.selected-mode .ldi-icon,
+a.leaflet-toolbar-icon.lock.selected-mode .ldi-icon,
+a.leaflet-toolbar-icon.unlock.selected-mode .ldi-icon {
+  fill: white;
 }
 
 li.disabled {
@@ -189,9 +194,9 @@ a.leaflet-toolbar-icon.disabled {
   pointer-events: none;
 }
 
-a.leaflet-toolbar-icon.lock.selected-mode .ldi-icon {
+/* a.leaflet-toolbar-icon.lock.selected-mode .ldi-icon {
   fill: white;
-}
+} */
 
 a.leaflet-toolbar-icon[title='Loading...'] {
   background-color: whitesmoke;

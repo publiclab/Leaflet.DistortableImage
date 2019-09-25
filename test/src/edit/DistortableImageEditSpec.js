@@ -198,10 +198,9 @@ describe('L.DistortableImage.Edit', function() {
       var edit = overlay.editing;
       for (var mode in L.DistortableImage.Edit.MODES) {
         edit.removeTool(L.DistortableImage.Edit.MODES[mode]);
+        delete edit._modes[mode];
       }
 
-      expect(edit.getMode()).to.eql('');
-      expect(edit._handles).to.be.empty;
       expect(edit.getModes()).to.be.empty;
     });
 

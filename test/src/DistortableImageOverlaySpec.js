@@ -71,19 +71,19 @@ describe('L.DistortableImageOverlay', function() {
       }, 3000);
     });
 
-    it('Returns false if image editing is disabled', function() {
-      overlay.editing.disable();
-      expect(overlay.select()).to.be.false
-      expect(overlay._selected).to.be.false
-      expect(overlay.editing.toolbar).to.be.undefined
-    });
+    // it('Returns false if image editing is disabled', function() {
+    //   overlay.editing.disable();
+    //   expect(overlay.select()).to.be.false
+    //   expect(overlay._selected).to.be.false
+    //   expect(overlay.editing.toolbar).to.be.undefined
+    // });
     
-    it('Returns false if the multiple image editing interface is on', function() {
-      L.DomUtil.addClass(overlay.getElement(), 'collected');
-      expect(overlay.select()).to.be.false
-      expect(overlay._selected).to.be.false
-      expect(overlay.editing.toolbar).to.be.false
-    });
+    // it('Returns false if the multiple image editing interface is on', function() {
+    //   L.DomUtil.addClass(overlay.getElement(), 'collected');
+    //   expect(overlay.select()).to.be.false
+    //   expect(overlay._selected).to.be.false
+    //   expect(overlay.editing.toolbar).to.be.false
+    // });
   });
 
   describe('#deselect', function() {
@@ -165,10 +165,10 @@ describe('L.DistortableImageOverlay', function() {
       expect(overlay._selected).to.be.false
     });
 
-    it('Returns false if image is not selected', function() {
-      expect(overlay.deselect()).to.be.ok
-      expect(overlay.deselect()).to.be.false
-    });
+    // it('Returns false if image is not selected', function() {
+    //   expect(overlay.deselect()).to.be.ok
+    //   expect(overlay.deselect()).to.be.false
+    // });
   });
 
   describe('#isSelected', function () {

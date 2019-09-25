@@ -36,9 +36,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
     // Have to wait for the image to load because need to access its w/h
     L.DomEvent.on(this._image, 'load', function() {
-      // To apply the drop shadow to a container element. Setting it directly on img results in bugs.
-      var wrap2 = document.querySelector('.wrapper-wrapper');
-      wrap2.appendChild(this._image);
+      this.getPane().appendChild(this._image);
       this._initImageDimensions();
       this._reset();
       /* Initialize default corners if not already set */
@@ -150,18 +148,20 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   deselect: function() {
     var edit = this.editing;
 
-    if (!edit.enabled() || !this.isSelected()) { return false; }
+    if (!edit.enabled()) { return false; }
 
     edit._removeToolbar();
     edit._hideMarkers();
     this._selected = false;
+
     return this;
   },
 
   select: function(e) {
     var edit = this.editing;
-
+    var img = this.getElement();
     if (e) { L.DomEvent.stopPropagation(e); }
+
     if (!edit.enabled()) { return false; }
 
     // this ensures deselection of all other images, allowing us to keep collection group optional
@@ -172,7 +172,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     edit._showMarkers();
 
     // we run the selection logic 1st anyway because the collection group's _addToolbar method depends on it
-    if (L.DomUtil.hasClass(this.getElement(), 'collected')) {
+    if (L.DomUtil.hasClass(img, 'collected') || (e && e.shiftKey)) {
       this.deselect();
       return false;
     }
@@ -477,8 +477,4 @@ L.Map.addInitHook(function() {
   if (!L.DomUtil.hasClass(this.getContainer(), 'ldi')) {
     L.DomUtil.addClass(this.getContainer(), 'ldi');
   }
-
-  this.wrap2 = document.createElement('div');
-  this.wrap2.className = 'wrapper-wrapper';
-  this.getPane('overlayPane').appendChild(this.wrap2);
 });

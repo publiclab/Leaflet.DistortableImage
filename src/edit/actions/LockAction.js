@@ -32,6 +32,9 @@ L.LockAction = L.EditAction.extend({
     var edit = this._overlay.editing;
 
     if (edit instanceof L.DistortableImage.Edit) { edit._toggleLockMode(); }
-    else { edit._lockGroup(); }
+    else {
+      // L.DomUtil.addClass(this._link, 'selected-mode');
+      edit._lockGroup();
+    }
   },
 });

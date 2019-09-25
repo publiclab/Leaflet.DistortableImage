@@ -8,6 +8,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
   initialize: function(group, options) {
     this._group = group;
+    this._mode = '';
     L.setOptions(this, options);
 
     L.distortableImage.group_action_map.Escape = '_decollectAll';
@@ -131,29 +132,13 @@ L.DistortableCollection.Edit = L.Handler.extend({
   },
 
   _unlockGroup: function() {
-    this._group.eachLayer(function(layer) {
-      if (this._group.isCollected(layer)) {
-        var edit = layer.editing;
-        if (edit.isMode('lock')) {
-          edit._unlock();
-          // unlock updates the layer's handles; deselect to ensure they're hidden
-          layer.deselect();
-        }
-      }
-    }, this);
+    this._mode = 'unlock';
+    this._setModeForLayers('unlock');
   },
 
   _lockGroup: function() {
-    this._group.eachLayer(function(layer) {
-      if (this._group.isCollected(layer) ) {
-        var edit = layer.editing;
-        if (!edit.isMode('lock')) {
-          edit._lock();
-          // map.addLayer also deselects the image, so we reselect here
-          L.DomUtil.addClass(layer.getElement(), 'collected');
-        }
-      }
-    }, this);
+    this._mode = 'lock';
+    this._setModeForLayers('lock');
   },
 
   _addCollections: function(e) {
@@ -201,6 +186,49 @@ L.DistortableCollection.Edit = L.Handler.extend({
     }
 
     if (e) { L.DomEvent.stopPropagation(e); }
+  },
+
+  _setModeForLayers: function(newMode) {
+    var group = this._group;
+    var map = group._map;
+
+    if (!this._group.anyCollected()) { return false; }
+
+    if (this.hasTool(L.DistortableCollection.Edit.MODES[newMode])) {
+      if (this.toolbar) { this.toolbar.clickTool(newMode); }
+      this._group.eachLayer(function(layer) {
+        var edit = layer.editing;
+
+        if (!this._group.isCollected(layer)) { return false; }
+        // prefer to use the already created setMode method for single instances
+        if (edit.hasMode(newMode)) { edit.setMode(newMode); }
+        else {
+          if (edit.isMode('lock') && !edit.dragging) { edit._enableDragging(); }
+          if (edit.currentHandle) { map.removeLayer(edit.currentHandle); }
+          // our collection group has unlock mode but our instances just consider it no mode ('')
+          edit._mode = newMode === 'unlock' ? '' : newMode;
+          if (edit.isMode('lock') && edit.dragging) {
+            edit.dragging.disable();
+            delete edit.dragging;
+          }
+          edit._updateHandle();
+        }
+
+        this._refresh();
+        // map.addLayer also deselects the image, so we reselect here
+        L.DomUtil.addClass(layer.getElement(), 'collected');
+        // we want to ensure its single interface markers still hidden except if they're lock
+        // nice to see lock handles in collection mode.
+        if (!edit.isMode('lock')) { layer.deselect(); }
+        return this;
+      }, this);
+    }
+    return false;
+  },
+
+  _refresh: function() {
+    if (this.toolbar) { this._removeToolbar(); }
+    this._addToolbar();
   },
 
   startExport: function(opts) {

@@ -28,7 +28,6 @@ L.EditAction = L.Toolbar2.Action.extend({
     var className = iconOptions.className;
     var edit = this._overlay.editing;
 
-    this.toolbar = toolbar;
     this._icon = L.DomUtil.create('li', '', container);
     this._link = L.DomUtil.create('a', '', this._icon);
 
