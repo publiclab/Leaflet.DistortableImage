@@ -771,7 +771,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     if (this.editable) { this.editing.enable(); }
 
     this._animHandles = L.layerGroup();
-    this._layerCount = 0;
+    // this._layerCount = 0;
 
     /**
      * although we have a DistortableCollection.Edit class that handles collection events to keep our code managable,
@@ -802,8 +802,8 @@ L.DistortableCollection = L.FeatureGroup.extend({
       contextmenu: this._longPressMultiSelect,
     }, this);
 
-    this._animHandles.addLayer(new L.MutationAnim(layer._image, this, this._layerCount));
-    this._layerCount++;
+    this._animHandles.addLayer(new L.MutationAnim(layer._image, this));
+    // this._layerCount++;
   },
 
   _removeEvents: function(e) {
@@ -1318,6 +1318,7 @@ L.MutationAnim.addInitHook(function() {
     }, this);
   }, this);
 
+  // polyfill covers prefix handling: https://github.com/web-animations/web-animations-js
   this._element._animation = this._element.animate({
     filter: ['none', 'drop-shadow(0 0 1rem #ffea00)', 'drop-shadow(0 0 2.5rem #ffea00)', 'none']}, {
     duration: 2500,
@@ -1401,6 +1402,7 @@ L.RotateScaleHandle = L.EditHandle.extend({
 L.LockHandle = L.EditHandle.extend({
   options: {
     TYPE: 'lock',
+    interactive: false,
     icon: L.icon({
       // eslint-disable-next-line max-len
       iconUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAD8SURBVO3BPU7CYAAA0AdfjIcQlRCQBG7C3gk2uIPG2RC3Dk16Gz0FTO1WZs/gwGCMP/2+xsSl7+n1er1Iz9LtRQjaPeMeO+TinLDCJV78YqjdA04YodKuxhUaPGoRxMmxwRQZSt87Yo4KExGCeAUyLLFB4bMacxywEClIU2KDKXbInTUYo8JCgoFuGoxQO5uiwY1EA91VmDqrcKeDoX8WdNNgjApvmGGLXKIgXY0xGkxQYItrrFFIEKQ5Yo4KEx9yrDFDhlKkIF6NOQ5Y+KpAhiXWKEQI4pxwiwoLPyuxwQw75FoE7fZYocFEuwI7jHCBV39gL92TXq/Xi/AOcmczZmaIMScAAAAASUVORK5CYII=',
@@ -2293,7 +2295,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (!ov.isSelected() && this.currentHandle) {
       this.currentHandle.eachLayer(function(handle) {
         handle.setOpacity(0);
-        handle.dragging.disable();
+        if (handle.dragging) { handle.dragging.disable(); }
       });
 
       if (!this.isMode('lock')) { this._enableDragging(); }
@@ -2615,8 +2617,8 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._mode = 'lock';
 
     L.DomUtil.addClass(wrap, 'lock');
-    this._disableDragging();
     this._updateHandle();
+    this._disableDragging();
     this._refresh();
   },
 

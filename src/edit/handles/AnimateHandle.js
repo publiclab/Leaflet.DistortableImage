@@ -53,6 +53,7 @@ L.MutationAnim.addInitHook(function() {
     }, this);
   }, this);
 
+  // polyfill covers prefix handling: https://github.com/web-animations/web-animations-js
   this._element._animation = this._element.animate({
     filter: ['none', 'drop-shadow(0 0 1rem #ffea00)', 'drop-shadow(0 0 2.5rem #ffea00)', 'none']}, {
     duration: 2500,

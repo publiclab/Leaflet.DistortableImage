@@ -154,7 +154,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (!ov.isSelected() && this.currentHandle) {
       this.currentHandle.eachLayer(function(handle) {
         handle.setOpacity(0);
-        handle.dragging.disable();
+        if (handle.dragging) { handle.dragging.disable(); }
       });
 
       if (!this.isMode('lock')) { this._enableDragging(); }
@@ -476,8 +476,8 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._mode = 'lock';
 
     L.DomUtil.addClass(wrap, 'lock');
-    this._disableDragging();
     this._updateHandle();
+    this._disableDragging();
     this._refresh();
   },
 
