@@ -142,7 +142,8 @@ L.DistortableCollection.Edit = L.Handler.extend({
     if (e) { L.DomEvent.stopPropagation(e); }
   },
 
-  _unlockGroup: function() {
+  unlockGroup: function() {
+    if (!this.hasTool(L.UnlockAction)) { return false; }
     this._mode = 'unlock';
     this._group.eachLayer(function(layer) {
       var edit = layer.editing;
@@ -155,9 +156,11 @@ L.DistortableCollection.Edit = L.Handler.extend({
       this.toolbar.clickTool('unlock');
       this._refresh();
     }
+    return this;
   },
 
-  _lockGroup: function() {
+  lockGroup: function() {
+    if (!this.hasTool(L.LockAction)) { return false; }
     this._mode = 'lock';
     this._group.eachLayer(function(layer) {
       var edit = layer.editing;
@@ -169,6 +172,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
       this.toolbar.clickTool('lock');
       this._refresh();
     }
+    return this;
   },
 
   _addCollections: function(e) {
@@ -215,9 +219,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     this._group.eachLayer(function(lay) {
       if (lay !== layer) {
         var div = lay.getElement().parentNode;
-        if (!L.DomUtil.hasClass(div, 'wrapcollect')) {
-          L.DomUtil.addClass(div, 'wrapcollect');
-        }
+        L.DomUtil.addClass(div, 'wrapcollect');
       }
     });
     if (layer) { layer.deselect(); }
@@ -228,15 +230,15 @@ L.DistortableCollection.Edit = L.Handler.extend({
     this._group.eachLayer(function(lay) {
       if (lay !== layer) {
         var div = lay.getElement().parentNode;
-        if (L.DomUtil.hasClass(div, 'wrapcollect')) {
-          L.DomUtil.removeClass(div, 'wrapcollect');
-        }
+        L.DomUtil.removeClass(div, 'wrapcollect');
       }
     });
     if (layer) { layer.select(); }
   },
 
   _refresh: function() {
+    var group = this._group;
+    if (group.options.suppressToolbar && !this.toolbar) { return; }
     if (this.toolbar) { this._removeToolbar(); }
     this._addToolbar();
   },

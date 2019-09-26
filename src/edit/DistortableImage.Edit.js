@@ -209,13 +209,10 @@ L.DistortableImage.Edit = L.Handler.extend({
         for (var mode in L.DistortableImage.Edit.MODES) {
           if (L.DistortableImage.Edit.MODES[mode] === value) {
             delete this._modes[mode];
-
             this._nextOrNada(mode);
+            return true;
           }
         }
-        return this;
-      } else {
-        return false;
       }
     }, this);
     if (!this._overlay.isSelected()) { this._removeToolbar(); }
@@ -223,15 +220,15 @@ L.DistortableImage.Edit = L.Handler.extend({
     else { return false; }
   },
 
-  // set the mode to the next mode or if that was the last one remove all
-  // handles and set them and mode to ''
+  // set the mode to the next mode or if that was the last one set mode to ''
   _nextOrNada: function(mode) {
-    if (this.getMode() === mode) {
-      if (this.getModes().length >= 1) {
+    if (this.isMode(mode)) {
+      if (Object.keys(this.getModes()).length >= 1) {
         this.nextMode();
       } else {
+        if (mode === 'lock') { this._enableDragging(); }
         this._mode = '';
-        this.currentHandle = '';
+        this._updateHandle();
       }
     }
   },
@@ -643,12 +640,10 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (this.hasMode(newMode) || (eP && eP.hasTool(L.DistortableCollection.Edit.MODES[newMode]))) {
       if (this.toolbar) { this.toolbar.clickTool(newMode); }
       if (this.isMode('lock') && !this.dragging) {
-        // ov.setZIndex(1);
         this._enableDragging();
       }
       this._mode = newMode;
       if (this.isMode('lock') && this.dragging) {
-        // ov.setZIndex(-10);
         this._disableDragging();
       }
       this._updateHandle();

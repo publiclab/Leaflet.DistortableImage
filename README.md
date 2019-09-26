@@ -216,6 +216,8 @@ To initialize an image without its `L.Popup` instance toolbar, pass it `suppress
 
 Typically, editing actions are triggered through our toolbar interface. If disabling the toolbar, the developer will need to implement their own toolbar UI connected to our actions.
 
+When set to true, associated keybindings will not be available and <code>dblclick</code>ing on the image is the only option to iterate through its available modes non-programatically.
+
 ## Multiple Image Interface
 
 Our `DistortableCollection` class builds on the single image interface to allow working with multiple images simultaneously.
@@ -266,7 +268,7 @@ Options available to pass during `L.DistortableCollection` initialization:
 
 ### ✤ Actions
 
-* `actions` (*optional*, default: [`L.ExportAction`, `L.DeleteAction`, `L.LockAction`, `L.UnlocksAction`], value: *array*)
+* `actions` (*optional*, default: [`L.ExportAction`, `L.DeleteAction`, `L.LockAction`, `L.UnlockAction`], value: *array*)
 
 Overrwrite the default toolbar actions for an image collection's `L.Control` toolbar. Reference the available values [here](#Multiple-Image-Interface).
 
@@ -321,17 +323,17 @@ imgGroup = L.distortableCollection({
 
 ### UI and functionalities
 
-Currently it supports multiple image selection and translations, and WIP we are working on porting all editing tools to work for it, such as opacity, etc. Image distortions (via modes) still use the single-image interface.
+Currently it supports image collection and translation, and WIP we are working on porting all editing tools to work for it, such as opacity, etc. Image distortions (via modes) still use the single-image interface.
 
 A single toolbar instance (using `L.control`) renders the set of tools available to use on collections of images.
 
 **collect**:
 
-1. Collect an indvidiual image with <kbd>shift</kbd> + `click`.
-2. Or for touch devices, `touch` + `hold` (aka `longpress`).
+1. Collect an indvidiual image with <kbd>shift</kbd> + `click`. (Toggles)
+2. Or for touch devices, `touch` + `hold` (aka `longpress`). (Toggles)
 3. Collect multiple images at once with <kbd>shift</kbd> + `drag` (Uses our `L.Map.BoxCollector`).
 
-**decollect:**
+**uncollect:**
 
 * In order to return to the single-image interface, where each `L.popup` toolbar only applies actions on the image it's attached to, you must toggle *all* images out of collection with `shift` + click / `touch` + `hold`, or...
 * ...Click on the map or hit the <kbd>esc</kbd> key to quickly decollect all.
@@ -386,7 +388,7 @@ Defaults:
   * Permanently deletes a collection of images from the map.
 * **L.LockAction** (<kbd>l</kbd>)
   * Sets `lock` mode for a collection of images.
-* **L.UnlocksAction** (<kbd>u</kbd>)
+* **L.UnlockAction** (<kbd>u</kbd>)
   * Unsets `lock` mode for a collection of images.
 
 ## Quick API Reference
@@ -478,7 +480,7 @@ We have slightly changed a default Leaflet handler:
 
 ---
 
-An individual image instance that can have transformation methods called on it and can be "selected".
+An individual image instance that can have transformation methods called on it and can be <code>"selected"</code>.
 
 <details><summary><code><b>getCorner(<i>idx</i> &#60;number 0..3>)</b>: LatLng</code></summary>
   <ul><li>Returns the coordinates of the image corner at <i>index</i>.</li></ul>
@@ -626,20 +628,21 @@ A handler that holds the keybindings and toolbar API for an image instance. It i
   <ul>
     <li>Sets the mode of the image to the next one in the <code>
     modes</code> array by passing it to <code>#setMode.</code></li>
-    <li>Returns false if the image only has 1 mode available on it.</li>
-    <li>We use this internally to iterate through an image's editing modes easily on <code>dblclick</code>, but you can call it programmatically if you find a need. Note that <code>dblclick</code> also selects the image (given it's not disabled or collected)</li>
+    <li>Returns false if the image doesn't have at least 2 modes available, or is disabled.</li>
+    <li>Internally, we use this to allow iterating through an image's editing modes when it is not collected by <code>dblclick</code>ing on it, but you can call it programmatically if you find a need.</li>
   </ul>
 </details>
 
 <details><summary><code><b>setMode(<i>mode</i> &#60;string>)</b>: this</code></summary>
   <ul>
-    <li>Sets the  <code>mode</code> of the image to the passed one given that it is in the  <code>modes</code> array, it is not already the current mode, and the image is selected. Otherwise returns false.</li>
+    <li>Sets the  <code>mode</code> of a selected image to the passed one given that it is in its  <code>modes</code> array, or internally for a collected image with the collection group's <code>modes</code>.</li>
+    <li>Returns false otherwise, or if image is disabled or attempting to set mode to the image's current mode.</li>
   </ul>
 </details>
 
 <details><summary><code><b>removeTool(<i>action</i> &#60;EditAction>)</b>: this</code></summary>
   <ul>
-    <li>Removes the passed tool from the chosen image's popup toolbar in runtime.</li>
+    <li>Removes the passed tool from the image's popup toolbar in runtime.</li>
     <li>If the tool is also a <code>mode</code>, removes that mode / its handles and sets the new mode to the next available one or to <code>''</code> if there are no other modes.</li>
     <li>Returns false if the tool is not present in the toolbar.</li>
     <li>ex: <code>img.editing.removeTool(L.BorderAction)</code></li>
@@ -664,14 +667,20 @@ A handler that holds the keybindings and toolbar API for an image instance. It i
 
 ---
 
-A collection instance made up of a group of images. Images can be "collected" in this interface and a "collected" image is never also "selected".
+Holds a collection of images, and applies additional collective actions on them through its <code>L.DistortableCollection.Edit</code> handler.
+
+<blockquote>Images can be <b><code>"collected"</code></b> in this interface and a "collected" image is never also "selected".</blockquote>
 
 <details><summary><code><b>isCollected(<i>img</i> &#60;DistortableImageOverlay>)</b>: Boolean</code></summary>
-<ul><li>Returns true if the passed <code>L.DistortableImageOverlay</code> instance is collected, i.e. its underlying <code>HTMLImageElement</code> has a class containing "selected".</li></ul>
+<ul><li>Returns true if the passed <code>L.DistortableImageOverlay</code> instance is collected, i.e. its underlying <code>HTMLImageElement</code> has a class containing <code>collected</code>.</li></ul>
 </details>
 
 <details><summary><code><b>anyCollected()</b>: Boolean</code></summary>
-<ul><li>Returns true if any <code>L.DistortableImageOverlay</code> instances are collected.</li></ul>
+  <ul><li>Returns true if any <code>L.DistortableImageOverlay</code> instances are collected.</li></ul>
+</details>
+
+<details><summary><code><b>getCollected()</b>: Boolean</code></summary>
+  <ul><li>Returns an array of the currently collected image instances.</li></ul>
 </details>
 
 ---
@@ -722,6 +731,16 @@ Same as `L.DistortableImage.Edit` but for the collection (`L.DistortableCollecti
 
 <details><summary><code><b>hasTool(<i>action</i> &#60;EditAction>)</b>: Boolean</code></summary>
 <ul><li>Returns true if the tool is present in the currently rendered control toolbar.</li></ul>
+</details>
+
+<details><summary><code><b>lockGroup()</b>: this</code></summary>
+  <ul><li>Locks all images in the current collection</li></ul>
+  <ul><li>Returns false instead if <code>L.LockAction</code> is not an available collection tool.</li></ul>
+</details>
+
+<details><summary><code><b>unlockGroup()</b>: this</code></summary>
+  <ul><li>Unlocks all images in the current collection.</li></ul>
+  <ul><li>Returns false instead if <code>L.UnlockAction</code> is not an available collection tool.</li></ul>
 </details>
 
 ## Additional Components

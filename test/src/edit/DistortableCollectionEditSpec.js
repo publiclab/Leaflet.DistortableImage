@@ -166,11 +166,11 @@ describe('L.DistortableCollection.Edit', function() {
     });
   });
 
-  describe('#_lockGroup', function() {
+  describe('#lockGroup', function() {
     beforeEach(function() {
       chai.simulateEvent(overlay.getElement(), 'mousedown', {shiftKey: true});
       chai.simulateEvent(overlay3.getElement(), 'mousedown', {shiftKey: true});
-      imgGroup.editing._lockGroup();
+      imgGroup.editing.lockGroup();
     });
 
     it('it only puts the multi-selected images in lock mode', function() {
@@ -181,7 +181,7 @@ describe('L.DistortableCollection.Edit', function() {
     });
 
     it('does not toggle lock mode', function() {
-      imgGroup.editing._lockGroup();
+      imgGroup.editing.lockGroup();
       expect(overlay.editing.isMode('lock')).to.be.true;
     });
 
@@ -193,23 +193,23 @@ describe('L.DistortableCollection.Edit', function() {
     });
   });
 
-  describe('#_unlockGroup', function() {
+  describe('#unlockGroup', function() {
     beforeEach(function() {
       chai.simulateEvent(overlay.getElement(), 'mousedown', {shiftKey: true});
       chai.simulateEvent(overlay2.getElement(), 'mousedown', {shiftKey: true});
       chai.simulateEvent(overlay3.getElement(), 'mousedown', {shiftKey: true});
-      imgGroup.editing._lockGroup();
+      imgGroup.editing.lockGroup();
       expect(overlay.editing.isMode('lock')).to.be.true;
     });
 
     it('it removes the collected images from lock mode', function() {
-      imgGroup.editing._unlockGroup();
+      imgGroup.editing.unlockGroup();
       expect(overlay.editing.isMode('lock')).to.be.false;
     });
 
     it('does not toggle lock mode', function() {
-      imgGroup.editing._unlockGroup();
-      imgGroup.editing._unlockGroup();
+      imgGroup.editing.unlockGroup();
+      imgGroup.editing.unlockGroup();
       expect(overlay.editing.isMode('lock')).to.be.false;
     });
   });

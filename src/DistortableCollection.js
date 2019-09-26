@@ -1,6 +1,7 @@
 L.DistortableCollection = L.FeatureGroup.extend({
   options: {
     editable: true,
+    // suppressToolbar: false,
   },
 
   initialize: function(options) {
@@ -8,6 +9,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     L.FeatureGroup.prototype.initialize.call(this, options);
 
     this.editable = this.options.editable;
+    // this.suppressToolbar = this.options.suppressToolbar;
   },
 
   onAdd: function(map) {
@@ -75,17 +77,21 @@ L.DistortableCollection = L.FeatureGroup.extend({
     layer.deselect();
     if (edit.isMode('lock')) { edit._showMarkers(); }
 
-    if (!groupEdit.toolbar) {
+    if (this.getCollected().length === 1) {
       groupEdit._mode = edit.isMode('lock') ? 'lock' : 'unlock';
       groupEdit._addToolbar();
-      groupEdit.toolbar.clickTool(groupEdit._mode);
+      if (groupEdit.toolbar) {
+        groupEdit.toolbar.clickTool(groupEdit._mode);
+      }
       groupEdit._collectionOn(layer);
     } else {
       if (this._hasGroupMode()) {
         groupEdit._mode = this._allLayersLocked() ? 'lock' : 'unlock';
-        groupEdit.toolbar.clickTool(groupEdit._mode);
+        if (groupEdit.toolbar) {
+          groupEdit.toolbar.clickTool(groupEdit._mode);
+        }
       } else { groupEdit._mode = ''; }
-      if (L.DomUtil.hasClass(div, 'wrapcollect')) { L.DomUtil.removeClass(div, 'wrapcollect'); }
+      L.DomUtil.removeClass(div, 'wrapcollect');
     }
     groupEdit._refresh();
   },
@@ -101,10 +107,12 @@ L.DistortableCollection = L.FeatureGroup.extend({
       groupEdit._collectionOff(layer);
     } else {
       layer.deselect();
-      if (!L.DomUtil.hasClass(div, 'wrapcollect')) { L.DomUtil.addClass(div, 'wrapcollect'); }
+      L.DomUtil.addClass(div, 'wrapcollect');
       if (this._hasGroupMode()) {
         groupEdit._mode = this._allLayersLocked() ? 'lock' : 'unlock';
-        groupEdit.toolbar.clickTool(groupEdit._mode);
+        if (groupEdit.toolbar) {
+          groupEdit.toolbar.clickTool(groupEdit._mode);
+        }
       } else { groupEdit._mode = ''; }
       groupEdit._refresh();
     }
@@ -137,7 +145,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return layerArr.some(this.isCollected.bind(this));
   },
 
-  getCollectedLayers: function() {
+  getCollected: function() {
     var layerArr = this.getLayers();
     return layerArr.filter(this.isCollected.bind(this));
   },
@@ -232,7 +240,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   _allLayersLocked: function() {
-    var layerArr = this.getCollectedLayers();
+    var layerArr = this.getCollected();
 
     return layerArr.every(function(layer) {
       return layer.editing.isMode('lock');
@@ -240,7 +248,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   _allLayersNotLocked: function() {
-    var layerArr = this.getCollectedLayers();
+    var layerArr = this.getCollected();
 
     return layerArr.every(function(layer) {
       return !layer.editing.isMode('lock');

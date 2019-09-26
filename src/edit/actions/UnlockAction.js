@@ -8,12 +8,12 @@ L.UnlockAction = L.EditAction.extend({
       className: 'unlock',
     };
 
-    L.DistortableImage.group_action_map.u = '_unlockGroup';
+    L.DistortableImage.group_action_map.u = 'unlockGroup';
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
   addHooks: function() {
     var edit = this._overlay.editing;
-    edit._unlockGroup();
+    edit.unlockGroup();
   },
 });

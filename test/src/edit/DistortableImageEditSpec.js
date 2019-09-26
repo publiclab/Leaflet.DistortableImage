@@ -206,9 +206,17 @@ describe('L.DistortableImage.Edit', function() {
       for (var mode in L.DistortableImage.Edit.MODES) {
         edit.removeTool(L.DistortableImage.Edit.MODES[mode]);
       }
-
       expect(edit.getModes()).to.be.empty;
       expect(edit.getMode()).to.eql('');
+    });
+
+    it('If the mode removed was \'lock\' it re-enables dragging', function () {
+      var edit = overlay.editing;
+      edit.setMode('lock');
+      expect(edit.dragging).to.be.undefined;
+      edit.removeTool(L.LockAction);
+      expect(edit.getMode()).to.not.eql('lock');
+      expect(edit.dragging).to.be.an.instanceOf(L.Draggable);
     });
 
     it('Returns false if the tool is not in the toolbar', function() {
