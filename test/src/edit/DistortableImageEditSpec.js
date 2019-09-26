@@ -62,7 +62,7 @@ describe('L.DistortableImage.Edit', function() {
 
     edit.enable();
     // this test applies to a selected image
-    simulateEvent(overlay.getElement(), 'click');
+    chai.simulateEvent(overlay.getElement(), 'click');
     
     overlay.setCorner(0, L.latLng(41.7934, -87.6252));
     /* Warp handles are currently on the map; they should have been updated. */
@@ -106,7 +106,7 @@ describe('L.DistortableImage.Edit', function() {
       overlay.deselect();
       expect(overlay.isSelected()).to.be.false;
 
-      simulateEvent(overlay.getElement(), 'dblclick');
+      chai.simulateEvent(overlay.getElement(), 'dblclick');
       setTimeout(function () {
         expect(overlay.isSelected()).to.be.true;
       }, 3000);
@@ -115,14 +115,14 @@ describe('L.DistortableImage.Edit', function() {
     it('It prevents dblclick events from propagating to the map', function() {
       var mapListen = sinon.spy();
       map.on('dblcick', mapListen);
-      simulateEvent(overlay.getElement(), 'dblclick');
+      chai.simulateEvent(overlay.getElement(), 'dblclick');
       expect(mapListen.called).not.to.be.ok;
     });
 
     it('Should call #setMode', function () {
       var edit = overlay.editing;
       var spy = sinon.spy(edit, 'setMode');
-      simulateEvent(overlay.getElement(), 'dblclick');
+      chai.simulateEvent(overlay.getElement(), 'dblclick');
       expect(spy.called).to.be.ok;
 
       edit.setMode.restore();

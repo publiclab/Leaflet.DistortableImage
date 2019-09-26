@@ -60,8 +60,8 @@ describe('L.DistortableCollection', function() {
       var img = overlay.getElement();
       var img2 = overlay2.getElement();
 
-      simulateEvent(img, 'mousedown', {shiftKey: true});
-      simulateEvent(img2, 'mousedown');
+      chai.simulateEvent(img, 'mousedown', {shiftKey: true});
+      chai.simulateEvent(img2, 'mousedown');
       expect(imgGroup.isCollected(overlay)).to.be.true;
       expect(imgGroup.isCollected(overlay2)).to.be.false;
     });
@@ -72,8 +72,8 @@ describe('L.DistortableCollection', function() {
       var img = overlay.getElement();
       var img2 = overlay2.getElement();
 
-      simulateEvent(img, 'mousedown');
-      simulateEvent(img2, 'mousedown');
+      chai.simulateEvent(img, 'mousedown');
+      chai.simulateEvent(img2, 'mousedown');
       expect(imgGroup.isCollected(overlay)).to.be.false;
       expect(imgGroup.isCollected(overlay2)).to.be.false;
     });
@@ -84,8 +84,8 @@ describe('L.DistortableCollection', function() {
       var img = overlay.getElement();
       var img2 = overlay2.getElement();
 
-      simulateEvent(img, 'mousedown', { shiftKey: true });
-      simulateEvent(img2, 'mousedown', { shiftKey: true });
+      chai.simulateEvent(img, 'mousedown', { shiftKey: true });
+      chai.simulateEvent(img2, 'mousedown', { shiftKey: true });
       expect(L.DomUtil.getClass(img)).to.include('collected');
       expect(L.DomUtil.getClass(img2)).to.include('collected');
     });
@@ -93,7 +93,7 @@ describe('L.DistortableCollection', function() {
     it('It should allow a locked image to be part of multiple image selection', function() {
       var img = overlay.getElement();
       overlay.editing._lock();
-      simulateEvent(img, 'mousedown', { shiftKey: true });
+      chai.simulateEvent(img, 'mousedown', { shiftKey: true });
       expect(L.DomUtil.getClass(img)).to.include('collected');
     });
   });

@@ -134,7 +134,7 @@ describe('L.DistortableImageOverlay', function() {
       var edit = overlay.editing;
       edit._lock();
       // select the image to initially create its individual toolbar instance
-      simulateEvent(overlay.getElement(), 'click');
+      chai.simulateEvent(overlay.getElement(), 'click');
 
       expect(edit.toolbar).to.not.be.false;
 
