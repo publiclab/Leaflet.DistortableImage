@@ -31,6 +31,8 @@ module.exports = function(config) {
       'node_modules/glfx/glfx.js',
       'node_modules/chai/chai.js',
       'node_modules/sinon/pkg/sinon.js',
+      'test/polyfill/*.js',
+      'assets/polyfill/*.js',
       'src/util/*.js',
       'src/DistortableImageOverlay.js',
       'src/DistortableCollection.js',

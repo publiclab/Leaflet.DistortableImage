@@ -18,12 +18,12 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this._selected = this.options.selected;
     this._url = url;
     this.rotation = 0;
-    // window.rotation = this.rotation;
   },
 
   onAdd: function(map) {
     this._map = map;
     if (!this._image) { this._initImage(); }
+    if (!this._events) { this._initEvents(); }
 
     map.on('viewreset', this._reset, this);
 
@@ -36,7 +36,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
     // Have to wait for the image to load because need to access its w/h
     L.DomEvent.on(this._image, 'load', function() {
-      this.getPane().appendChild(this._image);
+      // containing each img in a div element will give us better control
+      // over styling, touch events, etc.
+      var wrapper = L.DomUtil.create('div', 'wrapper', this.getPane());
+      wrapper.appendChild(this._image);
       this._initImageDimensions();
       this._reset();
       /* Initialize default corners if not already set */
@@ -57,6 +60,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     }, this);
 
     L.DomEvent.on(this._image, 'click', this.select, this);
+
     L.DomEvent.on(map, {
       singleclickon: this._singleClickListeners,
       singleclickoff: this._resetClickListeners,
@@ -147,22 +151,24 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   deselect: function() {
     var edit = this.editing;
-    if (!edit.enabled() || !this.isSelected()) { return false; }
+
+    if (!edit.enabled()) { return false; }
 
     edit._removeToolbar();
-    if (edit._mode !== 'lock') {
-      edit._hideMarkers();
-    }
-
+    edit._hideMarkers();
     this._selected = false;
+
     return this;
   },
 
   select: function(e) {
+    var map = this._map;
     var edit = this.editing;
+    var img = this.getElement();
+
+    if (!edit.enabled()) { return false; }
 
     if (e) { L.DomEvent.stopPropagation(e); }
-    if (!edit.enabled()) { return false; }
 
     // this ensures deselection of all other images, allowing us to keep collection group optional
     this._programmaticGrouping();
@@ -172,9 +178,24 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     edit._showMarkers();
 
     // we run the selection logic 1st anyway because the collection group's _addToolbar method depends on it
-    if (L.DomUtil.hasClass(this._image, 'collected')) {
+    if (L.DomUtil.hasClass(img, 'collected')) {
       this.deselect();
       return false;
+    }
+
+    if (e && !e.shiftKey) {
+      var src = e.sourceCapabilities;
+      if (L.Browser.touch && (src && src.firesTouchEvents)) {
+        map._clicked += 1;
+        this._map._clickTimeout = setTimeout(L.bind(function() {
+          if (map._clicked === 1) {
+            map._clicked = 0;
+          } else {
+            map._stamp = L.Util.stamp(this); // allows us to access later exactly which overlay fire the event
+            map._fireDOMEvent(e, 'dblclick');
+          }
+        }, this), 350);
+      }
     }
 
     return this;
@@ -336,13 +357,13 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       3: map.unproject(center.add(offset)),
     };
 
-    map.removeLayer(edit._handles[edit._mode]);
+    edit._hideMarkers();
 
     this.setCorners(corners);
 
     if (a !== 0) { this.rotateBy(L.TrigUtil.degreesToRadians(360 - a)); }
 
-    map.addLayer(edit._handles[edit._mode]);
+    edit._showMarkers();
 
     this.rotation = a;
   },

@@ -51,15 +51,13 @@ describe('L.DistortableCollection.Edit', function() {
   });
 
   describe('#_decollectAll', function() {
-    it('Should remove the \'selected\' class from all images', function() {
+    it('should remove the \'selected\' class from all images', function() {
       var img = overlay.getElement();
       var img2 = overlay2.getElement();
 
       L.DomUtil.addClass(img, 'collected');
       L.DomUtil.addClass(img2, 'collected');
-
       map.fire('click');
-
       // we deselect after 3ms to confirm the click wasn't a dblclick
       setTimeout(function() {
         expect(L.DomUtil.getClass(img)).to.not.include('collected');
@@ -67,48 +65,34 @@ describe('L.DistortableCollection.Edit', function() {
       }, 3000);
     });
 
-    it('Should hide all images\' handles unless they\'re lock handles', function() {
+    it('should hide all images\' handles unless they\'re lock handles', function() {
       var edit = overlay.editing;
       var edit2 = overlay2.editing;
-      var distortHandleState = [];
-      var lockHandleState = [];
-
       // turn on lock handles for one of the DistortableImageOverlay instances.
-      edit2._toggleLockMode();
-
-      // then trigger _decollectAll
-      map.fire('click');
+      edit2._lock();
+      map.fire('click'); // then trigger _decollectAll
 
       setTimeout(function() {
-        edit._handles['distort'].eachLayer(function(handle) {
+        edit.currentHandles.eachLayer(function(handle) {
           var icon = handle.getElement();
-          distortHandleState.push(L.DomUtil.getStyle(icon, 'opacity'));
+          expect(L.DomUtil.getStyle(icon, 'opacity')).to.eql('0');
         });
-
-        edit2._handles['lock'].eachLayer(function(handle) {
-          var icon = handle.getElement();
-          lockHandleState.push(L.DomUtil.getStyle(icon, 'opacity'));
-        });
-
-        expect(distortHandleState).to.deep.equal(['0', '0', '0', '0']);
         // opacity for lockHandles is unset because we never altered it to hide it as part of deselection
-        expect(lockHandleState).to.deep.equal(['', '', '', '']);
+        edit2.currentHandles.eachLayer(function(handle) {
+          var icon = handle.getElement();
+          expect(L.DomUtil.getStyle(icon, 'opacity')).to.eql('');
+        });
       }, 3000);
     });
 
-    it('Should remove an image\'s individual toolbar instances regardless of lock handles', function() {
+    it('should remove an image\'s individual toolbar instances regardless of lock handles', function() {
       var edit2 = overlay2.editing;
-
-      edit2._toggleLockMode();
-
+      edit2._lock();
       // select image to initially create individual toolbar instance (single selection interface)
-      chai.simulateEvent(overlay2.getElement(), chai.mouseEvents.Click);
-
+      chai.simulateEvent(overlay2.getElement(), 'click');
       expect(edit2.toolbar).to.not.be.false;
 
-      // then trigger _decollectAll
-      map.fire('click');
-
+      map.fire('click'); // then trigger _decollectAll
       setTimeout(function() {
         expect(edit2.toolbar).to.be.false;
       }, 3000);
@@ -118,52 +102,57 @@ describe('L.DistortableCollection.Edit', function() {
   describe('#_addToolbar', function() {
     it('is invoked on the click event that follows mousedown multi-select', function() {
       expect(map._toolbars).to.be.empty;
-
       // need both bc simulated `mousedown`s don't fire `click` events afterwards like regular user generated `mousedown`s.
-      chai.simulateEvent(overlay.getElement(), chai.mouseEvents.ShiftMouseDown);
-      chai.simulateEvent(overlay.getElement(), chai.mouseEvents.Click);
-
+      chai.simulateEvent(overlay.getElement(), 'mousedown', {shiftKey: true});
+      chai.simulateEvent(overlay.getElement(), 'click');
       expect(Object.keys(map._toolbars)).to.have.lengthOf(1);
     });
 
     it('it adds a control toolbar to the map', function() {
       expect(map._toolbars).to.be.empty;
-
       imgGroup.editing._addToolbar();
-
       expect(Object.keys(map._toolbars)).to.have.lengthOf(1);
       expect(Object.keys(map._toolbars)[0]._container).className = 'leaflet-control';
     });
 
     it('does not add multiple instances of a control toolbar', function() {
       expect(map._toolbars).to.be.empty;
-
       imgGroup.editing._addToolbar();
       imgGroup.editing._addToolbar();
-
       expect(Object.keys(map._toolbars)).to.have.lengthOf(1);
     });
   });
 
   describe('#_removeToolbar', function() {
     beforeEach(function() { // multi-select the image and add the toolbar
-      chai.simulateEvent(overlay.getElement(), chai.mouseEvents.ShiftMouseDown);
+      chai.simulateEvent(overlay.getElement(), 'mousedown', {shiftKey: true});
       imgGroup.editing._addToolbar();
 
       expect(Object.keys(map._toolbars)).to.have.lengthOf(1);
     });
 
     it('is invoked on map click', function() {
+      var edit = imgGroup.editing;
+      var spy = sinon.spy(edit, '_removeToolbar');
+
       map.fire('click');
+
       setTimeout(function() {
-        expect(map._toolbars).to.be.empty;
+        expect(spy.called).to.be.ok;
+        edit._removeToolbar.restore();
       }, 3000);
     });
 
     it('is invoked on shift + mousedown when it toggles the image *out* of multi-select', function() {
-      // deselecting the image removes the control toolbar
-      chai.simulateEvent(overlay.getElement(), chai.mouseEvents.ShiftMouseDown);
-      expect(map._toolbars).to.be.empty;
+      var edit = imgGroup.editing;
+      var spy = sinon.spy(edit, '_removeToolbar');
+      // uncollecting the last collected image removes the control toolbar
+      chai.simulateEvent(overlay.getElement(), 'mousedown', {shiftKey: true});
+      setTimeout(function () {
+        expect(map._toolbars).to.be.empty;
+        expect(spy.called).to.be.ok;
+        edit._removeToolbar.restore();
+      }, 3000);
     });
 
     it('it removes a control toolbar from the map', function() {
@@ -177,24 +166,23 @@ describe('L.DistortableCollection.Edit', function() {
     });
   });
 
-  describe('#_lockGroup', function() {
+  describe('#lockGroup', function() {
     beforeEach(function() {
-      chai.simulateEvent(overlay.getElement(), chai.mouseEvents.ShiftMouseDown);
-      chai.simulateEvent(overlay3.getElement(), chai.mouseEvents.ShiftMouseDown);
-
-      imgGroup.editing._lockGroup();
+      chai.simulateEvent(overlay.getElement(), 'mousedown', {shiftKey: true});
+      chai.simulateEvent(overlay3.getElement(), 'mousedown', {shiftKey: true});
+      imgGroup.editing.lockGroup();
     });
 
     it('it only puts the multi-selected images in lock mode', function() {
-      expect(overlay.editing._mode).to.equal('lock');
-      expect(overlay3.editing._mode).to.equal('lock');
+      expect(overlay.editing.isMode('lock')).to.be.true;
+      expect(overlay3.editing.isMode('lock')).to.be.true;
 
-      expect(overlay2.editing._mode).to.not.equal('lock');
+      expect(overlay2.editing.isMode('lock')).to.not.be.true;
     });
 
     it('does not toggle lock mode', function() {
-      imgGroup.editing._lockGroup();
-      expect(overlay.editing._mode).to.equal('lock');
+      imgGroup.editing.lockGroup();
+      expect(overlay.editing.isMode('lock')).to.be.true;
     });
 
     it('prevents images in that group from being dragged', function() {
@@ -205,35 +193,34 @@ describe('L.DistortableCollection.Edit', function() {
     });
   });
 
-  describe('#_unlockGroup', function() {
+  describe('#unlockGroup', function() {
     beforeEach(function() {
-      chai.simulateEvent(overlay.getElement(), chai.mouseEvents.ShiftMouseDown);
-      chai.simulateEvent(overlay2.getElement(), chai.mouseEvents.ShiftMouseDown);
-      chai.simulateEvent(overlay3.getElement(), chai.mouseEvents.ShiftMouseDown);
-
-      imgGroup.editing._lockGroup();
-      expect(overlay.editing._mode).to.equal('lock');
+      chai.simulateEvent(overlay.getElement(), 'mousedown', {shiftKey: true});
+      chai.simulateEvent(overlay2.getElement(), 'mousedown', {shiftKey: true});
+      chai.simulateEvent(overlay3.getElement(), 'mousedown', {shiftKey: true});
+      imgGroup.editing.lockGroup();
+      expect(overlay.editing.isMode('lock')).to.be.true;
     });
 
-    it('it removes the multi-selected images from lock mode', function() {
-      imgGroup.editing._unlockGroup();
-      expect(overlay.editing._mode).to.not.equal('lock');
+    it('it removes the collected images from lock mode', function() {
+      imgGroup.editing.unlockGroup();
+      expect(overlay.editing.isMode('lock')).to.be.false;
     });
 
     it('does not toggle lock mode', function() {
-      imgGroup.editing._unlockGroup();
-      imgGroup.editing._unlockGroup();
-      expect(overlay.editing._mode).to.not.equal('lock');
+      imgGroup.editing.unlockGroup();
+      imgGroup.editing.unlockGroup();
+      expect(overlay.editing.isMode('lock')).to.be.false;
     });
   });
 
   describe('#_removeGroup', function() {
     beforeEach(function() { // multi-selects the images to add them to the feature group
-      chai.simulateEvent(overlay.getElement(), chai.mouseEvents.ShiftMouseDown);
-      chai.simulateEvent(overlay3.getElement(), chai.mouseEvents.ShiftMouseDown);
+      chai.simulateEvent(overlay.getElement(), 'mousedown', {shiftKey: true});
+      chai.simulateEvent(overlay3.getElement(), 'mousedown', {shiftKey: true});
     });
 
-    it('removes a collection of layers that are multi-selected', function() {
+    it('removes a collection of layers', function() {
       var layers = imgGroup.getLayers();
       expect(layers).to.include.members([overlay, overlay2, overlay3]);
 

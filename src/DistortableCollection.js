@@ -17,6 +17,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     if (this.editable) { this.editing.enable(); }
 
+    this._animHandles = L.layerGroup();
+    // this._layerCount = 0;
+
     /**
      * although we have a DistortableCollection.Edit class that handles collection events to keep our code managable,
      * events that need to be added on individual images are kept here to do so through `layeradd`.
@@ -45,6 +48,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
       /* Enable longpress for multi select for touch devices. */
       contextmenu: this._longPressMultiSelect,
     }, this);
+
+    this._animHandles.addLayer(new L.MutationAnim(layer._image, this));
+    // this._layerCount++;
   },
 
   _removeEvents: function(e) {
@@ -61,6 +67,55 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
   },
 
+  _collect: function(layer) {
+    var groupEdit = this.editing;
+    var edit = layer.editing;
+    var div = layer.getElement().parentNode;
+
+    layer.deselect();
+    if (edit.isMode('lock')) { edit._showMarkers(); }
+
+    if (this.getCollected().length === 1) {
+      groupEdit._mode = edit.isMode('lock') ? 'lock' : 'unlock';
+      groupEdit._addToolbar();
+      if (groupEdit.toolbar) {
+        groupEdit.toolbar.clickTool(groupEdit._mode);
+      }
+      groupEdit._collectionOn(layer);
+    } else {
+      if (this._hasGroupMode()) {
+        groupEdit._mode = this._allLayersLocked() ? 'lock' : 'unlock';
+        if (groupEdit.toolbar) {
+          groupEdit.toolbar.clickTool(groupEdit._mode);
+        }
+      } else { groupEdit._mode = ''; }
+      L.DomUtil.removeClass(div, 'wrapcollect');
+    }
+    groupEdit._refresh();
+  },
+
+  _uncollect: function(layer) {
+    var groupEdit = this.editing;
+    var div = layer.getElement().parentNode;
+
+    if (!this.anyCollected()) {
+      groupEdit._mode = '';
+      groupEdit._refresh();
+      groupEdit._removeToolbar();
+      groupEdit._collectionOff(layer);
+    } else {
+      layer.deselect();
+      L.DomUtil.addClass(div, 'wrapcollect');
+      if (this._hasGroupMode()) {
+        groupEdit._mode = this._allLayersLocked() ? 'lock' : 'unlock';
+        if (groupEdit.toolbar) {
+          groupEdit.toolbar.clickTool(groupEdit._mode);
+        }
+      } else { groupEdit._mode = ''; }
+      groupEdit._refresh();
+    }
+  },
+
   _longPressMultiSelect: function(e) {
     if (!this.editable) { return; }
 
@@ -70,11 +125,10 @@ L.DistortableCollection = L.FeatureGroup.extend({
       var edit = layer.editing;
       if (layer.getElement() === e.target && edit.enabled()) {
         L.DomUtil.toggleClass(layer.getElement(), 'collected');
-        if (this.anyCollected()) {
-          layer.deselect();
-          this.editing._addToolbar();
+        if (L.DomUtil.hasClass(layer.getElement(), 'collected')) {
+          this._collect(layer);
         } else {
-          this.editing._removeToolbar();
+          this._uncollect(layer);
         }
       }
     }, this);
@@ -89,30 +143,47 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return layerArr.some(this.isCollected.bind(this));
   },
 
-  _toggleCollected: function(e, layer) {
-    if (e.shiftKey) {
-      /** conditional prevents disabled images from flickering multi-select mode */
-      if (layer.editing.enabled()) {
-        L.DomUtil.toggleClass(e.target, 'collected');
-      }
-    }
-
-    if (this.anyCollected()) { layer.deselect(); }
-    else { this.editing._removeToolbar(); }
+  getCollected: function() {
+    var layerArr = this.getLayers();
+    return layerArr.filter(this.isCollected.bind(this));
   },
 
-  _deselectOthers: function(e) {
+  getNotCollectedLayers: function() {
+    var layerArr = this.getLayers();
+    return layerArr.filter(!this.isCollected.bind(this));
+  },
+
+  _toggleCollected: function(e) {
     if (!this.editable) { return; }
 
     this.eachLayer(function(layer) {
-      if (layer.getElement() !== e.target) {
-        layer.deselect();
-      } else {
-        this._toggleCollected(e, layer);
+      var edit = layer.editing;
+      if (e.target === layer.getElement() && edit.enabled()) {
+        L.DomUtil.toggleClass(e.target, 'collected');
+        if (L.DomUtil.hasClass(e.target, 'collected')) {
+          this._collect(layer);
+        } else {
+          this._uncollect(layer);
+        }
       }
     }, this);
+  },
 
-    if (e) { L.DomEvent.stopPropagation(e); }
+  _deselectOthers: function(e) {
+    this.eachLayer(function(layer) {
+      if (layer.getElement() !== e.target) { layer.deselect(); }
+    });
+
+    if (e.shiftKey) { this._toggleCollected(e); }
+  },
+
+  _otherSelected: function() {
+    this.eachLayer(function(layer) {
+      if (layer._collectedAnim) {
+        return layer._collectedAnim.currentTime;
+      }
+    });
+    return false;
   },
 
   _dragStartMultiple: function(e) {
@@ -148,7 +219,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var layerArr = this.getLayers();
 
     return layerArr.filter(function(layer) {
-      var mode = layer.editing._mode;
+      var mode = layer.editing.getMode();
       return (this.isCollected(layer) && mode !== 'lock');
     }, this);
   },
@@ -157,9 +228,29 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var layerArr = this.getLayers();
 
     return layerArr.filter(function(layer) {
-      var mode = layer.editing._mode;
+      var mode = layer.editing.getMode();
       return layer !== overlay && this.isCollected(layer) && mode !== 'lock';
     }, this);
+  },
+
+  _hasGroupMode: function() {
+    return this._allLayersLocked() || this._allLayersNotLocked();
+  },
+
+  _allLayersLocked: function() {
+    var layerArr = this.getCollected();
+
+    return layerArr.every(function(layer) {
+      return layer.editing.isMode('lock');
+    });
+  },
+
+  _allLayersNotLocked: function() {
+    var layerArr = this.getCollected();
+
+    return layerArr.every(function(layer) {
+      return !layer.editing.isMode('lock');
+    });
   },
 
   _updateCollectionFromPoints: function(delta, overlay) {

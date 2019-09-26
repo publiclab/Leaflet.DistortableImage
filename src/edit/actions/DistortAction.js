@@ -14,6 +14,6 @@ L.DistortAction = L.EditAction.extend({
 
   addHooks: function() {
     var edit = this._overlay.editing;
-    edit._distortMode();
+    edit.setMode('distort');
   },
 });

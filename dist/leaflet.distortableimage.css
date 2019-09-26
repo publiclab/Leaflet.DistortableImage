@@ -2,8 +2,42 @@
   pointer-events: all !important;
 }
 
-.ldi img.leaflet-image-layer.collected {
-  box-shadow: 0px 0px 0px 12px #ffea00;
+/* unlocked, collected imagees during collection mode */
+.ldi .leaflet-pane .leaflet-overlay-pane .wrapper {
+  -webkit-filter: drop-shadow(2px 4px 6px #282323c9);
+  filter: drop-shadow(2px 4px 6px #282323c9);
+  position: absolute;
+  z-index: 2;
+}
+
+/* images that are collected during collection mode, but are locked */
+.ldi .leaflet-pane .leaflet-overlay-pane .wrapper.lock {
+  -webkit-filter: none;
+  filter: none;
+  position: absolute;
+  z-index: -2;
+}
+
+.ldi .leaflet-pane .leaflet-overlay-pane .wrapper.lock img.leaflet-marker-icon {
+  position: absolute !important;
+  z-index: 0 !important;
+}
+
+/* images that aren't collected during collection mode */
+.ldi .leaflet-pane .leaflet-overlay-pane .wrapper.wrapcollect,
+.ldi .leaflet-pane .leaflet-overlay-pane .wrapper.lock.wrapcollect,
+.ldi .leaflet-pane .leaflet-overlay-pane .wrapper.wrapcollect.lock {
+  -webkit-filter: brightness(0.7);
+  filter: brightness(0.7);
+  position: absolute;
+  z-index: -5;
+}
+
+.ldi .leaflet-pane .leaflet-overlay-pane .wrapper.wrapcollect img.leaflet-marker-icon,
+.ldi .leaflet-pane .leaflet-overlay-pane .wrapper.lock.wrapcollect img.leaflet-marker-icon,
+.ldi .leaflet-pane .leaflet-overlay-pane .wrapper.wrapcollect.lock img.leaflet-marker-icon {
+  position: absolute !important;
+  z-index: 0 !important;
 }
 
 .ldi-icon {
@@ -154,25 +188,29 @@ a.leaflet-toolbar-icon.freeRotate.selected-mode {
   border: inset 0.5px lightgray;
 }
 
-a.leaflet-toolbar-icon.rotate.selected-mode .ldi-icon,
-a.leaflet-toolbar-icon.freeRotate.selected-mode .ldi-icon {
-  fill: white;
-}
-
 a.leaflet-toolbar-icon.distort.selected-mode,
 a.leaflet-toolbar-icon.scale.selected-mode {
   background-color: hsla(239, 97%, 55%, 0.75);
   border: inset 0.5px lightgray;
 }
 
-a.leaflet-toolbar-icon.distort.selected-mode .ldi-icon,
-a.leaflet-toolbar-icon.scale.selected-mode .ldi-icon {
-  fill: white;
-}
-
 a.leaflet-toolbar-icon.lock.selected-mode {
   background-color: hsla(0, 0%, 1%, 0.7490196078431373);
   border: inset 0.5px lightgray;
+}
+
+a.leaflet-toolbar-icon.unlock.selected-mode {
+  background-color: hsla(54, 100%, 50%, 0.65);
+  border: inset 0.5px lightgray;
+}
+
+a.leaflet-toolbar-icon.rotate.selected-mode .ldi-icon,
+a.leaflet-toolbar-icon.freeRotate.selected-mode .ldi-icon,
+a.leaflet-toolbar-icon.distort.selected-mode .ldi-icon,
+a.leaflet-toolbar-icon.scale.selected-mode .ldi-icon,
+a.leaflet-toolbar-icon.lock.selected-mode .ldi-icon,
+a.leaflet-toolbar-icon.unlock.selected-mode .ldi-icon {
+  fill: white;
 }
 
 li.disabled {
@@ -182,10 +220,6 @@ li.disabled {
 a.leaflet-toolbar-icon.disabled {
   filter: grayscale(1);
   pointer-events: none;
-}
-
-a.leaflet-toolbar-icon.lock.selected-mode .ldi-icon {
-  fill: white;
 }
 
 a.leaflet-toolbar-icon[title='Loading...'] {

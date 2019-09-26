@@ -51,9 +51,19 @@ L.DistortableImageOverlay.addInitHook(function() {
     L.LockAction,
     L.OpacityAction,
     L.BorderAction,
+    L.StackAction,
     L.ExportAction,
     L.DeleteAction,
   ];
+
+  // all possible modes
+  L.DistortableImage.Edit.MODES = {
+    'scale': L.ScaleAction,
+    'distort': L.DistortAction,
+    'rotate': L.RotateAction,
+    'freeRotate': L.FreeRotateAction,
+    'lock': L.LockAction,
+  };
 
   var a = this.options.actions ? this.options.actions : this.ACTIONS;
 

@@ -8,6 +8,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
   initialize: function(group, options) {
     this._group = group;
+    this._mode = '';
     L.setOptions(this, options);
 
     L.distortableImage.group_action_map.Escape = '_decollectAll';
@@ -18,6 +19,8 @@ L.DistortableCollection.Edit = L.Handler.extend({
     var map = group._map;
 
     this.editActions = this.options.actions;
+
+    this._initModes();
 
     L.DomEvent.on(document, 'keydown', this._onKeyDown, this);
 
@@ -37,6 +40,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
       layer.editing.enable();
     });
   },
+
 
   removeHooks: function() {
     var group = this._group;
@@ -73,6 +77,18 @@ L.DistortableCollection.Edit = L.Handler.extend({
     this.removeHooks();
 
     return this;
+  },
+
+  _initModes: function() {
+    this._modes = {};
+    // passed from L.DistortablImage.ControlBar. If the mode is one
+    // of the current toolbar actions, adds it to this._modes
+    for (var mode in L.DistortableCollection.Edit.MODES) {
+      var action = L.DistortableCollection.Edit.MODES[mode];
+      if (this.editActions.indexOf(action) !== -1) {
+        this._modes[mode] = action;
+      }
+    }
   },
 
   _onKeyDown: function(e) {
@@ -117,38 +133,46 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
     this._group.eachLayer(function(layer) {
       L.DomUtil.removeClass(layer.getElement(), 'collected');
-      layer.deselect();
-    });
+      this._group._uncollect(layer);
+    }, this);
 
+    this._collectionOff();
     this._removeToolbar();
 
     if (e) { L.DomEvent.stopPropagation(e); }
   },
 
-  _unlockGroup: function() {
+  unlockGroup: function() {
+    if (!this.hasTool(L.UnlockAction)) { return false; }
+    this._mode = 'unlock';
     this._group.eachLayer(function(layer) {
-      if (this._group.isCollected(layer)) {
-        var edit = layer.editing;
-        if (edit._mode === 'lock') {
-          edit._unlock();
-          // unlock updates the layer's handles; deselect to ensure they're hidden
-          layer.deselect();
-        }
+      var edit = layer.editing;
+      if (this._group.isCollected(layer) && edit.isMode('lock')) {
+        edit._unlock();
+        layer.deselect();
       }
     }, this);
+    if (this.toolbar) {
+      this.toolbar.clickTool('unlock');
+      this._refresh();
+    }
+    return this;
   },
 
-  _lockGroup: function() {
+  lockGroup: function() {
+    if (!this.hasTool(L.LockAction)) { return false; }
+    this._mode = 'lock';
     this._group.eachLayer(function(layer) {
-      if (this._group.isCollected(layer) ) {
-        var edit = layer.editing;
-        if (edit._mode !== 'lock') {
-          edit._lock();
-          // map.addLayer also deselects the image, so we reselect here
-          L.DomUtil.addClass(layer.getElement(), 'collected');
-        }
+      var edit = layer.editing;
+      if (this._group.isCollected(layer) && !edit.isMode('lock')) {
+        edit._lock();
       }
     }, this);
+    if (this.toolbar) {
+      this.toolbar.clickTool('lock');
+      this._refresh();
+    }
+    return this;
   },
 
   _addCollections: function(e) {
@@ -157,16 +181,14 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
     this._group.eachLayer(function(layer) {
       var edit = layer.editing;
-
-      if (layer.isSelected()) { layer.deselect(); }
+      var zoom = map.getZoom();
+      var center = map.getCenter();
 
       var imgBounds = L.latLngBounds(layer.getCorner(2), layer.getCorner(1));
-      imgBounds = map._latLngBoundsToNewLayerBounds(imgBounds, map.getZoom(), map.getCenter());
+      imgBounds = map._latLngBoundsToNewLayerBounds(imgBounds, zoom, center);
       if (box.intersects(imgBounds) && edit.enabled()) {
-        if (!this.toolbar) {
-          this._addToolbar();
-        }
         L.DomUtil.addClass(layer.getElement(), 'collected');
+        this._group._collect(layer);
       }
     }, this);
   },
@@ -185,10 +207,44 @@ L.DistortableCollection.Edit = L.Handler.extend({
       }, this);
       if (!this._group.anyCollected()) {
         this._removeToolbar();
+        this._collectionOff();
       }
     }
 
     if (e) { L.DomEvent.stopPropagation(e); }
+  },
+
+  _collectionOn: function(layer) {
+    layer = layer || '';
+    this._group.eachLayer(function(lay) {
+      if (lay !== layer) {
+        var div = lay.getElement().parentNode;
+        L.DomUtil.addClass(div, 'wrapcollect');
+      }
+    });
+    if (layer) { layer.deselect(); }
+  },
+
+  _collectionOff: function(layer) {
+    layer = layer || '';
+    this._group.eachLayer(function(lay) {
+      if (lay !== layer) {
+        var div = lay.getElement().parentNode;
+        L.DomUtil.removeClass(div, 'wrapcollect');
+      }
+    });
+    if (layer) { layer.select(); }
+  },
+
+  _refresh: function() {
+    var group = this._group;
+    if (group.options.suppressToolbar && !this.toolbar) { return; }
+    if (this.toolbar) { this._removeToolbar(); }
+    this._addToolbar();
+  },
+
+  getModes: function() {
+    return this._modes;
   },
 
   startExport: function(opts) {
@@ -289,13 +345,14 @@ L.DistortableCollection.Edit = L.Handler.extend({
       this._removeToolbar();
       this.editActions.push(value);
       this._addToolbar();
+      return this;
     } else {
       return false;
     }
   },
 
   removeTool: function(value) {
-    this.editActions.some(function(item, idx) {
+    var matched = this.editActions.some(function(item, idx) {
       if (this.editActions[idx] === value) {
         this._removeToolbar();
         this.editActions.splice(idx, 1);
@@ -305,6 +362,8 @@ L.DistortableCollection.Edit = L.Handler.extend({
         return false;
       }
     }, this);
+    if (matched) { return this; }
+    else { return false; }
   },
 });
 

@@ -2,8 +2,8 @@ describe('L.DistortableImageOverlay', function() {
   var map, overlay;
 
   beforeEach(function(done) {
-    var mapContainer = L.DomUtil.create('div', '', document.body),
-        fullSize = [document.querySelector('html'), document.body, mapContainer];
+    var mapContainer = L.DomUtil.create('div', '', document.body);
+    var fullSize = [document.querySelector('html'), document.body, mapContainer];
 
     map = L.map(mapContainer).setView([41.7896, -87.5996], 15);
 
@@ -18,8 +18,8 @@ describe('L.DistortableImageOverlay', function() {
         L.latLng(41.7934, -87.6052),
         L.latLng(41.7934, -87.5852),
         L.latLng(41.7834, -87.6052),
-        L.latLng(41.7834, -87.5852)
-      ]
+        L.latLng(41.7834, -87.5852),
+      ],
     }).addTo(map);
 
     /* Forces the image to load before any tests are run. */
@@ -49,7 +49,6 @@ describe('L.DistortableImageOverlay', function() {
       expect(overlay.editing.toolbar).to.be.undefined
       
       overlay.select();
-
       setTimeout(function() {
         expect(overlay._selected).to.be.true
         expect(overlay.editing.toolbar).to.be.true
@@ -65,7 +64,7 @@ describe('L.DistortableImageOverlay', function() {
       overlay.editing._lock();
       overlay.getElement().click();
       setTimeout(function () {
-        expect(overlay.editing.getMode()).to.eql('lock');
+        expect(overlay.editing.isMode('lock')).to.be.true;
         expect(overlay._selected).to.be.true
         expect(overlay.editing.toolbar).to.be.true
       }, 3000);
@@ -79,7 +78,7 @@ describe('L.DistortableImageOverlay', function() {
     });
     
     it('Returns false if the multiple image editing interface is on', function() {
-      L.DomUtil.addClass(overlay._image, 'collected');
+      L.DomUtil.addClass(overlay.getElement(), 'collected');
       expect(overlay.select()).to.be.false
       expect(overlay._selected).to.be.false
       expect(overlay.editing.toolbar).to.be.false
@@ -100,20 +99,63 @@ describe('L.DistortableImageOverlay', function() {
     });
 
     it('Is invoked on map click', function() {
+      var spy = sinon.spy(overlay, 'deselect');
       map.fire('click');
-      expect(overlay.deselect).to.have.been.called;
+      setTimeout(function() {
+        expect(spy.called).to.be.ok;
+        overlay.deselect.restore();
+      }, 3000);
+    });
+
+    it('It should hide an unlocked image\'s handles by updating their opacity', function () {
+      var edit = overlay.editing;
+      map.fire('click');  // trigger deselect
+
+      setTimeout(function() {
+        edit.currentHandle.eachLayer(function(handle) {
+          var icon = handle.getElement();
+          expect(L.DomUtil.getStyle(icon, 'opacity')).to.eql('0');
+        });
+      }, 3000);
+    });
+
+    it('But it should not hide a locked image\'s handles', function () {
+      var edit = overlay.editing;
+      edit._lock(); // switch to lock handles
+      map.fire('click');
+
+      edit.currentHandle.eachLayer(function(handle) {
+        var icon = handle.getElement();
+        expect(L.DomUtil.getStyle(icon, 'opacity')).to.eql('1');
+      });
+    });
+
+    it('Should remove an image\'s individual toolbar instance regardless of lock handles', function () {
+      var edit = overlay.editing;
+      edit._lock();
+      // select the image to initially create its individual toolbar instance
+      chai.simulateEvent(overlay.getElement(), 'click');
+
+      expect(edit.toolbar).to.not.be.false;
+
+      map.fire('click');
+
+      // we deselect after 3ms to confirm the click wasn't a dblclick
+      setTimeout(function () {
+        expect(edit.toolbar).to.be.false;
+      }, 3000);
     });
 
     it('Returns false if image editing is disabled', function() {
       overlay.editing.disable();
-      expect(overlay.deselect()).to.be.false
-      expect(overlay._selected).to.be.false
+      expect(overlay.deselect()).to.be.false;
+      expect(overlay._selected).to.be.false;
     });
 
-    it('Returns false if image is not selected', function() {
-      expect(overlay.deselect()).to.be.ok
-      expect(overlay.deselect()).to.be.false
-    });
+    // it('Returns false if image is not selected', function() {
+    //   expect(overlay.deselect()).to.be.ok;
+    //   expect(overlay.deselect()).to.be.false;
+    // });
   });
 
   describe('#isSelected', function () {
@@ -164,7 +206,6 @@ describe('L.DistortableImageOverlay', function() {
 
     it('Maintains image proportions when scaling', function() {
       var center = overlay.getCenter();
-
       expect(Math.round(overlay.getCenter().lat)).to.equal(Math.round(center.lat));
       expect(Math.round(overlay.getCenter().lng)).to.equal(Math.round(center.lng));
     });

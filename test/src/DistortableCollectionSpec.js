@@ -9,8 +9,8 @@ describe('L.DistortableCollection', function() {
         L.latLng(41.7934, -87.6052),
         L.latLng(41.7934, -87.5852),
         L.latLng(41.7834, -87.6052),
-        L.latLng(41.7834, -87.5852)
-      ]
+        L.latLng(41.7834, -87.5852),
+      ],
     });
 
     overlay2 = L.distortableImageOverlay('/examples/example.png', {
@@ -18,8 +18,8 @@ describe('L.DistortableCollection', function() {
         L.latLng(41.7934, -87.605),
         L.latLng(41.7934, -87.585),
         L.latLng(41.7834, -87.605),
-        L.latLng(41.7834, -87.585)
-      ]
+        L.latLng(41.7834, -87.585),
+      ],
     });
 
     overlay3 = L.distortableImageOverlay('/examples/example.png', {
@@ -27,8 +27,8 @@ describe('L.DistortableCollection', function() {
         L.latLng(41.7934, -87.6054),
         L.latLng(41.7934, -87.5854),
         L.latLng(41.7834, -87.6054),
-        L.latLng(41.7834, -87.5854)
-      ]
+        L.latLng(41.7834, -87.5854),
+      ],
     });
 
     imgGroup = L.distortableCollection().addTo(map);
@@ -47,58 +47,47 @@ describe('L.DistortableCollection', function() {
     imgGroup.removeLayer(overlay3);
   });
 
-  it.skip('Should keep selected images in sync with eachother during translation', function() {});
+//   it.skip('Should keep selected images in sync with eachother during translation', function() {});
 
-  it('Adds the layers to the map when they are added to the group', function() {
+  it('adds the layers to the map when they are added to the group', function() {
     expect(map.hasLayer(overlay)).to.be.true;
     expect(map.hasLayer(overlay2)).to.be.true;
     expect(map.hasLayer(overlay3)).to.be.true;
   });
 
   describe('#isCollected', function() {
-    it('Should only return true if the image was selected using shift + mousedown', function() {
-      var img = overlay.getElement();
-      var img2 = overlay2.getElement();
-
-      chai.simulateEvent(img, chai.mouseEvents.ShiftMouseDown);
-      chai.simulateEvent(img2, chai.mouseEvents.MouseDown);
-
+    it('should only return true if the image was selected using shift + mousedown', function() {
+      chai.simulateEvent(overlay.getElement(), 'mousedown', {shiftKey: true});
+      chai.simulateEvent(overlay2.getElement(), 'mousedown');
       expect(imgGroup.isCollected(overlay)).to.be.true;
       expect(imgGroup.isCollected(overlay2)).to.be.false;
     });
   });
 
   describe('#anyCollected', function() {
-    it('Should return false if no selections were made with shift + mousedown', function() {
-      var img = overlay.getElement();
-      var img2 = overlay2.getElement();
-
-      chai.simulateEvent(img, chai.mouseEvents.MouseDown);
-      chai.simulateEvent(img2, chai.mouseEvents.MouseDown);
-
+    it('should return false if no selections were made with shift + mousedown', function() {
+      chai.simulateEvent(overlay.getElement(), 'mousedown');
+      chai.simulateEvent(overlay2.getElement(), 'mousedown');
       expect(imgGroup.isCollected(overlay)).to.be.false;
       expect(imgGroup.isCollected(overlay2)).to.be.false;
     });
   });
 
   describe('#_toggleCollected', function() {
-    it('Should allow multiple image selection on shift + click', function() {
+    it('Should allow multiple image selection (collection) on shift + click', function() {
       var img = overlay.getElement();
       var img2 = overlay2.getElement();
 
-      chai.simulateEvent(img, chai.mouseEvents.ShiftMouseDown);
-      chai.simulateEvent(img2, chai.mouseEvents.ShiftMouseDown);
-
+      chai.simulateEvent(img, 'mousedown', { shiftKey: true });
+      chai.simulateEvent(img2, 'mousedown', { shiftKey: true });
       expect(L.DomUtil.getClass(img)).to.include('collected');
       expect(L.DomUtil.getClass(img2)).to.include('collected');
     });
 
     it('It should allow a locked image to be part of multiple image selection', function() {
       var img = overlay.getElement();
-
-      overlay.editing._toggleLockMode();
-      chai.simulateEvent(img, chai.mouseEvents.ShiftMouseDown);
-
+      overlay.editing._lock();
+      chai.simulateEvent(img, 'mousedown', { shiftKey: true });
       expect(L.DomUtil.getClass(img)).to.include('collected');
     });
   });

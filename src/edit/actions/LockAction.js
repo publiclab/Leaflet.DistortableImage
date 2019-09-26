@@ -12,7 +12,7 @@ L.LockAction = L.EditAction.extend({
       if (edit._mode === 'lock') { use = 'lock'; }
       else { use = 'unlock'; }
     } else {
-      L.DistortableImage.group_action_map.l = '_lockGroup';
+      L.DistortableImage.group_action_map.l = 'lockGroup';
       tooltip = 'Lock Images';
       use = 'lock';
     }
@@ -32,6 +32,6 @@ L.LockAction = L.EditAction.extend({
     var edit = this._overlay.editing;
 
     if (edit instanceof L.DistortableImage.Edit) { edit._toggleLockMode(); }
-    else { edit._lockGroup(); }
+    else { edit.lockGroup(); }
   },
 });
