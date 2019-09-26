@@ -1286,17 +1286,19 @@ L.MutationAnim = L.Class.extend({
     this.config = options.config;
   },
 
-  _startObservering: function(el) {
-    this._observer.observe(el, this.config);
-  },
+  //   _startObservering: function(el) {
+  //     this._observer.observe(el, this.config);
+  //   },
 
-  onRemove: function(group, element, options) {
-    this._observer.disconnect();
-  },
+//   onRemove: function(group, element, options) {
+//     this._observer.disconnect();
+//   },
 });
+
 L.MutationAnim.addInitHook(function() {
   var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
   var group = this._group;
+
   var observer = new MutationObserver(function(mutations) {
     mutations.forEach(function(mutation) {
       mutation.group = group;
@@ -1315,6 +1317,7 @@ L.MutationAnim.addInitHook(function() {
       }
     }, this);
   }, this);
+
   this._element._animation = this._element.animate({
     filter: ['none', 'drop-shadow(0 0 1rem #ffea00)', 'drop-shadow(0 0 2.5rem #ffea00)', 'none']}, {
     duration: 2500,
@@ -1322,7 +1325,9 @@ L.MutationAnim.addInitHook(function() {
     easing: 'linear',
     iterations: Infinity,
   });
+
   this._element._animation.pause();
+
   observer.observe(this._element, {attributes: true});
 });
 
