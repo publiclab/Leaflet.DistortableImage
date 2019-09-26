@@ -6,7 +6,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     opacity: 0.7,
     outline: '1px solid red',
     keymap: L.distortableImage.action_map,
-    modes: ['scale', 'distort', 'rotate', 'freeRotate', 'lock'],
+    modes: ['drag', 'scale', 'distort', 'rotate', 'freeRotate', 'lock'],
   },
 
   initialize: function(overlay, options) {
@@ -96,6 +96,11 @@ L.DistortableImage.Edit = L.Handler.extend({
     var overlay = this._overlay;
     var i;
 
+    this._dragHandles = L.layerGroup();
+    for (i = 0; i < 4; i++) {
+      this._dragHandles.addLayer(new L.DragHandle(overlay, i));
+    }
+
     this._scaleHandles = L.layerGroup();
     for (i = 0; i < 4; i++) {
       this._scaleHandles.addLayer(new L.ScaleHandle(overlay, i));
@@ -114,7 +119,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     // handle includes rotate AND scale
     this._freeRotateHandles = L.layerGroup();
     for (i = 0; i < 4; i++) {
-      this._freeRotateHandles.addLayer(new L.RotateScaleHandle(overlay, i));
+      this._freeRotateHandles.addLayer(new L.FreeRotateHandle(overlay, i));
     }
 
     this._lockHandles = L.layerGroup();
@@ -125,6 +130,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
 
     this._handles = {
+      drag: this._dragHandles,
       scale: this._scaleHandles,
       distort: this._distortHandles,
       rotate: this._rotateHandles,
@@ -243,6 +249,11 @@ L.DistortableImage.Edit = L.Handler.extend({
 
       this.fire('drag');
     };
+  },
+
+  _dragMode: function() {
+    if (!this.hasTool(L.DragAction)) { return; }
+    this.setMode('drag');
   },
 
   _scaleMode: function() {

@@ -323,6 +323,21 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return this;
   },
 
+  dragBy: function(formerPoint, newPoint) {
+    var map = this._map;
+    var i;
+    var p;
+    var transCorners = {};
+    var delta = map.project(formerPoint).subtract(map.project(newPoint));
+
+    for (i = 0; i < 4; i++) {
+      p = map.project(this.getCorner(i)).subtract(delta);
+      transCorners[i] = map.unproject(p);
+    }
+
+    this.setCorners(transCorners);
+  },
+
   _revert: function() {
     var a = this.rotation;
     var map = this._map;

@@ -44,6 +44,7 @@ L.distortableImage.popupBar = function(latlng, options) {
 L.DistortableImageOverlay.addInitHook(function() {
   /** Default actions */
   this.ACTIONS = [
+    L.DragAction,
     L.ScaleAction,
     L.DistortAction,
     L.RotateAction,

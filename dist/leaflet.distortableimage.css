@@ -155,8 +155,14 @@ a.leaflet-toolbar-icon.freeRotate.selected-mode {
 }
 
 a.leaflet-toolbar-icon.rotate.selected-mode .ldi-icon,
-a.leaflet-toolbar-icon.freeRotate.selected-mode .ldi-icon {
+a.leaflet-toolbar-icon.freeRotate.selected-mode .ldi-icon,
+a.leaflet-toolbar-icon.drag.selected-mode .ldi-icon {
   fill: white;
+}
+
+a.leaflet-toolbar-icon.drag.selected-mode {
+  background-color: rgba(9, 155, 56, 0.75);
+  border: inset 0.5px lightgray;
 }
 
 a.leaflet-toolbar-icon.distort.selected-mode,
