@@ -20,6 +20,8 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
     this.editActions = this.options.actions;
 
+    this._initModes();
+
     L.DomEvent.on(document, 'keydown', this._onKeyDown, this);
 
     if (!(map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled())) {
@@ -77,6 +79,18 @@ L.DistortableCollection.Edit = L.Handler.extend({
     return this;
   },
 
+  _initModes: function() {
+    this._modes = {};
+    // passed from L.DistortablImage.PopupBar. If the mode is one
+    // of the current toolbar actions, add it to this._modes
+    for (var mode in L.DistortableCollection.Edit.MODES) {
+      var action = L.DistortableCollection.Edit.MODES[mode];
+      if (this.editActions.indexOf(action) !== -1) {
+        this._modes[mode] = action;
+      }
+    }
+  },
+
   _onKeyDown: function(e) {
     var keymap = this.options.keymap;
     var handlerName = keymap[e.key];
@@ -119,13 +133,10 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
     this._group.eachLayer(function(layer) {
       L.DomUtil.removeClass(layer.getElement(), 'collected');
-      if (layer._collectedAnim) {
-        layer._collectedAnim.currentTime = 0;
-        layer._collectedAnim.pause();
-      }
-      layer.deselect();
-    });
+      this._group._uncollect(layer);
+    }, this);
 
+    this._collectionOff();
     this._removeToolbar();
 
     if (e) { L.DomEvent.stopPropagation(e); }
@@ -133,12 +144,31 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
   _unlockGroup: function() {
     this._mode = 'unlock';
-    this._setModeForLayers('unlock');
+    this._group.eachLayer(function(layer) {
+      var edit = layer.editing;
+      if (this._group.isCollected(layer) && edit.isMode('lock')) {
+        edit._unlock();
+        layer.deselect();
+      }
+    }, this);
+    if (this.toolbar) {
+      this.toolbar.clickTool('unlock');
+      this._refresh();
+    }
   },
 
   _lockGroup: function() {
     this._mode = 'lock';
-    this._setModeForLayers('lock');
+    this._group.eachLayer(function(layer) {
+      var edit = layer.editing;
+      if (this._group.isCollected(layer) && !edit.isMode('lock')) {
+        edit._lock();
+      }
+    }, this);
+    if (this.toolbar) {
+      this.toolbar.clickTool('lock');
+      this._refresh();
+    }
   },
 
   _addCollections: function(e) {
@@ -150,20 +180,11 @@ L.DistortableCollection.Edit = L.Handler.extend({
       var zoom = map.getZoom();
       var center = map.getCenter();
 
-      if (layer.isSelected()) { layer.deselect(); }
-
       var imgBounds = L.latLngBounds(layer.getCorner(2), layer.getCorner(1));
       imgBounds = map._latLngBoundsToNewLayerBounds(imgBounds, zoom, center);
       if (box.intersects(imgBounds) && edit.enabled()) {
-        if (!this.toolbar) {
-          this._addToolbar();
-        }
         L.DomUtil.addClass(layer.getElement(), 'collected');
-        var anim = layer._collectedAnim;
-        if (anim && anim.playState === 'paused') {
-          layer._collectedAnim.play();
-          layer._collectedAnim.startTime = this._group._otherSelected() || layer._collectedAnim.currentTime / 3000;
-        }
+        this._group._collect(layer);
       }
     }, this);
   },
@@ -182,52 +203,46 @@ L.DistortableCollection.Edit = L.Handler.extend({
       }, this);
       if (!this._group.anyCollected()) {
         this._removeToolbar();
+        this._collectionOff();
       }
     }
 
     if (e) { L.DomEvent.stopPropagation(e); }
   },
 
-  _setModeForLayers: function(newMode) {
-    var group = this._group;
-    var map = group._map;
-
-    if (!this._group.anyCollected()) { return false; }
-
-    if (this.hasTool(L.DistortableCollection.Edit.MODES[newMode])) {
-      if (this.toolbar) { this.toolbar.clickTool(newMode); }
-      this._group.eachLayer(function(layer) {
-        var edit = layer.editing;
-
-        if (!this._group.isCollected(layer)) { return false; }
-        // prefer to use the already created setMode method for single instances
-        if (edit.hasMode(newMode)) { edit.setMode(newMode); }
-        else {
-          if (edit.isMode('lock') && !edit.dragging) { edit._enableDragging(); }
-          if (edit.currentHandle) { map.removeLayer(edit.currentHandle); }
-          // our collection group has unlock mode but our instances just consider it no mode ('')
-          edit._mode = newMode === 'unlock' ? '' : newMode;
-          if (edit.isMode('lock')) {
-            edit._disableDragging();
-          }
-          edit._updateHandle();
+  _collectionOn: function(layer) {
+    layer = layer || '';
+    this._group.eachLayer(function(lay) {
+      if (lay !== layer) {
+        var div = lay.getElement().parentNode;
+        if (!L.DomUtil.hasClass(div, 'wrapcollect')) {
+          L.DomUtil.addClass(div, 'wrapcollect');
         }
+      }
+    });
+    if (layer) { layer.deselect(); }
+  },
 
-        this._refresh();
-        // map.addLayer also deselects the image, so we reselect here
-        L.DomUtil.addClass(layer.getElement(), 'collected');
-        // we want to ensure its single interface markers still hidden except if they're lock
-        // nice to see lock handles in collection mode.
-        if (!edit.isMode('lock')) { layer.deselect(); }
-        return this;
-      }, this);
-    }
-    return false;
+  _collectionOff: function(layer) {
+    layer = layer || '';
+    this._group.eachLayer(function(lay) {
+      if (lay !== layer) {
+        var div = lay.getElement().parentNode;
+        if (L.DomUtil.hasClass(div, 'wrapcollect')) {
+          L.DomUtil.removeClass(div, 'wrapcollect');
+        }
+      }
+    });
+    if (layer) { layer.select(); }
   },
 
   _refresh: function() {
     if (this.toolbar) { this._removeToolbar(); }
     this._addToolbar();
+  },
+
+  getModes: function() {
+    return this._modes;
   },
 
   startExport: function(opts) {

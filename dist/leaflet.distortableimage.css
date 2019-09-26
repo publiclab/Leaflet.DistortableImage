@@ -2,15 +2,31 @@
   pointer-events: all !important;
 }
 
-/* .ldi .leaflet-pane .leaflet-overlay-pane .wrapper {
+/* unlocked, collected imagees during collection mode */
+.ldi .leaflet-pane .leaflet-overlay-pane .wrapper {
   -webkit-filter: drop-shadow(2px 4px 6px #282323c9);
   filter: drop-shadow(2px 4px 6px #282323c9);
-} */
+  position: absolute;
+  z-index: 2;
+}
 
-/* .ldi .leaflet-pane .leaflet-overlay-pane .wrapper.lock {
-  -webkit-filter: contrast(0.8);
-  filter: contrast(0.8);
-} */
+/* images that are collected during collection mode, but are locked */
+.ldi .leaflet-pane .leaflet-overlay-pane .wrapper.lock {
+  -webkit-filter: none;
+  filter: none;
+  position: absolute;
+  z-index: -2;
+}
+
+/* images that aren't collected during collection mode */
+.ldi .leaflet-pane .leaflet-overlay-pane .wrapper.wrapcollect,
+.ldi .leaflet-pane .leaflet-overlay-pane .wrapper.lock.wrapcollect,
+.ldi .leaflet-pane .leaflet-overlay-pane .wrapper.wrapcollect.lock {
+  -webkit-filter: brightness(0.7);
+  filter: brightness(0.7);
+  position: absolute;
+  z-index: -5;
+}
 
 .ldi-icon {
   width: 18px;

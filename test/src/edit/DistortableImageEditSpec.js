@@ -13,6 +13,17 @@ describe('L.DistortableImage.Edit', function() {
         L.latLng(41.7834, -87.5852),
         L.latLng(41.7834, -87.6052),
       ],
+      actions: [
+        L.ScaleAction,
+        L.DistortAction,
+        L.RotateAction,
+        L.FreeRotateAction,
+        L.LockAction,
+        L.OpacityAction,
+        L.BorderAction,
+        L.ExportAction,
+        L.DeleteAction,
+      ],
     }).addTo(map);
 
     ov2 = L.distortableImageOverlay('/examples/example.png', {
@@ -25,18 +36,24 @@ describe('L.DistortableImage.Edit', function() {
       suppressToolbar: true,
     }).addTo(map);
 
+    ov3 = L.distortableImageOverlay('/examples/example.png', {
+      actions: [],
+    }).addTo(map);
+
     /* Forces the image to load before any tests are run. */
-    L.DomEvent.on(ov2._image, 'load', function() { done(); });
+    L.DomEvent.on(ov3._image, 'load', function() { done(); });
 
     afterEach(function() {
       L.DomUtil.remove(overlay);
       L.DomUtil.remove(ov2);
+      L.DomUtil.remove(ov3);
     });
   });
 
   it('Should be initialized along with each instance of L.DistortableImageOverlay.', function() {
     expect(overlay.editing).to.be.an.instanceOf(L.DistortableImage.Edit);
     expect(ov2.editing).to.be.an.instanceOf(L.DistortableImage.Edit);
+    expect(ov3.editing).to.be.an.instanceOf(L.DistortableImage.Edit);
   });
 
   it('Should keep handles on the map in sync with the corners of the image.', function() {
@@ -57,6 +74,14 @@ describe('L.DistortableImage.Edit', function() {
     /* After we toggle modes, the freeRotateHandles are on the map and should be synced. */
     edit.currentHandle.eachLayer(function(handle) {
       expect(handle.getLatLng()).to.be.closeToLatLng(corners[handle._corner]);
+    });
+  });
+
+  describe('#_appendHandlesDraggable', function() {
+    it('Allows an empty actions array w/out suppressToolbar', function() {
+      expect(ov3.editing.enable).to.not.throw;
+      expect(ov3.editing.getMode()).to.be.undefined;
+      expect(ov3.editing.getModes()).to.be.empty;
     });
   });
 

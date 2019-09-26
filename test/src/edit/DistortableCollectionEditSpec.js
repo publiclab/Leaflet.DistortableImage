@@ -51,7 +51,7 @@ describe('L.DistortableCollection.Edit', function() {
   });
 
   describe('#_decollectAll', function() {
-    it('Should remove the \'selected\' class from all images', function() {
+    it('should remove the \'selected\' class from all images', function() {
       var img = overlay.getElement();
       var img2 = overlay2.getElement();
 
@@ -65,7 +65,7 @@ describe('L.DistortableCollection.Edit', function() {
       }, 3000);
     });
 
-    it('Should hide all images\' handles unless they\'re lock handles', function() {
+    it('should hide all images\' handles unless they\'re lock handles', function() {
       var edit = overlay.editing;
       var edit2 = overlay2.editing;
       // turn on lock handles for one of the DistortableImageOverlay instances.
@@ -85,7 +85,7 @@ describe('L.DistortableCollection.Edit', function() {
       }, 3000);
     });
 
-    it('Should remove an image\'s individual toolbar instances regardless of lock handles', function() {
+    it('should remove an image\'s individual toolbar instances regardless of lock handles', function() {
       var edit2 = overlay2.editing;
       edit2._lock();
       // select image to initially create individual toolbar instance (single selection interface)
@@ -144,9 +144,15 @@ describe('L.DistortableCollection.Edit', function() {
     });
 
     it('is invoked on shift + mousedown when it toggles the image *out* of multi-select', function() {
-      // deselecting the image removes the control toolbar
+      var edit = imgGroup.editing;
+      var spy = sinon.spy(edit, '_removeToolbar');
+      // uncollecting the last collected image removes the control toolbar
       simulateEvent(overlay.getElement(), 'mousedown', {shiftKey: true});
-      expect(map._toolbars).to.be.empty;
+      setTimeout(function () {
+        expect(map._toolbars).to.be.empty;
+        expect(spy.called).to.be.ok;
+        edit._removeToolbar.restore();
+      }, 3000);
     });
 
     it('it removes a control toolbar from the map', function() {
@@ -196,7 +202,7 @@ describe('L.DistortableCollection.Edit', function() {
       expect(overlay.editing.isMode('lock')).to.be.true;
     });
 
-    it('it removes the multi-selected images from lock mode', function() {
+    it('it removes the collected images from lock mode', function() {
       imgGroup.editing._unlockGroup();
       expect(overlay.editing.isMode('lock')).to.be.false;
     });
@@ -214,7 +220,7 @@ describe('L.DistortableCollection.Edit', function() {
       simulateEvent(overlay3.getElement(), 'mousedown', {shiftKey: true});
     });
 
-    it('removes a group of collected layers', function() {
+    it('removes a collection of layers', function() {
       var layers = imgGroup.getLayers();
       expect(layers).to.include.members([overlay, overlay2, overlay3]);
 

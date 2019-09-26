@@ -20,7 +20,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this.rotation = 0;
     this._clicked = 0;
     this._clickTimeout2 = null;
-    // window.rotation = this.rotation;
   },
 
   onAdd: function(map) {
@@ -39,7 +38,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
     // Have to wait for the image to load because need to access its w/h
     L.DomEvent.on(this._image, 'load', function() {
-      this.getPane().appendChild(this._image);
+      // containing each img in a div element will give us better control
+      // over styling, touch events, etc.
+      var wrapper = L.DomUtil.create('div', 'wrapper', this.getPane());
+      wrapper.appendChild(this._image);
       this._initImageDimensions();
       this._reset();
       /* Initialize default corners if not already set */
@@ -60,6 +62,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     }, this);
 
     L.DomEvent.on(this._image, 'click', this.select, this);
+
     L.DomEvent.on(map, {
       singleclickon: this._singleClickListeners,
       singleclickoff: this._resetClickListeners,
@@ -165,9 +168,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     var edit = this.editing;
     var img = this.getElement();
 
-    if (e) { L.DomEvent.stopPropagation(e); }
-
     if (!edit.enabled()) { return false; }
+
+    if (e) { L.DomEvent.stopPropagation(e); }
 
     // this ensures deselection of all other images, allowing us to keep collection group optional
     this._programmaticGrouping();
@@ -177,12 +180,12 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     edit._showMarkers();
 
     // we run the selection logic 1st anyway because the collection group's _addToolbar method depends on it
-    if (L.DomUtil.hasClass(img, 'collected') || (e && e.shiftKey)) {
+    if (L.DomUtil.hasClass(img, 'collected')) {
       this.deselect();
       return false;
     }
 
-    if (e) {
+    if (e && !e.shiftKey) {
       var src = e.sourceCapabilities;
       if (L.Browser.touch && (src && src.firesTouchEvents)) {
         map._clicked += 1;

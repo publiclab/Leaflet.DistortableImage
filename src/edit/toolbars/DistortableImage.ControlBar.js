@@ -20,11 +20,8 @@ L.DistortableImage.ControlBar = L.Toolbar2.Control.extend({
 
   clickTool: function(name) {
     var tools = this.tools();
-    console.log(tools);
     for (var i = 0; i < tools.length; i++) {
       var tool = tools.item(i).children[0];
-      console.log(tool);
-      console.log(L.DomUtil.hasClass(tool, name));
       if (L.DomUtil.hasClass(tool, name)) {
         tool.click();
         return tool;

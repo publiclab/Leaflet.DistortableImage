@@ -17,6 +17,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     if (this.editable) { this.editing.enable(); }
 
+    this._animHandles = L.layerGroup();
+    this._layerCount = 0;
+
     /**
      * although we have a DistortableCollection.Edit class that handles collection events to keep our code managable,
      * events that need to be added on individual images are kept here to do so through `layeradd`.
@@ -41,21 +44,13 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
 
     L.DomEvent.on(layer._image, {
-      // mouseup: this._deselectIfPropogated,
       mousedown: this._deselectOthers,
       /* Enable longpress for multi select for touch devices. */
       contextmenu: this._longPressMultiSelect,
     }, this);
 
-    layer._collectedAnim = layer.getElement().animate({
-      filter: ['none', 'drop-shadow(0 0 1rem #ffea00)', 'drop-shadow(0 0 2.5rem #ffea00)', 'none']}, {
-      duration: 2500,
-      fill: 'none',
-      easing: 'linear',
-      iterations: Infinity,
-    });
-
-    layer._collectedAnim.pause();
+    this._animHandles.addLayer(new L.MutationAnim(layer._image, this, this._layerCount));
+    this._layerCount++;
   },
 
   _removeEvents: function(e) {
@@ -67,10 +62,52 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
 
     L.DomEvent.off(layer._image, {
-      // mouseup: this._deselectIfPropogated,
       mousedown: this._deselectOthers,
       contextmenu: this._longPressMultiSelect,
     }, this);
+  },
+
+  _collect: function(layer) {
+    var groupEdit = this.editing;
+    var edit = layer.editing;
+    var div = layer.getElement().parentNode;
+
+    layer.deselect();
+    if (edit.isMode('lock')) { edit._showMarkers(); }
+
+    if (!groupEdit.toolbar) {
+      groupEdit._mode = edit.isMode('lock') ? 'lock' : 'unlock';
+      groupEdit._addToolbar();
+      groupEdit.toolbar.clickTool(groupEdit._mode);
+      groupEdit._collectionOn(layer);
+    } else {
+      if (this._hasGroupMode()) {
+        groupEdit._mode = this._allLayersLocked() ? 'lock' : 'unlock';
+        groupEdit.toolbar.clickTool(groupEdit._mode);
+      } else { groupEdit._mode = ''; }
+      if (L.DomUtil.hasClass(div, 'wrapcollect')) { L.DomUtil.removeClass(div, 'wrapcollect'); }
+    }
+    groupEdit._refresh();
+  },
+
+  _uncollect: function(layer) {
+    var groupEdit = this.editing;
+    var div = layer.getElement().parentNode;
+
+    if (!this.anyCollected()) {
+      groupEdit._mode = '';
+      groupEdit._refresh();
+      groupEdit._removeToolbar();
+      groupEdit._collectionOff(layer);
+    } else {
+      layer.deselect();
+      if (!L.DomUtil.hasClass(div, 'wrapcollect')) { L.DomUtil.addClass(div, 'wrapcollect'); }
+      if (this._hasGroupMode()) {
+        groupEdit._mode = this._allLayersLocked() ? 'lock' : 'unlock';
+        groupEdit.toolbar.clickTool(groupEdit._mode);
+      } else { groupEdit._mode = ''; }
+      groupEdit._refresh();
+    }
   },
 
   _longPressMultiSelect: function(e) {
@@ -83,19 +120,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
       if (layer.getElement() === e.target && edit.enabled()) {
         L.DomUtil.toggleClass(layer.getElement(), 'collected');
         if (L.DomUtil.hasClass(layer.getElement(), 'collected')) {
-          layer.deselect();
-          if (edit.isMode('lock')) { edit._showMarkers(); }
-          this.editing._addToolbar();
-          if (layer._collectedAnim) {
-            layer._collectedAnim.play();
-            layer._collectedAnim.startTime = this._otherSelected() || layer._collectedAnim.currentTime / 3000;
-          }
+          this._collect(layer);
         } else {
-          this.editing._removeToolbar();
-          if (layer._collectedAnim) {
-            layer._collectedAnim.currentTime = 0;
-            layer._collectedAnim.pause();
-          }
+          this._uncollect(layer);
         }
       }
     }, this);
@@ -115,13 +142,12 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return layerArr.filter(this.isCollected.bind(this));
   },
 
-  // _deselectIfPropogated: function(e) {
-
-  // },
+  getNotCollectedLayers: function() {
+    var layerArr = this.getLayers();
+    return layerArr.filter(!this.isCollected.bind(this));
+  },
 
   _toggleCollected: function(e) {
-    var groupEdit = this.editing;
-
     if (!this.editable) { return; }
 
     this.eachLayer(function(layer) {
@@ -129,36 +155,10 @@ L.DistortableCollection = L.FeatureGroup.extend({
       if (e.target === layer.getElement() && edit.enabled()) {
         L.DomUtil.toggleClass(e.target, 'collected');
         if (L.DomUtil.hasClass(e.target, 'collected')) {
-          layer._collectedAnim.play();
-          layer._collectedAnim.startTime = this._otherSelected() || layer._collectedAnim.currentTime / 3000;
-
-          layer.deselect();
-          if (edit.isMode('lock')) { edit._showMarkers(); }
-          if (!groupEdit.toolbar) { groupEdit._addToolbar(); }
-          if (this._allLayersSameMode()) { groupEdit._mode = this._allLayersLocked() ? 'lock' : 'unlock'; }
-          else { groupEdit._mode = ''; }
-          if (groupEdit._mode !== '') { groupEdit.toolbar.clickTool(groupEdit._mode); }
-          groupEdit._refresh();
-          return;
+          this._collect(layer);
         } else {
-          layer._collectedAnim.currentTime = 0;
-          layer._collectedAnim.pause();
-
-          if (!this.anyCollected()) {
-            groupEdit._mode = '';
-            groupEdit._refresh();
-            groupEdit._removeToolbar();
-            return;
-          }
-          else {
-            if (this._allLayersSameMode()) { groupEdit._mode = this._allLayersLocked() ? 'lock' : 'unlock'; }
-            else { groupEdit._mode = ''; }
-            if (groupEdit._mode !== '') { groupEdit.toolbar.clickTool(groupEdit._mode); }
-            groupEdit._refresh();
-            layer.deselect();
-          }
+          this._uncollect(layer);
         }
-        return;
       }
     }, this);
   },
@@ -227,28 +227,24 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
   },
 
-  _allLayersSameMode: function() {
-    return this._allLayersLocked() || this._allLayersModeless();
+  _hasGroupMode: function() {
+    return this._allLayersLocked() || this._allLayersNotLocked();
   },
 
   _allLayersLocked: function() {
     var layerArr = this.getCollectedLayers();
 
-    var a = layerArr.every(function(layer) {
+    return layerArr.every(function(layer) {
       return layer.editing.isMode('lock');
     });
-
-    return a;
   },
 
-  _allLayersModeless: function() {
+  _allLayersNotLocked: function() {
     var layerArr = this.getCollectedLayers();
 
-    var b = layerArr.every(function(layer) {
-      return layer.editing._mode === '';
+    return layerArr.every(function(layer) {
+      return !layer.editing.isMode('lock');
     });
-
-    return b;
   },
 
   _updateCollectionFromPoints: function(delta, overlay) {
