@@ -360,10 +360,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this._removeToolbar();
 
-    if (eP) {
-      // eP._uncollect(ov);
-      eP.removeLayer(ov);
-    }
+    if (eP) { eP.removeLayer(ov); }
     else { ov._map.removeLayer(ov); }
   },
 

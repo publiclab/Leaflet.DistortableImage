@@ -18,6 +18,11 @@
   z-index: -2;
 }
 
+.ldi .leaflet-pane .leaflet-overlay-pane .wrapper.lock img.leaflet-marker-icon {
+  position: absolute !important;
+  z-index: 0 !important;
+}
+
 /* images that aren't collected during collection mode */
 .ldi .leaflet-pane .leaflet-overlay-pane .wrapper.wrapcollect,
 .ldi .leaflet-pane .leaflet-overlay-pane .wrapper.lock.wrapcollect,
@@ -26,6 +31,13 @@
   filter: brightness(0.7);
   position: absolute;
   z-index: -5;
+}
+
+.ldi .leaflet-pane .leaflet-overlay-pane .wrapper.wrapcollect img.leaflet-marker-icon,
+.ldi .leaflet-pane .leaflet-overlay-pane .wrapper.lock.wrapcollect img.leaflet-marker-icon,
+.ldi .leaflet-pane .leaflet-overlay-pane .wrapper.wrapcollect.lock img.leaflet-marker-icon {
+  position: absolute !important;
+  z-index: 0 !important;
 }
 
 .ldi-icon {

@@ -61,7 +61,6 @@
               L.latLng(51.49,-0.17)
             ],
             mode: 'freeRotate',
-            actions: [],
           });
 
         img3 = L.distortableImageOverlay(
@@ -73,7 +72,6 @@
               L.latLng(51.48,-0.10),
             ],
             actions: [L.DistortAction, L.FreeRotateAction, L.LockAction, L.OpacityAction, L.DeleteAction],
-            suppressToolbar: true,
           });
 
         img4 = L.distortableImageOverlay(
@@ -87,7 +85,7 @@
             ],
           });
 
-        imgGroup = L.distortableCollection({actions: [L.LockAction]}).addTo(map);
+        imgGroup = L.distortableCollection().addTo(map);
 
         /** TODO: make an addLayers func */
         imgGroup.addLayer(img);
