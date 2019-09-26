@@ -85,7 +85,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   _initModes: function() {
     this._modes = {};
     // passed from L.DistortablImage.PopupBar. If the mode is one
-    // of the current toolbar actions, add it to this._modes
+    // of the current toolbar actions, adds it to this._modes
     for (var mode in L.DistortableImage.Edit.MODES) {
       var action = L.DistortableImage.Edit.MODES[mode];
       if (this.editActions.indexOf(action) !== -1) {

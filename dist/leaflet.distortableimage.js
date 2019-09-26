@@ -269,8 +269,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this._selected = this.options.selected;
     this._url = url;
     this.rotation = 0;
-    this._clicked = 0;
-    this._clickTimeout2 = null;
   },
 
   onAdd: function(map) {
@@ -756,7 +754,6 @@ L.Map.addInitHook(function() {
 L.DistortableCollection = L.FeatureGroup.extend({
   options: {
     editable: true,
-    // suppressToolbar: false,
   },
 
   initialize: function(options) {
@@ -764,7 +761,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
     L.FeatureGroup.prototype.initialize.call(this, options);
 
     this.editable = this.options.editable;
-    // this.suppressToolbar = this.options.suppressToolbar;
   },
 
   onAdd: function(map) {
@@ -1068,7 +1064,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
 L.distortableCollection = function(id, options) {
   return new L.DistortableCollection(id, options);
 };
-
 
 /* eslint-disable no-unused-vars */
 L.EXIF = function getEXIFdata(img) {
@@ -2224,7 +2219,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   _initModes: function() {
     this._modes = {};
     // passed from L.DistortablImage.PopupBar. If the mode is one
-    // of the current toolbar actions, add it to this._modes
+    // of the current toolbar actions, adds it to this._modes
     for (var mode in L.DistortableImage.Edit.MODES) {
       var action = L.DistortableImage.Edit.MODES[mode];
       if (this.editActions.indexOf(action) !== -1) {
@@ -2901,8 +2896,8 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
   _initModes: function() {
     this._modes = {};
-    // passed from L.DistortablImage.PopupBar. If the mode is one
-    // of the current toolbar actions, add it to this._modes
+    // passed from L.DistortablImage.ControlBar. If the mode is one
+    // of the current toolbar actions, adds it to this._modes
     for (var mode in L.DistortableCollection.Edit.MODES) {
       var action = L.DistortableCollection.Edit.MODES[mode];
       if (this.editActions.indexOf(action) !== -1) {

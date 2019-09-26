@@ -1,7 +1,6 @@
 L.DistortableCollection = L.FeatureGroup.extend({
   options: {
     editable: true,
-    // suppressToolbar: false,
   },
 
   initialize: function(options) {
@@ -9,7 +8,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
     L.FeatureGroup.prototype.initialize.call(this, options);
 
     this.editable = this.options.editable;
-    // this.suppressToolbar = this.options.suppressToolbar;
   },
 
   onAdd: function(map) {
@@ -313,4 +311,3 @@ L.DistortableCollection = L.FeatureGroup.extend({
 L.distortableCollection = function(id, options) {
   return new L.DistortableCollection(id, options);
 };
-

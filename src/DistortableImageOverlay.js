@@ -18,8 +18,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this._selected = this.options.selected;
     this._url = url;
     this.rotation = 0;
-    this._clicked = 0;
-    this._clickTimeout2 = null;
   },
 
   onAdd: function(map) {
