@@ -2,10 +2,10 @@
   pointer-events: all !important;
 }
 
-/* unlocked, collected imagees during collection mode */
+/* unlocked, collected images during collection mode */
 .ldi .leaflet-pane .leaflet-overlay-pane .wrapper {
-  -webkit-filter: drop-shadow(2px 4px 6px #282323c9);
-  filter: drop-shadow(2px 4px 6px #282323c9);
+  /* -webkit-filter: drop-shadow(2px 4px 6px #282323c9);
+  filter: drop-shadow(2px 4px 6px #282323c9); */
   position: absolute;
   z-index: 2;
 }
@@ -18,9 +18,9 @@
   z-index: -2;
 }
 
-.ldi .leaflet-pane .leaflet-overlay-pane .wrapper.red {
-  -webkit-filter: drop-shadow(0 0 1px red);
-  filter: drop-shadow(0 0 1px red);
+/* .ldi .leaflet-pane .leaflet-overlay-pane .wrapper.red {
+  -webkit-filter: drop-shadow(0 0 1px #ff000061);
+  filter: drop-shadow(0 0 1px #ff000061);
 }
 
 .ldi .leaflet-pane .leaflet-overlay-pane .wrapper.blue {
@@ -28,9 +28,16 @@
   filter: drop-shadow(0 0 1px blue);
 }
 
-.ldi .leaflet-pane .leaflet-overlay-pane .wrapper.black{
+.ldi .leaflet-pane .leaflet-overlay-pane .wrapper.black {
   -webkit-filter: drop-shadow(0 0 1px black);
   filter: drop-shadow(0 0 1px black);
+}  */
+
+/* image while being dragged in single select mode */
+.ldi .leaflet-pane .leaflet-overlay-pane .wrapper.clear {
+  -webkit-filter: none;
+  filter: none;
+  /* z-index: 10; */
 }
 
 /* images that aren't collected during collection mode */

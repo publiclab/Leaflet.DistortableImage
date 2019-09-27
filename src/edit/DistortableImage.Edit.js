@@ -47,13 +47,15 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
 
     this.lastOpacity = img.style.opacity;
+    this.lastOutline = img.style.outline;
     this._preview = false;
     this.parentGroup = overlay.eP ? overlay.eP : false;
 
     L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
     L.DomEvent.on(map, 'dblclick', this._catchAndFire, this);
     L.DomEvent.on(img, 'mouseover', this._previewOn, this);
-    L.DomEvent.on(img, 'mouseout down', this._previewOff, this);
+    L.DomEvent.on(img, 'mouseout mousedown', this._previewOff, this);
+    L.DomEvent.on(img, 'mouseup', this._timeout, this);
     L.DomEvent.on(img, 'dblclick', this.nextMode, this);
   },
 
@@ -84,6 +86,9 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     L.DomEvent.off(window, 'keydown', this._onKeyDown, this);
     L.DomEvent.off(map, 'dblclick', this._catchAndFire, this);
+    L.DomEvent.off(img, 'mouseover', this._previewOn, this);
+    L.DomEvent.off(img, 'mouseout mousedown', this._previewOff, this);
+    L.DomEvent.off(img, 'mouseup', this._timeout, this);
     L.DomEvent.off(img, 'dblclick', this.nextMode, this);
   },
 
@@ -191,6 +196,17 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
   },
 
+  _timeout: function() {
+    if (!this._timer) { return; }
+    clearTimeout(this._timer);
+
+    if (this._overlay._tooltip) {
+      setTimeout(L.bind(function() {
+        this._overlay.unbindTooltip();
+      }, this), 400);
+    }
+  },
+
   addTool: function(value) {
     if (value.baseClass === 'leaflet-toolbar-icon' && !this.hasTool(value)) {
       this._removeToolbar();
@@ -261,14 +277,25 @@ L.DistortableImage.Edit = L.Handler.extend({
     var ov = this._overlay;
     var img = ov.getElement();
     var eP = this.parentGroup;
-    var color = L.DistortableImage.Edit.colormap[this.getMode()];
-
-    if (ov.isSelected() || (eP && eP.isCollected(ov))) {
-      if (e) { L.DomEvent.stop(e); }
+    // images with no mode will just get white
+    var color = L.DistortableImage.Edit.colormap[this.getMode()] || 'white';
+    /* don't turn this this UI on for collection interface - has its own UI
+     * TODO longpress registers as `mouseover`, figure out a way to get into this conditional
+     * for touchscreens. (Not critical barely noticable UI diff - the image outline not removed)
+     */
+    if ((e && e.shiftKey) || (eP && eP.anyCollected())) {
+      this._previewOff();
       return;
     }
-    if (color) { L.DomUtil.addClass(img.parentNode, color); }
-    L.DomUtil.setOpacity(img, 0.5);
+
+    if (e && !e.shitKey) { L.DomEvent.stop(e); }
+    if (this._preview) { return; }
+    // prevents triggeringg preview UI for other images overlapped during dragging
+    if (ov.isSelected() || eP && eP.anyMoving()) { return; }
+
+    img.style.outline = '1px solid ' + color;
+    L.DomUtil.setOpacity(img, 0.8);
+    L.DomUtil.removeClass(img.parentNode, 'clear');
     this._showMarkers();
     this._preview = true;
   },
@@ -276,48 +303,59 @@ L.DistortableImage.Edit = L.Handler.extend({
   _previewOff: function(e) {
     var ov = this._overlay;
     var img = ov.getElement();
-    var eP = this.parentGroup;
-    var color = L.DistortableImage.Edit.colormap[this.getMode()];
 
-    // if (ov.isSelected() || (eP && eP.isCollected(ov))) {
-    //   return;
-    // }
-
-    // if (e)
-
-    if (this._preview) {
-      L.DomUtil.removeClass(img.parentNode, color);
-      L.DomUtil.setOpacity(img, this.lastOpacity);
-      this.lastOpacity = img.style.opacity;
-      this._preview = false;
-      if (e && e.type === 'down') { return; }
-      this._hideMarkers();
+    if (e && !e.shitKey) { L.DomEvent.stop(e); }
+    if (this.isMode('lock') && (e && e.type === 'mousedown') && !e.shitKey) {
+      ov.bindTooltip('Locked!').addTo(ov._map);
+      // 500 sec === user trying to drag the locked overlay & confused?
+      // Otherwise doesen't fire (see clearTimeout in `_timeout` for `mouseup`)
+      this._timer = setTimeout(L.bind(function() {
+        ov._openTooltip(ov._tooltip);
+      }, ov), 500);
     }
-    // if (ov.isSelected() || (eP && eP.isCollected(ov))) { return; }
-    // if (color) { L.DomUtil.addClass(img.parentNode, color); }
-    // L.DomUtil.setOpacity(img, this.lastOpacity);
-    // this._showMarkers();
+
+    if (!this._preview) { return; }
+
+    this._preview = false;
+    this._hideMarkers();
+    L.DomUtil.setOpacity(img, this.lastOpacity);
+    /*
+     * TODO: in order to not mess with the actual opacity and borders set by the user
+     * go into their tb actions and make sure to set the opacity / border status they pick to
+     * `this.lastOpacity` and `this.lastOutline`, respectively
+     */
+    img.style.outline = this.lastOutline;
   },
 
   _enableDragging: function() {
     var overlay = this._overlay;
     var map = overlay._map;
+    var img = overlay.getElement();
 
-    this.dragging = new L.Draggable(overlay.getElement());
+    this.dragging = new L.Draggable(img);
     this.dragging.enable();
-
-    this.dragging.on('down', this._previewOff, this);
 
     /* Hide toolbars and markers while dragging; click will re-show it */
     this.dragging.on('dragstart', function() {
       overlay.fire('dragstart');
-      this._removeToolbar();
+      if (overlay.eP && overlay.eP.anyCollected()) { return; }
+      if (overlay.isSelected()) { overlay.deselect(); }
+      console.log('no returned');
+      L.DomUtil.setOpacity(img, 0.8);
+      L.DomUtil.addClass(img.parentNode, 'clear');
+    }, this);
+
+    this.dragging.on('dragend', function() {
+      if (overlay.eP && overlay.eP.anyCollected()) { return; }
+      L.DomUtil.setOpacity(img, this.lastOpacity);
+      this.lastOpacity = img.style.opacity;
+      L.DomUtil.removeClass(img.parentNode, 'clear');
+      if (!overlay.isSelected()) { overlay.select(); }
     }, this);
 
     /*
-     * Adjust default behavior of L.Draggable.
-     * By default, L.Draggable overwrites the CSS3 distort transform
-     * that we want when it calls L.DomUtil.setPosition.
+     * Adjust default behavior of L.Draggable, which overwrites the CSS3 distort transformations
+     * that we set when it calls L.DomUtil.setPosition.
      */
     this.dragging._updatePosition = function() {
       var topLeft = overlay.getCorner(0);
@@ -385,7 +423,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _toggleBorder: function() {
     var image = this._overlay.getElement();
-    var opacity;
+    // var opacity;
     var outline;
 
     if (!this.hasTool(L.BorderAction)) { return; }
@@ -393,7 +431,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._outlined = !this._outlined;
     outline = this._outlined ? this.options.outline : 'none';
 
-    L.DomUtil.setOpacity(image, opacity);
+    // L.DomUtil.setOpacity(image, opacity);
 
     image.style.outline = outline;
 
@@ -588,7 +626,6 @@ L.DistortableImage.Edit = L.Handler.extend({
         maxLat = corners[i].lat;
       }
     }
-
     // Longitude is based on the centroid of the image.
     var raisedPoint = ov.getCenter();
     raisedPoint.lat = maxLat;
@@ -619,7 +656,6 @@ L.DistortableImage.Edit = L.Handler.extend({
           maxLat = corners[i].lat;
         }
       }
-
       // Longitude is based on the centroid of the image.
       var raisedPoint = overlay.getCenter();
       raisedPoint.lat = maxLat;
@@ -691,7 +727,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (this.isMode(newMode)) { return false; }
     if (!this.enabled()) { return false; }
 
-    if (this.hasMode(newMode) || (eP && eP.hasTool(L.DistortableCollection.Edit.MODES[newMode]))) {
+    if (this.hasMode(newMode) || (eP && eP.editing.hasTool(L.DistortableCollection.Edit.MODES[newMode]))) {
       if (this.toolbar) { this.toolbar.clickTool(newMode); }
       if (this.isMode('lock') && !this.dragging) {
         this._enableDragging();

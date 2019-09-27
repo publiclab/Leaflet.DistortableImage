@@ -352,18 +352,22 @@ L.DistortableCollection.Edit = L.Handler.extend({
   },
 
   removeTool: function(value) {
-    var matched = this.editActions.some(function(item, idx) {
-      if (this.editActions[idx] === value) {
+    return this.editActions.some(function(item, idx) {
+      if (item === value) {
         this._removeToolbar();
         this.editActions.splice(idx, 1);
         this._addToolbar();
-        return true;
+        for (var mode in L.DistortableCollection.Edit.MODES) {
+          if (L.DistortableCollection.Edit.MODES[mode] === value) {
+            delete this._modes[mode];
+            if (this._mode === mode) { this._mode = ''; }
+            return true;
+          }
+        }
       } else {
         return false;
       }
     }, this);
-    if (matched) { return this; }
-    else { return false; }
   },
 });
 

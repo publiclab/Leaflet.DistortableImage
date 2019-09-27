@@ -148,6 +148,25 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return layerArr.filter(this.isCollected.bind(this));
   },
 
+  anySelected: function() {
+    var layerArr = this.getLayers();
+    // return layerArr.some(function(layer) { return layer.isSelected(); });
+    return layerArr.some(function(layer) { return layer.isSelected(); });
+  },
+
+  anyMoving: function() {
+    var layerArr = this.getLayers();
+    // return layerArr.some(function(layer) { return layer.isSelected(); });
+    return layerArr.some(function(layer) {
+      var edit = layer.editing;
+      if (edit && edit.dragging) {
+        return edit.dragging._moving;
+      } else {
+        return false;
+      }
+    });
+  },
+
   getNotCollectedLayers: function() {
     var layerArr = this.getLayers();
     return layerArr.filter(!this.isCollected.bind(this));

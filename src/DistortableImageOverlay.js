@@ -170,8 +170,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
     if (e) { L.DomEvent.stopPropagation(e); }
 
-    if (edit._preview) { edit._previewOff(); }
-
     // this ensures deselection of all other images, allowing us to keep collection group optional
     this._programmaticGrouping();
 
@@ -290,6 +288,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this.setBounds(L.latLngBounds(this.getCorners()));
     this.fire('update');
 
+    // can delete the `instanceof` check, but perhaps useful for allowing
+    // developers to build their own toolbar UIs and connect them to this plugin
     if (edit.toolbar && edit.toolbar instanceof L.DistortableImage.PopupBar) {
       edit._updateToolbarPos();
     }
@@ -338,9 +338,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     }
 
     this.setCorners(corners);
-
-    // window.angle = L.TrigUtil.radiansToDegrees(angle);
-
     this.rotation -= L.TrigUtil.radiansToDegrees(angle);
 
     return this;
@@ -360,13 +357,11 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     };
 
     edit._hideMarkers();
-
     this.setCorners(corners);
 
     if (a !== 0) { this.rotateBy(L.TrigUtil.degreesToRadians(360 - a)); }
 
     edit._showMarkers();
-
     this.rotation = a;
   },
 
