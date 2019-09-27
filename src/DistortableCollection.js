@@ -18,7 +18,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
     if (this.editable) { this.editing.enable(); }
 
     this._animHandles = L.layerGroup();
-    // this._layerCount = 0;
 
     /**
      * although we have a DistortableCollection.Edit class that handles collection events to keep our code managable,
@@ -50,7 +49,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
 
     this._animHandles.addLayer(new L.MutationAnim(layer._image, this));
-    // this._layerCount++;
   },
 
   _removeEvents: function(e) {
@@ -150,13 +148,11 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
   anySelected: function() {
     var layerArr = this.getLayers();
-    // return layerArr.some(function(layer) { return layer.isSelected(); });
     return layerArr.some(function(layer) { return layer.isSelected(); });
   },
 
   anyMoving: function() {
     var layerArr = this.getLayers();
-    // return layerArr.some(function(layer) { return layer.isSelected(); });
     return layerArr.some(function(layer) {
       var edit = layer.editing;
       if (edit && edit.dragging) {

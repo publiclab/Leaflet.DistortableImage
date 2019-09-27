@@ -768,7 +768,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
     if (this.editable) { this.editing.enable(); }
 
     this._animHandles = L.layerGroup();
-    // this._layerCount = 0;
 
     /**
      * although we have a DistortableCollection.Edit class that handles collection events to keep our code managable,
@@ -800,7 +799,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
 
     this._animHandles.addLayer(new L.MutationAnim(layer._image, this));
-    // this._layerCount++;
   },
 
   _removeEvents: function(e) {
@@ -900,13 +898,11 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
   anySelected: function() {
     var layerArr = this.getLayers();
-    // return layerArr.some(function(layer) { return layer.isSelected(); });
     return layerArr.some(function(layer) { return layer.isSelected(); });
   },
 
   anyMoving: function() {
     var layerArr = this.getLayers();
-    // return layerArr.some(function(layer) { return layer.isSelected(); });
     return layerArr.some(function(layer) {
       var edit = layer.editing;
       if (edit && edit.dragging) {
@@ -2187,7 +2183,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     L.distortableImage.action_map.Escape = '_deselect';
   },
 
-  /* Run on image selection. */
   addHooks: function() {
     var overlay = this._overlay;
     var map = overlay._map;
@@ -2437,8 +2432,8 @@ L.DistortableImage.Edit = L.Handler.extend({
     // images with no mode will just get white
     var color = L.DistortableImage.Edit.colormap[this.getMode()] || 'white';
     /* don't turn this this UI on for collection interface - has its own UI
-     * TODO longpress registers as `mouseover`, figure out a way to get into this conditional
-     * for touchscreens. (Not critical barely noticable UI diff - the image outline not removed)
+     * TODO longpress registers as `mouseover`, cant get into this conditional so instead
+     * add the logic from the collection classes end (not critical).
      */
     if ((e && e.shiftKey) || (eP && eP.anyCollected())) {
       this._previewOff();
@@ -2497,7 +2492,6 @@ L.DistortableImage.Edit = L.Handler.extend({
       overlay.fire('dragstart');
       if (overlay.eP && overlay.eP.anyCollected()) { return; }
       if (overlay.isSelected()) { overlay.deselect(); }
-      console.log('no returned');
       L.DomUtil.setOpacity(img, 0.8);
       L.DomUtil.addClass(img.parentNode, 'clear');
     }, this);
@@ -2530,7 +2524,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 
       overlay.setCorners(corners);
       overlay.fire('drag');
-
       this.fire('drag');
     };
   },
