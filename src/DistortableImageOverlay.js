@@ -170,6 +170,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
     if (e) { L.DomEvent.stopPropagation(e); }
 
+    if (edit._preview) { edit._previewOff(); }
+
     // this ensures deselection of all other images, allowing us to keep collection group optional
     this._programmaticGrouping();
 

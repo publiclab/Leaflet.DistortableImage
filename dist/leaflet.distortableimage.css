@@ -18,9 +18,19 @@
   z-index: -2;
 }
 
-.ldi .leaflet-pane .leaflet-overlay-pane .wrapper.lock img.leaflet-marker-icon {
-  position: absolute !important;
-  z-index: 0 !important;
+.ldi .leaflet-pane .leaflet-overlay-pane .wrapper.red {
+  -webkit-filter: drop-shadow(0 0 1px red);
+  filter: drop-shadow(0 0 1px red);
+}
+
+.ldi .leaflet-pane .leaflet-overlay-pane .wrapper.blue {
+  -webkit-filter: drop-shadow(0 0 1px blue);
+  filter: drop-shadow(0 0 1px blue);
+}
+
+.ldi .leaflet-pane .leaflet-overlay-pane .wrapper.black{
+  -webkit-filter: drop-shadow(0 0 1px black);
+  filter: drop-shadow(0 0 1px black);
 }
 
 /* images that aren't collected during collection mode */
@@ -31,13 +41,6 @@
   filter: brightness(0.7);
   position: absolute;
   z-index: -5;
-}
-
-.ldi .leaflet-pane .leaflet-overlay-pane .wrapper.wrapcollect img.leaflet-marker-icon,
-.ldi .leaflet-pane .leaflet-overlay-pane .wrapper.lock.wrapcollect img.leaflet-marker-icon,
-.ldi .leaflet-pane .leaflet-overlay-pane .wrapper.wrapcollect.lock img.leaflet-marker-icon {
-  position: absolute !important;
-  z-index: 0 !important;
 }
 
 .ldi-icon {

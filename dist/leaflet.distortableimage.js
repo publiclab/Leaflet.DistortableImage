@@ -421,6 +421,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
     if (e) { L.DomEvent.stopPropagation(e); }
 
+    if (edit._preview) { edit._previewOff(); }
+
     // this ensures deselection of all other images, allowing us to keep collection group optional
     this._programmaticGrouping();
 
@@ -2149,6 +2151,16 @@ L.DistortableImage.Edit = L.Handler.extend({
     keymap: L.distortableImage.action_map,
   },
 
+  statics: {
+    colormap: {
+      'scale': 'blue',
+      'distort': 'blue',
+      'rotate': 'red',
+      'freeRotate': 'red',
+      'lock': 'black',
+    },
+  },
+
   initialize: function(overlay, options) {
     this._overlay = overlay;
     this._toggledImage = false;
@@ -2177,10 +2189,14 @@ L.DistortableImage.Edit = L.Handler.extend({
       this._addToolbar();
     }
 
+    this.lastOpacity = img.style.opacity;
+    this._preview = false;
     this.parentGroup = overlay.eP ? overlay.eP : false;
 
     L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
     L.DomEvent.on(map, 'dblclick', this._catchAndFire, this);
+    L.DomEvent.on(img, 'mouseover', this._previewOn, this);
+    L.DomEvent.on(img, 'mouseout down', this._previewOff, this);
     L.DomEvent.on(img, 'dblclick', this.nextMode, this);
   },
 
@@ -2384,12 +2400,56 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
   },
 
+  _previewOn: function(e) {
+    var ov = this._overlay;
+    var img = ov.getElement();
+    var eP = this.parentGroup;
+    var color = L.DistortableImage.Edit.colormap[this.getMode()];
+
+    if (ov.isSelected() || (eP && eP.isCollected(ov))) {
+      if (e) { L.DomEvent.stop(e); }
+      return;
+    }
+    if (color) { L.DomUtil.addClass(img.parentNode, color); }
+    L.DomUtil.setOpacity(img, 0.5);
+    this._showMarkers();
+    this._preview = true;
+  },
+
+  _previewOff: function(e) {
+    var ov = this._overlay;
+    var img = ov.getElement();
+    var eP = this.parentGroup;
+    var color = L.DistortableImage.Edit.colormap[this.getMode()];
+
+    // if (ov.isSelected() || (eP && eP.isCollected(ov))) {
+    //   return;
+    // }
+
+    // if (e)
+
+    if (this._preview) {
+      L.DomUtil.removeClass(img.parentNode, color);
+      L.DomUtil.setOpacity(img, this.lastOpacity);
+      this.lastOpacity = img.style.opacity;
+      this._preview = false;
+      if (e && e.type === 'down') { return; }
+      this._hideMarkers();
+    }
+    // if (ov.isSelected() || (eP && eP.isCollected(ov))) { return; }
+    // if (color) { L.DomUtil.addClass(img.parentNode, color); }
+    // L.DomUtil.setOpacity(img, this.lastOpacity);
+    // this._showMarkers();
+  },
+
   _enableDragging: function() {
     var overlay = this._overlay;
     var map = overlay._map;
 
     this.dragging = new L.Draggable(overlay.getElement());
     this.dragging.enable();
+
+    this.dragging.on('down', this._previewOff, this);
 
     /* Hide toolbars and markers while dragging; click will re-show it */
     this.dragging.on('dragstart', function() {
@@ -2626,20 +2686,19 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._overlay.deselect();
   },
 
-  _showMarkers: function() {
+  _showMarkers: function(e) {
     var eP = this.parentGroup;
 
     if (!this.currentHandle) { return; }
     // only markers we want in collect interface for now is lock
     if (!this.isMode('lock') && (eP && eP.anyCollected())) { return; }
-
     this.currentHandle.eachLayer(function(handle) {
       handle.setOpacity(1);
       if (handle.dragging) { handle.dragging.enable(); }
     });
   },
 
-  _hideMarkers: function() {
+  _hideMarkers: function(e) {
     var eP = this.parentGroup;
     // workaround for race condition w/ feature group
     if (!this._handles) { this._initHandles(); }
