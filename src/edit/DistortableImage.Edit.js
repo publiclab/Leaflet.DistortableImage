@@ -173,6 +173,23 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
   },
 
+  replaceTool: function(old, next) {
+    if (value.baseClass === 'leaflet-toolbar-icon' && !this.hasTool(value)) {
+      return false;
+    }
+
+    this.editActions.some(function(item, idx) {
+      if (this.editActions[idx] === value) {
+        this._removeToolbar();
+        this.editActions[idx] = next;
+        this._addToolbar();
+        return true;
+      } else {
+        return false;
+      }
+    }, this);
+  },
+
   addTool: function(value) {
     if (value.baseClass === 'leaflet-toolbar-icon' && !this.hasTool(value)) {
       this._removeToolbar();
