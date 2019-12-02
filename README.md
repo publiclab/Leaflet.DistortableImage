@@ -652,6 +652,10 @@ Same as `L.DistortableImage.Edit` but for the collection (`L.DistortableCollecti
 <ul><li>Adds the passed tool to the end of the control toolbar in runtime. Returns false if the tool is not available or is already present.</li></ul>
 </details>
 
+<details><summary><code><b>replaceTool(<i>old</i> &#60;EditAction>), <i>next</i> &#60;EditAction>)</b></code></summary>
+<ul><li>Replaces the first parameter with the second parameter. Returns false if the first parameter is not found. Also returns false if the second parameter is not available or is already present.</li></ul>
+</details>
+
 <details><summary><code><b>hasTool(<i>action</i> &#60;EditAction>)</b>: Boolean</code></summary>
 <ul><li>Returns true if the tool is present in the currently rendered control toolbar.</li></ul>
 </details>
