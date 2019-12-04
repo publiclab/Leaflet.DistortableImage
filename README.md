@@ -653,7 +653,7 @@ Same as `L.DistortableImage.Edit` but for the collection (`L.DistortableCollecti
 </details>
 
 <details><summary><code><b>replaceTool(<i>old</i> &#60;EditAction>), <i>next</i> &#60;EditAction>)</b></code></summary>
-<ul><li>Replaces the first parameter with the second parameter. Returns false if the first parameter is not found. Also returns false if the second parameter is not available or is already present.</li></ul>
+<ul><li>Replaces the first parameter with the second parameter.</li></ul>
 </details>
 
 <details><summary><code><b>hasTool(<i>action</i> &#60;EditAction>)</b>: Boolean</code></summary>

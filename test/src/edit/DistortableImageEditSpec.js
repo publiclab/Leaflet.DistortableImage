@@ -71,8 +71,7 @@ describe('L.DistortableImage.Edit', function() {
 
       edit.removeTool(next);
 
-      var res = edit.replaceTool(old, next);
-      expect(res).to.be.true;
+      edit.replaceTool(old, next);
 
       expect(edit.hasTool(old)).to.be.false;
       expect(edit.hasTool(next)).to.be.true;
@@ -86,8 +85,7 @@ describe('L.DistortableImage.Edit', function() {
 
       edit.removeTool(old);
 
-      var res = edit.replaceTool(old, next);
-      expect(res).to.be.false;
+      edit.replaceTool(old, next);
 
       expect(edit.hasTool(old)).to.be.false;
       expect(edit.hasTool(next)).to.be.true;
@@ -98,8 +96,7 @@ describe('L.DistortableImage.Edit', function() {
       var next = overlay.editing.editActions[1];
       var edit = overlay.editing;
 
-      var res = edit.replaceTool(old, next);
-      expect(res).to.be.false;
+      edit.replaceTool(old, next);
 
       expect(edit.hasTool(old)).to.be.true;
       expect(edit.hasTool(next)).to.be.true;
