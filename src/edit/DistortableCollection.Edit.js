@@ -29,7 +29,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
       singleclickon: this._singleClickListeners,
       singleclickoff: this._resetClickListeners,
       singleclick: this._singleClick,
-      boxzoomend: this._addCollections,
+      boxcollectend: this._addCollections,
     }, this);
 
     this._group.editable = true;
@@ -52,7 +52,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
       singleclickon: this._singleClickListeners,
       singleclickoff: this._resetClickListeners,
       singleclick: this._singleClick,
-      boxzoomend: this._addCollections,
+      boxcollectend: this._addCollections,
     }, this);
 
     this._decollectAll();
@@ -108,7 +108,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
     if (e) { oe = e.originalEvent; }
     /**
-     * prevents image deselection following the 'boxzoomend' event - note 'shift' must not be released until dragging is complete
+     * prevents image deselection following the 'boxcollectend' event - note 'shift' must not be released until dragging is complete
      * also prevents deselection following a click on a disabled img by differentiating it from the map
      */
     if (oe && (oe.shiftKey || oe.target instanceof HTMLImageElement)) {
@@ -152,7 +152,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
   },
 
   _addCollections: function(e) {
-    var box = e.boxZoomBounds;
+    var box = e.boxCollectBounds;
     var map = this._group._map;
 
     this._group.eachLayer(function(layer) {
