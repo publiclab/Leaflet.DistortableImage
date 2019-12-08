@@ -198,6 +198,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     opts.scale = opts.scale || 100; // switch it to _getAvgCmPerPixel !
     var statusUrl;
     var updateInterval;
+    var link = this.toolbar._active._link;
 
     // this may be overridden to update the UI to show export progress or completion
     // eslint-disable-next-line require-jsdoc
@@ -209,6 +210,10 @@ L.DistortableCollection.Edit = L.Handler.extend({
       }
       if (data.status === 'complete') {
         clearInterval(updateInterval);
+
+        L.IconUtil.toggleXlink(link, 'get_app', 'spinner');
+        L.IconUtil.toggleTitle(link, 'Export Images', 'Loading...');
+        L.DomUtil.removeClass(link.firstChild, 'loader');
       }
       if (data.status === 'complete' && data.jpg !== null) {
         alert('Export succeeded. http://export.mapknitter.org/' + data.jpg);
