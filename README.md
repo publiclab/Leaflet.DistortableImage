@@ -429,7 +429,8 @@ And the following custom handlers:
 
 <details><summary><code><b>boxCollector</b>: this</code></summary>
   <ul>
-    <li>Overrides the map's default <a href="https://leafletjs.com/reference-1.5.0.html#map-boxzoom"><code>boxZoom</code></a> handler.</li>
+    <li>Overrides the map's default <a href="https://leafletjs.com/reference-1.5.0.html#map-boxzoom"><code>boxZoom</code></a> handler. To use <code>boxZoom</code> instead, pass the options <code>{ boxCollector: false, boxZoom: true }</code> to the map on initialization.
+</li>
     <li>Allows multiple images to be collected when <kbd>shift</kbd> + <code>drag</code>ing on the map for the multiple image interface.</li>
   </ul>
 </details>
