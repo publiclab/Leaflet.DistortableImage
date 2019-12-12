@@ -192,7 +192,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
   },
 
   startExport: function(opts) {
-    return new Promise((resolve) => {
+    return new Promise(function(resolve) {
       opts = opts || {};
       opts.collection = opts.collection || this._group.generateExportJson();
       opts.frequency = opts.frequency || 3000;
@@ -250,9 +250,9 @@ L.DistortableCollection.Edit = L.Handler.extend({
           type: 'POST',
           data: {
             collection: JSON.stringify(collection.images),
-            scale: scale
+            scale: scale,
           },
-          success: opts.handleStatusUrl // this handles the initial response
+          success: opts.handleStatusUrl, // this handles the initial response
         });
       }
 
