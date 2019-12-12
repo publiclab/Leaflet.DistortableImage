@@ -4,39 +4,22 @@ beforeEach(function() {
 });
 
 /* Chain global testing utilites below to chai*/
-
-chai.mouseEvents = {
-  ShiftMouseDown: {
-    type: 'mousedown',
-    isShift: true,
-  },
-  MouseDown: {
-    type: 'mousedown',
-    isShift: false,
-  },
-  Click: {
-    type: 'click',
-    isShift: false,
-  },
-  Dblclick: {
-    type: 'dblclick',
-    isShift: false,
-  }
-}
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 /*
- * Mouse Events is a dictionary of "Events" and their properties. 
+ * Mouse Events is a dictionary of "Events" and their properties.
  * Other events include 'click', 'dblick', 'mouseup', 'mouseover', 'mouseout', 'mousemove'
- * Properties can take in properties of initMouseEvents().
+ * Properties can take in properties of MouseEvent.
+ * https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/MouseEvent
  */
-chai.simulateEvent = function simulateEventFn(el, event) {
-  if (document.createEvent) {
-    var e = document.createEvent('MouseEvents');
-    e.initMouseEvent(event.type, true, true, window, 0, 0, 0, 0, 0, false, false, event.isShift, false, 0, null);
-    return el.dispatchEvent(e);
-  }
+chai.simulateEvent = function simulateEventFn(el, type, params) {
+  params = params || {
+    bubbles: type != 'mouseleave' && type != 'mouseeenter',
+    cancelable: type != 'mousemove' && type != 'mouseleave' && type != 'mouseeenter',
+  };
+  var e = new MouseEvent(type, params);
+  return el.dispatchEvent(e);
 };
-
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 

@@ -102,7 +102,7 @@ describe('L.DistortableCollection.Edit', function() {
       edit2._toggleLockMode();
 
       // select image to initially create individual toolbar instance (single selection interface)
-      chai.simulateEvent(overlay2.getElement(), chai.mouseEvents.Click);
+      chai.simulateEvent(overlay2.getElement(), 'click');
 
       expect(edit2.toolbar).to.not.be.false;
 
@@ -120,34 +120,30 @@ describe('L.DistortableCollection.Edit', function() {
       expect(map._toolbars).to.be.empty;
 
       // need both bc simulated `mousedown`s don't fire `click` events afterwards like regular user generated `mousedown`s.
-      chai.simulateEvent(overlay.getElement(), chai.mouseEvents.ShiftMouseDown);
-      chai.simulateEvent(overlay.getElement(), chai.mouseEvents.Click);
+      chai.simulateEvent(overlay.getElement(), 'mousedown', { shiftKey: true });
+      chai.simulateEvent(overlay.getElement(), 'click');
 
       expect(Object.keys(map._toolbars)).to.have.lengthOf(1);
     });
 
     it('it adds a control toolbar to the map', function() {
       expect(map._toolbars).to.be.empty;
-
       imgGroup.editing._addToolbar();
-
       expect(Object.keys(map._toolbars)).to.have.lengthOf(1);
       expect(Object.keys(map._toolbars)[0]._container).className = 'leaflet-control';
     });
 
     it('does not add multiple instances of a control toolbar', function() {
       expect(map._toolbars).to.be.empty;
-
       imgGroup.editing._addToolbar();
       imgGroup.editing._addToolbar();
-
       expect(Object.keys(map._toolbars)).to.have.lengthOf(1);
     });
   });
 
   describe('#_removeToolbar', function() {
     beforeEach(function() { // multi-select the image and add the toolbar
-      chai.simulateEvent(overlay.getElement(), chai.mouseEvents.ShiftMouseDown);
+      chai.simulateEvent(overlay.getElement(), 'mousedown', { shiftKey: true });
       imgGroup.editing._addToolbar();
 
       expect(Object.keys(map._toolbars)).to.have.lengthOf(1);
@@ -162,7 +158,7 @@ describe('L.DistortableCollection.Edit', function() {
 
     it('is invoked on shift + mousedown when it toggles the image *out* of multi-select', function() {
       // deselecting the image removes the control toolbar
-      chai.simulateEvent(overlay.getElement(), chai.mouseEvents.ShiftMouseDown);
+      chai.simulateEvent(overlay.getElement(), 'mousedown', { shiftKey: true });
       expect(map._toolbars).to.be.empty;
     });
 
@@ -179,8 +175,8 @@ describe('L.DistortableCollection.Edit', function() {
 
   describe('#_lockGroup', function() {
     beforeEach(function() {
-      chai.simulateEvent(overlay.getElement(), chai.mouseEvents.ShiftMouseDown);
-      chai.simulateEvent(overlay3.getElement(), chai.mouseEvents.ShiftMouseDown);
+      chai.simulateEvent(overlay.getElement(), 'mousedown', { shiftKey: true });
+      chai.simulateEvent(overlay3.getElement(), 'mousedown', { shiftKey: true });
 
       imgGroup.editing._lockGroup();
     });
@@ -207,9 +203,9 @@ describe('L.DistortableCollection.Edit', function() {
 
   describe('#_unlockGroup', function() {
     beforeEach(function() {
-      chai.simulateEvent(overlay.getElement(), chai.mouseEvents.ShiftMouseDown);
-      chai.simulateEvent(overlay2.getElement(), chai.mouseEvents.ShiftMouseDown);
-      chai.simulateEvent(overlay3.getElement(), chai.mouseEvents.ShiftMouseDown);
+      chai.simulateEvent(overlay.getElement(), 'mousedown', { shiftKey: true });
+      chai.simulateEvent(overlay2.getElement(), 'mousedown', { shiftKey: true });
+      chai.simulateEvent(overlay3.getElement(), 'mousedown', { shiftKey: true });
 
       imgGroup.editing._lockGroup();
       expect(overlay.editing._mode).to.equal('lock');
@@ -229,11 +225,11 @@ describe('L.DistortableCollection.Edit', function() {
 
   describe('#_removeGroup', function() {
     beforeEach(function() { // multi-selects the images to add them to the feature group
-      chai.simulateEvent(overlay.getElement(), chai.mouseEvents.ShiftMouseDown);
-      chai.simulateEvent(overlay3.getElement(), chai.mouseEvents.ShiftMouseDown);
+      chai.simulateEvent(overlay.getElement(), 'mousedown', { shiftKey: true });
+      chai.simulateEvent(overlay3.getElement(), 'mousedown', { shiftKey: true });
     });
 
-    it('removes a collection of layers that are multi-selected', function() {
+    it('removes a collection of layers', function() {
       var layers = imgGroup.getLayers();
       expect(layers).to.include.members([overlay, overlay2, overlay3]);
 

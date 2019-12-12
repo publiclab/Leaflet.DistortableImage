@@ -42,11 +42,9 @@ describe('L.DistortableImage.Edit', function() {
   it('Should keep handles on the map in sync with the corners of the image.', function() {
     var corners = overlay.getCorners();
     var edit = overlay.editing;
-    var img = overlay.getElement();
-
     edit.enable();
     // this test applies to a selected image
-    chai.simulateEvent(img, chai.mouseEvents.Click);
+    chai.simulateEvent(overlay.getElement(), 'click');
 
     overlay.setCorner(0, L.latLng(41.7934, -87.6252));
 
@@ -146,7 +144,7 @@ describe('L.DistortableImage.Edit', function() {
       // switch to lock handles
       edit._toggleLockMode();
       // select the image to initially create its individual toolbar instance
-      chai.simulateEvent(img, chai.mouseEvents.Click);
+      chai.simulateEvent(overlay.getElement(), 'click');
 
       expect(edit.toolbar).to.not.be.false;
 
@@ -183,7 +181,7 @@ describe('L.DistortableImage.Edit', function() {
       overlay.deselect();
       expect(edit.nextMode()).to.be.false;
 
-      chai.simulateEvent(overlay.getElement(), chai.mouseEvents.Dblclick);
+      chai.simulateEvent(overlay.getElement(), 'dblclick');
       setTimeout(function() {
         expect(edit.nextMode()).to.be.ok;
       }, 3000);
