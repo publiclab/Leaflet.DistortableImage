@@ -30,11 +30,11 @@ L.ExportAction = L.EditAction.extend({
       L.IconUtil.toggleTitle(this._link, 'Export Images', 'Loading...');
       L.IconUtil.addClassToSvg(this._link, 'loader');
 
-      edit.startExport().then(() => {
+      edit.startExport().then(function() {
         L.IconUtil.toggleXlink(this._link, 'get_app', 'spinner');
         L.IconUtil.toggleTitle(this._link, 'Export Images', 'Loading...');
         L.DomUtil.removeClass(this._link.firstChild, 'loader');
-      });
+      }.bind(this));
     }
   },
 });
