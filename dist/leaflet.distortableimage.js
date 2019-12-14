@@ -1617,7 +1617,12 @@ L.ExportAction = L.EditAction.extend({
       L.IconUtil.toggleXlink(this._link, 'get_app', 'spinner');
       L.IconUtil.toggleTitle(this._link, 'Export Images', 'Loading...');
       L.IconUtil.addClassToSvg(this._link, 'loader');
-      edit.startExport();
+
+      edit.startExport().then(function() {
+        L.IconUtil.toggleXlink(this._link, 'get_app', 'spinner');
+        L.IconUtil.toggleTitle(this._link, 'Export Images', 'Loading...');
+        L.DomUtil.removeClass(this._link.firstChild, 'loader');
+      }.bind(this));
     }
   },
 });
@@ -2770,68 +2775,72 @@ L.DistortableCollection.Edit = L.Handler.extend({
   },
 
   startExport: function(opts) {
-    opts = opts || {};
-    opts.collection = opts.collection || this._group.generateExportJson();
-    opts.frequency = opts.frequency || 3000;
-    opts.scale = opts.scale || 100; // switch it to _getAvgCmPerPixel !
-    var statusUrl;
-    var updateInterval;
+    return new Promise(function(resolve) {
+      opts = opts || {};
+      opts.collection = opts.collection || this._group.generateExportJson();
+      opts.frequency = opts.frequency || 3000;
+      opts.scale = opts.scale || 100; // switch it to _getAvgCmPerPixel !
+      var statusUrl;
+      var updateInterval;
 
-    // this may be overridden to update the UI to show export progress or completion
-    // eslint-disable-next-line require-jsdoc
-    function _defaultUpdater(data) {
-      data = JSON.parse(data);
-      // optimization: fetch status directly from google storage:
-      if (statusUrl !== data.status_url && data.status_url.match('.json')) {
-        statusUrl = data.status_url;
+      // this may be overridden to update the UI to show export progress or completion
+      // eslint-disable-next-line require-jsdoc
+      function _defaultUpdater(data) {
+        data = JSON.parse(data);
+        // optimization: fetch status directly from google storage:
+        if (statusUrl !== data.status_url && data.status_url.match('.json')) {
+          statusUrl = data.status_url;
+        }
+        if (data.status === 'complete') {
+          clearInterval(updateInterval);
+          resolve();
+        }
+        if (data.status === 'complete' && data.jpg !== null) {
+          alert('Export succeeded. http://export.mapknitter.org/' + data.jpg);
+        }
+        // TODO: update to clearInterval when status == "failed" if we update that in this file:
+        // https://github.com/publiclab/mapknitter-exporter/blob/main/lib/mapknitterExporter.rb
+        console.log(data);
       }
-      if (data.status === 'complete') {
-        clearInterval(updateInterval);
-      }
-      if (data.status === 'complete' && data.jpg !== null) {
-        alert('Export succeeded. http://export.mapknitter.org/' + data.jpg);
-      }
-      // TODO: update to clearInterval when status == "failed" if we update that in this file:
-      // https://github.com/publiclab/mapknitter-exporter/blob/main/lib/mapknitterExporter.rb
-      console.log(data);
-    }
 
-    // receives the URL of status.json, and starts running the updater to repeatedly fetch from status.json;
-    // this may be overridden to integrate with any UI
-    // eslint-disable-next-line require-jsdoc
-    function _defaultHandleStatusUrl(data) {
-      console.log(data);
-      statusUrl = '//export.mapknitter.org' + data;
-      opts.updater = opts.updater || _defaultUpdater;
+      // receives the URL of status.json, and starts running the updater to repeatedly fetch from status.json;
+      // this may be overridden to integrate with any UI
+      // eslint-disable-next-line require-jsdoc
+      function _defaultHandleStatusUrl(data) {
+        console.log(data);
+        statusUrl = '//export.mapknitter.org' + data;
+        opts.updater = opts.updater || _defaultUpdater;
 
-      // repeatedly fetch the status.json
-      updateInterval = setInterval(function intervalUpdater() {
-        $.ajax(statusUrl + '?' + Date.now(), {// bust cache with timestamp
-          type: 'GET',
+        // repeatedly fetch the status.json
+        updateInterval = setInterval(function intervalUpdater() {
+          $.ajax(statusUrl + '?' + Date.now(), {
+            // bust cache with timestamp
+            type: 'GET',
+            crossDomain: true
+          }).done(function(data) {
+            opts.updater(data);
+          });
+        }, opts.frequency);
+      }
+
+      // eslint-disable-next-line require-jsdoc
+      function _fetchStatusUrl(collection, scale) {
+        opts.handleStatusUrl = opts.handleStatusUrl || _defaultHandleStatusUrl;
+
+        $.ajax({
+          url: '//export.mapknitter.org/export',
           crossDomain: true,
-        }).done(function(data) {
-          opts.updater(data);
+          type: 'POST',
+          data: {
+            collection: JSON.stringify(collection.images),
+            scale: scale,
+          },
+          success: opts.handleStatusUrl, // this handles the initial response
         });
-      }, opts.frequency);
-    }
+      }
 
-    // eslint-disable-next-line require-jsdoc
-    function _fetchStatusUrl(collection, scale) {
-      opts.handleStatusUrl = opts.handleStatusUrl || _defaultHandleStatusUrl;
-
-      $.ajax({
-        url: '//export.mapknitter.org/export',
-        crossDomain: true,
-        type: 'POST',
-        data: {
-          collection: JSON.stringify(collection.images),
-          scale: scale,
-        },
-        success: opts.handleStatusUrl, // this handles the initial response
-      });
-    }
-
-    _fetchStatusUrl(opts.collection, opts.scale);
+      _fetchStatusUrl(opts.collection, opts.scale);
+    }.bind(this));
   },
 
   _addToolbar: function() {
