@@ -2840,7 +2840,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
       }
 
       _fetchStatusUrl(opts.collection, opts.scale);
-    });
+    }.bind(this));
   },
 
   _addToolbar: function() {
