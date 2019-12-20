@@ -274,6 +274,21 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return this;
   },
 
+  getAngle: function() {
+    var matrix = this._image.style.transform
+      .split('matrix3d')[1]
+      .slice(1, -1)
+      .split(',');
+
+    var angle = Math.round(Math.atan2(matrix[1], matrix[0]) * (180 / Math.PI));
+
+    if (angle < 0) {
+      angle = 360 + angle;
+    }
+
+    return angle;
+  },
+
   scaleBy: function(scale) {
     var map = this._map;
     var center = map.project(this.getCenter());
