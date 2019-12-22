@@ -29,8 +29,18 @@ L.ExportAction = L.EditAction.extend({
       L.IconUtil.toggleXlink(this._link, 'get_app', 'spinner');
       L.IconUtil.toggleTitle(this._link, 'Export Images', 'Loading...');
       L.IconUtil.addClassToSvg(this._link, 'loader');
-
-      edit.startExport().then(function() {
+      edit.startExport({
+console.log(this, edit.options)
+// explicitly send each option:
+        collection: edit.options.collection,
+        frequency: edit.options.frequency,
+        scale: edit.options.scale,
+        updater: edit.options.updater,
+        handleStatusUrl: edit.options.handleStatusUrl,
+        fetchStatusUrl: edit.options.fetchStatusUrl,
+        exportStartUrl: edit.options.exportStartUrl,
+        exportUrl: edit.options.exportUrl
+      }).then(function() {
         L.IconUtil.toggleXlink(this._link, 'get_app', 'spinner');
         L.IconUtil.toggleTitle(this._link, 'Export Images', 'Loading...');
         L.DomUtil.removeClass(this._link.firstChild, 'loader');
