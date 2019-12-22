@@ -2150,10 +2150,8 @@ L.DistortableImage.Edit = L.Handler.extend({
       this._removeToolbar();
       this.editActions.push(value);
       this._addToolbar();
-      return this;
-    } else {
-      return false;
     }
+    return this;
   },
 
   hasTool: function(value) {
