@@ -10,10 +10,11 @@ L.DistortableCollection.Edit = L.Handler.extend({
     this._group = group;
 
 // OK let's just refactor this to not use the closure scope, but to pass options into each function. 
-// this is important anyways so you can override them from the HTML page
+// this is important anyways so you can override them from the HTML page and access private values
 
     this.startExport = options.startExport || function startExport(opts) {
       opts = opts || {};
+// this is undefined at runtime but gets filled in later... is this an async issue?
 console.log('options in startExport', opts, opts.exportUrl);
       opts.collection = opts.collection || this._group.generateExportJson();
       opts.frequency = opts.frequency || 3000;
