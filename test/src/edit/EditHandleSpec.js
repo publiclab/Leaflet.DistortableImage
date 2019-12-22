@@ -14,7 +14,7 @@ describe('L.EditHandle', function() {
       ],
     }).addTo(map);
 
-    L.DomEvent.on(overlay._image, 'load', function() {
+    L.DomEvent.on(overlay.getElement(), 'load', function() {
       rotateHandle = L.rotateHandle(overlay, 0);
       scaleHandle = L.scaleHandle(overlay, 0);
       done();

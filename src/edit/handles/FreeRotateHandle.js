@@ -19,7 +19,7 @@ L.FreeRotateHandle = L.EditHandle.extend({
     var angle = this.calculateAngleDelta(formerLatLng, newLatLng);
     var scale = this._calculateScalingFactor(formerLatLng, newLatLng);
 
-    if (angle !== 0) { overlay.rotateBy(angle); }
+    if (angle !== 0) { overlay.rotateBy(angle, 'rad'); }
 
     if (!edgeMinWidth) { edgeMinWidth = 50; } /* just in case */
     var corner1 = map.latLngToContainerPoint(overlay.getCorner(0));

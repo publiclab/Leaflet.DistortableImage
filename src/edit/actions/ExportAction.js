@@ -41,21 +41,21 @@ L.ExportAction = L.EditAction.extend({
       this.isHooksExecuted = true;
     }
 
-    var toolbarExportElement = this._link.parentElement;
+    var exportTool = this._link.parentElement;
 
     this.mouseEnterHandler = this.handleMouseEnter.bind(this);
     this.mouseLeaveHandler = this.handleMouseLeave.bind(this);
 
-    L.DomEvent.on(toolbarExportElement, 'click', function() {
+    L.DomEvent.on(exportTool, 'click', function() {
       if (!this.isExporting) {
         this.isExporting = true;
         this.renderExportIcon();
 
-        setTimeout(this.attachMouseEventListeners.bind(this, toolbarExportElement), 100);
+        setTimeout(this.attachMouseEventListeners.bind(this, exportTool), 100);
         edit.runExporter().then(
             function() {
               this.resetState();
-              this.detachMouseEventListeners(toolbarExportElement);
+              this.detachMouseEventListeners(exportTool);
             }.bind(this)
         );
       } else {
@@ -65,7 +65,7 @@ L.ExportAction = L.EditAction.extend({
         }
 
         this.resetState();
-        this.detachMouseEventListeners(toolbarExportElement);
+        this.detachMouseEventListeners(exportTool);
         edit.cancelExport();
       }
     }, this);

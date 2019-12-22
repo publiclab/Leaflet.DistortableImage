@@ -24,7 +24,7 @@ L.Utils = {
       confirmImageDelete:
         'Are you sure? This image will be permanently deleted from the map.',
       confirmImagesDeletes:
-        'images will be permanently deleted from the map. Do you really want to do this?',
+        'Are you sure? These images will be permanently deleted from the map.',
     };
 
     if (!this.options.translation) {
