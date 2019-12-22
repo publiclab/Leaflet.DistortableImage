@@ -642,7 +642,7 @@ Same as `L.DistortableImage.Edit` but for the collection (`L.DistortableCollecti
   </ul>
 </details>
 
-<details><summary><code><b>removeTool(<i>action</i> &#60;EditAction>)</b></code></summary>
+<details><summary><code><b>removeTool(<i>action</i> &#60;EditAction>)</b>: this</code></summary>
   <ul>
     <li>Removes the passed tool from the control toolbar in runtime. Returns the parent object.</li>
     <li>ex: <code>imgGroup.removeTool(Deletes)</code></li>
