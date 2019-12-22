@@ -175,7 +175,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   replaceTool: function(old, next) {
     if (next.baseClass !== 'leaflet-toolbar-icon' || this.hasTool(next)) {
-      return false;
+      return this;
     }
     this.editActions.some(function(item, idx) {
       if (this.editActions[idx] === old) {
