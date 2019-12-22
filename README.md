@@ -650,7 +650,7 @@ Same as `L.DistortableImage.Edit` but for the collection (`L.DistortableCollecti
 </details>
 
 <details><summary><code><b>addTool(<i>action</i> &#60;EditAction>)</b>: this</code></summary>
-<ul><li>Adds the passed tool to the end of the control toolbar in runtime. Returns the parent object.</li></ul>
+<ul><li>Adds the passed tool to the end of the control toolbar in runtime.</li></ul>
 </details>
 
 <details><summary><code><b>replaceTool(<i>old</i> &#60;EditAction>), <i>next</i> &#60;EditAction>)</b></code></summary>
