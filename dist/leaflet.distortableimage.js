@@ -1344,23 +1344,30 @@ L.LockHandle = L.EditHandle.extend({
 
   onRemove: function(map) {
     this.unbindTooltip();
+    this._handled.unbindTooltip();
     L.EditHandle.prototype.onRemove.call(this, map);
   },
 
   _bindListeners: function() {
     var icon = this.getElement();
+    var img = this._handled.getElement();
 
     this.on('contextmenu', L.DomEvent.stop, this);
     L.DomEvent.on(icon, 'mousedown', this._tooltipOn, this);
     L.DomEvent.on(icon, 'mouseout mouseup', this._tooltipOff, this);
+    L.DomEvent.on(img, 'mousedown', this._tooltipOn, this);
+    L.DomEvent.on(img, 'mouseout mouseup', this._tooltipOff, this);
   },
 
   _unbindListeners: function() {
     var icon = this.getElement();
+    var img = this._handled.getElement();
 
     this.off('contextmenu', L.DomEvent.stop, this);
     L.DomEvent.off(icon, 'mousedown', this._tooltipOn, this);
     L.DomEvent.off(icon, 'mouseout mouseup', this._tooltipOff, this);
+    L.DomEvent.off(img, 'mousedown', this._tooltipOn, this);
+    L.DomEvent.off(img, 'mouseout mouseup', this._tooltipOff, this);
   },
 
   /* cannot be dragged */
@@ -1373,23 +1380,34 @@ L.LockHandle = L.EditHandle.extend({
 
   _tooltipOn: function(e) {
     if (e && e.type === 'mousedown' && !e.shiftKey) {
-      if (this._timeout) { clearTimeout(this._timeout); }
+      var scope = L.DomUtil.hasClass(e.target, 'leaflet-image-layer') ?
+          this._handled :
+          this;
 
+      if (this._timeout) { clearTimeout(this._timeout); }
       this._timer = setTimeout(L.bind(function() {
         if (!this.getTooltip()) {
           this.bindTooltip('Locked!', {permanent: true});
         }
         this.openTooltip();
-      }, this), 500);
+      }, scope), 500);
     }
   },
 
-  _tooltipOff: function() {
+  _tooltipOff: function(e) {
+    var scope = this;
+
+    if (e) {
+      scope = L.DomUtil.hasClass(e.target, 'leaflet-image-layer') ?
+        this._handled :
+        this;
+    }
+
     if (this._timer) { clearTimeout(this._timer); }
 
     this._timeout = setTimeout(L.bind(function() {
       this.closeTooltip();
-    }, this), 400);
+    }, scope), 400);
   },
 });
 
