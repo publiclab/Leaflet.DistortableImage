@@ -1643,8 +1643,18 @@ L.ExportAction = L.EditAction.extend({
       L.IconUtil.toggleXlink(this._link, 'get_app', 'spinner');
       L.IconUtil.toggleTitle(this._link, 'Export Images', 'Loading...');
       L.IconUtil.addClassToSvg(this._link, 'loader');
-
-      edit.startExport().then(function() {
+      edit.startExport({
+console.log(this, edit.options)
+// explicitly send each option:
+        collection: edit.options.collection,
+        frequency: edit.options.frequency,
+        scale: edit.options.scale,
+        updater: edit.options.updater,
+        handleStatusUrl: edit.options.handleStatusUrl,
+        fetchStatusUrl: edit.options.fetchStatusUrl,
+        exportStartUrl: edit.options.exportStartUrl,
+        exportUrl: edit.options.exportUrl
+      }).then(function() {
         L.IconUtil.toggleXlink(this._link, 'get_app', 'spinner');
         L.IconUtil.toggleTitle(this._link, 'Export Images', 'Loading...');
         L.DomUtil.removeClass(this._link.firstChild, 'loader');
@@ -2617,9 +2627,94 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
   initialize: function(group, options) {
     this._group = group;
+
+// OK let's just refactor this to not use the closure scope, but to pass options into each function. 
+// this is important anyways so you can override them from the HTML page and access private values
+
+    this.startExport = options.startExport || function startExport(opts) {
+      return new Promise(function(resolve) {
+        opts = opts || {};
+
+    // this is undefined at runtime but gets filled in later... is this an async issue?
+    // ok, wrapped this in a promise
+    console.log('options in startExport', opts, opts.exportUrl);
+        opts.collection = opts.collection || this._group.generateExportJson();
+        opts.frequency = opts.frequency || 3000;
+        opts.scale = opts.scale || 100; // switch it to _getAvgCmPerPixel !
+        opts.updater = opts.updater || _defaultUpdater;
+        opts.handleStatusUrl = opts.handleStatusUrl || _defaultHandleStatusUrl;
+        opts.fetchStatusUrl = opts.fetchStatusUrl || _defaultFetchStatusUrl;
+        opts.exportStartUrl = opts.exportStartUrl || '//export.mapknitter.org/export';
+        opts.exportUrl = opts.exportUrl || 'http//export.mapknitter.org/';
+  
+        // this may be overridden to update the UI to show export progress or completion
+        // eslint-disable-next-line require-jsdoc
+        function _defaultUpdater(data, _opts) {
+          data = JSON.parse(data);
+          // optimization: fetch status directly from google storage:
+          if (_opts.statusUrl !== data.status_url && data.status_url.match('.json')) {
+            if (data.status_url && data.status_url.substr(0,1) == "/") {
+              _opts.statusUrl = _opts.exportUrl + data.status_url;
+            } else {
+              _opts.statusUrl = data.status_url;
+            }
+          }
+          if (data.status === 'complete') {
+            clearInterval(_opts.updateInterval);
+          }
+          if (data.status === 'complete' && data.jpg !== null) {
+            alert('Export succeeded. ' + _opts.exportUrl + data.jpg);
+          }
+          // TODO: update to clearInterval when status == "failed" if we update that in this file:
+          // https://github.com/publiclab/mapknitter-exporter/blob/main/lib/mapknitterExporter.rb
+          console.log(data);
+        }
+  
+        // receives the URL of status.json, and starts running the updater to repeatedly fetch from status.json;
+        // this may be overridden to integrate with any UI
+        // eslint-disable-next-line require-jsdoc
+        function _defaultHandleStatusUrl(data, _opts) {
+          console.log('handle status', data);
+//// why are we overwriting here?
+          //statusUrl = opts.exportUrl + data;
+  
+          // repeatedly fetch the status.json
+//// why do we need this closure ref?
+          _opts.updateInterval = setInterval(function intervalUpdater() {
+            $.ajax(_opts.statusUrl + '?' + Date.now(), {// bust cache with timestamp
+              type: 'GET',
+              crossDomain: true,
+            }).done(function(data) {
+              _opts.updater(data, _opts);
+            });
+          }, _opts.frequency);
+        }
+ 
+        // initiate the export 
+        // eslint-disable-next-line require-jsdoc
+        function _defaultFetchStatusUrl(_opts) {
+          $.ajax({
+            url: _opts.exportStartUrl,
+            crossDomain: true,
+            type: 'POST',
+            data: {
+              collection: JSON.stringify(_opts.collection.images),
+              scale: _opts.scale,
+              upload: true
+            },
+            success: function(data) { _opts.handleStatusUrl(data, _opts) }, // this handles the initial response
+          });
+        }
+  
+        opts.fetchStatusUrl(opts);
+      }.bind(this));
+
+    }
+
     L.setOptions(this, options);
 
     L.distortableImage.group_action_map.Escape = '_decollectAll';
+
   },
 
   addHooks: function() {
@@ -2638,7 +2733,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
       singleclickon: this._singleClickListeners,
       singleclickoff: this._resetClickListeners,
       singleclick: this._singleClick,
-      boxcollectend: this._addCollections,
+      boxzoomend: this._addCollections,
     }, this);
 
     this._group.editable = true;
@@ -2661,7 +2756,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
       singleclickon: this._singleClickListeners,
       singleclickoff: this._resetClickListeners,
       singleclick: this._singleClick,
-      boxcollectend: this._addCollections,
+      boxzoomend: this._addCollections,
     }, this);
 
     this._decollectAll();
@@ -2717,7 +2812,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
     if (e) { oe = e.originalEvent; }
     /**
-     * prevents image deselection following the 'boxcollectend' event - note 'shift' must not be released until dragging is complete
+     * prevents image deselection following the 'boxzoomend' event - note 'shift' must not be released until dragging is complete
      * also prevents deselection following a click on a disabled img by differentiating it from the map
      */
     if (oe && (oe.shiftKey || oe.target instanceof HTMLImageElement)) {
@@ -2761,7 +2856,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
   },
 
   _addCollections: function(e) {
-    var box = e.boxCollectBounds;
+    var box = e.boxZoomBounds;
     var map = this._group._map;
 
     this._group.eachLayer(function(layer) {
@@ -2800,75 +2895,6 @@ L.DistortableCollection.Edit = L.Handler.extend({
     }
 
     if (e) { L.DomEvent.stopPropagation(e); }
-  },
-
-  startExport: function(opts) {
-    return new Promise(function(resolve) {
-      opts = opts || {};
-      opts.collection = opts.collection || this._group.generateExportJson();
-      opts.frequency = opts.frequency || 3000;
-      opts.scale = opts.scale || 100; // switch it to _getAvgCmPerPixel !
-      var statusUrl;
-      var updateInterval;
-
-      // this may be overridden to update the UI to show export progress or completion
-      // eslint-disable-next-line require-jsdoc
-      function _defaultUpdater(data) {
-        data = JSON.parse(data);
-        // optimization: fetch status directly from google storage:
-        if (statusUrl !== data.status_url && data.status_url.match('.json')) {
-          statusUrl = data.status_url;
-        }
-        if (data.status === 'complete') {
-          clearInterval(updateInterval);
-          resolve();
-        }
-        if (data.status === 'complete' && data.jpg !== null) {
-          alert('Export succeeded. http://export.mapknitter.org/' + data.jpg);
-        }
-        // TODO: update to clearInterval when status == "failed" if we update that in this file:
-        // https://github.com/publiclab/mapknitter-exporter/blob/main/lib/mapknitterExporter.rb
-        console.log(data);
-      }
-
-      // receives the URL of status.json, and starts running the updater to repeatedly fetch from status.json;
-      // this may be overridden to integrate with any UI
-      // eslint-disable-next-line require-jsdoc
-      function _defaultHandleStatusUrl(data) {
-        console.log(data);
-        statusUrl = '//export.mapknitter.org' + data;
-        opts.updater = opts.updater || _defaultUpdater;
-
-        // repeatedly fetch the status.json
-        updateInterval = setInterval(function intervalUpdater() {
-          $.ajax(statusUrl + '?' + Date.now(), {
-            // bust cache with timestamp
-            type: 'GET',
-            crossDomain: true,
-          }).done(function(data) {
-            opts.updater(data);
-          });
-        }, opts.frequency);
-      }
-
-      // eslint-disable-next-line require-jsdoc
-      function _fetchStatusUrl(collection, scale) {
-        opts.handleStatusUrl = opts.handleStatusUrl || _defaultHandleStatusUrl;
-
-        $.ajax({
-          url: '//export.mapknitter.org/export',
-          crossDomain: true,
-          type: 'POST',
-          data: {
-            collection: JSON.stringify(collection.images),
-            scale: scale,
-          },
-          success: opts.handleStatusUrl, // this handles the initial response
-        });
-      }
-
-      _fetchStatusUrl(opts.collection, opts.scale);
-    }.bind(this));
   },
 
   _addToolbar: function() {
