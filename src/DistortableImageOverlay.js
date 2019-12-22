@@ -276,9 +276,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   getAngle: function() {
     var matrix = L.DomUtil.getStyle(this._image, 'transform')
-      .split('matrix3d')[1]
-      .slice(1, -1)
-      .split(',');
+        .split('matrix3d')[1]
+        .slice(1, -1)
+        .split(',');
 
     var row0x = matrix[0];
     var row0y = matrix[1];
