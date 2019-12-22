@@ -2816,7 +2816,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
           $.ajax(statusUrl + '?' + Date.now(), {
             // bust cache with timestamp
             type: 'GET',
-            crossDomain: true
+            crossDomain: true,
           }).done(function(data) {
             opts.updater(data);
           });
@@ -3385,8 +3385,6 @@ L.Map.include({
       doubleClickLabels: true,
     }, opts);
 
-//    if (opts.maxZoom > 21) { opts.maxZoom = 18; }
-
     if (!opts.labels) {
       this.mutantOptions = L.extend(this.mutantOptions, {
         labelOpacity: opts.labels ? 1 : undefined,
@@ -3423,6 +3421,7 @@ L.Map.include({
       interactive: false,
       opacity: opts.labelOpacity,
       maxZoom: opts.maxZoom,
+      maxNativeZoom: opts.maxNativeZoom,
       minZoom: opts.minZoom,
       ext: 'png',
     }).addTo(this);

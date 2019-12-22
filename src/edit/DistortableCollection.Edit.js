@@ -233,7 +233,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
           $.ajax(statusUrl + '?' + Date.now(), {
             // bust cache with timestamp
             type: 'GET',
-            crossDomain: true
+            crossDomain: true,
           }).done(function(data) {
             opts.updater(data);
           });
