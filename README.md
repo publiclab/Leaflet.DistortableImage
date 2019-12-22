@@ -107,7 +107,7 @@ img = L.distortableImageOverlay('example.jpg', {
     L.latLng(51.52,-0.14),
     L.latLng(51.52,-0.10),
     L.latLng(51.50,-0.14),
-    L.latLng(51.50,-0.10)
+    L.latLng(51.50,-0.10),
   ],
 }).addTo(map);
 
@@ -211,7 +211,7 @@ img = L.distortableImageOverlay('example.jpg', {
     L.latLng(51.52, -0.14),
     L.latLng(51.52,-0.10),
     L.latLng(51.50, -0.14),
-    L.latLng(51.50,-0.10)
+    L.latLng(51.50,-0.10),
   ],
 });
 
@@ -220,7 +220,7 @@ img2 = L.distortableImageOverlay('example.jpg', {
     L.latLng(51.51, -0.20),
     L.latLng(51.51,-0.16),
     L.latLng(51.49, -0.21),
-    L.latLng(51.49,-0.17)
+    L.latLng(51.49,-0.17),
   ],
 });
 
@@ -281,7 +281,7 @@ img = L.distortableImageOverlay('example.jpg', {
     L.latLng(51.52, -0.14),
     L.latLng(51.52,-0.10),
     L.latLng(51.50, -0.14),
-    L.latLng(51.50,-0.10)
+    L.latLng(51.50,-0.10),
   ],
 });
 
