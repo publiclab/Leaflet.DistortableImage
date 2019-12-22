@@ -508,6 +508,32 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return this;
   },
 
+  getAngle: function() {
+    var matrix = L.DomUtil.getStyle(this._image, 'transform')
+        .split('matrix3d')[1]
+        .slice(1, -1)
+        .split(',');
+
+    var row0x = matrix[0];
+    var row0y = matrix[1];
+    var row1x = matrix[4];
+    var row1y = matrix[5];
+
+    var determinant = row0x * row1y - row0y * row1x;
+
+    var angle = Math.atan2(row0y, row0x) * (180 / Math.PI);
+
+    if (determinant < 0) {
+      angle += angle < 0 ? 180 : -180;
+    }
+
+    if (angle < 0) {
+      angle = 360 + angle;
+    }
+
+    return angle;
+  },
+
   scaleBy: function(scale) {
     var map = this._map;
     var center = map.project(this.getCenter());
