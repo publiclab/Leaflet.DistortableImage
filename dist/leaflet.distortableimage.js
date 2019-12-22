@@ -1261,6 +1261,10 @@ L.DistortHandle = L.EditHandle.extend({
   },
 });
 
+L.distortHandle = function(overlay, idx, options) {
+  return new L.DistortHandle(overlay, idx, options);
+};
+
 L.DragHandle = L.EditHandle.extend({
   options: {
     TYPE: 'drag',
@@ -1332,9 +1336,31 @@ L.LockHandle = L.EditHandle.extend({
     icon: L.icon({
       // eslint-disable-next-line max-len
       iconUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAD8SURBVO3BPU7CYAAA0AdfjIcQlRCQBG7C3gk2uIPG2RC3Dk16Gz0FTO1WZs/gwGCMP/2+xsSl7+n1er1Iz9LtRQjaPeMeO+TinLDCJV78YqjdA04YodKuxhUaPGoRxMmxwRQZSt87Yo4KExGCeAUyLLFB4bMacxywEClIU2KDKXbInTUYo8JCgoFuGoxQO5uiwY1EA91VmDqrcKeDoX8WdNNgjApvmGGLXKIgXY0xGkxQYItrrFFIEKQ5Yo4KEx9yrDFDhlKkIF6NOQ5Y+KpAhiXWKEQI4pxwiwoLPyuxwQw75FoE7fZYocFEuwI7jHCBV39gL92TXq/Xi/AOcmczZmaIMScAAAAASUVORK5CYII=',
+      interactive: false,
       iconSize: [32, 32],
       iconAnchor: [16, 16],
     }),
+  },
+
+  onRemove: function(map) {
+    this.unbindTooltip();
+    L.EditHandle.prototype.onRemove.call(this, map);
+  },
+
+  _bindListeners: function() {
+    var icon = this.getElement();
+
+    this.on('contextmenu', L.DomEvent.stop, this);
+    L.DomEvent.on(icon, 'mousedown', this._tooltipOn, this);
+    L.DomEvent.on(icon, 'mouseout mouseup', this._tooltipOff, this);
+  },
+
+  _unbindListeners: function() {
+    var icon = this.getElement();
+
+    this.off('contextmenu', L.DomEvent.stop, this);
+    L.DomEvent.off(icon, 'mousedown', this._tooltipOn, this);
+    L.DomEvent.off(icon, 'mouseout mouseup', this._tooltipOff, this);
   },
 
   /* cannot be dragged */
@@ -1345,7 +1371,31 @@ L.LockHandle = L.EditHandle.extend({
     this.setLatLng(this._handled.getCorner(this._corner));
   },
 
+  _tooltipOn: function(e) {
+    if (e && e.type === 'mousedown' && !e.shiftKey) {
+      if (this._timeout) { clearTimeout(this._timeout); }
+
+      this._timer = setTimeout(L.bind(function() {
+        if (!this.getTooltip()) {
+          this.bindTooltip('Locked!', {permanent: true});
+        }
+        this.openTooltip();
+      }, this), 500);
+    }
+  },
+
+  _tooltipOff: function() {
+    if (this._timer) { clearTimeout(this._timer); }
+
+    this._timeout = setTimeout(L.bind(function() {
+      this.closeTooltip();
+    }, this), 400);
+  },
 });
+
+L.lockHandle = function(overlay, idx, options) {
+  return new L.LockHandle(overlay, idx, options);
+};
 
 L.RotateHandle = L.EditHandle.extend({
   options: {
@@ -1376,6 +1426,10 @@ L.RotateHandle = L.EditHandle.extend({
     this.setLatLng(this._handled.getCorner(this._corner));
   },
 });
+
+L.rotateHandle = function(overlay, idx, options) {
+  return new L.RotateHandle(overlay, idx, options);
+};
 
 L.ScaleHandle = L.EditHandle.extend({
   options: {
@@ -1424,6 +1478,10 @@ L.ScaleHandle = L.EditHandle.extend({
     this.setLatLng(this._handled.getCorner(this._corner));
   },
 });
+
+L.scaleHandle = function(overlay, idx, options) {
+  return new L.ScaleHandle(overlay, idx, options);
+};
 
 /* this is the baseclass other IconSets inherit from,
 * we don't use it directly */
@@ -2147,17 +2205,17 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this._scaleHandles = L.layerGroup();
     for (i = 0; i < 4; i++) {
-      this._scaleHandles.addLayer(new L.ScaleHandle(overlay, i));
+      this._scaleHandles.addLayer(L.scaleHandle(overlay, i));
     }
 
     this._distortHandles = L.layerGroup();
     for (i = 0; i < 4; i++) {
-      this._distortHandles.addLayer(new L.DistortHandle(overlay, i));
+      this._distortHandles.addLayer(L.distortHandle(overlay, i));
     }
 
     this._rotateHandles = L.layerGroup(); // individual rotate
     for (i = 0; i < 4; i++) {
-      this._rotateHandles.addLayer(new L.RotateHandle(overlay, i));
+      this._rotateHandles.addLayer(L.rotateHandle(overlay, i));
     }
 
     // handle includes rotate AND scale
@@ -2168,9 +2226,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this._lockHandles = L.layerGroup();
     for (i = 0; i < 4; i++) {
-      this._lockHandles.addLayer(
-          new L.LockHandle(overlay, i, {draggable: false})
-      );
+      this._lockHandles.addLayer(L.lockHandle(overlay, i, {draggable: false}));
     }
 
     this._handles = {

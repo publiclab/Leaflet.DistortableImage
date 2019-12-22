@@ -27,3 +27,7 @@ L.RotateHandle = L.EditHandle.extend({
     this.setLatLng(this._handled.getCorner(this._corner));
   },
 });
+
+L.rotateHandle = function(overlay, idx, options) {
+  return new L.RotateHandle(overlay, idx, options);
+};
