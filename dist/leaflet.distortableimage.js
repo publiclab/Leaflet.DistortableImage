@@ -1691,7 +1691,6 @@ L.GeolocateAction = L.EditAction.extend({
   addHooks: function() {
     var image = this._overlay.getElement();
 
-    // eslint-disable-next-line new-cap
     EXIF.getData(image, L.EXIF(image));
   },
 });
