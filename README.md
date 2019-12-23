@@ -1,6 +1,7 @@
 # Leaflet.DistortableImage
 
 [![Build Status](https://travis-ci.org/publiclab/Leaflet.DistortableImage.svg?branch=master)](https://travis-ci.org/publiclab/Leaflet.DistortableImage)
+[![Code of Conduct](https://img.shields.io/badge/code-of%20conduct-brightgreen.svg)](https://publiclab.org/conduct)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/publiclab/Leaflet.DistortableImage/issues)
 [![npm version](https://badge.fury.io/js/leaflet-distortableimage.svg)](https://badge.fury.io/js/leaflet-distortableimage)
 
@@ -107,7 +108,7 @@ img = L.distortableImageOverlay('example.jpg', {
     L.latLng(51.52,-0.14),
     L.latLng(51.52,-0.10),
     L.latLng(51.50,-0.14),
-    L.latLng(51.50,-0.10)
+    L.latLng(51.50,-0.10),
   ],
 }).addTo(map);
 
@@ -211,7 +212,7 @@ img = L.distortableImageOverlay('example.jpg', {
     L.latLng(51.52, -0.14),
     L.latLng(51.52,-0.10),
     L.latLng(51.50, -0.14),
-    L.latLng(51.50,-0.10)
+    L.latLng(51.50,-0.10),
   ],
 });
 
@@ -220,7 +221,7 @@ img2 = L.distortableImageOverlay('example.jpg', {
     L.latLng(51.51, -0.20),
     L.latLng(51.51,-0.16),
     L.latLng(51.49, -0.21),
-    L.latLng(51.49,-0.17)
+    L.latLng(51.49,-0.17),
   ],
 });
 
@@ -281,7 +282,7 @@ img = L.distortableImageOverlay('example.jpg', {
     L.latLng(51.52, -0.14),
     L.latLng(51.52,-0.10),
     L.latLng(51.50, -0.14),
-    L.latLng(51.50,-0.10)
+    L.latLng(51.50,-0.10),
   ],
 });
 
