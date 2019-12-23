@@ -1,6 +1,7 @@
 # Leaflet.DistortableImage
 
 [![Build Status](https://travis-ci.org/publiclab/Leaflet.DistortableImage.svg?branch=master)](https://travis-ci.org/publiclab/Leaflet.DistortableImage)
+[![Code of Conduct](https://img.shields.io/badge/code-of%20conduct-brightgreen.svg)](https://publiclab.org/conduct)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/publiclab/Leaflet.DistortableImage/issues)
 [![npm version](https://badge.fury.io/js/leaflet-distortableimage.svg)](https://badge.fury.io/js/leaflet-distortableimage)
 
@@ -107,7 +108,7 @@ img = L.distortableImageOverlay('example.jpg', {
     L.latLng(51.52,-0.14),
     L.latLng(51.52,-0.10),
     L.latLng(51.50,-0.14),
-    L.latLng(51.50,-0.10)
+    L.latLng(51.50,-0.10),
   ],
 }).addTo(map);
 
@@ -211,7 +212,7 @@ img = L.distortableImageOverlay('example.jpg', {
     L.latLng(51.52, -0.14),
     L.latLng(51.52,-0.10),
     L.latLng(51.50, -0.14),
-    L.latLng(51.50,-0.10)
+    L.latLng(51.50,-0.10),
   ],
 });
 
@@ -220,7 +221,7 @@ img2 = L.distortableImageOverlay('example.jpg', {
     L.latLng(51.51, -0.20),
     L.latLng(51.51,-0.16),
     L.latLng(51.49, -0.21),
-    L.latLng(51.49,-0.17)
+    L.latLng(51.49,-0.17),
   ],
 });
 
@@ -281,7 +282,7 @@ img = L.distortableImageOverlay('example.jpg', {
     L.latLng(51.52, -0.14),
     L.latLng(51.52,-0.10),
     L.latLng(51.50, -0.14),
-    L.latLng(51.50,-0.10)
+    L.latLng(51.50,-0.10),
   ],
 });
 
@@ -642,19 +643,19 @@ Same as `L.DistortableImage.Edit` but for the collection (`L.DistortableCollecti
   </ul>
 </details>
 
-<details><summary><code><b>removeTool(<i>action</i> &#60;EditAction>)</b></code></summary>
+<details><summary><code><b>removeTool(<i>action</i> &#60;EditAction>)</b>: this</code></summary>
   <ul>
-    <li>Removes the passed tool from the control toolbar in runtime.</li>
+    <li>Removes the passed tool from the control toolbar in runtime if the tool is present.</li>
     <li>ex: <code>imgGroup.removeTool(Deletes)</code></li>
   </ul>
 </details>
 
-<details><summary><code><b>addTool(<i>action</i> &#60;EditAction>)</b></code></summary>
-<ul><li>Adds the passed tool to the end of the control toolbar in runtime. Returns false if the tool is not available or is already present.</li></ul>
+<details><summary><code><b>addTool(<i>action</i> &#60;EditAction>)</b>: this</code></summary>
+<ul><li>Adds the passed tool to the end of the control toolbar in runtime.</li></ul>
 </details>
 
 <details><summary><code><b>replaceTool(<i>old</i> &#60;EditAction>), <i>next</i> &#60;EditAction>)</b></code></summary>
-<ul><li>Replaces the first parameter with the second parameter.</li></ul>
+<ul><li>Replaces the first parameter with the second parameter. Returns the parent object.</li></ul>
 </details>
 
 <details><summary><code><b>hasTool(<i>action</i> &#60;EditAction>)</b>: Boolean</code></summary>

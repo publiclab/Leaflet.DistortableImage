@@ -175,9 +175,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   replaceTool: function(old, next) {
     if (next.baseClass !== 'leaflet-toolbar-icon' || this.hasTool(next)) {
-      return;
+      return this;
     }
-
     this.editActions.some(function(item, idx) {
       if (this.editActions[idx] === old) {
         this._removeToolbar();
@@ -188,6 +187,7 @@ L.DistortableImage.Edit = L.Handler.extend({
         return false;
       }
     }, this);
+    return this;
   },
 
   addTool: function(value) {
@@ -195,9 +195,8 @@ L.DistortableImage.Edit = L.Handler.extend({
       this._removeToolbar();
       this.editActions.push(value);
       this._addToolbar();
-    } else {
-      return false;
     }
+    return this;
   },
 
   hasTool: function(value) {
@@ -217,6 +216,7 @@ L.DistortableImage.Edit = L.Handler.extend({
         return false;
       }
     }, this);
+    return this;
   },
 
   _removeToolbar: function() {

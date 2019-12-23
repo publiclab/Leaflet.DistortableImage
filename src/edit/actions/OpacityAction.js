@@ -28,9 +28,10 @@ L.OpacityAction = L.EditAction.extend({
 
   addHooks: function() {
     var edit = this._overlay.editing;
+    var link = this._link;
 
-    L.IconUtil.toggleXlink(this._link, 'opacity', 'opacity_empty');
-    L.IconUtil.toggleTitle(this._link, 'Make Image Transparent', 'Make Image Opaque');
+    L.IconUtil.toggleXlink(link, 'opacity', 'opacity_empty');
+    L.IconUtil.toggleTitle(link, 'Make Image Transparent', 'Make Image Opaque');
     edit._toggleOpacity();
   },
 });
