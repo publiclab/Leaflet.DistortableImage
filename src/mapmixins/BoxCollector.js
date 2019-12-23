@@ -124,8 +124,11 @@ L.Map.BoxCollector = L.Map.BoxZoom.extend({
         this._map.containerPointToLatLng(this._bounds.getTopRight())
     );
 
+    var zoom = this._map.getZoom();
+    var center = this._map.getCenter();
+
     // calls the `project` method but 1st updates the pixel origin - see https://github.com/publiclab/Leaflet.DistortableImage/pull/344
-    bounds = this._map._latLngBoundsToNewLayerBounds(bounds, this._map.getZoom(), this._map.getCenter());
+    bounds = this._map._latLngBoundsToNewLayerBounds(bounds, zoom, center);
 
     this._map.fire('boxcollectend', {boxCollectBounds: bounds});
   },

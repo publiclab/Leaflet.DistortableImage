@@ -29,7 +29,7 @@
 
   <script>
 
-    var map
+    var map;
 
     (function(){
 
@@ -44,23 +44,20 @@
       }).addTo(map);
 
       // create an image
-      img = L.distortableImageOverlay(
-        'example.png', {
-          corners: [
-            L.latLng(51.52,-0.10),
-            L.latLng(51.52,-0.14),
-            L.latLng(51.50,-0.10),
-            L.latLng(51.50,-0.14)
-          ]
-        }
-      ).addTo(map);
+      img = L.distortableImageOverlay('example.png', {
+        corners: [
+          L.latLng(51.52,-0.10),
+          L.latLng(51.52,-0.14),
+          L.latLng(51.50,-0.10),
+          L.latLng(51.50,-0.14),
+        ],
+      }).addTo(map);
 
       L.DomEvent.on(img._image, 'load', img.editing.enable, img.editing);
 
-      /* Wait until image is loaded before setting
-       * up DOM element listeners */
+      // Wait until image is loaded before setting up DOM element listeners
       L.DomEvent.on(img._image, 'load', function() {
-        var img = this
+        var img = this;
         img.on('edit', function() {alert('edited')}, img);
         L.DomEvent.on(img._image, 'mouseup', function() {alert('edited')}, img);
         L.DomEvent.on(img._image, 'touchend', function() {alert('edited')}, img);

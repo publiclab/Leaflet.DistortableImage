@@ -847,7 +847,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
   _toggleCollected: function(e, layer) {
     if (e.shiftKey) {
-      /** conditional prevents disabled images from flickering multi-select mode */
+      /* conditional prevents disabled images from flickering multi-select mode */
       if (layer.editing.enabled()) {
         L.DomUtil.toggleClass(e.target, 'collected');
       }
@@ -1691,7 +1691,6 @@ L.GeolocateAction = L.EditAction.extend({
   addHooks: function() {
     var image = this._overlay.getElement();
 
-    // eslint-disable-next-line new-cap
     EXIF.getData(image, L.EXIF(image));
   },
 });
@@ -1764,9 +1763,10 @@ L.OpacityAction = L.EditAction.extend({
 
   addHooks: function() {
     var edit = this._overlay.editing;
+    var link = this._link;
 
-    L.IconUtil.toggleXlink(this._link, 'opacity', 'opacity_empty');
-    L.IconUtil.toggleTitle(this._link, 'Make Image Transparent', 'Make Image Opaque');
+    L.IconUtil.toggleXlink(link, 'opacity', 'opacity_empty');
+    L.IconUtil.toggleTitle(link, 'Make Image Transparent', 'Make Image Opaque');
     edit._toggleOpacity();
   },
 });
@@ -2770,7 +2770,9 @@ L.DistortableCollection.Edit = L.Handler.extend({
       if (layer.isSelected()) { layer.deselect(); }
 
       var imgBounds = L.latLngBounds(layer.getCorner(2), layer.getCorner(1));
-      imgBounds = map._latLngBoundsToNewLayerBounds(imgBounds, map.getZoom(), map.getCenter());
+      var zoom = map.getZoom();
+      var center = map.getCenter();
+      imgBounds = map._latLngBoundsToNewLayerBounds(imgBounds, zoom, center);
       if (box.intersects(imgBounds) && edit.enabled()) {
         if (!this.toolbar) {
           this._addToolbar();
@@ -2842,7 +2844,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
           $.ajax(statusUrl + '?' + Date.now(), {
             // bust cache with timestamp
             type: 'GET',
-            crossDomain: true
+            crossDomain: true,
           }).done(function(data) {
             opts.updater(data);
           });
@@ -3305,8 +3307,11 @@ L.Map.BoxCollector = L.Map.BoxZoom.extend({
         this._map.containerPointToLatLng(this._bounds.getTopRight())
     );
 
+    var zoom = this._map.getZoom();
+    var center = this._map.getCenter();
+
     // calls the `project` method but 1st updates the pixel origin - see https://github.com/publiclab/Leaflet.DistortableImage/pull/344
-    bounds = this._map._latLngBoundsToNewLayerBounds(bounds, this._map.getZoom(), this._map.getCenter());
+    bounds = this._map._latLngBoundsToNewLayerBounds(bounds, zoom, center);
 
     this._map.fire('boxcollectend', {boxCollectBounds: bounds});
   },

@@ -91,7 +91,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
   _toggleCollected: function(e, layer) {
     if (e.shiftKey) {
-      /** conditional prevents disabled images from flickering multi-select mode */
+      /* conditional prevents disabled images from flickering multi-select mode */
       if (layer.editing.enabled()) {
         L.DomUtil.toggleClass(e.target, 'collected');
       }
