@@ -295,9 +295,8 @@ L.DistortableCollection.Edit = L.Handler.extend({
       this._removeToolbar();
       this.editActions.push(value);
       this._addToolbar();
-    } else {
-      return false;
     }
+    return this;
   },
 
   removeTool: function(value) {
@@ -311,6 +310,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
         return false;
       }
     }, this);
+    return this;
   },
 });
 
