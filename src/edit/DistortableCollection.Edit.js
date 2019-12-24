@@ -13,21 +13,21 @@ L.DistortableCollection.Edit = L.Handler.extend({
 // this is important anyways so you can override them from the HTML page and access private values
 console.log('init collection.edit', options, group);
 
-    this.startExport = options.startExport || function startExport(opts) {
+    this.startExport = options.startExport || function startExport() {
       return new Promise(function(resolve) {
-        opts = opts || {};
+        opts = group.options || {};
 
     // this is undefined at runtime but gets filled in later... is this an async issue?
     // ok, wrapped this in a promise
     console.log('options in startExport', opts, opts.exportUrl);
-        opts.collection = group.options.collection || this._group.generateExportJson();
-        opts.frequency = group.options.frequency || 3000;
-        opts.scale = group.options.scale || 100; // switch it to _getAvgCmPerPixel !
-        opts.updater = group.options.updater || _defaultUpdater;
-        opts.handleStatusUrl = group.options.handleStatusUrl || _defaultHandleStatusUrl;
-        opts.fetchStatusUrl = group.options.fetchStatusUrl || _defaultFetchStatusUrl;
-        opts.exportStartUrl = group.options.exportStartUrl || '//export.mapknitter.org/export';
-        opts.exportUrl = group.options.exportUrl || 'http//export.mapknitter.org/';
+        opts.collection = opts.collection || this._group.generateExportJson();
+        opts.frequency = opts.frequency || 3000;
+        opts.scale = opts.scale || 100; // switch it to _getAvgCmPerPixel !
+        opts.updater = opts.updater || _defaultUpdater;
+        opts.handleStatusUrl = opts.handleStatusUrl || _defaultHandleStatusUrl;
+        opts.fetchStatusUrl = opts.fetchStatusUrl || _defaultFetchStatusUrl;
+        opts.exportStartUrl = opts.exportStartUrl || '//export.mapknitter.org/export';
+        opts.exportUrl = opts.exportUrl || 'http//export.mapknitter.org/';
   
         // this may be overridden to update the UI to show export progress or completion
         // eslint-disable-next-line require-jsdoc
@@ -80,7 +80,7 @@ console.log('init collection.edit', options, group);
             crossDomain: true,
             type: 'POST',
             data: {
-              collection: JSON.stringify(_opts.collection.images),
+              collection: JSON.stringify(_opts.collection),
               scale: _opts.scale,
               upload: true
             },
