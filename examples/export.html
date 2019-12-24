@@ -64,21 +64,6 @@
         });
 
 /*
-          function _fetchStatusUrl(collection, scale) {
-            opts.handleStatusUrl = opts.handleStatusUrl || _defaultHandleStatusUrl;
-    
-            $.ajax({
-              url: '//export.mapknitter.org/export',
-              crossDomain: true,
-              type: 'POST',
-              data: {
-                collection: JSON.stringify(collection.images),
-                scale: scale,
-              },
-              success: opts.handleStatusUrl, // this handles the initial response
-            });
-          }
-
           // receives the URL of status.json, and starts running the updater to repeatedly fetch from status.json;
           // this may be overridden to integrate with any UI
           // eslint-disable-next-line require-jsdoc
@@ -124,7 +109,7 @@
             crossDomain: true,
             type: 'POST',
             data: {
-              collection: JSON.stringify(_opts.collection),
+              collection: _opts.collection,
               scale: prompt("Choose a scale or use the default (cm per pixel):", 100) || _opts.scale,
               upload: true
             },
