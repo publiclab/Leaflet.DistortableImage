@@ -2617,22 +2617,15 @@ L.DistortableCollection.Edit = L.Handler.extend({
   initialize: function(group, options) {
     this._group = group;
 
-// OK let's just refactor this to not use the closure scope, but to pass options into each function. 
-// this is important anyways so you can override them from the HTML page and access private values
-console.log('init collection.edit', options, group);
-
     this.startExport = options.startExport || function startExport() {
       return new Promise(function(resolve) {
         opts = group.options || {};
 
-    // this is undefined at runtime but gets filled in later... is this an async issue?
-    // ok, wrapped this in a promise
-    console.log('options in startExport', opts, opts.exportUrl);
         opts.collection = opts.collection || this._group.generateExportJson();
         opts.frequency = opts.frequency || 3000;
         opts.scale = opts.scale || 100; // switch it to _getAvgCmPerPixel !
         opts.updater = opts.updater || _defaultUpdater;
-        opts.handleStatusUrl = opts.handleStatusUrl || _defaultHandleStatusUrl;
+        opts.handleStatusResponse = opts.handleStatusResponse || _defaultHandleStatusResponse;
         opts.fetchStatusUrl = opts.fetchStatusUrl || _defaultFetchStatusUrl;
         opts.exportStartUrl = opts.exportStartUrl || '//export.mapknitter.org/export';
         opts.exportUrl = opts.exportUrl || 'http//export.mapknitter.org/';
@@ -2663,13 +2656,9 @@ console.log('init collection.edit', options, group);
         // receives the URL of status.json, and starts running the updater to repeatedly fetch from status.json;
         // this may be overridden to integrate with any UI
         // eslint-disable-next-line require-jsdoc
-        function _defaultHandleStatusUrl(data, _opts) {
-          console.log('handle status', data);
-//// why are we overwriting here?
-          //statusUrl = opts.exportUrl + data;
+        function _defaultHandleStatusResponse(data, _opts) {
   
           // repeatedly fetch the status.json
-//// why do we need this closure ref?
           _opts.updateInterval = setInterval(function intervalUpdater() {
             $.ajax(_opts.statusUrl + '?' + Date.now(), {// bust cache with timestamp
               type: 'GET',
@@ -2692,7 +2681,7 @@ console.log('init collection.edit', options, group);
               scale: _opts.scale,
               upload: true
             },
-            success: function(data) { _opts.handleStatusUrl(data, _opts) }, // this handles the initial response
+            success: function(data) { _opts.handleStatusResponse(data, _opts) }, // this handles the initial response
           });
         }
   

@@ -63,27 +63,6 @@
           suppressToolbar: true,
         });
 
-/*
-          // receives the URL of status.json, and starts running the updater to repeatedly fetch from status.json;
-          // this may be overridden to integrate with any UI
-          // eslint-disable-next-line require-jsdoc
-          function handleStatusResponse(data) {
-            console.log(data);
-            statusUrl = '//export.mapknitter.org' + data;
-            opts.updater = opts.updater || _defaultUpdater;
-    
-            // repeatedly fetch the status.json
-            updateInterval = setInterval(function intervalUpdater() {
-              $.ajax(statusUrl + '?' + Date.now(), {// bust cache with timestamp
-                type: 'GET',
-                crossDomain: true,
-              }).done(function(data) {
-                opts.updater(data);
-              });
-            }, opts.frequency);
-          }
- */   
-
         var json = [{"nodes":[
                 {"lat":"41.8200378187","lon":"-71.4034409085"},
                 {"lat":"41.8199873593","lon":"-71.4030021564"},
@@ -103,24 +82,53 @@
         ];
 
         // customize the function that starts up the export
-        function fetchStatusUrl(_opts) {
+        function fetchStatusUrl(opts) {
           $.ajax({
-            url: _opts.exportStartUrl,
+            url: opts.exportStartUrl,
             crossDomain: true,
             type: 'POST',
             data: {
-              collection: _opts.collection,
-              scale: prompt("Choose a scale or use the default (cm per pixel):", 100) || _opts.scale,
+              collection: opts.collection,
+              scale: prompt("Choose a scale or use the default (cm per pixel):", 100) || opts.scale,
               upload: true
             },
-            success: function(data) { _opts.handleStatusUrl(data, _opts) }, // this handles the initial response
+            success: function(data) { opts.handleStatusUrl(data, opts) }, // this handles the initial response
           });
         }
+
+        // receives the URL of status.json, and starts running the updater to repeatedly fetch from status.json;
+        // this may be overridden to integrate with any UI
+        function handleStatusResponse(data, opts) {
+          console.log(data);
+          var statusUrl = data.split('please visit, ')[1];
+
+          /* if we are getting status updates:     
+            // repeatedly fetch the status.json
+            var updateInterval = setInterval(function intervalUpdater() {
+              $.ajax(statusUrl + '?' + Date.now(), {// bust cache with timestamp
+                type: 'GET',
+                crossDomain: true,
+              }).done(function(data) {
+                // do something with the response?
+                opts.updater(data);
+              });
+            }, opts.frequency);
+          */
+
+          // but in this example, we're not; we just get the URL of the finished image:
+
+          // we should stop the spinner
+
+          // and we should initiate the download? 
+          window.location = statusUrl;
+        }
+
 
         // initialize the collection:
         imgGroup = L.distortableCollection({
           collection: json, // here we override the image data sent with a custom set
           fetchStatusUrl: fetchStatusUrl,
+          handleStatusResponse: handleStatusResponse,
           exportUrl: 'http://34.74.118.242/api/v2/export/', // used to 
           exportStartUrl: 'http://34.74.118.242/api/v2/export/' // used to initiate the export
 
@@ -135,7 +143,7 @@
           // frequency = opts.frequency || 3000;
           // scale = opts.scale || 100; // switch it to _getAvgCmPerPixel !
           // updater: function(json) {}  // a function to handle the result of repeated fetching of the status.json file
-          // handleStatusUrl = opts.handleStatusUrl || _defaultHandleStatusUrl;
+          // handleStatusResponse = opts.handleStatusResponse || _defaultHandleStatusResponse;
           // fetchStatusUrl = opts.fetchStatusUrl || _defaultFetchStatusUrl;
           // exportUrl = opts.exportUrl || 'http//export.mapknitter.org/';
           // exportStartUrl = opts.exportStartUrl || '//export.mapknitter.org/export';
