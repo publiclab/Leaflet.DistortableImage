@@ -11,18 +11,8 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
     this.startExport = options.startExport || function startExport() {
       return new Promise(function(resolve) {
-        opts = group.options || {};
+        var opts = group.options || {};
 
-        opts.resolve = resolve; // allow user-specified functions to resolve the promise
-        opts.collection = opts.collection || this._group.generateExportJson();
-        opts.frequency = opts.frequency || 3000;
-        opts.scale = opts.scale || 100; // switch it to _getAvgCmPerPixel !
-        opts.updater = opts.updater || _defaultUpdater;
-        opts.handleStatusResponse = opts.handleStatusResponse || _defaultHandleStatusResponse;
-        opts.fetchStatusUrl = opts.fetchStatusUrl || _defaultFetchStatusUrl;
-        opts.exportStartUrl = opts.exportStartUrl || '//export.mapknitter.org/export';
-        opts.exportUrl = opts.exportUrl || 'http//export.mapknitter.org/';
-  
         // this may be overridden to update the UI to show export progress or completion
         // eslint-disable-next-line require-jsdoc
         function _defaultUpdater(data, _opts) {
@@ -46,6 +36,16 @@ L.DistortableCollection.Edit = L.Handler.extend({
           // https://github.com/publiclab/mapknitter-exporter/blob/main/lib/mapknitterExporter.rb
           console.log(data);
         }
+
+        opts.resolve = resolve; // allow user-specified functions to resolve the promise
+        opts.collection = opts.collection || this._group.generateExportJson();
+        opts.frequency = opts.frequency || 3000;
+        opts.scale = opts.scale || 100; // switch it to _getAvgCmPerPixel !
+        opts.updater = opts.updater || _defaultUpdater;
+        opts.handleStatusResponse = opts.handleStatusResponse || _defaultHandleStatusResponse;
+        opts.fetchStatusUrl = opts.fetchStatusUrl || _defaultFetchStatusUrl;
+        opts.exportStartUrl = opts.exportStartUrl || '//export.mapknitter.org/export';
+        opts.exportUrl = opts.exportUrl || 'http//export.mapknitter.org/';
   
         // receives the URL of status.json, and starts running the updater to repeatedly fetch from status.json;
         // this may be overridden to integrate with any UI
