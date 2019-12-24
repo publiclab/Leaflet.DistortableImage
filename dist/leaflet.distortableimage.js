@@ -2627,7 +2627,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
           data = JSON.parse(data);
           // optimization: fetch status directly from google storage:
           if (_opts.statusUrl !== data.status_url && data.status_url.match('.json')) {
-            if (data.status_url && data.status_url.substr(0,1) == "/") {
+            if (data.status_url && data.status_url.substr(0,1) === "/") {
               _opts.statusUrl = _opts.exportUrl + data.status_url;
             } else {
               _opts.statusUrl = data.status_url;
@@ -2644,16 +2644,6 @@ L.DistortableCollection.Edit = L.Handler.extend({
           // https://github.com/publiclab/mapknitter-exporter/blob/main/lib/mapknitterExporter.rb
           console.log(data);
         }
-
-        opts.resolve = resolve; // allow user-specified functions to resolve the promise
-        opts.collection = opts.collection || this._group.generateExportJson();
-        opts.frequency = opts.frequency || 3000;
-        opts.scale = opts.scale || 100; // switch it to _getAvgCmPerPixel !
-        opts.updater = opts.updater || _defaultUpdater;
-        opts.handleStatusResponse = opts.handleStatusResponse || _defaultHandleStatusResponse;
-        opts.fetchStatusUrl = opts.fetchStatusUrl || _defaultFetchStatusUrl;
-        opts.exportStartUrl = opts.exportStartUrl || '//export.mapknitter.org/export';
-        opts.exportUrl = opts.exportUrl || 'http//export.mapknitter.org/';
   
         // receives the URL of status.json, and starts running the updater to repeatedly fetch from status.json;
         // this may be overridden to integrate with any UI
@@ -2683,14 +2673,24 @@ L.DistortableCollection.Edit = L.Handler.extend({
               scale: _opts.scale,
               upload: true
             },
-            success: function(data) { _opts.handleStatusResponse(data, _opts) }, // this handles the initial response
+            success: function(data) { _opts.handleStatusResponse(data, _opts); }, // this handles the initial response
           });
         }
   
         opts.fetchStatusUrl(opts);
       }.bind(this));
 
-    }
+        opts.resolve = resolve; // allow user-specified functions to resolve the promise
+        opts.collection = opts.collection || this._group.generateExportJson();
+        opts.frequency = opts.frequency || 3000;
+        opts.scale = opts.scale || 100; // switch it to _getAvgCmPerPixel !
+        opts.updater = opts.updater || _defaultUpdater;
+        opts.handleStatusResponse = opts.handleStatusResponse || _defaultHandleStatusResponse;
+        opts.fetchStatusUrl = opts.fetchStatusUrl || _defaultFetchStatusUrl;
+        opts.exportStartUrl = opts.exportStartUrl || '//export.mapknitter.org/export';
+        opts.exportUrl = opts.exportUrl || 'http//export.mapknitter.org/';
+
+    };
 
     L.setOptions(this, options);
 
