@@ -29,7 +29,7 @@ L.ExportAction = L.EditAction.extend({
       L.IconUtil.toggleXlink(this._link, 'get_app', 'spinner');
       L.IconUtil.toggleTitle(this._link, 'Export Images', 'Loading...');
       L.IconUtil.addClassToSvg(this._link, 'loader');
-console.log(this, edit.options);
+console.log('exportAction', this, edit, edit.options);
       edit.startExport({
 // explicitly send each option:
         collection: edit.options.collection,
