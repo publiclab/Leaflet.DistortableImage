@@ -389,6 +389,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     }
 
     this._selected = false;
+ 
+    $(this).trigger('deselectImage');
     return this;
   },
 
@@ -411,6 +413,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       return false;
     }
 
+    $(this).trigger('selectImage');
     return this;
   },
 
