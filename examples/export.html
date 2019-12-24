@@ -117,21 +117,35 @@
             "src":"https://s3.amazonaws.com/grassrootsmapping/warpables/320983/test.png"}
         ];
 
+        // customize the function that starts up the export
+        function fetchStatusUrl(_opts) {
+          $.ajax({
+            url: _opts.exportStartUrl,
+            crossDomain: true,
+            type: 'POST',
+            data: {
+              collection: JSON.stringify(_opts.collection),
+              scale: prompt("Choose a scale or use the default (cm per pixel):", 100) || _opts.scale,
+              upload: true
+            },
+            success: function(data) { _opts.handleStatusUrl(data, _opts) }, // this handles the initial response
+          });
+        }
+
         // initialize the collection:
         imgGroup = L.distortableCollection({
-          collection: json,
-// this needs to be a function run at the moment of pressing, not when initializing the collection
-//          scale: prompt("Choose a scale or use the default (cm per pixel):", 100),
+          collection: json, // here we override the image data sent with a custom set
+          fetchStatusUrl: fetchStatusUrl,
           exportUrl: 'http://34.74.118.242/api/v2/export/', // used to 
           exportStartUrl: 'http://34.74.118.242/api/v2/export/' // used to initiate the export
 
-// From this alternative exporter, we'll get a response like:
-// "Your Image is exporting, to load Image please visit, http://34.74.118.242/api/v2/status/?pid=3d8233faa2ade0f0cee400fba1170890-7153"
-// So, we can splice like this: response.split("please visit, ")[1]
-// and get http://34.74.118.242/api/v2/status/?pid=3d8233faa2ade0f0cee400fba1170890-7153
-// Noting, however, later we will expect to get a full Google Cloud Storage URL.
+          // From this alternative exporter, we'll get a response like:
+          // "Your Image is exporting, to load Image please visit, http://34.74.118.242/api/v2/status/?pid=3d8233faa2ade0f0cee400fba1170890-7153"
+          // So, we can splice like this: response.split("please visit, ")[1]
+          // and get http://34.74.118.242/api/v2/status/?pid=3d8233faa2ade0f0cee400fba1170890-7153
+          // Noting, however, later we will expect to get a full Google Cloud Storage URL.
 
-          // defaults are as follows, in /src/edit/DistortableCollection.Edit.js:
+          // remaining defaults are as follows, in /src/edit/DistortableCollection.Edit.js:
           // collection = opts.collection || this._group.generateExportJson();
           // frequency = opts.frequency || 3000;
           // scale = opts.scale || 100; // switch it to _getAvgCmPerPixel !
@@ -140,6 +154,7 @@
           // fetchStatusUrl = opts.fetchStatusUrl || _defaultFetchStatusUrl;
           // exportUrl = opts.exportUrl || 'http//export.mapknitter.org/';
           // exportStartUrl = opts.exportStartUrl || '//export.mapknitter.org/export';
+
         }).addTo(map);
 
         imgGroup.addLayer(img);
