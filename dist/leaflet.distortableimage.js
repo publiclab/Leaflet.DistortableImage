@@ -1643,18 +1643,7 @@ L.ExportAction = L.EditAction.extend({
       L.IconUtil.toggleXlink(this._link, 'get_app', 'spinner');
       L.IconUtil.toggleTitle(this._link, 'Export Images', 'Loading...');
       L.IconUtil.addClassToSvg(this._link, 'loader');
-      edit.startExport({
-console.log(this, edit.options)
-// explicitly send each option:
-        collection: edit.options.collection,
-        frequency: edit.options.frequency,
-        scale: edit.options.scale,
-        updater: edit.options.updater,
-        handleStatusUrl: edit.options.handleStatusUrl,
-        fetchStatusUrl: edit.options.fetchStatusUrl,
-        exportStartUrl: edit.options.exportStartUrl,
-        exportUrl: edit.options.exportUrl
-      }).then(function() {
+      edit.startExport().then(function() {
         L.IconUtil.toggleXlink(this._link, 'get_app', 'spinner');
         L.IconUtil.toggleTitle(this._link, 'Export Images', 'Loading...');
         L.DomUtil.removeClass(this._link.firstChild, 'loader');
@@ -2630,10 +2619,11 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
 // OK let's just refactor this to not use the closure scope, but to pass options into each function. 
 // this is important anyways so you can override them from the HTML page and access private values
+console.log('init collection.edit', options, group);
 
-    this.startExport = options.startExport || function startExport(opts) {
+    this.startExport = options.startExport || function startExport() {
       return new Promise(function(resolve) {
-        opts = opts || {};
+        opts = group.options || {};
 
     // this is undefined at runtime but gets filled in later... is this an async issue?
     // ok, wrapped this in a promise
@@ -2698,7 +2688,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
             crossDomain: true,
             type: 'POST',
             data: {
-              collection: JSON.stringify(_opts.collection.images),
+              collection: JSON.stringify(_opts.collection),
               scale: _opts.scale,
               upload: true
             },
