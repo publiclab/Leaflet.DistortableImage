@@ -13,6 +13,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
       return new Promise(function(resolve) {
         opts = group.options || {};
 
+        opts.resolve = resolve; // allow user-specified functions to resolve the promise
         opts.collection = opts.collection || this._group.generateExportJson();
         opts.frequency = opts.frequency || 3000;
         opts.scale = opts.scale || 100; // switch it to _getAvgCmPerPixel !
@@ -36,6 +37,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
           }
           if (data.status === 'complete') {
             clearInterval(_opts.updateInterval);
+            resolve();
           }
           if (data.status === 'complete' && data.jpg !== null) {
             alert('Export succeeded. ' + _opts.exportUrl + data.jpg);

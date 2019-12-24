@@ -115,10 +115,9 @@
             }, opts.frequency);
           */
 
-          // but in this example, we're not; we just get the URL of the finished image:
-
+          // but in this example, we're not; we just get the URL of the finished image;
           // we should stop the spinner
-
+          opts.resolve();
           // and we should initiate the download? 
           window.location = statusUrl;
         }
