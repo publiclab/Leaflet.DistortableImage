@@ -92,7 +92,7 @@
               scale: prompt("Choose a scale or use the default (cm per pixel):", 100) || opts.scale,
               upload: true
             },
-            success: function(data) { opts.handleStatusUrl(data, opts) }, // this handles the initial response
+            success: function(data) { opts.handleStatusResponse(data, opts) }, // this handles the initial response
           });
         }
 
