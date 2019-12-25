@@ -1391,6 +1391,7 @@ L.KeymapperIconSet = L.IconSet.extend({
 /* eslint-disable max-len */
 L.ToolbarIconSet = L.IconSet.extend({
   _symbols:
+    '<symbol viewBox="0 0 18 18" id="cancel"><path d="M13.279 5.779l-1.058-1.058L9 7.942 5.779 4.721 4.721 5.779 7.942 9l-3.221 3.221 1.058 1.058L9 10.057l3.221 3.222 1.058-1.058L10.057 9z"/></symbol>' +
     '<symbol viewBox="0 0 18 18" id="border_clear"><path d="M5.25 3.75h1.5v-1.5h-1.5v1.5zm0 6h1.5v-1.5h-1.5v1.5zm0 6h1.5v-1.5h-1.5v1.5zm3-3h1.5v-1.5h-1.5v1.5zm0 3h1.5v-1.5h-1.5v1.5zm-6 0h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm6 6h1.5v-1.5h-1.5v1.5zm6 3h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm0 6h1.5v-1.5h-1.5v1.5zm0-9h1.5v-1.5h-1.5v1.5zm-6 0h1.5v-1.5h-1.5v1.5zm6-4.5v1.5h1.5v-1.5h-1.5zm-6 1.5h1.5v-1.5h-1.5v1.5zm3 12h1.5v-1.5h-1.5v1.5zm0-6h1.5v-1.5h-1.5v1.5zm0-6h1.5v-1.5h-1.5v1.5z"/></symbol>' +
     '<symbol viewBox="0 0 18 18" id="border_outer"><path d="M9.75 5.25h-1.5v1.5h1.5v-1.5zm0 3h-1.5v1.5h1.5v-1.5zm3 0h-1.5v1.5h1.5v-1.5zm-10.5-6v13.5h13.5V2.25H2.25zm12 12H3.75V3.75h10.5v10.5zm-4.5-3h-1.5v1.5h1.5v-1.5zm-3-3h-1.5v1.5h1.5v-1.5z"/></symbol>' +
     '<symbol viewBox="0 0 18 18" id="crop_rotate"><path d="M5.603 16.117C3.15 14.947 1.394 12.57 1.125 9.75H0C.383 14.37 4.245 18 8.963 18c.172 0 .33-.015.495-.023L6.6 15.113l-.997 1.005zM9.037 0c-.172 0-.33.015-.495.03L11.4 2.888l.998-.998a7.876 7.876 0 0 1 4.477 6.36H18C17.617 3.63 13.755 0 9.037 0zM12 10.5h1.5V6A1.5 1.5 0 0 0 12 4.5H7.5V6H12v4.5zM6 12V3H4.5v1.5H3V6h1.5v6A1.5 1.5 0 0 0 6 13.5h6V15h1.5v-1.5H15V12H6z"/></symbol>' +
@@ -1408,7 +1409,7 @@ L.ToolbarIconSet = L.IconSet.extend({
     '<symbol viewBox="0 0 18 18" id="scale"><path d="M8.25 9h-6a.75.75 0 00-.75.75v6c0 .414.336.75.75.75h6a.75.75 0 00.75-.75v-6A.75.75 0 008.25 9zm-.75 6H3v-4.5h4.5V15zm8.94-13.035a.75.75 0 00-.405-.405.75.75 0 00-.285-.06h-4.5a.75.75 0 000 1.5h2.692L9.967 6.968a.75.75 0 000 1.064.75.75 0 001.065 0L15 4.057V6.75a.75.75 0 101.5 0v-4.5a.75.75 0 00-.06-.285z" /></symbol>' +
     '<symbol viewBox="0 0 18 18" id="spinner"><path d="M9 6.48c-.216 0-.36-.144-.36-.36V3.24c0-.216.144-.36.36-.36s.36.144.36.36v2.88c0 .216-.144.36-.36.36z"/><path d="M9 15.12c-.216 0-.36-.144-.36-.36v-2.88c0-.216.144-.36.36-.36s.36.144.36.36v2.88c0 .216-.144.36-.36.36zm1.44-8.28c-.072 0-.108 0-.18-.036-.144-.108-.216-.288-.108-.468l1.44-2.484c.108-.144.288-.216.468-.108.144.108.216.288.108.468l-1.44 2.484c-.072.072-.18.144-.288.144zm-4.32 7.488c-.072 0-.108 0-.18-.036-.144-.108-.216-.288-.108-.468l1.44-2.484c.108-.144.288-.216.468-.108.144.108.216.288.108.468l-1.44 2.484c-.072.072-.18.144-.288.144z" opacity=".3"/><path d="M7.56 6.84c-.108 0-.216-.072-.288-.18l-1.44-2.484c-.108-.144-.036-.36.108-.468.144-.108.36-.036.468.108L7.848 6.3c.108.144.036.36-.108.468-.072.072-.108.072-.18.072z" opacity=".93"/><path d="M11.88 14.328c-.108 0-.216-.072-.288-.18l-1.44-2.484c-.108-.144-.036-.36.108-.468.144-.108.36-.036.468.108l1.44 2.484c.108.144.036.36-.108.468-.072.036-.108.072-.18.072z" opacity=".3"/><path d="M6.12 9.36H3.24c-.216 0-.36-.144-.36-.36s.144-.36.36-.36h2.88c.216 0 .36.144.36.36s-.144.36-.36.36z" opacity=".65"/><path d="M14.76 9.36h-2.88c-.216 0-.36-.144-.36-.36s.144-.36.36-.36h2.88c.216 0 .36.144.36.36s-.144.36-.36.36z" opacity=".3"/><path d="M6.516 7.884c-.072 0-.108 0-.18-.036l-2.484-1.44c-.144-.108-.216-.288-.108-.468.108-.144.288-.216.468-.108l2.484 1.44c.144.108.216.288.108.468a.327.327 0 01-.288.144z" opacity=".86"/><path d="M14.004 12.204c-.072 0-.108 0-.18-.036l-2.484-1.44c-.144-.108-.216-.288-.108-.468.108-.144.288-.216.468-.108l2.484 1.44c.144.108.216.288.108.468a.327.327 0 01-.288.144z" opacity=".3"/><path d="M3.996 12.204c-.108 0-.216-.072-.288-.18-.108-.144-.036-.36.108-.468l2.484-1.44c.144-.108.36-.036.468.108.108.144.036.36-.108.468l-2.484 1.44c-.036.072-.108.072-.18.072z" opacity=".44"/><path d="M11.484 7.884c-.108 0-.216-.072-.288-.18-.108-.144-.036-.36.108-.468l2.484-1.44c.144-.108.36-.036.468.108.108.144.036.36-.108.468l-2.484 1.44c-.072.072-.108.072-.18.072z" opacity=".3"/></symbol>' +
     '<symbol viewBox="0 0 18 18" id="drag"><path d="M2.3 16.5c-0.2 0-0.4-0.1-0.5-0.2 -0.2-0.2-0.3-0.5-0.2-0.8l2.5-6.5 -2.5-6.5C1.5 2.3 1.5 2 1.7 1.8c0.2-0.2 0.5-0.3 0.8-0.2l6.5 2.5 6.5-2.5c0.3-0.1 0.6 0 0.8 0.2 0.2 0.2 0.3 0.5 0.2 0.8l-2.5 6.5 2.5 6.5c0.1 0.3 0 0.6-0.2 0.8 -0.2 0.2-0.5 0.3-0.8 0.2l-6.5-2.5 -6.5 2.5C2.4 16.5 2.3 16.5 2.3 16.5zM3.6 3.6l2 5.1c0.1 0.2 0.1 0.4 0 0.5l-2 5.1 5.1-2c0.2-0.1 0.4-0.1 0.5 0l5.1 2L12.4 9.3c-0.1-0.2-0.1-0.4 0-0.5l2-5.1L9.3 5.6c-0.2 0.1-0.4 0.1-0.5 0L3.6 3.6z" /></symbol>' +
-    '<symbol viewBox="0 0 18 18" id="unlock"><path d="M13.5 6h-.75V4.5C12.75 2.43 11.07.75 9 .75 6.93.75 5.25 2.43 5.25 4.5h1.5A2.247 2.247 0 0 1 9 2.25a2.247 2.247 0 0 1 2.25 2.25V6H4.5C3.675 6 3 6.675 3 7.5V15c0 .825.675 1.5 1.5 1.5h9c.825 0 1.5-.675 1.5-1.5V7.5c0-.825-.675-1.5-1.5-1.5zm0 9h-9V7.5h9V15zM9 12.75c.825 0 1.5-.675 1.5-1.5s-.675-1.5-1.5-1.5-1.5.675-1.5 1.5.675 1.5 1.5 1.5z"/></symbol>',
+    '<symbol viewBox="0 0 18 18" id="unlock"><path d="M13.5 6h-.75V4.5C12.75 2.43 11.07.75 9 .75 6.93.75 5.25 2.43 5.25 4.5h1.5A2.247 2.247 0 0 1 9 2.25a2.247 2.247 0 0 1 2.25 2.25V6H4.5C3.675 6 3 6.675 3 7.5V15c0 .825.675 1.5 1.5 1.5h9c.825 0 1.5-.675 1.5-1.5V7.5c0-.825-.675-1.5-1.5-1.5zm0 9h-9V7.5h9V15zM9 12.75c.825 0 1.5-.675 1.5-1.5s-.675-1.5-1.5-1.5-1.5.675-1.5 1.5.675 1.5 1.5 1.5z"/></symbol>'
 });
 
 L.DistortableImage = L.DistortableImage || {};
@@ -1613,9 +1614,14 @@ L.DragAction = L.EditAction.extend({
 });
 
 L.ExportAction = L.EditAction.extend({
+  // This function is executed every time we select an image
   initialize: function(map, overlay, options) {
     var edit = overlay.editing;
     var tooltip;
+
+    this.isExporting = false;
+    this.mouseLeaveSkip = true;
+    this.isHooksExecuted = false;
 
     if (edit instanceof L.DistortableImage.Edit) {
       L.DistortableImage.action_map.e = '_getExport';
@@ -1629,7 +1635,7 @@ L.ExportAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: 'get_app',
-      tooltip: tooltip,
+      tooltip: tooltip
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -1637,20 +1643,91 @@ L.ExportAction = L.EditAction.extend({
 
   addHooks: function() {
     var edit = this._overlay.editing;
+    var self = this;
 
-    if (edit instanceof L.DistortableImage.Edit) { edit._getExport(); }
-    else {
-      L.IconUtil.toggleXlink(this._link, 'get_app', 'spinner');
-      L.IconUtil.toggleTitle(this._link, 'Export Images', 'Loading...');
-      L.IconUtil.addClassToSvg(this._link, 'loader');
+    if (edit instanceof L.DistortableImage.Edit) {
+      edit._getExport();
+      return;
+    }
 
-      edit.startExport().then(function() {
-        L.IconUtil.toggleXlink(this._link, 'get_app', 'spinner');
-        L.IconUtil.toggleTitle(this._link, 'Export Images', 'Loading...');
-        L.DomUtil.removeClass(this._link.firstChild, 'loader');
-      }.bind(this));
+    // Make sure that addHooks is executed only once, event listeners will handle the rest
+    if (self.isHooksExecuted) {
+      return;
+    } else {
+      self.isHooksExecuted = true;
+    }
+
+    var toolbarExportElement = self._link.parentElement;
+
+    self.mouseEnterHandler = self.handleMouseEnter.bind(self);
+    self.mouseLeaveHandler = self.handleMouseLeave.bind(self);
+
+    toolbarExportElement.addEventListener('click', function() {
+      if (!self.isExporting) {
+        self.isExporting = true;
+        self.renderExportIcon();
+
+        setTimeout(self.attachMouseEventListeners.bind(self, this), 100);
+
+        edit.startExport().then(
+          function() {
+            self.resetState();
+            self.detachMouseEventListeners.call(self, this);
+          }.bind(this)
+        );
+      } else {
+        self.resetState();
+        self.detachMouseEventListeners.call(self, this);
+        edit.cancelExport();
+      }
+    });
+  },
+
+  resetState: function() {
+    this.renderDownloadIcon();
+    this.isExporting = false;
+    this.mouseLeaveSkip = true;
+  },
+
+  attachMouseEventListeners: function(element) {
+    element.addEventListener('mouseenter', this.mouseEnterHandler);
+    element.addEventListener('mouseleave', this.mouseLeaveHandler);
+  },
+
+  detachMouseEventListeners: function(element) {
+    element.removeEventListener('mouseenter', this.mouseEnterHandler);
+    element.removeEventListener('mouseleave', this.mouseLeaveHandler);
+  },
+
+  handleMouseEnter: function() {
+    this.renderCancelIcon();
+  },
+
+  handleMouseLeave: function() {
+    if (!this.mouseLeaveSkip) {
+      this.renderExportIcon();
+    } else {
+      this.mouseLeaveSkip = false;
     }
   },
+
+  renderDownloadIcon: function() {
+    L.IconUtil.toggleXlink(this._link, 'get_app', 'spinner');
+    L.IconUtil.toggleTitle(this._link, 'Export Images', 'Loading...');
+    L.DomUtil.removeClass(this._link.firstChild, 'loader');
+  },
+
+  renderExportIcon: function() {
+    L.IconUtil.toggleXlink(this._link, 'spinner');
+    L.IconUtil.toggleTitle(this._link, 'Export Images', 'Loading...');
+    L.IconUtil.addClassToSvg(this._link, 'loader');
+  },
+
+  renderCancelIcon: function() {
+    L.IconUtil.toggleXlink(this._link, 'cancel');
+    L.IconUtil.toggleTitle(this._link, 'Cancel Export', 'Loading...');
+    L.DomUtil.removeClass(this._link.firstChild, 'loader');
+  }
 });
 
 L.FreeRotateAction = L.EditAction.extend({
@@ -2802,6 +2879,10 @@ L.DistortableCollection.Edit = L.Handler.extend({
     if (e) { L.DomEvent.stopPropagation(e); }
   },
 
+  cancelExport: function() {
+    clearInterval(this.updateInterval);
+  },
+
   startExport: function(opts) {
     return new Promise(function(resolve) {
       opts = opts || {};
@@ -2809,7 +2890,8 @@ L.DistortableCollection.Edit = L.Handler.extend({
       opts.frequency = opts.frequency || 3000;
       opts.scale = opts.scale || 100; // switch it to _getAvgCmPerPixel !
       var statusUrl;
-      var updateInterval;
+      var self = this;
+      this.updateInterval = null;
 
       // this may be overridden to update the UI to show export progress or completion
       // eslint-disable-next-line require-jsdoc
@@ -2820,7 +2902,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
           statusUrl = data.status_url;
         }
         if (data.status === 'complete') {
-          clearInterval(updateInterval);
+          clearInterval(self.updateInterval);
           resolve();
         }
         if (data.status === 'complete' && data.jpg !== null) {
@@ -2840,7 +2922,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
         opts.updater = opts.updater || _defaultUpdater;
 
         // repeatedly fetch the status.json
-        updateInterval = setInterval(function intervalUpdater() {
+        self.updateInterval = setInterval(function intervalUpdater() {
           $.ajax(statusUrl + '?' + Date.now(), {
             // bust cache with timestamp
             type: 'GET',
