@@ -193,6 +193,10 @@ L.DistortableCollection.Edit = L.Handler.extend({
     if (e) { L.DomEvent.stopPropagation(e); }
   },
 
+  cancelExport: function() {
+    clearInterval(this.updateInterval);
+  },
+
   startExport: function(opts) {
     return new Promise(function(resolve) {
       opts = opts || {};
@@ -200,7 +204,8 @@ L.DistortableCollection.Edit = L.Handler.extend({
       opts.frequency = opts.frequency || 3000;
       opts.scale = opts.scale || 100; // switch it to _getAvgCmPerPixel !
       var statusUrl;
-      var updateInterval;
+      var self = this;
+      this.updateInterval = null;
 
       // this may be overridden to update the UI to show export progress or completion
       // eslint-disable-next-line require-jsdoc
@@ -211,7 +216,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
           statusUrl = data.status_url;
         }
         if (data.status === 'complete') {
-          clearInterval(updateInterval);
+          clearInterval(self.updateInterval);
           resolve();
         }
         if (data.status === 'complete' && data.jpg !== null) {
@@ -231,7 +236,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
         opts.updater = opts.updater || _defaultUpdater;
 
         // repeatedly fetch the status.json
-        updateInterval = setInterval(function intervalUpdater() {
+        self.updateInterval = setInterval(function intervalUpdater() {
           $.ajax(statusUrl + '?' + Date.now(), {
             // bust cache with timestamp
             type: 'GET',
