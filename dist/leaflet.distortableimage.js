@@ -2676,9 +2676,6 @@ L.DistortableCollection.Edit = L.Handler.extend({
             success: function(data) { _opts.handleStatusResponse(data, _opts); }, // this handles the initial response
           });
         }
-  
-        opts.fetchStatusUrl(opts);
-      }.bind(this));
 
         opts.resolve = resolve; // allow user-specified functions to resolve the promise
         opts.collection = opts.collection || this._group.generateExportJson();
@@ -2689,6 +2686,9 @@ L.DistortableCollection.Edit = L.Handler.extend({
         opts.fetchStatusUrl = opts.fetchStatusUrl || _defaultFetchStatusUrl;
         opts.exportStartUrl = opts.exportStartUrl || '//export.mapknitter.org/export';
         opts.exportUrl = opts.exportUrl || 'http//export.mapknitter.org/';
+  
+        opts.fetchStatusUrl(opts);
+      }.bind(this));
 
     };
 
