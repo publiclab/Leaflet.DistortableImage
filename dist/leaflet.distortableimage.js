@@ -3408,14 +3408,13 @@ L.Map.include({
 
     opts = this.mutantOptions = L.extend({
       mutantOpacity: 0.8,
-      maxZoom: 18,
+      maxZoom: 24,
+      maxNativeZoom: 20,
       minZoom: 0,
       labels: true,
       labelOpacity: 1,
       doubleClickLabels: true,
     }, opts);
-
-    if (opts.maxZoom > 21) { opts.maxZoom = 18; }
 
     if (!opts.labels) {
       this.mutantOptions = L.extend(this.mutantOptions, {
@@ -3426,6 +3425,7 @@ L.Map.include({
 
     this._googleMutant = L.tileLayer(url, {
       maxZoom: opts.maxZoom,
+      maxNativeZoom: opts.maxNativeZoom,
       minZoom: opts.minZoom,
       opacity: opts.mutantOpacity,
     }).addTo(this);
@@ -3452,6 +3452,7 @@ L.Map.include({
       interactive: false,
       opacity: opts.labelOpacity,
       maxZoom: opts.maxZoom,
+      maxNativeZoom: opts.maxNativeZoom,
       minZoom: opts.minZoom,
       ext: 'png',
     }).addTo(this);
