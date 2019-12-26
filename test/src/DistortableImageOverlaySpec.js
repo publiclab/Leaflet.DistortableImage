@@ -34,11 +34,12 @@ describe('L.DistortableImageOverlay', function() {
   });
 
   describe('#basic initialization', function() {
-    it('should add Google tile base layer via Google Mutant library, with maxZoom of 24', function() {
+    it('should add Google tile base layer via Google Mutant library, with maxZoom of 24', function(done) {
       map.addGoogleMutant();
 
       map.whenReady(function() {
         expect(map.getMaxZoom()).to.equal(24);
+        done();
       });
     });
   });
