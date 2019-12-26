@@ -6,6 +6,9 @@ describe('L.DistortableImageOverlay', function() {
     var fullSize = [document.querySelector('html'), document.body, mapContainer];
 
     map = L.map(mapContainer).setView([41.7896, -87.5996], 15);
+    map.whenReady(function() {
+      expect(map.getMaxZoom()).to.equal(Infinity); // before adding any background layers
+    });
 
     /* Map and its containing elements need to have height and width set. */
     for (var i = 0, l = fullSize.length; i < l; i++) {
@@ -27,6 +30,16 @@ describe('L.DistortableImageOverlay', function() {
 
     afterEach(function() {
       L.DomUtil.remove(overlay);
+    });
+  });
+
+  describe('#basic initialization', function() {
+    it('should add Google tile base layer via Google Mutant library, with maxZoom of 24', function() {
+      map.addGoogleMutant();
+
+      map.whenReady(function() {
+        expect(map.getMaxZoom()).to.equal(24);
+      });
     });
   });
 
