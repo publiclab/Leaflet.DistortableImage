@@ -34,6 +34,8 @@ describe('L.DistortableImageOverlay', function() {
   });
 
   describe('#basic initialization', function() {
+    // we need a maxZoom of 24 so that images of very small areas may be distorted against 
+    // one another even if the background imagery is not good enough to be useful.
     it('should add Google tile base layer via Google Mutant library, with maxZoom of 24', function(done) {
       map.addGoogleMutant();
 
