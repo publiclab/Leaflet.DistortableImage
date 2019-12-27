@@ -50,7 +50,6 @@ describe('L.DistortableCollection', function() {
   it.skip('Should keep selected images in sync with eachother during translation', function() {});
 
   it('allows custom export functions to be used', function(done) {
-    var img = overlay.getElement();
     customImgGroup = L.distortableCollection({
       fetchStatusUrl: function fetchStatusUrl(opts) {
         expect(opts).to.not.be.nil;
@@ -60,8 +59,13 @@ describe('L.DistortableCollection', function() {
     }).addTo(map);
 
     map.whenReady(function() {
+      // isolate a single image in a new collection:
+      imgGroup.removeLayer(overlay);
+      customImgGroup.addLayer(overlay);
       // simulate selection of an image
+// this is selecting in 2 different groups?:
       chai.simulateEvent(overlay.getElement(), 'mousedown', { shiftKey: true });
+// this returning false:
       expect(customImgGroup.isCollected(overlay)).to.be.true;
 
       // test that the collection menu appears and contains an export button
