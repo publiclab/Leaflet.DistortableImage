@@ -449,6 +449,46 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return this;
   },
 
+  exportImage: function() {
+    this.editing._getExport();
+    return this;
+  },
+
+  deleteImage: function() {
+    this.editing._removeOverlay();
+    return this;
+  },
+
+  toggleOrder: function() {
+    this.editing._toggleOrder();
+    return this;
+  },
+
+  toggleTransparency: function() {
+    this.editing._toggleOpacity();
+    return this;
+  },
+
+  toggleOutline: function() {
+    this.editing._toggleBorder();
+    return this;
+  },
+
+  toggleLockMode: function() {
+    this.editing._toggleLockMode();
+    return this;
+  },
+
+  lock: function() {
+    this.editing._lock();
+    return this;
+  },
+
+  unlock: function() {
+    this.editing._unlock();
+    return this;
+  },
+
   select: function(e) {
     var edit = this.editing;
 
