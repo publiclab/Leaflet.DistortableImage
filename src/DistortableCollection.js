@@ -6,6 +6,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
   initialize: function(options) {
     L.setOptions(this, options);
     L.FeatureGroup.prototype.initialize.call(this, options);
+    L.Utils.initTranslation.call(this);
 
     this.editable = this.options.editable;
   },
