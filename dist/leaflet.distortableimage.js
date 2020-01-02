@@ -557,6 +557,16 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return this;
   },
 
+  setAngle: function(angleInDeg) {
+    var currentAngleInDeg = this.getAngle();
+    var angleToRotateByInDeg = angleInDeg - currentAngleInDeg;
+
+    var angleInRad = L.TrigUtil.degreesToRadians(angleToRotateByInDeg);
+    this.rotateBy(angleInRad);
+
+    return this;
+  },
+
   rotateBy: function(angle) {
     var map = this._map;
     var center = map.project(this.getCenter());
