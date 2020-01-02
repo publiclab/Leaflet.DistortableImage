@@ -12,6 +12,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   initialize: function(url, options) {
     L.setOptions(this, options);
+    L.Utils.initTranslation.call(this);
 
     this.edgeMinWidth = this.options.edgeMinWidth;
     this.editable = this.options.editable;

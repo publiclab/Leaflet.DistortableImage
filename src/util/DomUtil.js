@@ -1,4 +1,8 @@
 L.DomUtil = L.extend(L.DomUtil, {
+  initTranslation: function(obj) {
+    this.translation = obj;
+  },
+
   getMatrixString: function(m) {
     var is3d = L.Browser.webkit3d || L.Browser.gecko3d || L.Browser.ie3d;
 
@@ -42,14 +46,17 @@ L.DomUtil = L.extend(L.DomUtil, {
   },
 
   confirmDelete: function() {
-    return window.confirm('Are you sure?' +
-      ' This image will be permanently deleted from the map.');
+    return window.confirm(this.translation.confirmImageDelete);
   },
 
   confirmDeletes: function(n) {
-    var humanized = n === 1 ? 'image' : 'images';
+    if (n === 1) {
+      this.confirmDelete();
+      return;
+    }
 
-    return window.confirm('Are you sure? ' + n +
-    ' ' + humanized + ' will be permanently deleted from the map.');
+    var warningMsg = n + ' ' + this.translation.confirmImagesDeletes;
+
+    return window.confirm(warningMsg);
   },
 });

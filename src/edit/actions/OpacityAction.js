@@ -7,10 +7,10 @@ L.OpacityAction = L.EditAction.extend({
 
     if (edit._transparent) {
       use = 'opacity_empty';
-      tooltip = 'Make Image Opaque';
+      tooltip = overlay.options.translation.makeImageOpaque;
     } else {
       use = 'opacity';
-      tooltip = 'Make Image Transparent';
+      tooltip = overlay.options.translation.makeImageTransparent;
     }
 
     options = options || {};

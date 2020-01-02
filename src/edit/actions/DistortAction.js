@@ -4,7 +4,7 @@ L.DistortAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: 'distort',
-      tooltip: 'Distort Image',
+      tooltip: overlay.options.translation.distortImage,
       className: 'distort',
     };
 

@@ -7,10 +7,10 @@ L.BorderAction = L.EditAction.extend({
 
     if (edit._outlined) {
       use = 'border_outer';
-      tooltip = 'Remove Border';
+      tooltip = overlay.options.translation.removeBorder;
     } else {
       use = 'border_clear';
-      tooltip = 'Add Border';
+      tooltip = overlay.options.translation.addBorder;
     }
 
     options = options || {};

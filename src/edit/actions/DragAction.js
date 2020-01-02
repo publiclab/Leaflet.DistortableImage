@@ -4,7 +4,7 @@ L.DragAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: 'drag',
-      tooltip: 'Drag Image',
+      tooltip: overlay.options.translation.dragImage,
       className: 'drag',
     };
 
