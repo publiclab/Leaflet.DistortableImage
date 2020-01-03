@@ -718,6 +718,21 @@ var translation = {
 };
 ```
 
+For `confirmImagesDeletes` you can pass a function that returs a string.
+This is useful for languages where noun form depends on the number:
+```javascript
+var translation = {
+  confirmImagesDeletes: function(n) {
+    var cond = n%10 >= 2 && n%10 <= 4 && n%100 - n%10 !== 10;
+    var str = 'Czy na pewno chcesz usunąć ' + n;
+    if(cond) str += ' obrazy?';
+    else str += ' obrazów?';
+    return str;
+  },
+  // ...
+}
+```
+
 **L.distortableImageOverlay**
 
 ```javascript
