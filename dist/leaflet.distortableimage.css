@@ -2,6 +2,10 @@
   pointer-events: all !important;
 }
 
+.ldi .leaflet-pane .leaflet-overlay-pane img.disabled {
+  cursor: default;
+}
+
 .ldi img.leaflet-image-layer.collected {
   box-shadow: 0px 0px 0px 12px #ffea00;
 }
