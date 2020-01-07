@@ -749,7 +749,7 @@ imgGroup = L.distortableCollection({
 
 There are [plenty of outstanding issues to resolve](https://github.com/publiclab/Leaflet.DistortableImage/issues). Please consider helping out!
 
-1. This project uses `grunt` to do a lot of things, including concatenate source files from `/src/` to `/DistortableImageOverlay.js`:
+1. This project uses `Webpack` to bundle JavaScript.
 
 ```Bash
 $ npm install
@@ -757,14 +757,14 @@ $ npm install
 # install leaflet peer dependency locally
 $ npm install leaflet --no-save
 
-# It'll watch for changes and concatenate them on the fly
-$ grunt
+# It'll open examples/index.html in your default browser and watch live for changes (Webpack development server compiles the changes and refreshes the browser)
+$ npm run dev
 ```
 
-2. To build all files from `/src/` into the `/dist/` folder, run:
+2. Once you finish, build all files from `/src/` into the `/dist/` folder:
 
 ```Bash
-$ grunt concat:dist
+$ npm run build
 ```
 
 3. _Optional_: We use SVG for our icon system. Please visit our wiki [SVG Icon System](https://github.com/publiclab/Leaflet.DistortableImage/wiki/SVG-Icon-System) if you are interested in making updates to them or just simply learning about our workflow.
