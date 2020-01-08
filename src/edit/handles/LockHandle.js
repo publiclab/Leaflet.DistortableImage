@@ -52,11 +52,17 @@ L.LockHandle = L.EditHandle.extend({
   _tooltipOn: function(e) {
     if (e.shiftKey) { return; }
 
+    var handlesArr = this._handled.editing._lockHandles;
+
     this._timer = setTimeout(L.bind(function() {
       if (this._timeout) { clearTimeout(this._timeout); }
 
       if (!this.getTooltip()) {
         this.bindTooltip('Locked!', {permanent: true});
+      } else {
+        handlesArr.eachLayer(function(handle) {
+          if (this !== handle) { handle.closeTooltip(); }
+        });
       }
 
       this.openTooltip();
