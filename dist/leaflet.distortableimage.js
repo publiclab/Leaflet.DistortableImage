@@ -2514,12 +2514,10 @@ L.DistortableImage.Edit = L.Handler.extend({
     var raisedPoint = ov.getCenter();
     raisedPoint.lat = maxLat;
 
-    try {
-      this.toolbar = L.distortableImage.popupBar(raisedPoint, {
-        actions: this.editActions,
-      }).addTo(map, ov);
-      ov.fire('toolbar:created');
-    } catch (e) { }
+    this.toolbar = L.distortableImage.popupBar(raisedPoint, {
+      actions: this.editActions,
+    }).addTo(map, ov);
+    ov.fire('toolbar:created');
   },
 
   _refresh: function() {

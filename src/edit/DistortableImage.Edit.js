@@ -533,7 +533,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     var raisedPoint = ov.getCenter();
     raisedPoint.lat = maxLat;
 
-    
     this.toolbar = L.distortableImage.popupBar(raisedPoint, {
       actions: this.editActions,
     }).addTo(map, ov);
