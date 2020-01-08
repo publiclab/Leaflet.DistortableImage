@@ -11,7 +11,6 @@ L.LockHandle = L.EditHandle.extend({
 
   onRemove: function(map) {
     this.unbindTooltip();
-    this._handled.unbindTooltip();
     L.EditHandle.prototype.onRemove.call(this, map);
   },
 
