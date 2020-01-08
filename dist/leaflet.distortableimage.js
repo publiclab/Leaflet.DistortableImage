@@ -1,4 +1,8 @@
 L.DomUtil = L.extend(L.DomUtil, {
+  initTranslation: function(obj) {
+    this.translation = obj;
+  },
+
   getMatrixString: function(m) {
     var is3d = L.Browser.webkit3d || L.Browser.gecko3d || L.Browser.ie3d;
 
@@ -42,15 +46,18 @@ L.DomUtil = L.extend(L.DomUtil, {
   },
 
   confirmDelete: function() {
-    return window.confirm('Are you sure?' +
-      ' This image will be permanently deleted from the map.');
+    return window.confirm(this.translation.confirmImageDelete);
   },
 
   confirmDeletes: function(n) {
-    var humanized = n === 1 ? 'image' : 'images';
+    if (n === 1) {
+      this.confirmDelete();
+      return;
+    }
 
-    return window.confirm('Are you sure? ' + n +
-    ' ' + humanized + ' will be permanently deleted from the map.');
+    var warningMsg = n + ' ' + this.translation.confirmImagesDeletes;
+
+    return window.confirm(warningMsg);
   },
 });
 
@@ -232,6 +239,50 @@ L.TrigUtil = {
 
 };
 
+L.Utils = {
+  initTranslation: function() {
+    var translation = {
+      deleteImage: 'Delete Image',
+      deleteImages: 'Delete Images',
+      distortImage: 'Distort Image',
+      dragImage: 'Drag Image',
+      exportImage: 'Export Image',
+      exportImages: 'Export Images',
+      removeBorder: 'Remove Border',
+      addBorder: 'Add Border',
+      freeRotateImage: 'Free rotate Image',
+      geolocateImage: 'Geolocate Image',
+      lockMode: 'Lock Mode',
+      lockImages: 'Lock Images',
+      makeImageOpaque: 'Make Image Opaque',
+      makeImageTransparent: 'Make Image Transparent',
+      restoreOriginalImageDimensions: 'Restore Original Image Dimension',
+      rotateImage: 'Rotate Image',
+      scaleImage: 'Scale Image',
+      stackToFront: 'Stack to Front',
+      stackToBack: 'Stack to Back',
+      unlockImages: 'Unlock Images',
+      confirmImageDelete:
+        'Are you sure? This image will be permanently deleted from the map.',
+      confirmImagesDeletes:
+        'images will be permanently deleted from the map. Do you really want to do this?',
+    };
+
+    if (!this.options.translation) {
+      this.options.translation = translation;
+    } else {
+      // If the translation for a word is not specified, fallback to English.
+      for (var key in translation) {
+        if (!this.options.translation.hasOwnProperty(key)) {
+          this.options.translation[key] = translation[key];
+        }
+      }
+    }
+
+    L.DomUtil.initTranslation(this.options.translation);
+  },
+};
+
 L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   options: {
@@ -246,6 +297,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   initialize: function(url, options) {
     L.setOptions(this, options);
+    L.Utils.initTranslation.call(this);
 
     this.edgeMinWidth = this.options.edgeMinWidth;
     this.editable = this.options.editable;
@@ -557,6 +609,16 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return this;
   },
 
+  setAngle: function(angleInDeg) {
+    var currentAngleInDeg = this.getAngle();
+    var angleToRotateByInDeg = angleInDeg - currentAngleInDeg;
+
+    var angleInRad = L.TrigUtil.degreesToRadians(angleToRotateByInDeg);
+    this.rotateBy(angleInRad);
+
+    return this;
+  },
+
   rotateBy: function(angle) {
     var map = this._map;
     var center = map.project(this.getCenter());
@@ -762,6 +824,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
   initialize: function(options) {
     L.setOptions(this, options);
     L.FeatureGroup.prototype.initialize.call(this, options);
+    L.Utils.initTranslation.call(this);
 
     this.editable = this.options.editable;
   },
@@ -847,7 +910,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
   _toggleCollected: function(e, layer) {
     if (e.shiftKey) {
-      /** conditional prevents disabled images from flickering multi-select mode */
+      /* conditional prevents disabled images from flickering multi-select mode */
       if (layer.editing.enabled()) {
         L.DomUtil.toggleClass(e.target, 'collected');
       }
@@ -1502,10 +1565,10 @@ L.BorderAction = L.EditAction.extend({
 
     if (edit._outlined) {
       use = 'border_outer';
-      tooltip = 'Remove Border';
+      tooltip = overlay.options.translation.removeBorder;
     } else {
       use = 'border_clear';
-      tooltip = 'Add Border';
+      tooltip = overlay.options.translation.addBorder;
     }
 
     options = options || {};
@@ -1541,13 +1604,13 @@ L.DeleteAction = L.EditAction.extend({
       * the former should have `parentGroup` defined on it. From there we call the apporpriate keybindings and methods.
       */
     if (edit instanceof L.DistortableImage.Edit) {
-      tooltip = 'Delete Image';
+      tooltip = overlay.options.translation.deleteImage;
       // backspace windows / delete mac
       L.DistortableImage.action_map.Backspace = (
         edit._mode === 'lock' ? '' : '_removeOverlay'
       );
     } else {
-      tooltip = 'Delete Images';
+      tooltip = overlay.options.translation.deleteImages;
       L.DistortableImage.group_action_map.Backspace = (
         edit._mode === 'lock' ? '' : '_removeGroup'
       );
@@ -1578,7 +1641,7 @@ L.DistortAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: 'distort',
-      tooltip: 'Distort Image',
+      tooltip: overlay.options.translation.distortImage,
       className: 'distort',
     };
 
@@ -1598,7 +1661,7 @@ L.DragAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: 'drag',
-      tooltip: 'Drag Image',
+      tooltip: overlay.options.translation.dragImage,
       className: 'drag',
     };
 
@@ -1619,10 +1682,10 @@ L.ExportAction = L.EditAction.extend({
 
     if (edit instanceof L.DistortableImage.Edit) {
       L.DistortableImage.action_map.e = '_getExport';
-      tooltip = 'Export Image';
+      tooltip = overlay.options.translation.exportImage;
     } else {
       L.DistortableImage.group_action_map.e = 'startExport';
-      tooltip = 'Export Images';
+      tooltip = overlay.options.translation.exportImages;
     }
 
     options = options || {};
@@ -1659,7 +1722,7 @@ L.FreeRotateAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: 'crop_rotate',
-      tooltip: 'Free rotate Image',
+      tooltip: overlay.options.translation.freeRotateImage,
       className: 'freeRotate',
     };
 
@@ -1681,7 +1744,7 @@ L.GeolocateAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: 'explore',
-      tooltip: 'Geolocate Image',
+      tooltip: overlay.options.translation.geolocateImage,
       className: edit._mode === 'lock' ? 'disabled' : '',
     };
 
@@ -1691,7 +1754,6 @@ L.GeolocateAction = L.EditAction.extend({
   addHooks: function() {
     var image = this._overlay.getElement();
 
-    // eslint-disable-next-line new-cap
     EXIF.getData(image, L.EXIF(image));
   },
 });
@@ -1705,13 +1767,13 @@ L.LockAction = L.EditAction.extend({
     if (edit instanceof L.DistortableImage.Edit) {
       L.DistortableImage.action_map.u = '_unlock';
       L.DistortableImage.action_map.l = '_lock';
-      tooltip = 'Lock Mode';
+      tooltip = overlay.options.translation.lockMode;
 
       if (edit._mode === 'lock') { use = 'lock'; }
       else { use = 'unlock'; }
     } else {
       L.DistortableImage.group_action_map.l = '_lockGroup';
-      tooltip = 'Lock Images';
+      tooltip = overlay.options.translation.lockImages;
       use = 'lock';
     }
 
@@ -1743,10 +1805,10 @@ L.OpacityAction = L.EditAction.extend({
 
     if (edit._transparent) {
       use = 'opacity_empty';
-      tooltip = 'Make Image Opaque';
+      tooltip = overlay.options.translation.makeImageOpaque;
     } else {
       use = 'opacity';
-      tooltip = 'Make Image Transparent';
+      tooltip = overlay.options.translation.makeImageTransparent;
     }
 
     options = options || {};
@@ -1764,9 +1826,10 @@ L.OpacityAction = L.EditAction.extend({
 
   addHooks: function() {
     var edit = this._overlay.editing;
+    var link = this._link;
 
-    L.IconUtil.toggleXlink(this._link, 'opacity', 'opacity_empty');
-    L.IconUtil.toggleTitle(this._link, 'Make Image Transparent', 'Make Image Opaque');
+    L.IconUtil.toggleXlink(link, 'opacity', 'opacity_empty');
+    L.IconUtil.toggleTitle(link, 'Make Image Transparent', 'Make Image Opaque');
     edit._toggleOpacity();
   },
 });
@@ -1779,7 +1842,7 @@ L.RevertAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: 'restore',
-      tooltip: 'Restore Original Image Dimensions',
+      tooltip: overlay.options.translation.restoreOriginalImageDimensions,
       className: edit._mode === 'lock' ? 'disabled' : '',
     };
 
@@ -1797,7 +1860,7 @@ L.RotateAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: 'rotate',
-      tooltip: 'Rotate Image',
+      tooltip: overlay.options.translation.rotateImage,
       className: 'rotate',
     };
 
@@ -1817,7 +1880,7 @@ L.ScaleAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: 'scale',
-      tooltip: 'Scale Image',
+      tooltip: overlay.options.translation.scaleImage,
       className: 'scale',
     };
 
@@ -1839,10 +1902,10 @@ L.StackAction = L.EditAction.extend({
 
     if (edit._toggledImage) {
       use = 'flip_to_back';
-      tooltip = 'Stack to Front';
+      tooltip = overlay.options.translation.stackToFront;
     } else {
       use = 'flip_to_front';
-      tooltip = 'Stack to Back';
+      tooltip = overlay.options.translation.stackToBack;
     }
 
     options = options || {};
@@ -1943,7 +2006,7 @@ L.UnlocksAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: 'unlock',
-      tooltip: 'Unlock Images',
+      tooltip: overlay.options.translation.unlockImages,
     };
 
     L.DistortableImage.group_action_map.u = '_unlockGroup';
@@ -2156,9 +2219,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   replaceTool: function(old, next) {
     if (next.baseClass !== 'leaflet-toolbar-icon' || this.hasTool(next)) {
-      return;
+      return this;
     }
-
     this.editActions.some(function(item, idx) {
       if (this.editActions[idx] === old) {
         this._removeToolbar();
@@ -2169,6 +2231,7 @@ L.DistortableImage.Edit = L.Handler.extend({
         return false;
       }
     }, this);
+    return this;
   },
 
   addTool: function(value) {
@@ -2176,9 +2239,8 @@ L.DistortableImage.Edit = L.Handler.extend({
       this._removeToolbar();
       this.editActions.push(value);
       this._addToolbar();
-    } else {
-      return false;
     }
+    return this;
   },
 
   hasTool: function(value) {
@@ -2198,6 +2260,7 @@ L.DistortableImage.Edit = L.Handler.extend({
         return false;
       }
     }, this);
+    return this;
   },
 
   _removeToolbar: function() {
@@ -2514,12 +2577,10 @@ L.DistortableImage.Edit = L.Handler.extend({
     var raisedPoint = ov.getCenter();
     raisedPoint.lat = maxLat;
 
-    try {
-      this.toolbar = L.distortableImage.popupBar(raisedPoint, {
-        actions: this.editActions,
-      }).addTo(map, ov);
-      ov.fire('toolbar:created');
-    } catch (e) { }
+    this.toolbar = L.distortableImage.popupBar(raisedPoint, {
+      actions: this.editActions,
+    }).addTo(map, ov);
+    ov.fire('toolbar:created');
   },
 
   _refresh: function() {
@@ -2770,7 +2831,9 @@ L.DistortableCollection.Edit = L.Handler.extend({
       if (layer.isSelected()) { layer.deselect(); }
 
       var imgBounds = L.latLngBounds(layer.getCorner(2), layer.getCorner(1));
-      imgBounds = map._latLngBoundsToNewLayerBounds(imgBounds, map.getZoom(), map.getCenter());
+      var zoom = map.getZoom();
+      var center = map.getCenter();
+      imgBounds = map._latLngBoundsToNewLayerBounds(imgBounds, zoom, center);
       if (box.intersects(imgBounds) && edit.enabled()) {
         if (!this.toolbar) {
           this._addToolbar();
@@ -2902,9 +2965,8 @@ L.DistortableCollection.Edit = L.Handler.extend({
       this._removeToolbar();
       this.editActions.push(value);
       this._addToolbar();
-    } else {
-      return false;
     }
+    return this;
   },
 
   removeTool: function(value) {
@@ -2918,6 +2980,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
         return false;
       }
     }, this);
+    return this;
   },
 });
 
@@ -3305,8 +3368,11 @@ L.Map.BoxCollector = L.Map.BoxZoom.extend({
         this._map.containerPointToLatLng(this._bounds.getTopRight())
     );
 
+    var zoom = this._map.getZoom();
+    var center = this._map.getCenter();
+
     // calls the `project` method but 1st updates the pixel origin - see https://github.com/publiclab/Leaflet.DistortableImage/pull/344
-    bounds = this._map._latLngBoundsToNewLayerBounds(bounds, this._map.getZoom(), this._map.getCenter());
+    bounds = this._map._latLngBoundsToNewLayerBounds(bounds, zoom, center);
 
     this._map.fire('boxcollectend', {boxCollectBounds: bounds});
   },
@@ -3403,14 +3469,13 @@ L.Map.include({
 
     opts = this.mutantOptions = L.extend({
       mutantOpacity: 0.8,
-      maxZoom: 18,
+      maxZoom: 24,
+      maxNativeZoom: 20,
       minZoom: 0,
       labels: true,
       labelOpacity: 1,
       doubleClickLabels: true,
     }, opts);
-
-    if (opts.maxZoom > 21) { opts.maxZoom = 18; }
 
     if (!opts.labels) {
       this.mutantOptions = L.extend(this.mutantOptions, {
@@ -3421,6 +3486,7 @@ L.Map.include({
 
     this._googleMutant = L.tileLayer(url, {
       maxZoom: opts.maxZoom,
+      maxNativeZoom: opts.maxNativeZoom,
       minZoom: opts.minZoom,
       opacity: opts.mutantOpacity,
     }).addTo(this);
@@ -3447,6 +3513,7 @@ L.Map.include({
       interactive: false,
       opacity: opts.labelOpacity,
       maxZoom: opts.maxZoom,
+      maxNativeZoom: opts.maxNativeZoom,
       minZoom: opts.minZoom,
       ext: 'png',
     }).addTo(this);

@@ -8,13 +8,13 @@ L.DeleteAction = L.EditAction.extend({
       * the former should have `parentGroup` defined on it. From there we call the apporpriate keybindings and methods.
       */
     if (edit instanceof L.DistortableImage.Edit) {
-      tooltip = 'Delete Image';
+      tooltip = overlay.options.translation.deleteImage;
       // backspace windows / delete mac
       L.DistortableImage.action_map.Backspace = (
         edit._mode === 'lock' ? '' : '_removeOverlay'
       );
     } else {
-      tooltip = 'Delete Images';
+      tooltip = overlay.options.translation.deleteImages;
       L.DistortableImage.group_action_map.Backspace = (
         edit._mode === 'lock' ? '' : '_removeGroup'
       );

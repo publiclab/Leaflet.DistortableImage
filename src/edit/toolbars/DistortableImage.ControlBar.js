@@ -9,7 +9,7 @@ L.UnlocksAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: 'unlock',
-      tooltip: 'Unlock Images',
+      tooltip: overlay.options.translation.unlockImages,
     };
 
     L.DistortableImage.group_action_map.u = '_unlockGroup';

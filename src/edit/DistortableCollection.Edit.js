@@ -161,7 +161,9 @@ L.DistortableCollection.Edit = L.Handler.extend({
       if (layer.isSelected()) { layer.deselect(); }
 
       var imgBounds = L.latLngBounds(layer.getCorner(2), layer.getCorner(1));
-      imgBounds = map._latLngBoundsToNewLayerBounds(imgBounds, map.getZoom(), map.getCenter());
+      var zoom = map.getZoom();
+      var center = map.getCenter();
+      imgBounds = map._latLngBoundsToNewLayerBounds(imgBounds, zoom, center);
       if (box.intersects(imgBounds) && edit.enabled()) {
         if (!this.toolbar) {
           this._addToolbar();
@@ -293,9 +295,8 @@ L.DistortableCollection.Edit = L.Handler.extend({
       this._removeToolbar();
       this.editActions.push(value);
       this._addToolbar();
-    } else {
-      return false;
     }
+    return this;
   },
 
   removeTool: function(value) {
@@ -309,6 +310,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
         return false;
       }
     }, this);
+    return this;
   },
 });
 

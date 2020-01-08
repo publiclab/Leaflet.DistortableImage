@@ -23,10 +23,26 @@ describe('L.DistortableImageOverlay', function() {
     }).addTo(map);
 
     /* Forces the image to load before any tests are run. */
-    L.DomEvent.on(overlay._image, 'load', function() { done(); });
+    L.DomEvent.on(overlay._image, 'load', function() { 
+      expect(map.getMaxZoom()).to.equal(Infinity); // before adding any background layers
+      done();
+    });
 
     afterEach(function() {
       L.DomUtil.remove(overlay);
+    });
+  });
+
+  describe('#basic initialization', function() {
+    // we need a maxZoom of 24 so that images of very small areas may be distorted against 
+    // one another even if the background imagery is not good enough to be useful.
+    it('should add Google tile base layer via Google Mutant library, with maxZoom of 24', function(done) {
+      map.addGoogleMutant();
+
+      map.whenReady(function() {
+        expect(map.getMaxZoom()).to.equal(24);
+        done();
+      });
     });
   });
 
