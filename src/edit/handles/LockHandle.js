@@ -17,8 +17,6 @@ L.LockHandle = L.EditHandle.extend({
 
   _bindListeners: function() {
     var icon = this.getElement();
-    var ov = this._handled;
-    var img = ov.getElement();
 
     L.EditHandle.prototype._bindListeners.call(this);
 
@@ -27,15 +25,11 @@ L.LockHandle = L.EditHandle.extend({
       mouseup: this._tooltipOff,
     }, this);
 
-    L.DomEvent.on(img, 'mousedown', this._tooltipOn, ov);
-    L.DomEvent.on(img, 'mouseout mouseup dragstart', this._tooltipOff, ov);
-    L.DomEvent.on(document, 'mouseleave', this._tooltipOff, ov);
+    L.DomEvent.on(document, 'mouseleave', this._tooltipOff, this);
   },
 
   _unbindListeners: function() {
     var icon = this.getElement();
-    var ov = this._handled;
-    var img = ov.getElement();
 
     L.EditHandle.prototype._bindListeners.call(this);
 
@@ -44,9 +38,7 @@ L.LockHandle = L.EditHandle.extend({
       mouseup: this._tooltipOff,
     }, this);
 
-    L.DomEvent.off(img, 'mousedown', this._tooltipOn, ov);
-    L.DomEvent.off(img, 'mouseout mouseup dragstart', this._tooltipOff, ov);
-    L.DomEvent.off(document, 'mouseleave', this._tooltipOff, ov);
+    L.DomEvent.off(document, 'mouseleave', this._tooltipOff, this);
   },
 
   /* cannot be dragged */
@@ -74,12 +66,10 @@ L.LockHandle = L.EditHandle.extend({
   _tooltipOff: function(e) {
     if (e.shiftKey) { return; }
 
-    var scope = this._handled ?
-      this._handled.editing._lockHandles :
-      this.editing._lockHandles;
+    var handlesArr = this._handled.editing._lockHandles;
 
     if (e.currentTarget === document) {
-      scope.eachLayer(function(handle) {
+      handlesArr.eachLayer(function(handle) {
         handle.closeTooltip();
       });
     }
@@ -87,7 +77,7 @@ L.LockHandle = L.EditHandle.extend({
     if (this._timer) { clearTimeout(this._timer); }
 
     this._timeout = setTimeout(L.bind(function() {
-      if (e.type !== 'mouseout') { this.closeTooltip(); }
+      this.closeTooltip();
     }, this), 400);
   },
 });
