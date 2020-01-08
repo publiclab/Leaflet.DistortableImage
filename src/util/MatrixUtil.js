@@ -64,7 +64,6 @@ L.MatrixUtil = {
     ]);
   },
 
-
   project: function(m, x, y) {
     var v = L.MatrixUtil.multmv(m, [x, y, 1]);
 
