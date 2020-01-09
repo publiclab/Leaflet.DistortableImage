@@ -9,6 +9,37 @@ L.LockHandle = L.EditHandle.extend({
     }),
   },
 
+  onRemove: function(map) {
+    this.unbindTooltip();
+    L.EditHandle.prototype.onRemove.call(this, map);
+  },
+
+  _bindListeners: function() {
+    var icon = this.getElement();
+
+    L.EditHandle.prototype._bindListeners.call(this);
+
+    L.DomEvent.on(icon, {
+      mousedown: this._tooltipOn,
+      mouseup: this._tooltipOff,
+    }, this);
+
+    L.DomEvent.on(document, 'pointerleave', this._tooltipOff, this);
+  },
+
+  _unbindListeners: function() {
+    var icon = this.getElement();
+
+    L.EditHandle.prototype._bindListeners.call(this);
+
+    L.DomEvent.off(icon, {
+      mousedown: this._tooltipOn,
+      mouseup: this._tooltipOff,
+    }, this);
+
+    L.DomEvent.off(document, 'pointerleave', this._tooltipOff, this);
+  },
+
   /* cannot be dragged */
   _onHandleDrag: function() {
   },
@@ -17,4 +48,45 @@ L.LockHandle = L.EditHandle.extend({
     this.setLatLng(this._handled.getCorner(this._corner));
   },
 
+  _tooltipOn: function(e) {
+    if (e.shiftKey) { return; }
+
+    var handlesArr = this._handled.editing._lockHandles;
+
+    this._timer = setTimeout(L.bind(function() {
+      if (this._timeout) { clearTimeout(this._timeout); }
+
+      if (!this.getTooltip()) {
+        this.bindTooltip('Locked!', {permanent: true});
+      } else {
+        handlesArr.eachLayer(function(handle) {
+          if (this !== handle) { handle.closeTooltip(); }
+        });
+      }
+
+      this.openTooltip();
+    }, this), 500);
+  },
+
+  _tooltipOff: function(e) {
+    if (e.shiftKey) { return; }
+
+    var handlesArr = this._handled.editing._lockHandles;
+
+    if (e.currentTarget === document) {
+      handlesArr.eachLayer(function(handle) {
+        handle.closeTooltip();
+      });
+    }
+
+    if (this._timer) { clearTimeout(this._timer); }
+
+    this._timeout = setTimeout(L.bind(function() {
+      this.closeTooltip();
+    }, this), 400);
+  },
 });
+
+L.lockHandle = function(overlay, idx, options) {
+  return new L.LockHandle(overlay, idx, options);
+};

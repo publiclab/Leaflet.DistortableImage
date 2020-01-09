@@ -202,7 +202,6 @@ L.MatrixUtil = {
     ]);
   },
 
-
   project: function(m, x, y) {
     var v = L.MatrixUtil.multmv(m, [x, y, 1]);
 
@@ -221,10 +220,9 @@ L.MatrixUtil = {
         .basisToPoints(x1d, y1d, x2d, y2d, x3d, y3d, x4d, y4d);
     var m = L.MatrixUtil.multmm(d, L.MatrixUtil.adj(s));
 
-    /*
- *Normalize to the unique matrix with m[8] == 1.
- * See: http://franklinta.com/2014/09/08/computing-css-matrix3d-transforms/
- */
+    // Normalize to the unique matrix with m[8] == 1.
+    // See: http://franklinta.com/2014/09/08/computing-css-matrix3d-transforms/
+
     return L.MatrixUtil.multsm(1/m[8], m);
   },
 };
@@ -1157,7 +1155,6 @@ L.EditHandle = L.Marker.extend({
   onAdd: function(map) {
     L.Marker.prototype.onAdd.call(this, map);
     this._bindListeners();
-
     this.updateHandle();
   },
 
@@ -1268,6 +1265,10 @@ L.DistortHandle = L.EditHandle.extend({
   },
 });
 
+L.distortHandle = function(overlay, idx, options) {
+  return new L.DistortHandle(overlay, idx, options);
+};
+
 L.DragHandle = L.EditHandle.extend({
   options: {
     TYPE: 'drag',
@@ -1344,6 +1345,37 @@ L.LockHandle = L.EditHandle.extend({
     }),
   },
 
+  onRemove: function(map) {
+    this.unbindTooltip();
+    L.EditHandle.prototype.onRemove.call(this, map);
+  },
+
+  _bindListeners: function() {
+    var icon = this.getElement();
+
+    L.EditHandle.prototype._bindListeners.call(this);
+
+    L.DomEvent.on(icon, {
+      mousedown: this._tooltipOn,
+      mouseup: this._tooltipOff,
+    }, this);
+
+    L.DomEvent.on(document, 'pointerleave', this._tooltipOff, this);
+  },
+
+  _unbindListeners: function() {
+    var icon = this.getElement();
+
+    L.EditHandle.prototype._bindListeners.call(this);
+
+    L.DomEvent.off(icon, {
+      mousedown: this._tooltipOn,
+      mouseup: this._tooltipOff,
+    }, this);
+
+    L.DomEvent.off(document, 'pointerleave', this._tooltipOff, this);
+  },
+
   /* cannot be dragged */
   _onHandleDrag: function() {
   },
@@ -1352,7 +1384,48 @@ L.LockHandle = L.EditHandle.extend({
     this.setLatLng(this._handled.getCorner(this._corner));
   },
 
+  _tooltipOn: function(e) {
+    if (e.shiftKey) { return; }
+
+    var handlesArr = this._handled.editing._lockHandles;
+
+    this._timer = setTimeout(L.bind(function() {
+      if (this._timeout) { clearTimeout(this._timeout); }
+
+      if (!this.getTooltip()) {
+        this.bindTooltip('Locked!', {permanent: true});
+      } else {
+        handlesArr.eachLayer(function(handle) {
+          if (this !== handle) { handle.closeTooltip(); }
+        });
+      }
+
+      this.openTooltip();
+    }, this), 500);
+  },
+
+  _tooltipOff: function(e) {
+    if (e.shiftKey) { return; }
+
+    var handlesArr = this._handled.editing._lockHandles;
+
+    if (e.currentTarget === document) {
+      handlesArr.eachLayer(function(handle) {
+        handle.closeTooltip();
+      });
+    }
+
+    if (this._timer) { clearTimeout(this._timer); }
+
+    this._timeout = setTimeout(L.bind(function() {
+      this.closeTooltip();
+    }, this), 400);
+  },
 });
+
+L.lockHandle = function(overlay, idx, options) {
+  return new L.LockHandle(overlay, idx, options);
+};
 
 L.RotateHandle = L.EditHandle.extend({
   options: {
@@ -1383,6 +1456,10 @@ L.RotateHandle = L.EditHandle.extend({
     this.setLatLng(this._handled.getCorner(this._corner));
   },
 });
+
+L.rotateHandle = function(overlay, idx, options) {
+  return new L.RotateHandle(overlay, idx, options);
+};
 
 L.ScaleHandle = L.EditHandle.extend({
   options: {
@@ -1431,6 +1508,10 @@ L.ScaleHandle = L.EditHandle.extend({
     this.setLatLng(this._handled.getCorner(this._corner));
   },
 });
+
+L.scaleHandle = function(overlay, idx, options) {
+  return new L.ScaleHandle(overlay, idx, options);
+};
 
 /* this is the baseclass other IconSets inherit from,
 * we don't use it directly */
@@ -2154,17 +2235,17 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this._scaleHandles = L.layerGroup();
     for (i = 0; i < 4; i++) {
-      this._scaleHandles.addLayer(new L.ScaleHandle(overlay, i));
+      this._scaleHandles.addLayer(L.scaleHandle(overlay, i));
     }
 
     this._distortHandles = L.layerGroup();
     for (i = 0; i < 4; i++) {
-      this._distortHandles.addLayer(new L.DistortHandle(overlay, i));
+      this._distortHandles.addLayer(L.distortHandle(overlay, i));
     }
 
     this._rotateHandles = L.layerGroup(); // individual rotate
     for (i = 0; i < 4; i++) {
-      this._rotateHandles.addLayer(new L.RotateHandle(overlay, i));
+      this._rotateHandles.addLayer(L.rotateHandle(overlay, i));
     }
 
     // handle includes rotate AND scale
@@ -2175,9 +2256,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this._lockHandles = L.layerGroup();
     for (i = 0; i < 4; i++) {
-      this._lockHandles.addLayer(
-          new L.LockHandle(overlay, i, {draggable: false})
-      );
+      this._lockHandles.addLayer(L.lockHandle(overlay, i, {draggable: false}));
     }
 
     this._handles = {

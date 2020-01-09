@@ -22,7 +22,6 @@ L.EditHandle = L.Marker.extend({
   onAdd: function(map) {
     L.Marker.prototype.onAdd.call(this, map);
     this._bindListeners();
-
     this.updateHandle();
   },
 

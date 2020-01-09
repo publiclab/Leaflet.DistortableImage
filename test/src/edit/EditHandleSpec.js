@@ -15,8 +15,8 @@ describe('L.EditHandle', function() {
     }).addTo(map);
 
     L.DomEvent.on(overlay._image, 'load', function() {
-      rotateHandle = new L.RotateHandle(overlay, 0);
-      scaleHandle = new L.ScaleHandle(overlay, 0);
+      rotateHandle = L.rotateHandle(overlay, 0);
+      scaleHandle = L.scaleHandle(overlay, 0);
       done();
     });
   });
@@ -25,7 +25,6 @@ describe('L.EditHandle', function() {
     it('Should return 0 when given the same latlng twice.', function() {
       var latlng = overlay.getCorner(0);
       var angle = rotateHandle.calculateAngleDelta(latlng, latlng);
-
       expect(angle).to.equal(0);
     });
   });
@@ -34,7 +33,6 @@ describe('L.EditHandle', function() {
     it('Should return 1 when given the same latlng twice.', function() {
       var latlng = overlay.getCorner(0);
       var scale = scaleHandle._calculateScalingFactor(latlng, latlng);
-
       expect(scale).to.equal(1);
     });
 
