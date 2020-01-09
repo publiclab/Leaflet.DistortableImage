@@ -1779,7 +1779,7 @@ L.ExportAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: 'get_app',
-      tooltip: tooltip
+      tooltip: tooltip,
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
