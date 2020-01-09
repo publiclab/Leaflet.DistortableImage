@@ -1353,7 +1353,7 @@ L.LockHandle = L.EditHandle.extend({
       mouseup: this._tooltipOff,
     }, this);
 
-    L.DomEvent.on(document, 'mouseleave', this._tooltipOff, this);
+    L.DomEvent.on(document, 'pointerleave', this._tooltipOff, this);
   },
 
   _unbindListeners: function() {
@@ -1366,7 +1366,7 @@ L.LockHandle = L.EditHandle.extend({
       mouseup: this._tooltipOff,
     }, this);
 
-    L.DomEvent.off(document, 'mouseleave', this._tooltipOff, this);
+    L.DomEvent.off(document, 'pointerleave', this._tooltipOff, this);
   },
 
   /* cannot be dragged */
