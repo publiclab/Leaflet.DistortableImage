@@ -64,7 +64,6 @@ L.MatrixUtil = {
     ]);
   },
 
-
   project: function(m, x, y) {
     var v = L.MatrixUtil.multmv(m, [x, y, 1]);
 
@@ -83,10 +82,9 @@ L.MatrixUtil = {
         .basisToPoints(x1d, y1d, x2d, y2d, x3d, y3d, x4d, y4d);
     var m = L.MatrixUtil.multmm(d, L.MatrixUtil.adj(s));
 
-    /*
- *Normalize to the unique matrix with m[8] == 1.
- * See: http://franklinta.com/2014/09/08/computing-css-matrix3d-transforms/
- */
+    // Normalize to the unique matrix with m[8] == 1.
+    // See: http://franklinta.com/2014/09/08/computing-css-matrix3d-transforms/
+
     return L.MatrixUtil.multsm(1/m[8], m);
   },
 };

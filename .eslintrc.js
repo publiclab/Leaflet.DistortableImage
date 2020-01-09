@@ -8,7 +8,7 @@ module.exports = {
     SharedArrayBuffer: 'readonly'
   },
   parserOptions: {
-    ecmaVersion: 2018
+    ecmaVersion: 5
   },
   rules: {
     /*
@@ -26,15 +26,15 @@ module.exports = {
      */
 
     /* rules */
-    curly: ['error', 'multi-line'],
-    'brace-style': ['off', '1tbs', { allowSingleLine: true }],
     'block-spacing': ['error', 'always'],
-    'no-var': 0,
-    'new-cap': 0,
+    'brace-style': ['off', '1tbs', { allowSingleLine: true }],
+    curly: ['error', 'multi-line'],
     'guard-for-in': 0,
+    'linebreak-style': ['error', 'unix'],
     'max-len': ['warn', { ignoreComments: true }],
+    'new-cap': 0,
+    'no-var': 0,
     'prefer-const': 1,
     'valid-jsdoc': 0,
-    'linebreak-style': ['error', 'unix'],
   }
 };
