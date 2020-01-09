@@ -218,15 +218,18 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     var zoom = map.getZoom();
     var edit = this.editing;
     var i = 0;
+
+    //could be a problem here
+
     // this is to fix https://github.com/publiclab/Leaflet.DistortableImage/issues/402
-    for (var k in latlngObj) {
-      if (this._cornerExceedsMapLats(zoom, latlngObj[k])) {
-        // calling reset / update w/ the same corners bc it prevents a marker flicker for rotate
-        this.setBounds(L.latLngBounds(this.getCorners()));
-        this.fire('update');
-        return;
-      }
-    }
+    // for (var k in latlngObj) {
+    //   if (this._cornerExceedsMapLats(zoom, latlngObj[k])) {
+    //     // calling reset / update w/ the same corners bc it prevents a marker flicker for rotate
+    //     this.setBounds(L.latLngBounds(this.getCorners()));
+    //     this.fire('update');
+    //     return;
+    //   }
+    // }
 
     for (k in latlngObj) {
       this._corners[i] = latlngObj[k];
