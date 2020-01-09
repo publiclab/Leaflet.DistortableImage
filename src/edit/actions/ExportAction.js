@@ -55,10 +55,10 @@ L.ExportAction = L.EditAction.extend({
         setTimeout(self.attachMouseEventListeners.bind(self, this), 100);
 
         edit.startExport().then(
-          function() {
-            self.resetState();
-            self.detachMouseEventListeners.call(self, this);
-          }.bind(this)
+            function() {
+              self.resetState();
+              self.detachMouseEventListeners.call(self, this);
+            }.bind(this)
         );
       } else {
         self.resetState();
@@ -112,5 +112,5 @@ L.ExportAction = L.EditAction.extend({
     L.IconUtil.toggleXlink(this._link, 'cancel');
     L.IconUtil.toggleTitle(this._link, 'Cancel Export', 'Loading...');
     L.DomUtil.removeClass(this._link.firstChild, 'loader');
-  }
+  },
 });
