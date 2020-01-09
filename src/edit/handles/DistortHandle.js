@@ -20,3 +20,7 @@ L.DistortHandle = L.EditHandle.extend({
     this.setLatLng(this._handled.getCorner(this._corner));
   },
 });
+
+L.distortHandle = function(overlay, idx, options) {
+  return new L.DistortHandle(overlay, idx, options);
+};
