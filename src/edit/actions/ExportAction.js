@@ -28,7 +28,6 @@ L.ExportAction = L.EditAction.extend({
 
   addHooks: function() {
     var edit = this._overlay.editing;
-    var self = this;
 
     if (edit instanceof L.DistortableImage.Edit) {
       edit._getExport();
@@ -36,36 +35,41 @@ L.ExportAction = L.EditAction.extend({
     }
 
     // Make sure that addHooks is executed only once, event listeners will handle the rest
-    if (self.isHooksExecuted) {
+    if (this.isHooksExecuted) {
       return;
     } else {
-      self.isHooksExecuted = true;
+      this.isHooksExecuted = true;
     }
 
-    var toolbarExportElement = self._link.parentElement;
+    var toolbarExportElement = this._link.parentElement;
 
-    self.mouseEnterHandler = self.handleMouseEnter.bind(self);
-    self.mouseLeaveHandler = self.handleMouseLeave.bind(self);
+    this.mouseEnterHandler = this.handleMouseEnter.bind(this);
+    this.mouseLeaveHandler = this.handleMouseLeave.bind(this);
 
-    toolbarExportElement.addEventListener('click', function() {
-      if (!self.isExporting) {
-        self.isExporting = true;
-        self.renderExportIcon();
+    L.DomEvent.on(toolbarExportElement, 'click', function() {
+      if (!this.isExporting) {
+        this.isExporting = true;
+        this.renderExportIcon();
 
-        setTimeout(self.attachMouseEventListeners.bind(self, this), 100);
+        setTimeout(this.attachMouseEventListeners.bind(this, toolbarExportElement), 100);
 
         edit.startExport().then(
             function() {
-              self.resetState();
-              self.detachMouseEventListeners.call(self, this);
+              this.resetState();
+              this.detachMouseEventListeners(toolbarExportElement);
             }.bind(this)
         );
       } else {
-        self.resetState();
-        self.detachMouseEventListeners.call(self, this);
+        // Clicking on the export icon after export has started will be ignored
+        if (this.mouseLeaveSkip) {
+          return;
+        }
+
+        this.resetState();
+        this.detachMouseEventListeners(toolbarExportElement);
         edit.cancelExport();
       }
-    });
+    }, this);
   },
 
   resetState: function() {
