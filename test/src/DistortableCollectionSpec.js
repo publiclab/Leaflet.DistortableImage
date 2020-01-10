@@ -49,6 +49,31 @@ describe('L.DistortableCollection', function() {
 
   it.skip('Should keep selected images in sync with eachother during translation', function() {});
 
+  it('allows custom export functions to be used', function(done) {
+    customImgGroup = L.distortableCollection({
+      fetchStatusUrl: function fetchStatusUrl(opts) {
+        expect(opts).to.not.be.nil;
+        // expand testing of opts; we can test other constructor parameters being passed through here
+        done();
+      }
+    }).addTo(map);
+
+    map.whenReady(function() {
+      // isolate a single image in a new collection:
+      imgGroup.removeLayer(overlay);
+      customImgGroup.addLayer(overlay);
+      // simulate selection of an image
+// this is selecting in 2 different groups?:
+      chai.simulateEvent(overlay.getElement(), 'mousedown', { shiftKey: true });
+// this returning false:
+      expect(customImgGroup.isCollected(overlay)).to.be.true;
+
+      // test that the collection menu appears and contains an export button
+      expect(document.querySelector('.leaflet-toolbar-icon[title="Export Images"]')).to.not.be.null;
+      chai.simulateEvent(document.querySelector('.leaflet-toolbar-icon[title="Export Images"]'), 'mousedown');
+    });
+  });
+
   it('Adds the layers to the map when they are added to the group', function() {
     expect(map.hasLayer(overlay)).to.be.true;
     expect(map.hasLayer(overlay2)).to.be.true;
