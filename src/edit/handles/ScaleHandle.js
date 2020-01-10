@@ -45,3 +45,7 @@ L.ScaleHandle = L.EditHandle.extend({
     this.setLatLng(this._handled.getCorner(this._corner));
   },
 });
+
+L.scaleHandle = function(overlay, idx, options) {
+  return new L.ScaleHandle(overlay, idx, options);
+};

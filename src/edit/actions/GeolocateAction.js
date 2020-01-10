@@ -6,7 +6,7 @@ L.GeolocateAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: 'explore',
-      tooltip: 'Geolocate Image',
+      tooltip: overlay.options.translation.geolocateImage,
       className: edit._mode === 'lock' ? 'disabled' : '',
     };
 

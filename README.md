@@ -681,6 +681,70 @@ Adds a control onto the map which opens a keymapper legend showing the available
 
 (WIP) Currently includes keybindings for all available actions and does not update yet if you use the `actions` API to limit available actions.
 
+### Custom Translations
+
+You can translate the LDI toolbar buttons in your native language by providing custom `translation` object to `distortableImageOverlay` or `distortableCollection`.
+
+**NOTE:** If you don't specify custom translation for certain field, it will fallback to English.
+
+These are the defaults:
+
+```javascript
+var translation = {
+    deleteImage: 'Delete Image',
+    deleteImages: 'Delete Images',
+    distortImage: 'Distort Image',
+    dragImage: 'Drag Image',
+    exportImage: 'Export Image',
+    exportImages: 'Export Images',
+    removeBorder: 'Remove Border',
+    addBorder: 'Add Border',
+    freeRotateImage: 'Free rotate Image',
+    geolocateImage: 'Geolocate Image',
+    lockMode: 'Lock Mode',
+    lockImages: 'Lock Images',
+    makeImageOpaque: 'Make Image Opaque',
+    makeImageTransparent: 'Make Image Transparent',
+    restoreOriginalImageDimensions: 'Restore Original Image Dimension',
+    rotateImage: 'Rotate Image',
+    scaleImage: 'Scale Image',
+    stackToFront: 'Stack to Front',
+    stackToBack: 'Stack to Back',
+    unlockImages: 'Unlock Images',
+    confirmImageDelete:
+    'Are you sure? This image will be permanently deleted from the map.',
+    confirmImagesDeletes:
+    'images will be permanently deleted from the map. Do you really want to do this?',
+};
+```
+
+**L.distortableImageOverlay**
+
+```javascript
+img = L.distortableImageOverlay('example.jpg', {
+    selected: true,
+    fullResolutionSrc: 'large.jpg',
+    translation: {
+        deleteImage: 'Obriši sliku',
+        distortImage: 'Izobliči sliku',
+        dragImage: 'Pomjeri sliku'
+        // ...
+    }
+}
+```
+
+**L.distortableCollection**
+
+```javascript
+imgGroup = L.distortableCollection({
+    translation: {
+        deleteImages: 'Obriši slike',
+        exportImages: 'Izvezi slike'
+        // ...
+    }
+})
+```
+
 ## Contributing
 
 There are [plenty of outstanding issues to resolve](https://github.com/publiclab/Leaflet.DistortableImage/issues). Please consider helping out!
@@ -704,6 +768,10 @@ $ grunt concat:dist
 ```
 
 3. _Optional_: We use SVG for our icon system. Please visit our wiki [SVG Icon System](https://github.com/publiclab/Leaflet.DistortableImage/wiki/SVG-Icon-System) if you are interested in making updates to them or just simply learning about our workflow.
+
+### Testing
+
+[Guide](TESTING.md) on testing LDI.
 
 ---
 

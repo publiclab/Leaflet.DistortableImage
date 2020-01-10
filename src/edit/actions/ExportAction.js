@@ -10,10 +10,10 @@ L.ExportAction = L.EditAction.extend({
 
     if (edit instanceof L.DistortableImage.Edit) {
       L.DistortableImage.action_map.e = '_getExport';
-      tooltip = 'Export Image';
+      tooltip = overlay.options.translation.exportImage;
     } else {
       L.DistortableImage.group_action_map.e = 'startExport';
-      tooltip = 'Export Images';
+      tooltip = overlay.options.translation.exportImages;
     }
 
     options = options || {};
