@@ -1,4 +1,8 @@
 L.DomUtil = L.extend(L.DomUtil, {
+  initTranslation: function(obj) {
+    this.translation = obj;
+  },
+
   getMatrixString: function(m) {
     var is3d = L.Browser.webkit3d || L.Browser.gecko3d || L.Browser.ie3d;
 
@@ -42,15 +46,18 @@ L.DomUtil = L.extend(L.DomUtil, {
   },
 
   confirmDelete: function() {
-    return window.confirm('Are you sure?' +
-      ' This image will be permanently deleted from the map.');
+    return window.confirm(this.translation.confirmImageDelete);
   },
 
   confirmDeletes: function(n) {
-    var humanized = n === 1 ? 'image' : 'images';
+    if (n === 1) {
+      this.confirmDelete();
+      return;
+    }
 
-    return window.confirm('Are you sure? ' + n +
-    ' ' + humanized + ' will be permanently deleted from the map.');
+    var warningMsg = n + ' ' + this.translation.confirmImagesDeletes;
+
+    return window.confirm(warningMsg);
   },
 });
 
@@ -188,7 +195,6 @@ L.MatrixUtil = {
     ]);
   },
 
-
   project: function(m, x, y) {
     var v = L.MatrixUtil.multmv(m, [x, y, 1]);
 
@@ -207,10 +213,9 @@ L.MatrixUtil = {
         .basisToPoints(x1d, y1d, x2d, y2d, x3d, y3d, x4d, y4d);
     var m = L.MatrixUtil.multmm(d, L.MatrixUtil.adj(s));
 
-    /*
- *Normalize to the unique matrix with m[8] == 1.
- * See: http://franklinta.com/2014/09/08/computing-css-matrix3d-transforms/
- */
+    // Normalize to the unique matrix with m[8] == 1.
+    // See: http://franklinta.com/2014/09/08/computing-css-matrix3d-transforms/
+
     return L.MatrixUtil.multsm(1/m[8], m);
   },
 };
@@ -232,6 +237,50 @@ L.TrigUtil = {
 
 };
 
+L.Utils = {
+  initTranslation: function() {
+    var translation = {
+      deleteImage: 'Delete Image',
+      deleteImages: 'Delete Images',
+      distortImage: 'Distort Image',
+      dragImage: 'Drag Image',
+      exportImage: 'Export Image',
+      exportImages: 'Export Images',
+      removeBorder: 'Remove Border',
+      addBorder: 'Add Border',
+      freeRotateImage: 'Free rotate Image',
+      geolocateImage: 'Geolocate Image',
+      lockMode: 'Lock Mode',
+      lockImages: 'Lock Images',
+      makeImageOpaque: 'Make Image Opaque',
+      makeImageTransparent: 'Make Image Transparent',
+      restoreOriginalImageDimensions: 'Restore Original Image Dimension',
+      rotateImage: 'Rotate Image',
+      scaleImage: 'Scale Image',
+      stackToFront: 'Stack to Front',
+      stackToBack: 'Stack to Back',
+      unlockImages: 'Unlock Images',
+      confirmImageDelete:
+        'Are you sure? This image will be permanently deleted from the map.',
+      confirmImagesDeletes:
+        'images will be permanently deleted from the map. Do you really want to do this?',
+    };
+
+    if (!this.options.translation) {
+      this.options.translation = translation;
+    } else {
+      // If the translation for a word is not specified, fallback to English.
+      for (var key in translation) {
+        if (!this.options.translation.hasOwnProperty(key)) {
+          this.options.translation[key] = translation[key];
+        }
+      }
+    }
+
+    L.DomUtil.initTranslation(this.options.translation);
+  },
+};
+
 L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   options: {
@@ -246,6 +295,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   initialize: function(url, options) {
     L.setOptions(this, options);
+    L.Utils.initTranslation.call(this);
 
     this.edgeMinWidth = this.options.edgeMinWidth;
     this.editable = this.options.editable;
@@ -557,6 +607,16 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return this;
   },
 
+  setAngle: function(angleInDeg) {
+    var currentAngleInDeg = this.getAngle();
+    var angleToRotateByInDeg = angleInDeg - currentAngleInDeg;
+
+    var angleInRad = L.TrigUtil.degreesToRadians(angleToRotateByInDeg);
+    this.rotateBy(angleInRad);
+
+    return this;
+  },
+
   rotateBy: function(angle) {
     var map = this._map;
     var center = map.project(this.getCenter());
@@ -762,6 +822,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
   initialize: function(options) {
     L.setOptions(this, options);
     L.FeatureGroup.prototype.initialize.call(this, options);
+    L.Utils.initTranslation.call(this);
 
     this.editable = this.options.editable;
   },
@@ -1087,7 +1148,6 @@ L.EditHandle = L.Marker.extend({
   onAdd: function(map) {
     L.Marker.prototype.onAdd.call(this, map);
     this._bindListeners();
-
     this.updateHandle();
   },
 
@@ -1198,6 +1258,10 @@ L.DistortHandle = L.EditHandle.extend({
   },
 });
 
+L.distortHandle = function(overlay, idx, options) {
+  return new L.DistortHandle(overlay, idx, options);
+};
+
 L.DragHandle = L.EditHandle.extend({
   options: {
     TYPE: 'drag',
@@ -1274,6 +1338,37 @@ L.LockHandle = L.EditHandle.extend({
     }),
   },
 
+  onRemove: function(map) {
+    this.unbindTooltip();
+    L.EditHandle.prototype.onRemove.call(this, map);
+  },
+
+  _bindListeners: function() {
+    var icon = this.getElement();
+
+    L.EditHandle.prototype._bindListeners.call(this);
+
+    L.DomEvent.on(icon, {
+      mousedown: this._tooltipOn,
+      mouseup: this._tooltipOff,
+    }, this);
+
+    L.DomEvent.on(document, 'pointerleave', this._tooltipOff, this);
+  },
+
+  _unbindListeners: function() {
+    var icon = this.getElement();
+
+    L.EditHandle.prototype._bindListeners.call(this);
+
+    L.DomEvent.off(icon, {
+      mousedown: this._tooltipOn,
+      mouseup: this._tooltipOff,
+    }, this);
+
+    L.DomEvent.off(document, 'pointerleave', this._tooltipOff, this);
+  },
+
   /* cannot be dragged */
   _onHandleDrag: function() {
   },
@@ -1282,7 +1377,48 @@ L.LockHandle = L.EditHandle.extend({
     this.setLatLng(this._handled.getCorner(this._corner));
   },
 
+  _tooltipOn: function(e) {
+    if (e.shiftKey) { return; }
+
+    var handlesArr = this._handled.editing._lockHandles;
+
+    this._timer = setTimeout(L.bind(function() {
+      if (this._timeout) { clearTimeout(this._timeout); }
+
+      if (!this.getTooltip()) {
+        this.bindTooltip('Locked!', {permanent: true});
+      } else {
+        handlesArr.eachLayer(function(handle) {
+          if (this !== handle) { handle.closeTooltip(); }
+        });
+      }
+
+      this.openTooltip();
+    }, this), 500);
+  },
+
+  _tooltipOff: function(e) {
+    if (e.shiftKey) { return; }
+
+    var handlesArr = this._handled.editing._lockHandles;
+
+    if (e.currentTarget === document) {
+      handlesArr.eachLayer(function(handle) {
+        handle.closeTooltip();
+      });
+    }
+
+    if (this._timer) { clearTimeout(this._timer); }
+
+    this._timeout = setTimeout(L.bind(function() {
+      this.closeTooltip();
+    }, this), 400);
+  },
 });
+
+L.lockHandle = function(overlay, idx, options) {
+  return new L.LockHandle(overlay, idx, options);
+};
 
 L.RotateHandle = L.EditHandle.extend({
   options: {
@@ -1313,6 +1449,10 @@ L.RotateHandle = L.EditHandle.extend({
     this.setLatLng(this._handled.getCorner(this._corner));
   },
 });
+
+L.rotateHandle = function(overlay, idx, options) {
+  return new L.RotateHandle(overlay, idx, options);
+};
 
 L.ScaleHandle = L.EditHandle.extend({
   options: {
@@ -1361,6 +1501,10 @@ L.ScaleHandle = L.EditHandle.extend({
     this.setLatLng(this._handled.getCorner(this._corner));
   },
 });
+
+L.scaleHandle = function(overlay, idx, options) {
+  return new L.ScaleHandle(overlay, idx, options);
+};
 
 /* this is the baseclass other IconSets inherit from,
 * we don't use it directly */
@@ -1502,10 +1646,10 @@ L.BorderAction = L.EditAction.extend({
 
     if (edit._outlined) {
       use = 'border_outer';
-      tooltip = 'Remove Border';
+      tooltip = overlay.options.translation.removeBorder;
     } else {
       use = 'border_clear';
-      tooltip = 'Add Border';
+      tooltip = overlay.options.translation.addBorder;
     }
 
     options = options || {};
@@ -1541,13 +1685,13 @@ L.DeleteAction = L.EditAction.extend({
       * the former should have `parentGroup` defined on it. From there we call the apporpriate keybindings and methods.
       */
     if (edit instanceof L.DistortableImage.Edit) {
-      tooltip = 'Delete Image';
+      tooltip = overlay.options.translation.deleteImage;
       // backspace windows / delete mac
       L.DistortableImage.action_map.Backspace = (
         edit._mode === 'lock' ? '' : '_removeOverlay'
       );
     } else {
-      tooltip = 'Delete Images';
+      tooltip = overlay.options.translation.deleteImages;
       L.DistortableImage.group_action_map.Backspace = (
         edit._mode === 'lock' ? '' : '_removeGroup'
       );
@@ -1578,7 +1722,7 @@ L.DistortAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: 'distort',
-      tooltip: 'Distort Image',
+      tooltip: overlay.options.translation.distortImage,
       className: 'distort',
     };
 
@@ -1598,7 +1742,7 @@ L.DragAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: 'drag',
-      tooltip: 'Drag Image',
+      tooltip: overlay.options.translation.dragImage,
       className: 'drag',
     };
 
@@ -1619,10 +1763,10 @@ L.ExportAction = L.EditAction.extend({
 
     if (edit instanceof L.DistortableImage.Edit) {
       L.DistortableImage.action_map.e = '_getExport';
-      tooltip = 'Export Image';
+      tooltip = overlay.options.translation.exportImage;
     } else {
       L.DistortableImage.group_action_map.e = 'startExport';
-      tooltip = 'Export Images';
+      tooltip = overlay.options.translation.exportImages;
     }
 
     options = options || {};
@@ -1658,7 +1802,7 @@ L.FreeRotateAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: 'crop_rotate',
-      tooltip: 'Free rotate Image',
+      tooltip: overlay.options.translation.freeRotateImage,
       className: 'freeRotate',
     };
 
@@ -1680,7 +1824,7 @@ L.GeolocateAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: 'explore',
-      tooltip: 'Geolocate Image',
+      tooltip: overlay.options.translation.geolocateImage,
       className: edit._mode === 'lock' ? 'disabled' : '',
     };
 
@@ -1703,13 +1847,13 @@ L.LockAction = L.EditAction.extend({
     if (edit instanceof L.DistortableImage.Edit) {
       L.DistortableImage.action_map.u = '_unlock';
       L.DistortableImage.action_map.l = '_lock';
-      tooltip = 'Lock Mode';
+      tooltip = overlay.options.translation.lockMode;
 
       if (edit._mode === 'lock') { use = 'lock'; }
       else { use = 'unlock'; }
     } else {
       L.DistortableImage.group_action_map.l = '_lockGroup';
-      tooltip = 'Lock Images';
+      tooltip = overlay.options.translation.lockImages;
       use = 'lock';
     }
 
@@ -1741,10 +1885,10 @@ L.OpacityAction = L.EditAction.extend({
 
     if (edit._transparent) {
       use = 'opacity_empty';
-      tooltip = 'Make Image Opaque';
+      tooltip = overlay.options.translation.makeImageOpaque;
     } else {
       use = 'opacity';
-      tooltip = 'Make Image Transparent';
+      tooltip = overlay.options.translation.makeImageTransparent;
     }
 
     options = options || {};
@@ -1778,7 +1922,7 @@ L.RevertAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: 'restore',
-      tooltip: 'Restore Original Image Dimensions',
+      tooltip: overlay.options.translation.restoreOriginalImageDimensions,
       className: edit._mode === 'lock' ? 'disabled' : '',
     };
 
@@ -1796,7 +1940,7 @@ L.RotateAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: 'rotate',
-      tooltip: 'Rotate Image',
+      tooltip: overlay.options.translation.rotateImage,
       className: 'rotate',
     };
 
@@ -1816,7 +1960,7 @@ L.ScaleAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: 'scale',
-      tooltip: 'Scale Image',
+      tooltip: overlay.options.translation.scaleImage,
       className: 'scale',
     };
 
@@ -1838,10 +1982,10 @@ L.StackAction = L.EditAction.extend({
 
     if (edit._toggledImage) {
       use = 'flip_to_back';
-      tooltip = 'Stack to Front';
+      tooltip = overlay.options.translation.stackToFront;
     } else {
       use = 'flip_to_front';
-      tooltip = 'Stack to Back';
+      tooltip = overlay.options.translation.stackToBack;
     }
 
     options = options || {};
@@ -1942,7 +2086,7 @@ L.UnlocksAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: 'unlock',
-      tooltip: 'Unlock Images',
+      tooltip: overlay.options.translation.unlockImages,
     };
 
     L.DistortableImage.group_action_map.u = '_unlockGroup';
@@ -2083,17 +2227,17 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this._scaleHandles = L.layerGroup();
     for (i = 0; i < 4; i++) {
-      this._scaleHandles.addLayer(new L.ScaleHandle(overlay, i));
+      this._scaleHandles.addLayer(L.scaleHandle(overlay, i));
     }
 
     this._distortHandles = L.layerGroup();
     for (i = 0; i < 4; i++) {
-      this._distortHandles.addLayer(new L.DistortHandle(overlay, i));
+      this._distortHandles.addLayer(L.distortHandle(overlay, i));
     }
 
     this._rotateHandles = L.layerGroup(); // individual rotate
     for (i = 0; i < 4; i++) {
-      this._rotateHandles.addLayer(new L.RotateHandle(overlay, i));
+      this._rotateHandles.addLayer(L.rotateHandle(overlay, i));
     }
 
     // handle includes rotate AND scale
@@ -2104,9 +2248,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this._lockHandles = L.layerGroup();
     for (i = 0; i < 4; i++) {
-      this._lockHandles.addLayer(
-          new L.LockHandle(overlay, i, {draggable: false})
-      );
+      this._lockHandles.addLayer(L.lockHandle(overlay, i, {draggable: false}));
     }
 
     this._handles = {
@@ -2513,12 +2655,10 @@ L.DistortableImage.Edit = L.Handler.extend({
     var raisedPoint = ov.getCenter();
     raisedPoint.lat = maxLat;
 
-    try {
-      this.toolbar = L.distortableImage.popupBar(raisedPoint, {
-        actions: this.editActions,
-      }).addTo(map, ov);
-      ov.fire('toolbar:created');
-    } catch (e) { }
+    this.toolbar = L.distortableImage.popupBar(raisedPoint, {
+      actions: this.editActions,
+    }).addTo(map, ov);
+    ov.fire('toolbar:created');
   },
 
   _refresh: function() {

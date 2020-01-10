@@ -6,10 +6,10 @@ L.StackAction = L.EditAction.extend({
 
     if (edit._toggledImage) {
       use = 'flip_to_back';
-      tooltip = 'Stack to Front';
+      tooltip = overlay.options.translation.stackToFront;
     } else {
       use = 'flip_to_front';
-      tooltip = 'Stack to Back';
+      tooltip = overlay.options.translation.stackToBack;
     }
 
     options = options || {};

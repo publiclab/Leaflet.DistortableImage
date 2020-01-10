@@ -4,7 +4,7 @@ L.FreeRotateAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: 'crop_rotate',
-      tooltip: 'Free rotate Image',
+      tooltip: overlay.options.translation.freeRotateImage,
       className: 'freeRotate',
     };
 

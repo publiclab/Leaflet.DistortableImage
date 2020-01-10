@@ -6,7 +6,7 @@ L.RevertAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: 'restore',
-      tooltip: 'Restore Original Image Dimensions',
+      tooltip: overlay.options.translation.restoreOriginalImageDimensions,
       className: edit._mode === 'lock' ? 'disabled' : '',
     };
 

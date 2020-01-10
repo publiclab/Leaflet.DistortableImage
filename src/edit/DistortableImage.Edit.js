@@ -103,17 +103,17 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this._scaleHandles = L.layerGroup();
     for (i = 0; i < 4; i++) {
-      this._scaleHandles.addLayer(new L.ScaleHandle(overlay, i));
+      this._scaleHandles.addLayer(L.scaleHandle(overlay, i));
     }
 
     this._distortHandles = L.layerGroup();
     for (i = 0; i < 4; i++) {
-      this._distortHandles.addLayer(new L.DistortHandle(overlay, i));
+      this._distortHandles.addLayer(L.distortHandle(overlay, i));
     }
 
     this._rotateHandles = L.layerGroup(); // individual rotate
     for (i = 0; i < 4; i++) {
-      this._rotateHandles.addLayer(new L.RotateHandle(overlay, i));
+      this._rotateHandles.addLayer(L.rotateHandle(overlay, i));
     }
 
     // handle includes rotate AND scale
@@ -124,9 +124,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this._lockHandles = L.layerGroup();
     for (i = 0; i < 4; i++) {
-      this._lockHandles.addLayer(
-          new L.LockHandle(overlay, i, {draggable: false})
-      );
+      this._lockHandles.addLayer(L.lockHandle(overlay, i, {draggable: false}));
     }
 
     this._handles = {
@@ -533,12 +531,10 @@ L.DistortableImage.Edit = L.Handler.extend({
     var raisedPoint = ov.getCenter();
     raisedPoint.lat = maxLat;
 
-    try {
-      this.toolbar = L.distortableImage.popupBar(raisedPoint, {
-        actions: this.editActions,
-      }).addTo(map, ov);
-      ov.fire('toolbar:created');
-    } catch (e) { }
+    this.toolbar = L.distortableImage.popupBar(raisedPoint, {
+      actions: this.editActions,
+    }).addTo(map, ov);
+    ov.fire('toolbar:created');
   },
 
   _refresh: function() {

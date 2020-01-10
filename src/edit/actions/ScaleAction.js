@@ -4,7 +4,7 @@ L.ScaleAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: 'scale',
-      tooltip: 'Scale Image',
+      tooltip: overlay.options.translation.scaleImage,
       className: 'scale',
     };
 

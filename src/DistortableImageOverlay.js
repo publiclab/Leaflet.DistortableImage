@@ -12,6 +12,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   initialize: function(url, options) {
     L.setOptions(this, options);
+    L.Utils.initTranslation.call(this);
 
     this.edgeMinWidth = this.options.edgeMinWidth;
     this.editable = this.options.editable;
@@ -319,6 +320,16 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     }
 
     this.setCorners(scaledCorners);
+
+    return this;
+  },
+
+  setAngle: function(angleInDeg) {
+    var currentAngleInDeg = this.getAngle();
+    var angleToRotateByInDeg = angleInDeg - currentAngleInDeg;
+
+    var angleInRad = L.TrigUtil.degreesToRadians(angleToRotateByInDeg);
+    this.rotateBy(angleInRad);
 
     return this;
   },
