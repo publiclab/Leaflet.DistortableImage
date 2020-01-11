@@ -287,7 +287,7 @@ L.Utils = {
     return obj3;
   },
 
-  getNestedKey: function(obj, key, nestedKey) {
+  getNestedVal: function(obj, key, nestedKey) {
     var dig = [key, nestedKey];
     return dig.reduce(function(obj, k) {
       return obj && obj[k];
@@ -1785,7 +1785,7 @@ L.ExportAction = L.EditAction.extend({
       L.DistortableImage.action_map.e = '_getExport';
       tooltip = overlay.options.translation.exportImage;
     } else {
-      L.DistortableImage.group_action_map.e = 'startExport';
+      L.DistortableImage.group_action_map.e = 'runExporter';
       tooltip = overlay.options.translation.exportImages;
     }
 
@@ -1801,8 +1801,6 @@ L.ExportAction = L.EditAction.extend({
 
   addHooks: function() {
     var edit = this._overlay.editing;
-    // var singleExport = L.bind(edit._getExport, edit);
-    // var collctionExport = edit.exporter;
 
     if (edit instanceof L.DistortableImage.Edit) {
       edit._getExport();
@@ -1827,8 +1825,7 @@ L.ExportAction = L.EditAction.extend({
         this.renderExportIcon();
 
         setTimeout(this.attachMouseEventListeners.bind(this, toolbarExportElement), 100);
-        // L.bind(L.Utils.getNestedKey(edit.options.startExport) || edit.startExport, edit);
-        edit.exporter().then(
+        edit.runExporter().then(
             function() {
               this.resetState();
               this.detachMouseEventListeners(toolbarExportElement);
@@ -2850,7 +2847,11 @@ L.DistortableImage = L.DistortableImage || {};
 L.DistortableCollection.Edit = L.Handler.extend({
   options: {
     keymap: L.distortableImage.group_action_map,
-    exportOpts: {},
+    exportOpts: {
+      exportStartUrl: '//export.mapknitter.org/export',
+      statusUrl: '//export.mapknitter.org',
+      exportUrl: 'http://export.mapknitter.org/',
+    },
   },
 
   initialize: function(group, options) {
@@ -2866,7 +2867,9 @@ L.DistortableCollection.Edit = L.Handler.extend({
     var map = group._map;
 
     this.editActions = this.options.actions;
-    this.exporter = L.bind(L.Utils.getNestedKey(this.options, 'exportOpts', 'startExport') || this.startExport, this);
+    this.runExporter =
+        L.bind(L.Utils.getNestedVal(this.options, 'exportOpts', 'exporter') ||
+        this.startExport, this);
 
     L.DomEvent.on(document, 'keydown', this._onKeyDown, this);
 
@@ -3099,9 +3102,10 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
   startExport: function() {
     return new Promise(function(resolve) {
-      var opts = {};
+      var opts = this.options.exportOpts;
       var statusUrl;
-      var updateInterval;
+      var self = this;
+      this.updateInterval = null;
 
       // this may be overridden to update the UI to show export progress or completion
       // eslint-disable-next-line require-jsdoc
@@ -3117,7 +3121,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
         }
 
         if (data.status === 'complete') {
-          clearInterval(updateInterval);
+          clearInterval(this.updateInterval);
           resolve();
           if (data.jpg !== null) {
             alert('Export succeeded. ' + opts.exportUrl + data.jpg);
@@ -3132,10 +3136,10 @@ L.DistortableCollection.Edit = L.Handler.extend({
       // receives the URL of status.json, and starts running the updater to repeatedly fetch from status.json;
       // this may be overridden to integrate with any UI
       // eslint-disable-next-line require-jsdoc
-      function _defaultHandleStatusResponse(data) {
+      function _defaultHandleStatusRes(data) {
         statusUrl = opts.statusUrl + data;
         // repeatedly fetch the status.json
-        updateInterval = setInterval(function intervalUpdater() {
+        self.updateInterval = setInterval(function intervalUpdater() {
           $.ajax(statusUrl + '?' + Date.now(), {// bust cache with timestamp
             type: 'GET',
             crossDomain: true,
@@ -3157,25 +3161,18 @@ L.DistortableCollection.Edit = L.Handler.extend({
             scale: opts.scale,
             upload: true,
           },
-          success: function(data) { opts.handleStatusResponse(data); }, // this handles the initial response
+          success: function(data) { opts.handleStatusRes(data); }, // this handles the initial response
         });
       }
 
-      opts.resolve = resolve; // allow user-specified functions to resolve the promise
-      // opts.resolve = L.Utils.getNestedKey(this.options, exportOpts, resolve) || resolve;
-      opts.collection = this._group.generateExportJson();
-      opts.frequency = 3000;
-      opts.scale = 100; // switch it to _getAvgCmPerPixel !
-      opts.updater = L.Utils.getNestedKey(this.options, 'exportOpts', 'updater') || _defaultUpdater;
-      opts.handleStatusResponse = L.Utils.getNestedKey(this.options, 'exportOpts', 'handleStatusResponse') || _defaultHandleStatusResponse;
-      opts.fetchStatusUrl = L.Utils.getNestedKey(this.options, 'exportOpts', 'fetchStatusUrl') || _defaultFetchStatusUrl;
-      opts.exportStartUrl = '//export.mapknitter.org/export';
-      opts.statusUrl = '//export.mapknitter.org';
-      opts.exportUrl = 'http://export.mapknitter.org/';
+      opts.collection = opts.collection || this._group.generateExportJson();
+      opts.frequency = opts.frequency || 3000;
+      opts.scale = opts.scale || 100; // switch it to _getAvgCmPerPixel !
+      opts.updater = opts.updater || _defaultUpdater;
+      opts.handleStatusRes = opts.handleStatusRes || _defaultHandleStatusRes;
+      opts.fetchStatusUrl = opts.fetchStatusUrl || _defaultFetchStatusUrl;
 
-      // L.Utils.mergeOptions(opts, this.options.exportOpts);
-
-      opts.fetchStatusUrl(L.Utils.mergeOptions(opts, this.options.exportOpts));
+      opts.fetchStatusUrl(opts);
     }.bind(this));
   },
 });

@@ -48,7 +48,7 @@ L.Utils = {
     return obj3;
   },
 
-  getNestedKey: function(obj, key, nestedKey) {
+  getNestedVal: function(obj, key, nestedKey) {
     var dig = [key, nestedKey];
     return dig.reduce(function(obj, k) {
       return obj && obj[k];

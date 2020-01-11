@@ -46,7 +46,7 @@
             L.latLng(51.52, -0.14),
             L.latLng(51.52,-0.10),
             L.latLng(51.50, -0.14),
-            L.latLng(51.50,-0.10)
+            L.latLng(51.50,-0.10),
           ],
           mode: 'lock',
         });
@@ -57,7 +57,7 @@
             L.latLng(51.51, -0.20),
             L.latLng(51.51,-0.16),
             L.latLng(51.49, -0.21),
-            L.latLng(51.49,-0.17)
+            L.latLng(51.49,-0.17),
           ],
           mode: 'freeRotate',
           suppressToolbar: true,
@@ -90,19 +90,19 @@
             data: {
               collection: opts.collection,
               scale: prompt("Choose a scale or use the default (cm per pixel):", 100) || opts.scale,
-              upload: true
+              upload: true,
             },
-            success: function(data) { opts.handleStatusResponse(data, opts) }, // this handles the initial response
+            success: function(data) { opts.handleStatusRes(data, opts) }, // this handles the initial response
           });
         }
 
         // receives the URL of status.json, and starts running the updater to repeatedly fetch from status.json;
         // this may be overridden to integrate with any UI
-        function handleStatusResponse(data, opts) {
+        function handleStatusRes(data, opts) {
           console.log(data);
           var statusUrl = data.split('please visit, ')[1];
 
-          /* if we are getting status updates:     
+          /* if we are getting status updates:
             // repeatedly fetch the status.json
             var updateInterval = setInterval(function intervalUpdater() {
               $.ajax(statusUrl + '?' + Date.now(), {// bust cache with timestamp
@@ -118,7 +118,7 @@
           // but in this example, we're not; we just get the URL of the finished image;
           // we should stop the spinner
           opts.resolve();
-          // and we should initiate the download? 
+          // and we should initiate the download?
           window.location = statusUrl;
         }
 
@@ -127,8 +127,8 @@
         imgGroup = L.distortableCollection({
           collection: json, // here we override the image data sent with a custom set
           fetchStatusUrl: fetchStatusUrl,
-          handleStatusResponse: handleStatusResponse,
-          exportUrl: 'http://34.74.118.242/api/v2/export/', // used to 
+          handleStatusRes: handleStatusRes,
+          exportUrl: 'http://34.74.118.242/api/v2/export/', // used to
           exportStartUrl: 'http://34.74.118.242/api/v2/export/' // used to initiate the export
 
           // From this alternative exporter, we'll get a response like:
@@ -142,9 +142,9 @@
           // frequency = opts.frequency || 3000;
           // scale = opts.scale || 100; // switch it to _getAvgCmPerPixel !
           // updater: function(json) {}  // a function to handle the result of repeated fetching of the status.json file
-          // handleStatusResponse = opts.handleStatusResponse || _defaultHandleStatusResponse;
+          // handleStatusRes = opts.handleStatusRes || _defaultHandleStatusRes;
           // fetchStatusUrl = opts.fetchStatusUrl || _defaultFetchStatusUrl;
-          // exportUrl = opts.exportUrl || 'http//export.mapknitter.org/';
+          // exportUrl = opts.exportUrl || 'http://export.mapknitter.org/';
           // exportStartUrl = opts.exportStartUrl || '//export.mapknitter.org/export';
 
         }).addTo(map);
