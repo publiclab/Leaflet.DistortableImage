@@ -99,7 +99,6 @@
         // receives the URL of status.json, and starts running the updater to repeatedly fetch from status.json;
         // this may be overridden to integrate with any UI
         function handleStatusRes(data, opts) {
-          // console.log(data);
           var statusUrl = data.split('please visit, ')[1];
 
           /* if we are getting status updates:
@@ -116,8 +115,7 @@
           */
 
           // but in this example, we're not; we just get the URL of the finished image;
-          // we should stop the spinner
-          // and we should initiate the download?
+          // we should initiate the download?
           window.location = statusUrl;
         }
 
