@@ -35,6 +35,7 @@ module.exports = {
     'new-cap': 0,
     'no-var': 0,
     'prefer-const': 1,
+    'require-jsdoc': 0,
     'valid-jsdoc': 0,
   }
 };

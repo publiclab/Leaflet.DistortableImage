@@ -261,34 +261,34 @@ L.DistortableCollection.Edit = L.Handler.extend({
       this.updateInterval = null;
 
       // this may be overridden to update the UI to show export progress or completion
-      // eslint-disable-next-line require-jsdoc
       function _defaultUpdater(data) {
         data = JSON.parse(data);
         // optimization: fetch status directly from google storage:
-        if (statusUrl !== data.status_url && data.status_url.match('.json')) {
-          // if (data.status_url && data.status_url.substr(0,1) === "/") {
-          //   opts.statusUrl = opts.statusUrl + data.status_url;
-          // } else {
-          statusUrl = data.status_url;
-          // }
-        }
-
-        if (data.status === 'complete') {
-          clearInterval(this.updateInterval);
-          resolve();
-          if (data.jpg !== null) {
-            alert('Export succeeded. ' + opts.exportUrl + data.jpg);
+        if (data.status_url) {
+          if (statusUrl !== data.status_url && data.status_url.match('.json')) {
+            // if (data.status_url && data.status_url.substr(0,1) === "/") {
+            //   opts.statusUrl = opts.statusUrl + data.status_url;
+            // } else {
+            statusUrl = data.status_url;
+            // }
           }
-        }
 
-        // TODO: update to clearInterval when status == "failed" if we update that in this file:
-        // https://github.com/publiclab/mapknitter-exporter/blob/main/lib/mapknitterExporter.rb
-        console.log(data);
+          if (data.status === 'complete') {
+            clearInterval(this.updateInterval);
+            resolve();
+            if (data.jpg !== null) {
+              alert('Export succeeded. ' + opts.exportUrl + data.jpg);
+            }
+          }
+
+          // TODO: update to clearInterval when status == "failed" if we update that in this file:
+          // https://github.com/publiclab/mapknitter-exporter/blob/main/lib/mapknitterExporter.rb
+          console.log(data);
+        }
       }
 
       // receives the URL of status.json, and starts running the updater to repeatedly fetch from status.json;
       // this may be overridden to integrate with any UI
-      // eslint-disable-next-line require-jsdoc
       function _defaultHandleStatusRes(data) {
         statusUrl = opts.statusUrl + data;
         // repeatedly fetch the status.json
@@ -303,7 +303,6 @@ L.DistortableCollection.Edit = L.Handler.extend({
       }
 
       // initiate the export
-      // eslint-disable-next-line require-jsdoc
       function _defaultFetchStatusUrl(opts) {
         $.ajax({
           url: opts.exportStartUrl,
