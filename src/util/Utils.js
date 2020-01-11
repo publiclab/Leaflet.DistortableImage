@@ -41,13 +41,6 @@ L.Utils = {
     L.DomUtil.initTranslation(this.options.translation);
   },
 
-  mergeOptions: function(obj1, obj2) {
-    var obj3 = {};
-    for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }
-    for (var attrname2 in obj2) { obj3[attrname] = obj2[attrname2]; }
-    return obj3;
-  },
-
   getNestedVal: function(obj, key, nestedKey) {
     var dig = [key, nestedKey];
     return dig.reduce(function(obj, k) {
