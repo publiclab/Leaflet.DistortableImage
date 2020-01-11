@@ -40,4 +40,11 @@ L.Utils = {
 
     L.DomUtil.initTranslation(this.options.translation);
   },
+
+  getNestedVal: function(obj, key, nestedKey) {
+    var dig = [key, nestedKey];
+    return dig.reduce(function(obj, k) {
+      return obj && obj[k];
+    }, obj);
+  },
 };
