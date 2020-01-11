@@ -4,90 +4,15 @@ L.DistortableImage = L.DistortableImage || {};
 L.DistortableCollection.Edit = L.Handler.extend({
   options: {
     keymap: L.distortableImage.group_action_map,
+    exportOpts: {},
   },
 
   initialize: function(group, options) {
     this._group = group;
 
-    this.startExport = options.startExport || function startExport() {
-      return new Promise(function(resolve) {
-        var opts = group.options || {};
-
-        // this may be overridden to update the UI to show export progress or completion
-        // eslint-disable-next-line require-jsdoc
-        function _defaultUpdater(data, _opts) {
-          data = JSON.parse(data);
-          // optimization: fetch status directly from google storage:
-          if (_opts.statusUrl !== data.status_url && data.status_url.match('.json')) {
-            if (data.status_url && data.status_url.substr(0,1) === "/") {
-              _opts.statusUrl = _opts.exportUrl + data.status_url;
-            } else {
-              _opts.statusUrl = data.status_url;
-            }
-          }
-          if (data.status === 'complete') {
-            clearInterval(_opts.updateInterval);
-            resolve();
-          }
-          if (data.status === 'complete' && data.jpg !== null) {
-            alert('Export succeeded. ' + _opts.exportUrl + data.jpg);
-          }
-          // TODO: update to clearInterval when status == "failed" if we update that in this file:
-          // https://github.com/publiclab/mapknitter-exporter/blob/main/lib/mapknitterExporter.rb
-          console.log(data);
-        }
-  
-        // receives the URL of status.json, and starts running the updater to repeatedly fetch from status.json;
-        // this may be overridden to integrate with any UI
-        // eslint-disable-next-line require-jsdoc
-        function _defaultHandleStatusResponse(data, _opts) {
-  
-          // repeatedly fetch the status.json
-          _opts.updateInterval = setInterval(function intervalUpdater() {
-            $.ajax(_opts.statusUrl + '?' + Date.now(), {// bust cache with timestamp
-              type: 'GET',
-              crossDomain: true,
-            }).done(function(data) {
-              _opts.updater(data, _opts);
-            });
-          }, _opts.frequency);
-        }
- 
-        // initiate the export 
-        // eslint-disable-next-line require-jsdoc
-        function _defaultFetchStatusUrl(_opts) {
-          $.ajax({
-            url: _opts.exportStartUrl,
-            crossDomain: true,
-            type: 'POST',
-            data: {
-              collection: JSON.stringify(_opts.collection),
-              scale: _opts.scale,
-              upload: true
-            },
-            success: function(data) { _opts.handleStatusResponse(data, _opts); }, // this handles the initial response
-          });
-        }
-
-        opts.resolve = resolve; // allow user-specified functions to resolve the promise
-        opts.collection = opts.collection || this._group.generateExportJson();
-        opts.frequency = opts.frequency || 3000;
-        opts.scale = opts.scale || 100; // switch it to _getAvgCmPerPixel !
-        opts.updater = opts.updater || _defaultUpdater;
-        opts.handleStatusResponse = opts.handleStatusResponse || _defaultHandleStatusResponse;
-        opts.fetchStatusUrl = opts.fetchStatusUrl || _defaultFetchStatusUrl;
-        opts.exportStartUrl = opts.exportStartUrl || '//export.mapknitter.org/export';
-        opts.exportUrl = opts.exportUrl || 'http//export.mapknitter.org/';
-  
-        opts.fetchStatusUrl(opts);
-      }.bind(this));
-
-    };
-
     L.setOptions(this, options);
 
     L.distortableImage.group_action_map.Escape = '_decollectAll';
-
   },
 
   addHooks: function() {
@@ -95,6 +20,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     var map = group._map;
 
     this.editActions = this.options.actions;
+    this.exporter = L.bind(L.Utils.getNestedKey(this.options, 'exportOpts', 'startExport') || this.startExport, this);
 
     L.DomEvent.on(document, 'keydown', this._onKeyDown, this);
 
@@ -274,76 +200,6 @@ L.DistortableCollection.Edit = L.Handler.extend({
     clearInterval(this.updateInterval);
   },
 
-  startExport: function(opts) {
-    return new Promise(function(resolve) {
-      opts = opts || {};
-      opts.collection = opts.collection || this._group.generateExportJson();
-      opts.frequency = opts.frequency || 3000;
-      opts.scale = opts.scale || 100; // switch it to _getAvgCmPerPixel !
-      var statusUrl;
-      var self = this;
-      this.updateInterval = null;
-
-      // this may be overridden to update the UI to show export progress or completion
-      // eslint-disable-next-line require-jsdoc
-      function _defaultUpdater(data) {
-        data = JSON.parse(data);
-        // optimization: fetch status directly from google storage:
-        if (statusUrl !== data.status_url && data.status_url.match('.json')) {
-          statusUrl = data.status_url;
-        }
-        if (data.status === 'complete') {
-          clearInterval(self.updateInterval);
-          resolve();
-        }
-        if (data.status === 'complete' && data.jpg !== null) {
-          alert('Export succeeded. http://export.mapknitter.org/' + data.jpg);
-        }
-        // TODO: update to clearInterval when status == "failed" if we update that in this file:
-        // https://github.com/publiclab/mapknitter-exporter/blob/main/lib/mapknitterExporter.rb
-        console.log(data);
-      }
-
-      // receives the URL of status.json, and starts running the updater to repeatedly fetch from status.json;
-      // this may be overridden to integrate with any UI
-      // eslint-disable-next-line require-jsdoc
-      function _defaultHandleStatusUrl(data) {
-        console.log(data);
-        statusUrl = '//export.mapknitter.org' + data;
-        opts.updater = opts.updater || _defaultUpdater;
-
-        // repeatedly fetch the status.json
-        self.updateInterval = setInterval(function intervalUpdater() {
-          $.ajax(statusUrl + '?' + Date.now(), {
-            // bust cache with timestamp
-            type: 'GET',
-            crossDomain: true,
-          }).done(function(data) {
-            opts.updater(data);
-          });
-        }, opts.frequency);
-      }
-
-      // eslint-disable-next-line require-jsdoc
-      function _fetchStatusUrl(collection, scale) {
-        opts.handleStatusUrl = opts.handleStatusUrl || _defaultHandleStatusUrl;
-
-        $.ajax({
-          url: '//export.mapknitter.org/export',
-          crossDomain: true,
-          type: 'POST',
-          data: {
-            collection: JSON.stringify(collection.images),
-            scale: scale,
-          },
-          success: opts.handleStatusUrl, // this handles the initial response
-        });
-      }
-
-      _fetchStatusUrl(opts.collection, opts.scale);
-    }.bind(this));
-  },
-    
   _addToolbar: function() {
     var group = this._group;
     var map = group._map;
@@ -393,6 +249,88 @@ L.DistortableCollection.Edit = L.Handler.extend({
       }
     }, this);
     return this;
+  },
+
+  startExport: function() {
+    return new Promise(function(resolve) {
+      var opts = {};
+      var statusUrl;
+      var updateInterval;
+
+      // this may be overridden to update the UI to show export progress or completion
+      // eslint-disable-next-line require-jsdoc
+      function _defaultUpdater(data) {
+        data = JSON.parse(data);
+        // optimization: fetch status directly from google storage:
+        if (statusUrl !== data.status_url && data.status_url.match('.json')) {
+          // if (data.status_url && data.status_url.substr(0,1) === "/") {
+          //   opts.statusUrl = opts.statusUrl + data.status_url;
+          // } else {
+          statusUrl = data.status_url;
+          // }
+        }
+
+        if (data.status === 'complete') {
+          clearInterval(updateInterval);
+          resolve();
+          if (data.jpg !== null) {
+            alert('Export succeeded. ' + opts.exportUrl + data.jpg);
+          }
+        }
+
+        // TODO: update to clearInterval when status == "failed" if we update that in this file:
+        // https://github.com/publiclab/mapknitter-exporter/blob/main/lib/mapknitterExporter.rb
+        console.log(data);
+      }
+
+      // receives the URL of status.json, and starts running the updater to repeatedly fetch from status.json;
+      // this may be overridden to integrate with any UI
+      // eslint-disable-next-line require-jsdoc
+      function _defaultHandleStatusResponse(data) {
+        statusUrl = opts.statusUrl + data;
+        // repeatedly fetch the status.json
+        updateInterval = setInterval(function intervalUpdater() {
+          $.ajax(statusUrl + '?' + Date.now(), {// bust cache with timestamp
+            type: 'GET',
+            crossDomain: true,
+          }).done(function(data) {
+            opts.updater(data);
+          });
+        }, opts.frequency);
+      }
+
+      // initiate the export
+      // eslint-disable-next-line require-jsdoc
+      function _defaultFetchStatusUrl(opts) {
+        $.ajax({
+          url: opts.exportStartUrl,
+          crossDomain: true,
+          type: 'POST',
+          data: {
+            collection: JSON.stringify(opts.collection.images),
+            scale: opts.scale,
+            upload: true,
+          },
+          success: function(data) { opts.handleStatusResponse(data); }, // this handles the initial response
+        });
+      }
+
+      opts.resolve = resolve; // allow user-specified functions to resolve the promise
+      // opts.resolve = L.Utils.getNestedKey(this.options, exportOpts, resolve) || resolve;
+      opts.collection = this._group.generateExportJson();
+      opts.frequency = 3000;
+      opts.scale = 100; // switch it to _getAvgCmPerPixel !
+      opts.updater = L.Utils.getNestedKey(this.options, 'exportOpts', 'updater') || _defaultUpdater;
+      opts.handleStatusResponse = L.Utils.getNestedKey(this.options, 'exportOpts', 'handleStatusResponse') || _defaultHandleStatusResponse;
+      opts.fetchStatusUrl = L.Utils.getNestedKey(this.options, 'exportOpts', 'fetchStatusUrl') || _defaultFetchStatusUrl;
+      opts.exportStartUrl = '//export.mapknitter.org/export';
+      opts.statusUrl = '//export.mapknitter.org';
+      opts.exportUrl = 'http://export.mapknitter.org/';
+
+      // L.Utils.mergeOptions(opts, this.options.exportOpts);
+
+      opts.fetchStatusUrl(L.Utils.mergeOptions(opts, this.options.exportOpts));
+    }.bind(this));
   },
 });
 

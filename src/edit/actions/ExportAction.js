@@ -28,6 +28,8 @@ L.ExportAction = L.EditAction.extend({
 
   addHooks: function() {
     var edit = this._overlay.editing;
+    // var singleExport = L.bind(edit._getExport, edit);
+    // var collctionExport = edit.exporter;
 
     if (edit instanceof L.DistortableImage.Edit) {
       edit._getExport();
@@ -52,8 +54,8 @@ L.ExportAction = L.EditAction.extend({
         this.renderExportIcon();
 
         setTimeout(this.attachMouseEventListeners.bind(this, toolbarExportElement), 100);
-
-        edit.startExport().then(
+        // L.bind(L.Utils.getNestedKey(edit.options.startExport) || edit.startExport, edit);
+        edit.exporter().then(
             function() {
               this.resetState();
               this.detachMouseEventListeners(toolbarExportElement);
