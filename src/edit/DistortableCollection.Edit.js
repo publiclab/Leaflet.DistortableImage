@@ -4,15 +4,11 @@ L.DistortableImage = L.DistortableImage || {};
 L.DistortableCollection.Edit = L.Handler.extend({
   options: {
     keymap: L.distortableImage.group_action_map,
-    exportOpts: {
-      exportStartUrl: '//export.mapknitter.org/export',
-      statusUrl: '//export.mapknitter.org',
-      exportUrl: 'http://export.mapknitter.org/',
-    },
   },
 
   initialize: function(group, options) {
     this._group = group;
+    this._exportOpts = group.options.exportOpts;
 
     L.setOptions(this, options);
 
@@ -25,7 +21,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
     this.editActions = this.options.actions;
     this.runExporter =
-        L.bind(L.Utils.getNestedVal(this.options, 'exportOpts', 'exporter') ||
+        L.bind(L.Utils.getNestedVal(this, '_exportOpts', 'exporter') ||
         this.startExport, this);
 
     L.DomEvent.on(document, 'keydown', this._onKeyDown, this);
@@ -259,7 +255,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
   startExport: function() {
     return new Promise(function(resolve) {
-      var opts = this.options.exportOpts;
+      var opts = this._exportOpts;
       var statusUrl;
       var self = this;
       this.updateInterval = null;
