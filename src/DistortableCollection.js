@@ -1,6 +1,11 @@
 L.DistortableCollection = L.FeatureGroup.extend({
   options: {
     editable: true,
+    exportOpts: {
+      exportStartUrl: '//export.mapknitter.org/export',
+      statusUrl: '//export.mapknitter.org',
+      exportUrl: 'http://export.mapknitter.org/',
+    },
   },
 
   initialize: function(options) {
