@@ -3115,7 +3115,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
           }
 
           if (data.status === 'complete') {
-            clearInterval(this.updateInterval);
+            clearInterval(self.updateInterval);
             resolve();
             if (data.jpg !== null) {
               alert('Export succeeded. ' + opts.exportUrl + data.jpg);
