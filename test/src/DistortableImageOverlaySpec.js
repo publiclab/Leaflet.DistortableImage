@@ -46,16 +46,47 @@ describe('L.DistortableImageOverlay', function() {
     });
   });
 
-  describe('#_calculateProjectiveTransform', function() {
-    it.skip('Should', function() {
-      var matrix;
-
+  describe("#_calculateProjectiveTransform", function() {
+    it("Should correctly calculate projective transform matrix", function() {
       /* _map is set when #onAdd is called. */
       overlay._map = map;
       overlay._initImage();
 
-      matrix = overlay._calculateProjectiveTransform();
-      expect(matrix).to.equal([]);
+      var latLngToLayerPoint = L.bind(map.latLngToLayerPoint, map);
+
+      var matrix = overlay._calculateProjectiveTransform(latLngToLayerPoint);
+
+      // Compute matrix
+      var offset = latLngToLayerPoint(overlay._corners[0]);
+      var w = overlay._image.offsetWidth || 500;
+      var h = overlay._image.offsetHeight || 375;
+      var c = [];
+      var j;
+
+      for (j = 0; j < overlay._corners.length; j++) {
+        c.push(latLngToLayerPoint(overlay._corners[j])._subtract(offset));
+      }
+
+      var computedMatrix = L.MatrixUtil.general2DProjection(
+        0,
+        0,
+        c[0].x,
+        c[0].y,
+        w,
+        0,
+        c[1].x,
+        c[1].y,
+        0,
+        h,
+        c[2].x,
+        c[2].y,
+        w,
+        h,
+        c[3].x,
+        c[3].y
+      );
+
+      expect(matrix).to.eql(computedMatrix);
     });
   });
 
