@@ -1,0 +1,36 @@
+{
+  "name": "leaflet.toolbar",
+  "main": [
+    "leaflet.toolbar.css",
+    "leaflet.toolbar.js"
+  ],
+  "version": "0.1.2",
+  "homepage": "https://github.com/Leaflet/Leaflet.toolbar",
+  "authors": [
+    "Justin Manley"
+  ],
+  "description": "Flexible, extensible toolbars for Leaflet maps.",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "examples",
+    "src",
+    "node_modules",
+    "test",
+    "tests",
+    "Gruntfile.js"
+  ],
+  "keywords": [
+    "maps",
+    "leaflet",
+    "client",
+    "draw",
+    "toolbar",
+    "edit"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Leaflet/Leaflet.toolbar"
+  },
+  "dependencies": {}
+}
