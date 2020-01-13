@@ -3040,6 +3040,10 @@ L.DistortableCollection.Edit = L.Handler.extend({
   },
 
   cancelExport: function() {
+    if (!this.customCollection) {
+      this._exportOpts.collection = undefined;
+    }
+
     clearInterval(this.updateInterval);
   },
 
@@ -3116,6 +3120,11 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
           if (data.status === 'complete') {
             clearInterval(self.updateInterval);
+
+            if (!self.customCollection) {
+              self._exportOpts.collection = undefined;
+            }
+
             resolve();
             if (data.jpg !== null) {
               alert('Export succeeded. ' + opts.exportUrl + data.jpg);
@@ -3150,7 +3159,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
           crossDomain: true,
           type: 'POST',
           data: {
-            collection: JSON.stringify(opts.collection.images),
+            collection: JSON.stringify(opts.collection),
             scale: opts.scale,
             upload: true,
           },
@@ -3158,7 +3167,14 @@ L.DistortableCollection.Edit = L.Handler.extend({
         });
       }
 
-      opts.collection = opts.collection || this._group.generateExportJson();
+      // If the user has passed collection property
+      if (opts.collection) {
+        self.customCollection = true;
+      } else {
+        self.customCollection = false;
+        opts.collection = this._group.generateExportJson().images;
+      }
+
       opts.frequency = opts.frequency || 3000;
       opts.scale = opts.scale || 100; // switch it to _getAvgCmPerPixel !
       opts.updater = opts.updater || _defaultUpdater;
