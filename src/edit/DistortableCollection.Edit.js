@@ -318,7 +318,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
           crossDomain: true,
           type: 'POST',
           data: {
-            collection: JSON.stringify(opts.collection.images),
+            collection: JSON.stringify(opts.collection),
             scale: opts.scale,
             upload: true,
           },
@@ -331,7 +331,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
         self.customCollection = true;
       } else {
         self.customCollection = false;
-        opts.collection = this._group.generateExportJson();
+        opts.collection = this._group.generateExportJson().images;
       }
 
       opts.frequency = opts.frequency || 3000;

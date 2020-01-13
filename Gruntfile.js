@@ -151,9 +151,9 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['karma:development:start', 'watch']);
 
   grunt.registerTask('build', [
-    // 'jshint',
-    // 'karma:development:start',
-    // 'coverage',
+    'jshint',
+    'karma:development:start',
+    'coverage',
     'concat:dist',
   ]);
 
