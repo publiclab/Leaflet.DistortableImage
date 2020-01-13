@@ -52,40 +52,40 @@ describe('L.DistortableImageOverlay', function() {
       overlay._map = map;
       overlay._initImage();
 
-      var latLngToLayerPoint = L.bind(map.latLngToLayerPoint, map);
+      var latLngToCartesian = L.bind(map.latLngToLayerPoint, map);
 
-      var matrix = overlay._calculateProjectiveTransform(latLngToLayerPoint);
+      var matrix = overlay._calculateProjectiveTransform(latLngToCartesian);
 
       // Compute matrix
-      var offset = latLngToLayerPoint(overlay._corners[0]);
+      var offset = latLngToCartesian(overlay._corners[0]);
+      // Offset width (image's width, including padding and borders)
       var w = overlay._image.offsetWidth || 500;
+      // Offset height (image's height, including padding and borders)
       var h = overlay._image.offsetHeight || 375;
+      // An array of objects containing cartesian coordinates { x: <num>, y: <num> }
+      // Each object represents the coordinate of one of 4 corners of the image
       var c = [];
-      var j;
 
-      for (j = 0; j < overlay._corners.length; j++) {
-        c.push(latLngToLayerPoint(overlay._corners[j])._subtract(offset));
+
+      for (var j = 0; j < overlay._corners.length; j++) {
+        // Convert image corner's geocoordinates(lat & lng) to cartesian coordinates(x & y)
+        // From each corner substract the base offset coordinates
+        c.push(latLngToCartesian(overlay._corners[j])._subtract(offset));
       }
 
+      // Homogeneous transformation matrix
+      // Each row represents a CSS transformation on each corner
       var computedMatrix = L.MatrixUtil.general2DProjection(
-        0,
-        0,
-        c[0].x,
-        c[0].y,
-        w,
-        0,
-        c[1].x,
-        c[1].y,
-        0,
-        h,
-        c[2].x,
-        c[2].y,
-        w,
-        h,
-        c[3].x,
-        c[3].y
+        // The image is always placed to the top left corner because the first row is always 0,0,0,0
+        // The first 2 numbers represent the base position (origin), and the second 2 numbers
+        // represent the postion that it maps to
+        0, 0, c[0].x, c[0].y,
+        w, 0, c[1].x, c[1].y,
+        0, h, c[2].x, c[2].y,
+        w, h, c[3].x, c[3].y
       );
 
+      // LEARN MORE: https://publiclab.org/notes/justinmanley/05-21-2015/the-magic-behind-mapknitter-leaflet-distortableimage
       expect(matrix).to.eql(computedMatrix);
     });
   });
