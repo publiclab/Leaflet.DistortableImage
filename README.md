@@ -705,7 +705,7 @@ var translation = {
     lockImages: 'Lock Images',
     makeImageOpaque: 'Make Image Opaque',
     makeImageTransparent: 'Make Image Transparent',
-    restoreOriginalImageDimensions: 'Restore Original Image Dimension',
+    restoreOriginalImageDimensions: 'Restore Original Image Dimensions',
     rotateImage: 'Rotate Image',
     scaleImage: 'Scale Image',
     stackToFront: 'Stack to Front',
