@@ -3106,6 +3106,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
   startExport: function() {
     return new Promise(function(resolve) {
       var opts = this._exportOpts;
+      opts.resolve = resolve; // allow resolving promise in user-defined functions, to stop spinner on completion
       var statusUrl;
       var self = this;
       this.updateInterval = null;
