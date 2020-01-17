@@ -1,3 +1,13 @@
+# Grunt Commands
+
+grunt concat:dist - build the distribution files in /dist/...
+grunt test - run automated tests.
+grunt init - imports the JSON metadata stored in package.json into the grunt config.
+grunt jshint - list all the errors in javascript files before going into production mode.
+grunt karma - run karma server and  tests for javascript files.
+grunt watch - watch for changes in  files.
+grunt svgmin - minify SVG using SVGO.
+
 # Leaflet.DistortableImage
 
 [![Build Status](https://travis-ci.org/publiclab/Leaflet.DistortableImage.svg?branch=master)](https://travis-ci.org/publiclab/Leaflet.DistortableImage)
