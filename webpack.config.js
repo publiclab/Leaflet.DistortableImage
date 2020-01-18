@@ -54,7 +54,7 @@ const config = {
   },
   devServer: {
     host: 'localhost',
-    port: 3000,
+    port: 8080,
     hot: true,
     publicPath: '/',
     writeToDisk: true,

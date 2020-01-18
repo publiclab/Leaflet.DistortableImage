@@ -440,7 +440,7 @@ We have slightly changed a default Leaflet handler:
 <br><br>
 <details><summary><code><b>doubleClickZoom</b>: this</code></summary>
 <ul>
-  <li>This handler may not be <code>enabled</code> (and will return false) while the <code>doubleClickLabels</code> handler is <code>enabled</code>.</li>  
+  <li>This handler may not be <code>enabled</code> (and will return false) while the <code>doubleClickLabels</code> handler is <code>enabled</code>.</li>
   <li>This handler and <code>doubleClickLabels</code> time and fire a custom <code>singleclick</code> event on map click.</li>
 </ul>
 </details>
@@ -761,7 +761,7 @@ $ npm install leaflet --no-save
 $ npm run dev
 ```
 
-2. Once you finish, build all files from `/src/` into the `/dist/` folder:
+2. Once you finish, commit your changes and a pre-commit hook will build all files from `/src/` into the `/dist/` folder:
 
 ```Bash
 $ npm run build

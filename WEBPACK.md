@@ -1,6 +1,6 @@
 # Webpack configuration file
 
-This file provides a documentation for `webpack.config.js`
+This file provides documentation for `webpack.config.js`
 
 ```javascript
 // Include necessary modules
