@@ -1,4 +1,4 @@
-## Webpack configuration file
+# Webpack configuration file
 
 This file provides a documentation for `webpack.config.js`
 
@@ -50,11 +50,11 @@ const config = {
     path: path.resolve(__dirname, 'dist'),
     filename: 'leaflet.distortableimage.js',
     /**
-     * Webpack live server, on change in the source code, compiles files again and 	            * generates new hot update files. Instead of generating new filess on each change, we 	   * just override the previous file.
+     * Webpack live server, on change in the source code, compiles files again and 	     * generates new hot update files. Instead of generating new files on each change,  * we just override the previous file.
      */
     // Filename of hot update chunks
     hotUpdateChunkFilename: 'hot/hot-update.js',
-    // The main hot update filename 
+    // The main hot update filename
     hotUpdateMainFilename: 'hot/hot-update.json'
   },
   module: {
@@ -95,7 +95,7 @@ const config = {
   },
   // Generate source maps
   devtool: 'source-map',
-  // Minimize Webpack's output in terminal, only show errors 
+  // Minimize Webpack's output in terminal, only show errors
   stats: 'errors-only',
   plugins: []
 };
@@ -142,4 +142,3 @@ if (process.env.NODE_ENV === 'production') {
 
 module.exports = config;
 ```
-
