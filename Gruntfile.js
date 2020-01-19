@@ -111,6 +111,16 @@ module.exports = function(grunt) {
           }
         }
       }
+    },
+
+    watch: {
+      options: {
+        livereload: true
+      },
+      source: {
+        files: ['src/**/*.js', 'test/**/*.js', 'Gruntfile.js'],
+        tasks: ['jshint', 'karma:development:start']
+      }
     }
   });
 
