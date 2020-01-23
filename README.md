@@ -683,9 +683,9 @@ Adds a control onto the map which opens a keymapper legend showing the available
 
 ### Custom Translations
 
-You can translate the LDI toolbar buttons in your native language by providing custom `translation` object to `distortableImageOverlay` or `distortableCollection`.
+You can translate the LDI toolbar buttons in your native language by providing a custom `translation` object to `DistortableImageOverlay` or `DistortableCollection`.
 
-**NOTE:** If you don't specify custom translation for certain field, it will fallback to English.
+**NOTE:** If you don't specify a custom translation for a certain field, it will fallback to English.
 
 These are the defaults:
 
@@ -705,7 +705,7 @@ var translation = {
     lockImages: 'Lock Images',
     makeImageOpaque: 'Make Image Opaque',
     makeImageTransparent: 'Make Image Transparent',
-    restoreOriginalImageDimensions: 'Restore Original Image Dimension',
+    restoreOriginalImageDimensions: 'Restore Original Image Dimensions',
     rotateImage: 'Rotate Image',
     scaleImage: 'Scale Image',
     stackToFront: 'Stack to Front',
@@ -718,7 +718,7 @@ var translation = {
 };
 ```
 
-**L.distortableImageOverlay**
+**L.DistortableImageOverlay**
 
 ```javascript
 img = L.distortableImageOverlay('example.jpg', {
@@ -727,19 +727,19 @@ img = L.distortableImageOverlay('example.jpg', {
     translation: {
         deleteImage: 'Obriši sliku',
         distortImage: 'Izobliči sliku',
-        dragImage: 'Pomjeri sliku'
+        dragImage: 'Pomjeri sliku',
         // ...
     }
 }
 ```
 
-**L.distortableCollection**
+**L.DistortableCollection**
 
 ```javascript
 imgGroup = L.distortableCollection({
     translation: {
         deleteImages: 'Obriši slike',
-        exportImages: 'Izvezi slike'
+        exportImages: 'Izvezi slike',
         // ...
     }
 })

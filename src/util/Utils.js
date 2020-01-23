@@ -15,7 +15,7 @@ L.Utils = {
       lockImages: 'Lock Images',
       makeImageOpaque: 'Make Image Opaque',
       makeImageTransparent: 'Make Image Transparent',
-      restoreOriginalImageDimensions: 'Restore Original Image Dimension',
+      restoreOriginalImageDimensions: 'Restore Original Image Dimensions',
       rotateImage: 'Rotate Image',
       scaleImage: 'Scale Image',
       stackToFront: 'Stack to Front',
@@ -39,5 +39,12 @@ L.Utils = {
     }
 
     L.DomUtil.initTranslation(this.options.translation);
+  },
+
+  getNestedVal: function(obj, key, nestedKey) {
+    var dig = [key, nestedKey];
+    return dig.reduce(function(obj, k) {
+      return obj && obj[k];
+    }, obj);
   },
 };
