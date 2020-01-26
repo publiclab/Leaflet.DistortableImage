@@ -763,7 +763,6 @@ $ npm run dev
 
 2. Once you finish, commit your changes and a pre-commit hook will build all files from `/src/` into the `/dist/` folder:
 
-$ npm run build
 ```
 
 3. _Optional_: We use SVG for our icon system. Please visit our wiki [SVG Icon System](https://github.com/publiclab/Leaflet.DistortableImage/wiki/SVG-Icon-System) if you are interested in making updates to them or just simply learning about our workflow.
