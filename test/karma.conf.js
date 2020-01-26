@@ -77,9 +77,9 @@ module.exports = function(config) {
         return file.originalPath;
       }
     },
-    
+
     preprocessors: {
-      'src/**/*.js': ['babel']
+      'src/**/*.js': ['babel', 'coverage']
     },
 
     // web server port
@@ -108,9 +108,9 @@ module.exports = function(config) {
 
     coverageReporter: {
       reporters: [
-        { type: 'text', dir: '../coverage/', file: 'coverage.txt' },
-        { type: 'lcovonly', dir: '../coverage/' },
-        { type: 'html', dir: '../coverage/' }
+        { type: 'text', dir: './coverage', file: 'coverage.txt', subdir: '.' },
+        { type: 'lcovonly', dir: './coverage', subdir: '.' },
+        { type: 'html', dir: './coverage', subdir: '.' }
       ]
     }
   });

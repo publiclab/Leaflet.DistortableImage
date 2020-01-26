@@ -8,7 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "linter": "./node_modules/.bin/eslint ."
   },
-  "browserslist": "> 2%, IE 9, last 2 versions",
+  "browserslist": "> 0.2%, IE 9, last 2 versions",
   "main": "dist/leaflet.distortableimage.js",
   "repository": {
     "type": "git",
