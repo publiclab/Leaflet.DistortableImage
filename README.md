@@ -763,7 +763,6 @@ $ npm run dev
 
 2. Once you finish, commit your changes and a pre-commit hook will build all files from `/src/` into the `/dist/` folder:
 
-```Bash
 $ npm run build
 ```
 
