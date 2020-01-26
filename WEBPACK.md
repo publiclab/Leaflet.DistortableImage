@@ -80,7 +80,7 @@ const config = {
   },
   devServer: {
     host: 'localhost',
-    port: 3000,
+    port: 8080,
     // Enable Hot Module Replacement(HMR)
     // HMR allows updating modules without forcing a page refresh
     hot: true,
