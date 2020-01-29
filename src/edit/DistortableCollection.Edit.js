@@ -303,28 +303,27 @@ L.DistortableCollection.Edit = L.Handler.extend({
         statusUrl = opts.statusUrl + data;
         // repeatedly fetch the status.json
         self.updateInterval = setInterval(function intervalUpdater() {
-          $.ajax(statusUrl + '?' + Date.now(), {// bust cache with timestamp
-            type: 'GET',
-            crossDomain: true,
-          }).done(function(data) {
-            opts.updater(data);
-          });
+          var request = new XMLHttpRequest();
+          request.onload = function(event) {
+            opts.updater(JSON.parse(this.response));
+          };
+          request.open('GET', statusUrl + '?' + Date.now());
+          request.send();
         }, opts.frequency);
       }
 
       // initiate the export
       function _defaultFetchStatusUrl(opts) {
-        $.ajax({
-          url: opts.exportStartUrl,
-          crossDomain: true,
-          type: 'POST',
-          data: {
-            collection: JSON.stringify(opts.collection),
-            scale: opts.scale,
-            upload: true,
-          },
-          success: function(data) { opts.handleStatusRes(data); }, // this handles the initial response
-        });
+        var form = new FormData();
+        form.append('collection', JSON.stringify(opts.collection));
+        form.append('scale', opts.scale);
+        form.append('upload', true);
+        var request = new XMLHttpRequest();
+        request.onload = function(event) {
+          opts.handleStatusRes(JSON.parse(this.response));
+        };
+        request.open('POST', opts.exportStartUrl);
+        request.send(form);
       }
 
       // If the user has passed collection property
