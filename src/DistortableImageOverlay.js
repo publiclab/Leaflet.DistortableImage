@@ -156,6 +156,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     }
 
     this._selected = false;
+
+    var event = new Event('deselectImage', {bubbles: true});
+    this._image.dispatchEvent(event);
+
     return this;
   },
 
@@ -177,6 +181,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       this.deselect();
       return false;
     }
+
+    var event = new Event('selectImage', {bubbles: true});
+    this._image.dispatchEvent(event);
 
     return this;
   },
