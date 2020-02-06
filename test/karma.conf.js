@@ -13,6 +13,7 @@ module.exports = function(config) {
       require('karma-coverage'),
       require('karma-mocha-reporter'),
       require('karma-phantomjs-launcher'),
+      require('karma-babel-preprocessor')
     ],
 
     // frameworks to use
@@ -21,8 +22,8 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      {pattern: 'examples/*.jpg', included: false, served: true},
-      {pattern: 'examples/*.png', included: false, served: true},
+      { pattern: 'examples/*.jpg', included: false, served: true },
+      { pattern: 'examples/*.png', included: false, served: true },
       'node_modules/leaflet/dist/leaflet-src.js',
       'node_modules/leaflet/dist/leaflet.css',
       'node_modules/leaflet-toolbar/dist/leaflet.toolbar.js',
@@ -51,12 +52,12 @@ module.exports = function(config) {
       'src/components/DistortableImage.Keymapper.js',
       'test/SpecHelper.js',
       'test/src/*Spec.js',
-      'test/src/**/*Spec.js',
+      'test/src/**/*Spec.js'
     ],
 
     // so that karma can serve examples/example.png
     proxies: {
-      '/examples/': '/base/examples/',
+      '/examples/': '/base/examples/'
     },
 
     // test results reporter to use
@@ -64,8 +65,21 @@ module.exports = function(config) {
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
     reporters: ['mocha', 'coverage'],
 
+    babelPreprocessor: {
+      options: {
+        presets: ['@babel/preset-env'],
+        sourceMap: 'inline'
+      },
+      filename: function(file) {
+        return file.originalPath.replace(/\.js$/, '.es5.js');
+      },
+      sourceFileName: function(file) {
+        return file.originalPath;
+      }
+    },
+
     preprocessors: {
-      '../src/**/*.js': 'coverage',
+      'src/**/*.js': ['babel', 'coverage']
     },
 
     // web server port
@@ -94,10 +108,10 @@ module.exports = function(config) {
 
     coverageReporter: {
       reporters: [
-        {type: 'text', dir: '../coverage/', file: 'coverage.txt'},
-        {type: 'lcovonly', dir: '../coverage/'},
-        {type: 'html', dir: '../coverage/'},
-      ],
-    },
+        { type: 'text', dir: './coverage', file: 'coverage.txt', subdir: '.' },
+        { type: 'lcovonly', dir: './coverage', subdir: '.' },
+        { type: 'html', dir: './coverage', subdir: '.' }
+      ]
+    }
   });
 };

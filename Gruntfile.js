@@ -1,8 +1,14 @@
+const webpackConfig = require('./webpack.config.js');
+
 module.exports = function(grunt) {
   require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+
+    webpack: {
+      myConfig: webpackConfig
+    },
 
     jshint: {
       options: {
@@ -113,48 +119,21 @@ module.exports = function(grunt) {
       },
       source: {
         files: ['src/**/*.js', 'test/**/*.js', 'Gruntfile.js'],
-        tasks: ['build:js']
-      }
-    },
-
-    concat: {
-      dist: {
-        src: [
-          'src/util/*.js',
-          'src/DistortableImageOverlay.js',
-          'src/DistortableCollection.js',
-          'src/edit/getEXIFdata.js',
-          'src/edit/handles/EditHandle.js',
-          'src/edit/handles/*.js',
-          'src/iconsets/IconSet.js',
-          'src/iconsets/KeymapperIconSet.js',
-          'src/iconsets/ToolbarIconSet.js',
-          'src/edit/actions/EditAction.js',
-          'src/edit/actions/*.js',
-          'src/edit/toolbars/DistortableImage.PopupBar.js',
-          'src/edit/toolbars/DistortableImage.ControlBar.js',
-          'src/edit/DistortableImage.Edit.js',
-          'src/edit/DistortableCollection.Edit.js',
-          'src/components/DistortableImage.Keymapper.js',
-          'src/mapmixins/DoubleClickZoom.js',
-          'src/mapmixins/*.js'
-        ],
-        dest: 'dist/leaflet.distortableimage.js'
+        tasks: ['jshint', 'karma:development:start']
       }
     }
   });
 
+  grunt.loadNpmTasks('grunt-webpack');
+
   /* Run tests once. */
   grunt.registerTask('test', ['jshint', 'karma:test']);
-
-  /* Default (development): Watch files and lint, test, and build on change. */
-  grunt.registerTask('default', ['karma:development:start', 'watch']);
 
   grunt.registerTask('build', [
     'jshint',
     'karma:development:start',
     'coverage',
-    'concat:dist',
+    'webpack',
   ]);
 
   // recompile svg icon sprite
