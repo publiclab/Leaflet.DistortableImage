@@ -20,7 +20,7 @@ L.RotateHandle = L.EditHandle.extend({
      * running rotation logic even for an angle delta of 0
      * prevents a small, occasional marker flicker
      */
-    overlay.rotateBy(angle);
+    overlay.rotateBy(angle, 'rad');
   },
 
   updateHandle: function() {

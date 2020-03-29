@@ -26,7 +26,7 @@ describe('L.DistortableImage.Edit', function() {
     }).addTo(map);
 
     /* Forces the image to load before any tests are run. */
-    L.DomEvent.on(ov2._image, 'load', function() { done(); });
+    L.DomEvent.on(ov2.getElement(), 'load', function() { done(); });
 
     afterEach(function() {
       L.DomUtil.remove(overlay);
