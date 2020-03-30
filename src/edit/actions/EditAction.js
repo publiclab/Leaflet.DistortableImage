@@ -57,6 +57,10 @@ L.EditAction = L.Toolbar2.Action.extend({
     }
 
     L.DomEvent.on(this._link, 'click', this.enable, this);
+    L.DomEvent.on(this._overlay, 'update', () => {
+      var match = this._link.innerHTML.match(/xlink:href="#restore"/);
+      if (match && match.length === 1) { this._enableAction(); }
+    });
 
     /* Add secondary toolbar */
     this._addSubToolbar(toolbar, this._icon, args);
@@ -73,6 +77,16 @@ L.EditAction = L.Toolbar2.Action.extend({
     el.innerHTML = new L.ToolbarIconSet().render();
 
     document.querySelector('.leaflet-marker-pane').appendChild(el);
+  },
+
+  _enableAction: function() {
+    L.DomUtil.removeClass(this._link.parentElement, 'disabled');
+    L.DomUtil.removeClass(this._link, 'disabled');
+  },
+
+  _disableAction: function() {
+    L.DomUtil.addClass(this._link.parentElement, 'disabled');
+    L.DomUtil.addClass(this._link, 'disabled');
   },
 });
 

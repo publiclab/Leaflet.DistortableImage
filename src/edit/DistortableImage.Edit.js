@@ -43,7 +43,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this.parentGroup = overlay.eP ? overlay.eP : false;
 
-    L.DomEvent.on(overlay._image, {
+    L.DomEvent.on(overlay.getElement(), {
       dblclick: this.nextMode,
     }, this);
 
@@ -76,7 +76,7 @@ L.DistortableImage.Edit = L.Handler.extend({
       eP.editing._removeToolbar();
     }
 
-    L.DomEvent.off(overlay._image, {
+    L.DomEvent.off(overlay.getElement(), {
       dblclick: this.nextMode,
     }, this);
 
@@ -357,6 +357,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   _getExport: function() {
     var overlay = this._overlay;
     var map = overlay._map;
+    var img = overlay.getElement();
 
     if (!this.hasTool(L.ExportAction)) { return; }
 
@@ -408,7 +409,7 @@ L.DistortableImage.Edit = L.Handler.extend({
       }
     };
 
-    downloadable.src = overlay.options.fullResolutionSrc || overlay._image.src;
+    downloadable.src = overlay.options.fullResolutionSrc || img.src;
   },
 
   _stackUp: function() {
