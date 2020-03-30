@@ -125,7 +125,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       'zoom': map.getZoom(),
     };
 
-    window.initialD = this._initialDimensions;
+    this.setBounds(L.latLngBounds(this.getCorners()));
   },
 
   _singleClick: function(e) {
