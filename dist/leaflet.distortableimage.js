@@ -63,7 +63,7 @@
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "e9e205b1c2e6dd84f92f";
+/******/ 	var hotCurrentHash = "9f1a3ce486dd0351767a";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -10901,14 +10901,14 @@ L.DistortableCollection = L.FeatureGroup.extend({
   _toRemove: function _toRemove() {
     var layerArr = this.getLayers();
     return layerArr.filter(function (layer) {
-      var mode = layer.editing.getMode();
+      var mode = layer.editing._mode;
       return this.isCollected(layer) && mode !== 'lock';
     }, this);
   },
   _toMove: function _toMove(overlay) {
     var layerArr = this.getLayers();
     return layerArr.filter(function (layer) {
-      var mode = layer.editing.getMode();
+      var mode = layer.editing._mode;
       return layer !== overlay && this.isCollected(layer) && mode !== 'lock';
     }, this);
   },
