@@ -53,7 +53,6 @@ L.DistortableImageOverlay.addInitHook(function() {
     L.OpacityAction,
     L.BorderAction,
     L.ExportAction,
-    L.RestoreAction,
     L.DeleteAction,
   ];
 

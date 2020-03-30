@@ -63,7 +63,7 @@
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "c88ea644329313e1f6d3";
+/******/ 	var hotCurrentHash = "5f2d85ce5d6156c3b5fa";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -11378,6 +11378,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
     this.edited = false;
     this.fire('restore');
+    return this;
   },
 
   /* Copied from Leaflet v0.7 https://github.com/Leaflet/Leaflet/blob/66282f14bcb180ec87d9818d9f3c9f75afd01b30/src/dom/DomUtil.js#L189-L199 */
@@ -12938,8 +12939,8 @@ L.EditAction = L.Toolbar2.Action.extend({
     L.DomUtil.removeClass(this._link, 'disabled');
   },
   _disableAction: function _disableAction() {
-    L.DomUtil.removeClass(this._link.parentElement, 'disabled');
-    L.DomUtil.removeClass(this._link, 'disabled');
+    L.DomUtil.addClass(this._link.parentElement, 'disabled');
+    L.DomUtil.addClass(this._link, 'disabled');
   }
 });
 
@@ -13229,7 +13230,7 @@ L.RestoreAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: 'restore',
-      tooltip: overlay.options.translation.restoreInitialImage,
+      tooltip: overlay.options.translation.restoreImage,
       className: edited && mode !== 'lock' ? '' : 'disabled'
     };
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -13238,13 +13239,9 @@ L.RestoreAction = L.EditAction.extend({
     var ov = this._overlay;
     L.DomEvent.on(ov, {
       edit: this._enableAction,
-      restore: this.disableRestore
+      restore: this._disableAction
     }, this);
     ov.restore();
-  },
-  disableRestore: function disableRestore() {
-    L.DomUtil.addClass(this._link.parentElement, 'disabled');
-    L.DomUtil.addClass(this._link, 'disabled');
   }
 });
 
@@ -13954,7 +13951,7 @@ L.distortableImage.popupBar = function (latlng, options) {
 
 L.DistortableImageOverlay.addInitHook(function () {
   /** Default actions */
-  this.ACTIONS = [L.DragAction, L.ScaleAction, L.DistortAction, L.RotateAction, L.FreeRotateAction, L.LockAction, L.OpacityAction, L.BorderAction, L.ExportAction, L.RestoreAction, L.DeleteAction];
+  this.ACTIONS = [L.DragAction, L.ScaleAction, L.DistortAction, L.RotateAction, L.FreeRotateAction, L.LockAction, L.OpacityAction, L.BorderAction, L.ExportAction, L.DeleteAction];
   var a = this.options.actions ? this.options.actions : this.ACTIONS;
   this.editing = L.distortableImage.edit(this, {
     actions: a
@@ -14665,7 +14662,7 @@ L.Utils = {
       lockImages: 'Lock Images',
       makeImageOpaque: 'Make Image Opaque',
       makeImageTransparent: 'Make Image Transparent',
-      restoreInitialImage: 'Restore Initial Image Proportions',
+      restoreImage: 'Restore Initial Image',
       rotateImage: 'Rotate Image',
       scaleImage: 'Scale Image',
       stackToFront: 'Stack to Front',

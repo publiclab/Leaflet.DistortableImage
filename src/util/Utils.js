@@ -15,7 +15,7 @@ L.Utils = {
       lockImages: 'Lock Images',
       makeImageOpaque: 'Make Image Opaque',
       makeImageTransparent: 'Make Image Transparent',
-      restoreInitialImage: 'Restore Initial Image Proportions',
+      restoreImage: 'Restore Initial Image',
       rotateImage: 'Rotate Image',
       scaleImage: 'Scale Image',
       stackToFront: 'Stack to Front',

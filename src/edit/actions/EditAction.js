@@ -85,8 +85,8 @@ L.EditAction = L.Toolbar2.Action.extend({
   },
 
   _disableAction: function() {
-    L.DomUtil.removeClass(this._link.parentElement, 'disabled');
-    L.DomUtil.removeClass(this._link, 'disabled');
+    L.DomUtil.addClass(this._link.parentElement, 'disabled');
+    L.DomUtil.addClass(this._link, 'disabled');
   },
 });
 

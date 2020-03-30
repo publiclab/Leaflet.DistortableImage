@@ -7,7 +7,7 @@ L.RestoreAction = L.EditAction.extend({
     options.toolbarIcon = {
       svg: true,
       html: 'restore',
-      tooltip: overlay.options.translation.restoreInitialImage,
+      tooltip: overlay.options.translation.restoreImage,
       className: edited && mode !== 'lock' ? '' : 'disabled',
     };
 
@@ -19,14 +19,9 @@ L.RestoreAction = L.EditAction.extend({
 
     L.DomEvent.on(ov, {
       edit: this._enableAction,
-      restore: this.disableRestore,
+      restore: this._disableAction,
     }, this);
 
     ov.restore();
-  },
-
-  disableRestore: function() {
-    L.DomUtil.addClass(this._link.parentElement, 'disabled');
-    L.DomUtil.addClass(this._link, 'disabled');
   },
 });

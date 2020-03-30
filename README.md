@@ -359,7 +359,7 @@ Defaults:
 
  Addons:
 * **L.RestoreAction**
-  * Restores the image to its initial proportions, rotation, and location on the map.
+  * Restores the image to its initial dimensions, scale, rotation, and location on the map.
 * **L.StackAction** (<kbd>q</kbd>, <kbd>a</kbd>)
   * Switch an image's overlap compared to neighboring images back and forth into view. Employs [`bringToFront()`](https://leafletjs.com/reference-1.5.0.html\#imageoverlay-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.5.0.html#imageoverlay-bringtoback) from the Leaflet API.
 * **L.GeolocateAction (WIP)**
@@ -573,6 +573,12 @@ img.rotateBy(Math.PI, 'rad');
   </ul>
 </details>
 
+<details><summary><code><b>restore()</b>: this</code></summary>
+  <ul>
+    <li>Restores the image to its initial dimensions, scale, rotation, and location on the map.</li>
+  </ul>
+</details>
+
 <details><summary><code><b>isSelected()</b>: Boolean</code></summary>
   <ul><li>Returns true if the individual image instance is selected.</li></ul>
 </details>
@@ -756,7 +762,7 @@ var translation = {
   lockImages: 'Lock Images',
   makeImageOpaque: 'Make Image Opaque',
   makeImageTransparent: 'Make Image Transparent',
-  restoreInitialImage: 'Restore Initial Image Proportions',
+  restoreImage: 'Restore Initial Image',
   rotateImage: 'Rotate Image',
   scaleImage: 'Scale Image',
   stackToFront: 'Stack to Front',

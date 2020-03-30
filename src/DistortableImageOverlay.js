@@ -409,6 +409,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
     this.edited = false;
     this.fire('restore');
+
+    return this;
   },
 
   /* Copied from Leaflet v0.7 https://github.com/Leaflet/Leaflet/blob/66282f14bcb180ec87d9818d9f3c9f75afd01b30/src/dom/DomUtil.js#L189-L199 */
