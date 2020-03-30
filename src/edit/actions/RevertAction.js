@@ -7,13 +7,13 @@ L.RevertAction = L.EditAction.extend({
       svg: true,
       html: 'restore',
       tooltip: overlay.options.translation.restoreOriginalImageDimensions,
-      className: edit._mode === 'lock' ? 'disabled' : '',
+      className: edit.getMode() === 'lock' ? 'disabled' : '',
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
   addHooks: function() {
-    this._overlay._revert();
+    this._overlay.revert();
   },
 });

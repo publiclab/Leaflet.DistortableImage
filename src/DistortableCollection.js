@@ -154,7 +154,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var layerArr = this.getLayers();
 
     return layerArr.filter(function(layer) {
-      var mode = layer.editing._mode;
+      var mode = layer.editing.getMode();
       return (this.isCollected(layer) && mode !== 'lock');
     }, this);
   },
@@ -163,7 +163,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var layerArr = this.getLayers();
 
     return layerArr.filter(function(layer) {
-      var mode = layer.editing._mode;
+      var mode = layer.editing.getMode();
       return layer !== overlay && this.isCollected(layer) && mode !== 'lock';
     }, this);
   },

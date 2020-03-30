@@ -106,31 +106,26 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
         parseInt(originalImageWidth) / parseInt(originalImageHeight);
     var imageHeight = this.options.height;
     var imageWidth = parseInt(aspectRatio * imageHeight);
-    var center = map.latLngToContainerPoint(map.getCenter());
+    var center = map.project(map.getCenter());
     var offset = L.point(imageWidth, imageHeight).divideBy(2);
-
     if (this.options.corners) {
       this._corners = this.options.corners;
     } else {
       this._corners = [
-        map.containerPointToLatLng(center.subtract(offset)),
-        map.containerPointToLatLng(
-            center.add(L.point(offset.x, -offset.y))
-        ),
-        map.containerPointToLatLng(
-            center.add(L.point(-offset.x, offset.y))
-        ),
-        map.containerPointToLatLng(center.add(offset)),
+        map.unproject(center.subtract(offset)),
+        map.unproject(center.add(L.point(offset.x, -offset.y))),
+        map.unproject(center.add(L.point(-offset.x, offset.y))),
+        map.unproject(center.add(offset)),
       ];
     }
 
-    this.setBounds(L.latLngBounds(this.getCorners()));
-
     this._initialDimensions = {
-      'height': imageHeight,
-      'width': imageWidth,
+      'center': center,
       'offset': offset,
+      'zoom': map.getZoom(),
     };
+
+    window.initialD = this._initialDimensions;
   },
 
   _singleClick: function(e) {
@@ -159,7 +154,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     if (!edit.enabled() || !this.isSelected()) { return false; }
 
     edit._removeToolbar();
-    if (edit._mode !== 'lock') {
+    if (edit.getMode() !== 'lock') {
       edit._hideMarkers();
     }
 
@@ -388,21 +383,23 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this.setCorners(transCorners);
   },
 
-  _revert: function() {
+  revert: function() {
     var map = this._map;
-    var edit = this.editing;
-    var center = map.project(this.getCenter());
+    var center = this._initialDimensions.center;
     var offset = this._initialDimensions.offset;
-    var corners = {
-      0: map.unproject(center.subtract(offset)),
-      1: map.unproject(center.add(L.point(offset.x, -offset.y))),
-      2: map.unproject(center.add(L.point(-offset.x, offset.y))),
-      3: map.unproject(center.add(offset)),
-    };
+    var zoom = this._initialDimensions.zoom;
+    var corners = [
+      center.subtract(offset),
+      center.add(L.point(offset.x, -offset.y)),
+      center.add(L.point(-offset.x, offset.y)),
+      center.add(offset),
+    ];
 
-    map.removeLayer(edit._handles[edit._mode]);
-    this.setCorners(corners);
-    map.addLayer(edit._handles[edit._mode]);
+    for (var i = 0; i < 4; i++) {
+      if (!map.unproject(corners[i], zoom).equals(this.getCorner(i))) {
+        this.setCorner(i, map.unproject(corners[i], zoom));
+      }
+    }
   },
 
   /* Copied from Leaflet v0.7 https://github.com/Leaflet/Leaflet/blob/66282f14bcb180ec87d9818d9f3c9f75afd01b30/src/dom/DomUtil.js#L189-L199 */
