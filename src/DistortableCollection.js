@@ -46,7 +46,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
       drag: this._dragMultiple,
     }, this);
 
-    L.DomEvent.on(layer._image, {
+    L.DomEvent.on(layer.getElement(), {
       mousedown: this._deselectOthers,
       /* Enable longpress for multi select for touch devices. */
       contextmenu: this._longPressMultiSelect,
@@ -61,7 +61,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
       drag: this._dragMultiple,
     }, this);
 
-    L.DomEvent.off(layer._image, {
+    L.DomEvent.off(layer.getElement(), {
       mousedown: this._deselectOthers,
       contextmenu: this._longPressMultiSelect,
     }, this);

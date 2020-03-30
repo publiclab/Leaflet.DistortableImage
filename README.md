@@ -341,28 +341,28 @@ A single toolbar instance (using `L.control`) renders the set of tools available
 
 Defaults:
 
-* **L.ScaleAction** (<kbd>s</kbd>):
-  * Sets `scale` mode.
-* **L.RotateAction** (<kbd>r</kbd>):
-  * Sets `rotate` mode.
+* **L.BorderAction** (<kbd>b</kbd>)
+  * Toggles a thin border around the overlay.
+* **L.DeleteAction** (<kbd>backscpace</kbd>, <kbd>delete</kbd>)
+  * Permanently deletes the image from the map. Uses a `confirm()` modal dialog.
+  * windows `backspace` / mac `delete`
+* **L.ExportAction** (<kbd>e</kbd>)
 * **L.FreeRotateAction** (<kbd>f</kbd>)
   * Sets `freeRotate` mode.
 * **L.LockAction** (<kbd>l</kbd>, <kbd>u</kbd>)
   * Toggles between `lock` mode and the initially set default mode (`distort` by default).
-* **L.BorderAction** (<kbd>b</kbd>)
-  * Toggles a thin border around the overlay.
 * **L.OpacityAction** (<kbd>o</kbd>)
-* **L.ExportAction** (<kbd>e</kbd>)
-* **L.DeleteAction** (<kbd>backscpace</kbd>, <kbd>delete</kbd>)
-  * Permanently deletes the image from the map. Uses a `confirm()` modal dialog.
-  * windows `backspace` / mac `delete`
+* **L.RotateAction** (<kbd>r</kbd>):
+  * Sets `rotate` mode.
+* **L.ScaleAction** (<kbd>s</kbd>):
+  * Sets `scale` mode.
 
  Addons:
+* **L.RestoreAction**
+  * Restores the image to its natural dimensions, scale, rotation, and location on the map.
 * **L.StackAction** (<kbd>q</kbd>, <kbd>a</kbd>)
   * Switch an image's overlap compared to neighboring images back and forth into view. Employs [`bringToFront()`](https://leafletjs.com/reference-1.5.0.html\#imageoverlay-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.5.0.html#imageoverlay-bringtoback) from the Leaflet API.
 * **L.GeolocateAction (WIP)**
-* **L.RevertAction (WIP)**
-  * Restores the image to its original proportions and scale, but keeps its current rotation angle and location on the map intact.
 
 ---
 
@@ -372,7 +372,7 @@ Defaults:
 
 Defaults:
 
-* **L.ExportAction** (<kbd>e</kbd>) (WIP)
+* **L.ExportAction** (<kbd>e</kbd>)
 * **L.DeleteAction** (<kbd>backscpace</kbd>, <kbd>delete</kbd>)
   * Permanently deletes a collection of images from the map.
 * **L.LockAction** (<kbd>l</kbd>)
@@ -573,6 +573,12 @@ img.rotateBy(Math.PI, 'rad');
   </ul>
 </details>
 
+<details><summary><code><b>restore()</b>: this</code></summary>
+  <ul>
+    <li>Restores the image to its natural dimensions, scale, rotation, and location on the map.</li>
+  </ul>
+</details>
+
 <details><summary><code><b>isSelected()</b>: Boolean</code></summary>
   <ul><li>Returns true if the individual image instance is selected.</li></ul>
 </details>
@@ -756,7 +762,7 @@ var translation = {
   lockImages: 'Lock Images',
   makeImageOpaque: 'Make Image Opaque',
   makeImageTransparent: 'Make Image Transparent',
-  restoreOriginalImageDimensions: 'Restore Original Image Dimensions',
+  restoreImage: 'Restore Natural Image',
   rotateImage: 'Rotate Image',
   scaleImage: 'Scale Image',
   stackToFront: 'Stack to Front',
