@@ -358,10 +358,10 @@ Defaults:
   * Sets `scale` mode.
 
  Addons:
-* **L.StackAction** (<kbd>q</kbd>, <kbd>a</kbd>)
-  * Switch an image's overlap compared to neighboring images back and forth into view. Employs [`bringToFront()`](https://leafletjs.com/reference-1.5.0.html\#imageoverlay-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.5.0.html#imageoverlay-bringtoback) from the Leaflet API.
 * **L.RestoreAction**
   * Restores the image to its initial proportions, rotation, and location on the map.
+* **L.StackAction** (<kbd>q</kbd>, <kbd>a</kbd>)
+  * Switch an image's overlap compared to neighboring images back and forth into view. Employs [`bringToFront()`](https://leafletjs.com/reference-1.5.0.html\#imageoverlay-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.5.0.html#imageoverlay-bringtoback) from the Leaflet API.
 * **L.GeolocateAction (WIP)**
 
 ---
@@ -372,7 +372,7 @@ Defaults:
 
 Defaults:
 
-* **L.ExportAction** (<kbd>e</kbd>) (WIP)
+* **L.ExportAction** (<kbd>e</kbd>)
 * **L.DeleteAction** (<kbd>backscpace</kbd>, <kbd>delete</kbd>)
   * Permanently deletes a collection of images from the map.
 * **L.LockAction** (<kbd>l</kbd>)
