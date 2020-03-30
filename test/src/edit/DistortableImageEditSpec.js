@@ -138,7 +138,6 @@ describe('L.DistortableImage.Edit', function() {
 
     it('Should remove an image\'s individual toolbar instance regardless of lock handles', function() {
       var edit = overlay.editing;
-      var img = overlay.getElement();
 
       edit.enable();
       // switch to lock handles
@@ -233,7 +232,7 @@ describe('L.DistortableImage.Edit', function() {
       expect(edit.setMode('lock')).to.be.false;
     });
 
-    it('Will return false if the passed mode is already the images mode', function() {
+    it('Will return false if the passed mode is already the image\'s mode', function() {
       var edit = overlay.editing;
       overlay.select();
       expect(edit.setMode('lock')).to.be.ok;

@@ -57,12 +57,9 @@ L.EditAction = L.Toolbar2.Action.extend({
     }
 
     L.DomEvent.on(this._link, 'click', this.enable, this);
-    L.DomEvent.on(this._overlay, 'edit', () => {
+    L.DomEvent.on(this._overlay, 'update', () => {
       var match = this._link.innerHTML.match(/xlink:href="#restore"/);
-      if (match && match.length === 1) {
-        L.DomUtil.removeClass(this._link.parentElement, 'disabled');
-        L.DomUtil.removeClass(this._link, 'disabled');
-      }
+      if (match && match.length === 1) { this._enableAction(); }
     });
 
     /* Add secondary toolbar */
@@ -80,6 +77,16 @@ L.EditAction = L.Toolbar2.Action.extend({
     el.innerHTML = new L.ToolbarIconSet().render();
 
     document.querySelector('.leaflet-marker-pane').appendChild(el);
+  },
+
+  _enableAction: function() {
+    L.DomUtil.removeClass(this._link.parentElement, 'disabled');
+    L.DomUtil.removeClass(this._link, 'disabled');
+  },
+
+  _disableAction: function() {
+    L.DomUtil.removeClass(this._link.parentElement, 'disabled');
+    L.DomUtil.removeClass(this._link, 'disabled');
   },
 });
 

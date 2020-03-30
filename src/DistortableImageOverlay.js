@@ -154,7 +154,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     if (!edit.enabled() || !this.isSelected()) { return false; }
 
     edit._removeToolbar();
-    if (edit.getMode() !== 'lock') {
+    if (edit._mode !== 'lock') {
       edit._hideMarkers();
     }
 
@@ -204,6 +204,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       edit._updateToolbarPos();
     }
 
+    this.edited = true;
+
     return this;
   },
 
@@ -248,6 +250,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       edit._updateToolbarPos();
     }
 
+    this.edited = true;
+
     return this;
   },
 
@@ -279,6 +283,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     if (edit.toolbar && edit.toolbar instanceof L.DistortableImage.PopupBar) {
       edit._updateToolbarPos();
     }
+
+    this.edited = true;
 
     return this;
   },
@@ -400,6 +406,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
         this.setCorner(i, map.unproject(corners[i], zoom));
       }
     }
+
+    this.edited = false;
+    this.fire('restore');
   },
 
   /* Copied from Leaflet v0.7 https://github.com/Leaflet/Leaflet/blob/66282f14bcb180ec87d9818d9f3c9f75afd01b30/src/dom/DomUtil.js#L189-L199 */
@@ -482,15 +491,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       return agg.add(map.project(corner));
     }, L.point(0, 0));
     return map.unproject(reduce.divideBy(4));
-  },
-
-  _calcCenterTwoCornerPoints: function(topLeft, topRight) {
-    var toolPoint = {x: '', y: ''};
-
-    toolPoint.x = topRight.x + (topLeft.x - topRight.x) / 2;
-    toolPoint.y = topRight.y + (topLeft.y - topRight.y) / 2;
-
-    return toolPoint;
   },
 
   _calculateProjectiveTransform: function(latLngToCartesian) {

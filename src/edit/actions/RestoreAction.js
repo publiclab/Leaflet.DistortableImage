@@ -1,11 +1,14 @@
 L.RestoreAction = L.EditAction.extend({
   initialize: function(map, overlay, options) {
+    var mode = L.Utils.getNestedVal(overlay, 'editing', '_mode');
+    var edited = overlay.edited;
+
     options = options || {};
     options.toolbarIcon = {
       svg: true,
       html: 'restore',
-      tooltip: overlay.options.translation.restoreOriginalImageDimensions,
-      className: 'disabled',
+      tooltip: overlay.options.translation.restoreInitialImage,
+      className: edited && mode !== 'lock' ? '' : 'disabled',
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -13,14 +16,17 @@ L.RestoreAction = L.EditAction.extend({
 
   addHooks: function() {
     var ov = this._overlay;
-    var restoreTool = this._link;
-    L.DomUtil.addClass(restoreTool.parentElement, 'disabled');
-    L.DomUtil.addClass(restoreTool, 'disabled');
 
-    L.DomEvent.on(ov, 'edit', () => {
-      L.DomUtil.removeClass(restoreTool.parentElement, 'disabled');
-      L.DomUtil.removeClass(restoreTool, 'disabled');
-    });
+    L.DomEvent.on(ov, {
+      edit: this._enableAction,
+      restore: this.disableRestore,
+    }, this);
+
     ov.restore();
+  },
+
+  disableRestore: function() {
+    L.DomUtil.addClass(this._link.parentElement, 'disabled');
+    L.DomUtil.addClass(this._link, 'disabled');
   },
 });
