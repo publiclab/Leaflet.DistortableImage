@@ -57,6 +57,13 @@ L.EditAction = L.Toolbar2.Action.extend({
     }
 
     L.DomEvent.on(this._link, 'click', this.enable, this);
+    L.DomEvent.on(this._overlay, 'edit', () => {
+      var match = this._link.innerHTML.match(/xlink:href="#restore"/);
+      if (match && match.length === 1) {
+        L.DomUtil.removeClass(this._link.parentElement, 'disabled');
+        L.DomUtil.removeClass(this._link, 'disabled');
+      }
+    });
 
     /* Add secondary toolbar */
     this._addSubToolbar(toolbar, this._icon, args);

@@ -63,7 +63,7 @@
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "9f1a3ce486dd0351767a";
+/******/ 	var hotCurrentHash = "c9001b780d98c67208d8";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -12876,6 +12876,8 @@ L.EditAction = L.Toolbar2.Action.extend({
     this._injectIconSet();
   },
   _createIcon: function _createIcon(toolbar, container, args) {
+    var _this = this;
+
     var iconOptions = this.options.toolbarIcon;
     var className = iconOptions.className;
     var edit = this._overlay.editing;
@@ -12912,6 +12914,14 @@ L.EditAction = L.Toolbar2.Action.extend({
     }
 
     L.DomEvent.on(this._link, 'click', this.enable, this);
+    L.DomEvent.on(this._overlay, 'edit', function () {
+      var match = _this._link.innerHTML.match(/xlink:href="#restore"/);
+
+      if (match && match.length === 1) {
+        L.DomUtil.removeClass(_this._link.parentElement, 'disabled');
+        L.DomUtil.removeClass(_this._link, 'disabled');
+      }
+    });
     /* Add secondary toolbar */
 
     this._addSubToolbar(toolbar, this._icon, args);
@@ -13209,18 +13219,25 @@ L.OpacityAction = L.EditAction.extend({
 
 L.RestoreAction = L.EditAction.extend({
   initialize: function initialize(map, overlay, options) {
-    var edit = overlay.editing;
     options = options || {};
     options.toolbarIcon = {
       svg: true,
       html: 'restore',
       tooltip: overlay.options.translation.restoreOriginalImageDimensions,
-      className: edit._mode === 'lock' ? 'disabled' : ''
+      className: 'disabled'
     };
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
   addHooks: function addHooks() {
-    this._overlay.restore();
+    var ov = this._overlay;
+    var restoreTool = this._link;
+    L.DomUtil.addClass(restoreTool.parentElement, 'disabled');
+    L.DomUtil.addClass(restoreTool, 'disabled');
+    L.DomEvent.on(ov, 'edit', function () {
+      L.DomUtil.removeClass(restoreTool.parentElement, 'disabled');
+      L.DomUtil.removeClass(restoreTool, 'disabled');
+    });
+    ov.restore();
   }
 });
 
@@ -14647,7 +14664,7 @@ L.Utils = {
       lockImages: 'Lock Images',
       makeImageOpaque: 'Make Image Opaque',
       makeImageTransparent: 'Make Image Transparent',
-      restoreOriginalImageDimensions: 'Restore Original Image Dimensions',
+      restoreInitialImage: 'Restore Initial Image Proportions',
       rotateImage: 'Rotate Image',
       scaleImage: 'Scale Image',
       stackToFront: 'Stack to Front',
