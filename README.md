@@ -352,8 +352,6 @@ Defaults:
 * **L.LockAction** (<kbd>l</kbd>, <kbd>u</kbd>)
   * Toggles between `lock` mode and the initially set default mode (`distort` by default).
 * **L.OpacityAction** (<kbd>o</kbd>)
-* **L.RevertAction**
-  * Restores the image to its original proportions and scale, but keeps its current rotation angle and location on the map intact.
 * **L.RotateAction** (<kbd>r</kbd>):
   * Sets `rotate` mode.
 * **L.ScaleAction** (<kbd>s</kbd>):
@@ -362,6 +360,8 @@ Defaults:
  Addons:
 * **L.StackAction** (<kbd>q</kbd>, <kbd>a</kbd>)
   * Switch an image's overlap compared to neighboring images back and forth into view. Employs [`bringToFront()`](https://leafletjs.com/reference-1.5.0.html\#imageoverlay-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.5.0.html#imageoverlay-bringtoback) from the Leaflet API.
+* **L.RestoreAction**
+  * Restores the image to its initial proportions, rotation, and location on the map.
 * **L.GeolocateAction (WIP)**
 
 ---

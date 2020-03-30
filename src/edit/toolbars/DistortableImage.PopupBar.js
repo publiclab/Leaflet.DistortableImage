@@ -48,12 +48,12 @@ L.DistortableImageOverlay.addInitHook(function() {
     L.ScaleAction,
     L.DistortAction,
     L.RotateAction,
-    L.RevertAction,
     L.FreeRotateAction,
     L.LockAction,
     L.OpacityAction,
     L.BorderAction,
     L.ExportAction,
+    L.RestoreAction,
     L.DeleteAction,
   ];
 

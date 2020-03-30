@@ -383,7 +383,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this.setCorners(transCorners);
   },
 
-  revert: function() {
+  restore: function() {
     var map = this._map;
     var center = this._initialDimensions.center;
     var offset = this._initialDimensions.offset;

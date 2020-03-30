@@ -63,7 +63,7 @@
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "0a45a2ef791274d4d82e";
+/******/ 	var hotCurrentHash = "b9a9dfe6058598fc8458";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -11360,7 +11360,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
     this.setCorners(transCorners);
   },
-  revert: function revert() {
+  restore: function restore() {
     var map = this._map;
     var center = this._initialDimensions.center;
     var offset = this._initialDimensions.offset;
@@ -13200,14 +13200,14 @@ L.OpacityAction = L.EditAction.extend({
 
 /***/ }),
 
-/***/ "./src/edit/actions/RevertAction.js":
-/*!******************************************!*\
-  !*** ./src/edit/actions/RevertAction.js ***!
-  \******************************************/
+/***/ "./src/edit/actions/RestoreAction.js":
+/*!*******************************************!*\
+  !*** ./src/edit/actions/RestoreAction.js ***!
+  \*******************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-L.RevertAction = L.EditAction.extend({
+L.RestoreAction = L.EditAction.extend({
   initialize: function initialize(map, overlay, options) {
     var edit = overlay.editing;
     options = options || {};
@@ -13215,12 +13215,12 @@ L.RevertAction = L.EditAction.extend({
       svg: true,
       html: 'restore',
       tooltip: overlay.options.translation.restoreOriginalImageDimensions,
-      className: edit.getMode() === 'lock' ? 'disabled' : ''
+      className: edit._mode === 'lock' ? 'disabled' : ''
     };
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
   addHooks: function addHooks() {
-    this._overlay.revert();
+    this._overlay.restore();
   }
 });
 
@@ -13930,7 +13930,7 @@ L.distortableImage.popupBar = function (latlng, options) {
 
 L.DistortableImageOverlay.addInitHook(function () {
   /** Default actions */
-  this.ACTIONS = [L.DragAction, L.ScaleAction, L.DistortAction, L.RotateAction, L.RevertAction, L.FreeRotateAction, L.LockAction, L.OpacityAction, L.BorderAction, L.ExportAction, L.DeleteAction];
+  this.ACTIONS = [L.DragAction, L.ScaleAction, L.DistortAction, L.RotateAction, L.FreeRotateAction, L.LockAction, L.OpacityAction, L.BorderAction, L.ExportAction, L.RestoreAction, L.DeleteAction];
   var a = this.options.actions ? this.options.actions : this.ACTIONS;
   this.editing = L.distortableImage.edit(this, {
     actions: a
@@ -14681,9 +14681,9 @@ L.Utils = {
 /***/ }),
 
 /***/ 1:
-/*!***************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** multi (webpack)-dev-server/client?http://localhost:8080 (webpack)/hot/dev-server.js ./src/util/DomUtil.js ./src/util/IconUtil.js ./src/util/ImageUtil.js ./src/util/MatrixUtil.js ./src/util/TrigUtil.js ./src/util/Utils.js ./src/DistortableImageOverlay.js ./src/DistortableCollection.js ./src/edit/getEXIFdata.js ./src/edit/handles/EditHandle.js ./src/edit/handles/DistortHandle.js ./src/edit/handles/DragHandle.js ./src/edit/handles/FreeRotateHandle.js ./src/edit/handles/LockHandle.js ./src/edit/handles/RotateHandle.js ./src/edit/handles/ScaleHandle.js ./src/iconsets/IconSet.js ./src/iconsets/KeymapperIconSet.js ./src/iconsets/ToolbarIconSet.js ./src/edit/actions/EditAction.js ./src/edit/actions/BorderAction.js ./src/edit/actions/DeleteAction.js ./src/edit/actions/DistortAction.js ./src/edit/actions/DragAction.js ./src/edit/actions/ExportAction.js ./src/edit/actions/FreeRotateAction.js ./src/edit/actions/GeolocateAction.js ./src/edit/actions/LockAction.js ./src/edit/actions/OpacityAction.js ./src/edit/actions/RevertAction.js ./src/edit/actions/RotateAction.js ./src/edit/actions/ScaleAction.js ./src/edit/actions/StackAction.js ./src/edit/toolbars/DistortableImage.PopupBar.js ./src/edit/toolbars/DistortableImage.ControlBar.js ./src/edit/DistortableImage.Edit.js ./src/edit/DistortableCollection.Edit.js ./src/components/DistortableImage.Keymapper.js ./src/mapmixins/DoubleClickZoom.js ./src/mapmixins/BoxCollector.js ./src/mapmixins/DoubleClickLabels.js ./src/mapmixins/MapMixins.js ***!
-  \***************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*!****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** multi (webpack)-dev-server/client?http://localhost:8080 (webpack)/hot/dev-server.js ./src/util/DomUtil.js ./src/util/IconUtil.js ./src/util/ImageUtil.js ./src/util/MatrixUtil.js ./src/util/TrigUtil.js ./src/util/Utils.js ./src/DistortableImageOverlay.js ./src/DistortableCollection.js ./src/edit/getEXIFdata.js ./src/edit/handles/EditHandle.js ./src/edit/handles/DistortHandle.js ./src/edit/handles/DragHandle.js ./src/edit/handles/FreeRotateHandle.js ./src/edit/handles/LockHandle.js ./src/edit/handles/RotateHandle.js ./src/edit/handles/ScaleHandle.js ./src/iconsets/IconSet.js ./src/iconsets/KeymapperIconSet.js ./src/iconsets/ToolbarIconSet.js ./src/edit/actions/EditAction.js ./src/edit/actions/BorderAction.js ./src/edit/actions/DeleteAction.js ./src/edit/actions/DistortAction.js ./src/edit/actions/DragAction.js ./src/edit/actions/ExportAction.js ./src/edit/actions/FreeRotateAction.js ./src/edit/actions/GeolocateAction.js ./src/edit/actions/LockAction.js ./src/edit/actions/OpacityAction.js ./src/edit/actions/RestoreAction.js ./src/edit/actions/RotateAction.js ./src/edit/actions/ScaleAction.js ./src/edit/actions/StackAction.js ./src/edit/toolbars/DistortableImage.PopupBar.js ./src/edit/toolbars/DistortableImage.ControlBar.js ./src/edit/DistortableImage.Edit.js ./src/edit/DistortableCollection.Edit.js ./src/components/DistortableImage.Keymapper.js ./src/mapmixins/DoubleClickZoom.js ./src/mapmixins/BoxCollector.js ./src/mapmixins/DoubleClickLabels.js ./src/mapmixins/MapMixins.js ***!
+  \****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -14718,7 +14718,7 @@ __webpack_require__(/*! ./src/edit/actions/FreeRotateAction.js */"./src/edit/act
 __webpack_require__(/*! ./src/edit/actions/GeolocateAction.js */"./src/edit/actions/GeolocateAction.js");
 __webpack_require__(/*! ./src/edit/actions/LockAction.js */"./src/edit/actions/LockAction.js");
 __webpack_require__(/*! ./src/edit/actions/OpacityAction.js */"./src/edit/actions/OpacityAction.js");
-__webpack_require__(/*! ./src/edit/actions/RevertAction.js */"./src/edit/actions/RevertAction.js");
+__webpack_require__(/*! ./src/edit/actions/RestoreAction.js */"./src/edit/actions/RestoreAction.js");
 __webpack_require__(/*! ./src/edit/actions/RotateAction.js */"./src/edit/actions/RotateAction.js");
 __webpack_require__(/*! ./src/edit/actions/ScaleAction.js */"./src/edit/actions/ScaleAction.js");
 __webpack_require__(/*! ./src/edit/actions/StackAction.js */"./src/edit/actions/StackAction.js");
