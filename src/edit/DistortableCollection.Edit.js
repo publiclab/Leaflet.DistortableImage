@@ -305,7 +305,9 @@ L.DistortableCollection.Edit = L.Handler.extend({
         self.updateInterval = setInterval(function intervalUpdater() {
           var request = new XMLHttpRequest();
           request.onload = function(event) {
-            opts.updater(JSON.parse(this.response));
+            if (request.status === 200) {
+              opts.updater(JSON.parse(this.response));
+            }
           };
           request.open('GET', statusUrl + '?' + Date.now());
           request.send();
@@ -320,7 +322,9 @@ L.DistortableCollection.Edit = L.Handler.extend({
         form.append('upload', true);
         var request = new XMLHttpRequest();
         request.onload = function(event) {
-          opts.handleStatusRes(JSON.parse(this.response));
+          if (request.status === 200) {
+            opts.handleStatusRes(JSON.parse(this.response));
+          }
         };
         request.open('POST', opts.exportStartUrl);
         request.send(form);
