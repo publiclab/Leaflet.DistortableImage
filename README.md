@@ -259,7 +259,7 @@ Options available to pass during `L.DistortableCollection` initialization:
 
 ### ✤ Actions
 
-* `actions` (*optional*, default: [`L.ExportAction`, `L.DeleteAction`, `L.LockAction`, `L.UnlocksAction`], value: *array*)
+* `actions` (*optional*, default: [`L.ExportAction`, `L.DeleteAction`, `L.LockAction`, `L.UnlockAction`], value: *array*)
 
 Overrwrite the default toolbar actions for an image collection's `L.Control` toolbar. Reference the available values [here](#Multiple-Image-Interface).
 
@@ -377,7 +377,7 @@ Defaults:
   * Permanently deletes a collection of images from the map.
 * **L.LockAction** (<kbd>l</kbd>)
   * Sets `lock` mode for a collection of images.
-* **L.UnlocksAction** (<kbd>u</kbd>)
+* **L.UnlockAction** (<kbd>u</kbd>)
   * Unsets `lock` mode for a collection of images.
 
 ## Quick API Reference
@@ -586,7 +586,7 @@ img.rotateBy(Math.PI, 'rad');
 <details><summary><code><b>select()</b>: this</code></summary>
   <ul>
     <li>Selects an individual image instance.</li>
-    <li>If its editing handler is disabled or the multiple image interface is on (<code>imgGroup.anyCollected()</code> returns true), instead just returns false.</li>
+    <li>Returns early if its editing handler is disabled or the multiple image interface is on (<code>imgGroup.anyCollected()</code> returns true).</li>
     <li>Internally invoked on image <code>click</code>.</li>
   </ul>
 </details>
@@ -594,7 +594,7 @@ img.rotateBy(Math.PI, 'rad');
 <details><summary><code><b>deselect()</b>: this</code></summary>
   <ul>
     <li>Deselects an individual image instance.</li>
-    <li>If its editing handler is disabled or it is not currently selected, instead just returns false.</li>
+    <li>Returns early if its editing handler is disabled.</li>
     <li>Internally invoked on map <code>click</code> and image collect (<kbd>shift</kbd> + <code>click</code>).</li>
   </ul>
 </details>
