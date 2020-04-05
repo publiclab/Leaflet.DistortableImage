@@ -1,11 +1,11 @@
 {
   "name": "leaflet-distortableimage",
-  "version": "0.12.6",
+  "version": "0.14.6",
   "description": "Leaflet plugin enabling image overlays to be distorted, stretched, and warped (built for Public Lab's MapKnitter: http://publiclab.org).",
   "scripts": {
     "build": "cross-env NODE_ENV=production grunt build",
     "dev": "npm run build; cross-env NODE_ENV=development webpack-dev-server",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "grunt test",
     "linter": "./node_modules/.bin/eslint ."
   },
   "browserslist": "> 0.2%, IE 9, last 2 versions",
@@ -50,7 +50,7 @@
     "eslint": "^6.4.0",
     "eslint-config-google": "^0.14.0",
     "glob": "^7.1.6",
-    "grunt": "^1.0.3",
+    "grunt": "^1.1.0",
     "grunt-cli": "^1.3.2",
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-jshint": "^2.0.0",
@@ -58,8 +58,8 @@
     "grunt-karma": "^3.0.1",
     "grunt-svg-sprite": "^1.5.0",
     "grunt-svgmin": "^6.0.0",
-    "husky": "^4.2.1",
     "grunt-webpack": "^3.1.3",
+    "husky": "^4.2.1",
     "karma": "^4.3.0",
     "karma-babel-preprocessor": "^8.0.1",
     "karma-coverage": "^2.0.1",

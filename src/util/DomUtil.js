@@ -31,14 +31,6 @@ L.DomUtil = L.extend(L.DomUtil, {
     return str;
   },
 
-  getRotateString: function(angle, units) {
-    var is3d = L.Browser.webkit3d || L.Browser.gecko3d || L.Browser.ie3d;
-    var open = 'rotate' + (is3d ? '3d' : '') + '(';
-    var rotateString = (is3d ? '0, 0, 1, ' : '') + angle + units;
-
-    return open + rotateString + ')';
-  },
-
   toggleClass: function(el, className) {
     var c = className;
     return this.hasClass(el, c) ?

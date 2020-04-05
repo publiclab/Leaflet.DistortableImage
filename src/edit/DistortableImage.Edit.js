@@ -43,7 +43,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this.parentGroup = overlay.eP ? overlay.eP : false;
 
-    L.DomEvent.on(overlay._image, {
+    L.DomEvent.on(overlay.getElement(), {
       dblclick: this.nextMode,
     }, this);
 
@@ -57,8 +57,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     var eP = this.parentGroup;
 
     // First, check if dragging exists - it may be off due to locking
-    if (this.dragging) { this.dragging.disable(); }
-    delete this.dragging;
+    this._disableDragging();
 
     if (this.toolbar) { this._removeToolbar(); }
 
@@ -76,7 +75,7 @@ L.DistortableImage.Edit = L.Handler.extend({
       eP.editing._removeToolbar();
     }
 
-    L.DomEvent.off(overlay._image, {
+    L.DomEvent.off(overlay.getElement(), {
       dblclick: this.nextMode,
     }, this);
 
@@ -266,6 +265,13 @@ L.DistortableImage.Edit = L.Handler.extend({
     };
   },
 
+  _disableDragging: function() {
+    if (this.dragging) {
+      this.dragging.disable();
+    }
+    delete this.dragging;
+  },
+
   _dragMode: function() {
     if (!this.hasTool(L.DragAction)) { return; }
     this.setMode('drag');
@@ -357,6 +363,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   _getExport: function() {
     var overlay = this._overlay;
     var map = overlay._map;
+    var img = overlay.getElement();
 
     if (!this.hasTool(L.ExportAction)) { return; }
 
@@ -408,7 +415,7 @@ L.DistortableImage.Edit = L.Handler.extend({
       }
     };
 
-    downloadable.src = overlay.options.fullResolutionSrc || overlay._image.src;
+    downloadable.src = overlay.options.fullResolutionSrc || img.src;
   },
 
   _stackUp: function() {
@@ -458,10 +465,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     map.removeLayer(this._handles[m]);
 
     this._mode = 'lock';
-    if (this.dragging) {
-      this.dragging.disable();
-      delete this.dragging;
-    }
+    this._disableDragging();
     map.addLayer(this._handles[this._mode]);
     this._refresh();
   },

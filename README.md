@@ -71,6 +71,7 @@ map.whenReady(function() {
 * [editable](#editable)
 * [fullResolutionSrc](#Full-resolution%20download)
 * [mode](#mode)
+* [rotation](#rotation)
 * [selected](#selected)
 * [suppressToolbar](#Suppress-Toolbar)
 
@@ -173,6 +174,20 @@ In the below example, the image will be initialiazed with "freeRotate" handles:
 ```js
 img = L.distortableImageOverlay('example.jpg', {
   mode: 'freeRotate',
+}).addTo(map);
+```
+
+### Rotation
+
+`rotation` (*optional*, default: {deg: 0, rad: 0}, value: *hash*)
+
+Set the initial rotation angle of your image, in degrees or radians. Set the unit as the key, and the angle as the value.
+
+```js
+img = L.distortableImageOverlay('example.jpg', {
+  rotation: {
+    deg: 180
+  },
 }).addTo(map);
 ```
 
@@ -326,28 +341,28 @@ A single toolbar instance (using `L.control`) renders the set of tools available
 
 Defaults:
 
-* **L.ScaleAction** (<kbd>s</kbd>):
-  * Sets `scale` mode.
-* **L.RotateAction** (<kbd>r</kbd>):
-  * Sets `rotate` mode.
+* **L.BorderAction** (<kbd>b</kbd>)
+  * Toggles a thin border around the overlay.
+* **L.DeleteAction** (<kbd>backscpace</kbd>, <kbd>delete</kbd>)
+  * Permanently deletes the image from the map. Uses a `confirm()` modal dialog.
+  * windows `backspace` / mac `delete`
+* **L.ExportAction** (<kbd>e</kbd>)
 * **L.FreeRotateAction** (<kbd>f</kbd>)
   * Sets `freeRotate` mode.
 * **L.LockAction** (<kbd>l</kbd>, <kbd>u</kbd>)
   * Toggles between `lock` mode and the initially set default mode (`distort` by default).
-* **L.BorderAction** (<kbd>b</kbd>)
-  * Toggles a thin border around the overlay.
 * **L.OpacityAction** (<kbd>o</kbd>)
-* **L.ExportAction** (<kbd>e</kbd>)
-* **L.DeleteAction** (<kbd>backscpace</kbd>, <kbd>delete</kbd>)
-  * Permanently deletes the image from the map. Uses a `confirm()` modal dialog.
-  * windows `backspace` / mac `delete`
+* **L.RotateAction** (<kbd>r</kbd>):
+  * Sets `rotate` mode.
+* **L.ScaleAction** (<kbd>s</kbd>):
+  * Sets `scale` mode.
 
  Addons:
+* **L.RestoreAction**
+  * Restores the image to its natural dimensions, scale, rotation, and location on the map.
 * **L.StackAction** (<kbd>q</kbd>, <kbd>a</kbd>)
   * Switch an image's overlap compared to neighboring images back and forth into view. Employs [`bringToFront()`](https://leafletjs.com/reference-1.5.0.html\#imageoverlay-bringtofront) and [`bringToBack()`](https://leafletjs.com/reference-1.5.0.html#imageoverlay-bringtoback) from the Leaflet API.
 * **L.GeolocateAction (WIP)**
-* **L.RevertAction (WIP)**
-  * Restores the image to its original proportions and scale, but keeps its current rotation angle and location on the map intact.
 
 ---
 
@@ -357,7 +372,7 @@ Defaults:
 
 Defaults:
 
-* **L.ExportAction** (<kbd>e</kbd>) (WIP)
+* **L.ExportAction** (<kbd>e</kbd>)
 * **L.DeleteAction** (<kbd>backscpace</kbd>, <kbd>delete</kbd>)
   * Permanently deletes a collection of images from the map.
 * **L.LockAction** (<kbd>l</kbd>)
@@ -509,6 +524,46 @@ img.setCorners(scaledCorners);
   <ul><li>Returns the center (<a href="http://en.wikipedia.org/wiki/Centroid">centroid</a>) of the image.</li></ul>
 </details>
 
+<details><summary><code><b>getAngle(<i>[unit = 'deg']</i> &#60;string>)</b>: Number</code></summary>
+  <ul>
+    <li>Returns the image's rotation angle in <code>units</code>, or in degrees by default.
+    <li><code>Number</code> will always be >= 0.</li>
+    <li><code>unit</code> (<i>optional</i>, default: 'deg', value: <i>string 'deg'|'rad'</i>) <br>
+  ex.
+<pre>
+img.getAngle();
+img.getAngle('deg');
+img.getAngle('rad');
+</pre></li>
+  </ul>
+</details>
+
+<details><summary><code><b>setAngle(<i>angle</i> &#60;number>, <i>[unit = 'deg']</i> &#60;string>)</b>: this</code></summary>
+  <ul>
+    <li>Sets the image's rotation to <code>angle</code> in <code>units</code>, or in degrees by default.</li>
+    <li><code>unit</code> (<i>optional</i>, default: 'deg', value: <i>string 'deg'|'rad'</i>) <br>
+  ex.
+<pre>
+img.setAngle(180);
+img.setAngle(180, 'deg');
+img.setAngle(Math.PI, 'rad');
+</pre></li>
+  </ul>
+</details>
+
+<details><summary><code><b>rotateBy(<i>angle</i> &#60;number>, <i>[unit = 'deg']</i> &#60;string>)</b>: this</code></summary>
+  <ul>
+    <li>Rotates the image relative to its current angle by <code>angle</code> in <code>units</code>, or in degrees by default.</li>
+    <li><code>unit</code> (<i>optional</i>, default: 'deg', value: <i>string 'deg'|'rad'</i>) <br>
+  ex.
+<pre>
+img.rotateBy(180);
+img.rotateBy(180, 'deg');
+img.rotateBy(Math.PI, 'rad');
+</pre></li>
+  </ul>
+</details>
+
 <details><summary><code><b>scaleBy(<i>factor</i> &#60;number>)</b>: this</code></summary>
   <ul>
     <li>Scales the image by the given factor and calls <code>#setCorners</code>.</li>
@@ -518,8 +573,10 @@ img.setCorners(scaledCorners);
   </ul>
 </details>
 
-<details><summary><code><b>rotateBy(<i>rad</i> &#60;number>)</b>: this</code></summary>
-  <ul><li>Rotates the image by the given radian angle and calls <code>#setCorners</code>.</li></ul>
+<details><summary><code><b>restore()</b>: this</code></summary>
+  <ul>
+    <li>Restores the image to its natural dimensions, scale, rotation, and location on the map.</li>
+  </ul>
 </details>
 
 <details><summary><code><b>isSelected()</b>: Boolean</code></summary>
@@ -691,30 +748,28 @@ These are the defaults:
 
 ```javascript
 var translation = {
-    deleteImage: 'Delete Image',
-    deleteImages: 'Delete Images',
-    distortImage: 'Distort Image',
-    dragImage: 'Drag Image',
-    exportImage: 'Export Image',
-    exportImages: 'Export Images',
-    removeBorder: 'Remove Border',
-    addBorder: 'Add Border',
-    freeRotateImage: 'Free rotate Image',
-    geolocateImage: 'Geolocate Image',
-    lockMode: 'Lock Mode',
-    lockImages: 'Lock Images',
-    makeImageOpaque: 'Make Image Opaque',
-    makeImageTransparent: 'Make Image Transparent',
-    restoreOriginalImageDimensions: 'Restore Original Image Dimensions',
-    rotateImage: 'Rotate Image',
-    scaleImage: 'Scale Image',
-    stackToFront: 'Stack to Front',
-    stackToBack: 'Stack to Back',
-    unlockImages: 'Unlock Images',
-    confirmImageDelete:
-    'Are you sure? This image will be permanently deleted from the map.',
-    confirmImagesDeletes:
-    'images will be permanently deleted from the map. Do you really want to do this?',
+  deleteImage: 'Delete Image',
+  deleteImages: 'Delete Images',
+  distortImage: 'Distort Image',
+  dragImage: 'Drag Image',
+  exportImage: 'Export Image',
+  exportImages: 'Export Images',
+  removeBorder: 'Remove Border',
+  addBorder: 'Add Border',
+  freeRotateImage: 'Free rotate Image',
+  geolocateImage: 'Geolocate Image',
+  lockMode: 'Lock Mode',
+  lockImages: 'Lock Images',
+  makeImageOpaque: 'Make Image Opaque',
+  makeImageTransparent: 'Make Image Transparent',
+  restoreImage: 'Restore Natural Image',
+  rotateImage: 'Rotate Image',
+  scaleImage: 'Scale Image',
+  stackToFront: 'Stack to Front',
+  stackToBack: 'Stack to Back',
+  unlockImages: 'Unlock Images',
+  confirmImageDelete: 'Are you sure? This image will be permanently deleted from the map.',
+  confirmImagesDeletes: 'Are you sure? These images will be permanently deleted from the map.',
 };
 ```
 
@@ -736,29 +791,27 @@ var translation = {
 
 **L.DistortableImageOverlay**
 
-```javascript
+```js
 img = L.distortableImageOverlay('example.jpg', {
-    selected: true,
-    fullResolutionSrc: 'large.jpg',
-    translation: {
-        deleteImage: 'Obriši sliku',
-        distortImage: 'Izobliči sliku',
-        dragImage: 'Pomjeri sliku',
-        // ...
-    }
-}
+  translation: {
+    deleteImage: 'Obriši sliku',
+    distortImage: 'Izobliči sliku',
+    dragImage: 'Pomjeri sliku',
+    // ...
+  },
+}).addTo(map);
 ```
 
 **L.DistortableCollection**
 
 ```javascript
 imgGroup = L.distortableCollection({
-    translation: {
-        deleteImages: 'Obriši slike',
-        exportImages: 'Izvezi slike',
-        // ...
-    }
-})
+  translation: {
+    deleteImages: 'Obriši slike',
+    exportImages: 'Izvezi slike',
+    // ...
+  },
+}).addTo(map);
 ```
 
 ## Contributing

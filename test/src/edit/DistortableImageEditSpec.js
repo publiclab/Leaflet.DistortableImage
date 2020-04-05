@@ -1,12 +1,12 @@
 describe('L.DistortableImage.Edit', function() {
   var map;
-  var overlay;
+  var ov;
   var ov2;
 
   beforeEach(function(done) {
     map = L.map(L.DomUtil.create('div', '', document.body)).setView([41.7896, -87.5996], 15);
 
-    overlay = L.distortableImageOverlay('/examples/example.png', {
+    ov = L.distortableImageOverlay('/examples/example.png', {
       corners: [
         L.latLng(41.7934, -87.6052),
         L.latLng(41.7934, -87.5852),
@@ -26,27 +26,27 @@ describe('L.DistortableImage.Edit', function() {
     }).addTo(map);
 
     /* Forces the image to load before any tests are run. */
-    L.DomEvent.on(ov2._image, 'load', function() { done(); });
+    L.DomEvent.on(ov2.getElement(), 'load', function() { done(); });
 
     afterEach(function() {
-      L.DomUtil.remove(overlay);
+      L.DomUtil.remove(ov);
       L.DomUtil.remove(ov2);
     });
   });
 
   it('Should be initialized along with each instance of L.DistortableImageOverlay.', function() {
-    expect(overlay.editing).to.be.an.instanceOf(L.DistortableImage.Edit);
+    expect(ov.editing).to.be.an.instanceOf(L.DistortableImage.Edit);
     expect(ov2.editing).to.be.an.instanceOf(L.DistortableImage.Edit);
   });
 
   it('Should keep handles on the map in sync with the corners of the image.', function() {
-    var corners = overlay.getCorners();
-    var edit = overlay.editing;
+    var corners = ov.getCorners();
+    var edit = ov.editing;
     edit.enable();
     // this test applies to a selected image
-    chai.simulateEvent(overlay.getElement(), 'click');
+    chai.simulateEvent(ov.getElement(), 'click');
 
-    overlay.setCorner(0, L.latLng(41.7934, -87.6252));
+    ov.setCorner(0, L.latLng(41.7934, -87.6252));
 
     /* Warp handles are currently on the map; they should have been updated. */
     edit._distortHandles.eachLayer(function(handle) {
@@ -63,9 +63,9 @@ describe('L.DistortableImage.Edit', function() {
 
   describe('#replaceTool', function() {
     it('It should replace an existing action', function() {
-      var old = overlay.editing.editActions[0];
-      var next = overlay.editing.editActions[1];
-      var edit = overlay.editing;
+      var old = ov.editing.editActions[0];
+      var next = ov.editing.editActions[1];
+      var edit = ov.editing;
 
       edit.removeTool(next);
 
@@ -77,9 +77,9 @@ describe('L.DistortableImage.Edit', function() {
     });
 
     it('It should do nothing if the first parameter does not exist', function() {
-      var old = overlay.editing.editActions[0];
-      var next = overlay.editing.editActions[1];
-      var edit = overlay.editing;
+      var old = ov.editing.editActions[0];
+      var next = ov.editing.editActions[1];
+      var edit = ov.editing;
 
       edit.removeTool(old);
 
@@ -90,9 +90,9 @@ describe('L.DistortableImage.Edit', function() {
     });
 
     it('It should do nothing if the second parameter already exists', function() {
-      var old = overlay.editing.editActions[0];
-      var next = overlay.editing.editActions[1];
-      var edit = overlay.editing;
+      var old = ov.editing.editActions[0];
+      var next = ov.editing.editActions[1];
+      var edit = ov.editing;
 
       edit.replaceTool(old, next);
 
@@ -103,7 +103,7 @@ describe('L.DistortableImage.Edit', function() {
 
   describe('#_deselect', function() {
     it('It should hide an unlocked image\'s handles by updating their opacity', function() {
-      var edit = overlay.editing;
+      var edit = ov.editing;
 
       edit.enable();
       // then trigger _deselect
@@ -119,7 +119,7 @@ describe('L.DistortableImage.Edit', function() {
     });
 
     it('But it should not hide a locked image\'s handles', function() {
-      var edit = overlay.editing;
+      var edit = ov.editing;
 
       edit.enable();
       // switch to lock handles
@@ -137,14 +137,13 @@ describe('L.DistortableImage.Edit', function() {
     });
 
     it('Should remove an image\'s individual toolbar instance regardless of lock handles', function() {
-      var edit = overlay.editing;
-      var img = overlay.getElement();
+      var edit = ov.editing;
 
       edit.enable();
       // switch to lock handles
       edit._toggleLockMode();
       // select the image to initially create its individual toolbar instance
-      chai.simulateEvent(overlay.getElement(), 'click');
+      chai.simulateEvent(ov.getElement(), 'click');
 
       expect(edit.toolbar).to.not.be.false;
 
@@ -160,12 +159,12 @@ describe('L.DistortableImage.Edit', function() {
 
   describe('#nextMode', function() {
     beforeEach(function() {
-      overlay.editing.enable();
-      overlay.select();
+      ov.editing.enable();
+      ov.select();
     });
 
     it('Should update image\'s mode to the next in its modes array', function() {
-      var edit = overlay.editing;
+      var edit = ov.editing;
       var modes = edit.getModes();
 
       edit._mode = 'distort';
@@ -176,12 +175,12 @@ describe('L.DistortableImage.Edit', function() {
     });
 
     it('Will only update if the image is selected, or nextMode was triggerd by dblclick', function() {
-      var edit = overlay.editing;
+      var edit = ov.editing;
 
-      overlay.deselect();
+      ov.deselect();
       expect(edit.nextMode()).to.be.false;
 
-      chai.simulateEvent(overlay.getElement(), 'dblclick');
+      chai.simulateEvent(ov.getElement(), 'dblclick');
       setTimeout(function() {
         expect(edit.nextMode()).to.be.ok;
       }, 3000);
@@ -191,13 +190,13 @@ describe('L.DistortableImage.Edit', function() {
       var overlaySpy = sinon.spy();
       var mapSpy = sinon.spy();
 
-      overlay.on('dblclick', overlaySpy);
+      ov.on('dblclick', overlaySpy);
       map.on('dblclick', mapSpy);
 
-      overlay.fire('dblclick');
+      ov.fire('dblclick');
 
       setTimeout(function() {
-        expect(overlay.editing.nextMode).to.have.been.called;
+        expect(ov.editing.nextMode).to.have.been.called;
         expect(L.DomEvent.stop).to.have.been.called;
 
         expect(overlaySpy.called).to.be.true;
@@ -207,10 +206,10 @@ describe('L.DistortableImage.Edit', function() {
 
     it('Should call #setMode', function() {
       var overlaySpy = sinon.spy();
-      overlay.on('dblclick', overlaySpy);
+      ov.on('dblclick', overlaySpy);
 
-      overlay.fire('dblclick');
-      expect(overlay.editing.setMode).to.have.been.called;
+      ov.fire('dblclick');
+      expect(ov.editing.setMode).to.have.been.called;
     });
 
     it('Will still update the mode of an initialized image with suppressToolbar: true', function() {
@@ -222,20 +221,20 @@ describe('L.DistortableImage.Edit', function() {
 
   describe('#setMode', function() {
     it('Will return false if the passed value is not in the image\'s modes array', function() {
-      var edit = overlay.editing;
-      overlay.select();
+      var edit = ov.editing;
+      ov.select();
       expect(edit.setMode('lock')).to.be.ok;
       expect(edit.setMode('blah')).to.be.false;
     });
 
     it('Will return false if the image is not selected', function() {
-      var edit = overlay.editing;
+      var edit = ov.editing;
       expect(edit.setMode('lock')).to.be.false;
     });
 
-    it('Will return false if the passed mode is already the images mode', function() {
-      var edit = overlay.editing;
-      overlay.select();
+    it('Will return false if the passed mode is already the image\'s mode', function() {
+      var edit = ov.editing;
+      ov.select();
       expect(edit.setMode('lock')).to.be.ok;
       expect(edit.setMode('lock')).to.be.false;
     });

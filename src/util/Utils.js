@@ -15,7 +15,7 @@ L.Utils = {
       lockImages: 'Lock Images',
       makeImageOpaque: 'Make Image Opaque',
       makeImageTransparent: 'Make Image Transparent',
-      restoreOriginalImageDimensions: 'Restore Original Image Dimensions',
+      restoreImage: 'Restore Natural Image',
       rotateImage: 'Rotate Image',
       scaleImage: 'Scale Image',
       stackToFront: 'Stack to Front',
@@ -24,7 +24,7 @@ L.Utils = {
       confirmImageDelete:
         'Are you sure? This image will be permanently deleted from the map.',
       confirmImagesDeletes:
-        'images will be permanently deleted from the map. Do you really want to do this?',
+        'Are you sure? These images will be permanently deleted from the map.',
     };
 
     if (!this.options.translation) {

@@ -60,4 +60,3 @@ L.DistortableImageOverlay.addInitHook(function() {
 
   this.editing = L.distortableImage.edit(this, {actions: a});
 });
-

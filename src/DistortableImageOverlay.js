@@ -18,13 +18,12 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this.editable = this.options.editable;
     this._selected = this.options.selected;
     this._url = url;
-    this.rotation = 0;
-    // window.rotation = this.rotation;
+    this.rotation = {};
   },
 
   onAdd: function(map) {
     this._map = map;
-    if (!this._image) { this._initImage(); }
+    if (!this.getElement()) { this._initImage(); }
 
     map.on('viewreset', this._reset, this);
 
@@ -36,16 +35,25 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     }
 
     // Have to wait for the image to load because need to access its w/h
-    L.DomEvent.on(this._image, 'load', function() {
-      this.getPane().appendChild(this._image);
+    L.DomEvent.on(this.getElement(), 'load', function() {
+      this.getPane().appendChild(this.getElement());
       this._initImageDimensions();
-      this._reset();
+
+      if (this.options.rotation) {
+        var units = this.options.rotation.deg ? 'deg' : 'rad';
+        this.setAngle(this.options.rotation[units], units);
+      } else {
+        this.rotation = {deg: 0, rad: 0};
+        this._reset();
+      }
+
       /* Initialize default corners if not already set */
       if (!this._corners) {
         if (map.options.zoomAnimation && L.Browser.any3d) {
           map.on('zoomanim', this._animateZoom, this);
         }
       }
+
       /** if there is a featureGroup, only its editable option matters */
       var eventParents = this._eventParents;
       if (eventParents) {
@@ -57,7 +65,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       }
     }, this);
 
-    L.DomEvent.on(this._image, 'click', this.select, this);
+    L.DomEvent.on(this.getElement(), 'click', this.select, this);
     L.DomEvent.on(map, {
       singleclickon: this._singleClickListeners,
       singleclickoff: this._resetClickListeners,
@@ -76,7 +84,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   onRemove: function(map) {
-    L.DomEvent.off(this._image, 'click', this.select, this);
+    L.DomEvent.off(this.getElement(), 'click', this.select, this);
     L.DomEvent.off(map, {
       singleclickon: this._singleClickListeners,
       singleclickoff: this._resetClickListeners,
@@ -92,37 +100,32 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   _initImageDimensions: function() {
     var map = this._map;
-    var originalImageWidth = L.DomUtil.getStyle(this._image, 'width');
-    var originalImageHeight = L.DomUtil.getStyle(this._image, 'height');
+    var originalImageWidth = L.DomUtil.getStyle(this.getElement(), 'width');
+    var originalImageHeight = L.DomUtil.getStyle(this.getElement(), 'height');
     var aspectRatio =
         parseInt(originalImageWidth) / parseInt(originalImageHeight);
     var imageHeight = this.options.height;
     var imageWidth = parseInt(aspectRatio * imageHeight);
-    var center = map.latLngToContainerPoint(map.getCenter());
+    var center = map.project(map.getCenter());
     var offset = L.point(imageWidth, imageHeight).divideBy(2);
-
     if (this.options.corners) {
       this._corners = this.options.corners;
     } else {
       this._corners = [
-        map.containerPointToLatLng(center.subtract(offset)),
-        map.containerPointToLatLng(
-            center.add(L.point(offset.x, -offset.y))
-        ),
-        map.containerPointToLatLng(
-            center.add(L.point(-offset.x, offset.y))
-        ),
-        map.containerPointToLatLng(center.add(offset)),
+        map.unproject(center.subtract(offset)),
+        map.unproject(center.add(L.point(offset.x, -offset.y))),
+        map.unproject(center.add(L.point(-offset.x, offset.y))),
+        map.unproject(center.add(offset)),
       ];
     }
 
-    this.setBounds(L.latLngBounds(this._corners));
-
     this._initialDimensions = {
-      'height': imageHeight,
-      'width': imageWidth,
+      'center': center,
       'offset': offset,
+      'zoom': map.getZoom(),
     };
+
+    this.setBounds(L.latLngBounds(this.getCorners()));
   },
 
   _singleClick: function(e) {
@@ -173,7 +176,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     edit._showMarkers();
 
     // we run the selection logic 1st anyway because the collection group's _addToolbar method depends on it
-    if (L.DomUtil.hasClass(this._image, 'collected')) {
+    if (L.DomUtil.hasClass(this.getElement(), 'collected')) {
       this.deselect();
       return false;
     }
@@ -200,6 +203,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     if (edit.toolbar && edit.toolbar instanceof L.DistortableImage.PopupBar) {
       edit._updateToolbarPos();
     }
+
+    this.edited = true;
 
     return this;
   },
@@ -245,6 +250,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       edit._updateToolbarPos();
     }
 
+    this.edited = true;
+
     return this;
   },
 
@@ -277,33 +284,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       edit._updateToolbarPos();
     }
 
+    this.edited = true;
+
     return this;
-  },
-
-  getAngle: function() {
-    var matrix = L.DomUtil.getStyle(this._image, 'transform')
-        .split('matrix3d')[1]
-        .slice(1, -1)
-        .split(',');
-
-    var row0x = matrix[0];
-    var row0y = matrix[1];
-    var row1x = matrix[4];
-    var row1y = matrix[5];
-
-    var determinant = row0x * row1y - row0y * row1x;
-
-    var angle = Math.atan2(row0y, row0x) * (180 / Math.PI);
-
-    if (determinant < 0) {
-      angle += angle < 0 ? 180 : -180;
-    }
-
-    if (angle < 0) {
-      angle = 360 + angle;
-    }
-
-    return angle;
   },
 
   scaleBy: function(scale) {
@@ -329,23 +312,53 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return this;
   },
 
-  setAngle: function(angleInDeg) {
-    var currentAngleInDeg = this.getAngle();
-    var angleToRotateByInDeg = angleInDeg - currentAngleInDeg;
+  getAngle: function(unit = 'deg') {
+    var matrix = this.getElement().style[L.DomUtil.TRANSFORM]
+        .split('matrix3d')[1]
+        .slice(1, -1)
+        .split(',');
 
-    var angleInRad = L.TrigUtil.degreesToRadians(angleToRotateByInDeg);
-    this.rotateBy(angleInRad);
+    var row0x = matrix[0];
+    var row0y = matrix[1];
+    var row1x = matrix[4];
+    var row1y = matrix[5];
+
+    var determinant = row0x * row1y - row0y * row1x;
+
+    var angle = L.TrigUtil.calcAngle(row0x, row0y, 'rad');
+
+    if (determinant < 0) {
+      angle += angle < 0 ? Math.PI : -Math.PI;
+    }
+
+    if (angle < 0) {
+      angle = 2 * Math.PI + angle;
+    }
+
+    return unit === 'deg' ?
+        Math.round(L.TrigUtil.radiansToDegrees(angle)) :
+        L.Util.formatNum(angle, 2);
+  },
+
+  setAngle: function(angle, unit = 'deg') {
+    var currentAngle = this.getAngle(unit);
+    var angleToRotateBy = angle - currentAngle;
+    this.rotateBy(angleToRotateBy, unit);
 
     return this;
   },
 
-  rotateBy: function(angle) {
+  rotateBy: function(angle, unit = 'deg') {
     var map = this._map;
     var center = map.project(this.getCenter());
     var corners = {};
     var i;
     var p;
     var q;
+
+    if (unit === 'deg') {
+      angle = L.TrigUtil.degreesToRadians(angle);
+    }
 
     for (i = 0; i < 4; i++) {
       p = map.project(this.getCorner(i)).subtract(center);
@@ -357,10 +370,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     }
 
     this.setCorners(corners);
-
-    // window.angle = L.TrigUtil.radiansToDegrees(angle);
-
-    this.rotation -= L.TrigUtil.radiansToDegrees(angle);
 
     return this;
   },
@@ -380,28 +389,28 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this.setCorners(transCorners);
   },
 
-  _revert: function() {
-    var a = this.rotation;
+  restore: function() {
     var map = this._map;
-    var edit = this.editing;
-    var center = map.project(this.getCenter());
+    var center = this._initialDimensions.center;
     var offset = this._initialDimensions.offset;
-    var corners = {
-      0: map.unproject(center.subtract(offset)),
-      1: map.unproject(center.add(L.point(offset.x, -offset.y))),
-      2: map.unproject(center.add(L.point(-offset.x, offset.y))),
-      3: map.unproject(center.add(offset)),
-    };
+    var zoom = this._initialDimensions.zoom;
+    var corners = [
+      center.subtract(offset),
+      center.add(L.point(offset.x, -offset.y)),
+      center.add(L.point(-offset.x, offset.y)),
+      center.add(offset),
+    ];
 
-    map.removeLayer(edit._handles[edit._mode]);
+    for (var i = 0; i < 4; i++) {
+      if (!map.unproject(corners[i], zoom).equals(this.getCorner(i))) {
+        this.setCorner(i, map.unproject(corners[i], zoom));
+      }
+    }
 
-    this.setCorners(corners);
+    this.edited = false;
+    this.fire('restore');
 
-    if (a !== 0) { this.rotateBy(L.TrigUtil.degreesToRadians(360 - a)); }
-
-    map.addLayer(edit._handles[edit._mode]);
-
-    this.rotation = a;
+    return this;
   },
 
   /* Copied from Leaflet v0.7 https://github.com/Leaflet/Leaflet/blob/66282f14bcb180ec87d9818d9f3c9f75afd01b30/src/dom/DomUtil.js#L189-L199 */
@@ -422,7 +431,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   _reset: function() {
     var map = this._map;
-    var image = this._image;
+    var image = this.getElement();
     var latLngToLayerPoint = L.bind(map.latLngToLayerPoint, map);
     var transformMatrix = this
         ._calculateProjectiveTransform(latLngToLayerPoint);
@@ -439,6 +448,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
      * the center of the image, which is the default.
      */
     image.style[L.DomUtil.TRANSFORM + '-origin'] = '0 0 0';
+
+    this.rotation.deg = this.getAngle();
+    this.rotation.rad = this.getAngle('rad');
   },
 
   /*
@@ -449,7 +461,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
    */
   _animateZoom: function(event) {
     var map = this._map;
-    var image = this._image;
+    var image = this.getElement();
     var latLngToNewLayerPoint = function(latlng) {
       return map._latLngToNewLayerPoint(latlng, event.zoom, event.center);
     };
@@ -483,27 +495,18 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return map.unproject(reduce.divideBy(4));
   },
 
-  _calcCenterTwoCornerPoints: function(topLeft, topRight) {
-    var toolPoint = {x: '', y: ''};
-
-    toolPoint.x = topRight.x + (topLeft.x - topRight.x) / 2;
-    toolPoint.y = topRight.y + (topLeft.y - topRight.y) / 2;
-
-    return toolPoint;
-  },
-
   _calculateProjectiveTransform: function(latLngToCartesian) {
     /* Setting reasonable but made-up image defaults
      * allow us to place images on the map before
      * they've finished downloading. */
-    var offset = latLngToCartesian(this._corners[0]);
-    var w = this._image.offsetWidth || 500;
-    var h = this._image.offsetHeight || 375;
+    var offset = latLngToCartesian(this.getCorner(0));
+    var w = this.getElement().offsetWidth || 500;
+    var h = this.getElement().offsetHeight || 375;
     var c = [];
     var j;
     /* Convert corners to container points (i.e. cartesian coordinates). */
-    for (j = 0; j < this._corners.length; j++) {
-      c.push(latLngToCartesian(this._corners[j])._subtract(offset));
+    for (j = 0; j < 4; j++) {
+      c.push(latLngToCartesian(this.getCorner(j))._subtract(offset));
     }
 
     /*
