@@ -47,7 +47,14 @@ L.DomUtil = L.extend(L.DomUtil, {
       return;
     }
 
-    var warningMsg = n + ' ' + this.translation.confirmImagesDeletes;
+    var translation = this.translation.confirmImagesDeletes;
+    var warningMsg = '';
+
+    if (typeof translation === 'function') {
+      warningMsg = translation(n);
+    } else {
+      warningMsg = n + ' ' + translation;
+    }
 
     return window.confirm(warningMsg);
   },
