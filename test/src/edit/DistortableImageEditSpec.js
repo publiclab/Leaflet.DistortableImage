@@ -99,6 +99,28 @@ describe('L.DistortableImage.Edit', function() {
       expect(edit.hasTool(old)).to.be.true;
       expect(edit.hasTool(next)).to.be.true;
     });
+
+    it('Should add the new action to the image\'s `modes` if it is also a mode', function(done) {
+      var ov3 = L.distortableImageOverlay('/examples/example.png', {
+        actions: [L.ScaleAction]
+      }).addTo(map);
+
+      var old = L.ScaleAction;
+      var next = L.DragAction;
+
+      L.DomEvent.on(ov3.getElement(), 'load', function() {
+        var edit = ov3.editing;
+        expect(edit.hasMode('scale')).to.be.true;
+        expect(edit.hasMode('drag')).to.be.false;
+
+        edit.replaceTool(old, next);
+
+        expect(edit.hasMode('scale')).to.be.false;
+        expect(edit.hasMode('drag')).to.be.true;
+
+        done();
+      });
+    });
   });
 
   describe('#_deselect', function() {

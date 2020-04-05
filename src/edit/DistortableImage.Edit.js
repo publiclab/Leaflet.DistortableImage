@@ -49,7 +49,6 @@ L.DistortableImage.Edit = L.Handler.extend({
   /* Run on image deselection. */
   removeHooks: function() {
     var overlay = this._overlay;
-    // var map = overlay._map;
     var eP = this.parentGroup;
 
     // First, check if dragging exists - it may be off due to locking
@@ -646,7 +645,9 @@ L.DistortableImage.Edit = L.Handler.extend({
     var ov = this._overlay;
     var eP = this.parentGroup;
     var mode = this.getMode();
-    var collectionTool = L.DistortableCollection.Edit.MODES[newMode];
+    var collectionTool;
+
+    if (eP) { collectionTool = L.DistortableCollection.Edit.MODES[newMode]; }
 
     if (mode === newMode || !this.enabled()) { return; }
     if (!this.hasMode(newMode) || (eP && !eP.editing.hasTool(collectionTool))) {

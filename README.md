@@ -77,7 +77,7 @@ map.whenReady(function() {
 
 ### Actions
 
-* `actions` (*optional*, default: [`L.ScaleAction`, `L.DistortAction`, `L.RotateAction`, `L.FreeRotateAction`, `L.LockAction`, `L.OpacityAction`, `L.BorderAction`, `L.ExportAction`, `L.DeleteAction`], value: *array*)
+* `actions` (*optional*, default: [`L.DragAction`, `L.ScaleAction`, `L.DistortAction`, `L.RotateAction`, `L.FreeRotateAction`, `L.LockAction`, `L.OpacityAction`, `L.BorderAction`, `L.ExportAction`, `L.DeleteAction`], value: *array*)
 
 If you would like to overrwrite the default toolbar actions available for an individual image's `L.Popup` toolbar, pass an array with the actions you want. Reference the available values [here](#Single-Image-Interface).
 
@@ -164,6 +164,7 @@ This option sets the image's initial editing mode, meaning the corresponding edi
 Values available to pass to `mode` are:
 
 * **distort** (*default*): Distortion via individually draggable corners.
+* **drag**: Translation via individually draggable corners.
 * **rotate**: Rotation only.
 * **scale**: Resize only.
 * **freeRotate**: Combines the rotate and scale modes into one.
@@ -176,6 +177,29 @@ img = L.distortableImageOverlay('example.jpg', {
   mode: 'freeRotate',
 }).addTo(map);
 ```
+
+If you select a <code>mode</code> that is removed or unavailable, your image will just be assigned the first available <code>mode</code> on initialization.
+
+<hr>
+
+**Limiting modes:**
+
+<hr>
+
+<blockquote>Each <code>mode</code> is just a special type of action, so to ensure that these are always in sync the <code>modes</code> available on an image instance can be limited by the <code>actions</code> available on it. <strong>To remove a mode, limit its corresponding action via the <code><a name="Actions">actions</a></code> option during initialization.</strong> This holds true even when <code>suppressToolbar: true</code> is passed.</blockquote>
+
+In the below example, the image will be initialiazed with `'freeRotate'` handles, and limit its available modes to `'freeRotate'` and `'scale'`.
+
+* We also remember to add the normal toolbar actions we will want:
+
+```js
+img = L.distortableImageOverlay('example.jpg', {
+  mode: 'freeRotate',
+  actions: [L.FreeRotateAction, L.ScaleAction, L.BorderAction, L.OpacityAction],
+}).addTo(map);
+```
+
+Likewise, it is possible to remove or add `actions` during runtime (`addTool`, `removeTool`), and if those actions are modes it will remove / add the `mode`.
 
 ### Rotation
 
@@ -253,11 +277,11 @@ imgGroup.addLayer(img2);
 
 Options available to pass during `L.DistortableCollection` initialization:
 
-* [actions](#✤-Actions)
-* [editable](#✤-editable)
-* [supressToolbar](#✤-)
+* [actions](#Actions-1)
+* [editable](#Editable-1)
+* [supressToolbar](#Suppress-Toolbar-1)
 
-### ✤ Actions
+### Actions
 
 * `actions` (*optional*, default: [`L.ExportAction`, `L.DeleteAction`, `L.LockAction`, `L.UnlockAction`], value: *array*)
 
@@ -273,13 +297,13 @@ imgGroup = L.distortableCollection({
 
 To add / remove a tool from the toolbar at runtime, we have also added the methods `addTool(action)` and `removeTool(action)`.
 
-### ✤ Editable
+### Editable
 
 `editable` (*optional*, default: true, value: *boolean*)
 
 See [editable](#editable).
 
-### ✤ Suppress Toolbar
+### Suppress Toolbar
 
 `suppressToolbar` (*optional*, default: false, value: *boolean*)
 
@@ -346,6 +370,10 @@ Defaults:
 * **L.DeleteAction** (<kbd>backscpace</kbd>, <kbd>delete</kbd>)
   * Permanently deletes the image from the map. Uses a `confirm()` modal dialog.
   * windows `backspace` / mac `delete`
+* **L.DistortAction** (<kbd>d</kbd>)
+  * Sets `distort` mode.
+* **L.DragAction**
+  * Sets `drag` mode.
 * **L.ExportAction** (<kbd>e</kbd>)
 * **L.FreeRotateAction** (<kbd>f</kbd>)
   * Sets `freeRotate` mode.
@@ -632,9 +660,21 @@ A handler that holds the keybindings and toolbar API for an image instance. It i
   </ul>
 </details>
 
+<details><summary><code><b>hasMode(<i>mode</i> &#60;string>)</b>: Boolean</code></summary>
+  <ul>
+    <li>Returns true if the image has the passed mode.</li>
+  </ul>
+</details>
+
 <details><summary><code><b>getMode()</b>: String</code></summary>
   <ul>
     <li>Returns the current <code>mode</code> of the image if it's editing interface is enabled.</li>
+  </ul>
+</details>
+
+<details><summary><code><b>getModes()</b>: Hash</code></summary>
+  <ul>
+    <li>Returns all the modes available on the image.</li>
   </ul>
 </details>
 

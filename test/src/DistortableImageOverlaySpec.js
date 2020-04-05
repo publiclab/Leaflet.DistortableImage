@@ -22,15 +22,6 @@ describe('L.DistortableImageOverlay', function() {
       ],
     }).addTo(map);
 
-    ov2 = L.distortableImageOverlay('/examples/example.png', {
-      corners: [
-        L.latLng(41.7934, -87.6052),
-        L.latLng(41.7934, -87.5852),
-        L.latLng(41.7834, -87.6052),
-        L.latLng(41.7834, -87.5852),
-      ],
-    }).addTo(map);
-
     /* Forces the image to load before any tests are run. */
     L.DomEvent.on(ov.getElement(), 'load', function() {
       expect(map.getMaxZoom()).to.equal(Infinity); // before adding any background layers
@@ -42,7 +33,7 @@ describe('L.DistortableImageOverlay', function() {
     });
   });
 
-  describe('#basic initialization', function() {
+  describe('initialization', function() {
     // we need a maxZoom of 24 so that images of very small areas may be distorted against
     // one another even if the background imagery is not good enough to be useful.
     it('should add Google tile base layer via Google Mutant library, with maxZoom of 24', function(done) {
@@ -50,6 +41,87 @@ describe('L.DistortableImageOverlay', function() {
 
       map.whenReady(function() {
         expect(map.getMaxZoom()).to.equal(24);
+        done();
+      });
+    });
+  });
+
+  describe('initialization: actions option', function() {
+    it('If not passed, the image will be initialized with a default set of actions', function(done) {
+      var ov2 = L.distortableImageOverlay('/examples/example.png', {}).addTo(map);
+
+      L.DomEvent.on(ov2.getElement(), 'load', function() {
+        expect(ov2.editing.editActions.length).to.eq(10);
+        done();
+      });
+    });
+
+    it('The image will be initialized with the passed array of actions', function(done) {
+      var ov2 = L.distortableImageOverlay('/examples/example.png', {
+        actions: [L.ScaleAction, L.RestoreAction, L.RotateAction]
+      }).addTo(map);
+
+      L.DomEvent.on(ov2.getElement(), 'load', function() {
+        expect(ov2.editing.editActions.length).to.eq(3);
+        done();
+      });
+    });
+
+    it('If passed an empty array, the image will be initialized with no actions', function(done) {
+      var ov2 = L.distortableImageOverlay('/examples/example.png', {
+        actions: [],
+      }).addTo(map);
+
+      L.DomEvent.on(ov2.getElement(), 'load', function() {
+        expect(ov2.editing).to.be.ok;
+        expect(ov2.editing.editActions.length).to.eq(0);
+        done();
+      });
+    });
+  });
+
+  describe('initialization: mode option', function() {
+    it('Will initialize the image with the passed mode, if available', function(done) {
+      var ov2 = L.distortableImageOverlay('/examples/example.png', {
+        mode: 'rotate',
+      }).addTo(map);
+
+      L.DomEvent.on(ov2.getElement(), 'load', function() {
+        expect(ov2.editing.getMode()).to.eq('rotate');
+        done();
+      });
+    });
+
+    it('If the mode is unavailable, the image\'s mode will be the 1st available one', function(done) {
+      var ov2 = L.distortableImageOverlay('/examples/example.png', {
+        mode: 'blah',
+      }).addTo(map);
+
+      L.DomEvent.on(ov2.getElement(), 'load', function() {
+        expect(ov2.editing.editActions[0]).to.eq(L.DragAction);
+        expect(ov2.editing.getMode()).to.eq('drag');
+        done();
+      });
+    });
+
+    it("A mode is unavailable if it either does not exist or is restricted via the `actions` option", function(done) {
+      var ov2 = L.distortableImageOverlay('/examples/example.png', {
+        mode: 'rotate',
+        actions: [L.ScaleAction, L.BorderAction],
+      }).addTo(map);
+
+      L.DomEvent.on(ov2.getElement(), 'load', function() {
+        expect(ov2.editing.editActions[0]).to.eq(L.ScaleAction);
+        expect(ov2.editing.getMode()).to.eq('scale');
+        done();
+      });
+    });
+
+    it('If not passed, the image will have the default mode, `distort` if available', function(done) {
+      var ov2 = L.distortableImageOverlay('/examples/example.png', {}).addTo(map);
+
+      L.DomEvent.on(ov2.getElement(), 'load', function() {
+        expect(ov2.editing.getMode()).to.eq('distort');
         done();
       });
     });
@@ -189,6 +261,23 @@ describe('L.DistortableImageOverlay', function() {
   });
 
   describe('#rotateBy', function() {
+    var ov2;
+
+    beforeEach(function(done) {
+      ov2 = L.distortableImageOverlay('/examples/example.png', {
+        corners: [
+          L.latLng(41.7934, -87.6052),
+          L.latLng(41.7934, -87.5852),
+          L.latLng(41.7834, -87.6052),
+          L.latLng(41.7834, -87.5852)
+        ],
+      }).addTo(map);
+
+      L.DomEvent.on(ov2.getElement(), 'load', function() {
+        done();
+      });
+    });
+
     it('Should not rotate the image when passed a value of 0 or 360', function() {
       var corners = ov.getCorners();
 

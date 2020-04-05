@@ -51,9 +51,15 @@ L.LockHandle = L.EditHandle.extend({
   },
 
   _tooltipOn: function(e) {
-    if (e.shiftKey || !this._handled.isSelected()) { return; }
+    var eP = this._handled.parentGroup;
+    var edit = eP ? eP.editing : this._handled.editing;
 
-    var handlesArr = this._handled.editing._lockHandles;
+    if (e.shiftKey) { return; }
+    if (!this._handled.isSelected() && (eP && !eP.isCollected(this._handled))) {
+      return;
+    }
+
+    var handlesArr = edit._lockHandles;
 
     this._timer = setTimeout(L.bind(function() {
       if (this._timeout) { clearTimeout(this._timeout); }
@@ -71,9 +77,15 @@ L.LockHandle = L.EditHandle.extend({
   },
 
   _tooltipOff: function(e) {
-    if (e.shiftKey || !this._handled.isSelected()) { return; }
+    var eP = this._handled.parentGroup;
+    var edit = eP ? eP.editing : this._handled.editing;
 
-    var handlesArr = this._handled.editing._lockHandles;
+    if (e.shiftKey) { return; }
+    if (!this._handled.isSelected() && (eP && !eP.isCollected(this._handled))) {
+      return;
+    }
+
+    var handlesArr = edit._lockHandles;
 
     if (e.currentTarget === document) {
       handlesArr.eachLayer(function(handle) {
