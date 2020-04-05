@@ -63,7 +63,7 @@
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "39f7fa5411ae43c31925";
+/******/ 	var hotCurrentHash = "dca01a48f927235da13a";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -14702,8 +14702,8 @@ L.Utils = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /Users/i0724/codes/open_source/Leaflet.DistortableImage/node_modules/webpack-dev-server/client/index.js?http://localhost:8080 */"./node_modules/webpack-dev-server/client/index.js?http://localhost:8080");
-__webpack_require__(/*! /Users/i0724/codes/open_source/Leaflet.DistortableImage/node_modules/webpack/hot/dev-server.js */"./node_modules/webpack/hot/dev-server.js");
+__webpack_require__(/*! /Users/sashaboginsky/Desktop/Course by week/Leaflet.DistortableImage/node_modules/webpack-dev-server/client/index.js?http://localhost:8080 */"./node_modules/webpack-dev-server/client/index.js?http://localhost:8080");
+__webpack_require__(/*! /Users/sashaboginsky/Desktop/Course by week/Leaflet.DistortableImage/node_modules/webpack/hot/dev-server.js */"./node_modules/webpack/hot/dev-server.js");
 __webpack_require__(/*! ./src/util/DomUtil.js */"./src/util/DomUtil.js");
 __webpack_require__(/*! ./src/util/IconUtil.js */"./src/util/IconUtil.js");
 __webpack_require__(/*! ./src/util/ImageUtil.js */"./src/util/ImageUtil.js");
