@@ -48,7 +48,7 @@ describe('L.DistortableImageOverlay', function() {
   });
 
   describe('initialization: actions option', function() {
-    it('If not passed, the image will be initialized with a default set of actions', function(done) {
+    it('The image will be initialized with a default set of actions if not passed', function(done) {
       var ov2 = L.distortableImageOverlay('/examples/example.png', {}).addTo(map);
 
       L.DomEvent.on(ov2.getElement(), 'load', function() {
@@ -57,7 +57,7 @@ describe('L.DistortableImageOverlay', function() {
       });
     });
 
-    it('The image will be initialized with the passed array of actions', function(done) {
+    it('Will initialize the image with the passed array of actions', function(done) {
       var ov2 = L.distortableImageOverlay('/examples/example.png', {
         actions: [L.ScaleAction, L.RestoreAction, L.RotateAction]
       }).addTo(map);
@@ -68,7 +68,7 @@ describe('L.DistortableImageOverlay', function() {
       });
     });
 
-    it('If passed an empty array, the image will be initialized with no actions', function(done) {
+    it('Will initialize an image with no actions if passed an empty array', function(done) {
       var ov2 = L.distortableImageOverlay('/examples/example.png', {
         actions: [],
       }).addTo(map);
