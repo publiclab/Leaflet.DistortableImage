@@ -57,8 +57,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     var eP = this.parentGroup;
 
     // First, check if dragging exists - it may be off due to locking
-    if (this.dragging) { this.dragging.disable(); }
-    delete this.dragging;
+    this._disableDragging();
 
     if (this.toolbar) { this._removeToolbar(); }
 
@@ -266,6 +265,13 @@ L.DistortableImage.Edit = L.Handler.extend({
     };
   },
 
+  _disableDragging: function() {
+    if (this.dragging) {
+      this.dragging.disable();
+    }
+    delete this.dragging;
+  },
+
   _dragMode: function() {
     if (!this.hasTool(L.DragAction)) { return; }
     this.setMode('drag');
@@ -459,10 +465,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     map.removeLayer(this._handles[m]);
 
     this._mode = 'lock';
-    if (this.dragging) {
-      this.dragging.disable();
-      delete this.dragging;
-    }
+    this._disableDragging();
     map.addLayer(this._handles[this._mode]);
     this._refresh();
   },
