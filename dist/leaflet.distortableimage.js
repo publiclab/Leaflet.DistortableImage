@@ -63,7 +63,7 @@
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "e46135f25c6493e540ca";
+/******/ 	var hotCurrentHash = "39f7fa5411ae43c31925";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -261,6 +261,7 @@
 /******/ 			var chunkId = "main";
 /******/ 			// eslint-disable-next-line no-lone-blocks
 /******/ 			{
+/******/ 				/*globals chunkId */
 /******/ 				hotEnsureUpdateChunk(chunkId);
 /******/ 			}
 /******/ 			if (
@@ -983,22 +984,6 @@ ansiHTML.reset()
 
 /***/ }),
 
-/***/ "./node_modules/ansi-regex/index.js":
-/*!******************************************!*\
-  !*** ./node_modules/ansi-regex/index.js ***!
-  \******************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-module.exports = function () {
-	return /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-PRZcf-nqry=><]/g;
-};
-
-
-/***/ }),
-
 /***/ "./node_modules/events/events.js":
 /*!***************************************!*\
   !*** ./node_modules/events/events.js ***!
@@ -1075,12 +1060,6 @@ EventEmitter.prototype._maxListeners = undefined;
 // added to it. This is a useful default which helps finding memory leaks.
 var defaultMaxListeners = 10;
 
-function checkListener(listener) {
-  if (typeof listener !== 'function') {
-    throw new TypeError('The "listener" argument must be of type Function. Received type ' + typeof listener);
-  }
-}
-
 Object.defineProperty(EventEmitter, 'defaultMaxListeners', {
   enumerable: true,
   get: function() {
@@ -1115,14 +1094,14 @@ EventEmitter.prototype.setMaxListeners = function setMaxListeners(n) {
   return this;
 };
 
-function _getMaxListeners(that) {
+function $getMaxListeners(that) {
   if (that._maxListeners === undefined)
     return EventEmitter.defaultMaxListeners;
   return that._maxListeners;
 }
 
 EventEmitter.prototype.getMaxListeners = function getMaxListeners() {
-  return _getMaxListeners(this);
+  return $getMaxListeners(this);
 };
 
 EventEmitter.prototype.emit = function emit(type) {
@@ -1174,7 +1153,9 @@ function _addListener(target, type, listener, prepend) {
   var events;
   var existing;
 
-  checkListener(listener);
+  if (typeof listener !== 'function') {
+    throw new TypeError('The "listener" argument must be of type Function. Received type ' + typeof listener);
+  }
 
   events = target._events;
   if (events === undefined) {
@@ -1211,7 +1192,7 @@ function _addListener(target, type, listener, prepend) {
     }
 
     // Check for listener leak
-    m = _getMaxListeners(target);
+    m = $getMaxListeners(target);
     if (m > 0 && existing.length > m && !existing.warned) {
       existing.warned = true;
       // No error code for this since it is a Warning
@@ -1243,12 +1224,12 @@ EventEmitter.prototype.prependListener =
     };
 
 function onceWrapper() {
+  var args = [];
+  for (var i = 0; i < arguments.length; i++) args.push(arguments[i]);
   if (!this.fired) {
     this.target.removeListener(this.type, this.wrapFn);
     this.fired = true;
-    if (arguments.length === 0)
-      return this.listener.call(this.target);
-    return this.listener.apply(this.target, arguments);
+    ReflectApply(this.listener, this.target, args);
   }
 }
 
@@ -1261,14 +1242,18 @@ function _onceWrap(target, type, listener) {
 }
 
 EventEmitter.prototype.once = function once(type, listener) {
-  checkListener(listener);
+  if (typeof listener !== 'function') {
+    throw new TypeError('The "listener" argument must be of type Function. Received type ' + typeof listener);
+  }
   this.on(type, _onceWrap(this, type, listener));
   return this;
 };
 
 EventEmitter.prototype.prependOnceListener =
     function prependOnceListener(type, listener) {
-      checkListener(listener);
+      if (typeof listener !== 'function') {
+        throw new TypeError('The "listener" argument must be of type Function. Received type ' + typeof listener);
+      }
       this.prependListener(type, _onceWrap(this, type, listener));
       return this;
     };
@@ -1278,7 +1263,9 @@ EventEmitter.prototype.removeListener =
     function removeListener(type, listener) {
       var list, events, position, i, originalListener;
 
-      checkListener(listener);
+      if (typeof listener !== 'function') {
+        throw new TypeError('The "listener" argument must be of type Function. Received type ' + typeof listener);
+      }
 
       events = this._events;
       if (events === undefined)
@@ -2027,7 +2014,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
     // Slightly dubious tricks to cut down minimized file size
     var noop = function() {};
     var undefinedType = "undefined";
-    var isIE = (typeof window !== undefinedType) && (typeof window.navigator !== undefinedType) && (
+    var isIE = (typeof window !== undefinedType) && (
         /Trident\/|MSIE /.test(window.navigator.userAgent)
     );
 
@@ -8848,24 +8835,6 @@ module.exports = Url;
 
 /***/ }),
 
-/***/ "./node_modules/strip-ansi/index.js":
-/*!******************************************!*\
-  !*** ./node_modules/strip-ansi/index.js ***!
-  \******************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var ansiRegex = __webpack_require__(/*! ansi-regex */ "./node_modules/ansi-regex/index.js")();
-
-module.exports = function (str) {
-	return typeof str === 'string' ? str.replace(ansiRegex, '') : str;
-};
-
-
-/***/ }),
-
 /***/ "./node_modules/url/url.js":
 /*!*********************************!*\
   !*** ./node_modules/url/url.js ***!
@@ -9774,7 +9743,7 @@ function (_BaseClient) {
 
 /* eslint prefer-destructuring: off */
 
-var stripAnsi = __webpack_require__(/*! strip-ansi */ "./node_modules/strip-ansi/index.js");
+var stripAnsi = __webpack_require__(/*! strip-ansi */ "./node_modules/webpack-dev-server/node_modules/strip-ansi/index.js");
 
 var socket = __webpack_require__(/*! ./socket */ "./node_modules/webpack-dev-server/client/socket.js");
 
@@ -10424,6 +10393,40 @@ function sendMsg(type, data) {
 }
 
 module.exports = sendMsg;
+
+/***/ }),
+
+/***/ "./node_modules/webpack-dev-server/node_modules/ansi-regex/index.js":
+/*!*************************************************************!*\
+  !*** (webpack)-dev-server/node_modules/ansi-regex/index.js ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+module.exports = function () {
+	return /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-PRZcf-nqry=><]/g;
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/webpack-dev-server/node_modules/strip-ansi/index.js":
+/*!*************************************************************!*\
+  !*** (webpack)-dev-server/node_modules/strip-ansi/index.js ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var ansiRegex = __webpack_require__(/*! ansi-regex */ "./node_modules/webpack-dev-server/node_modules/ansi-regex/index.js")();
+
+module.exports = function (str) {
+	return typeof str === 'string' ? str.replace(ansiRegex, '') : str;
+};
+
 
 /***/ }),
 
