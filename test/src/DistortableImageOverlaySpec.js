@@ -1,3 +1,4 @@
+/* jshint -W030 */
 describe('L.DistortableImageOverlay', function() {
   var map, ov;
 
@@ -142,7 +143,7 @@ describe('L.DistortableImageOverlay', function() {
 
   describe('#select', function() {
     it('Allows programmatically selecting a single image', function() {
-      expect(ov._selected).to.be.false
+      expect(ov._selected).to.be.false;
       expect(ov.editing.toolbar).to.be.undefined;
 
       ov.select();
@@ -163,8 +164,8 @@ describe('L.DistortableImageOverlay', function() {
       ov.getElement().click();
       setTimeout(function() {
         expect(ov.editing.getMode()).to.eql('lock');
-        expect(ov._selected).to.be.true
-        expect(ov.editing.toolbar).to.be.true
+        expect(ov._selected).to.be.true;
+        expect(ov.editing.toolbar).to.be.true;
       }, 3000);
     });
 

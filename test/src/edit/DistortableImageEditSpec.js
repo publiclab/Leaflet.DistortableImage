@@ -1,3 +1,4 @@
+/* jshint -W030 */
 describe('L.DistortableImage.Edit', function() {
   var map;
   var ov;
