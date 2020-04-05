@@ -165,24 +165,22 @@ describe('L.DistortableImage.Edit', function() {
 
     it('Should update image\'s mode to the next in its modes array', function() {
       var edit = ov.editing;
-      var modes = edit.getModes();
+      var modes = Object.keys(edit.getModes());
 
-      edit._mode = 'distort';
+      edit.setMode('distort');
       var idx = modes.indexOf('distort');
 
       var newIdx = modes.indexOf(edit.nextMode()._mode);
       expect(newIdx).to.equal((idx + 1) % modes.length);
     });
 
-    it('Will only update if the image is selected, or nextMode was triggerd by dblclick', function() {
-      var edit = ov.editing;
-
+    it('Will also select the image when triggerd by dblclick', function() {
       ov.deselect();
-      expect(edit.nextMode()).to.be.false;
+      expect(ov.isSelected()).to.be.false;
 
       chai.simulateEvent(ov.getElement(), 'dblclick');
       setTimeout(function() {
-        expect(edit.nextMode()).to.be.ok;
+        expect(ov.isSelected()).to.be.true;
       }, 3000);
     });
 
@@ -205,11 +203,10 @@ describe('L.DistortableImage.Edit', function() {
     });
 
     it('Should call #setMode', function() {
-      var overlaySpy = sinon.spy();
-      ov.on('dblclick', overlaySpy);
-
-      ov.fire('dblclick');
-      expect(ov.editing.setMode).to.have.been.called;
+      var edit = ov.editing;
+      var spy = sinon.spy(edit, 'setMode');
+      chai.simulateEvent(ov.getElement(), 'dblclick');
+      expect(spy.called).to.be.ok;
     });
 
     it('Will still update the mode of an initialized image with suppressToolbar: true', function() {
@@ -220,23 +217,25 @@ describe('L.DistortableImage.Edit', function() {
   });
 
   describe('#setMode', function() {
-    it('Will return false if the passed value is not in the image\'s modes array', function() {
+    it('Will return undefined if the passed value is not in the image\'s modes array', function() {
       var edit = ov.editing;
       ov.select();
       expect(edit.setMode('lock')).to.be.ok;
-      expect(edit.setMode('blah')).to.be.false;
+      expect(edit.setMode('blah')).to.be.undefined;
     });
 
-    it('Will return false if the image is not selected', function() {
+    it('Will return undefined if image editing is not enabled', function() {
       var edit = ov.editing;
-      expect(edit.setMode('lock')).to.be.false;
+      edit.disable();
+      expect(edit.setMode('lock')).to.be.undefined;
     });
 
-    it('Will return false if the passed mode is already the image\'s mode', function() {
+    it('Will return undefined if the passed mode is already the image\'s mode', function() {
       var edit = ov.editing;
       ov.select();
+      edit.setMode('distort');
       expect(edit.setMode('lock')).to.be.ok;
-      expect(edit.setMode('lock')).to.be.false;
+      expect(edit.setMode('lock')).to.be.undefined;
     });
 
     it('Will still update the mode of an initialized image with suppressToolbar: true', function() {

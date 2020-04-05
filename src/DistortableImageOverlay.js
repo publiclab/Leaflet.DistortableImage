@@ -151,12 +151,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   deselect: function() {
     var edit = this.editing;
-    if (!edit.enabled() || !this.isSelected()) { return false; }
+    if (!edit.enabled()) { return; }
 
     edit._removeToolbar();
-    if (edit._mode !== 'lock') {
-      edit._hideMarkers();
-    }
+    edit._hideMarkers();
 
     this._selected = false;
     return this;
@@ -165,8 +163,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   select: function(e) {
     var edit = this.editing;
 
+    if (!edit.enabled()) { return; }
     if (e) { L.DomEvent.stopPropagation(e); }
-    if (!edit.enabled()) { return false; }
 
     // this ensures deselection of all other images, allowing us to keep collection group optional
     this._programmaticGrouping();
@@ -178,7 +176,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     // we run the selection logic 1st anyway because the collection group's _addToolbar method depends on it
     if (L.DomUtil.hasClass(this.getElement(), 'collected')) {
       this.deselect();
-      return false;
+      return;
     }
 
     return this;

@@ -3,25 +3,6 @@ L.distortableImage = L.DistortableImage;
 
 L.DistortableImage.group_action_map = {};
 
-L.UnlocksAction = L.EditAction.extend({
-  initialize: function(map, overlay, options) {
-    options = options || {};
-    options.toolbarIcon = {
-      svg: true,
-      html: 'unlock',
-      tooltip: overlay.options.translation.unlockImages,
-    };
-
-    L.DistortableImage.group_action_map.u = '_unlockGroup';
-    L.EditAction.prototype.initialize.call(this, map, overlay, options);
-  },
-
-  addHooks: function() {
-    var edit = this._overlay.editing;
-    edit._unlockGroup();
-  },
-});
-
 L.DistortableImage.ControlBar = L.Toolbar2.Control.extend({
   options: {
   },
@@ -33,12 +14,19 @@ L.distortableImage.controlBar = function(options) {
 
 /** addInitHooks run before onAdd */
 L.DistortableCollection.addInitHook(function() {
+  /** Default actions */
   this.ACTIONS = [
     L.ExportAction,
     L.DeleteAction,
     L.LockAction,
-    L.UnlocksAction,
+    L.UnlockAction,
   ];
+
+  // all possible modes
+  L.DistortableCollection.Edit.MODES = {
+    lock: L.LockAction,
+    unlock: L.UnlockAction,
+  };
 
   var a = this.options.actions ? this.options.actions : this.ACTIONS;
 
