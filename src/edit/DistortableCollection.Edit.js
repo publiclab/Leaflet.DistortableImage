@@ -303,14 +303,12 @@ L.DistortableCollection.Edit = L.Handler.extend({
         statusUrl = opts.statusUrl + data;
         // repeatedly fetch the status.json
         self.updateInterval = setInterval(function intervalUpdater() {
-          var request = new XMLHttpRequest();
-          request.onload = function(event) {
-            if (request.status === 200) {
-              opts.updater(JSON.parse(this.response));
+          var request = new Request(statusUrl+'?'+Date.now(), {method: 'GET'});
+          fetch(request).then(function(response) {
+            if (response.status === 200) {
+              return response.json();
             }
-          };
-          request.open('GET', statusUrl + '?' + Date.now());
-          request.send();
+          }).then(opts.updater);
         }, opts.frequency);
       }
 
@@ -320,14 +318,13 @@ L.DistortableCollection.Edit = L.Handler.extend({
         form.append('collection', JSON.stringify(opts.collection));
         form.append('scale', opts.scale);
         form.append('upload', true);
-        var request = new XMLHttpRequest();
-        request.onload = function(event) {
-          if (request.status === 200) {
-            opts.handleStatusRes(JSON.parse(this.response));
+        var requestOptions = {method: 'POST', body: form};
+        var request = new Request(open.exportStartUrl, requestOptions);
+        fetch(request).then(function(response) {
+          if (response.status === 200) {
+            return response.json();
           }
-        };
-        request.open('POST', opts.exportStartUrl);
-        request.send(form);
+        }).then(opts.handleStatusRes);
       }
 
       // If the user has passed collection property
