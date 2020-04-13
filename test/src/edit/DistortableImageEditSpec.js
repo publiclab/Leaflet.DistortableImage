@@ -133,7 +133,7 @@ describe('L.DistortableImage.Edit', function() {
       map.fire('click');
 
       var handleState = [];
-      edit._handles['distort'].eachLayer(function(handle) {
+      edit._handles.distort.eachLayer(function(handle) {
         var icon = handle.getElement();
         handleState.push(L.DomUtil.getStyle(icon, 'opacity'));
       });
@@ -151,7 +151,7 @@ describe('L.DistortableImage.Edit', function() {
       map.fire('click');
 
       var lockHandleState = [];
-      edit._handles['lock'].eachLayer(function(handle) {
+      edit._handles.lock.eachLayer(function(handle) {
         var icon = handle.getElement();
         lockHandleState.push(L.DomUtil.getStyle(icon, 'opacity'));
       });
@@ -181,11 +181,6 @@ describe('L.DistortableImage.Edit', function() {
   });
 
   describe('#nextMode', function() {
-    beforeEach(function() {
-      ov.editing.enable();
-      ov.select();
-    });
-
     it('Should update image\'s mode to the next in its modes array', function() {
       var edit = ov.editing;
       var modes = Object.keys(edit.getModes());
@@ -233,16 +228,21 @@ describe('L.DistortableImage.Edit', function() {
     });
 
     it('Will still update the mode of an initialized image with suppressToolbar: true', function() {
-      ov2.select();
-      expect(ov2.editing.toolbar).to.be.undefined;
-      expect(ov2.editing.nextMode()).to.be.ok;
+      var edit = ov2.editing;
+      var modes = Object.keys(edit.getModes());
+      var mode = edit.getMode();
+      var idx = modes.indexOf(mode);
+
+      expect(edit.toolbar).to.be.undefined;
+
+      var newIdx = modes.indexOf(edit.nextMode()._mode);
+      expect(newIdx).to.equal((idx + 1) % modes.length);
     });
   });
 
   describe('#setMode', function() {
     it('Will return undefined if the passed value is not in the image\'s modes array', function() {
       var edit = ov.editing;
-      ov.select();
       expect(edit.setMode('lock')).to.be.ok;
       expect(edit.setMode('blah')).to.be.undefined;
     });
@@ -255,16 +255,17 @@ describe('L.DistortableImage.Edit', function() {
 
     it('Will return undefined if the passed mode is already the image\'s mode', function() {
       var edit = ov.editing;
-      ov.select();
       edit.setMode('distort');
       expect(edit.setMode('lock')).to.be.ok;
       expect(edit.setMode('lock')).to.be.undefined;
     });
 
     it('Will still update the mode of an initialized image with suppressToolbar: true', function() {
-      ov2.select();
-      expect(ov2.editing.toolbar).to.be.undefined;
-      expect(ov2.editing.setMode('lock')).to.be.ok;
+      var edit = ov2.editing;
+      expect(edit.toolbar).to.be.undefined;
+      expect(edit.getMode()).to.not.eql('lock');
+      expect(edit.setMode('lock')).to.be.ok;
+      expect(edit.getMode()).to.eql('lock');
     });
   });
 });
