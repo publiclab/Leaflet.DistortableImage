@@ -3,10 +3,7 @@ L.distortableImage = L.DistortableImage;
 
 L.DistortableImage.group_action_map = {};
 
-L.DistortableImage.ControlBar = L.Toolbar2.Control.extend({
-  options: {
-  },
-});
+L.DistortableImage.ControlBar = L.Toolbar2.Control.extend({});
 
 L.distortableImage.controlBar = function(options) {
   return new L.DistortableImage.ControlBar(options);

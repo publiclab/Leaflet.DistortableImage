@@ -317,8 +317,8 @@ L.DistortableImage.Edit = L.Handler.extend({
   _disableDragging: function() {
     if (this.dragging) {
       this.dragging.disable();
+      delete this.dragging;
     }
-    delete this.dragging;
   },
 
   _dragMode: function() {
@@ -483,15 +483,17 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _unlock: function() {
     var ov = this._overlay;
+    var map = ov._map;
     var eP = this.parentGroup;
     var tool = L.LockAction;
     var collectionTool = L.UnlockAction;
 
     if (!this.isMode('lock')) { return; }
-    if (!this.hasTool(tool) && eP && !eP.editing.hasTool(collectionTool)) {
+    if (!this.hasTool(tool) && (eP && !eP.editing.hasTool(collectionTool))) {
       return;
     }
 
+    if (this.currentHandle) { map.removeLayer(this.currentHandle); }
     if (ov.options.mode === 'lock' || !this.hasMode(ov.options.mode)) {
       this._mode = '';
       this.currentHandle = '';
@@ -504,12 +506,14 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _lock: function() {
+    var ov = this._overlay;
+    var map = ov._map;
     var eP = this.parentGroup;
     var tool = L.LockAction;
 
     if (this.isMode('lock')) { return; }
     if (!this.hasTool(tool) && (eP && !eP.editing.hasTool(tool))) { return; }
-
+    if (this.currentHandle) { map.removeLayer(this.currentHandle); }
     this._mode = 'lock';
     this._updateHandle();
     this._disableDragging();
@@ -657,12 +661,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (this.toolbar) { this.toolbar.clickTool(newMode); }
     if (this.isMode('lock') && !this.dragging) { this._enableDragging(); }
     this._mode = newMode;
-    if (this.isMode('lock') && this.dragging) {
-      if (this.dragging) {
-        this.dragging.disable();
-        delete this.dragging;
-      }
-    }
+    if (this.isMode('lock')) { this._disableDragging(); }
     this._updateHandle();
     this._refresh();
 

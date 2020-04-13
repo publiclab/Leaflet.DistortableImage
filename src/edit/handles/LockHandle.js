@@ -1,7 +1,6 @@
 L.LockHandle = L.EditHandle.extend({
   options: {
     TYPE: 'lock',
-    draggable: false,
     interactive: false,
     icon: L.icon({
       // eslint-disable-next-line max-len
