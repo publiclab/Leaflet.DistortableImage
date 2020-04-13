@@ -82,12 +82,12 @@ describe('L.DistortableCollection.Edit', function() {
       map.fire('click');
 
       setTimeout(function() {
-        edit._handles['distort'].eachLayer(function(handle) {
+        edit._handles.distort.eachLayer(function(handle) {
           var icon = handle.getElement();
           distortHandleState.push(L.DomUtil.getStyle(icon, 'opacity'));
         });
 
-        edit2._handles['lock'].eachLayer(function(handle) {
+        edit2._handles.lock.eachLayer(function(handle) {
           var icon = handle.getElement();
           lockHandleState.push(L.DomUtil.getStyle(icon, 'opacity'));
         });
