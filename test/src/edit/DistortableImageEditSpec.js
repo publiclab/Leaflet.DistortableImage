@@ -168,28 +168,6 @@ describe('L.DistortableImage.Edit', function() {
   });
 
   describe('#nextMode', function() {
-    var ov2;
-
-    beforeEach(function(done) {
-      ov2 = L.distortableImageOverlay('/examples/example.png', {
-        corners: [
-          L.latLng(41.7934, -87.6052),
-          L.latLng(41.7934, -87.5852),
-          L.latLng(41.7834, -87.5852),
-          L.latLng(41.7834, -87.6052)
-        ],
-        suppressToolbar: true
-      }).addTo(map);
-
-      L.DomEvent.on(ov2.getElement(), 'load', function() {
-        done();
-      });
-    });
-
-    afterEach(function() {
-      L.DomUtil.remove(ov2);
-    });
-
     it('Should update image\'s mode to the next in its modes array', function() {
       var edit = ov.editing;
       var modes = Object.keys(edit.getModes());
@@ -236,42 +214,28 @@ describe('L.DistortableImage.Edit', function() {
       expect(spy.called).to.be.ok;
     });
 
-    it('Will still update the mode of an initialized image with suppressToolbar: true', function() {
-      var edit = ov2.editing;
-      var modes = Object.keys(edit.getModes());
-      var mode = edit.getMode();
-      var idx = modes.indexOf(mode);
+    it('Will still update the mode of an initialized image with suppressToolbar: true', function(done) {
+      var ov2 = L.distortableImageOverlay('/examples/example.png', {
+        suppressToolbar: true,
+      }).addTo(map);
 
-      expect(edit.toolbar).to.be.undefined;
+      L.DomEvent.on(ov2.getElement(), 'load', function() {
+        var edit = ov2.editing;
+        var modes = Object.keys(edit.getModes());
+        var mode = edit.getMode();
+        var idx = modes.indexOf(mode);
 
-      var newIdx = modes.indexOf(edit.nextMode()._mode);
-      expect(newIdx).to.equal((idx + 1) % modes.length);
+        expect(edit.toolbar).to.be.undefined;
+
+        var newIdx = modes.indexOf(edit.nextMode()._mode);
+        expect(newIdx).to.equal((idx + 1) % modes.length);
+
+        done();
+      });
     });
   });
 
   describe('#setMode', function() {
-    var ov2;
-
-    beforeEach(function(done) {
-      ov2 = L.distortableImageOverlay('/examples/example.png', {
-        corners: [
-          L.latLng(41.7934, -87.6052),
-          L.latLng(41.7934, -87.5852),
-          L.latLng(41.7834, -87.5852),
-          L.latLng(41.7834, -87.6052)
-        ],
-        suppressToolbar: true
-      }).addTo(map);
-
-      L.DomEvent.on(ov2.getElement(), 'load', function() {
-        done();
-      });
-    });
-
-    afterEach(function() {
-      L.DomUtil.remove(ov2);
-    });
-
     it('Will return undefined if the passed value is not in the image\'s modes array', function() {
       var edit = ov.editing;
       expect(edit.setMode('lock')).to.be.ok;
@@ -291,12 +255,20 @@ describe('L.DistortableImage.Edit', function() {
       expect(edit.setMode('lock')).to.be.undefined;
     });
 
-    it('Will still update the mode of an initialized image with suppressToolbar: true', function() {
-      var edit = ov2.editing;
-      expect(edit.toolbar).to.be.undefined;
-      expect(edit.getMode()).to.not.eql('lock');
-      expect(edit.setMode('lock')).to.be.ok;
-      expect(edit.getMode()).to.eql('lock');
+    it('Will still update the mode of an initialized image with suppressToolbar: true', function(done) {
+      var ov2 = L.distortableImageOverlay('/examples/example.png', {
+        suppressToolbar: true,
+      }).addTo(map);
+
+      L.DomEvent.on(ov2.getElement(), 'load', function() {
+        var edit = ov2.editing;
+        expect(edit.toolbar).to.be.undefined;
+        expect(edit.getMode()).to.not.eql('lock');
+        expect(edit.setMode('lock')).to.be.ok;
+        expect(edit.getMode()).to.eql('lock');
+
+        done();
+      });
     });
   });
 });
