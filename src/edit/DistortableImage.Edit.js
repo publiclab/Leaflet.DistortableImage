@@ -30,7 +30,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     overlay.bringToFront();
     this._initModes();
     this._initHandles();
-    this._appendHandlesandDragable(this._mode);
+    this._appendHandlesandDragable();
 
 
     if (overlay.isSelected() && !overlay.options.suppressToolbar) {
@@ -154,10 +154,9 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _appendHandlesandDragable: function() {
     var ov = this._overlay;
-    // var wrap = ov.getElement().parentNode;
 
+    // won't throw error if user adds 0 mode actions to toolbar
     if (!this._mode) {
-      // won't throw error if user adds 0 mode actions to toolbar
       this._enableDragging();
       return;
     }
@@ -169,8 +168,6 @@ L.DistortableImage.Edit = L.Handler.extend({
         handle.setOpacity(0);
         if (handle.dragging) { handle.dragging.disable(); }
       });
-
-      // else { L.DomUtil.addClass(wrap, 'lock'); }
     }
     if (!this.isMode('lock')) { this._enableDragging(); }
   },
@@ -322,27 +319,22 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _dragMode: function() {
-    // if (!this.hasTool(L.DragAction)) { return; }
     this.setMode('drag');
   },
 
   _scaleMode: function() {
-    // if (!this.hasTool(L.ScaleAction)) { return; }
     this.setMode('scale');
   },
 
   _distortMode: function() {
-    // if (!this.hasTool(L.DistortAction)) { return; }
     this.setMode('distort');
   },
 
   _rotateMode: function() {
-    // if (!this.hasTool(L.RotateAction)) { return; }
     this.setMode('rotate');
   },
 
   _freeRotateMode: function() {
-    // if (!this.hasTool(L.FreeRotateAction)) { return; }
     this.setMode('freeRotate');
   },
 
