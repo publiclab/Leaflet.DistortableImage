@@ -9,7 +9,7 @@ L.LockAction = L.EditAction.extend({
       L.DistortableImage.action_map.l = '_lock';
       tooltip = overlay.options.translation.lockMode;
 
-      if (edit._mode === 'lock') { use = 'lock'; }
+      if (edit.isMode('lock')) { use = 'lock'; }
       else { use = 'unlock'; }
     } else {
       L.DistortableImage.group_action_map.l = '_lockGroup';

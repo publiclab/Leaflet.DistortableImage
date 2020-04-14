@@ -77,7 +77,7 @@ map.whenReady(function() {
 
 ### Actions
 
-* `actions` (*optional*, default: [`L.ScaleAction`, `L.DistortAction`, `L.RotateAction`, `L.FreeRotateAction`, `L.LockAction`, `L.OpacityAction`, `L.BorderAction`, `L.ExportAction`, `L.DeleteAction`], value: *array*)
+* `actions` (*optional*, default: [`L.DragAction`, `L.ScaleAction`, `L.DistortAction`, `L.RotateAction`, `L.FreeRotateAction`, `L.LockAction`, `L.OpacityAction`, `L.BorderAction`, `L.ExportAction`, `L.DeleteAction`], value: *array*)
 
 If you would like to overrwrite the default toolbar actions available for an individual image's `L.Popup` toolbar, pass an array with the actions you want. Reference the available values [here](#Single-Image-Interface).
 
@@ -164,6 +164,7 @@ This option sets the image's initial editing mode, meaning the corresponding edi
 Values available to pass to `mode` are:
 
 * **distort** (*default*): Distortion via individually draggable corners.
+* **drag**: Translation via individually draggable corners.
 * **rotate**: Rotation only.
 * **scale**: Resize only.
 * **freeRotate**: Combines the rotate and scale modes into one.
@@ -176,6 +177,29 @@ img = L.distortableImageOverlay('example.jpg', {
   mode: 'freeRotate',
 }).addTo(map);
 ```
+
+If you select a <code>mode</code> that is removed or unavailable, your image will just be assigned the first available <code>mode</code> on initialization.
+
+<hr>
+
+**Limiting modes:**
+
+<hr>
+
+<blockquote>Each <code>mode</code> is just a special type of action, so to ensure that these are always in sync the <code>modes</code> available on an image instance can be limited by the <code>actions</code> available on it. <strong>To remove a mode, limit its corresponding action via the <code><a name="Actions">actions</a></code> option during initialization.</strong> This holds true even when <code>suppressToolbar: true</code> is passed.</blockquote>
+
+In the below example, the image will be initialiazed with `'freeRotate'` handles, and limit its available modes to `'freeRotate'` and `'scale'`.
+
+* We also remember to add the normal toolbar actions we will want:
+
+```js
+img = L.distortableImageOverlay('example.jpg', {
+  mode: 'freeRotate',
+  actions: [L.FreeRotateAction, L.ScaleAction, L.BorderAction, L.OpacityAction],
+}).addTo(map);
+```
+
+Likewise, it is possible to remove or add `actions` during runtime (`addTool`, `removeTool`), and if those actions are modes it will remove / add the `mode`.
 
 ### Rotation
 
@@ -253,13 +277,13 @@ imgGroup.addLayer(img2);
 
 Options available to pass during `L.DistortableCollection` initialization:
 
-* [actions](#✤-Actions)
-* [editable](#✤-editable)
-* [supressToolbar](#✤-)
+* [actions](#Actions-1)
+* [editable](#Editable-1)
+* [supressToolbar](#Suppress-Toolbar-1)
 
-### ✤ Actions
+### Actions
 
-* `actions` (*optional*, default: [`L.ExportAction`, `L.DeleteAction`, `L.LockAction`, `L.UnlocksAction`], value: *array*)
+* `actions` (*optional*, default: [`L.ExportAction`, `L.DeleteAction`, `L.LockAction`, `L.UnlockAction`], value: *array*)
 
 Overrwrite the default toolbar actions for an image collection's `L.Control` toolbar. Reference the available values [here](#Multiple-Image-Interface).
 
@@ -273,13 +297,13 @@ imgGroup = L.distortableCollection({
 
 To add / remove a tool from the toolbar at runtime, we have also added the methods `addTool(action)` and `removeTool(action)`.
 
-### ✤ Editable
+### Editable
 
 `editable` (*optional*, default: true, value: *boolean*)
 
 See [editable](#editable).
 
-### ✤ Suppress Toolbar
+### Suppress Toolbar
 
 `suppressToolbar` (*optional*, default: false, value: *boolean*)
 
@@ -346,6 +370,10 @@ Defaults:
 * **L.DeleteAction** (<kbd>backscpace</kbd>, <kbd>delete</kbd>)
   * Permanently deletes the image from the map. Uses a `confirm()` modal dialog.
   * windows `backspace` / mac `delete`
+* **L.DistortAction** (<kbd>d</kbd>)
+  * Sets `distort` mode.
+* **L.DragAction**
+  * Sets `drag` mode.
 * **L.ExportAction** (<kbd>e</kbd>)
 * **L.FreeRotateAction** (<kbd>f</kbd>)
   * Sets `freeRotate` mode.
@@ -377,7 +405,7 @@ Defaults:
   * Permanently deletes a collection of images from the map.
 * **L.LockAction** (<kbd>l</kbd>)
   * Sets `lock` mode for a collection of images.
-* **L.UnlocksAction** (<kbd>u</kbd>)
+* **L.UnlockAction** (<kbd>u</kbd>)
   * Unsets `lock` mode for a collection of images.
 
 ## Quick API Reference
@@ -586,7 +614,7 @@ img.rotateBy(Math.PI, 'rad');
 <details><summary><code><b>select()</b>: this</code></summary>
   <ul>
     <li>Selects an individual image instance.</li>
-    <li>If its editing handler is disabled or the multiple image interface is on (<code>imgGroup.anyCollected()</code> returns true), instead just returns false.</li>
+    <li>If its editing handler is disabled or the multiple image interface is on (<code>imgGroup.anyCollected() === true</code>), does not select and instead just returns undefined.</li>
     <li>Internally invoked on image <code>click</code>.</li>
   </ul>
 </details>
@@ -594,7 +622,7 @@ img.rotateBy(Math.PI, 'rad');
 <details><summary><code><b>deselect()</b>: this</code></summary>
   <ul>
     <li>Deselects an individual image instance.</li>
-    <li>If its editing handler is disabled or it is not currently selected, instead just returns false.</li>
+    <li>If its editing handler is disabled, does not deselect and instead just returns undefined.</li>
     <li>Internally invoked on map <code>click</code> and image collect (<kbd>shift</kbd> + <code>click</code>).</li>
   </ul>
 </details>
@@ -632,24 +660,35 @@ A handler that holds the keybindings and toolbar API for an image instance. It i
   </ul>
 </details>
 
+<details><summary><code><b>hasMode(<i>mode</i> &#60;string>)</b>: Boolean</code></summary>
+  <ul>
+    <li>Returns true if the image has the passed mode.</li>
+  </ul>
+</details>
+
 <details><summary><code><b>getMode()</b>: String</code></summary>
   <ul>
-    <li>Returns the current <code>mode</code> of the image if it's selected, otherwise returns false.</li>
+    <li>Returns the current <code>mode</code> of the image.</li>
+  </ul>
+</details>
+
+<details><summary><code><b>getModes()</b>: Hash</code></summary>
+  <ul>
+    <li>Returns all the modes available on the image.</li>
   </ul>
 </details>
 
 <details><summary><code><b>nextMode()</b>: this</code></summary>
   <ul>
-    <li>Sets the mode of the image to the next one in the <code>
-    modes</code> array by passing it to <code>#setMode.</code></li>
-    <li>If the image is not selected or <code>modes</code> only has 1 mode, it will instead return false.</li>
-    <li>We use this internally to iterate through an image's editing modes easily on <code>dblclick</code>, but you can call it programmatically if you find a need. Note that <code>dblclick</code> also selects the image (given it's not disabled or collected)</li>
+    <li>Sets the <code>mode</code> of the image to the next one in the <code>modes</code> array by passing it to <code>#setMode</code>.</li>
+    <li>If the image's editing interface is not enabled or <code>modes</code> only has 1 <code>mode</code>, it will instead return undefined and not update the image's <code>mode</code>.</li>
+    <li>We use this internally to iterate through an image's editing modes easily on <code>dblclick</code>, but you can call it programmatically if you find a need. Note that <code>dblclick</code> also selects the image (given it's not disabled and the collection interface is not on).</li>
   </ul>
 </details>
 
 <details><summary><code><b>setMode(<i>mode</i> &#60;string>)</b>: this</code></summary>
   <ul>
-    <li>Sets the  <code>mode</code> of the image to the passed one given that it is in the  <code>modes </code> array, it is not already the current mode, and the image is selcted. Otherwise returns false.</li>
+    <li>Sets the <code>mode</code> of the image to the passed one given that it is in the <code>modes</code>array, it is not already the current <code>mode</code>, and the image editing interface is enabled. Otherwise, does not set the mode and instead just returns undefined.</li>
   </ul>
 </details>
 

@@ -1,6 +1,7 @@
 L.LockHandle = L.EditHandle.extend({
   options: {
     TYPE: 'lock',
+    interactive: false,
     icon: L.icon({
       // eslint-disable-next-line max-len
       iconUrl: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAD8SURBVO3BPU7CYAAA0AdfjIcQlRCQBG7C3gk2uIPG2RC3Dk16Gz0FTO1WZs/gwGCMP/2+xsSl7+n1er1Iz9LtRQjaPeMeO+TinLDCJV78YqjdA04YodKuxhUaPGoRxMmxwRQZSt87Yo4KExGCeAUyLLFB4bMacxywEClIU2KDKXbInTUYo8JCgoFuGoxQO5uiwY1EA91VmDqrcKeDoX8WdNNgjApvmGGLXKIgXY0xGkxQYItrrFFIEKQ5Yo4KEx9yrDFDhlKkIF6NOQ5Y+KpAhiXWKEQI4pxwiwoLPyuxwQw75FoE7fZYocFEuwI7jHCBV39gL92TXq/Xi/AOcmczZmaIMScAAAAASUVORK5CYII=',
@@ -49,9 +50,15 @@ L.LockHandle = L.EditHandle.extend({
   },
 
   _tooltipOn: function(e) {
-    if (e.shiftKey) { return; }
+    var eP = this._handled.parentGroup;
+    var edit = eP ? eP.editing : this._handled.editing;
 
-    var handlesArr = this._handled.editing._lockHandles;
+    if (e.shiftKey) { return; }
+    if (!this._handled.isSelected() && (eP && !eP.isCollected(this._handled))) {
+      return;
+    }
+
+    var handlesArr = edit._lockHandles;
 
     this._timer = setTimeout(L.bind(function() {
       if (this._timeout) { clearTimeout(this._timeout); }
@@ -69,9 +76,15 @@ L.LockHandle = L.EditHandle.extend({
   },
 
   _tooltipOff: function(e) {
-    if (e.shiftKey) { return; }
+    var eP = this._handled.parentGroup;
+    var edit = eP ? eP.editing : this._handled.editing;
 
-    var handlesArr = this._handled.editing._lockHandles;
+    if (e.shiftKey) { return; }
+    if (!this._handled.isSelected() && (eP && !eP.isCollected(this._handled))) {
+      return;
+    }
+
+    var handlesArr = edit._lockHandles;
 
     if (e.currentTarget === document) {
       handlesArr.eachLayer(function(handle) {
