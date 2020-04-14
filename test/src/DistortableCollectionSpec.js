@@ -1,5 +1,6 @@
+/* jshint -W030 */
 describe('L.DistortableCollection', function() {
-  var map, overlay, overlay2, imgGroup;
+  var map, overlay, overlay2, overlay3, imgGroup;
 
   beforeEach(function(done) {
     map = L.map(L.DomUtil.create('div', '', document.body)).setView([41.7896, -87.5996], 15);
@@ -57,7 +58,7 @@ describe('L.DistortableCollection', function() {
 
   describe('#isCollected', function() {
     it('Should only return true if the image was selected using shift + mousedown', function() {
-      chai.simulateEvent(overlay.getElement(), 'mousedown', { shiftKey: true });
+      chai.simulateEvent(overlay.getElement(), 'mousedown', {shiftKey: true});
       chai.simulateEvent(overlay2.getElement(), 'mousedown');
       expect(imgGroup.isCollected(overlay)).to.be.true;
       expect(imgGroup.isCollected(overlay2)).to.be.false;
@@ -78,8 +79,8 @@ describe('L.DistortableCollection', function() {
       var img = overlay.getElement();
       var img2 = overlay2.getElement();
 
-      chai.simulateEvent(img, 'mousedown', { shiftKey: true });
-      chai.simulateEvent(img2, 'mousedown', { shiftKey: true });
+      chai.simulateEvent(img, 'mousedown', {shiftKey: true});
+      chai.simulateEvent(img2, 'mousedown', {shiftKey: true});
 
       expect(L.DomUtil.getClass(img)).to.include('collected');
       expect(L.DomUtil.getClass(img2)).to.include('collected');
@@ -89,7 +90,7 @@ describe('L.DistortableCollection', function() {
       var img = overlay.getElement();
 
       overlay.editing._toggleLockMode();
-      chai.simulateEvent(img, 'mousedown', { shiftKey: true });
+      chai.simulateEvent(img, 'mousedown', {shiftKey: true});
 
       expect(L.DomUtil.getClass(img)).to.include('collected');
     });
