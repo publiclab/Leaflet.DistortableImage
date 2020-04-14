@@ -177,6 +177,16 @@ describe('L.DistortableImageOverlay', function() {
     });
 
     it('Returns undefined if the multiple image editing interface is on', function() {
+      ov.eP = {};
+      ov.eP.anyCollected = function propFn() {
+        var layerArr = this.getLayers();
+        return layerArr.some(this.isCollected.bind(this));
+      };
+
+      sinon.stub(ov.eP, 'anyCollected').callsFake(function fakeFn() {
+        return L.DomUtil.hasClass(ov.getElement(), 'collected');
+      });
+
       L.DomUtil.addClass(ov.getElement(), 'collected');
       expect(ov.select()).to.be.undefined;
       expect(ov._selected).to.be.false;
@@ -277,6 +287,10 @@ describe('L.DistortableImageOverlay', function() {
       L.DomEvent.on(ov2.getElement(), 'load', function() {
         done();
       });
+    });
+
+    afterEach(function() {
+      L.DomUtil.remove(ov2);
     });
 
     it('Should not rotate the image when passed a value of 0 or 360', function() {

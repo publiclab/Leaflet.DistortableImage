@@ -2,7 +2,6 @@
 describe('L.DistortableImage.Edit', function() {
   var map;
   var ov;
-  var ov2;
 
   beforeEach(function(done) {
     map = L.map(L.DomUtil.create('div', '', document.body)).setView([41.7896, -87.5996], 15);
@@ -16,28 +15,16 @@ describe('L.DistortableImage.Edit', function() {
       ],
     }).addTo(map);
 
-    ov2 = L.distortableImageOverlay('/examples/example.png', {
-      corners: [
-        L.latLng(41.7934, -87.6052),
-        L.latLng(41.7934, -87.5852),
-        L.latLng(41.7834, -87.5852),
-        L.latLng(41.7834, -87.6052),
-      ],
-      suppressToolbar: true,
-    }).addTo(map);
-
     /* Forces the image to load before any tests are run. */
-    L.DomEvent.on(ov2.getElement(), 'load', function() { done(); });
+    L.DomEvent.on(ov.getElement(), 'load', function() { done(); });
 
     afterEach(function() {
       L.DomUtil.remove(ov);
-      L.DomUtil.remove(ov2);
     });
   });
 
   it('Should be initialized along with each instance of L.DistortableImageOverlay.', function() {
     expect(ov.editing).to.be.an.instanceOf(L.DistortableImage.Edit);
-    expect(ov2.editing).to.be.an.instanceOf(L.DistortableImage.Edit);
   });
 
   it('Should keep handles on the map in sync with the corners of the image.', function() {
@@ -181,6 +168,28 @@ describe('L.DistortableImage.Edit', function() {
   });
 
   describe('#nextMode', function() {
+    var ov2;
+
+    beforeEach(function(done) {
+      ov2 = L.distortableImageOverlay('/examples/example.png', {
+        corners: [
+          L.latLng(41.7934, -87.6052),
+          L.latLng(41.7934, -87.5852),
+          L.latLng(41.7834, -87.5852),
+          L.latLng(41.7834, -87.6052)
+        ],
+        suppressToolbar: true
+      }).addTo(map);
+
+      L.DomEvent.on(ov2.getElement(), 'load', function() {
+        done();
+      });
+    });
+
+    afterEach(function() {
+      L.DomUtil.remove(ov2);
+    });
+
     it('Should update image\'s mode to the next in its modes array', function() {
       var edit = ov.editing;
       var modes = Object.keys(edit.getModes());
@@ -241,6 +250,28 @@ describe('L.DistortableImage.Edit', function() {
   });
 
   describe('#setMode', function() {
+    var ov2;
+
+    beforeEach(function(done) {
+      ov2 = L.distortableImageOverlay('/examples/example.png', {
+        corners: [
+          L.latLng(41.7934, -87.6052),
+          L.latLng(41.7934, -87.5852),
+          L.latLng(41.7834, -87.5852),
+          L.latLng(41.7834, -87.6052)
+        ],
+        suppressToolbar: true
+      }).addTo(map);
+
+      L.DomEvent.on(ov2.getElement(), 'load', function() {
+        done();
+      });
+    });
+
+    afterEach(function() {
+      L.DomUtil.remove(ov2);
+    });
+
     it('Will return undefined if the passed value is not in the image\'s modes array', function() {
       var edit = ov.editing;
       expect(edit.setMode('lock')).to.be.ok;
