@@ -76,10 +76,8 @@ L.MatrixUtil = {
       x3s, y3s, x3d, y3d,
       x4s, y4s, x4d, y4d
   ) {
-    var s = L.MatrixUtil
-        .basisToPoints(x1s, y1s, x2s, y2s, x3s, y3s, x4s, y4s);
-    var d = L.MatrixUtil
-        .basisToPoints(x1d, y1d, x2d, y2d, x3d, y3d, x4d, y4d);
+    var s = L.MatrixUtil.basisToPoints(x1s, y1s, x2s, y2s, x3s, y3s, x4s, y4s);
+    var d = L.MatrixUtil.basisToPoints(x1d, y1d, x2d, y2d, x3d, y3d, x4d, y4d);
     var m = L.MatrixUtil.multmm(d, L.MatrixUtil.adj(s));
 
     // Normalize to the unique matrix with m[8] == 1.
