@@ -1,0 +1,7 @@
+node_modules
+coverage
+todo.txt
+*.swp
+*.swo
+package-lock.json
+.DS_Store
