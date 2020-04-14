@@ -1,6 +1,6 @@
 L.ImageUtil = {
 
-  getCmPerPixel: function(overlay) {
+  getCmPerPixel(overlay) {
     var map = overlay._map;
 
     var dist = map
