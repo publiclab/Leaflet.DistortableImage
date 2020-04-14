@@ -93,6 +93,23 @@ describe('L.DistortableImageOverlay', function() {
       });
     });
 
+    it('A mode is unavailable if it either does not exist or is restricted via the `actions` option', function(done) {
+      var ov2 = L.distortableImageOverlay('/examples/example.png', {
+        mode: 'blah',
+      }).addTo(map);
+
+      var ov3 = L.distortableImageOverlay('/examples/example.png', {
+        mode: 'rotate',
+        actions: [L.ScaleAction, L.BorderAction],
+      }).addTo(map);
+
+      L.DomEvent.on(ov3.getElement(), 'load', function() {
+        expect(ov2.editing.getMode()).to.not.eq('blah');
+        expect(ov3.editing.getMode()).to.not.eq('rotate');
+        done();
+      });
+    });
+
     it('If the mode is unavailable, the image\'s mode will be the 1st available one', function(done) {
       var ov2 = L.distortableImageOverlay('/examples/example.png', {
         mode: 'blah',
@@ -101,19 +118,6 @@ describe('L.DistortableImageOverlay', function() {
       L.DomEvent.on(ov2.getElement(), 'load', function() {
         expect(ov2.editing.editActions[0]).to.eq(L.DragAction);
         expect(ov2.editing.getMode()).to.eq('drag');
-        done();
-      });
-    });
-
-    it("A mode is unavailable if it either does not exist or is restricted via the `actions` option", function(done) {
-      var ov2 = L.distortableImageOverlay('/examples/example.png', {
-        mode: 'rotate',
-        actions: [L.ScaleAction, L.BorderAction],
-      }).addTo(map);
-
-      L.DomEvent.on(ov2.getElement(), 'load', function() {
-        expect(ov2.editing.editActions[0]).to.eq(L.ScaleAction);
-        expect(ov2.editing.getMode()).to.eq('scale');
         done();
       });
     });
