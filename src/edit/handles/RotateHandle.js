@@ -10,7 +10,7 @@ L.RotateHandle = L.EditHandle.extend({
     }),
   },
 
-  _onHandleDrag: function() {
+  _onHandleDrag() {
     var overlay = this._handled;
     var formerLatLng = overlay.getCorner(this._corner);
     var newLatLng = this.getLatLng();
@@ -23,7 +23,7 @@ L.RotateHandle = L.EditHandle.extend({
     overlay.rotateBy(angle, 'rad');
   },
 
-  updateHandle: function() {
+  updateHandle() {
     this.setLatLng(this._handled.getCorner(this._corner));
   },
 });
