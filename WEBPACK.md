@@ -95,7 +95,6 @@ const config = {
     // Open page in user's default browser
     open: true,
     openPage: 'examples/index.html',
-    sockPort: 8080
   },
   // Generate source maps
   devtool: 'source-map',
