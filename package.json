@@ -88,7 +88,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run linter && npm run build && git add"
+      "pre-commit": "npm run linter && npm run build && git add dist/leaflet.distortableimage.js"
     }
   }
 }
