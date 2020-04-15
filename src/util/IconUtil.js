@@ -4,7 +4,7 @@ L.IconUtil = {
    * identifier (id) of the symbol to reference. note for symplicity
    * we allow providing the icon target with or without the '#' prefix
    */
-  create: function(ref) {
+  create(ref) {
     if (/^#/.test(ref)) {
       ref = ref.replace(/^#/, '');
     }
@@ -16,7 +16,7 @@ L.IconUtil = {
     );
   },
 
-  addClassToSvg: function(container, loader) {
+  addClassToSvg(container, loader) {
     var svg = container.querySelector('svg');
 
     if (svg) {
@@ -25,7 +25,7 @@ L.IconUtil = {
   },
 
   // finds the use element and toggles its icon reference
-  toggleXlink: function(container, ref1, ref2) {
+  toggleXlink(container, ref1, ref2) {
     if (!/^#/.test(ref1)) {
       ref1 = '#' + ref1;
     }
@@ -42,7 +42,7 @@ L.IconUtil = {
     return false;
   },
 
-  toggleTitle: function(container, title1, title2) {
+  toggleTitle(container, title1, title2) {
     var toggled = container.getAttribute('title') === title1 ? title2 : title1;
 
     container.setAttribute('title', toggled);
