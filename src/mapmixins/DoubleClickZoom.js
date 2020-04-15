@@ -4,21 +4,21 @@
  * 2) Maintains a mutually exclusive relationship with the map's `DoubleClickLabels` handler
  */
 L.Map.DoubleClickZoom.include({
-  addHooks: function() {
+  addHooks() {
     this._map.on({
       click: this._fireIfSingle,
       dblclick: this._onDoubleClick,
     }, this);
   },
 
-  removeHooks: function() {
+  removeHooks() {
     this._map.off({
       click: this._fireIfSingle,
       dblclick: this._onDoubleClick,
     }, this);
   },
 
-  enable: function() {
+  enable() {
     if (this._enabled) { return this; }
 
     // don't enable 'doubleClickZoom' unless 'doubleClickLabels' is disabled first
@@ -36,7 +36,7 @@ L.Map.DoubleClickZoom.include({
     return this;
   },
 
-  disable: function() {
+  disable() {
     if (!this._enabled) { return this; }
 
     // signify to collection/instance safe to swap 'singleclick' listeners with 'click' listeners.
@@ -47,7 +47,7 @@ L.Map.DoubleClickZoom.include({
     return this;
   },
 
-  _fireIfSingle: function(e) {
+  _fireIfSingle(e) {
     var map = this._map;
     var oe = e.originalEvent;
 
@@ -71,7 +71,7 @@ L.Map.DoubleClickZoom.include({
     }, 250);
   },
 
-  _onDoubleClick: function(e) {
+  _onDoubleClick(e) {
     var map = this._map;
     var oe = e.originalEvent;
 

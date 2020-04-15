@@ -6,12 +6,12 @@ L.IconSet = L.Class.extend({
 
   _symbols: '',
 
-  render: function() {
+  render() {
     this.addSymbols(this._symbols);
     return this._svg;
   },
 
-  addSymbols: function(symbols) {
+  addSymbols(symbols) {
     this._svg += symbols;
   },
 });

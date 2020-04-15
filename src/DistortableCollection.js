@@ -8,7 +8,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     },
   },
 
-  initialize: function(options) {
+  initialize(options) {
     L.setOptions(this, options);
     L.FeatureGroup.prototype.initialize.call(this, options);
     L.Utils.initTranslation.call(this);
@@ -16,7 +16,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     this.editable = this.options.editable;
   },
 
-  onAdd: function(map) {
+  onAdd(map) {
     L.FeatureGroup.prototype.onAdd.call(this, map);
 
     this._map = map;
@@ -31,14 +31,14 @@ L.DistortableCollection = L.FeatureGroup.extend({
     this.on('layerremove', this._removeEvents, this);
   },
 
-  onRemove: function() {
+  onRemove() {
     if (this.editing) { this.editing.disable(); }
 
     this.off('layeradd', this._addEvents, this);
     this.off('layerremove', this._removeEvents, this);
   },
 
-  _addEvents: function(e) {
+  _addEvents(e) {
     var layer = e.layer;
 
     L.DomEvent.on(layer, {
@@ -53,7 +53,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
   },
 
-  _removeEvents: function(e) {
+  _removeEvents(e) {
     var layer = e.layer;
 
     L.DomEvent.off(layer, {
@@ -67,7 +67,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
   },
 
-  _longPressMultiSelect: function(e) {
+  _longPressMultiSelect(e) {
     if (!this.editable) { return; }
 
     e.preventDefault();
@@ -86,16 +86,16 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
   },
 
-  isCollected: function(overlay) {
+  isCollected(overlay) {
     return L.DomUtil.hasClass(overlay.getElement(), 'collected');
   },
 
-  anyCollected: function() {
+  anyCollected() {
     var layerArr = this.getLayers();
     return layerArr.some(this.isCollected.bind(this));
   },
 
-  _toggleCollected: function(e, layer) {
+  _toggleCollected(e, layer) {
     if (e.shiftKey) {
       /* conditional prevents disabled images from flickering multi-select mode */
       if (layer.editing.enabled()) {
@@ -107,7 +107,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     else { this.editing._removeToolbar(); }
   },
 
-  _deselectOthers: function(e) {
+  _deselectOthers(e) {
     if (!this.editable) { return; }
 
     this.eachLayer(function(layer) {
@@ -121,7 +121,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     if (e) { L.DomEvent.stopPropagation(e); }
   },
 
-  _dragStartMultiple: function(e) {
+  _dragStartMultiple(e) {
     var overlay = e.target;
     var map = this._map;
     var i;
@@ -138,7 +138,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     });
   },
 
-  _dragMultiple: function(e) {
+  _dragMultiple(e) {
     var overlay = e.target;
     var map = this._map;
 
@@ -150,7 +150,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     this._updateCollectionFromPoints(delta, overlay);
   },
 
-  _toRemove: function() {
+  _toRemove() {
     var layerArr = this.getLayers();
 
     return layerArr.filter(function(layer) {
@@ -159,7 +159,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
   },
 
-  _toMove: function(overlay) {
+  _toMove(overlay) {
     var layerArr = this.getLayers();
 
     return layerArr.filter(function(layer) {
@@ -168,7 +168,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
   },
 
-  _updateCollectionFromPoints: function(delta, overlay) {
+  _updateCollectionFromPoints(delta, overlay) {
     var layersToMove = this._toMove(overlay);
     var p = new L.Transformation(1, -delta.x, 1, -delta.y);
     var i;
@@ -182,14 +182,14 @@ L.DistortableCollection = L.FeatureGroup.extend({
     });
   },
 
-  _getAvgCmPerPixel: function(imgs) {
+  _getAvgCmPerPixel(imgs) {
     var reduce = imgs.reduce(function(sum, img) {
       return sum + img.cm_per_pixel;
     }, 0);
     return reduce / imgs.length;
   },
 
-  generateExportJson: function() {
+  generateExportJson() {
     var json = {};
     json.images = [];
 

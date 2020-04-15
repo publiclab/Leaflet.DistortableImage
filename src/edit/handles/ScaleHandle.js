@@ -10,7 +10,7 @@ L.ScaleHandle = L.EditHandle.extend({
     }),
   },
 
-  _onHandleDrag: function() {
+  _onHandleDrag() {
     var overlay = this._handled;
     var map = overlay._map;
     var edgeMinWidth = overlay.edgeMinWidth;
@@ -41,7 +41,7 @@ L.ScaleHandle = L.EditHandle.extend({
     }
   },
 
-  updateHandle: function() {
+  updateHandle() {
     this.setLatLng(this._handled.getCorner(this._corner));
   },
 });

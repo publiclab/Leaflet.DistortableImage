@@ -1,5 +1,5 @@
 L.DragAction = L.EditAction.extend({
-  initialize: function(map, overlay, options) {
+  initialize(map, overlay, options) {
     options = options || {};
     options.toolbarIcon = {
       svg: true,
@@ -12,7 +12,7 @@ L.DragAction = L.EditAction.extend({
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
-  addHooks: function() {
+  addHooks() {
     var edit = this._overlay.editing;
     edit._dragMode();
   },

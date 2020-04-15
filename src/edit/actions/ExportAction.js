@@ -1,6 +1,6 @@
 L.ExportAction = L.EditAction.extend({
   // This function is executed every time we select an image
-  initialize: function(map, overlay, options) {
+  initialize(map, overlay, options) {
     var edit = overlay.editing;
     var tooltip;
 
@@ -26,7 +26,7 @@ L.ExportAction = L.EditAction.extend({
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
-  addHooks: function() {
+  addHooks() {
     var edit = this._overlay.editing;
 
     if (edit instanceof L.DistortableImage.Edit) {
@@ -71,27 +71,27 @@ L.ExportAction = L.EditAction.extend({
     }, this);
   },
 
-  resetState: function() {
+  resetState() {
     this.renderDownloadIcon();
     this.isExporting = false;
     this.mouseLeaveSkip = true;
   },
 
-  attachMouseEventListeners: function(element) {
+  attachMouseEventListeners(element) {
     element.addEventListener('mouseenter', this.mouseEnterHandler);
     element.addEventListener('mouseleave', this.mouseLeaveHandler);
   },
 
-  detachMouseEventListeners: function(element) {
+  detachMouseEventListeners(element) {
     element.removeEventListener('mouseenter', this.mouseEnterHandler);
     element.removeEventListener('mouseleave', this.mouseLeaveHandler);
   },
 
-  handleMouseEnter: function() {
+  handleMouseEnter() {
     this.renderCancelIcon();
   },
 
-  handleMouseLeave: function() {
+  handleMouseLeave() {
     if (!this.mouseLeaveSkip) {
       this.renderExportIcon();
     } else {
@@ -99,19 +99,19 @@ L.ExportAction = L.EditAction.extend({
     }
   },
 
-  renderDownloadIcon: function() {
+  renderDownloadIcon() {
     L.IconUtil.toggleXlink(this._link, 'get_app', 'spinner');
     L.IconUtil.toggleTitle(this._link, 'Export Images', 'Loading...');
     L.DomUtil.removeClass(this._link.firstChild, 'loader');
   },
 
-  renderExportIcon: function() {
+  renderExportIcon() {
     L.IconUtil.toggleXlink(this._link, 'spinner');
     L.IconUtil.toggleTitle(this._link, 'Export Images', 'Loading...');
     L.IconUtil.addClassToSvg(this._link, 'loader');
   },
 
-  renderCancelIcon: function() {
+  renderCancelIcon() {
     L.IconUtil.toggleXlink(this._link, 'cancel');
     L.IconUtil.toggleTitle(this._link, 'Cancel Export', 'Loading...');
     L.DomUtil.removeClass(this._link.firstChild, 'loader');

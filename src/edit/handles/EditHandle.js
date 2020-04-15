@@ -1,5 +1,5 @@
 L.EditHandle = L.Marker.extend({
-  initialize: function(overlay, corner, options) {
+  initialize(overlay, corner, options) {
     var latlng = overlay.getCorner(corner);
 
     L.setOptions(this, options);
@@ -19,31 +19,31 @@ L.EditHandle = L.Marker.extend({
     L.Marker.prototype.initialize.call(this, latlng, markerOptions);
   },
 
-  onAdd: function(map) {
+  onAdd(map) {
     L.Marker.prototype.onAdd.call(this, map);
     this._bindListeners();
     this.updateHandle();
   },
 
-  onRemove: function(map) {
+  onRemove(map) {
     this._unbindListeners();
     L.Marker.prototype.onRemove.call(this, map);
   },
 
-  _onHandleDragStart: function() {
+  _onHandleDragStart() {
     this._handled.fire('editstart');
   },
 
-  _onHandleDragEnd: function() {
+  _onHandleDragEnd() {
     this._fireEdit();
   },
 
-  _fireEdit: function() {
+  _fireEdit() {
     this._handled.edited = true;
     this._handled.fire('edit');
   },
 
-  _bindListeners: function() {
+  _bindListeners() {
     this.on({
       contextmenu: L.DomEvent.stop,
       dragstart: this._onHandleDragStart,
@@ -55,7 +55,7 @@ L.EditHandle = L.Marker.extend({
     this._handled.on('update', this.updateHandle, this);
   },
 
-  _unbindListeners: function() {
+  _unbindListeners() {
     this.off({
       contextmenu: L.DomEvent.stop,
       dragstart: this._onHandleDragStart,
@@ -68,7 +68,7 @@ L.EditHandle = L.Marker.extend({
   },
 
   /* Takes two latlngs and calculates the scaling difference. */
-  _calculateScalingFactor: function(latlngA, latlngB) {
+  _calculateScalingFactor(latlngA, latlngB) {
     var overlay = this._handled;
     var map = overlay._map;
 
@@ -82,7 +82,7 @@ L.EditHandle = L.Marker.extend({
   },
 
   /* Distance between two points in cartesian space, squared (distance formula). */
-  _d2: function(a, b) {
+  _d2(a, b) {
     var dx = a.x - b.x;
     var dy = a.y - b.y;
 
@@ -90,7 +90,7 @@ L.EditHandle = L.Marker.extend({
   },
 
   /* Takes two latlngs and calculates the angle between them. */
-  calculateAngleDelta: function(latlngA, latlngB) {
+  calculateAngleDelta(latlngA, latlngB) {
     var overlay = this._handled;
     var map = overlay._map;
 

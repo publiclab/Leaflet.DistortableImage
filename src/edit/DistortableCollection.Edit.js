@@ -6,7 +6,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     keymap: L.distortableImage.group_action_map,
   },
 
-  initialize: function(group, options) {
+  initialize(group, options) {
     this._group = group;
     this._exportOpts = group.options.exportOpts;
 
@@ -15,7 +15,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     L.distortableImage.group_action_map.Escape = '_decollectAll';
   },
 
-  addHooks: function() {
+  addHooks() {
     var group = this._group;
     var map = group._map;
 
@@ -43,7 +43,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     });
   },
 
-  removeHooks: function() {
+  removeHooks() {
     var group = this._group;
     var map = group._map;
 
@@ -67,20 +67,20 @@ L.DistortableCollection.Edit = L.Handler.extend({
     });
   },
 
-  enable: function() {
+  enable() {
     this._enabled = true;
     this.addHooks();
     return this;
   },
 
-  disable: function() {
+  disable() {
     this._enabled = false;
     this.removeHooks();
 
     return this;
   },
 
-  _onKeyDown: function(e) {
+  _onKeyDown(e) {
     var keymap = this.options.keymap;
     var handlerName = keymap[e.key];
 
@@ -91,24 +91,24 @@ L.DistortableCollection.Edit = L.Handler.extend({
     }
   },
 
-  _singleClick: function(e) {
+  _singleClick(e) {
     if (e.type === 'singleclick') { this._decollectAll(e); }
     else { return; }
   },
 
-  _singleClickListeners: function() {
+  _singleClickListeners() {
     var map = this._group._map;
     L.DomEvent.off(map, 'click', this._decollectAll, this);
     L.DomEvent.on(map, 'singleclick', this._decollectAll, this);
   },
 
-  _resetClickListeners: function() {
+  _resetClickListeners() {
     var map = this._group._map;
     L.DomEvent.on(map, 'click', this._decollectAll, this);
     L.DomEvent.off(map, 'singleclick', this._decollectAll, this);
   },
 
-  _decollectAll: function(e) {
+  _decollectAll(e) {
     var oe;
 
     if (e) { oe = e.originalEvent; }
@@ -130,7 +130,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     if (e) { L.DomEvent.stopPropagation(e); }
   },
 
-  _unlockGroup: function() {
+  _unlockGroup() {
     this._group.eachLayer(function(layer) {
       if (this._group.isCollected(layer)) {
         var edit = layer.editing;
@@ -143,7 +143,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     }, this);
   },
 
-  _lockGroup: function() {
+  _lockGroup() {
     this._group.eachLayer(function(layer) {
       if (this._group.isCollected(layer) ) {
         var edit = layer.editing;
@@ -156,7 +156,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     }, this);
   },
 
-  _addCollections: function(e) {
+  _addCollections(e) {
     var box = e.boxCollectBounds;
     var map = this._group._map;
 
@@ -178,7 +178,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     }, this);
   },
 
-  _removeGroup: function(e) {
+  _removeGroup(e) {
     var layersToRemove = this._group._toRemove();
     var n = layersToRemove.length;
 
@@ -198,7 +198,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     if (e) { L.DomEvent.stopPropagation(e); }
   },
 
-  cancelExport: function() {
+  cancelExport() {
     if (!this.customCollection) {
       this._exportOpts.collection = undefined;
     }
@@ -206,7 +206,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     clearInterval(this.updateInterval);
   },
 
-  _addToolbar: function() {
+  _addToolbar() {
     var group = this._group;
     var map = group._map;
 
@@ -218,7 +218,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     }).addTo(map, group);
   },
 
-  _removeToolbar: function() {
+  _removeToolbar() {
     var map = this._group._map;
     if (this.toolbar) {
       map.removeLayer(this.toolbar);
@@ -228,13 +228,13 @@ L.DistortableCollection.Edit = L.Handler.extend({
     }
   },
 
-  hasTool: function(value) {
+  hasTool(value) {
     return this.editActions.some(function(action) {
       return action === value;
     });
   },
 
-  addTool: function(value) {
+  addTool(value) {
     if (value.baseClass === 'leaflet-toolbar-icon' && !this.hasTool(value)) {
       this._removeToolbar();
       this.editActions.push(value);
@@ -243,7 +243,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     return this;
   },
 
-  removeTool: function(value) {
+  removeTool(value) {
     this.editActions.some(function(item, idx) {
       if (this.editActions[idx] === value) {
         this._removeToolbar();
@@ -257,7 +257,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     return this;
   },
 
-  startExport: function() {
+  startExport() {
     return new Promise(function(resolve) {
       var opts = this._exportOpts;
       opts.resolve = resolve; // allow resolving promise in user-defined functions, to stop spinner on completion
@@ -323,7 +323,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
             scale: opts.scale,
             upload: true,
           },
-          success: function(data) { opts.handleStatusRes(data); }, // this handles the initial response
+          success(data) { opts.handleStatusRes(data); }, // this handles the initial response
         });
       }
 
