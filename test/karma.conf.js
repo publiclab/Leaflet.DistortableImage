@@ -100,6 +100,13 @@ module.exports = function(config) {
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
     browsers: ['PhantomJS'],
 
+    // If browser does not capture in given timeout [ms], kill it
+    captureTimeout: 5000,
+
+    // Workaround for PhantomJS random DISCONNECTED error
+    browserDisconnectTimeout: 10000, // default 2000
+    browserDisconnectTolerance: 1, // default 0
+
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
     singleRun: true,
