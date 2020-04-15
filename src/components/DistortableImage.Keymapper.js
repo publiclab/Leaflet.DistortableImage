@@ -8,12 +8,12 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     position: 'topright',
   },
 
-  initialize: function(map, options) {
+  initialize(map, options) {
     this._map = map;
     L.setOptions(this, options);
   },
 
-  addHooks: function() {
+  addHooks() {
     if (!this._keymapper) {
       this._container = this._buildContainer();
       this._scrollWrapper = this._wrap();
@@ -27,7 +27,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     }
   },
 
-  removeHooks: function() {
+  removeHooks() {
     if (this._keymapper) {
       L.DomEvent.off(this._toggler, 'click', this._toggleKeymapper, this);
 
@@ -38,7 +38,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     }
   },
 
-  _buildContainer: function() {
+  _buildContainer() {
     var container = L.DomUtil.create('div', 'ldi-keymapper-hide');
     container.setAttribute('id', 'ldi-keymapper');
 
@@ -48,7 +48,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     return container;
   },
 
-  _createButton: function() {
+  _createButton() {
     var toggler = L.DomUtil.create('a', '');
     toggler.innerHTML = L.IconUtil.create('keyboard_open');
 
@@ -62,7 +62,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     return toggler;
   },
 
-  _wrap: function() {
+  _wrap() {
     var wrap = L.DomUtil.create('div', '');
     wrap.setAttribute('id', 'keymapper-wrapper');
     wrap.style.display = 'none';
@@ -70,7 +70,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     return wrap;
   },
 
-  _setMapper: function(container, wrap, button) {
+  _setMapper(container, wrap, button) {
     this._keymapper = L.control({position: this.options.position});
 
     this._keymapper.onAdd = function() {
@@ -102,7 +102,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     this._keymapper.addTo(this._map);
   },
 
-  _toggleKeymapper: function(e) {
+  _toggleKeymapper(e) {
     e.preventDefault();
 
     this._container.className = (
@@ -125,7 +125,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     L.DomUtil.toggleClass(this._toggler, 'close-icon');
   },
 
-  _injectIconSet: function() {
+  _injectIconSet() {
     if (document.querySelector('#keymapper-iconset')) { return; }
 
     var el = L.DomUtil.create('div', '');
