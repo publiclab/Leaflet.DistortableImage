@@ -1,4 +1,3 @@
-const webpack = require('webpack');
 const glob = require('glob');
 const path = require('path');
 const MergeIntoSingleFilePlugin = require('webpack-merge-and-include-globally');
@@ -13,14 +12,14 @@ const config = {
     './src/edit/getEXIFdata.js',
     './src/edit/handles/EditHandle.js',
     ...glob.sync('./src/edit/handles/*', {
-      ignore: './src/edit/handles/EditHandle.js'
+      ignore: './src/edit/handles/EditHandle.js',
     }),
     './src/iconsets/IconSet.js',
     './src/iconsets/KeymapperIconSet.js',
     './src/iconsets/ToolbarIconSet.js',
     './src/edit/actions/EditAction.js',
     ...glob.sync('./src/edit/actions/*', {
-      ignore: './src/edit/actions/EditAction.js'
+      ignore: './src/edit/actions/EditAction.js',
     }),
     './src/edit/toolbars/DistortableImage.PopupBar.js',
     './src/edit/toolbars/DistortableImage.ControlBar.js',
@@ -29,14 +28,15 @@ const config = {
     './src/components/DistortableImage.Keymapper.js',
     './src/mapmixins/DoubleClickZoom.js',
     ...glob.sync('./src/mapmixins/*', {
-      ignore: './src/mapmixins/DoubleClickZoom.js'
-    })
+      ignore: './src/mapmixins/DoubleClickZoom.js',
+    }),
   ],
   output: {
     path: path.resolve(__dirname, 'dist'),
+    publicPath: '/dist/',
     filename: 'leaflet.distortableimage.js',
     hotUpdateChunkFilename: 'hot/hot-update.js',
-    hotUpdateMainFilename: 'hot/hot-update.json'
+    hotUpdateMainFilename: 'hot/hot-update.json',
   },
   module: {
     rules: [
@@ -46,25 +46,25 @@ const config = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env']
-          }
-        }
-      }
-    ]
+            presets: ['@babel/preset-env'],
+          },
+        },
+      },
+    ],
   },
   devServer: {
     host: 'localhost',
     port: 8080,
     hot: true,
-    publicPath: '/',
+    publicPath: '/dist/',
     writeToDisk: true,
     inline: true,
     open: true,
-    openPage: 'examples/index.html'
+    openPage: 'examples/index.html',
   },
   devtool: 'source-map',
   stats: 'errors-only',
-  plugins: []
+  plugins: [],
 };
 
 if (process.env.NODE_ENV === 'production') {
@@ -77,12 +77,12 @@ if (process.env.NODE_ENV === 'production') {
           './node_modules/promise-polyfill/dist/polyfill.min.js',
           './node_modules/webgl-distort/dist/webgl-distort.js',
           './node_modules/glfx/glfx.js',
-          './node_modules/exif-js/exif.js'
+          './node_modules/exif-js/exif.js',
         ],
         'vendor.css': [
           './node_modules/leaflet/dist/leaflet.css',
-          './node_modules/leaflet-toolbar/dist/leaflet.toolbar.css'
-        ]
+          './node_modules/leaflet-toolbar/dist/leaflet.toolbar.css',
+        ],
       },
       transform: {
         'vendor.js': code => require('uglify-js').minify(code).code
