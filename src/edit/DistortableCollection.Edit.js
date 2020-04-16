@@ -306,7 +306,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
           var request = new Request(statusUrl+'?'+Date.now(), {method: 'GET'});
           fetch(request).then(function(response) {
             if (response.status === 200) {
-              return response.json();
+              return response.text();
             }
           }).then(opts.updater);
         }, opts.frequency);
@@ -319,10 +319,10 @@ L.DistortableCollection.Edit = L.Handler.extend({
         form.append('scale', opts.scale);
         form.append('upload', true);
         var requestOptions = {method: 'POST', body: form};
-        var request = new Request(open.exportStartUrl, requestOptions);
+        var request = new Request(opts.exportStartUrl, requestOptions);
         fetch(request).then(function(response) {
           if (response.status === 200) {
-            return response.json();
+            return response.text();
           }
         }).then(opts.handleStatusRes);
       }
