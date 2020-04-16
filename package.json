@@ -10,6 +10,7 @@
     "watch:dev": "webpack --watch",
     "serve:dev": "cross-env NODE_ENV=development webpack-dev-server",
     "test": "grunt test",
+    "watch:test": "grunt karma:development:start && grunt watch",
     "build": "cross-env NODE_ENV=production grunt build",
     "linter": "./node_modules/.bin/eslint ."
   },
