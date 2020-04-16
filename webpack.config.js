@@ -60,7 +60,7 @@ const config = {
     inline: true,
     open: true,
     openPage: 'examples/index.html',
-    publicPath: 'http://localhost:8080/dist/',
+    publicPath: '/dist/',
     clientLogLevel: 'silent',
   },
   devtool: 'source-map',

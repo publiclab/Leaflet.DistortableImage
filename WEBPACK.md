@@ -84,10 +84,10 @@ const config = {
   devServer: {
     host: 'localhost',
     port: 8080,
-    // Enable Hot Module Replacement(HMR)
-    // HMR allows updating modules without forcing a page refresh
+    // Enable Hot Module Replacement (HMR), allowing
+    // module updates without forcing a page reload.
     hot: true,
-    // Make bundled files available on this location
+    // Make bundled files available on this location.
     publicPath: '/dist/',
     writeToDisk: true,
     // Make build messages appear in the browser console
@@ -95,6 +95,8 @@ const config = {
     // Open page in user's default browser
     open: true,
     openPage: 'examples/index.html',
+    // Make less messages appeaar in browser console
+    clientLogLevel: 'silent',
   },
   // Generate source maps
   devtool: 'source-map',
