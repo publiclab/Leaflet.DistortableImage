@@ -7,10 +7,10 @@
   },
   "scripts": {
     "setup": "npm i && npm i leaflet --no-save && npm run build",
-    "start:dev": "webpack --watch",
-    "build": "cross-env NODE_ENV=production grunt build",
-    "dev": "npm run build; cross-env NODE_ENV=development webpack-dev-server",
+    "watch:dev": "webpack --watch",
+    "serve:dev": "cross-env NODE_ENV=development webpack-dev-server",
     "test": "grunt test",
+    "build": "cross-env NODE_ENV=production grunt build",
     "linter": "./node_modules/.bin/eslint ."
   },
   "browserslist": "> 0.2%, IE 9, last 2 versions",
