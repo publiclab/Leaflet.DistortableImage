@@ -1,5 +1,5 @@
 L.StackAction = L.EditAction.extend({
-  initialize: function(map, overlay, options) {
+  initialize(map, overlay, options) {
     var edit = overlay.editing;
     var use;
     var tooltip;
@@ -26,7 +26,7 @@ L.StackAction = L.EditAction.extend({
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
-  addHooks: function() {
+  addHooks() {
     var edit = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'flip_to_front', 'flip_to_back');
