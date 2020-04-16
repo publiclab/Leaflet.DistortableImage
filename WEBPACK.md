@@ -51,8 +51,8 @@ const config = {
     filename: 'leaflet.distortableimage.js',
 
     /**
-     * Webpack live server regenerates new hot update files on changes in source code. We use the
-     * 2 optional options below to instead have it override the existing ones on changes.
+     * Webpack dev server regenerates new hot update files on changes in src code.
+     * The 2 options below have it override the existing ones instead,
      */
 
     // Filename of hot update chunks
