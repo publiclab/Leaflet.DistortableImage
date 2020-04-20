@@ -1,3 +1,14 @@
+1.1.1 / 2019-12-12
+=================
+  * [Refactor] use split-up `es-abstract` (85% bundle size decrease)
+  * [Deps] update `es-abstract`
+  * [Dev Deps] update `eslint`, `@ljharb/eslint-config`, `functions-have-names`, `tape`, `object-keys`
+  * [Tests] use `npx aud` instead of `nsp` or `npm audit` with hoops
+  * [Tests] use shared travis-ci configs
+  * [Tests] use `functions-have-names`
+  * [meta] add `funding` field
+  * [actions] add automatic rebasing / merge commit blocking
+
 1.1.0 / 2019-01-01
 =================
   * [New] add `auto` entry point`

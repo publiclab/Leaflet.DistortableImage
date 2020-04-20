@@ -1,15 +1,16 @@
 'use strict';
 
-var ES = require('es-abstract/es7');
 var has = require('has');
-var bind = require('function-bind');
-var isEnumerable = bind.call(Function.call, Object.prototype.propertyIsEnumerable);
+var RequireObjectCoercible = require('es-abstract/2019/RequireObjectCoercible');
+var callBound = require('es-abstract/helpers/callBound');
+
+var $isEnumerable = callBound('Object.prototype.propertyIsEnumerable');
 
 module.exports = function values(O) {
-	var obj = ES.RequireObjectCoercible(O);
+	var obj = RequireObjectCoercible(O);
 	var vals = [];
 	for (var key in obj) {
-		if (has(obj, key) && isEnumerable(obj, key)) {
+		if (has(obj, key) && $isEnumerable(obj, key)) {
 			vals.push(obj[key]);
 		}
 	}

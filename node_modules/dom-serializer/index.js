@@ -105,7 +105,7 @@ var render = (module.exports = function(dom, opts) {
   return output;
 });
 
-const foreignModeIntegrationPoints = [
+var foreignModeIntegrationPoints = [
   'mi',
   'mo',
   'mn',

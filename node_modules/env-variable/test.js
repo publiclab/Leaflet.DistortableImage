@@ -26,6 +26,18 @@ describe('env-variable', function () {
     assume(data.foo).equals('bar');
   });
 
+  it('does not throw when window.localStorage throws', function () {
+    global.window = global.window || {};
+
+    Object.defineProperty(window, 'localStorage', {
+      get: function () {
+        throw new Error('NOT ACCESSIBLE IN PRIVATE BROWSING')
+      }
+    });
+
+    env();
+  });
+
   describe('#merge', function () {
     it('merges objects', function () {
       const data = {};

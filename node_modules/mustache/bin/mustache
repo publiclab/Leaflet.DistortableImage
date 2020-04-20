@@ -53,11 +53,20 @@ function run (/*args*/) {
 }
 
 function readView (cb) {
-  var view = isStdin(viewArg) ? process.openStdin() : fs.createReadStream(viewArg);
-
-  streamToStr(view, function onDone (str) {
-    cb(parseView(str));
-  });
+  var view;
+  if (isJsFile(viewArg)) {
+    view = require(path.join(process.cwd(),viewArg));
+    cb(view);
+  } else {
+    if (isStdin(viewArg)) {
+      view = process.openStdin();
+    } else {
+      view = fs.createReadStream(viewArg);
+    }
+    streamToStr(view, function onDone (str) {
+      cb(parseView(str));
+    });
+  }
 }
 
 function parseView (str) {
@@ -119,6 +128,11 @@ function streamToStr (stream, cb) {
 
 function isStdin (view) {
   return view === '-';
+}
+
+function isJsFile (view) {
+  var extension = path.extname(view);
+  return extension === '.js' || extension === '.cjs';
 }
 
 function wasNotFound (err) {

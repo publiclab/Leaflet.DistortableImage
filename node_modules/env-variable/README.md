@@ -1,13 +1,5 @@
 # env-variable
 
-[![From bigpipe.io][from]](http://bigpipe.io)[![Version npm][version]](http://browsenpm.org/package/env-variable)[![Build Status][build]](https://travis-ci.org/bigpipe/env-variable)[![Dependencies][david]](https://david-dm.org/bigpipe/env-variable)[![Coverage Status][cover]](https://coveralls.io/r/bigpipe/env-variable?branch=master)
-
-[from]: https://img.shields.io/badge/from-bigpipe.io-9d8dff.svg?style=flat-square
-[version]: http://img.shields.io/npm/v/env-variable.svg?style=flat-square
-[build]: http://img.shields.io/travis/bigpipe/env-variable/master.svg?style=flat-square
-[david]: https://img.shields.io/david/bigpipe/env-variable.svg?style=flat-square
-[cover]: http://img.shields.io/coveralls/bigpipe/env-variable/master.svg?style=flat-square
-
 A cross platform `env-variable` for browsers and node. Of course, browsers
 doesn't have environment variables but we do have hashtags and localStorage
 which we will use as fallback.
