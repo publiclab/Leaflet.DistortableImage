@@ -10,23 +10,27 @@ L.FreeRotateHandle = L.EditHandle.extend({
     }),
   },
 
-  _onHandleDrag: function() {
-    var overlay = this._handled;
-    var map = overlay._map;
-    var edgeMinWidth = overlay.edgeMinWidth;
-    var formerLatLng = overlay.getCorner(this._corner);
-    var newLatLng = this.getLatLng();
-    var angle = this.calculateAngleDelta(formerLatLng, newLatLng);
-    var scale = this._calculateScalingFactor(formerLatLng, newLatLng);
+  _onHandleDrag() {
+    let overlay = this._handled;
+    let map = overlay._map;
+    let edgeMinWidth = overlay.edgeMinWidth;
+    let formerLatLng = overlay.getCorner(this._corner);
+    let newLatLng = this.getLatLng();
+    let angle = this.calculateAngleDelta(formerLatLng, newLatLng);
+    let scale = this._calculateScalingFactor(formerLatLng, newLatLng);
 
-    if (angle !== 0) { overlay.rotateBy(angle, 'rad'); }
+    if (angle !== 0) {
+      overlay.rotateBy(angle, 'rad');
+    }
 
-    if (!edgeMinWidth) { edgeMinWidth = 50; } /* just in case */
-    var corner1 = map.latLngToContainerPoint(overlay.getCorner(0));
-    var corner2 = map.latLngToContainerPoint(overlay.getCorner(1));
-    var w = Math.abs(corner1.x - corner2.x);
-    var h = Math.abs(corner1.y - corner2.y);
-    var distance = Math.sqrt(w * w + h * h);
+    if (!edgeMinWidth) {
+      edgeMinWidth = 50;
+    } /* just in case */
+    let corner1 = map.latLngToContainerPoint(overlay.getCorner(0));
+    let corner2 = map.latLngToContainerPoint(overlay.getCorner(1));
+    let w = Math.abs(corner1.x - corner2.x);
+    let h = Math.abs(corner1.y - corner2.y);
+    let distance = Math.sqrt(w * w + h * h);
     if (distance > edgeMinWidth || scale > 1) {
       overlay.scaleBy(scale);
     } else {
@@ -34,11 +38,11 @@ L.FreeRotateHandle = L.EditHandle.extend({
     }
   },
 
-  updateHandle: function() {
+  updateHandle() {
     this.setLatLng(this._handled.getCorner(this._corner));
   },
 });
 
-L.freeRotateHandle = function(overlay, idx, options) {
+L.freeRotateHandle = (overlay, idx, options) => {
   return new L.FreeRotateHandle(overlay, idx, options);
 };
