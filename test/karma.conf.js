@@ -12,8 +12,8 @@ module.exports = function(config) {
       require('karma-sinon'),
       require('karma-coverage'),
       require('karma-mocha-reporter'),
-      require('karma-phantomjs-launcher'),
-      require('karma-babel-preprocessor')
+      require('karma-babel-preprocessor'),
+      require('karma-phantomjs-launcher')
     ],
 
     // frameworks to use
@@ -31,7 +31,6 @@ module.exports = function(config) {
       'node_modules/webgl-distort/dist/webgl-distort.js',
       'node_modules/glfx/glfx.js',
       'node_modules/chai/chai.js',
-      'node_modules/sinon/pkg/sinon.js',
       'test/polyfill/*.js',
       'src/util/*.js',
       'src/DistortableImageOverlay.js',

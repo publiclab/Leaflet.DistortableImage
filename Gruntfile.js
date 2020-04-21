@@ -30,7 +30,6 @@ module.exports = function(grunt) {
         undef: true,
         globals: {
           L: false,
-          $: false,
           LeafletToolbar: false,
           warpWebGl: false,
           EXIF: false,
