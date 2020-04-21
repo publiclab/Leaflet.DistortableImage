@@ -45,7 +45,7 @@ npm run serve:dev
 npm run watch:dev
 ```
 
-3\. Once you finish, commit your changes and a pre-commit hook will automatically update your `dist` files to a production build.
+3\. Once you finish, commit your changes and a pre-commit hook automatically updates your `dist` files to a production build (via `npm run build`).
 
 *To learn more about our Webpack configuration file, take a look at [this](WEBPACK.md).*
 
