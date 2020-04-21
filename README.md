@@ -28,11 +28,6 @@ npm i leaflet-distortableimage
 
 Compatible with Leaflet 1.0.0 and greater
 
-## Setup
-
-* From the root directory, run `npm install` and
-`npm install leaflet --no-save`
-
 ## Demo
 
 Check out this [simple demo](https://publiclab.github.io/Leaflet.DistortableImage/examples/index.html).
@@ -853,33 +848,11 @@ imgGroup = L.distortableCollection({
 }).addTo(map);
 ```
 
+---
+
 ## Contributing
 
-There are [plenty of outstanding issues to resolve](https://github.com/publiclab/Leaflet.DistortableImage/issues). Please consider helping out!
-
-1. This project uses `Webpack` to bundle JavaScript.
-
-```Bash
-$ npm install
-
-# install leaflet peer dependency locally
-$ npm install leaflet --no-save
-
-# It'll open examples/index.html in your default browser and watch live for changes (Webpack development server compiles the changes and refreshes the browser)
-$ npm run dev
-```
-
-2. Once you finish, commit your changes and a pre-commit hook will build all files from `/src/` into the `/dist/` folder.
-
-
-3. _Optional_: We use SVG for our icon system. Please visit our wiki [SVG Icon System](https://github.com/publiclab/Leaflet.DistortableImage/wiki/SVG-Icon-System) if you are interested in making updates to them or just simply learning about our workflow.
-4. _Optional_: To learn more about our Webpack configuration file, take a look at [this](WEBPACK.md).
-
-### Testing
-
-[Guide](TESTING.md) on testing LDI.
-
----
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for details on how you can contribute to Leaflet.DistortableImage.
 
 ### Contributors
 
