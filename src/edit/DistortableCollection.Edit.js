@@ -305,7 +305,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
         self.updateInterval = setInterval(function intervalUpdater() {
           var request = new Request(statusUrl+'?'+Date.now(), {method: 'GET'});
           fetch(request).then(function(response) {
-            if (response.status === 200) {
+            if (response.ok) {
               return response.text();
             }
           }).then(opts.updater);
@@ -321,7 +321,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
         var requestOptions = {method: 'POST', body: form};
         var request = new Request(opts.exportStartUrl, requestOptions);
         fetch(request).then(function(response) {
-          if (response.status === 200) {
+          if (response.ok) {
             return response.text();
           }
         }).then(opts.handleStatusRes);
