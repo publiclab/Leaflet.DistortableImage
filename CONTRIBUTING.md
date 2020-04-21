@@ -21,25 +21,33 @@ Learn more about contributing to Public Lab code projects on these pages:
 
 ## Setup
 
-1. This project uses Webpack to bundle JavaScript. From the root directory, run:
+1\. This project uses Webpack to bundle JavaScript. From the root directory, run:
 
 ```Bash
 # installs dependencies and the latest version of leaflet as a peer dependency; builds dist files.
 npm run setup
 ```
-- If you want to install a specific version of leaflet besides the latest, run `npm i leaflet@1.X.X --no-save`
 
-2. You can run it with the webpack development server we have set up.
+ * If you want to install a specific version of leaflet besides the latest, run `npm i leaflet@1.X.X --no-save`
+
+2\. Server setup. **Choose one option below.**
+
+  - a. You can run it with the webpack development server we have set up:
+
 ```Bash
-# Webpack development server opens examples/index.html in your default browser and watch live for changes
+# Opens examples/index.html in your default browser and watch live for changes
 npm run serve:dev
 ```
 
-- Webpack dev server generates a development build and adds it's own code to sync changes with the HMR server that won't be compatible running on a different server. If you prefer to use a different server, don't run the above command. You can also remove this code by generating a fresh production build with `npm run build`
+* b. Or to run it with your own server, just ensure that webpack is watching for updates to the `src` files:
 
-3. Once you finish, commit your changes and a pre-commit hook will automatically update your build to a production build.
+```Bash
+npm run watch:dev
+```
 
-*Optional*: To learn more about our Webpack configuration file, take a look at [this](WEBPACK.md).
+3\. Once you finish, commit your changes and a pre-commit hook will automatically update your `dist` files to a production build.
+
+*To learn more about our Webpack configuration file, take a look at [this](WEBPACK.md).*
 
 ### Icons
 
