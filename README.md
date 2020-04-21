@@ -210,7 +210,7 @@ Set the initial rotation angle of your image, in degrees or radians. Set the uni
 ```js
 img = L.distortableImageOverlay('example.jpg', {
   rotation: {
-    deg: 180
+    deg: 180,
   },
 }).addTo(map);
 ```
