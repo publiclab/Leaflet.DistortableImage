@@ -12,8 +12,8 @@ module.exports = function(config) {
       require('karma-sinon'),
       require('karma-coverage'),
       require('karma-mocha-reporter'),
-      require('karma-babel-preprocessor'),
-      require('karma-phantomjs-launcher')
+      require('karma-phantomjs-launcher'),
+      require('karma-babel-preprocessor')
     ],
 
     // frameworks to use

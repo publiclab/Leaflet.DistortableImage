@@ -11,26 +11,23 @@ L.FreeRotateHandle = L.EditHandle.extend({
   },
 
   _onHandleDrag() {
-    let overlay = this._handled;
-    let map = overlay._map;
+    const overlay = this._handled;
+    const map = overlay._map;
+    const formerLatLng = overlay.getCorner(this._corner);
+    const newLatLng = this.getLatLng();
+    const angle = this.calculateAngleDelta(formerLatLng, newLatLng);
+    const scale = this._calculateScalingFactor(formerLatLng, newLatLng);
+
+    if (angle !== 0) { overlay.rotateBy(angle, 'rad'); }
+
     let edgeMinWidth = overlay.edgeMinWidth;
-    let formerLatLng = overlay.getCorner(this._corner);
-    let newLatLng = this.getLatLng();
-    let angle = this.calculateAngleDelta(formerLatLng, newLatLng);
-    let scale = this._calculateScalingFactor(formerLatLng, newLatLng);
+    if (!edgeMinWidth) { edgeMinWidth = 50; } /* just in case */
 
-    if (angle !== 0) {
-      overlay.rotateBy(angle, 'rad');
-    }
-
-    if (!edgeMinWidth) {
-      edgeMinWidth = 50;
-    } /* just in case */
-    let corner1 = map.latLngToContainerPoint(overlay.getCorner(0));
-    let corner2 = map.latLngToContainerPoint(overlay.getCorner(1));
-    let w = Math.abs(corner1.x - corner2.x);
-    let h = Math.abs(corner1.y - corner2.y);
-    let distance = Math.sqrt(w * w + h * h);
+    const corner1 = map.latLngToContainerPoint(overlay.getCorner(0));
+    const corner2 = map.latLngToContainerPoint(overlay.getCorner(1));
+    const w = Math.abs(corner1.x - corner2.x);
+    const h = Math.abs(corner1.y - corner2.y);
+    const distance = Math.sqrt(w * w + h * h);
     if (distance > edgeMinWidth || scale > 1) {
       overlay.scaleBy(scale);
     } else {
