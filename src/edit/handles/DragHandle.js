@@ -21,3 +21,7 @@ L.DragHandle = L.EditHandle.extend({
     this.setLatLng(this._handled.getCorner(this._corner));
   },
 });
+
+L.dragHandle = function(overlay, idx, options) {
+  return new L.DragHandle(overlay, idx, options);
+};
