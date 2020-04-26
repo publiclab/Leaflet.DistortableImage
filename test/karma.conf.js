@@ -7,6 +7,7 @@ module.exports = function(config) {
     basePath: '../',
 
     plugins: [
+<<<<<<< HEAD
       require('mocha'),
       require('karma-mocha'),
       require('karma-sinon'),
@@ -14,6 +15,15 @@ module.exports = function(config) {
       require('karma-mocha-reporter'),
       require('karma-phantomjs-launcher'),
       require('karma-babel-preprocessor')
+=======
+      require("mocha"),
+      require("karma-mocha"),
+      require("karma-coverage"),
+      require("karma-mocha-reporter"),
+      require("karma-phantomjs-launcher"),
+      require("glfx"),
+      require("webgl-distort/dist/webgl-distort.js")
+>>>>>>> dce63cf6d97329e4bcbd0b98c2f1399574610998
     ],
 
     // frameworks to use
@@ -22,6 +32,7 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
+<<<<<<< HEAD
       { pattern: 'examples/*.jpg', included: false, served: true },
       { pattern: 'examples/*.png', included: false, served: true },
       'node_modules/leaflet/dist/leaflet-src.js',
@@ -52,6 +63,28 @@ module.exports = function(config) {
       'test/SpecHelper.js',
       'test/src/*Spec.js',
       'test/src/**/*Spec.js'
+=======
+      { pattern: "examples/*.jpg", included: false, served: true },
+      { pattern: "examples/*.png", included: false, served: true },
+      "node_modules/leaflet/dist/leaflet-src.js",
+      "node_modules/leaflet/dist/leaflet.css",
+      "node_modules/leaflet-toolbar/dist/leaflet.toolbar.js",
+      "node_modules/leaflet-toolbar/dist/leaflet.toolbar.css",
+      "node_modules/webgl-distort/dist/webgl-distort.js",
+      "node_modules/glfx/glfx.js",
+      "node_modules/chai/chai.js",
+      "node_modules/sinon/pkg/sinon.js",
+      "src/util/*.js",
+      "src/edit/EditHandle.js",
+      "src/edit/LockHandle.js",
+      "src/edit/DistortHandle.js",
+      "src/edit/RotateHandle.js",
+      "src/DistortableImageOverlay.js",
+      "src/edit/DistortableImage.EditToolbar.js",
+      "src/edit/DistortableImage.Edit.js",
+      "test/SpecHelper.js",
+      "test/src/**/*Spec.js"
+>>>>>>> dce63cf6d97329e4bcbd0b98c2f1399574610998
     ],
 
     // so that karma can serve examples/example.png

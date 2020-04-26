@@ -4,7 +4,10 @@ todo.txt
 *.swp
 *.swo
 package-lock.json
+<<<<<<< HEAD
 .DS_Store
 dist/*
 !dist/leaflet.distortableimage.css
 !dist/leaflet.distortableimage.js
+=======
+>>>>>>> dce63cf6d97329e4bcbd0b98c2f1399574610998

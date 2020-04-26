@@ -6,6 +6,7 @@ module.exports = function(grunt) {
     return ['grunt-cli'].indexOf(pkg) < 0;
   }).forEach(grunt.loadNpmTasks);
 
+<<<<<<< HEAD
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
@@ -46,6 +47,95 @@ module.exports = function(grunt) {
           chai: false,
           expect: false,
           sinon: false
+=======
+    require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
+
+    grunt.initConfig({
+        pkg: grunt.file.readJSON('package.json'),
+
+        jshint: {
+            options: {
+                node: true,
+                browser: true,
+                esnext: true,
+                bitwise: true,
+                curly: true,
+                eqeqeq: true,
+                immed: true,
+                indent: 4,
+                latedef: true,
+                newcap: true,
+                noarg: true,
+                regexp: true,
+                undef: true,
+                unused: true,
+                trailing: true,
+                smarttabs: true,
+                globals: {
+                    L: false,
+                    $: false,
+                    LeafletToolbar: false,
+                    warpWebGl: false,
+
+                    // Mocha
+
+                    describe: false,
+                    it: false,
+                    before: false,
+                    after: false,
+                    beforeEach: false,
+                    afterEach: false,
+                    chai: false,
+                    expect: false,
+                    sinon: false
+                }
+            },
+            source: {
+                src: [ 'src/**/*.js', 'package.json' ]
+            },
+            grunt: {
+                src: [ 'Gruntfile.js' ]
+            }
+        },
+
+        karma: {
+            development: {
+                configFile: 'test/karma.conf.js',
+            },
+            test: {
+                configFile: 'test/karma.conf.js',
+            }
+        },
+
+        watch: {
+            options : {
+                livereload: true
+            },
+            source: {
+                files: [
+                    'src/**/*.js',
+                    'test/**/*.js',
+                    'Gruntfile.js'
+                ],
+                tasks: [ 'build:js' ]
+            }
+        },
+
+        concat: {
+            dist: {
+                src: [
+                    'src/util/*.js',
+                    'src/edit/EditHandle.js',
+                    'src/edit/LockHandle.js',
+                    'src/edit/DistortHandle.js',
+                    'src/edit/RotateHandle.js',
+                    'src/DistortableImageOverlay.js',
+                    'src/edit/DistortableImage.EditToolbar.js',
+                    'src/edit/DistortableImage.Edit.js',
+                ],
+                dest: 'dist/leaflet.distortableimage.js',
+            }
+>>>>>>> dce63cf6d97329e4bcbd0b98c2f1399574610998
         }
       },
       source: {

@@ -1,6 +1,10 @@
 {
   "name": "leaflet-distortableimage",
+<<<<<<< HEAD
   "version": "0.17.7",
+=======
+  "version": "0.2.0",
+>>>>>>> dce63cf6d97329e4bcbd0b98c2f1399574610998
   "description": "Leaflet plugin enabling image overlays to be distorted, stretched, and warped (built for Public Lab's MapKnitter: http://publiclab.org).",
   "engines": {
     "node": ">=10.0.0"
@@ -39,6 +43,7 @@
   },
   "homepage": "https://github.com/publiclab/Leaflet.DistortableImage",
   "dependencies": {
+<<<<<<< HEAD
     "exif-js": "^2.3.0",
     "glfx": "0.0.4",
     "leaflet-toolbar": "0.4.0-alpha.2",
@@ -56,6 +61,15 @@
     "glob": "^7.1.6",
     "grunt": "^1.1.0",
     "grunt-cli": "^1.3.2",
+=======
+    "grunt-cli": "^1.2.0"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "font-awesome": "^4.2.0",
+    "glfx": "0.0.4",
+    "grunt": "^1.0.3",
+>>>>>>> dce63cf6d97329e4bcbd0b98c2f1399574610998
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-jshint": "^2.0.0",
     "grunt-contrib-watch": "^1.0.0",
@@ -72,6 +86,7 @@
     "karma-phantomjs-launcher": "^1.0.4",
     "karma-sinon": "^1.0.5",
     "matchdep": "^2.0.0",
+<<<<<<< HEAD
     "mocha": "^7.1.1",
     "phantomjs-prebuilt": "^2.1.16",
     "sinon": "^7.2.4",
@@ -88,5 +103,10 @@
     "hooks": {
       "pre-commit": "npm run linter && npm run build && git add dist/leaflet.distortableimage.js"
     }
+=======
+    "mocha": "^5.2.0",
+    "sinon": "^7.2.2",
+    "webgl-distort": "0.0.2"
+>>>>>>> dce63cf6d97329e4bcbd0b98c2f1399574610998
   }
 }
