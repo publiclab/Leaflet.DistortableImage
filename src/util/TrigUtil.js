@@ -6,7 +6,7 @@ L.TrigUtil = {
         Math.atan2(y, x);
   },
 
-  radiansToDegrees: function(angle) {
+  radiansToDegrees(angle) {
     return (angle * 180) / Math.PI;
   },
 
