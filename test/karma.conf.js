@@ -102,6 +102,10 @@ module.exports = function(config) {
     // If browser does not capture in given timeout [ms], kill it
     captureTimeout: 5000,
 
+    // to address Travis build errors; https://github.com/publiclab/Leaflet.DistortableImage/pull/675
+    // https://docs.travis-ci.com/user/gui-and-headless-browsers/#karma-and-firefox-inactivity-timeouts
+    browserNoActivityTimeout: 40000,
+
     // Workaround for PhantomJS random DISCONNECTED error
     browserDisconnectTimeout: 10000, // default 2000
     browserDisconnectTolerance: 1, // default 0
