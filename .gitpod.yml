@@ -1,5 +1,5 @@
 tasks:
-  - init: npm i && npm run build
+  - init: npm i && npm run setup
     command: npm run serve:dev
 ports:
   - port: 3000
