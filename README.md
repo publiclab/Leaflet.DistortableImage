@@ -358,7 +358,7 @@ A single toolbar instance (using `L.control`) renders the set of tools available
 
 ---
 
-Defaults:
+#### Default tools
 
 * **L.BorderAction** (<kbd>b</kbd>)
   * Toggles a thin border around the overlay.
@@ -380,7 +380,14 @@ Defaults:
 * **L.ScaleAction** (<kbd>s</kbd>):
   * Sets `scale` mode.
 
- Addons:
+#### Add-on tools
+
+These may be added using `addTool()`, like this: 
+
+```js
+distortableImageLayer.editing.addTool(L.StackAction);
+```
+
 * **L.RestoreAction**
   * Restores the image to its natural dimensions, scale, rotation, and location on the map.
 * **L.StackAction** (<kbd>q</kbd>, <kbd>a</kbd>)
