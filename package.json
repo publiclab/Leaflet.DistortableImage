@@ -41,6 +41,7 @@
   "dependencies": {
     "exif-js": "^2.3.0",
     "glfx": "0.0.4",
+    "karma-chrome-launcher": "^3.1.0",
     "leaflet-toolbar": "0.4.0-alpha.2",
     "webgl-distort": "0.0.2"
   },

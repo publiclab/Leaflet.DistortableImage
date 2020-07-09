@@ -12,7 +12,7 @@ module.exports = function(config) {
       require('karma-sinon'),
       require('karma-coverage'),
       require('karma-mocha-reporter'),
-      require('karma-phantomjs-launcher'),
+      require('karma-chrome-launcher'),
       require('karma-babel-preprocessor')
     ],
 
@@ -97,7 +97,7 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['PhantomJS'],
+    browsers: ['Chrome'],
 
     // If browser does not capture in given timeout [ms], kill it
     captureTimeout: 5000,
