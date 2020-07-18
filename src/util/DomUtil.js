@@ -1,10 +1,10 @@
 L.DomUtil = L.extend(L.DomUtil, {
   initTranslation: function(obj) {
-    this.translation = obj;
+    return (this.translation = obj);
   },
 
-  getMatrixString: function(m) {
-    var is3d = L.Browser.webkit3d || L.Browser.gecko3d || L.Browser.ie3d;
+  getMatrixString(m) {
+    const is3d = L.Browser.webkit3d || L.Browser.gecko3d || L.Browser.ie3d;
 
     /*
      * Since matrix3d takes a 4*4 matrix, we add in an empty row and column,
@@ -14,34 +14,48 @@ L.DomUtil = L.extend(L.DomUtil, {
      *     https://developer.mozilla.org/en-US/docs/Web/CSS/transform-function#M.C3.B6bius'_homogeneous_coordinates_in_projective_geometry
      */
     var matrix = [
-      m[0], m[3], 0, m[6],
-      m[1], m[4], 0, m[7],
-      0, 0, 1, 0,
-      m[2], m[5], 0, m[8],
+      m[0],
+      m[3],
+      0,
+      m[6],
+      m[1],
+      m[4],
+      0,
+      m[7],
+      0,
+      0,
+      1,
+      0,
+      m[2],
+      m[5],
+      0,
+      m[8],
     ];
 
-    var str = is3d ? 'matrix3d(' + matrix.join(',') + ')' : '';
+    const str = is3d ? 'matrix3d(' + matrix.join(',') + ')' : '';
 
     if (!is3d) {
-      console
-          .log('Your browser must support 3D CSS transforms' +
-          'in order to use DistortableImageOverlay.');
+      console.log(
+          'Your browser must support 3D CSS transforms' +
+          'in order to use DistortableImageOverlay.'
+      );
     }
 
     return str;
   },
 
-  toggleClass: function(el, className) {
+  toggleClass(el, className) {
     var c = className;
     return this.hasClass(el, c) ?
-      this.removeClass(el, c) : this.addClass(el, c);
+      this.removeClass(el, c) :
+      this.addClass(el, c);
   },
 
-  confirmDelete: function() {
+  confirmDelete() {
     return window.confirm(this.translation.confirmImageDelete);
   },
 
-  confirmDeletes: function(n) {
+  confirmDeletes(n) {
     if (n === 1) {
       this.confirmDelete();
       return;

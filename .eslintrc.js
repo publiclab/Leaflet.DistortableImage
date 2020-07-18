@@ -1,14 +1,14 @@
 module.exports = {
   env: {
-    browser: true
+    browser: true,
   },
   extends: 'google',
   globals: {
     Atomics: 'readonly',
-    SharedArrayBuffer: 'readonly'
+    SharedArrayBuffer: 'readonly',
   },
   parserOptions: {
-    ecmaVersion: 6
+    ecmaVersion: 6,
   },
   rules: {
     /*
@@ -27,15 +27,15 @@ module.exports = {
 
     /* rules */
     'block-spacing': ['error', 'always'],
-    'brace-style': ['off', '1tbs', { allowSingleLine: true }],
-    curly: ['error', 'multi-line'],
+    'brace-style': ['off', '1tbs', {allowSingleLine: true}],
+    'curly': ['error', 'multi-line'],
     'guard-for-in': 0,
     'linebreak-style': ['error', 'unix'],
-    'max-len': ['warn', { ignoreComments: true }],
+    'max-len': ['warn', {ignoreComments: true}],
     'new-cap': 0,
     'no-var': 0,
     'prefer-const': 1,
     'require-jsdoc': 0,
     'valid-jsdoc': 0,
-  }
+  },
 };
