@@ -3,7 +3,7 @@ L.Map.include({
 
   _clicked: 0,
 
-  addGoogleMutant: function(opts) {
+  addGoogleMutant(opts) {
     var url = 'http://mt0.google.com/vt/lyrs=s&x={x}&y={y}&z={z}';
 
     opts = this.mutantOptions = L.extend({
@@ -39,7 +39,7 @@ L.Map.include({
     return this;
   },
 
-  _addLabels: function(opts) {
+  _addLabels(opts) {
     var url = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner-labels/{z}/{x}/{y}{r}.{ext}';
 
     if (opts.labelOpacity !== 0 && opts.labelOpacity !== 1) {
