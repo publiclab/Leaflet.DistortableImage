@@ -1,3 +1,7 @@
+.ldi .leaflet-popup-toolbar {
+  width: max-content !important;
+}
+
 .ldi .leaflet-pane .leaflet-overlay-pane img {
   pointer-events: all !important;
 }
