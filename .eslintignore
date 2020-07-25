@@ -3,3 +3,4 @@ test/*
 Gruntfile.js
 dist
 webpack.config.js
+.eslintrc.js
