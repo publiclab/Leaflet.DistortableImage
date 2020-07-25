@@ -108,7 +108,7 @@ module.exports = function(config) {
 
     // Workaround for PhantomJS random DISCONNECTED error
     browserDisconnectTimeout: 10000, // default 2000
-    browserDisconnectTolerance: 1, // default 0
+    browserDisconnectTolerance: 5, // default 0
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
