@@ -89,12 +89,12 @@ describe('L.DistortableImage.Edit', function() {
     });
 
     it('Should add the new action to the image\'s `modes` if it is also a mode', function(done) {
-      var ov3 = L.distortableImageOverlay('/examples/example.png', {
-        actions: [L.ScaleAction]
-      }).addTo(map);
-
       var old = L.ScaleAction;
       var next = L.DragAction;
+
+      var ov3 = L.distortableImageOverlay('/examples/example.png', {
+        actions: [old]
+      }).addTo(map);
 
       L.DomEvent.on(ov3.getElement(), 'load', function() {
         var edit = ov3.editing;
