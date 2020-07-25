@@ -179,6 +179,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
   },
 
   _removeGroup: function(e) {
+    if (!this.hasTool(L.DeleteAction)) { return; }
     var layersToRemove = this._group._toRemove();
     var n = layersToRemove.length;
 
