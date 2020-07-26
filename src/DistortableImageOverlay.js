@@ -35,7 +35,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     }
 
     // Have to wait for the image to load because need to access its w/h
-    L.DomEvent.on(this.getElement(), 'load', function() {
+    L.DomEvent.on(this.getElement(), 'load', () => {
       this.getPane().appendChild(this.getElement());
       this._initImageDimensions();
 
@@ -63,7 +63,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
         if (this.editable) { this.editing.enable(); }
         this.eP = null;
       }
-    }, this);
+    });
 
     L.DomEvent.on(this.getElement(), 'click', this.select, this);
     L.DomEvent.on(map, {
@@ -184,7 +184,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   _programmaticGrouping: function() {
-    this._map.eachLayer(function(layer) {
+    this._map.eachLayer((layer) => {
       if (layer instanceof L.DistortableImageOverlay) {
         layer.deselect();
       }

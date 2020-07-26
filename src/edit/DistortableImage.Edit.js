@@ -639,7 +639,9 @@ L.DistortableImage.Edit = L.Handler.extend({
     var eP = this.parentGroup;
     var mode = this.getMode();
 
-    if (mode === newMode || !this.hasMode(newMode) || !this.enabled()) { return; }
+    if (mode === newMode || !this.hasMode(newMode) || !this.enabled()) {
+      return;
+    }
 
     if (this.toolbar) { this.toolbar.clickTool(newMode); }
     if (this.isMode('lock') && !this.dragging) { this._enableDragging(); }
