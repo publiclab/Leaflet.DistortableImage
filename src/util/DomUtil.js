@@ -53,7 +53,7 @@ L.DomUtil = L.extend(L.DomUtil, {
     if (typeof translation === 'function') {
       warningMsg = translation(n);
     } else {
-      warningMsg = n + ' ' + translation;
+      warningMsg = translation;
     }
 
     return window.confirm(warningMsg);

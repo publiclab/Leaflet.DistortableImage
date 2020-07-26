@@ -131,7 +131,8 @@ L.DistortableCollection.Edit = L.Handler.extend({
   },
 
   _unlockGroup: function() {
-    this._group.eachLayer(function(layer) {
+    if (!this.hasTool(L.UnlockAction)) { return; }
+    this._group.eachLayer((layer) => {
       if (this._group.isCollected(layer)) {
         var edit = layer.editing;
         if (edit.isMode('lock')) {
@@ -140,11 +141,12 @@ L.DistortableCollection.Edit = L.Handler.extend({
           layer.deselect();
         }
       }
-    }, this);
+    });
   },
 
   _lockGroup: function() {
-    this._group.eachLayer(function(layer) {
+    if (!this.hasTool(L.LockAction)) { return; }
+    this._group.eachLayer((layer) => {
       if (this._group.isCollected(layer) ) {
         var edit = layer.editing;
         if (!edit.isMode('lock')) {
@@ -153,7 +155,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
           L.DomUtil.addClass(layer.getElement(), 'collected');
         }
       }
-    }, this);
+    });
   },
 
   _addCollections: function(e) {
@@ -188,9 +190,9 @@ L.DistortableCollection.Edit = L.Handler.extend({
     var choice = L.DomUtil.confirmDeletes(n);
 
     if (choice) {
-      layersToRemove.forEach(function(layer) {
+      layersToRemove.forEach((layer) => {
         this._group.removeLayer(layer);
-      }, this);
+      });
       if (!this._group.anyCollected()) {
         this._removeToolbar();
       }
@@ -259,6 +261,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
   },
 
   startExport: function() {
+    if (!this.hasTool(L.ExportAction)) { return; }
     return new Promise(function(resolve) {
       var opts = this._exportOpts;
       opts.resolve = resolve; // allow resolving promise in user-defined functions, to stop spinner on completion
