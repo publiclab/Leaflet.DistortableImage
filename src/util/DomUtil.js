@@ -42,10 +42,7 @@ L.DomUtil = L.extend(L.DomUtil, {
   },
 
   confirmDeletes(n) {
-    if (n === 1) {
-      this.confirmDelete();
-      return;
-    }
+    if (n === 1) { return this.confirmDelete(); }
 
     var translation = this.translation.confirmImagesDeletes;
     var warningMsg = '';
