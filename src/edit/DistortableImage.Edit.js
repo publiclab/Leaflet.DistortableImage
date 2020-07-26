@@ -164,7 +164,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._updateHandle();
 
     if (!ov.isSelected() && this.currentHandle) {
-      this.currentHandle.eachLayer(function(handle) {
+      this.currentHandle.eachLayer((handle) => {
         handle.setOpacity(0);
         if (handle.dragging) { handle.dragging.disable(); }
       });
@@ -191,7 +191,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (next.baseClass !== 'leaflet-toolbar-icon' || this.hasTool(next)) {
       return this;
     }
-    this.editActions.some(function(item, idx) {
+    this.editActions.some((item, idx) => {
       if (item === old) {
         this._removeToolbar();
         this.editActions[idx] = next;
@@ -206,7 +206,7 @@ L.DistortableImage.Edit = L.Handler.extend({
         }
         return true;
       }
-    }, this);
+    });
     return this;
   },
 
@@ -226,13 +226,11 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   hasTool: function(value) {
-    return this.editActions.some(function(action) {
-      return action === value;
-    });
+    return this.editActions.some(action => action === value);
   },
 
   removeTool: function(value) {
-    this.editActions.some(function(item, idx) {
+    this.editActions.some((item, idx) => {
       if (item === value) {
         this._removeToolbar();
         this.editActions.splice(idx, 1);
@@ -245,7 +243,7 @@ L.DistortableImage.Edit = L.Handler.extend({
         }
         return true;
       }
-    }, this);
+    });
     if (!this._overlay.isSelected()) { this._removeToolbar(); }
     return this;
   },
@@ -281,10 +279,10 @@ L.DistortableImage.Edit = L.Handler.extend({
     this.dragging.enable();
 
     /* Hide toolbars and markers while dragging; click will re-show it */
-    this.dragging.on('dragstart', function() {
+    this.dragging.on('dragstart', () => {
       overlay.fire('dragstart');
       this._removeToolbar();
-    }, this);
+    });
 
     /*
      * Adjust default behavior of L.Draggable, which overwrites the CSS3
@@ -339,7 +337,6 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _toggleLockMode: function() {
-    if (!this.hasTool(L.LockAction)) { return; }
     if (this.isMode('lock')) { this._unlock(); }
     else { this._lock(); }
   },
@@ -375,7 +372,6 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   // compare this to using overlay zIndex
   _toggleOrder: function() {
-    if (!this.hasTool(L.StackAction)) { return; }
     if (this._toggledImage) { this._stackUp(); }
     else { this._stackDown(); }
   },
@@ -468,6 +464,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     var t = this._toggledImage;
 
     if (t || !this.hasTool(L.StackAction)) { return; }
+
     this._toggledImage = true;
     this._overlay.bringToBack();
     this._refresh();
@@ -477,12 +474,10 @@ L.DistortableImage.Edit = L.Handler.extend({
     var ov = this._overlay;
     var map = ov._map;
     var eP = this.parentGroup;
-    var tool = L.LockAction;
-    var collectionTool = L.UnlockAction;
 
     if (!this.isMode('lock')) { return; }
-    if (!this.hasTool(tool) && (eP && !eP.editing.hasTool(collectionTool))) {
-      return;
+    if ((eP && !eP.isCollected(ov)) || !eP) {
+      if (!this.hasTool(L.LockAction)) { return; }
     }
 
     if (this.currentHandle) { map.removeLayer(this.currentHandle); }
@@ -501,10 +496,12 @@ L.DistortableImage.Edit = L.Handler.extend({
     var ov = this._overlay;
     var map = ov._map;
     var eP = this.parentGroup;
-    var tool = L.LockAction;
 
     if (this.isMode('lock')) { return; }
-    if (!this.hasTool(tool) && (eP && !eP.editing.hasTool(tool))) { return; }
+    if ((eP && !eP.isCollected(ov)) || !eP) {
+      if (!this.hasTool(L.LockAction)) { return; }
+    }
+
     if (this.currentHandle) { map.removeLayer(this.currentHandle); }
     this._mode = 'lock';
     this._updateHandle();
@@ -523,7 +520,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     // only markers we want in collect interface for now is lock
     if (!this.isMode('lock') && (eP && eP.anyCollected())) { return; }
 
-    this.currentHandle.eachLayer(function(handle) {
+    this.currentHandle.eachLayer((handle) => {
       handle.setOpacity(1);
       if (handle.dragging) { handle.dragging.enable(); }
       L.DomUtil.addClass(handle.getElement(), 'leaflet-interactive');
@@ -540,7 +537,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (!this.currentHandle) { return; }
     if (this.isMode('lock') && (eP && eP.isCollected(ov))) { return; }
 
-    this.currentHandle.eachLayer(function(handle) {
+    this.currentHandle.eachLayer((handle) => {
       handle.setOpacity(0);
       if (handle.dragging) { handle.dragging.disable(); }
       L.DomUtil.removeClass(handle.getElement(), 'leaflet-interactive');
@@ -553,7 +550,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     var mode = this.getMode();
 
     if (this.currentHandle) { map.removeLayer(this.currentHandle); }
-    this.currentHandle = mode === '' ? '' : this._handles[this.getMode()];
+    this.currentHandle = mode === '' ? '' : this._handles[mode];
     if (this.currentHandle !== '') {
       map.addLayer(this.currentHandle);
     }
@@ -641,14 +638,8 @@ L.DistortableImage.Edit = L.Handler.extend({
     var ov = this._overlay;
     var eP = this.parentGroup;
     var mode = this.getMode();
-    var collectionTool;
 
-    if (eP) { collectionTool = L.DistortableCollection.Edit.MODES[newMode]; }
-
-    if (mode === newMode || !this.enabled()) { return; }
-    if (!this.hasMode(newMode) || (eP && !eP.editing.hasTool(collectionTool))) {
-      return;
-    }
+    if (mode === newMode || !this.hasMode(newMode) || !this.enabled()) { return; }
 
     if (this.toolbar) { this.toolbar.clickTool(newMode); }
     if (this.isMode('lock') && !this.dragging) { this._enableDragging(); }

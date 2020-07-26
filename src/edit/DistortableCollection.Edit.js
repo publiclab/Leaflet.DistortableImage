@@ -38,9 +38,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     }, this);
 
     this._group.editable = true;
-    this._group.eachLayer(function(layer) {
-      layer.editing.enable();
-    });
+    this._group.eachLayer(layer => layer.editing.enable());
   },
 
   removeHooks: function() {
@@ -62,9 +60,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
     this._decollectAll();
     this._group.editable = false;
-    this._group.eachLayer(function(layer) {
-      layer.editing.disable();
-    });
+    this._group.eachLayer(layer => layer.editing.disable());
   },
 
   enable: function() {
@@ -120,7 +116,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
       return;
     }
 
-    this._group.eachLayer(function(layer) {
+    this._group.eachLayer((layer) => {
       L.DomUtil.removeClass(layer.getElement(), 'collected');
       layer.deselect();
     });
@@ -135,11 +131,9 @@ L.DistortableCollection.Edit = L.Handler.extend({
     this._group.eachLayer((layer) => {
       if (this._group.isCollected(layer)) {
         var edit = layer.editing;
-        if (edit.isMode('lock')) {
-          edit._unlock();
-          // unlock updates the layer's handles; deselect to ensure they're hidden
-          layer.deselect();
-        }
+        edit._unlock();
+        // unlock updates the layer's handles; deselect to ensure they're hidden
+        layer.deselect();
       }
     });
   },
@@ -149,11 +143,9 @@ L.DistortableCollection.Edit = L.Handler.extend({
     this._group.eachLayer((layer) => {
       if (this._group.isCollected(layer) ) {
         var edit = layer.editing;
-        if (!edit.isMode('lock')) {
-          edit._lock();
-          // map.addLayer also deselects the image, so we reselect here
-          L.DomUtil.addClass(layer.getElement(), 'collected');
-        }
+        edit._lock();
+        // map.addLayer also deselects the image, so we reselect here
+        L.DomUtil.addClass(layer.getElement(), 'collected');
       }
     });
   },
@@ -162,7 +154,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     var box = e.boxCollectBounds;
     var map = this._group._map;
 
-    this._group.eachLayer(function(layer) {
+    this._group.eachLayer((layer) => {
       var edit = layer.editing;
 
       if (layer.isSelected()) { layer.deselect(); }
@@ -172,12 +164,10 @@ L.DistortableCollection.Edit = L.Handler.extend({
       var center = map.getCenter();
       imgBounds = map._latLngBoundsToNewLayerBounds(imgBounds, zoom, center);
       if (box.intersects(imgBounds) && edit.enabled()) {
-        if (!this.toolbar) {
-          this._addToolbar();
-        }
+        if (!this.toolbar) { this._addToolbar(); }
         L.DomUtil.addClass(layer.getElement(), 'collected');
       }
-    }, this);
+    });
   },
 
   _removeGroup: function(e) {
@@ -232,9 +222,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
   },
 
   hasTool: function(value) {
-    return this.editActions.some(function(action) {
-      return action === value;
-    });
+    return this.editActions.some(action => action === value);
   },
 
   addTool: function(value) {
@@ -247,7 +235,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
   },
 
   removeTool: function(value) {
-    this.editActions.some(function(item, idx) {
+    this.editActions.some((item, idx) => {
       if (this.editActions[idx] === value) {
         this._removeToolbar();
         this.editActions.splice(idx, 1);
@@ -256,7 +244,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
       } else {
         return false;
       }
-    }, this);
+    });
     return this;
   },
 
