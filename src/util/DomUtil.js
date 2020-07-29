@@ -1,9 +1,9 @@
 L.DomUtil = L.extend(L.DomUtil, {
-  initTranslation: function(obj) {
+  initTranslation(obj) {
     this.translation = obj;
   },
 
-  getMatrixString: function(m) {
+  getMatrixString(m) {
     var is3d = L.Browser.webkit3d || L.Browser.gecko3d || L.Browser.ie3d;
 
     /*
@@ -31,17 +31,17 @@ L.DomUtil = L.extend(L.DomUtil, {
     return str;
   },
 
-  toggleClass: function(el, className) {
+  toggleClass(el, className) {
     var c = className;
     return this.hasClass(el, c) ?
       this.removeClass(el, c) : this.addClass(el, c);
   },
 
-  confirmDelete: function() {
+  confirmDelete() {
     return window.confirm(this.translation.confirmImageDelete);
   },
 
-  confirmDeletes: function(n) {
+  confirmDeletes(n) {
     if (n === 1) {
       this.confirmDelete();
       return;
