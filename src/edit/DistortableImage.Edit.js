@@ -12,7 +12,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._overlay = overlay;
     this._toggledImage = false;
     this._mode = overlay.options.mode;
-    this._transparent = false;
+    this._transparent = 1.0;
     this._outlined = false;
 
     L.setOptions(this, options);
@@ -350,8 +350,13 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     if (!this.hasTool(L.OpacityAction)) { return; }
 
-    this._transparent = !this._transparent;
-    opacity = this._transparent ? this.options.opacity : 1;
+    if (this._transparent === this.options.opacity) {
+      this._transparent = 1.0;
+    } else {
+      this._transparent = parseFloat((this._transparent-0.1).toFixed(1));
+    }
+
+    opacity = this._transparent;
 
     L.DomUtil.setOpacity(image, opacity);
     image.setAttribute('opacity', opacity);
