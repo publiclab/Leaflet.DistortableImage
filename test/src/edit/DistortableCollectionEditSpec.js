@@ -229,6 +229,7 @@ describe('L.DistortableCollection.Edit', function() {
     beforeEach(function() { // multi-selects the images to add them to the feature group
       chai.simulateEvent(overlay.getElement(), 'mousedown', {shiftKey: true});
       chai.simulateEvent(overlay3.getElement(), 'mousedown', {shiftKey: true});
+      confirm = sinon.spy();
     });
 
     it('removes a collection of layers', function() {

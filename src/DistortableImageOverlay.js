@@ -157,6 +157,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     edit._hideMarkers();
 
     this._selected = false;
+    this.fire('deselect');
     return this;
   },
 
@@ -173,6 +174,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this._selected = true;
     edit._addToolbar();
     edit._showMarkers();
+    this.fire('select');
 
     // we run the selection logic 1st anyway because the collection group's _addToolbar method depends on it
     if (eP && eP.anyCollected()) {

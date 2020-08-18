@@ -12,8 +12,8 @@ module.exports = function(config) {
       require('karma-sinon'),
       require('karma-coverage'),
       require('karma-mocha-reporter'),
-      require('karma-phantomjs-launcher'),
-      require('karma-babel-preprocessor')
+      require('karma-chrome-launcher'),
+      require('karma-babel-preprocessor'),
     ],
 
     // frameworks to use
@@ -51,12 +51,12 @@ module.exports = function(config) {
       'src/components/DistortableImage.Keymapper.js',
       'test/SpecHelper.js',
       'test/src/*Spec.js',
-      'test/src/**/*Spec.js'
+      'test/src/**/*Spec.js',
     ],
 
     // so that karma can serve examples/example.png
     proxies: {
-      '/examples/': '/base/examples/'
+      '/examples/': '/base/examples/',
     },
 
     // test results reporter to use
@@ -67,18 +67,18 @@ module.exports = function(config) {
     babelPreprocessor: {
       options: {
         presets: ['@babel/preset-env'],
-        sourceMap: 'inline'
+        sourceMap: 'inline',
       },
-      filename: function(file) {
+      filename: function (file) {
         return file.originalPath.replace(/\.js$/, '.es5.js');
       },
-      sourceFileName: function(file) {
+      sourceFileName: function (file) {
         return file.originalPath;
-      }
+      },
     },
 
     preprocessors: {
-      'src/**/*.js': ['babel', 'coverage']
+      'src/**/*.js': ['babel', 'coverage'],
     },
 
     // web server port
@@ -97,7 +97,7 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['PhantomJS'],
+    browsers: [process.env.TRAVIS ? 'Chrome_travis_ci' : 'Chrome'],
 
     // If browser does not capture in given timeout [ms], kill it
     captureTimeout: 5000,
@@ -107,8 +107,8 @@ module.exports = function(config) {
     browserNoActivityTimeout: 40000,
 
     // Workaround for PhantomJS random DISCONNECTED error
-    browserDisconnectTimeout: 10000, // default 2000
-    browserDisconnectTolerance: 5, // default 0
+    // browserDisconnectTimeout: 10000, // default 2000
+    // browserDisconnectTolerance: 5, // default 0
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
@@ -120,8 +120,8 @@ module.exports = function(config) {
       reporters: [
         { type: 'text', dir: './coverage', file: 'coverage.txt', subdir: '.' },
         { type: 'lcovonly', dir: './coverage', subdir: '.' },
-        { type: 'html', dir: './coverage', subdir: '.' }
-      ]
-    }
+        { type: 'html', dir: './coverage', subdir: '.' },
+      ],
+    },
   });
 };

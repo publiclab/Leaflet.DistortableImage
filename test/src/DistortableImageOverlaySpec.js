@@ -158,9 +158,11 @@ describe('L.DistortableImageOverlay', function() {
       }, 3000);
     });
 
-    it('Is also invoked on image click', function() {
+    it('Is invoked on image click', function() {
+      let ovSpy = sinon.spy();
+      ov.on('select', ovSpy);
       ov.getElement().click();
-      expect(ov.select).to.have.been.called;
+      expect(ovSpy.called).to.be.true;
     });
 
     it('Locked images can be selected', function() {
@@ -199,10 +201,11 @@ describe('L.DistortableImageOverlay', function() {
   });
 
   describe('#deselect', function() {
-    beforeEach(function() { // select the image
+    beforeEach(function() {
       ov.select();
       setTimeout(function() {
         expect(ov._selected).to.be.true;
+        expect(ov.editing.toolbar).to.be.true;
       }, 3000);
     });
 
@@ -212,8 +215,12 @@ describe('L.DistortableImageOverlay', function() {
     });
 
     it('Is invoked on map click', function() {
-      map.fire('click');
-      expect(ov.deselect).to.have.been.called;
+      let ovSpy = sinon.spy();
+      ov.on('deselect', ovSpy);
+      map.getContainer().click();
+      setTimeout(function() {
+        expect(ovSpy.called).to.be.true;
+      }, 3000);
     });
 
     it('Returns undefined if image editing is disabled', function() {
