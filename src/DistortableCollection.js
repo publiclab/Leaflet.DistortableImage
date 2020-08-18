@@ -72,7 +72,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     e.preventDefault();
 
-    this.eachLayer(function(layer) {
+    this.eachLayer((layer) => {
       var edit = layer.editing;
       if (layer.getElement() === e.target && edit.enabled()) {
         L.DomUtil.toggleClass(layer.getElement(), 'collected');
@@ -83,7 +83,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
           this.editing._removeToolbar();
         }
       }
-    }, this);
+    });
   },
 
   isCollected: function(overlay) {
@@ -110,13 +110,13 @@ L.DistortableCollection = L.FeatureGroup.extend({
   _deselectOthers: function(e) {
     if (!this.editable) { return; }
 
-    this.eachLayer(function(layer) {
+    this.eachLayer((layer) => {
       if (layer.getElement() !== e.target) {
         layer.deselect();
       } else {
         this._toggleCollected(e, layer);
       }
-    }, this);
+    });
 
     if (e) { L.DomEvent.stopPropagation(e); }
   },
@@ -128,7 +128,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     if (!this.isCollected(overlay)) { return; }
 
-    this.eachLayer(function(layer) {
+    this.eachLayer((layer) => {
       layer._dragStartPoints = {};
       layer.deselect();
       for (i = 0; i < 4; i++) {
@@ -153,19 +153,19 @@ L.DistortableCollection = L.FeatureGroup.extend({
   _toRemove: function() {
     var layerArr = this.getLayers();
 
-    return layerArr.filter(function(layer) {
+    return layerArr.filter((layer) => {
       var mode = layer.editing._mode;
       return (this.isCollected(layer) && mode !== 'lock');
-    }, this);
+    });
   },
 
   _toMove: function(overlay) {
     var layerArr = this.getLayers();
 
-    return layerArr.filter(function(layer) {
+    return layerArr.filter((layer) => {
       var mode = layer.editing._mode;
       return layer !== overlay && this.isCollected(layer) && mode !== 'lock';
-    }, this);
+    });
   },
 
   _updateCollectionFromPoints: function(delta, overlay) {
@@ -173,7 +173,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var p = new L.Transformation(1, -delta.x, 1, -delta.y);
     var i;
 
-    layersToMove.forEach(function(layer) {
+    layersToMove.forEach((layer) => {
       var movedPoints = {};
       for (i = 0; i < 4; i++) {
         movedPoints[i] = p.transform(layer._dragStartPoints[i]);

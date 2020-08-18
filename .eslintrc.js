@@ -26,6 +26,7 @@ module.exports = {
      */
 
     /* rules */
+    'arrow-parens': [2, 'as-needed', { 'requireForBlockBody': true }],
     'block-spacing': ['error', 'always'],
     'brace-style': ['off', '1tbs', { allowSingleLine: true }],
     curly: ['error', 'multi-line'],

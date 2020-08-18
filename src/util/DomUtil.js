@@ -42,10 +42,7 @@ L.DomUtil = L.extend(L.DomUtil, {
   },
 
   confirmDeletes(n) {
-    if (n === 1) {
-      this.confirmDelete();
-      return;
-    }
+    if (n === 1) { return this.confirmDelete(); }
 
     var translation = this.translation.confirmImagesDeletes;
     var warningMsg = '';
@@ -53,7 +50,7 @@ L.DomUtil = L.extend(L.DomUtil, {
     if (typeof translation === 'function') {
       warningMsg = translation(n);
     } else {
-      warningMsg = n + ' ' + translation;
+      warningMsg = translation;
     }
 
     return window.confirm(warningMsg);
