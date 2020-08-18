@@ -97,7 +97,7 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: [process.env.TRAVIS ? 'Chrome_travis_ci' : 'Chrome'],
+    browsers: ['Chrome'],
 
     // If browser does not capture in given timeout [ms], kill it
     captureTimeout: 5000,
@@ -105,10 +105,6 @@ module.exports = function(config) {
     // to address Travis build errors; https://github.com/publiclab/Leaflet.DistortableImage/pull/675
     // https://docs.travis-ci.com/user/gui-and-headless-browsers/#karma-and-firefox-inactivity-timeouts
     browserNoActivityTimeout: 40000,
-
-    // Workaround for PhantomJS random DISCONNECTED error
-    // browserDisconnectTimeout: 10000, // default 2000
-    // browserDisconnectTolerance: 5, // default 0
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
