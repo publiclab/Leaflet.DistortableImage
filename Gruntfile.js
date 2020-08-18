@@ -1,7 +1,10 @@
 const webpackConfig = require('./webpack.config.js');
 
 module.exports = function(grunt) {
-  require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
+  // load npm tasks for grunt-* libs, excluding grunt-cli
+  require('matchdep').filterDev('grunt-*').filter(function(pkg) {
+    return ['grunt-cli'].indexOf(pkg) < 0;
+  }).forEach(grunt.loadNpmTasks);
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
@@ -27,7 +30,6 @@ module.exports = function(grunt) {
         undef: true,
         globals: {
           L: false,
-          $: false,
           LeafletToolbar: false,
           warpWebGl: false,
           EXIF: false,
@@ -121,8 +123,6 @@ module.exports = function(grunt) {
       }
     }
   });
-
-  grunt.loadNpmTasks('grunt-webpack');
 
   /* Run tests once. */
   grunt.registerTask('test', ['jshint', 'karma:test']);

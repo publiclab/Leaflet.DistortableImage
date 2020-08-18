@@ -31,7 +31,6 @@ module.exports = function(config) {
       'node_modules/webgl-distort/dist/webgl-distort.js',
       'node_modules/glfx/glfx.js',
       'node_modules/chai/chai.js',
-      'node_modules/sinon/pkg/sinon.js',
       'test/polyfill/*.js',
       'src/util/*.js',
       'src/DistortableImageOverlay.js',
@@ -103,9 +102,13 @@ module.exports = function(config) {
     // If browser does not capture in given timeout [ms], kill it
     captureTimeout: 5000,
 
+    // to address Travis build errors; https://github.com/publiclab/Leaflet.DistortableImage/pull/675
+    // https://docs.travis-ci.com/user/gui-and-headless-browsers/#karma-and-firefox-inactivity-timeouts
+    browserNoActivityTimeout: 40000,
+
     // Workaround for PhantomJS random DISCONNECTED error
     browserDisconnectTimeout: 10000, // default 2000
-    browserDisconnectTolerance: 1, // default 0
+    browserDisconnectTolerance: 5, // default 0
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits

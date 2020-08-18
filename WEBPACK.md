@@ -4,7 +4,6 @@ This file provides documentation for `webpack.config.js`
 
 ```javascript
 // Include necessary modules
-const webpack = require('webpack');
 const glob = require('glob');
 const path = require('path');
 const MergeIntoSingleFilePlugin = require('webpack-merge-and-include-globally');
@@ -48,10 +47,14 @@ const config = {
   ],
   output: {
     path: path.resolve(__dirname, 'dist'),
+    publicPath: '/dist/',
     filename: 'leaflet.distortableimage.js',
+
     /**
-     * Webpack live server, on change in the source code, compiles files again and 	     * generates new hot update files. Instead of generating new files on each change,  * we just override the previous file.
+     * Webpack dev server regenerates new hot update files on changes in src code.
+     * The 2 options below have it override the existing ones instead,
      */
+
     // Filename of hot update chunks
     hotUpdateChunkFilename: 'hot/hot-update.js',
     // The main hot update filename
@@ -81,17 +84,19 @@ const config = {
   devServer: {
     host: 'localhost',
     port: 8080,
-    // Enable Hot Module Replacement(HMR)
-    // HMR allows updating modules without forcing a page refresh
+    // Enable Hot Module Replacement (HMR), allowing
+    // module updates without forcing a page reload.
     hot: true,
-    // Make bundled files available on this location
-    publicPath: '/',
+    // Make bundled files available on this location.
+    publicPath: '/dist/',
     writeToDisk: true,
     // Make build messages appear in the browser console
     inline: true,
     // Open page in user's default browser
     open: true,
-    openPage: 'examples/index.html'
+    openPage: 'examples/index.html',
+    // Make less messages appeaar in browser console
+    clientLogLevel: 'silent',
   },
   // Generate source maps
   devtool: 'source-map',
