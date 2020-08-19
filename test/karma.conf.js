@@ -98,7 +98,7 @@ module.exports = function(config) {
     // - Chrome
     // - ChromeHeadless
     // - ChromeHeadlessNoSandbox
-    browsers: ['ChromeHeadlessNoSandbox'],
+    browsers: ['ChromeHeadless'],
 
     customLaunchers: {
       ChromeHeadlessNoSandbox: {
