@@ -8,12 +8,14 @@ module.exports = function(config) {
 
     plugins: [
       require('mocha'),
-      require('karma-mocha'),
-      require('karma-sinon'),
-      require('karma-coverage'),
-      require('karma-mocha-reporter'),
-      require('karma-chrome-launcher'),
       require('karma-babel-preprocessor'),
+      require('karma-chrome-launcher'),
+      require('karma-coverage'),
+      require('karma-safari-launcher'),
+      require('karma-firefox-launcher'),
+      require('karma-mocha'),
+      require('karma-mocha-reporter'),
+      require('karma-sinon'),
     ],
 
     // frameworks to use
@@ -98,6 +100,8 @@ module.exports = function(config) {
     // - Chrome
     // - ChromeHeadless
     // - ChromeHeadlessNoSandbox
+    // - Firefox
+    // - Safari
     browsers: ['ChromeHeadless'],
 
     customLaunchers: {
