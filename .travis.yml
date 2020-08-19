@@ -2,5 +2,6 @@ language: node_js
 node_js:
   - '10'
   - '12'
-before_script: npm i && npm i leaflet --no-save
-script: npm run build
+addons:
+  chrome: stable
+script: npm run setup
