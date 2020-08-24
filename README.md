@@ -76,11 +76,11 @@ map.whenReady(function() {
 
 If you would like to overrwrite the default toolbar actions available for an individual image's `L.Popup` toolbar, pass an array with the actions you want. Reference the available values [here](#Single-Image-Interface).
 
-For example, to overrwrite the toolbar to only include `L.OpacityAction` and `L.DeleteAction` , and also add on an additional non-default like `L.RevertAction`:
+For example, to overrwrite the toolbar to only include `L.OpacityAction` and `L.DeleteAction` , and also add on an additional non-default like `L.RestoreAction`:
 
 ```js
 img = L.distortableImageOverlay('example.jpg', {
-  actions: [L.OpacityAction, L.DeleteAction, L.RevertAction],
+  actions: [L.OpacityAction, L.DeleteAction, L.RestoreAction],
 }).addTo(map);
 ```
 
