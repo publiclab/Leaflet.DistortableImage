@@ -54,7 +54,7 @@ const config = {
   },
   devServer: {
     host: 'localhost',
-    port: 8080,
+    port: 8081,
     hot: true,
     writeToDisk: true,
     inline: true,
@@ -73,9 +73,7 @@ if (process.env.NODE_ENV === 'production') {
     new MergeIntoSingleFilePlugin({
       files: {
         'vendor.js': [
-          './node_modules/jquery/dist/jquery.js',
           './node_modules/leaflet-toolbar/dist/leaflet.toolbar.js',
-          './node_modules/promise-polyfill/dist/polyfill.min.js',
           './node_modules/webgl-distort/dist/webgl-distort.js',
           './node_modules/glfx/glfx.js',
           './node_modules/exif-js/exif.js',
