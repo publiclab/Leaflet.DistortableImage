@@ -152,7 +152,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     };
   },
 
-  _appendHandlesandDragable: function() {
+  _appendHandlesandDragable() {
     var ov = this._overlay;
 
     // won't throw error if user adds 0 mode actions to toolbar
@@ -172,7 +172,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (!this.isMode('lock')) { this._enableDragging(); }
   },
 
-  _onKeyDown: function(e) {
+  _onKeyDown(e) {
     var keymap = this.options.keymap;
     var handlerName = keymap[e.key];
     var ov = this._overlay;
@@ -187,7 +187,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
   },
 
-  replaceTool: function(old, next) {
+  replaceTool(old, next) {
     if (next.baseClass !== 'leaflet-toolbar-icon' || this.hasTool(next)) {
       return this;
     }
@@ -210,7 +210,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     return this;
   },
 
-  addTool: function(value) {
+  addTool(value) {
     if (value.baseClass === 'leaflet-toolbar-icon' && !this.hasTool(value)) {
       this._removeToolbar();
       this.editActions.push(value);
@@ -225,11 +225,11 @@ L.DistortableImage.Edit = L.Handler.extend({
     return this;
   },
 
-  hasTool: function(value) {
+  hasTool(value) {
     return this.editActions.some(action => action === value);
   },
 
-  removeTool: function(value) {
+  removeTool(value) {
     this.editActions.some((item, idx) => {
       if (item === value) {
         this._removeToolbar();
