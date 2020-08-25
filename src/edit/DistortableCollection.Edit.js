@@ -6,7 +6,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     keymap: L.distortableImage.group_action_map,
   },
 
-  initialize: function(group, options) {
+  initialize(group, options) {
     this._group = group;
     this._exportOpts = group.options.exportOpts;
 
@@ -15,9 +15,9 @@ L.DistortableCollection.Edit = L.Handler.extend({
     L.distortableImage.group_action_map.Escape = '_decollectAll';
   },
 
-  addHooks: function() {
-    var group = this._group;
-    var map = group._map;
+  addHooks() {
+    const group = this._group;
+    const map = group._map;
 
     this.editActions = this.options.actions;
     this.runExporter =
@@ -41,9 +41,9 @@ L.DistortableCollection.Edit = L.Handler.extend({
     this._group.eachLayer(layer => layer.editing.enable());
   },
 
-  removeHooks: function() {
-    var group = this._group;
-    var map = group._map;
+  removeHooks() {
+    const group = this._group;
+    const map = group._map;
 
     L.DomEvent.off(document, 'keydown', this._onKeyDown, this);
 
@@ -63,22 +63,21 @@ L.DistortableCollection.Edit = L.Handler.extend({
     this._group.eachLayer(layer => layer.editing.disable());
   },
 
-  enable: function() {
+  enable() {
     this._enabled = true;
     this.addHooks();
     return this;
   },
 
-  disable: function() {
+  disable() {
     this._enabled = false;
     this.removeHooks();
-
     return this;
   },
 
-  _onKeyDown: function(e) {
-    var keymap = this.options.keymap;
-    var handlerName = keymap[e.key];
+  _onKeyDown(e) {
+    const keymap = this.options.keymap;
+    const handlerName = keymap[e.key];
 
     if (!this[handlerName]) { return; }
 
@@ -87,25 +86,25 @@ L.DistortableCollection.Edit = L.Handler.extend({
     }
   },
 
-  _singleClick: function(e) {
+  _singleClick(e) {
     if (e.type === 'singleclick') { this._decollectAll(e); }
     else { return; }
   },
 
-  _singleClickListeners: function() {
-    var map = this._group._map;
+  _singleClickListeners() {
+    const map = this._group._map;
     L.DomEvent.off(map, 'click', this._decollectAll, this);
     L.DomEvent.on(map, 'singleclick', this._decollectAll, this);
   },
 
-  _resetClickListeners: function() {
-    var map = this._group._map;
+  _resetClickListeners() {
+    const map = this._group._map;
     L.DomEvent.on(map, 'click', this._decollectAll, this);
     L.DomEvent.off(map, 'singleclick', this._decollectAll, this);
   },
 
-  _decollectAll: function(e) {
-    var oe;
+  _decollectAll(e) {
+    let oe;
 
     if (e) { oe = e.originalEvent; }
     /**
@@ -126,11 +125,12 @@ L.DistortableCollection.Edit = L.Handler.extend({
     if (e) { L.DomEvent.stopPropagation(e); }
   },
 
-  _unlockGroup: function() {
+  _unlockGroup() {
     if (!this.hasTool(L.UnlockAction)) { return; }
+
     this._group.eachLayer((layer) => {
       if (this._group.isCollected(layer)) {
-        var edit = layer.editing;
+        const edit = layer.editing;
         edit._unlock();
         // unlock updates the layer's handles; deselect to ensure they're hidden
         layer.deselect();
@@ -138,11 +138,12 @@ L.DistortableCollection.Edit = L.Handler.extend({
     });
   },
 
-  _lockGroup: function() {
+  _lockGroup() {
     if (!this.hasTool(L.LockAction)) { return; }
+
     this._group.eachLayer((layer) => {
       if (this._group.isCollected(layer) ) {
-        var edit = layer.editing;
+        const edit = layer.editing;
         edit._lock();
         // map.addLayer also deselects the image, so we reselect here
         L.DomUtil.addClass(layer.getElement(), 'collected');
@@ -150,18 +151,19 @@ L.DistortableCollection.Edit = L.Handler.extend({
     });
   },
 
-  _addCollections: function(e) {
-    var box = e.boxCollectBounds;
-    var map = this._group._map;
+  _addCollections(e) {
+    const box = e.boxCollectBounds;
+    const map = this._group._map;
 
     this._group.eachLayer((layer) => {
-      var edit = layer.editing;
+      const edit = layer.editing;
 
       if (layer.isSelected()) { layer.deselect(); }
 
-      var imgBounds = L.latLngBounds(layer.getCorner(2), layer.getCorner(1));
-      var zoom = map.getZoom();
-      var center = map.getCenter();
+      const zoom = map.getZoom();
+      const center = map.getCenter();
+      let imgBounds = L.latLngBounds(layer.getCorner(2), layer.getCorner(1));
+
       imgBounds = map._latLngBoundsToNewLayerBounds(imgBounds, zoom, center);
       if (box.intersects(imgBounds) && edit.enabled()) {
         if (!this.toolbar) { this._addToolbar(); }
@@ -170,14 +172,15 @@ L.DistortableCollection.Edit = L.Handler.extend({
     });
   },
 
-  _removeGroup: function(e) {
+  _removeGroup(e) {
     if (!this.hasTool(L.DeleteAction)) { return; }
-    var layersToRemove = this._group._toRemove();
-    var n = layersToRemove.length;
+
+    const layersToRemove = this._group._toRemove();
+    const n = layersToRemove.length;
 
     if (n === 0) { return; }
 
-    var choice = L.DomUtil.confirmDeletes(n);
+    const choice = L.DomUtil.confirmDeletes(n);
 
     if (choice) {
       layersToRemove.forEach((layer) => {
@@ -191,7 +194,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     if (e) { L.DomEvent.stopPropagation(e); }
   },
 
-  cancelExport: function() {
+  cancelExport() {
     if (!this.customCollection) {
       this._exportOpts.collection = undefined;
     }
@@ -199,9 +202,9 @@ L.DistortableCollection.Edit = L.Handler.extend({
     clearInterval(this.updateInterval);
   },
 
-  _addToolbar: function() {
-    var group = this._group;
-    var map = group._map;
+  _addToolbar() {
+    const group = this._group;
+    const map = group._map;
 
     if (group.options.suppressToolbar || this.toolbar) { return; }
 
@@ -211,8 +214,8 @@ L.DistortableCollection.Edit = L.Handler.extend({
     }).addTo(map, group);
   },
 
-  _removeToolbar: function() {
-    var map = this._group._map;
+  _removeToolbar() {
+    const map = this._group._map;
     if (this.toolbar) {
       map.removeLayer(this.toolbar);
       this.toolbar = false;
@@ -221,11 +224,11 @@ L.DistortableCollection.Edit = L.Handler.extend({
     }
   },
 
-  hasTool: function(value) {
+  hasTool(value) {
     return this.editActions.some(action => action === value);
   },
 
-  addTool: function(value) {
+  addTool(value) {
     if (value.baseClass === 'leaflet-toolbar-icon' && !this.hasTool(value)) {
       this._removeToolbar();
       this.editActions.push(value);
@@ -234,7 +237,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     return this;
   },
 
-  removeTool: function(value) {
+  removeTool(value) {
     this.editActions.some((item, idx) => {
       if (this.editActions[idx] === value) {
         this._removeToolbar();
@@ -248,17 +251,18 @@ L.DistortableCollection.Edit = L.Handler.extend({
     return this;
   },
 
-  startExport: function() {
+  startExport() {
     if (!this.hasTool(L.ExportAction)) { return; }
-    return new Promise(function(resolve) {
-      var opts = this._exportOpts;
+
+    return new Promise((resolve) => {
+      const opts = this._exportOpts;
       opts.resolve = resolve; // allow resolving promise in user-defined functions, to stop spinner on completion
-      var statusUrl;
-      var self = this;
+
+      let statusUrl;
       this.updateInterval = null;
 
       // this may be overridden to update the UI to show export progress or completion
-      function _defaultUpdater(data) {
+      const _defaultUpdater = (data) => {
         data = JSON.parse(data);
         // optimization: fetch status directly from google storage:
         if (data.status_url) {
@@ -271,10 +275,10 @@ L.DistortableCollection.Edit = L.Handler.extend({
           }
 
           if (data.status === 'complete') {
-            clearInterval(self.updateInterval);
+            clearInterval(this.updateInterval);
 
-            if (!self.customCollection) {
-              self._exportOpts.collection = undefined;
+            if (!this.customCollection) {
+              this._exportOpts.collection = undefined;
             }
 
             resolve();
@@ -287,43 +291,43 @@ L.DistortableCollection.Edit = L.Handler.extend({
           // https://github.com/publiclab/mapknitter-exporter/blob/main/lib/mapknitterExporter.rb
           console.log(data);
         }
-      }
+      };
 
       // receives the URL of status.json, and starts running the updater to repeatedly fetch from status.json;
       // this may be overridden to integrate with any UI
-      function _defaultHandleStatusRes(data) {
+      const _defaultHandleStatusRes = (data) => {
         statusUrl = opts.statusUrl + data;
         // repeatedly fetch the status.json
-        self.updateInterval = setInterval(function intervalUpdater() {
-          var request = new Request(statusUrl+'?'+Date.now(), {method: 'GET'});
-          fetch(request).then(function(response) {
-            if (response.ok) {
-              return response.text();
+        this.updateInterval = setInterval(() => {
+          const reqOpts = {method: 'GET'};
+          const req = new Request(`${statusUrl}?${Date.now()}`, reqOpts);
+          fetch(req).then((res) => {
+            if (res.ok) {
+              return res.text();
             }
           }).then(opts.updater);
         }, opts.frequency);
-      }
+      };
 
       // initiate the export
-      function _defaultFetchStatusUrl(opts) {
-        var form = new FormData();
-        form.append('collection', JSON.stringify(opts.collection));
-        form.append('scale', opts.scale);
+      const _defaultFetchStatusUrl = (mergedOpts) => {
+        const form = new FormData();
+        form.append('collection', JSON.stringify(mergedOpts.collection));
+        form.append('scale', mergedOpts.scale);
         form.append('upload', true);
-        var requestOptions = {method: 'POST', body: form};
-        var request = new Request(opts.exportStartUrl, requestOptions);
-        fetch(request).then(function(response) {
-          if (response.ok) {
-            return response.text();
+
+        const reqOpts = {method: 'POST', body: form};
+        const req = new Request(mergedOpts.exportStartUrl, reqOpts);
+        fetch(req).then((res) => {
+          if (res.ok) {
+            return res.text();
           }
-        }).then(opts.handleStatusRes);
-      }
+        }).then(mergedOpts.handleStatusRes);
+      };
 
       // If the user has passed collection property
-      if (opts.collection) {
-        self.customCollection = true;
-      } else {
-        self.customCollection = false;
+      this.customCollection = !!opts.collection;
+      if (!this.customCollection) {
         opts.collection = this._group.generateExportJson().images;
       }
 
@@ -334,10 +338,10 @@ L.DistortableCollection.Edit = L.Handler.extend({
       opts.fetchStatusUrl = opts.fetchStatusUrl || _defaultFetchStatusUrl;
 
       opts.fetchStatusUrl(opts);
-    }.bind(this));
+    });
   },
 });
 
-L.distortableCollection.edit = function(group, options) {
+L.distortableCollection.edit = (group, options) => {
   return new L.DistortableCollection.Edit(group, options);
 };
