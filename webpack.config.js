@@ -79,7 +79,6 @@ if (process.env.NODE_ENV === 'production') {
           './node_modules/exif-js/exif.js',
         ],
         'vendor.css': [
-          './node_modules/leaflet/dist/leaflet.css',
           './node_modules/leaflet-toolbar/dist/leaflet.toolbar.css',
         ],
       },
