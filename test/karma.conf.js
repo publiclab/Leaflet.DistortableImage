@@ -99,17 +99,9 @@ module.exports = function(config) {
     // start these browsers, currently available:
     // - Chrome
     // - ChromeHeadless
-    // - ChromeHeadlessNoSandbox
     // - Firefox
     // - Safari
     browsers: ['ChromeHeadless'],
-
-    customLaunchers: {
-      ChromeHeadlessNoSandbox: {
-        base: 'ChromeHeadless',
-        flags: ['--no-sandbox'],
-      },
-    },
 
     // If browser does not capture in given timeout [ms], kill it
     captureTimeout: 5000,
