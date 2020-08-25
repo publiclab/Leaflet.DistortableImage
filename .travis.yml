@@ -6,5 +6,5 @@ node_js:
 addons:
   chrome: stable
 before_install:
-  - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
+  - google-chrome-stable --headless --remote-debugging-port=9222 http://localhost &
 script: npm run setup
