@@ -7,15 +7,15 @@ module.exports = function(config) {
     basePath: '../',
 
     plugins: [
-      require('mocha'),
       require('karma-babel-preprocessor'),
       require('karma-chrome-launcher'),
       require('karma-coverage'),
-      require('karma-safari-launcher'),
       require('karma-firefox-launcher'),
       require('karma-mocha'),
       require('karma-mocha-reporter'),
+      require('karma-safari-launcher'),
       require('karma-sinon'),
+      require('mocha'),
     ],
 
     // frameworks to use
