@@ -6,20 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale=1.0, user-scalable=no"/>
   <meta http-equiv="x-ua-compatible" content="ie=edge"/>
 
-  <script src="../node_modules/leaflet/dist/leaflet-src.js" type="text/javascript" charset="utf-8"></script>
-  <link rel="stylesheet" href="../node_modules/leaflet/dist/leaflet.css" media="screen" title="no title">
-  <script src="../node_modules/leaflet-toolbar/dist/leaflet.toolbar.js"></script>
-  <link href="../node_modules/leaflet-toolbar/dist/leaflet.toolbar.css" rel="stylesheet">
-
-  <!-- for full-res export -->
-  <script src="../node_modules/jquery/dist/jquery.js"></script>
-  <script defer src="../node_modules/webgl-distort/dist/webgl-distort.js"></script>
-  <script defer src="../node_modules/glfx/glfx.js"></script>
-
-  <!-- for EXIF geocode -->
-  <script defer type="text/javascript" src="../node_modules/exif-js/exif.js"></script>
-
+  <link rel="stylesheet" href="../node_modules/leaflet/dist/leaflet.css">
+  <link rel="stylesheet" href="../dist/vendor.css">
   <link rel="stylesheet" href="../dist/leaflet.distortableimage.css" media="screen" title="no title">
+
+  <script src="../node_modules/leaflet/dist/leaflet.js" type="text/javascript" charset="utf-8"></script>
+  <script src="../dist/vendor.js"></script>
   <script src="../dist/leaflet.distortableimage.js"></script>
 </head>
 <body style="margin:0;">
@@ -31,16 +23,13 @@
   <div id="map" style="width:100%; height:100%; position:absolute; top:0;"></div>
 
   <script>
+    var map;
 
-    var map
-
-    (function(){
-
+    (function() {
       map = L.map('map').setView([51.505, -0.13], 13);
       map.addGoogleMutant();
 
       map.whenReady(function() {
-
         img = L.distortableImageOverlay('example.jpg', {
           corners: [
             L.latLng(51.52, -0.14),
@@ -82,43 +71,46 @@
         ];
 
         // customize the function that starts up the export
-        function fetchStatusUrl(opts) {
-          $.ajax({
-            url: opts.exportStartUrl,
-            crossDomain: true,
-            type: 'POST',
-            data: {
-              collection: opts.collection,
-              scale: prompt("Choose a scale or use the default (cm per pixel):", 100) || opts.scale,
-              upload: true,
-            },
-            success: function(data) { opts.handleStatusRes(data, opts) }, // this handles the initial response
-          });
-        }
+        const fetchStatusUrl = (mergedOpts) => {
+          const form = new FormData();
+          form.append('collection', JSON.stringify(mergedOpts.collection));
+          form.append('scale', prompt("Choose a scale or use the default (cm per pixel):", 100) || mergedOpts.scale);
+          form.append('upload', true);
+
+          const reqOpts = {method: 'POST', body: form};
+          const req = new Request(mergedOpts.exportStartUrl, reqOpts);
+
+          fetch(req).then((res) => {
+            if (res.ok) {
+              return res.text();
+            }
+          }).then(mergedOpts.handleStatusRes);
+        };
 
         // receives the URL of status.json, and starts running the updater to repeatedly fetch from status.json;
         // this may be overridden to integrate with any UI
-        function handleStatusRes(data, opts) {
-          var statusUrl = data.split('please visit, ')[1];
+        const handleStatusRes = (data) => {
+          statusUrl = data.split('please visit, ')[1];
 
-          /* if we are getting status updates:
-            // repeatedly fetch the status.json
-            var updateInterval = setInterval(function intervalUpdater() {
-              $.ajax(statusUrl + '?' + Date.now(), {// bust cache with timestamp
-                type: 'GET',
-                crossDomain: true,
-              }).done(function(data) {
-                // do something with the response?
-                opts.updater(data);
-              });
+          /*
+            if we are getting status updates, repeatedly fetch the status.json:
+
+            this.updateInterval = setInterval(() => {
+              const reqOpts = {method: 'GET'};
+              const req = new Request(`${data}?${Date.now()}`, reqOpts);
+              fetch(req).then((res) => {
+                if (res.ok) {
+                  return res.text();
+                }
+              }).then(opts.updater);
             }, opts.frequency);
+
           */
 
           // but in this example, we're not; we just get the URL of the finished image;
           // we should initiate the download?
           window.location = statusUrl;
-        }
-
+        };
 
         // initialize the collection:
         imgGroup = L.distortableCollection({
@@ -150,7 +142,6 @@
         imgGroup.addLayer(img);
         imgGroup.addLayer(img2);
       });
-
     })();
   </script>
 </html>
