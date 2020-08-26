@@ -1,5 +1,5 @@
 tasks:
-  - init: npm i && npm run setup
+  - init: npm run setup
     command: npm run serve:dev
 ports:
   - port: 3000
@@ -14,4 +14,4 @@ github:
     addCheck: true
     addComment: true
     addBadge: false
-    addLabel: false 
+    addLabel: false

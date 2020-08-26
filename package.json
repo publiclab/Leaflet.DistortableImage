@@ -1,12 +1,12 @@
 {
   "name": "leaflet-distortableimage",
-  "version": "0.20.8",
+  "version": "0.21.7",
   "description": "Leaflet plugin enabling image overlays to be distorted, stretched, and warped (built for Public Lab's MapKnitter: http://publiclab.org).",
   "engines": {
     "node": ">=10.0.0"
   },
   "scripts": {
-    "setup": "npm i && npm i leaflet --no-save && npm run build",
+    "setup": "npm i && npm run build",
     "watch:dev": "webpack --watch",
     "serve:dev": "cross-env NODE_ENV=development webpack-dev-server",
     "test": "grunt test",
@@ -73,6 +73,7 @@
     "karma-mocha-reporter": "^2.2.5",
     "karma-safari-launcher": "~1.0.0",
     "karma-sinon": "^1.0.5",
+    "leaflet": "1.x",
     "matchdep": "^2.0.0",
     "mocha": "^8.1.1",
     "sinon": "^9.0.3",
@@ -83,7 +84,7 @@
     "webpack-merge-and-include-globally": "^2.1.24"
   },
   "peerDependencies": {
-    "leaflet": "^1.0.0"
+    "leaflet": "1.x"
   },
   "husky": {
     "hooks": {
