@@ -2,8 +2,8 @@ L.TrigUtil = {
 
   calcAngle(x, y, unit = 'deg') {
     return unit === 'deg' ?
-      this.radiansToDegrees(Math.atan2(y, x)) :
-      Math.atan2(y, x);
+        this.radiansToDegrees(Math.atan2(y, x)) :
+        Math.atan2(y, x);
   },
 
   radiansToDegrees(angle) {
