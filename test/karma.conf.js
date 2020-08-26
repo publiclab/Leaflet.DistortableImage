@@ -1,6 +1,3 @@
-// Karma configuration
-// Generated on Tue Jul 08 2014 12:47:31 GMT-0500 (CDT)
-
 module.exports = function(config) {
   config.set({
     // base path that will be used to resolve all patterns (eg. files, exclude)
@@ -55,7 +52,7 @@ module.exports = function(config) {
       'test/src/**/*Spec.js',
     ],
 
-    // so that karma can serve examples/example.png
+    // so that karma can serve examples/example.jpg
     proxies: {
       '/examples/': '/base/examples/',
     },
@@ -106,7 +103,6 @@ module.exports = function(config) {
     // If browser does not capture in given timeout [ms], kill it
     captureTimeout: 5000,
 
-    // to address Travis build errors; https://github.com/publiclab/Leaflet.DistortableImage/pull/675
     // https://docs.travis-ci.com/user/gui-and-headless-browsers/#karma-and-firefox-inactivity-timeouts
     browserNoActivityTimeout: 40000,
 
