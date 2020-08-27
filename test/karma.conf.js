@@ -12,7 +12,6 @@ module.exports = function(config) {
       require('karma-mocha-reporter'),
       require('karma-safari-launcher'),
       require('karma-sinon'),
-      require('mocha'),
     ],
 
     // frameworks to use
@@ -95,6 +94,7 @@ module.exports = function(config) {
 
     // start these browsers, currently available:
     // - Chrome
+    // - ChromeCanary
     // - ChromeHeadless
     // - Firefox
     // - Safari
