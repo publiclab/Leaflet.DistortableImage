@@ -66,10 +66,10 @@ module.exports = function(config) {
         presets: ['@babel/preset-env'],
         sourceMap: 'inline',
       },
-      filename: function (file) {
+      filename: function(file) {
         return file.originalPath.replace(/\.js$/, '.es5.js');
       },
-      sourceFileName: function (file) {
+      sourceFileName: function(file) {
         return file.originalPath;
       },
     },
@@ -84,12 +84,12 @@ module.exports = function(config) {
     // enable / disable colors in the output (reporters and logs)
     colors: true,
 
-    // level of logging
-    // possible values: config.LOG_DISABLE
-    // || config.LOG_ERROR
-    // || config.LOG_WARN
-    // || config.LOG_INFO
-    // || config.LOG_DEBUG
+    // possible values:
+    // - config.LOG_DISABLE
+    // - config.LOG_ERROR
+    // - config.LOG_WARN
+    // - config.LOG_INFO
+    // - config.LOG_DEBUG
     logLevel: config.LOG_INFO,
 
     // start these browsers, currently available:
