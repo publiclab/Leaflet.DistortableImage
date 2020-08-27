@@ -324,24 +324,24 @@ L.DistortableImage.Edit = L.Handler.extend({
     this.setMode('scale');
   },
 
-  _distortMode(){
+  _distortMode() {
     this.setMode('distort');
   },
 
-  _rotateMode(){
+  _rotateMode() {
     this.setMode('rotate');
   },
 
-  _freeRotateMode(){
+  _freeRotateMode() {
     this.setMode('freeRotate');
   },
 
-  _toggleLockMode(){
+  _toggleLockMode() {
     if (this.isMode('lock')) { this._unlock(); }
     else { this._lock(); }
   },
 
-  _toggleOpacity(){
+  _toggleOpacity() {
     var image = this._overlay.getElement();
     var opacity;
 
@@ -356,7 +356,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._refresh();
   },
 
-  _toggleBorder(){
+  _toggleBorder() {
     var image = this._overlay.getElement();
     var outline;
 
