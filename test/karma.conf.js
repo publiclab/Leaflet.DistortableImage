@@ -1,3 +1,5 @@
+process.env.CHROME_BIN = require('puppeteer').executablePath();
+
 module.exports = function(config) {
   config.set({
     // base path that will be used to resolve all patterns (eg. files, exclude)
@@ -101,7 +103,7 @@ module.exports = function(config) {
     // - PhantomJS
     // - Safari
     browsers: [
-      process.env.GITPOD_WORKSPACE_ID ? 'PhantomJS' : 'ChromeHeadless',
+      'ChromeHeadless',
     ],
 
     // If browser does not capture in given timeout [ms], kill it
@@ -125,6 +127,4 @@ module.exports = function(config) {
       ],
     },
   });
-
-
 };
