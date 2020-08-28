@@ -1,9 +1,6 @@
-image:
-  file: .gitpod.dockerfile
 tasks:
-  - before: google-chrome-stable --headless --remote-debugging-port=9222 http://localhost &
-    init: npm i && npm rebuild --build-from-source && npm run build
-    command: npm run serve:dev
+    - init: npm i && npm rebuild --build-from-source && npm run build
+      command: npm run serve:dev
 ports:
   - port: 8081
     onOpen: open-preview

@@ -10,6 +10,7 @@ module.exports = function(config) {
       require('karma-firefox-launcher'),
       require('karma-mocha'),
       require('karma-mocha-reporter'),
+      require('karma-nightmare'),
       require('karma-safari-launcher'),
       require('karma-sinon'),
     ],
@@ -97,14 +98,14 @@ module.exports = function(config) {
     // - ChromeCanary
     // - ChromeHeadless
     // - Firefox
+    // - Nightmare
     // - Safari
-    browsers: ['ChromeHeadless'],
+    browsers: [
+      process.env.GITPOD_WORKSPACE_ID ? 'Nightmare' : 'ChromeHeadless',
+    ],
 
     // If browser does not capture in given timeout [ms], kill it
     captureTimeout: 5000,
-
-    // https://docs.travis-ci.com/user/gui-and-headless-browsers/#karma-and-firefox-inactivity-timeouts
-    browserNoActivityTimeout: 40000,
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
@@ -120,4 +121,5 @@ module.exports = function(config) {
       ],
     },
   });
+
 };
