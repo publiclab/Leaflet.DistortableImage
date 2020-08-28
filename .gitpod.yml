@@ -1,6 +1,6 @@
 tasks:
-    - init: npm i && npm rebuild --build-from-source && npm run build
-      command: npm run serve:dev
+  - init: npm i && npm rebuild --build-from-source && npm run build
+    command: npm run serve:dev
 ports:
   - port: 8081
     onOpen: open-preview

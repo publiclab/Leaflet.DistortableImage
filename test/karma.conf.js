@@ -8,6 +8,7 @@ module.exports = function(config) {
       require('karma-chrome-launcher'),
       require('karma-coverage'),
       require('karma-firefox-launcher'),
+      require('karma-phantomjs-launcher'),
       require('karma-mocha'),
       require('karma-mocha-reporter'),
       require('karma-safari-launcher'),
@@ -66,10 +67,10 @@ module.exports = function(config) {
         presets: ['@babel/preset-env'],
         sourceMap: 'inline',
       },
-      filename: function(file) {
+      filename: function (file) {
         return file.originalPath.replace(/\.js$/, '.es5.js');
       },
-      sourceFileName: function(file) {
+      sourceFileName: function (file) {
         return file.originalPath;
       },
     },
@@ -106,6 +107,10 @@ module.exports = function(config) {
     // If browser does not capture in given timeout [ms], kill it
     captureTimeout: 5000,
 
+    // Workaround for PhantomJS random DISCONNECTED error
+    browserDisconnectTimeout: 10000, // default 2000
+    browserDisconnectTolerance: 5, // default 0
+
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
     singleRun: true,
@@ -120,5 +125,6 @@ module.exports = function(config) {
       ],
     },
   });
+
 
 };
