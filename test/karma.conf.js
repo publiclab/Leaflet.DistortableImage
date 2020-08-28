@@ -10,7 +10,6 @@ module.exports = function(config) {
       require('karma-firefox-launcher'),
       require('karma-mocha'),
       require('karma-mocha-reporter'),
-      require('karma-nightmare'),
       require('karma-safari-launcher'),
       require('karma-sinon'),
     ],
@@ -98,10 +97,10 @@ module.exports = function(config) {
     // - ChromeCanary
     // - ChromeHeadless
     // - Firefox
-    // - Nightmare
+    // - PhantomJS
     // - Safari
     browsers: [
-      process.env.GITPOD_WORKSPACE_ID ? 'Nightmare' : 'ChromeHeadless',
+      process.env.GITPOD_WORKSPACE_ID ? 'PhantomJS' : 'ChromeHeadless',
     ],
 
     // If browser does not capture in given timeout [ms], kill it

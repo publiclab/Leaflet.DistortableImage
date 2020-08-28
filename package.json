@@ -71,7 +71,7 @@
     "karma-firefox-launcher": "~1.1.0",
     "karma-mocha": "^2.0.1",
     "karma-mocha-reporter": "^2.2.5",
-    "karma-nightmare": "^0.4.15",
+    "karma-phantomjs-launcher": "^1.0.4",
     "karma-safari-launcher": "~1.0.0",
     "karma-sinon": "^1.0.5",
     "leaflet": "1.x",
