@@ -1,7 +1,8 @@
 image:
   file: .gitpod.dockerfile
 tasks:
-  - init: npm i && npm rebuild --build-from-source && npm run build
+  - before: cp -p chrome_sandbox /usr/local/sbin/chrome-devel-sandbox && export CHROME_DEVEL_SANDBOX=/usr/local/sbin/chrome-devel-sandbox
+    init: npm i && npm rebuild --build-from-source && npm run build
     command: npm run serve:dev
 ports:
   - port: 8081
