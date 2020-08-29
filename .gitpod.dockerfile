@@ -1,8 +1,7 @@
-FROM gitpod/workspace-full
+FROM sboginsky17/gitpod-workspace-full-chromesandbox
 
 USER root
-RUN CONFIG_USER_NS=y
-RUN sudo sysctl kernel.unprivileged_userns_clone=1
+
 RUN sudo apt-get update \
     && sudo apt-get install -y \
     libnss3-dev \
@@ -46,3 +45,5 @@ RUN sudo apt-get update \
     wget \
     libgbm1 \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/*
+
+USER gitpod
