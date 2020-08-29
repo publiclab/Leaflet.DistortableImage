@@ -1,6 +1,8 @@
 FROM gitpod/workspace-full
 
 USER root
+RUN CONFIG_USER_NS=y
+RUN sudo sysctl kernel.unprivileged_userns_clone=1
 RUN sudo apt-get update \
     && sudo apt-get install -y \
     libnss3-dev \
