@@ -45,5 +45,3 @@ RUN sudo apt-get update \
     wget \
     libgbm1 \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/*
-
-USER gitpod
