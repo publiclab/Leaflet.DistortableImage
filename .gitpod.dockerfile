@@ -44,3 +44,8 @@ RUN sudo apt-get update \
     wget \
     libgbm1 \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/*
+RUN cd node_modules/puppeteer/.local_chromium/linux-782078/chrome-linux/ \
+    && sudo chown root:root chrome_sandbox \
+    && sudo chmod 4755 chrome_sandbox \
+    && sudo cp -p chrome_sandbox /usr/local/sbin/chrome-devel-sandbox \
+    && export CHROME_DEVEL_SANDBOX=/usr/local/sbin/chrome-devel-sandbox
