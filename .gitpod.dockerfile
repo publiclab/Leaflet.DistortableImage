@@ -1,4 +1,4 @@
-FROM sboginsky17/gitpod-workspace-full-chromesandbox
+FROM sboginsky17/gitpod-workspace-full-chromesandbox:v1
 
 USER root
 
