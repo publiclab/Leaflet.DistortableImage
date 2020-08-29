@@ -42,4 +42,5 @@ RUN sudo apt-get update \
     lsb-release \
     xdg-utils \
     wget \
+    libgbm1 \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/*
