@@ -320,6 +320,11 @@ L.DistortableImage.Edit = L.Handler.extend({
     this.setMode('drag');
   },
 
+  _shiftMode: function() {
+    if (!this.hasTool(L.DragAction)) { return; }
+    this.setMode('shift');
+  },
+
   _scaleMode: function() {
     this.setMode('scale');
   },
