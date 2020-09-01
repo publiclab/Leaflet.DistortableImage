@@ -249,7 +249,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   // set the mode to the next mode or if that was the last one set mode to ''
-  _nextOrNone: function(mode) {
+  _nextOrNone(mode) {
     if (this.isMode(mode)) {
       if (Object.keys(this.getModes()).length >= 1) {
         this.nextMode();
@@ -261,7 +261,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
   },
 
-  _removeToolbar: function() {
+  _removeToolbar() {
     var ov = this._overlay;
     var map = ov._map;
 
@@ -271,7 +271,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
   },
 
-  _enableDragging: function() {
+  _enableDragging() {
     var overlay = this._overlay;
     var map = overlay._map;
 
@@ -309,18 +309,18 @@ L.DistortableImage.Edit = L.Handler.extend({
     };
   },
 
-  _disableDragging: function() {
+  _disableDragging() {
     if (this.dragging) {
       this.dragging.disable();
       delete this.dragging;
     }
   },
 
-  _dragMode: function() {
+  _dragMode() {
     this.setMode('drag');
   },
 
-  _scaleMode: function() {
+  _scaleMode() {
     this.setMode('scale');
   },
 
