@@ -70,7 +70,6 @@
     "karma-coverage": "^2.0.3",
     "karma-mocha": "^2.0.1",
     "karma-mocha-reporter": "^2.2.5",
-    "karma-phantomjs-launcher": "^1.0.4",
     "karma-sinon": "^1.0.5",
     "leaflet": "1.x",
     "matchdep": "^2.0.0",
