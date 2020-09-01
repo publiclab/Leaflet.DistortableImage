@@ -94,28 +94,11 @@ module.exports = function(config) {
     // - Chrome
     // - ChromeCanary
     // - ChromeHeadless
-    // - ChromeHeadlessNoSandbox
 
-    browsers: [
-      process.env.GITPOD_WORKSPACE_ID ?
-        'ChromeHeadlessNoSandbox' :
-        'ChromeHeadless',
-    ],
-
-    customLaunchers: {
-      ChromeHeadlessNoSandbox: {
-        binary: process.env.CHROME_BIN,
-        base: 'ChromeHeadless',
-        flags: ['--no-sandbox'],
-      },
-    },
+    browsers: ['ChromeHeadless'],
 
     // If browser does not capture in given timeout [ms], kill it
     captureTimeout: 5000,
-
-    // Workaround for PhantomJS random DISCONNECTED error
-    browserDisconnectTimeout: 10000, // default 2000
-    browserDisconnectTolerance: 5, // default 0
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
