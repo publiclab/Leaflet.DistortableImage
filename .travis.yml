@@ -1,6 +1,11 @@
+dist: xenial
 language: node_js
 node_js:
   - '10'
   - '12'
-before_script: npm i && npm i leaflet --no-save
+  - '14'
+addons:
+  chrome: stable
+before_install:
+  - google-chrome-stable --headless --remote-debugging-port=9222 http://localhost &
 script: npm run build

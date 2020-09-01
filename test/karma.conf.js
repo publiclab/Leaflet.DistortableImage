@@ -1,19 +1,15 @@
-// Karma configuration
-// Generated on Tue Jul 08 2014 12:47:31 GMT-0500 (CDT)
-
 module.exports = function(config) {
   config.set({
     // base path that will be used to resolve all patterns (eg. files, exclude)
     basePath: '../',
 
     plugins: [
-      require('mocha'),
-      require('karma-mocha'),
-      require('karma-sinon'),
+      require('karma-babel-preprocessor'),
+      require('karma-chrome-launcher'),
       require('karma-coverage'),
+      require('karma-mocha'),
       require('karma-mocha-reporter'),
-      require('karma-phantomjs-launcher'),
-      require('karma-babel-preprocessor')
+      require('karma-sinon'),
     ],
 
     // frameworks to use
@@ -23,7 +19,6 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       { pattern: 'examples/*.jpg', included: false, served: true },
-      { pattern: 'examples/*.png', included: false, served: true },
       'node_modules/leaflet/dist/leaflet-src.js',
       'node_modules/leaflet/dist/leaflet.css',
       'node_modules/leaflet-toolbar/dist/leaflet.toolbar.js',
@@ -51,12 +46,12 @@ module.exports = function(config) {
       'src/components/DistortableImage.Keymapper.js',
       'test/SpecHelper.js',
       'test/src/*Spec.js',
-      'test/src/**/*Spec.js'
+      'test/src/**/*Spec.js',
     ],
 
-    // so that karma can serve examples/example.png
+    // so that karma can serve examples/example.jpg
     proxies: {
-      '/examples/': '/base/examples/'
+      '/examples/': '/base/examples/',
     },
 
     // test results reporter to use
@@ -67,18 +62,18 @@ module.exports = function(config) {
     babelPreprocessor: {
       options: {
         presets: ['@babel/preset-env'],
-        sourceMap: 'inline'
+        sourceMap: 'inline',
       },
-      filename: function(file) {
+      filename: function (file) {
         return file.originalPath.replace(/\.js$/, '.es5.js');
       },
-      sourceFileName: function(file) {
+      sourceFileName: function (file) {
         return file.originalPath;
-      }
+      },
     },
 
     preprocessors: {
-      'src/**/*.js': ['babel', 'coverage']
+      'src/**/*.js': ['babel', 'coverage'],
     },
 
     // web server port
@@ -87,28 +82,23 @@ module.exports = function(config) {
     // enable / disable colors in the output (reporters and logs)
     colors: true,
 
-    // level of logging
-    // possible values: config.LOG_DISABLE
-    // || config.LOG_ERROR
-    // || config.LOG_WARN
-    // || config.LOG_INFO
-    // || config.LOG_DEBUG
+    // possible values:
+    // - config.LOG_DISABLE
+    // - config.LOG_ERROR
+    // - config.LOG_WARN
+    // - config.LOG_INFO
+    // - config.LOG_DEBUG
     logLevel: config.LOG_INFO,
 
-    // start these browsers
-    // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['PhantomJS'],
+    // start these browsers, currently available:
+    // - Chrome
+    // - ChromeCanary
+    // - ChromeHeadless
+
+    browsers: ['ChromeHeadless'],
 
     // If browser does not capture in given timeout [ms], kill it
     captureTimeout: 5000,
-
-    // to address Travis build errors; https://github.com/publiclab/Leaflet.DistortableImage/pull/675
-    // https://docs.travis-ci.com/user/gui-and-headless-browsers/#karma-and-firefox-inactivity-timeouts
-    browserNoActivityTimeout: 40000,
-
-    // Workaround for PhantomJS random DISCONNECTED error
-    browserDisconnectTimeout: 10000, // default 2000
-    browserDisconnectTolerance: 5, // default 0
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
@@ -120,8 +110,8 @@ module.exports = function(config) {
       reporters: [
         { type: 'text', dir: './coverage', file: 'coverage.txt', subdir: '.' },
         { type: 'lcovonly', dir: './coverage', subdir: '.' },
-        { type: 'html', dir: './coverage', subdir: '.' }
-      ]
-    }
+        { type: 'html', dir: './coverage', subdir: '.' },
+      ],
+    },
   });
 };

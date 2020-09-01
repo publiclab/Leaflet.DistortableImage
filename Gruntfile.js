@@ -19,7 +19,6 @@ module.exports = function(grunt) {
         browser: true,
         esversion: 6,
         mocha: true,
-        phantom: true,
         typed: true,
         bitwise: true,
         curly: true,

@@ -6,7 +6,7 @@ describe('L.DistortableImage.Edit', function() {
   beforeEach(function(done) {
     map = L.map(L.DomUtil.create('div', '', document.body)).setView([41.7896, -87.5996], 15);
 
-    ov = L.distortableImageOverlay('/examples/example.png', {
+    ov = L.distortableImageOverlay('/examples/example.jpg', {
       corners: [
         L.latLng(41.7934, -87.6052),
         L.latLng(41.7934, -87.5852),
@@ -92,7 +92,7 @@ describe('L.DistortableImage.Edit', function() {
       var old = L.ScaleAction;
       var next = L.DragAction;
 
-      var ov3 = L.distortableImageOverlay('/examples/example.png', {
+      var ov3 = L.distortableImageOverlay('/examples/example.jpg', {
         actions: [old]
       }).addTo(map);
 
@@ -215,7 +215,7 @@ describe('L.DistortableImage.Edit', function() {
     });
 
     it('Will still update the mode of an initialized image with suppressToolbar: true', function(done) {
-      var ov2 = L.distortableImageOverlay('/examples/example.png', {
+      var ov2 = L.distortableImageOverlay('/examples/example.jpg', {
         suppressToolbar: true,
       }).addTo(map);
 
@@ -256,7 +256,7 @@ describe('L.DistortableImage.Edit', function() {
     });
 
     it('Will still update the mode of an initialized image with suppressToolbar: true', function(done) {
-      var ov2 = L.distortableImageOverlay('/examples/example.png', {
+      var ov2 = L.distortableImageOverlay('/examples/example.jpg', {
         suppressToolbar: true,
       }).addTo(map);
 

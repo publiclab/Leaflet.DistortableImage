@@ -9,7 +9,7 @@ describe('L.DistortableCollection.Edit', function() {
   beforeEach(function(done) {
     map = L.map(L.DomUtil.create('div', '', document.body)).setView([41.7896, -87.5996], 15);
 
-    overlay = L.distortableImageOverlay('/examples/example.png', {
+    overlay = L.distortableImageOverlay('/examples/example.jpg', {
       corners: [
         L.latLng(41.7934, -87.6052),
         L.latLng(41.7934, -87.5852),
@@ -18,7 +18,7 @@ describe('L.DistortableCollection.Edit', function() {
       ],
     });
 
-    overlay2 = L.distortableImageOverlay('/examples/example.png', {
+    overlay2 = L.distortableImageOverlay('/examples/example.jpg', {
       corners: [
         L.latLng(41.7934, -87.6050),
         L.latLng(41.7934, -87.5850),
@@ -27,7 +27,7 @@ describe('L.DistortableCollection.Edit', function() {
       ],
     });
 
-    overlay3 = L.distortableImageOverlay('/examples/example.png', {
+    overlay3 = L.distortableImageOverlay('/examples/example.jpg', {
       corners: [
         L.latLng(41.7934, -87.6054),
         L.latLng(41.7934, -87.5854),
@@ -229,6 +229,7 @@ describe('L.DistortableCollection.Edit', function() {
     beforeEach(function() { // multi-selects the images to add them to the feature group
       chai.simulateEvent(overlay.getElement(), 'mousedown', {shiftKey: true});
       chai.simulateEvent(overlay3.getElement(), 'mousedown', {shiftKey: true});
+      confirm = sinon.spy();
     });
 
     it('removes a collection of layers', function() {

@@ -4,6 +4,5 @@
   "node": true,
   "browser": true,
   "mocha": true,
-  "phantom": true,
   "typed": true
 }

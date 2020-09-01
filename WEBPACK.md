@@ -83,7 +83,7 @@ const config = {
   },
   devServer: {
     host: 'localhost',
-    port: 8080,
+    port: 8081,
     // Enable Hot Module Replacement (HMR), allowing
     // module updates without forcing a page reload.
     hot: true,
@@ -117,16 +117,13 @@ if (process.env.NODE_ENV === 'production') {
       files: {
         // Bundle an array of 3rd party JavaScript files in dist/vendor.js
         'vendor.js': [
-          './node_modules/jquery/dist/jquery.js',
           './node_modules/leaflet-toolbar/dist/leaflet.toolbar.js',
-          './node_modules/promise-polyfill/dist/polyfill.min.js',
           './node_modules/webgl-distort/dist/webgl-distort.js',
           './node_modules/glfx/glfx.js',
           './node_modules/exif-js/exif.js'
         ],
         // Bundle an array of 3rd party CSS files in dist/vendor.css
         'vendor.css': [
-          './node_modules/leaflet/dist/leaflet.css',
           './node_modules/leaflet-toolbar/dist/leaflet.toolbar.css'
         ]
       },

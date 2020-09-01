@@ -14,7 +14,7 @@ describe('L.DistortableImageOverlay', function() {
       fullSize[i].style.height = '100%';
     }
 
-    ov = L.distortableImageOverlay('/examples/example.png', {
+    ov = L.distortableImageOverlay('/examples/example.jpg', {
       corners: [
         L.latLng(41.7934, -87.6052),
         L.latLng(41.7934, -87.5852),
@@ -49,7 +49,7 @@ describe('L.DistortableImageOverlay', function() {
 
   describe('initialization: actions option', function() {
     it('The image will be initialized with a default set of actions if not passed', function(done) {
-      var ov2 = L.distortableImageOverlay('/examples/example.png', {}).addTo(map);
+      var ov2 = L.distortableImageOverlay('/examples/example.jpg', {}).addTo(map);
 
       L.DomEvent.on(ov2.getElement(), 'load', function() {
         expect(ov2.editing.editActions.length).to.eq(10);
@@ -58,7 +58,7 @@ describe('L.DistortableImageOverlay', function() {
     });
 
     it('Will initialize the image with the passed array of actions', function(done) {
-      var ov2 = L.distortableImageOverlay('/examples/example.png', {
+      var ov2 = L.distortableImageOverlay('/examples/example.jpg', {
         actions: [L.ScaleAction, L.RestoreAction, L.RotateAction]
       }).addTo(map);
 
@@ -69,7 +69,7 @@ describe('L.DistortableImageOverlay', function() {
     });
 
     it('Will initialize an image with no actions if passed an empty array', function(done) {
-      var ov2 = L.distortableImageOverlay('/examples/example.png', {
+      var ov2 = L.distortableImageOverlay('/examples/example.jpg', {
         actions: [],
       }).addTo(map);
 
@@ -83,7 +83,7 @@ describe('L.DistortableImageOverlay', function() {
 
   describe('initialization: mode option', function() {
     it('Will initialize the image with the passed mode, if available', function(done) {
-      var ov2 = L.distortableImageOverlay('/examples/example.png', {
+      var ov2 = L.distortableImageOverlay('/examples/example.jpg', {
         mode: 'rotate',
       }).addTo(map);
 
@@ -94,11 +94,11 @@ describe('L.DistortableImageOverlay', function() {
     });
 
     it('A mode is unavailable if it either does not exist or is restricted via the `actions` option', function(done) {
-      var ov2 = L.distortableImageOverlay('/examples/example.png', {
+      var ov2 = L.distortableImageOverlay('/examples/example.jpg', {
         mode: 'blah',
       }).addTo(map);
 
-      var ov3 = L.distortableImageOverlay('/examples/example.png', {
+      var ov3 = L.distortableImageOverlay('/examples/example.jpg', {
         mode: 'rotate',
         actions: [L.ScaleAction, L.BorderAction],
       }).addTo(map);
@@ -111,7 +111,7 @@ describe('L.DistortableImageOverlay', function() {
     });
 
     it('If the mode is unavailable, the image\'s mode will be the 1st available one', function(done) {
-      var ov2 = L.distortableImageOverlay('/examples/example.png', {
+      var ov2 = L.distortableImageOverlay('/examples/example.jpg', {
         mode: 'blah',
       }).addTo(map);
 
@@ -123,7 +123,7 @@ describe('L.DistortableImageOverlay', function() {
     });
 
     it('If not passed, the image will have the default mode, `distort` if available', function(done) {
-      var ov2 = L.distortableImageOverlay('/examples/example.png', {}).addTo(map);
+      var ov2 = L.distortableImageOverlay('/examples/example.jpg', {}).addTo(map);
 
       L.DomEvent.on(ov2.getElement(), 'load', function() {
         expect(ov2.editing.getMode()).to.eq('distort');
@@ -158,9 +158,11 @@ describe('L.DistortableImageOverlay', function() {
       }, 3000);
     });
 
-    it('Is also invoked on image click', function() {
+    it('Is invoked on image click', function() {
+      let ovSpy = sinon.spy();
+      ov.on('select', ovSpy);
       ov.getElement().click();
-      expect(ov.select).to.have.been.called;
+      expect(ovSpy.called).to.be.true;
     });
 
     it('Locked images can be selected', function() {
@@ -199,10 +201,11 @@ describe('L.DistortableImageOverlay', function() {
   });
 
   describe('#deselect', function() {
-    beforeEach(function() { // select the image
+    beforeEach(function() {
       ov.select();
       setTimeout(function() {
         expect(ov._selected).to.be.true;
+        expect(ov.editing.toolbar).to.be.true;
       }, 3000);
     });
 
@@ -212,8 +215,12 @@ describe('L.DistortableImageOverlay', function() {
     });
 
     it('Is invoked on map click', function() {
-      map.fire('click');
-      expect(ov.deselect).to.have.been.called;
+      let ovSpy = sinon.spy();
+      ov.on('deselect', ovSpy);
+      map.getContainer().click();
+      setTimeout(function() {
+        expect(ovSpy.called).to.be.true;
+      }, 3000);
     });
 
     it('Returns undefined if image editing is disabled', function() {
@@ -279,7 +286,7 @@ describe('L.DistortableImageOverlay', function() {
     var ov2;
 
     beforeEach(function(done) {
-      ov2 = L.distortableImageOverlay('/examples/example.png', {
+      ov2 = L.distortableImageOverlay('/examples/example.jpg', {
         corners: [
           L.latLng(41.7934, -87.6052),
           L.latLng(41.7934, -87.5852),

@@ -1,4 +1,4 @@
-## Testing
+# Testing
 
 We use Mocha & Karma with the help of Grunt for testing.
 
@@ -14,44 +14,44 @@ To learn more about these tools, visit the official docs:
 
 [Karma](https://karma-runner.github.io/latest/index.html) is a test runner, it allows us to test our code in multiple browsers and devices.
 
-### Running just one test
+## Pick a test browser
 
-For this, you need to install Mocha globally. Run `npm i -g mocha`
+In `test/karma.conf.js`, you can find the available browser options we include:
 
-After you've successfully installed Mocha, you can run just one type of test by passing a test file to Mocha:
+```JavaScript
+// start these browsers, currently available:
+// - Chrome
+// - ChromeCanary
+// - ChromeHeadless
+browsers: ['ChromeHeadless'],
+```
 
-`mocha <filename>.js`
+available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
 
-### Running a single test block within a test file
+## Running a single test block
 
-In order to do this, you don't need to install Mocha globally.
-
-You can just attach a `.only()` function call to a test block that you want to execute.
-
-It can be attached to both, `describe` and `it` test blocks.
+Attach a `.only()` function call to the `describe` or `it` test block you want to execute.
 
 **EXAMPLE**:
 
 ```javascript
-it('tests feature 1', function(){
+it('tests feature 1', function() {
     // I won't run :(
 });
 
-it.only('tests feature 2', function(){
+it.only('tests feature 2', function() {
     // I'll run :)
 });
 
-it('tests feature 3', function(){
+it('tests feature 3', function() {
     // I won't run :(
 });
 ```
 
-### Skipping tests
+## Skipping tests
 
-Sometimes, we just want to write a boilerplate code for a test, but we don't want to implement it yet.
+Attach `.skip()` function call. Works the same way as `.only()`.
 
-We can attach `.skip()` function call, which will skip our `it` or `describe` blocks, works just like `.only()`.
+### Note
 
-**NOTE**: After you finish writing a test, remember to remove your `.only()` or `.skip()` calls.
-
-They are meant for development purposes, in production we don't want to alter the actual code of our tests.
+To make your code production ready, remember to remove your `.only()` and `.skip()` calls. They are meant for development purposes only.

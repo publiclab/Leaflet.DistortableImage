@@ -1,12 +1,12 @@
 {
   "name": "leaflet-distortableimage",
-  "version": "0.20.7",
+  "version": "0.21.7",
   "description": "Leaflet plugin enabling image overlays to be distorted, stretched, and warped (built for Public Lab's MapKnitter: http://publiclab.org).",
   "engines": {
     "node": ">=10.0.0"
   },
   "scripts": {
-    "setup": "npm i && npm i leaflet --no-save && npm run build",
+    "setup": "npm i && npm run build",
     "watch:dev": "webpack --watch",
     "serve:dev": "cross-env NODE_ENV=development webpack-dev-server",
     "test": "grunt test",
@@ -64,17 +64,17 @@
     "grunt-svgmin": "^6.0.0",
     "grunt-webpack": "^3.1.3",
     "husky": "^4.2.5",
-    "karma": "^5.0.1",
+    "karma": "^5.1.1",
     "karma-babel-preprocessor": "^8.0.1",
-    "karma-coverage": "^2.0.2",
-    "karma-mocha": "^2.0.0",
+    "karma-chrome-launcher": "^3.1.0",
+    "karma-coverage": "^2.0.3",
+    "karma-mocha": "^2.0.1",
     "karma-mocha-reporter": "^2.2.5",
-    "karma-phantomjs-launcher": "^1.0.4",
     "karma-sinon": "^1.0.5",
+    "leaflet": "1.x",
     "matchdep": "^2.0.0",
-    "mocha": "^7.1.1",
-    "phantomjs-prebuilt": "^2.1.16",
-    "sinon": "^7.2.4",
+    "mocha": "^8.1.1",
+    "sinon": "^9.0.3",
     "uglify-js": "^3.7.4",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.10",
@@ -82,7 +82,7 @@
     "webpack-merge-and-include-globally": "^2.1.24"
   },
   "peerDependencies": {
-    "leaflet": "^1.0.0"
+    "leaflet": "1.x"
   },
   "husky": {
     "hooks": {
