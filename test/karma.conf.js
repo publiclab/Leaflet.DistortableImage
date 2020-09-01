@@ -104,6 +104,7 @@ module.exports = function(config) {
 
     customLaunchers: {
       ChromeHeadlessNoSandbox: {
+        binary: process.env.CHROME_BIN,
         base: 'ChromeHeadless',
         flags: ['--no-sandbox'],
       },

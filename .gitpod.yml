@@ -1,3 +1,5 @@
+image:
+  file: .gitpod.dockerfile
 tasks:
   - init: npm i && npm rebuild --build-from-source && npm run build
     command: npm run serve:dev
