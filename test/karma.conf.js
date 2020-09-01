@@ -1,5 +1,3 @@
-process.env.CHROME_BIN = require('puppeteer').executablePath();
-
 module.exports = function(config) {
   config.set({
     // base path that will be used to resolve all patterns (eg. files, exclude)
@@ -9,11 +7,9 @@ module.exports = function(config) {
       require('karma-babel-preprocessor'),
       require('karma-chrome-launcher'),
       require('karma-coverage'),
-      require('karma-firefox-launcher'),
       require('karma-phantomjs-launcher'),
       require('karma-mocha'),
       require('karma-mocha-reporter'),
-      require('karma-safari-launcher'),
       require('karma-sinon'),
     ],
 
@@ -99,11 +95,9 @@ module.exports = function(config) {
     // - Chrome
     // - ChromeCanary
     // - ChromeHeadless
-    // - Firefox
     // - PhantomJS
-    // - Safari
     browsers: [
-      'ChromeHeadless',
+      process.env.GITPOD_WORKSPACE_ID ? 'PhantomJS' : 'ChromeHeadless',
     ],
 
     // If browser does not capture in given timeout [ms], kill it
