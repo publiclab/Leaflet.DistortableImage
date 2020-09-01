@@ -135,12 +135,7 @@ If you want to enable editing based on custom logic instead, you can pass `edita
 
 `fullResolutionSrc` (*optional*)
 
-We've added a GPU-accelerated means to generate a full resolution version of the distorted image; it requires two additional dependencies to enable; see how we've included them in the demo:
-
-```HTML
-<script src="../node_modules/webgl-distort/dist/webgl-distort.js"></script>
-<script src="../node_modules/glfx/glfx.js"></script>
-```
+We've added a GPU-accelerated means to generate a full resolution version of the distorted image.
 
 When instantiating a Distortable Image, pass in a `fullResolutionSrc` option set to the url of the higher resolution image. This image will be used in full-res exporting.
 
@@ -149,6 +144,7 @@ img = L.distortableImageOverlay('example.jpg', {
   fullResolutionSrc: 'large.jpg',
 }).addTo(map);
 ```
+Our project includes two additional dependencies to enable this feature, [glfx.js](https://github.com/evanw/glfx.js) and [webgl-distort](https://github.com/jywarren/webgl-distort), both of which you can find in our [package.json](./package.json).
 
 ### Mode
 
