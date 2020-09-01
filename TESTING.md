@@ -21,9 +21,8 @@ In `test/karma.conf.js`, you can find the available browser options we include:
 ```JavaScript
 // start these browsers, currently available:
 // - Chrome
+// - ChromeCanary
 // - ChromeHeadless
-// - Firefox
-// - Safari
 browsers: ['ChromeHeadless'],
 ```
 
