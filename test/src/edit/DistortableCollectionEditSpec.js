@@ -1,9 +1,5 @@
 describe('L.DistortableCollection.Edit', function() {
-  var map;
-  var overlay;
-  var overlay2;
-  var overlay3;
-  var imgGroup;
+  let map; let overlay; let overlay2; let overlay3; let imgGroup;
 
   beforeEach(function(done) {
     map = L.map(L.DomUtil.create('div', '', document.body)).setView([41.7896, -87.5996], 15);
@@ -53,8 +49,8 @@ describe('L.DistortableCollection.Edit', function() {
 
   describe('#_decollectAll', function() {
     it('Should remove the \'selected\' class from all images', function() {
-      var img = overlay.getElement();
-      var img2 = overlay2.getElement();
+      const img = overlay.getElement();
+      const img2 = overlay2.getElement();
 
       L.DomUtil.addClass(img, 'collected');
       L.DomUtil.addClass(img2, 'collected');
@@ -69,10 +65,10 @@ describe('L.DistortableCollection.Edit', function() {
     });
 
     it('Should hide all images\' handles unless they\'re lock handles', function() {
-      var edit = overlay.editing;
-      var edit2 = overlay2.editing;
-      var distortHandleState = [];
-      var lockHandleState = [];
+      const edit = overlay.editing;
+      const edit2 = overlay2.editing;
+      const distortHandleState = [];
+      const lockHandleState = [];
 
       // turn on lock handles for one of the DistortableImageOverlay instances.
       edit2._toggleLockMode();
@@ -82,12 +78,12 @@ describe('L.DistortableCollection.Edit', function() {
 
       setTimeout(function() {
         edit._handles.distort.eachLayer(function(handle) {
-          var icon = handle.getElement();
+          const icon = handle.getElement();
           distortHandleState.push(L.DomUtil.getStyle(icon, 'opacity'));
         });
 
         edit2._handles.lock.eachLayer(function(handle) {
-          var icon = handle.getElement();
+          const icon = handle.getElement();
           lockHandleState.push(L.DomUtil.getStyle(icon, 'opacity'));
         });
 
@@ -98,7 +94,7 @@ describe('L.DistortableCollection.Edit', function() {
     });
 
     it('Should remove an image\'s individual toolbar instances regardless of lock handles', function() {
-      var edit2 = overlay2.editing;
+      const edit2 = overlay2.editing;
 
       edit2._toggleLockMode();
 
@@ -231,7 +227,7 @@ describe('L.DistortableCollection.Edit', function() {
     });
 
     it('removes a collection of layers', function() {
-      var layers = imgGroup.getLayers();
+      const layers = imgGroup.getLayers();
       expect(layers).to.include.members([overlay, overlay2, overlay3]);
 
       imgGroup.editing._removeGroup();
@@ -241,9 +237,9 @@ describe('L.DistortableCollection.Edit', function() {
     });
 
     it('removes the layers from the map on removal from group', function() {
-      var id = imgGroup.getLayerId(overlay);
-      var id2 = imgGroup.getLayerId(overlay2);
-      var id3 = imgGroup.getLayerId(overlay3);
+      const id = imgGroup.getLayerId(overlay);
+      const id2 = imgGroup.getLayerId(overlay2);
+      const id3 = imgGroup.getLayerId(overlay3);
 
       expect(map._layers).to.include.all.keys(id, id2, id3);
 

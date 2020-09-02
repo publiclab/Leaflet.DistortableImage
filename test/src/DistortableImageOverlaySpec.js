@@ -1,14 +1,14 @@
 describe('L.DistortableImageOverlay', function() {
-  var map, ov;
+  let map; let ov;
 
   beforeEach(function(done) {
-    var mapContainer = L.DomUtil.create('div', '', document.body);
-    var fullSize = [document.querySelector('html'), document.body, mapContainer];
+    const mapContainer = L.DomUtil.create('div', '', document.body);
+    const fullSize = [document.querySelector('html'), document.body, mapContainer];
 
     map = L.map(mapContainer).setView([41.7896, -87.5996], 15);
 
     /* Map and its containing elements need to have height and width set. */
-    for (var i = 0, l = fullSize.length; i < l; i++) {
+    for (let i = 0, l = fullSize.length; i < l; i++) {
       fullSize[i].style.width = '100%';
       fullSize[i].style.height = '100%';
     }
@@ -48,7 +48,7 @@ describe('L.DistortableImageOverlay', function() {
 
   describe('initialization: actions option', function() {
     it('The image will be initialized with a default set of actions if not passed', function(done) {
-      var ov2 = L.distortableImageOverlay('/examples/example.jpg', {}).addTo(map);
+      const ov2 = L.distortableImageOverlay('/examples/example.jpg', {}).addTo(map);
 
       L.DomEvent.on(ov2.getElement(), 'load', function() {
         expect(ov2.editing.editActions.length).to.eq(10);
@@ -57,8 +57,8 @@ describe('L.DistortableImageOverlay', function() {
     });
 
     it('Will initialize the image with the passed array of actions', function(done) {
-      var ov2 = L.distortableImageOverlay('/examples/example.jpg', {
-        actions: [L.ScaleAction, L.RestoreAction, L.RotateAction]
+      const ov2 = L.distortableImageOverlay('/examples/example.jpg', {
+        actions: [L.ScaleAction, L.RestoreAction, L.RotateAction],
       }).addTo(map);
 
       L.DomEvent.on(ov2.getElement(), 'load', function() {
@@ -68,7 +68,7 @@ describe('L.DistortableImageOverlay', function() {
     });
 
     it('Will initialize an image with no actions if passed an empty array', function(done) {
-      var ov2 = L.distortableImageOverlay('/examples/example.jpg', {
+      const ov2 = L.distortableImageOverlay('/examples/example.jpg', {
         actions: [],
       }).addTo(map);
 
@@ -82,7 +82,7 @@ describe('L.DistortableImageOverlay', function() {
 
   describe('initialization: mode option', function() {
     it('Will initialize the image with the passed mode, if available', function(done) {
-      var ov2 = L.distortableImageOverlay('/examples/example.jpg', {
+      const ov2 = L.distortableImageOverlay('/examples/example.jpg', {
         mode: 'rotate',
       }).addTo(map);
 
@@ -93,11 +93,11 @@ describe('L.DistortableImageOverlay', function() {
     });
 
     it('A mode is unavailable if it either does not exist or is restricted via the `actions` option', function(done) {
-      var ov2 = L.distortableImageOverlay('/examples/example.jpg', {
+      const ov2 = L.distortableImageOverlay('/examples/example.jpg', {
         mode: 'blah',
       }).addTo(map);
 
-      var ov3 = L.distortableImageOverlay('/examples/example.jpg', {
+      const ov3 = L.distortableImageOverlay('/examples/example.jpg', {
         mode: 'rotate',
         actions: [L.ScaleAction, L.BorderAction],
       }).addTo(map);
@@ -110,7 +110,7 @@ describe('L.DistortableImageOverlay', function() {
     });
 
     it('If the mode is unavailable, the image\'s mode will be the 1st available one', function(done) {
-      var ov2 = L.distortableImageOverlay('/examples/example.jpg', {
+      const ov2 = L.distortableImageOverlay('/examples/example.jpg', {
         mode: 'blah',
       }).addTo(map);
 
@@ -122,7 +122,7 @@ describe('L.DistortableImageOverlay', function() {
     });
 
     it('If not passed, the image will have the default mode, `distort` if available', function(done) {
-      var ov2 = L.distortableImageOverlay('/examples/example.jpg', {}).addTo(map);
+      const ov2 = L.distortableImageOverlay('/examples/example.jpg', {}).addTo(map);
 
       L.DomEvent.on(ov2.getElement(), 'load', function() {
         expect(ov2.editing.getMode()).to.eq('distort');
@@ -133,13 +133,11 @@ describe('L.DistortableImageOverlay', function() {
 
   describe('#_calculateProjectiveTransform', function() {
     it.skip('Should', function() {
-      var matrix;
-
       /* _map is set when #onAdd is called. */
       ov._map = map;
       ov._initImage();
 
-      matrix = ov._calculateProjectiveTransform();
+      const matrix = ov._calculateProjectiveTransform();
       expect(matrix).to.equal([]);
     });
   });
@@ -158,7 +156,7 @@ describe('L.DistortableImageOverlay', function() {
     });
 
     it('Is invoked on image click', function() {
-      let ovSpy = sinon.spy();
+      const ovSpy = sinon.spy();
       ov.on('select', ovSpy);
       ov.getElement().click();
       expect(ovSpy.called).to.be.true;
@@ -184,7 +182,7 @@ describe('L.DistortableImageOverlay', function() {
     it('Returns undefined if the multiple image editing interface is on', function() {
       ov.eP = {};
       ov.eP.anyCollected = function propFn() {
-        var layerArr = this.getLayers();
+        const layerArr = this.getLayers();
         return layerArr.some(this.isCollected.bind(this));
       };
 
@@ -214,7 +212,7 @@ describe('L.DistortableImageOverlay', function() {
     });
 
     it('Is invoked on map click', function() {
-      let ovSpy = sinon.spy();
+      const ovSpy = sinon.spy();
       ov.on('deselect', ovSpy);
       map.getContainer().click();
       setTimeout(function() {
@@ -228,7 +226,7 @@ describe('L.DistortableImageOverlay', function() {
     });
   });
 
-  describe('#isSelected', function () {
+  describe('#isSelected', function() {
     it('Only returns true for a selected image', function() {
       expect(ov.isSelected()).to.be.false;
       ov.select();
@@ -238,35 +236,45 @@ describe('L.DistortableImageOverlay', function() {
 
   describe('#getCenter', function() {
     it('Should return the center when the outline of the image is a rectangle', function() {
-      var center = ov.getCenter();
+      const center = ov.getCenter();
       expect(center).to.be.closeToLatLng(L.latLng(41.7884, -87.5952));
     });
   });
 
   describe('#scaleBy', function() {
     it('Should not change image dimensions when passed a value of 1 or 0', function() {
-      var img = ov.getElement();
-      var dims = [img.getBoundingClientRect().width, img.getBoundingClientRect().height];
+      const img = ov.getElement();
+
+      const dims = [
+        img.getBoundingClientRect().width,
+        img.getBoundingClientRect().height,
+      ];
 
       ov.scaleBy(1);
 
-      var scaledDims = [img.getBoundingClientRect().width, img.getBoundingClientRect().height];
+      const scaledDims = [
+        img.getBoundingClientRect().width,
+        img.getBoundingClientRect().height,
+      ];
       expect(dims).to.eql(scaledDims);
 
       ov.scaleBy(0);
 
-      var scaledDims2 = [img.getBoundingClientRect().width, img.getBoundingClientRect().height];
+      const scaledDims2 = [
+        img.getBoundingClientRect().width,
+        img.getBoundingClientRect().height,
+      ];
       expect(dims).to.eql(scaledDims2);
     });
 
     it('Should invert image dimensions when passed a negative value', function() {
-      var c2 = ov.getCorner(2);
-      var c3 = ov.getCorner(3);
+      const c2 = ov.getCorner(2);
+      const c3 = ov.getCorner(3);
 
       ov.scaleBy(-1);
 
-      var scaledC = ov.getCorner(0);
-      var scaledC1 = ov.getCorner(1);
+      const scaledC = ov.getCorner(0);
+      const scaledC1 = ov.getCorner(1);
 
       expect(Math.round(scaledC.lat)).to.equal(Math.round(c3.lat));
       expect(Math.round(scaledC.lng)).to.equal(Math.round(c3.lng));
@@ -275,14 +283,14 @@ describe('L.DistortableImageOverlay', function() {
     });
 
     it('Maintains image proportions when scaling', function() {
-      var center = ov.getCenter();
+      const center = ov.getCenter();
       expect(Math.round(ov.getCenter().lat)).to.equal(Math.round(center.lat));
       expect(Math.round(ov.getCenter().lng)).to.equal(Math.round(center.lng));
     });
   });
 
   describe('#rotateBy', function() {
-    var ov2;
+    let ov2;
 
     beforeEach(function(done) {
       ov2 = L.distortableImageOverlay('/examples/example.jpg', {
@@ -304,7 +312,7 @@ describe('L.DistortableImageOverlay', function() {
     });
 
     it('Should not rotate the image when passed a value of 0 or 360', function() {
-      var corners = ov.getCorners();
+      const corners = ov.getCorners();
 
       ov.rotateBy(0);
       expect(corners).to.eql(ov.getCorners());
@@ -314,19 +322,25 @@ describe('L.DistortableImageOverlay', function() {
     });
 
     it('Should rotate the image by the specified units, otherwise by degrees', function() {
-      var c1 = ov.getCorner(0);
-      var c2 = ov.getCorner(1);
-      var c3 = ov.getCorner(2);
-      var c4 = ov.getCorner(3);
+      const c1 = ov.getCorner(0);
+      const c2 = ov.getCorner(1);
+      const c3 = ov.getCorner(2);
+      const c4 = ov.getCorner(3);
 
       ov.rotateBy(180);
-      expect([ov.getCorner(2), ov.getCorner(3)].members).to.equal([c1, c2].members);
+      expect(
+          [ov.getCorner(2), ov.getCorner(3)].members).to.equal([c1, c2].members
+      );
 
       ov.rotateBy(180, 'deg');
-      expect([ov.getCorner(2), ov.getCorner(3)].members).to.equal([c3, c4].members);
+      expect(
+          [ov.getCorner(2), ov.getCorner(3)].members).to.equal([c3, c4].members
+      );
 
       ov.rotateBy(Math.PI, 'rad');
-      expect([ov.getCorner(2), ov.getCorner(3)].members).to.equal([c1, c2].members);
+      expect(
+          [ov.getCorner(2), ov.getCorner(3)].members).to.equal([c1, c2].members
+      );
     });
 
     it('Rotates the image counter clockwise for negative values', function() {
@@ -355,13 +369,13 @@ describe('L.DistortableImageOverlay', function() {
     });
 
     it('Returns the correct angle even when the image is flipped', function() {
-      var c1 = ov.getCorner(0);
-      var c2 = ov.getCorner(1);
-      var c3 = ov.getCorner(2);
-      var c4 = ov.getCorner(3);
+      const c1 = ov.getCorner(0);
+      const c2 = ov.getCorner(1);
+      const c3 = ov.getCorner(2);
+      const c4 = ov.getCorner(3);
 
       expect(ov.getAngle()).to.equal(0);
-      ov.setCorners({ 0: c3, 1: c4, 2: c1, 3: c2 });
+      ov.setCorners({0: c3, 1: c4, 2: c1, 3: c2});
       expect(ov.getAngle()).to.equal(180);
     });
 
@@ -397,13 +411,13 @@ describe('L.DistortableImageOverlay', function() {
     });
 
     it('Sets the correct angle even when the image is flipped', function() {
-      var c1 = ov.getCorner(0);
-      var c2 = ov.getCorner(1);
-      var c3 = ov.getCorner(2);
-      var c4 = ov.getCorner(3);
+      const c1 = ov.getCorner(0);
+      const c2 = ov.getCorner(1);
+      const c3 = ov.getCorner(2);
+      const c4 = ov.getCorner(3);
 
       expect(ov.getAngle()).to.equal(0);
-      ov.setCorners({ 0: c3, 1: c4, 2: c1, 3: c2 });
+      ov.setCorners({0: c3, 1: c4, 2: c1, 3: c2});
       expect(ov.getAngle()).to.equal(180);
       ov.setAngle(0);
       expect(ov.getAngle()).to.equal(0);

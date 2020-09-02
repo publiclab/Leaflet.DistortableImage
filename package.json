@@ -12,7 +12,7 @@
     "test": "grunt test",
     "watch:test": "grunt karma:development:start && grunt watch",
     "build": "cross-env NODE_ENV=production grunt build",
-    "linter": "./node_modules/.bin/eslint ."
+    "linter": "grunt eslint"
   },
   "browserslist": "> 0.2%, IE 9, last 2 versions",
   "main": "dist/leaflet.distortableimage.js",

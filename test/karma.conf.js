@@ -12,13 +12,10 @@ module.exports = function(config) {
       require('karma-sinon'),
     ],
 
-    // frameworks to use
-    // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
     frameworks: ['mocha', 'sinon'],
 
-    // list of files / patterns to load in the browser
     files: [
-      { pattern: 'examples/*.jpg', included: false, served: true },
+      {pattern: 'examples/*.jpg', included: false, served: true},
       'node_modules/leaflet/dist/leaflet-src.js',
       'node_modules/leaflet/dist/leaflet.css',
       'node_modules/leaflet-toolbar/dist/leaflet.toolbar.js',
@@ -26,7 +23,6 @@ module.exports = function(config) {
       'node_modules/webgl-distort/dist/webgl-distort.js',
       'node_modules/glfx/glfx.js',
       'node_modules/chai/chai.js',
-      'test/polyfill/*.js',
       'src/util/*.js',
       'src/DistortableImageOverlay.js',
       'src/DistortableCollection.js',
@@ -64,10 +60,10 @@ module.exports = function(config) {
         presets: ['@babel/preset-env'],
         sourceMap: 'inline',
       },
-      filename: function (file) {
+      filename: function(file) {
         return file.originalPath.replace(/\.js$/, '.es5.js');
       },
-      sourceFileName: function (file) {
+      sourceFileName: function(file) {
         return file.originalPath;
       },
     },
@@ -94,7 +90,6 @@ module.exports = function(config) {
     // - Chrome
     // - ChromeCanary
     // - ChromeHeadless
-
     browsers: ['ChromeHeadless'],
 
     // If browser does not capture in given timeout [ms], kill it
@@ -108,9 +103,9 @@ module.exports = function(config) {
 
     coverageReporter: {
       reporters: [
-        { type: 'text', dir: './coverage', file: 'coverage.txt', subdir: '.' },
-        { type: 'lcovonly', dir: './coverage', subdir: '.' },
-        { type: 'html', dir: './coverage', subdir: '.' },
+        {type: 'text', dir: './coverage', file: 'coverage.txt', subdir: '.'},
+        {type: 'lcovonly', dir: './coverage', subdir: '.'},
+        {type: 'html', dir: './coverage', subdir: '.'},
       ],
     },
   });

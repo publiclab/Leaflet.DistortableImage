@@ -29,20 +29,20 @@ module.exports = {
      */
 
     /* rules */
-    'arrow-parens': [2, 'as-needed', { requireForBlockBody: true }],
+    'arrow-parens': [2, 'as-needed', {requireForBlockBody: true}],
     'block-spacing': [2, 'always'],
-    'brace-style': ['off', '1tbs', { allowSingleLine: true }],
-    curly: [2, 'multi-line'],
+    'brace-style': ['off', '1tbs', {allowSingleLine: true}],
+    'curly': [2, 'multi-line'],
     'guard-for-in': 0,
     'linebreak-style': [2, 'unix'],
-    'max-len': ['warn', { ignoreComments: true }],
+    'max-len': ['warn', {ignoreComments: true, ignoreStrings: true, tabWidth: 2}],
     'new-cap': 0,
     'no-var': 0,
-    quotes: [2, 'single'],
+    'quotes': [2, 'single'],
     'prefer-const': 1,
     'require-jsdoc': 0,
     'valid-jsdoc': 0,
     'comma-style': [2, 'last'], // requires comma after and on the same line
-    'no-trailing-spaces': [2, { skipBlankLines: true }], // Disallows trailing whitespace on end of lines and empty lines
+    'no-trailing-spaces': [2, {skipBlankLines: true}], // Disallows trailing whitespace on end of lines and empty lines
   },
 };

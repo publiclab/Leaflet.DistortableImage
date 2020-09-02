@@ -14,26 +14,7 @@ module.exports = function(grunt) {
     },
 
     eslint: {
-      options: {
-        node: true,
-        browser: true,
-        esversion: 6,
-        mocha: true,
-        typed: true,
-        bitwise: true,
-        curly: true,
-        eqeqeq: true,
-        latedef: true,
-        noarg: true,
-        regexp: true,
-        undef: true,
-      },
-      source: {
-        src: ['src/**/*.js'],
-      },
-      grunt: {
-        src: ['Gruntfile.js'],
-      },
+      src: ['src/**/*.js', 'test/**/*.js'],
     },
 
     karma: {
@@ -60,9 +41,9 @@ module.exports = function(grunt) {
       },
       options: {
         plugins: [
-          {removeViewBox: false},
-          {removeEmptyAttrs: false},
-          {removeTitle: true}, // "leaflet-toolbar" lets us specify the title attribute later
+          { removeViewBox: false },
+          { removeEmptyAttrs: false },
+          { removeTitle: true }, // "leaflet-toolbar" lets us specify the title attribute later
           {
             removeAttrs: {
               attrs: ['xmlns', 'fill'],
