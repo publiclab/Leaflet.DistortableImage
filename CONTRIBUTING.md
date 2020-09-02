@@ -55,8 +55,7 @@ We use SVG for our icon system. Please visit our wiki [SVG Icon System](https://
 
 ### Testing
 
-[Guide](TESTING.md) on testing LDI.
-
+[Guide](https://github.com/publiclab/Leaflet.DistortableImage/wiki/Testing) on testing LDI.
 
 ## Bug reports & troubleshooting
 

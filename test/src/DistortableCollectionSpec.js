@@ -1,6 +1,5 @@
-/* jshint -W030 */
 describe('L.DistortableCollection', function() {
-  var map, overlay, overlay2, overlay3, imgGroup;
+  let map; let overlay; let overlay2; let overlay3; let imgGroup;
 
   beforeEach(function(done) {
     map = L.map(L.DomUtil.create('div', '', document.body)).setView([41.7896, -87.5996], 15);
@@ -76,8 +75,8 @@ describe('L.DistortableCollection', function() {
 
   describe('#_toggleCollected', function() {
     it('Should allow multiple image selection (collection) on shift + click', function() {
-      var img = overlay.getElement();
-      var img2 = overlay2.getElement();
+      const img = overlay.getElement();
+      const img2 = overlay2.getElement();
 
       chai.simulateEvent(img, 'mousedown', {shiftKey: true});
       chai.simulateEvent(img2, 'mousedown', {shiftKey: true});
@@ -87,7 +86,7 @@ describe('L.DistortableCollection', function() {
     });
 
     it('It should allow a locked image to be part of multiple image selection', function() {
-      var img = overlay.getElement();
+      const img = overlay.getElement();
 
       overlay.editing._toggleLockMode();
       chai.simulateEvent(img, 'mousedown', {shiftKey: true});
