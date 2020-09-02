@@ -1,4 +1,3 @@
-/* jshint -W030 */
 describe('L.DistortableCollection', function() {
   var map, overlay, overlay2, overlay3, imgGroup;
 

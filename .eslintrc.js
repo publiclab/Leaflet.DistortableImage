@@ -1,14 +1,17 @@
 module.exports = {
   env: {
-    browser: true
+    browser: true,
+    commonjs: true,
+    es6: true,
+    node: true,
   },
   extends: 'google',
   globals: {
     Atomics: 'readonly',
-    SharedArrayBuffer: 'readonly'
+    SharedArrayBuffer: 'readonly',
   },
   parserOptions: {
-    ecmaVersion: 6
+    ecmaVersion: 6,
   },
   rules: {
     /*
@@ -26,17 +29,20 @@ module.exports = {
      */
 
     /* rules */
-    'arrow-parens': [2, 'as-needed', { 'requireForBlockBody': true }],
-    'block-spacing': ['error', 'always'],
+    'arrow-parens': [2, 'as-needed', { requireForBlockBody: true }],
+    'block-spacing': [2, 'always'],
     'brace-style': ['off', '1tbs', { allowSingleLine: true }],
-    curly: ['error', 'multi-line'],
+    curly: [2, 'multi-line'],
     'guard-for-in': 0,
-    'linebreak-style': ['error', 'unix'],
+    'linebreak-style': [2, 'unix'],
     'max-len': ['warn', { ignoreComments: true }],
     'new-cap': 0,
     'no-var': 0,
+    quotes: [2, 'single'],
     'prefer-const': 1,
     'require-jsdoc': 0,
     'valid-jsdoc': 0,
-  }
+    'comma-style': [2, 'last'], // requires comma after and on the same line
+    'no-trailing-spaces': [2, { skipBlankLines: true }], // Disallows trailing whitespace on end of lines and empty lines
+  },
 };

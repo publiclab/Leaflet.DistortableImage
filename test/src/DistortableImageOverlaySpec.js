@@ -1,4 +1,3 @@
-/* jshint -W030 */
 describe('L.DistortableImageOverlay', function() {
   var map, ov;
 

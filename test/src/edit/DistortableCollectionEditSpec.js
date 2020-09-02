@@ -1,4 +1,3 @@
-/* jshint -W030 */
 describe('L.DistortableCollection.Edit', function() {
   var map;
   var overlay;
@@ -60,7 +59,7 @@ describe('L.DistortableCollection.Edit', function() {
       L.DomUtil.addClass(img, 'collected');
       L.DomUtil.addClass(img2, 'collected');
 
-      map.fire('click');
+      map.getContainer().click();
 
       // we deselect after 3ms to confirm the click wasn't a dblclick
       setTimeout(function() {
@@ -79,7 +78,7 @@ describe('L.DistortableCollection.Edit', function() {
       edit2._toggleLockMode();
 
       // then trigger _decollectAll
-      map.fire('click');
+      map.getContainer().click();
 
       setTimeout(function() {
         edit._handles.distort.eachLayer(function(handle) {
@@ -104,12 +103,12 @@ describe('L.DistortableCollection.Edit', function() {
       edit2._toggleLockMode();
 
       // select image to initially create individual toolbar instance (single selection interface)
-      chai.simulateEvent(overlay2.getElement(), 'click');
+      overlay2.getElement().click();
 
       expect(edit2.toolbar).to.not.be.false;
 
       // then trigger _decollectAll
-      map.fire('click');
+      map.getContainer().click();
 
       setTimeout(function() {
         expect(edit2.toolbar).to.be.false;
@@ -123,7 +122,7 @@ describe('L.DistortableCollection.Edit', function() {
 
       // need both bc simulated `mousedown`s don't fire `click` events afterwards like regular user generated `mousedown`s.
       chai.simulateEvent(overlay.getElement(), 'mousedown', {shiftKey: true});
-      chai.simulateEvent(overlay.getElement(), 'click');
+      overlay.getElement().click();
 
       expect(Object.keys(map._toolbars)).to.have.lengthOf(1);
     });
@@ -152,7 +151,7 @@ describe('L.DistortableCollection.Edit', function() {
     });
 
     it('is invoked on map click', function() {
-      map.fire('click');
+      map.getContainer().click();
       setTimeout(function() {
         expect(map._toolbars).to.be.empty;
       }, 3000);
@@ -229,7 +228,6 @@ describe('L.DistortableCollection.Edit', function() {
     beforeEach(function() { // multi-selects the images to add them to the feature group
       chai.simulateEvent(overlay.getElement(), 'mousedown', {shiftKey: true});
       chai.simulateEvent(overlay3.getElement(), 'mousedown', {shiftKey: true});
-      confirm = sinon.spy();
     });
 
     it('removes a collection of layers', function() {

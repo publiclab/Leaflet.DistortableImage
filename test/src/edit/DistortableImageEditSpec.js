@@ -1,4 +1,3 @@
-/* jshint -W030 */
 describe('L.DistortableImage.Edit', function() {
   var map;
   var ov;
@@ -32,7 +31,7 @@ describe('L.DistortableImage.Edit', function() {
     var edit = ov.editing;
     edit.enable();
     // this test applies to a selected image
-    chai.simulateEvent(ov.getElement(), 'click');
+    ov.getElement().click();
 
     ov.setCorner(0, L.latLng(41.7934, -87.6252));
 
@@ -117,7 +116,7 @@ describe('L.DistortableImage.Edit', function() {
 
       edit.enable();
       // then trigger _deselect
-      map.fire('click');
+      map.getContainer().click();
 
       var handleState = [];
       edit._handles.distort.eachLayer(function(handle) {
@@ -135,7 +134,7 @@ describe('L.DistortableImage.Edit', function() {
       // switch to lock handles
       edit._toggleLockMode();
       // then trigger _deselect
-      map.fire('click');
+      map.getContainer().click();
 
       var lockHandleState = [];
       edit._handles.lock.eachLayer(function(handle) {
@@ -153,12 +152,12 @@ describe('L.DistortableImage.Edit', function() {
       // switch to lock handles
       edit._toggleLockMode();
       // select the image to initially create its individual toolbar instance
-      chai.simulateEvent(ov.getElement(), 'click');
+      ov.getElement().click();
 
       expect(edit.toolbar).to.not.be.false;
 
       // then trigger _deselect
-      map.fire('click');
+      map.getContainer().click();
 
       // we deselect after 3ms to confirm the click wasn't a dblclick
       setTimeout(function() {
@@ -196,7 +195,7 @@ describe('L.DistortableImage.Edit', function() {
       ov.on('dblclick', overlaySpy);
       map.on('dblclick', mapSpy);
 
-      ov.fire('dblclick');
+      chai.simulateEvent(ov.getElement(), 'dblclick');
 
       setTimeout(function() {
         expect(ov.editing.nextMode).to.have.been.called;

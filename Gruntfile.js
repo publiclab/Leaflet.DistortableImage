@@ -2,7 +2,7 @@ const webpackConfig = require('./webpack.config.js');
 
 module.exports = function(grunt) {
   // load npm tasks for grunt-* libs, excluding grunt-cli
-  require('matchdep').filterDev('grunt-*').filter(function(pkg) {
+  require('matchdep').filterDev('{grunt,gruntify}-*').filter(function(pkg) {
     return ['grunt-cli'].indexOf(pkg) < 0;
   }).forEach(grunt.loadNpmTasks);
 
@@ -10,10 +10,10 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
 
     webpack: {
-      myConfig: webpackConfig
+      myConfig: webpackConfig,
     },
 
-    jshint: {
+    eslint: {
       options: {
         node: true,
         browser: true,
@@ -27,41 +27,22 @@ module.exports = function(grunt) {
         noarg: true,
         regexp: true,
         undef: true,
-        globals: {
-          L: false,
-          LeafletToolbar: false,
-          warpWebGl: false,
-          EXIF: false,
-          alert: false,
-
-          // Mocha
-
-          describe: false,
-          it: false,
-          before: false,
-          after: false,
-          beforeEach: false,
-          afterEach: false,
-          chai: false,
-          expect: false,
-          sinon: false
-        }
       },
       source: {
-        src: ['src/**/*.js', 'package.json']
+        src: ['src/**/*.js'],
       },
       grunt: {
-        src: ['Gruntfile.js']
-      }
+        src: ['Gruntfile.js'],
+      },
     },
 
     karma: {
       development: {
-        configFile: 'test/karma.conf.js'
+        configFile: 'test/karma.conf.js',
       },
       test: {
-        configFile: 'test/karma.conf.js'
-      }
+        configFile: 'test/karma.conf.js',
+      },
     },
 
     // Minify SVGs from svg directory, output to svg-min
@@ -73,22 +54,22 @@ module.exports = function(grunt) {
             cwd: 'assets/icons/svg',
             src: ['*.svg'],
             dest: 'assets/icons/svg-min/',
-            ext: '.svg'
-          }
-        ]
+            ext: '.svg',
+          },
+        ],
       },
       options: {
         plugins: [
-          { removeViewBox: false },
-          { removeEmptyAttrs: false },
-          { removeTitle: true }, // "leaflet-toolbar" lets us specify the title attribute later
+          {removeViewBox: false},
+          {removeEmptyAttrs: false},
+          {removeTitle: true}, // "leaflet-toolbar" lets us specify the title attribute later
           {
             removeAttrs: {
-              attrs: ['xmlns', 'fill']
-            }
-          }
-        ]
-      }
+              attrs: ['xmlns', 'fill'],
+            },
+          },
+        ],
+      },
     },
 
     svg_sprite: {
@@ -105,29 +86,29 @@ module.exports = function(grunt) {
           mode: {
             symbol: {
               sprite: 'sprite.symbol.svg',
-              example: true
-            }
-          }
-        }
-      }
+              example: true,
+            },
+          },
+        },
+      },
     },
 
     watch: {
       options: {
-        livereload: true
+        livereload: true,
       },
       source: {
         files: ['src/**/*.js', 'test/**/*.js', 'Gruntfile.js'],
-        tasks: ['jshint', 'karma:development:start']
-      }
-    }
+        tasks: ['eslint', 'karma:development:start'],
+      },
+    },
   });
 
   /* Run tests once. */
-  grunt.registerTask('test', ['jshint', 'karma:test']);
+  grunt.registerTask('test', ['eslint', 'karma:test']);
 
   grunt.registerTask('build', [
-    'jshint',
+    'eslint',
     'karma:development:start',
     'coverage',
     'webpack',
@@ -136,7 +117,7 @@ module.exports = function(grunt) {
   // recompile svg icon sprite
   grunt.registerTask('icons', ['svgmin', 'svg_sprite']);
 
-  grunt.registerTask('coverage', 'Custom commmand-line reporter for karma-coverage', function() {
+  grunt.registerTask('coverage', 'CLI reporter for karma-coverage', function() {
     var coverageReports = grunt.file.expand('coverage/*/coverage.txt');
     var reports = {};
     var report; var i; var len;
