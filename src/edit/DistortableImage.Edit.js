@@ -371,7 +371,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   // compare this to using overlay zIndex
-  _toggleOrder: function() {
+  _toggleOrder() {
     if (this._toggledImage) { this._stackUp(); }
     else { this._stackDown(); }
   },
