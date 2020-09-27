@@ -371,12 +371,12 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   // compare this to using overlay zIndex
-  _toggleOrder: function() {
+  _toggleOrder() {
     if (this._toggledImage) { this._stackUp(); }
     else { this._stackDown(); }
   },
 
-  _removeOverlay: function() {
+  _removeOverlay() {
     var ov = this._overlay;
     var eP = this.parentGroup;
 
@@ -392,7 +392,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   // Based on https://github.com/publiclab/mapknitter/blob/8d94132c81b3040ae0d0b4627e685ff75275b416/app/assets/javascripts/mapknitter/Map.js#L47-L82
-  _getExport: function() {
+  _getExport() {
     var overlay = this._overlay;
     var map = overlay._map;
     var img = overlay.getElement();
@@ -450,7 +450,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     downloadable.src = overlay.options.fullResolutionSrc || img.src;
   },
 
-  _stackUp: function() {
+  _stackUp() {
     var t = this._toggledImage;
 
     if (!t || !this.hasTool(L.StackAction)) { return; }
@@ -460,7 +460,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._refresh();
   },
 
-  _stackDown: function() {
+  _stackDown() {
     var t = this._toggledImage;
 
     if (t || !this.hasTool(L.StackAction)) { return; }
@@ -470,7 +470,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._refresh();
   },
 
-  _unlock: function() {
+  _unlock() {
     var ov = this._overlay;
     var map = ov._map;
     var eP = this.parentGroup;
