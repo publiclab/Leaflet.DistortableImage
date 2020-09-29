@@ -492,7 +492,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._refresh();
   },
 
-  _lock: function() {
+  _lock() {
     var ov = this._overlay;
     var map = ov._map;
     var eP = this.parentGroup;
@@ -509,11 +509,11 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._refresh();
   },
 
-  _deselect: function() {
+  _deselect() {
     this._overlay.deselect();
   },
 
-  _showMarkers: function(e) {
+  _showMarkers(e) {
     var eP = this.parentGroup;
 
     if (!this.currentHandle) { return; }
@@ -527,7 +527,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     });
   },
 
-  _hideMarkers: function() {
+  _hideMarkers() {
     var ov = this._overlay;
     var eP = this.parentGroup;
 
@@ -544,7 +544,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     });
   },
 
-  _updateHandle: function() {
+  _updateHandle() {
     var ov = this._overlay;
     var map = ov._map;
     var mode = this.getMode();
@@ -556,7 +556,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
   },
 
-  _addToolbar: function() {
+  _addToolbar() {
     var ov = this._overlay;
     var eP = this.parentGroup;
     var map = ov._map;
