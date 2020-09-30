@@ -8,7 +8,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     keymap: L.distortableImage.action_map,
   },
 
-  initialize: function(overlay, options) {
+  initialize(overlay, options) {
     this._overlay = overlay;
     this._toggledImage = false;
     this._mode = overlay.options.mode;
@@ -21,7 +21,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   /* Run on image selection. */
-  addHooks: function() {
+  addHooks() {
     var overlay = this._overlay;
 
     this.editActions = this.options.actions;
@@ -47,7 +47,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   /* Run on image deselection. */
-  removeHooks: function() {
+  removeHooks() {
     var overlay = this._overlay;
     var eP = this.parentGroup;
 
@@ -79,7 +79,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     L.DomEvent.off(window, 'keydown', this._onKeyDown, this);
   },
 
-  disable: function() {
+  disable() {
     if (!this._enabled) { return this; }
 
     this._overlay.deselect();
@@ -88,7 +88,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     return this;
   },
 
-  _initModes: function() {
+  _initModes() {
     this._modes = {};
     // passed from L.DistortablImage.PopupBar. If the mode is one
     // of the current toolbar actions, adds it to this._modes
@@ -107,7 +107,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
 
-  _initHandles: function() {
+  _initHandles() {
     var overlay = this._overlay;
     var i;
 
@@ -587,12 +587,12 @@ L.DistortableImage.Edit = L.Handler.extend({
     ov.fire('toolbar:created');
   },
 
-  _refresh: function() {
+  _refresh() {
     if (this.toolbar) { this._removeToolbar(); }
     this._addToolbar();
   },
 
-  _updateToolbarPos: function() {
+  _updateToolbarPos() {
     var overlay = this._overlay;
     // Find the topmost point on the image.
     var corners = overlay.getCorners();
@@ -616,25 +616,25 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
   },
 
-  hasMode: function(mode) {
+  hasMode(mode) {
     return !!this._modes[mode];
   },
 
-  getMode: function() {
+  getMode() {
     if (!this.enabled()) { return; }
     return this._mode;
   },
 
-  getModes: function() {
+  getModes() {
     return this._modes;
   },
 
-  isMode: function(mode) {
+  isMode(mode) {
     if (!this.enabled()) { return false; }
     return this._mode === mode;
   },
 
-  setMode: function(newMode) {
+  setMode(newMode) {
     var ov = this._overlay;
     var eP = this.parentGroup;
     var mode = this.getMode();
@@ -659,7 +659,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     * need to attach a stop to img dblclick or it will propagate to
     * the map and fire the handler that shows map location labels on map dblclick.
     */
-  nextMode: function(e) {
+  nextMode(e) {
     var mode = this.getMode();
     var eP = this.parentGroup;
     var modesArray = Object.keys(this.getModes());
