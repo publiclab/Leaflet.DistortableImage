@@ -288,7 +288,7 @@ L.DistortableImage.Edit = L.Handler.extend({
      * Adjust default behavior of L.Draggable, which overwrites the CSS3
      * distort transformations that we set when it calls L.DomUtil.setPosition.
      */
-    this.dragging._updatePosition = function() {
+    this.dragging._updatePosition = () => {
       var topLeft = overlay.getCorner(0);
       var delta = this._newPos.subtract(map.latLngToLayerPoint(topLeft));
       var currentPoint;
@@ -405,7 +405,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     downloadable.id = downloadable.id || 'tempId12345';
     document.body.appendChild(downloadable);
 
-    downloadable.onload = function onLoadDownloadableImage() {
+    downloadable.onload = onLoadDownloadableImage() => {
       var height = downloadable.height;
       var width = downloadable.width;
       var nw = map.latLngToLayerPoint(overlay.getCorner(0));
@@ -433,7 +433,7 @@ L.DistortableImage.Edit = L.Handler.extend({
       // sw.y -= nw.y;
 
       // run once warping is complete
-      downloadable.onload = function() {
+      downloadable.onload = () => {
         L.DomUtil.remove(downloadable);
       };
 
@@ -676,6 +676,6 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 });
 
-L.distortableImage.edit = function(overlay, options) {
+L.distortableImage.edit = (overlay, options) => {
   return new L.DistortableImage.Edit(overlay, options);
 };
