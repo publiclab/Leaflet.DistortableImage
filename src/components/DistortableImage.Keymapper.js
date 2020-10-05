@@ -4,7 +4,7 @@ L.distortableImage = L.DistortableImage;
 
 L.DistortableImage.Keymapper = L.Handler.extend({
   options: {
-    position: "topright",
+    position: 'topright',
   },
 
   initialize: function (map, options) {
@@ -19,7 +19,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
       this._toggler = this._createButton();
       this._setMapper(this._container, this._scrollWrapper, this._toggler);
 
-      L.DomEvent.on(this._toggler, "click", this._toggleKeymapper, this);
+      L.DomEvent.on(this._toggler, 'click', this._toggleKeymapper, this);
 
       L.DomEvent.disableClickPropagation(this._container);
       L.DomEvent.disableScrollPropagation(this._container);
@@ -28,7 +28,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
 
   removeHooks: function () {
     if (this._keymapper) {
-      L.DomEvent.off(this._toggler, "click", this._toggleKeymapper, this);
+      L.DomEvent.off(this._toggler, 'click', this._toggleKeymapper, this);
 
       L.DomUtil.remove(this._toggler);
       L.DomUtil.remove(this._scrollWrapper);
@@ -38,33 +38,33 @@ L.DistortableImage.Keymapper = L.Handler.extend({
   },
 
   _buildContainer: function () {
-    var container = L.DomUtil.create("div", "ldi-keymapper-hide");
-    container.setAttribute("id", "ldi-keymapper");
+    var container = L.DomUtil.create('div', 'ldi-keymapper-hide');
+    container.setAttribute('id', 'ldi-keymapper');
 
-    var divider = L.DomUtil.create("br", "divider");
+    var divider = L.DomUtil.create('br', 'divider');
     container.appendChild(divider);
 
     return container;
   },
 
   _createButton: function () {
-    var toggler = L.DomUtil.create("a", "");
-    toggler.innerHTML = L.IconUtil.create("keyboard_open");
+    var toggler = L.DomUtil.create('a', '');
+    toggler.innerHTML = L.IconUtil.create('keyboard_open');
 
-    toggler.setAttribute("id", "toggle-keymapper");
-    toggler.setAttribute("href", "#");
-    toggler.setAttribute("title", "Show keymap");
+    toggler.setAttribute('id', 'toggle-keymapper');
+    toggler.setAttribute('href', '#');
+    toggler.setAttribute('title', 'Show keymap');
     // Will force screen readers like VoiceOver to read this as "Show keymap - button"
-    toggler.setAttribute("role", "button");
-    toggler.setAttribute("aria-label", "Show keymap");
+    toggler.setAttribute('role', 'button');
+    toggler.setAttribute('aria-label', 'Show keymap');
 
     return toggler;
   },
 
   _wrap: function () {
-    var wrap = L.DomUtil.create("div", "");
-    wrap.setAttribute("id", "keymapper-wrapper");
-    wrap.style.display = "none";
+    var wrap = L.DomUtil.create('div', '');
+    wrap.setAttribute('id', 'keymapper-wrapper');
+    wrap.style.display = 'none';
 
     return wrap;
   },
@@ -75,8 +75,8 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     this._keymapper.onAdd = function () {
       container.appendChild(wrap);
       wrap.insertAdjacentHTML(
-        "beforeend",
-        "<table><tbody>" +
+        'beforeend',
+        '<table><tbody>' +
           '<hr id="keymapper-hr">' +
           /* eslint-disable */
           '<tr><td><div class="left"><span>Rotate Mode</span></div><div class="right"><kbd>R</kbd></div></td></tr>' +
@@ -91,7 +91,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
           '<tr><td><div class="left"><span>Deselect All</span></div><div class="right"><kbd>esc</kbd></div></td></tr>' +
           '<tr><td><div class="left"><span>Delete Image(s)</span></div><div class="right"><kbd>delete</kbd>\xa0<kbd>backspace</kbd></div></td></tr>' +
           '<tr><td><div class="left"><span>Export Image(s)</span></div><div class="right"><kbd>e</kbd></div></td></tr>' +
-          "</tbody></table>"
+          '</tbody></table>'
       );
       /* eslint-enable */
       container.appendChild(button);
@@ -105,35 +105,35 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     e.preventDefault();
 
     this._container.className =
-      this._container.className === "ldi-keymapper leaflet-control"
-        ? "ldi-keymapper-hide leaflet-control"
-        : "ldi-keymapper leaflet-control";
+      this._container.className === 'ldi-keymapper leaflet-control'
+        ? 'ldi-keymapper-hide leaflet-control'
+        : 'ldi-keymapper leaflet-control';
 
     this._scrollWrapper.style.display =
-      this._scrollWrapper.style.display === "none" ? "block" : "none";
+      this._scrollWrapper.style.display === 'none' ? 'block' : 'none';
 
     this._toggler.innerHTML =
-      this._toggler.innerHTML === "close"
-        ? L.IconUtil.create("keyboard_open")
-        : "close";
+      this._toggler.innerHTML === 'close'
+        ? L.IconUtil.create('keyboard_open')
+        : 'close';
 
-    L.IconUtil.toggleTitle(this._toggler, "Show keymap", "Hide keymap");
-    L.DomUtil.toggleClass(this._toggler, "close-icon");
+    L.IconUtil.toggleTitle(this._toggler, 'Show keymap', 'Hide keymap');
+    L.DomUtil.toggleClass(this._toggler, 'close-icon');
   },
 
   _injectIconSet() {
-    if (document.querySelector("#keymapper-iconset")) {
+    if (document.querySelector('#keymapper-iconset')) {
       return;
     }
 
-    var el = L.DomUtil.create("div", "");
-    el.id = "keymapper-iconset";
-    el.setAttribute("hidden", "hidden");
+    var el = L.DomUtil.create('div', '');
+    el.id = 'keymapper-iconset';
+    el.setAttribute('hidden', 'hidden');
 
     this._iconset = new L.KeymapperIconSet().render();
     el.innerHTML = this._iconset;
 
-    document.querySelector(".leaflet-control-container").appendChild(el);
+    document.querySelector('.leaflet-control-container').appendChild(el);
   },
 });
 
