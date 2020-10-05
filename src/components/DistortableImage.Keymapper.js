@@ -69,7 +69,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     return wrap;
   },
 
-  _setMapper: function (container, wrap, button) {
+  _setMapper(container, wrap, button) {
     this._keymapper = L.control({ position: this.options.position });
 
     this._keymapper.onAdd = function () {
@@ -101,7 +101,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     this._keymapper.addTo(this._map);
   },
 
-  _toggleKeymapper: function (e) {
+  _toggleKeymapper(e) {
     e.preventDefault();
 
     this._container.className =
@@ -121,7 +121,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     L.DomUtil.toggleClass(this._toggler, 'close-icon');
   },
 
-  _injectIconSet: function () {
+  _injectIconSet() {
     if (document.querySelector('#keymapper-iconset')) {
       return;
     }
@@ -137,7 +137,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
   },
 });
 
-L.DistortableImage.Keymapper.addInitHook(function () {
+L.DistortableImage.Keymapper.addInitHook(() => {
   L.DistortableImage.Keymapper.prototype._n = L.DistortableImage.Keymapper
     .prototype._n
     ? L.DistortableImage.Keymapper.prototype._n + 1
@@ -149,6 +149,6 @@ L.DistortableImage.Keymapper.addInitHook(function () {
   }
 });
 
-L.distortableImage.keymapper = function (map, options) {
+L.distortableImage.keymapper = (map, options) => {
   return new L.DistortableImage.Keymapper(map, options);
 };
