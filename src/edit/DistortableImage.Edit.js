@@ -587,12 +587,12 @@ L.DistortableImage.Edit = L.Handler.extend({
     ov.fire('toolbar:created');
   },
 
-  _refresh: function() {
+  _refresh() {
     if (this.toolbar) { this._removeToolbar(); }
     this._addToolbar();
   },
 
-  _updateToolbarPos: function() {
+  _updateToolbarPos() {
     var overlay = this._overlay;
     // Find the topmost point on the image.
     var corners = overlay.getCorners();
@@ -616,20 +616,20 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
   },
 
-  hasMode: function(mode) {
+  hasMode(mode) {
     return !!this._modes[mode];
   },
 
-  getMode: function() {
+  getMode() {
     if (!this.enabled()) { return; }
     return this._mode;
   },
 
-  getModes: function() {
+  getModes() {
     return this._modes;
   },
 
-  isMode: function(mode) {
+  isMode(mode) {
     if (!this.enabled()) { return false; }
     return this._mode === mode;
   },
