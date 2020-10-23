@@ -634,7 +634,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     return this._mode === mode;
   },
 
-  setMode: function(newMode) {
+  setMode(newMode) {
     var ov = this._overlay;
     var eP = this.parentGroup;
     var mode = this.getMode();
@@ -659,7 +659,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     * need to attach a stop to img dblclick or it will propagate to
     * the map and fire the handler that shows map location labels on map dblclick.
     */
-  nextMode: function(e) {
+  nextMode(e) {
     var mode = this.getMode();
     var eP = this.parentGroup;
     var modesArray = Object.keys(this.getModes());
@@ -676,6 +676,6 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 });
 
-L.distortableImage.edit = function(overlay, options) {
+L.distortableImage.edit = (overlay, options) => {
   return new L.DistortableImage.Edit(overlay, options);
 };
