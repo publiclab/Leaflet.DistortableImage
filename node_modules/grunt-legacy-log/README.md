@@ -1,6 +1,5 @@
 # grunt-legacy-log
-> The Grunt 0.4.x logger.
+> The Grunt logger.
 
-[![Build Status](https://secure.travis-ci.org/gruntjs/grunt-legacy-log.png?branch=master)](http://travis-ci.org/gruntjs/grunt-legacy-log)
-[![Built with Grunt](https://cdn.gruntjs.com/builtwith.png)](http://gruntjs.com/)
-
+[![Built with Grunt](https://cdn.gruntjs.com/builtwith.svg)](http://gruntjs.com/)
+[![Build Status](https://github.com/gruntjs/grunt-legacy-log/workflows/Tests/badge.svg)](https://github.com/gruntjs/grunt-legacy-log/actions?workflow=Tests)

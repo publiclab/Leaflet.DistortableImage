@@ -1,6 +1,6 @@
 # Leaflet.DistortableImage
 
-[![Build Status](https://travis-ci.org/publiclab/Leaflet.DistortableImage.svg?branch=master)](https://travis-ci.org/publiclab/Leaflet.DistortableImage)
+[![Build Status](https://travis-ci.org/publiclab/Leaflet.DistortableImage.svg?branch=main)](https://travis-ci.org/publiclab/Leaflet.DistortableImage)
 [![Code of Conduct](https://img.shields.io/badge/code-of%20conduct-brightgreen.svg)](https://publiclab.org/conduct)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/publiclab/Leaflet.DistortableImage/issues)
 [![npm version](https://badge.fury.io/js/leaflet-distortableimage.svg)](https://badge.fury.io/js/leaflet-distortableimage)
@@ -76,11 +76,11 @@ map.whenReady(function() {
 
 If you would like to overrwrite the default toolbar actions available for an individual image's `L.Popup` toolbar, pass an array with the actions you want. Reference the available values [here](#Single-Image-Interface).
 
-For example, to overrwrite the toolbar to only include `L.OpacityAction` and `L.DeleteAction` , and also add on an additional non-default like `L.RevertAction`:
+For example, to overrwrite the toolbar to only include `L.OpacityAction` and `L.DeleteAction` , and also add on an additional non-default like `L.RestoreAction`:
 
 ```js
 img = L.distortableImageOverlay('example.jpg', {
-  actions: [L.OpacityAction, L.DeleteAction, L.RevertAction],
+  actions: [L.OpacityAction, L.DeleteAction, L.RestoreAction],
 }).addTo(map);
 ```
 
@@ -135,12 +135,7 @@ If you want to enable editing based on custom logic instead, you can pass `edita
 
 `fullResolutionSrc` (*optional*)
 
-We've added a GPU-accelerated means to generate a full resolution version of the distorted image; it requires two additional dependencies to enable; see how we've included them in the demo:
-
-```HTML
-<script src="../node_modules/webgl-distort/dist/webgl-distort.js"></script>
-<script src="../node_modules/glfx/glfx.js"></script>
-```
+We've added a GPU-accelerated means to generate a full resolution version of the distorted image.
 
 When instantiating a Distortable Image, pass in a `fullResolutionSrc` option set to the url of the higher resolution image. This image will be used in full-res exporting.
 
@@ -149,6 +144,7 @@ img = L.distortableImageOverlay('example.jpg', {
   fullResolutionSrc: 'large.jpg',
 }).addTo(map);
 ```
+Our project includes two additional dependencies to enable this feature, [glfx.js](https://github.com/evanw/glfx.js) and [webgl-distort](https://github.com/jywarren/webgl-distort), both of which you can find in our [package.json](./package.json).
 
 ### Mode
 

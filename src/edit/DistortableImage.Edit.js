@@ -8,7 +8,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     keymap: L.distortableImage.action_map,
   },
 
-  initialize: function(overlay, options) {
+  initialize(overlay, options) {
     this._overlay = overlay;
     this._toggledImage = false;
     this._mode = overlay.options.mode;
@@ -21,7 +21,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   /* Run on image selection. */
-  addHooks: function() {
+  addHooks() {
     var overlay = this._overlay;
 
     this.editActions = this.options.actions;
@@ -47,7 +47,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   /* Run on image deselection. */
-  removeHooks: function() {
+  removeHooks() {
     var overlay = this._overlay;
     var eP = this.parentGroup;
 
@@ -79,7 +79,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     L.DomEvent.off(window, 'keydown', this._onKeyDown, this);
   },
 
-  disable: function() {
+  disable() {
     if (!this._enabled) { return this; }
 
     this._overlay.deselect();
@@ -88,7 +88,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     return this;
   },
 
-  _initModes: function() {
+  _initModes() {
     this._modes = {};
     // passed from L.DistortablImage.PopupBar. If the mode is one
     // of the current toolbar actions, adds it to this._modes
@@ -107,7 +107,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
 
-  _initHandles: function() {
+  _initHandles() {
     var overlay = this._overlay;
     var i;
 
@@ -152,7 +152,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     };
   },
 
-  _appendHandlesandDragable: function() {
+  _appendHandlesandDragable() {
     var ov = this._overlay;
 
     // won't throw error if user adds 0 mode actions to toolbar
@@ -172,7 +172,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (!this.isMode('lock')) { this._enableDragging(); }
   },
 
-  _onKeyDown: function(e) {
+  _onKeyDown(e) {
     var keymap = this.options.keymap;
     var handlerName = keymap[e.key];
     var ov = this._overlay;
@@ -187,7 +187,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
   },
 
-  replaceTool: function(old, next) {
+  replaceTool(old, next) {
     if (next.baseClass !== 'leaflet-toolbar-icon' || this.hasTool(next)) {
       return this;
     }
@@ -210,7 +210,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     return this;
   },
 
-  addTool: function(value) {
+  addTool(value) {
     if (value.baseClass === 'leaflet-toolbar-icon' && !this.hasTool(value)) {
       this._removeToolbar();
       this.editActions.push(value);
@@ -225,11 +225,11 @@ L.DistortableImage.Edit = L.Handler.extend({
     return this;
   },
 
-  hasTool: function(value) {
+  hasTool(value) {
     return this.editActions.some(action => action === value);
   },
 
-  removeTool: function(value) {
+  removeTool(value) {
     this.editActions.some((item, idx) => {
       if (item === value) {
         this._removeToolbar();
@@ -249,7 +249,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   // set the mode to the next mode or if that was the last one set mode to ''
-  _nextOrNone: function(mode) {
+  _nextOrNone(mode) {
     if (this.isMode(mode)) {
       if (Object.keys(this.getModes()).length >= 1) {
         this.nextMode();
@@ -261,7 +261,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
   },
 
-  _removeToolbar: function() {
+  _removeToolbar() {
     var ov = this._overlay;
     var map = ov._map;
 
@@ -271,7 +271,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
   },
 
-  _enableDragging: function() {
+  _enableDragging() {
     var overlay = this._overlay;
     var map = overlay._map;
 
@@ -309,39 +309,39 @@ L.DistortableImage.Edit = L.Handler.extend({
     };
   },
 
-  _disableDragging: function() {
+  _disableDragging() {
     if (this.dragging) {
       this.dragging.disable();
       delete this.dragging;
     }
   },
 
-  _dragMode: function() {
+  _dragMode() {
     this.setMode('drag');
   },
 
-  _scaleMode: function() {
+  _scaleMode() {
     this.setMode('scale');
   },
 
-  _distortMode: function() {
+  _distortMode() {
     this.setMode('distort');
   },
 
-  _rotateMode: function() {
+  _rotateMode() {
     this.setMode('rotate');
   },
 
-  _freeRotateMode: function() {
+  _freeRotateMode() {
     this.setMode('freeRotate');
   },
 
-  _toggleLockMode: function() {
+  _toggleLockMode() {
     if (this.isMode('lock')) { this._unlock(); }
     else { this._lock(); }
   },
 
-  _toggleOpacity: function() {
+  _toggleOpacity() {
     var image = this._overlay.getElement();
     var opacity;
 
@@ -356,7 +356,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._refresh();
   },
 
-  _toggleBorder: function() {
+  _toggleBorder() {
     var image = this._overlay.getElement();
     var outline;
 
@@ -371,12 +371,12 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   // compare this to using overlay zIndex
-  _toggleOrder: function() {
+  _toggleOrder() {
     if (this._toggledImage) { this._stackUp(); }
     else { this._stackDown(); }
   },
 
-  _removeOverlay: function() {
+  _removeOverlay() {
     var ov = this._overlay;
     var eP = this.parentGroup;
 
@@ -392,7 +392,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   // Based on https://github.com/publiclab/mapknitter/blob/8d94132c81b3040ae0d0b4627e685ff75275b416/app/assets/javascripts/mapknitter/Map.js#L47-L82
-  _getExport: function() {
+  _getExport() {
     var overlay = this._overlay;
     var map = overlay._map;
     var img = overlay.getElement();
@@ -450,7 +450,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     downloadable.src = overlay.options.fullResolutionSrc || img.src;
   },
 
-  _stackUp: function() {
+  _stackUp() {
     var t = this._toggledImage;
 
     if (!t || !this.hasTool(L.StackAction)) { return; }
@@ -460,7 +460,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._refresh();
   },
 
-  _stackDown: function() {
+  _stackDown() {
     var t = this._toggledImage;
 
     if (t || !this.hasTool(L.StackAction)) { return; }
@@ -470,7 +470,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._refresh();
   },
 
-  _unlock: function() {
+  _unlock() {
     var ov = this._overlay;
     var map = ov._map;
     var eP = this.parentGroup;
@@ -492,7 +492,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._refresh();
   },
 
-  _lock: function() {
+  _lock() {
     var ov = this._overlay;
     var map = ov._map;
     var eP = this.parentGroup;
@@ -509,11 +509,11 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._refresh();
   },
 
-  _deselect: function() {
+  _deselect() {
     this._overlay.deselect();
   },
 
-  _showMarkers: function(e) {
+  _showMarkers(e) {
     var eP = this.parentGroup;
 
     if (!this.currentHandle) { return; }
@@ -527,7 +527,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     });
   },
 
-  _hideMarkers: function() {
+  _hideMarkers() {
     var ov = this._overlay;
     var eP = this.parentGroup;
 
@@ -544,7 +544,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     });
   },
 
-  _updateHandle: function() {
+  _updateHandle() {
     var ov = this._overlay;
     var map = ov._map;
     var mode = this.getMode();
@@ -556,7 +556,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
   },
 
-  _addToolbar: function() {
+  _addToolbar() {
     var ov = this._overlay;
     var eP = this.parentGroup;
     var map = ov._map;
@@ -587,12 +587,12 @@ L.DistortableImage.Edit = L.Handler.extend({
     ov.fire('toolbar:created');
   },
 
-  _refresh: function() {
+  _refresh() {
     if (this.toolbar) { this._removeToolbar(); }
     this._addToolbar();
   },
 
-  _updateToolbarPos: function() {
+  _updateToolbarPos() {
     var overlay = this._overlay;
     // Find the topmost point on the image.
     var corners = overlay.getCorners();
@@ -616,25 +616,25 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
   },
 
-  hasMode: function(mode) {
+  hasMode(mode) {
     return !!this._modes[mode];
   },
 
-  getMode: function() {
+  getMode() {
     if (!this.enabled()) { return; }
     return this._mode;
   },
 
-  getModes: function() {
+  getModes() {
     return this._modes;
   },
 
-  isMode: function(mode) {
+  isMode(mode) {
     if (!this.enabled()) { return false; }
     return this._mode === mode;
   },
 
-  setMode: function(newMode) {
+  setMode(newMode) {
     var ov = this._overlay;
     var eP = this.parentGroup;
     var mode = this.getMode();
@@ -659,7 +659,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     * need to attach a stop to img dblclick or it will propagate to
     * the map and fire the handler that shows map location labels on map dblclick.
     */
-  nextMode: function(e) {
+  nextMode(e) {
     var mode = this.getMode();
     var eP = this.parentGroup;
     var modesArray = Object.keys(this.getModes());
@@ -676,6 +676,6 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 });
 
-L.distortableImage.edit = function(overlay, options) {
+L.distortableImage.edit = (overlay, options) => {
   return new L.DistortableImage.Edit(overlay, options);
 };

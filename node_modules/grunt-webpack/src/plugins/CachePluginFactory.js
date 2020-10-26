@@ -1,11 +1,18 @@
-'use strict';
-const CachePlugin = require('webpack/lib/CachePlugin');
+"use strict";
+
+let CachePlugin;
+try {
+  // webpack 4
+  CachePlugin = require("webpack/lib/CachePlugin");
+} catch (e) {
+  // webpack 5
+  // eslint-disable-next-line import/no-unresolved
+  CachePlugin = require("webpack/lib/cache/MemoryCachePlugin");
+}
 
 class CachePluginFactory {
-
   constructor() {
     this.plugins = {};
-    this.dependencies = {};
   }
 
   addPlugin(target, compiler) {
@@ -13,17 +20,6 @@ class CachePluginFactory {
       this.plugins[target] = new CachePlugin();
     }
     this.plugins[target].apply(compiler);
-    if (this.dependencies[target]) {
-      compiler._lastCompilationFileDependencies = this.dependencies[target].file;
-      compiler._lastCompilationContextDependencies = this.dependencies[target].context;
-    }
-  }
-
-  updateDependencies(target, compiler) {
-    this.dependencies[target] = {
-      file: compiler._lastCompilationFileDependencies,
-      context: compiler._lastCompilationContextDependencies
-    };
   }
 }
 

@@ -1,15 +1,10 @@
-/* jshint -W030 */
 describe('L.DistortableCollection.Edit', function() {
-  var map;
-  var overlay;
-  var overlay2;
-  var overlay3;
-  var imgGroup;
+  let map; let overlay; let overlay2; let overlay3; let imgGroup;
 
   beforeEach(function(done) {
     map = L.map(L.DomUtil.create('div', '', document.body)).setView([41.7896, -87.5996], 15);
 
-    overlay = L.distortableImageOverlay('/examples/example.png', {
+    overlay = L.distortableImageOverlay('/examples/example.jpg', {
       corners: [
         L.latLng(41.7934, -87.6052),
         L.latLng(41.7934, -87.5852),
@@ -18,7 +13,7 @@ describe('L.DistortableCollection.Edit', function() {
       ],
     });
 
-    overlay2 = L.distortableImageOverlay('/examples/example.png', {
+    overlay2 = L.distortableImageOverlay('/examples/example.jpg', {
       corners: [
         L.latLng(41.7934, -87.6050),
         L.latLng(41.7934, -87.5850),
@@ -27,7 +22,7 @@ describe('L.DistortableCollection.Edit', function() {
       ],
     });
 
-    overlay3 = L.distortableImageOverlay('/examples/example.png', {
+    overlay3 = L.distortableImageOverlay('/examples/example.jpg', {
       corners: [
         L.latLng(41.7934, -87.6054),
         L.latLng(41.7934, -87.5854),
@@ -54,13 +49,13 @@ describe('L.DistortableCollection.Edit', function() {
 
   describe('#_decollectAll', function() {
     it('Should remove the \'selected\' class from all images', function() {
-      var img = overlay.getElement();
-      var img2 = overlay2.getElement();
+      const img = overlay.getElement();
+      const img2 = overlay2.getElement();
 
       L.DomUtil.addClass(img, 'collected');
       L.DomUtil.addClass(img2, 'collected');
 
-      map.fire('click');
+      map.getContainer().click();
 
       // we deselect after 3ms to confirm the click wasn't a dblclick
       setTimeout(function() {
@@ -70,25 +65,25 @@ describe('L.DistortableCollection.Edit', function() {
     });
 
     it('Should hide all images\' handles unless they\'re lock handles', function() {
-      var edit = overlay.editing;
-      var edit2 = overlay2.editing;
-      var distortHandleState = [];
-      var lockHandleState = [];
+      const edit = overlay.editing;
+      const edit2 = overlay2.editing;
+      const distortHandleState = [];
+      const lockHandleState = [];
 
       // turn on lock handles for one of the DistortableImageOverlay instances.
       edit2._toggleLockMode();
 
       // then trigger _decollectAll
-      map.fire('click');
+      map.getContainer().click();
 
       setTimeout(function() {
         edit._handles.distort.eachLayer(function(handle) {
-          var icon = handle.getElement();
+          const icon = handle.getElement();
           distortHandleState.push(L.DomUtil.getStyle(icon, 'opacity'));
         });
 
         edit2._handles.lock.eachLayer(function(handle) {
-          var icon = handle.getElement();
+          const icon = handle.getElement();
           lockHandleState.push(L.DomUtil.getStyle(icon, 'opacity'));
         });
 
@@ -99,17 +94,17 @@ describe('L.DistortableCollection.Edit', function() {
     });
 
     it('Should remove an image\'s individual toolbar instances regardless of lock handles', function() {
-      var edit2 = overlay2.editing;
+      const edit2 = overlay2.editing;
 
       edit2._toggleLockMode();
 
       // select image to initially create individual toolbar instance (single selection interface)
-      chai.simulateEvent(overlay2.getElement(), 'click');
+      overlay2.getElement().click();
 
       expect(edit2.toolbar).to.not.be.false;
 
       // then trigger _decollectAll
-      map.fire('click');
+      map.getContainer().click();
 
       setTimeout(function() {
         expect(edit2.toolbar).to.be.false;
@@ -123,7 +118,7 @@ describe('L.DistortableCollection.Edit', function() {
 
       // need both bc simulated `mousedown`s don't fire `click` events afterwards like regular user generated `mousedown`s.
       chai.simulateEvent(overlay.getElement(), 'mousedown', {shiftKey: true});
-      chai.simulateEvent(overlay.getElement(), 'click');
+      overlay.getElement().click();
 
       expect(Object.keys(map._toolbars)).to.have.lengthOf(1);
     });
@@ -152,7 +147,7 @@ describe('L.DistortableCollection.Edit', function() {
     });
 
     it('is invoked on map click', function() {
-      map.fire('click');
+      map.getContainer().click();
       setTimeout(function() {
         expect(map._toolbars).to.be.empty;
       }, 3000);
@@ -232,7 +227,7 @@ describe('L.DistortableCollection.Edit', function() {
     });
 
     it('removes a collection of layers', function() {
-      var layers = imgGroup.getLayers();
+      const layers = imgGroup.getLayers();
       expect(layers).to.include.members([overlay, overlay2, overlay3]);
 
       imgGroup.editing._removeGroup();
@@ -242,9 +237,9 @@ describe('L.DistortableCollection.Edit', function() {
     });
 
     it('removes the layers from the map on removal from group', function() {
-      var id = imgGroup.getLayerId(overlay);
-      var id2 = imgGroup.getLayerId(overlay2);
-      var id3 = imgGroup.getLayerId(overlay3);
+      const id = imgGroup.getLayerId(overlay);
+      const id2 = imgGroup.getLayerId(overlay2);
+      const id3 = imgGroup.getLayerId(overlay3);
 
       expect(map._layers).to.include.all.keys(id, id2, id3);
 

@@ -1,3 +1,9 @@
+v2.0.0:
+  date: 2020-08-18
+  changes:
+    - Update dependencies
+    - Fix Buffer warnings by switching to Buffer.from()
+    - Avoid detecting AsyncFunction as a generic object
 v1.1.1:
   date: 2018-05-21
   changes:

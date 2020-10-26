@@ -1,6 +1,6 @@
 tasks:
-  - init: npm i && npm run setup
-    command: npm run serve:dev
+  - init: npm i && export CHROME_BIN=/usr/bin/chromium-browser
+    command: NODE_ENV=production node_modules/grunt/bin/grunt webpack && npm run serve:dev
 ports:
   - port: 3000
     onOpen: open-preview

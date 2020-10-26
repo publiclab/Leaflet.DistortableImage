@@ -1,9 +1,9 @@
-'use strict';
-const defaults = require('./default');
-const OptionHelper = require('./OptionHelper');
+"use strict";
+
+const defaults = require("./default");
+const OptionHelper = require("./OptionHelper");
 
 class WebpackOptionHelper extends OptionHelper {
-
   getDefaultOptions() {
     return Object.assign({}, defaults.gruntOptions, defaults.webpackOptions);
   }
@@ -27,7 +27,7 @@ class WebpackOptionHelper extends OptionHelper {
 
     // ensure that when we send the cache option to webpack in watch mode it is not the function
     // TODO: this is workaround and should be handled in a more generic way
-    if (typeof options.cache === 'function') {
+    if (typeof options.cache === "function") {
       options.cache = options.cache(options);
     }
 

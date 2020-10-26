@@ -477,10 +477,10 @@ exports['util.recurse'] = {
   'buffer': function(test) {
     test.expect(1);
     var actual = util.recurse({
-      buf: new Buffer('buf'),
+      buf: Buffer.from('buf'),
     }, this.typeValue);
     var expected = {
-      buf: {type: 'buffer', value: new Buffer('buf')},
+      buf: {type: 'buffer', value: Buffer.from('buf')},
     };
     test.deepEqual(actual, expected, 'Should not mangle Buffer instances.');
     test.done();

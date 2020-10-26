@@ -49,7 +49,7 @@ function repeat(str, n, separator) {
   return result;
 }
 
-var fooBuffer = new Buffer('foo');
+var fooBuffer = Buffer.from('foo');
 
 exports['Log instance'] = {
   setUp: function(done) {
