@@ -1,0 +1,29 @@
+name: build
+on: [pull_request]
+jobs:
+  jasmine:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup node
+      uses: actions/setup-node@v2
+      with:
+        node-version: '12'
+        check-latest: true
+    - name: Cache node modules
+      uses: actions/cache@v2
+      env:
+        cache-name: cache-node-modules
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}-
+          ${{ runner.os }}-build-
+          ${{ runner.os }}-
+    - name: Install dependencies
+      run: npm install
+    - name: "Google chrome"
+      run: google-chrome-stable --headless --no-sandbox --remote-debugging-port=9222 http://localhost &
+    - name: "Build"
+      run: npm run build
