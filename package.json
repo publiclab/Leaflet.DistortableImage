@@ -45,6 +45,7 @@
     "webgl-distort": "0.0.2"
   },
   "devDependencies": {
+    "acorn": "^8.7.1",
     "@babel/core": "^7.9.0",
     "@babel/preset-env": "^7.9.5",
     "babel-loader": "^8.1.0",
@@ -61,7 +62,7 @@
     "grunt-karma": "^4.0.0",
     "grunt-svg-sprite": "^1.5.0",
     "grunt-svgmin": "^6.0.0",
-    "grunt-webpack": "^4.0.2",
+    "grunt-webpack": "^5.0.0",
     "gruntify-eslint": "^5.0.0",
     "husky": "^4.2.5",
     "karma": "^6.3.14",
