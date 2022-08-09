@@ -214,11 +214,11 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     var exceedsTop;
     var exceedsBottom;
     if (zoom === 0) {
-      exceedsTop = map.project(corner).y < 2;
-      exceedsBottom = map.project(corner).y >= 255;
+      exceedsTop = Math.abs( map.project(corner).y ) < 2;
+      exceedsBottom = Math.abs( map.project(corner).y ) >= 255;
     } else {
-      exceedsTop = map.project(corner).y / zoom < 2;
-      exceedsBottom = map.project(corner).y / Math.pow(2, zoom) >= 255;
+      exceedsTop = Math.abs( map.project(corner).y / zoom ) < 2;
+      exceedsBottom = Math.abs( map.project(corner).y / Math.pow(2, zoom) ) >= 255;
     }
     return (exceedsTop || exceedsBottom);
   },
