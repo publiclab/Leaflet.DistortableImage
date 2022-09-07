@@ -16,9 +16,9 @@
     <script src="../dist/leaflet.distortableimage.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
   </head>
-  <body style="margin:0;">
-    <div id="map" style="width:100%; height:100%; position:absolute; top:0;"></div>
 
+  <body style="margin:0;">
+    
     <div class="modal fade" id="welcomeModal" aria-labelledby="exampleModalLabel" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content bg-light">
@@ -39,25 +39,61 @@
               </a>
             </p>
             <p>Paste it here to begin:</p>
-            <input type="text" class="form-control" placeholder="https://archive.org/details/...">
-            <button class="btn btn-primary mt-4 mb-5">Begin</button>
+            <form id="form">
+              <input id="input" type="text" class="form-control" placeholder="https://archive.org/details/..." required>
+              <button type="submit" class="btn btn-primary mt-4 mb-5">Begin</button>
+            </form>
           </div>
         </div>
       </div>
     </div>
+
+    <div id="map" style="width:100%; height:100%; position:absolute; top:0;"></div>
+
+    <div class="offcanvas offcanvas-end" data-bs-backdrop="false" data-bs-keyboard="false" tabindex="1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+      <div class="offcanvas-header">
+        <h3 id="offcanvasRightLabel">Images</h3>
+        <button type="button" class="btn btn-primary d-sm-none" data-bs-dismiss="offcanvas" aria-label="Close">View Map</button>
+      </div>
+      <hr>
+      <div class="offcanvas-body">
+        <p id="response">No images yet...</p>
+      </div>
+    </div>
   </body>
+
   <script>
     let map;
+    let welcomeModal = document.getElementById('welcomeModal');
+    let sidebar = document.getElementById('offcanvasRight');
+    let form = document.getElementById('form');
+    let input = document.getElementById('input');
+    let responseText = document.getElementById('response');
 
     const setupMap = () => {
       map = L.map('map').setView([51.505, -0.09], 13);
+      
+      map.attributionControl.setPosition('bottomleft');
+
       map.addGoogleMutant();
 
       map.whenReady(function() {
-        new bootstrap.Modal(document.getElementById('welcomeModal')).show()
+        new bootstrap.Modal(welcomeModal).show();
       });
     }
-    
     setupMap();
+
+    welcomeModal.addEventListener('hidden.bs.modal', function (event) {
+      new bootstrap.Offcanvas(sidebar).show();
+    });
+    
+    form.addEventListener('submit', function(event){
+      console.log('here');
+      event.preventDefault();
+      bootstrap.Modal.getInstance(welcomeModal).hide();
+      responseText.innerHTML = input.value
+    });
+
+
   </script>
 </html>
