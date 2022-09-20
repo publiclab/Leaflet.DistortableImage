@@ -96,13 +96,17 @@
             response.data.files.forEach(file => {
               if (file.format === 'PNG' || file.format === 'JPEG'){
                 let imageRow = document.createElement('div');
-                imageRow.classList.add('d-flex', 'justify-content-between', 'align-items-center', 'mb-4', 'pe-5');
                 let image = new Image(150, 150);
-                image.src = `${url.replace('metadata', 'download')}/${file.name}`;
                 let placeButton = document.createElement('a');
+
                 placeButton.classList.add('btn', 'btn-sm', 'btn-outline-secondary');
                 placeButton.innerHTML = 'Place on map';
+
+                image.src = `${url.replace('metadata', 'download')}/${file.name}`;
+
+                imageRow.classList.add('d-flex', 'justify-content-between', 'align-items-center', 'mb-4', 'pe-5');
                 imageRow.append(image, placeButton);
+
                 imageContainer.appendChild(imageRow);
                 imageCount++;
               }
