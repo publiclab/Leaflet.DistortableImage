@@ -15,6 +15,7 @@
     <script src="../dist/vendor.js"></script>
     <script src="../dist/leaflet.distortableimage.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   </head>
 
   <body style="margin:0;">
@@ -57,7 +58,8 @@
       </div>
       <hr>
       <div class="offcanvas-body">
-        <p id="response">No images yet...</p>
+        <p id="response" class="mb-5">No link = No images...</p>
+        <div id="imgContainer"></div>
       </div>
     </div>
   </body>
@@ -69,6 +71,7 @@
     let form = document.getElementById('form');
     let input = document.getElementById('input');
     let responseText = document.getElementById('response');
+    let imageContainer = document.getElementById('imgContainer');
 
     const setupMap = () => {
       map = L.map('map').setView([51.505, -0.09], 13);
@@ -77,23 +80,52 @@
 
       map.addGoogleMutant();
 
-      map.whenReady(function() {
+      map.whenReady(() => {
         new bootstrap.Modal(welcomeModal).show();
       });
     }
     setupMap();
+    
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const url = input.value.replace('details', 'metadata');
+      axios.get(url)
+        .then((response) => {
+          if (response.data.files && response.data.files.length != 0) {
+            let imageCount = 0;
+            response.data.files.forEach(file => {
+              if (file.format === 'PNG' || file.format === 'JPEG'){
+                let imageRow = document.createElement('div');
+                let image = new Image(150, 150);
+                let placeButton = document.createElement('a');
 
-    welcomeModal.addEventListener('hidden.bs.modal', function (event) {
+                placeButton.classList.add('btn', 'btn-sm', 'btn-outline-secondary');
+                placeButton.innerHTML = 'Place on map';
+
+                image.src = `${url.replace('metadata', 'download')}/${file.name}`;
+
+                imageRow.classList.add('d-flex', 'justify-content-between', 'align-items-center', 'mb-4', 'pe-5');
+                imageRow.append(image, placeButton);
+
+                imageContainer.appendChild(imageRow);
+                imageCount++;
+              }
+            });
+            responseText.innerHTML = imageCount ? `${imageCount} image(s) fetched successfully.` : 'No images found in the link provided...'
+          } else {
+            responseText.innerHTML = 'No images found in the link provided...'
+          }
+        })
+        .catch((error) => {
+          responseText.innerHTML = 'Uh-oh! Something\'s not right with the link provided!'
+        })
+        .finally(() => {
+          bootstrap.Modal.getInstance(welcomeModal).hide();
+        });
+    });
+
+    welcomeModal.addEventListener('hidden.bs.modal', (event) => {
       new bootstrap.Offcanvas(sidebar).show();
     });
-    
-    form.addEventListener('submit', function(event){
-      console.log('here');
-      event.preventDefault();
-      bootstrap.Modal.getInstance(welcomeModal).hide();
-      responseText.innerHTML = input.value
-    });
-
-
   </script>
 </html>
