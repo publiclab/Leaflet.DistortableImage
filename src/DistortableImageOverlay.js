@@ -214,16 +214,16 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     if (map.options.crs == L.CRS.Simple) {
       return false;
     } else {  
-       var exceedsTop;
-       var exceedsBottom;
-       if (zoom === 0) {
-         exceedsTop = map.project(corner).y < 2;
-         exceedsBottom = map.project(corner).y >= 255;
-       } else {
-         exceedsTop = map.project(corner).y / zoom < 2;
-         exceedsBottom = map.project(corner).y / Math.pow(2, zoom) >= 255;
-       }
-       return (exceedsTop || exceedsBottom);      
+      var exceedsTop;
+      var exceedsBottom;
+      if (zoom === 0) {
+        exceedsTop = map.project(corner).y < 2;
+        exceedsBottom = map.project(corner).y >= 255;
+      } else {
+        exceedsTop = map.project(corner).y / zoom < 2;
+        exceedsBottom = map.project(corner).y / Math.pow(2, zoom) >= 255;
+      }
+      return (exceedsTop || exceedsBottom);      
     }
   },
 
