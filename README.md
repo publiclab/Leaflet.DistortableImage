@@ -7,6 +7,10 @@
 
 A Leaflet extension to distort images -- "rubbersheeting" -- for the [MapKnitter.org](http://mapknitter.org) ([src](https://github.com/publiclab/mapknitter)) image georectification service by [Public Lab](http://publiclab.org). Leaflet.DistortableImage allows for perspectival distortions of images, client-side, using CSS3 transformations in the DOM.
 
+Begin running (and contributing to) this codebase immediately with [GitPod](https://gitpod.io):
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/publiclab/Leaflet.DistortableImage)
+
 Advantages include:
 
 * It can handle over 100 images smoothly, even on a smartphone
