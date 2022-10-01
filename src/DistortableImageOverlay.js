@@ -213,7 +213,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   _cornerExceedsMapLats: function(zoom, corner, map) {
     if (map.options.crs == L.CRS.Simple) {
       return false;
-    } else {  
+    } else {
       var exceedsTop;
       var exceedsBottom;
       if (zoom === 0) {
