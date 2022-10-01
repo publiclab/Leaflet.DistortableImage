@@ -223,7 +223,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
         exceedsTop = map.project(corner).y / zoom < 2;
         exceedsBottom = map.project(corner).y / Math.pow(2, zoom) >= 255;
       }
-      return (exceedsTop || exceedsBottom);      
+      return (exceedsTop || exceedsBottom);
     }
   },
 
