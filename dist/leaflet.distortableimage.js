@@ -1833,7 +1833,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     };
 
     this.dragging.on('dragend', function () {
-      overlay.fire('dragstart');
+      overlay.fire('dragend');
     });
   },
   _disableDragging: function _disableDragging() {
@@ -7253,7 +7253,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "95c41563aa5830496807"; }
+/******/ 		__webpack_require__.h = function() { return "56a169c76d4a1f2271f8"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
