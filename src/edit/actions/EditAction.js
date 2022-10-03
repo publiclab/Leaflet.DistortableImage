@@ -13,7 +13,7 @@ L.EditAction = L.Toolbar2.Action.extend({
     },
   },
 
-  initialize: function(map, overlay, options) {
+  initialize(map, overlay, options) {
     this._overlay = overlay;
     this._map = map;
 
@@ -23,7 +23,7 @@ L.EditAction = L.Toolbar2.Action.extend({
     this._injectIconSet();
   },
 
-  _createIcon: function(toolbar, container, args) {
+  _createIcon(toolbar, container, args) {
     var iconOptions = this.options.toolbarIcon;
     var className = iconOptions.className;
     var edit = this._overlay.editing;
@@ -66,7 +66,7 @@ L.EditAction = L.Toolbar2.Action.extend({
     this._addSubToolbar(toolbar, this._icon, args);
   },
 
-  _injectIconSet: function() {
+ _injectIconSet() {
     if (document.querySelector('#iconset')) {
       return;
     }
@@ -79,12 +79,12 @@ L.EditAction = L.Toolbar2.Action.extend({
     document.querySelector('.leaflet-marker-pane').appendChild(el);
   },
 
-  _enableAction: function() {
+  _enableAction() {
     L.DomUtil.removeClass(this._link.parentElement, 'disabled');
     L.DomUtil.removeClass(this._link, 'disabled');
   },
 
-  _disableAction: function() {
+ _disableAction() {
     L.DomUtil.addClass(this._link.parentElement, 'disabled');
     L.DomUtil.addClass(this._link, 'disabled');
   },
