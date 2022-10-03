@@ -66,7 +66,7 @@ L.EditAction = L.Toolbar2.Action.extend({
     this._addSubToolbar(toolbar, this._icon, args);
   },
 
- _injectIconSet() {
+  _injectIconSet() {
     if (document.querySelector('#iconset')) {
       return;
     }
