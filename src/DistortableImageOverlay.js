@@ -211,16 +211,20 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   _cornerExceedsMapLats: function(zoom, corner, map) {
-    var exceedsTop;
-    var exceedsBottom;
-    if (zoom === 0) {
-      exceedsTop = Math.abs( map.project(corner).y ) < 2;
-      exceedsBottom = Math.abs( map.project(corner).y ) >= 255;
+    if (map.options.crs == L.CRS.Simple) {
+      return false;
     } else {
-      exceedsTop = Math.abs( map.project(corner).y / zoom ) < 2;
-      exceedsBottom = Math.abs( map.project(corner).y / Math.pow(2, zoom) ) >= 255;
+      var exceedsTop;
+      var exceedsBottom;
+      if (zoom === 0) {
+        exceedsTop = map.project(corner).y < 2;
+        exceedsBottom = map.project(corner).y >= 255;
+      } else {
+        exceedsTop = map.project(corner).y / zoom < 2;
+        exceedsBottom = map.project(corner).y / Math.pow(2, zoom) >= 255;
+      }
+      return (exceedsTop || exceedsBottom);
     }
-    return (exceedsTop || exceedsBottom);
   },
 
   setCorners: function(latlngObj) {

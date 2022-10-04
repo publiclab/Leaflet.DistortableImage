@@ -669,18 +669,22 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return this;
   },
   _cornerExceedsMapLats: function _cornerExceedsMapLats(zoom, corner, map) {
-    var exceedsTop;
-    var exceedsBottom;
-
-    if (zoom === 0) {
-      exceedsTop = map.project(corner).y < 2;
-      exceedsBottom = map.project(corner).y >= 255;
+    if (map.options.crs == L.CRS.Simple) {
+      return false;
     } else {
-      exceedsTop = map.project(corner).y / zoom < 2;
-      exceedsBottom = map.project(corner).y / Math.pow(2, zoom) >= 255;
-    }
+      var exceedsTop;
+      var exceedsBottom;
 
-    return exceedsTop || exceedsBottom;
+      if (zoom === 0) {
+        exceedsTop = map.project(corner).y < 2;
+        exceedsBottom = map.project(corner).y >= 255;
+      } else {
+        exceedsTop = map.project(corner).y / zoom < 2;
+        exceedsBottom = map.project(corner).y / Math.pow(2, zoom) >= 255;
+      }
+
+      return exceedsTop || exceedsBottom;
+    }
   },
   setCorners: function setCorners(latlngObj) {
     var map = this._map;
@@ -1833,7 +1837,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     };
 
     this.dragging.on('dragend', function () {
-      overlay.fire('dragstart');
+      overlay.fire('dragend');
     });
   },
   _disableDragging: function _disableDragging() {
@@ -7253,7 +7257,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "95c41563aa5830496807"; }
+/******/ 		__webpack_require__.h = function() { return "fad18fc29f8ca9f7ff77"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
