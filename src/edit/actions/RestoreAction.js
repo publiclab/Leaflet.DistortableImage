@@ -1,5 +1,5 @@
 L.RestoreAction = L.EditAction.extend({
-  initialize: function(map, overlay, options) {
+  initialize(map, overlay, options) {
     var mode = L.Utils.getNestedVal(overlay, 'editing', '_mode');
     var edited = overlay.edited;
 
@@ -14,7 +14,7 @@ L.RestoreAction = L.EditAction.extend({
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
-  addHooks: function() {
+  addHooks() {
     var ov = this._overlay;
 
     L.DomEvent.on(ov, {
