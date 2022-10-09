@@ -307,6 +307,10 @@ L.DistortableImage.Edit = L.Handler.extend({
 
       this.fire('drag');
     };
+
+    this.dragging.on('dragend', () => {
+      overlay.fire('dragend');
+    });
   },
 
   _disableDragging() {

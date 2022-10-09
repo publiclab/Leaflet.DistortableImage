@@ -1,5 +1,5 @@
 L.DeleteAction = L.EditAction.extend({
-  initialize: function(map, overlay, options) {
+  initialize(map, overlay, options) {
     var edit = overlay.editing;
     var use = 'delete_forever';
     var tooltip;
@@ -31,7 +31,7 @@ L.DeleteAction = L.EditAction.extend({
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
-  addHooks: function() {
+  addHooks() {
     var edit = this._overlay.editing;
 
     if (edit instanceof L.DistortableImage.Edit) { edit._removeOverlay(); }
