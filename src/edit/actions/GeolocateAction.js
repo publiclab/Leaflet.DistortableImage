@@ -1,5 +1,5 @@
 L.GeolocateAction = L.EditAction.extend({
-  initialize: function(map, overlay, options) {
+  initialize(map, overlay, options) {
     var edit = overlay.editing;
 
     options = options || {};
@@ -13,7 +13,7 @@ L.GeolocateAction = L.EditAction.extend({
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
-  addHooks: function() {
+  addHooks() {
     var image = this._overlay.getElement();
 
     EXIF.getData(image, L.EXIF(image));
