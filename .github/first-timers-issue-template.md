@@ -24,7 +24,7 @@ Nothing. This issue is meant to welcome you to Open Source :) We are happy to wa
 
 - [ ] 📝 **Update** the file [$FILENAME]($BRANCH_URL) in the `$REPO` repository (press the little pen Icon) and edit the line as shown below.
 
-+[See this page](https://code.publiclab.org/#r=all) for some help in taking your first steps!
+[See this page](https://code.publiclab.org/#r=all) for some help in taking your first steps!
 
 Below is a "diff" showing in red (and a `-`) which lines to remove, and in green (and a `+`) which lines to add:
 
