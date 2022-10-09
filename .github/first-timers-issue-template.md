@@ -22,7 +22,7 @@ Nothing. This issue is meant to welcome you to Open Source :) We are happy to wa
   <p>And open one early if possible - even before you've completed it with additional commits - and others can help you figure out any issues you may face.</p>
 </details>
 
-- [ ] 📝 **Update** the file [$FILENAME]($BRANCH_URL) in the `Leaflet.DistortableImage` repository (press the little pen Icon) and edit the line as shown below.
+- [ ] 📝 **Update** the file [$FILENAME]($BRANCH_URL) in the `$REPO` repository (press the little pen Icon) and edit the line as shown below.
 
 +[See this page](https://code.publiclab.org/#r=all) for some help in taking your first steps!
 
