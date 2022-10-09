@@ -10,12 +10,12 @@ L.LockHandle = L.EditHandle.extend({
     }),
   },
 
-  onRemove: function(map) {
+  onRemove(map) {
     this.unbindTooltip();
     L.EditHandle.prototype.onRemove.call(this, map);
   },
 
-  _bindListeners: function() {
+  _bindListeners() {
     var icon = this.getElement();
 
     L.EditHandle.prototype._bindListeners.call(this);
@@ -28,7 +28,7 @@ L.LockHandle = L.EditHandle.extend({
     L.DomEvent.on(document, 'pointerleave', this._tooltipOff, this);
   },
 
-  _unbindListeners: function() {
+  _unbindListeners() {
     var icon = this.getElement();
 
     L.EditHandle.prototype._bindListeners.call(this);
@@ -42,14 +42,14 @@ L.LockHandle = L.EditHandle.extend({
   },
 
   /* cannot be dragged */
-  _onHandleDrag: function() {
+  _onHandleDrag() {
   },
 
-  updateHandle: function() {
+  updateHandle() {
     this.setLatLng(this._handled.getCorner(this._corner));
   },
 
-  _tooltipOn: function(e) {
+  _tooltipOn(e) {
     var eP = this._handled.parentGroup;
     var edit = eP ? eP.editing : this._handled.editing;
 
