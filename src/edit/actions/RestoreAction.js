@@ -14,7 +14,7 @@ L.RestoreAction = L.EditAction.extend({
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
-    addHooks() {
+  addHooks() {
     var ov = this._overlay;
 
     L.DomEvent.on(ov, {
