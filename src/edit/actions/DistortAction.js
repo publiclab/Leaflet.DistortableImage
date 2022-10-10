@@ -3,17 +3,17 @@ L.DistortAction = L.EditAction.extend({
     options = options || {};
     options.toolbarIcon = {
       svg: true,
-      html: 'distort',
+      html: "distort",
       tooltip: overlay.options.translation.distortImage,
-      className: 'distort',
+      className: "distort",
     };
 
-    L.DistortableImage.action_map.d = '_distortMode';
+    L.DistortableImage.action_map.d = "_distortMode";
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
   addHooks() {
-    var edit = this._overlay.editing;
+    const edit = this._overlay.editing;
     edit._distortMode();
   },
 });
