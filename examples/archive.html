@@ -83,8 +83,14 @@
       map.whenReady(() => {
         new bootstrap.Modal(welcomeModal).show();
       });
-    }
+    };
+
+    const setupCollection = () => {
+      map.imgGroup = L.distortableCollection().addTo(map);
+    };
+
     setupMap();
+    setupCollection();
     
     form.addEventListener('submit', (event) => {
       event.preventDefault();
@@ -99,7 +105,7 @@
                 let image = new Image(150, 150);
                 let placeButton = document.createElement('a');
 
-                placeButton.classList.add('btn', 'btn-sm', 'btn-outline-secondary');
+                placeButton.classList.add('btn', 'btn-sm', 'btn-outline-secondary', 'place-button');
                 placeButton.innerHTML = 'Place on map';
 
                 image.src = `${url.replace('metadata', 'download')}/${file.name}`;
@@ -126,6 +132,14 @@
 
     welcomeModal.addEventListener('hidden.bs.modal', (event) => {
       new bootstrap.Offcanvas(sidebar).show();
+    });
+
+    document.addEventListener("click", (event) => {
+      if (event.target.classList.contains('place-button')) {
+        let imageURL = event.target.previousElementSibling.src;
+        let image = L.distortableImageOverlay(imageURL);
+        map.imgGroup.addLayer(image);
+      }
     });
   </script>
 </html>

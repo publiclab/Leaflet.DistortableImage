@@ -8,7 +8,7 @@ L.Map.mergeOptions({
  * our `L.DistortableCollection` class instead of a zoom box.
  * */
 L.Map.BoxCollector = L.Map.BoxZoom.extend({
-  initialize: function(map) {
+  initialize(map) {
     this._map = map;
     this._container = map._container;
     this._pane = map._panes.overlayPane;
@@ -16,36 +16,36 @@ L.Map.BoxCollector = L.Map.BoxZoom.extend({
     map.on('unload', this._destroy, this);
   },
 
-  addHooks: function() {
+  addHooks() {
     L.DomEvent.on(this._container, 'mousedown', this._onMouseDown, this);
   },
 
-  removeHooks: function() {
+  removeHooks() {
     L.DomEvent.off(this._container, 'mousedown', this._onMouseDown, this);
   },
 
-  moved: function() {
+  moved() {
     return this._moved;
   },
 
-  _destroy: function() {
+  _destroy() {
     L.DomUtil.remove(this._pane);
     delete this._pane;
   },
 
-  _resetState: function() {
+  _resetState() {
     this._resetStateTimeout = 0;
     this._moved = false;
   },
 
-  _clearDeferredResetState: function() {
+  _clearDeferredResetState() {
     if (this._resetStateTimeout !== 0) {
       clearTimeout(this._resetStateTimeout);
       this._resetStateTimeout = 0;
     }
   },
 
-  _onMouseDown: function(e) {
+  _onMouseDown(e) {
     if (!e.shiftKey || (e.which !== 1 && e.button !== 1)) {
       return false;
     }
@@ -67,7 +67,7 @@ L.Map.BoxCollector = L.Map.BoxZoom.extend({
     }, this);
   },
 
-  _onMouseMove: function(e) {
+  _onMouseMove(e) {
     if (!this._moved) {
       this._moved = true;
 
@@ -88,7 +88,7 @@ L.Map.BoxCollector = L.Map.BoxZoom.extend({
     this._box.style.height = size.y + 'px';
   },
 
-  _finish: function() {
+  _finish() {
     if (this._moved) {
       L.DomUtil.remove(this._box);
       L.DomUtil.removeClass(this._container, 'leaflet-crosshair');
@@ -104,7 +104,7 @@ L.Map.BoxCollector = L.Map.BoxZoom.extend({
     }, this);
   },
 
-  _onMouseUp: function(e) {
+  _onMouseUp(e) {
     if (e.which !== 1 && e.button !== 1) {
       return;
     }
