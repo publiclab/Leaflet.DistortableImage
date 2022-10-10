@@ -82,9 +82,9 @@ L.Map.DoubleClickZoom.include({
 
     if (!oe) { return false; }
 
-    let oldZoom = map.getZoom();
-    let delta = map.options.zoomDelta;
-    let zoom = oe.shiftKey ? oldZoom - delta : oldZoom + delta;
+    const oldZoom = map.getZoom();
+    const delta = map.options.zoomDelta;
+    const zoom = oe.shiftKey ? oldZoom - delta : oldZoom + delta;
 
     if (map.options.doubleClickZoom === 'center') {
       map.setZoom(zoom);
