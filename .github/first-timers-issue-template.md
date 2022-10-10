@@ -1,10 +1,11 @@
-Hi, this is a [first-timers-only issue](https://publiclab.github.io/community-toolbox/#r=all). This means we've worked to make it more legible to folks who either **haven't contributed to our codebase before, or even folks who haven't contributed to open source before**. 
+Hi, this is a [first-timers-only issue](https://code.publiclab.org/#r=all). This means we've worked to make it more legible to folks who either **haven't contributed to our codebase before, or even folks who haven't contributed to open source before**.
 
-If that's you, we're interested in helping you take the first step and can answer questions and help you out as you do. Note that we're especially interested in contributions from people from groups underrepresented in free and open source software!
+If that's you, we're interested in helping you take the first step and can answer questions and help you out as you do. Note that we're especially interested in contributions from people from underrepresented groups in free and open-source software!
 
-We know that the process of creating a pull request is the biggest barrier for new contributors. This issue is for you 💝
+We know that the process of creating a pull request is one of the biggest barriers for new contributors. This issue is for you 💝
 
-If you have contributed before, **consider leaving this one for someone new**, and looking through our general [help wanted](https://github.com/publiclab/Leaflet.DistortableImage/labels/help%20wanted) issues. Thanks!
+If you have contributed before, **consider leaving this one for someone new**, and looking through our general [help wanted](https://github.com/publiclab/plots2/labels/help-wanted) issues. Thanks!
+
 
 ### 🤔 What you will need to know.
 
@@ -12,11 +13,18 @@ Nothing. This issue is meant to welcome you to Open Source :) We are happy to wa
 
 ### 📋 Step by Step
 
-- [ ] 🙋 **Claim this issue**: Comment below. If someone else has claimed it, ask if they've opened a pull request already and if they're stuck -- maybe you can help them solve a problem or move it along!
+- [ ] 🙋 **Claim this issue**: Claim the issue by commenting. If someone else has claimed it, ask if they've opened a pull request already and if they're stuck -- maybe you can help them solve a problem or move it along!
 
-- [ ] 📝 **Update** the file [$FILENAME]($BRANCH_URL) in the `$REPO` repository (press the little pen Icon) and edit the line as shown below. 
+<details>
+  <summary>💡 <i>Learn how to claim</i> 🙋</summary>
+  <h3>Claiming an issue</h3>
+  <p>Unless the issue is marked as reserved for someone, you can just say "I'd like to try this!" and then you've claimed it - no need to wait for someone to assign it to you. Just be sure you link your pull request (PR) to this issue so we can see where your solution is.</p>
+  <p>And open one early if possible - even before you've completed it with additional commits - and others can help you figure out any issues you may face.</p>
+</details>
 
-[See this page](https://publiclab.github.io/community-toolbox/#r=all) for some help in taking your first steps!
+- [ ] 📝 **Update** the file [$FILENAME]($BRANCH_URL) in the `$REPO` repository (press the little pen Icon) and edit the line as shown below.
+
+[See this page](https://code.publiclab.org/#r=all) for some help in taking your first steps!
 
 Below is a "diff" showing in red (and a `-`) which lines to remove, and in green (and a `+`) which lines to add:
 
