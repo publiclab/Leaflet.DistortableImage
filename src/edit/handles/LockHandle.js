@@ -75,7 +75,7 @@ L.LockHandle = L.EditHandle.extend({
     }, this), 500);
   },
 
-  _tooltipOff: function(e) {
+  _tooltipOff(e) {
     var eP = this._handled.parentGroup;
     var edit = eP ? eP.editing : this._handled.editing;
 
