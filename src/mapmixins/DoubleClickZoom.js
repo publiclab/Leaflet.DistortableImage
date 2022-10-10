@@ -48,8 +48,8 @@ L.Map.DoubleClickZoom.include({
   },
 
   _fireIfSingle(e) {
-    var map = this._map;
-    var oe = e.originalEvent;
+    const map = this._map;
+    const oe = e.originalEvent;
 
     // prevents deselection in case of box selector
     if (oe && oe.shiftKey) { return; }
@@ -72,8 +72,8 @@ L.Map.DoubleClickZoom.include({
   },
 
   _onDoubleClick(e) {
-    var map = this._map;
-    var oe = e.originalEvent;
+    const map = this._map;
+    const oe = e.originalEvent;
 
     setTimeout(function() {
       map._clicked = 0;
@@ -82,9 +82,9 @@ L.Map.DoubleClickZoom.include({
 
     if (!oe) { return false; }
 
-    var oldZoom = map.getZoom();
-    var delta = map.options.zoomDelta;
-    var zoom = oe.shiftKey ? oldZoom - delta : oldZoom + delta;
+    let oldZoom = map.getZoom();
+    let delta = map.options.zoomDelta;
+    let zoom = oe.shiftKey ? oldZoom - delta : oldZoom + delta;
 
     if (map.options.doubleClickZoom === 'center') {
       map.setZoom(zoom);
