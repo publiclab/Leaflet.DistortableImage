@@ -45,9 +45,9 @@
     "webgl-distort": "0.0.2"
   },
   "devDependencies": {
-    "acorn": "^8.7.1",
     "@babel/core": "^7.9.0",
     "@babel/preset-env": "^7.9.5",
+    "acorn": "^8.7.1",
     "babel-loader": "^8.1.0",
     "chai": "^4.2.0",
     "clean-webpack-plugin": "^4.0.0",
@@ -72,7 +72,7 @@
     "karma-mocha": "^2.0.1",
     "karma-mocha-reporter": "^2.2.5",
     "karma-sinon": "^1.0.5",
-    "leaflet": "1.x",
+    "leaflet": "^1.9.2",
     "matchdep": "^2.0.0",
     "mocha": "^10.0.0",
     "sinon": "^14.0.0",
