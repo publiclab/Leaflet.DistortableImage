@@ -39,7 +39,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   _addEvents(e) {
-    var layer = e.layer;
+    const layer = e.layer;
 
     L.DomEvent.on(layer, {
       dragstart: this._dragStartMultiple,
@@ -54,7 +54,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   _removeEvents(e) {
-    var layer = e.layer;
+    const layer = e.layer;
 
     L.DomEvent.off(layer, {
       dragstart: this._dragStartMultiple,
@@ -73,7 +73,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     e.preventDefault();
 
     this.eachLayer((layer) => {
-      var edit = layer.editing;
+      const edit = layer.editing;
       if (layer.getElement() === e.target && edit.enabled()) {
         L.DomUtil.toggleClass(layer.getElement(), 'collected');
         if (this.anyCollected()) {
@@ -91,7 +91,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   anyCollected() {
-    var layerArr = this.getLayers();
+    const layerArr = this.getLayers();
     return layerArr.some(this.isCollected.bind(this));
   },
 
@@ -122,9 +122,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   _dragStartMultiple(e) {
-    var overlay = e.target;
-    var map = this._map;
-    var i;
+    const overlay = e.target;
+    const map = this._map;
+    let i;
 
     if (!this.isCollected(overlay)) { return; }
 
@@ -132,49 +132,49 @@ L.DistortableCollection = L.FeatureGroup.extend({
       layer._dragStartPoints = {};
       layer.deselect();
       for (i = 0; i < 4; i++) {
-        var c = layer.getCorner(i);
+        let c = layer.getCorner(i);
         layer._dragStartPoints[i] = map.latLngToLayerPoint(c);
       }
     });
   },
 
   _dragMultiple(e) {
-    var overlay = e.target;
-    var map = this._map;
+    const overlay = e.target;
+    const map = this._map;
 
     if (!this.isCollected(overlay)) { return; }
 
-    var topLeft = map.latLngToLayerPoint(overlay.getCorner(0));
-    var delta = overlay._dragStartPoints[0].subtract(topLeft);
+    const topLeft = map.latLngToLayerPoint(overlay.getCorner(0));
+    const delta = overlay._dragStartPoints[0].subtract(topLeft);
 
     this._updateCollectionFromPoints(delta, overlay);
   },
 
   _toRemove() {
-    var layerArr = this.getLayers();
+    const layerArr = this.getLayers();
 
     return layerArr.filter((layer) => {
-      var mode = layer.editing._mode;
+      const mode = layer.editing._mode;
       return (this.isCollected(layer) && mode !== 'lock');
     });
   },
 
   _toMove(overlay) {
-    var layerArr = this.getLayers();
+    const layerArr = this.getLayers();
 
     return layerArr.filter((layer) => {
-      var mode = layer.editing._mode;
+      const mode = layer.editing._mode;
       return layer !== overlay && this.isCollected(layer) && mode !== 'lock';
     });
   },
 
   _updateCollectionFromPoints(delta, overlay) {
-    var layersToMove = this._toMove(overlay);
-    var p = new L.Transformation(1, -delta.x, 1, -delta.y);
-    var i;
+    const layersToMove = this._toMove(overlay);
+    const p = new L.Transformation(1, -delta.x, 1, -delta.y);
+    let i;
 
     layersToMove.forEach((layer) => {
-      var movedPoints = {};
+      let movedPoints = {};
       for (i = 0; i < 4; i++) {
         movedPoints[i] = p.transform(layer._dragStartPoints[i]);
       }
@@ -183,22 +183,22 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   _getAvgCmPerPixel(imgs) {
-    var reduce = imgs.reduce(function(sum, img) {
+    const reduce = imgs.reduce(function(sum, img) {
       return sum + img.cm_per_pixel;
     }, 0);
     return reduce / imgs.length;
   },
 
   generateExportJson() {
-    var json = {};
+    const json = {};
     json.images = [];
 
     this.eachLayer(function(layer) {
       if (this.isCollected(layer)) {
-        var sections = layer._image.src.split('/');
-        var filename = sections[sections.length-1];
-        var zc = layer.getCorners();
-        var corners = [
+        let sections = layer._image.src.split('/');
+        let filename = sections[sections.length-1];
+        let zc = layer.getCorners();
+        let corners = [
           {lat: zc[0].lat, lon: zc[0].lng},
           {lat: zc[1].lat, lon: zc[1].lng},
           {lat: zc[3].lat, lon: zc[3].lng},
