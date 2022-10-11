@@ -1,8 +1,8 @@
 L.DeleteAction = L.EditAction.extend({
   initialize(map, overlay, options) {
-    var edit = overlay.editing;
-    var use = 'delete_forever';
-    var tooltip;
+    let edit = overlay.editing;
+    const use = 'delete_forever';
+    let tooltip;
     /**
       * we can tell whether the overlay is an instance of `L.DistortableImageOverlay` or `L.DistortableCollection` bc only
       * the former should have `parentGroup` defined on it. From there we call the apporpriate keybindings and methods.
@@ -32,7 +32,7 @@ L.DeleteAction = L.EditAction.extend({
   },
 
   addHooks() {
-    var edit = this._overlay.editing;
+    let edit = this._overlay.editing;
 
     if (edit instanceof L.DistortableImage.Edit) { edit._removeOverlay(); }
     else { edit._removeGroup(); }
