@@ -243,7 +243,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       }
     }
 
-    for (k in latlngObj) {
+    for (let k in latlngObj) {
       this._corners[i] = latlngObj[k];
       i += 1;
     }
@@ -277,7 +277,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       }
     }
 
-    for (k in pointsObj) {
+    for (let k in pointsObj) {
       this._corners[i] = map.layerPointToLatLng(pointsObj[k]);
       i += 1;
     }
