@@ -1,8 +1,8 @@
 L.LockAction = L.EditAction.extend({
   initialize(map, overlay, options) {
-    var edit = overlay.editing;
-    var use;
-    var tooltip;
+    const edit = overlay.editing;
+    let use;
+    let tooltip;
 
     if (edit instanceof L.DistortableImage.Edit) {
       L.DistortableImage.action_map.u = '_unlock';
@@ -28,7 +28,7 @@ L.LockAction = L.EditAction.extend({
   },
 
   addHooks() {
-    var edit = this._overlay.editing;
+    const edit = this._overlay.editing;
 
     if (edit instanceof L.DistortableImage.Edit) { edit._toggleLockMode(); }
     else { edit._lockGroup(); }
