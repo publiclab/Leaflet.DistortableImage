@@ -11,10 +11,10 @@ L.RotateHandle = L.EditHandle.extend({
   },
 
   _onHandleDrag() {
-    const overlay = this._handled;
-    const formerLatLng = overlay.getCorner(this._corner);
-    const newLatLng = this.getLatLng();
-    const angle = this.calculateAngleDelta(formerLatLng, newLatLng);
+    var overlay = this._handled;
+    var formerLatLng = overlay.getCorner(this._corner);
+    var newLatLng = this.getLatLng();
+    var angle = this.calculateAngleDelta(formerLatLng, newLatLng);
 
     /*
      * running rotation logic even for an angle delta of 0
