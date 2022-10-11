@@ -40,7 +40,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       this._initImageDimensions();
 
       if (this.options.rotation) {
-        var units = this.options.rotation.deg ? 'deg' : 'rad';
+        const units = this.options.rotation.deg ? 'deg' : 'rad';
         this.setAngle(this.options.rotation[units], units);
       } else {
         this.rotation = {deg: 0, rad: 0};
@@ -55,7 +55,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       }
 
       /** if there is a featureGroup, only its editable option matters */
-      var eventParents = this._eventParents;
+      const eventParents = this._eventParents;
       if (eventParents) {
         this.eP = eventParents[Object.keys(eventParents)[0]];
         if (this.eP.editable) { this.editing.enable(); }
@@ -99,15 +99,15 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   _initImageDimensions() {
-    var map = this._map;
-    var originalImageWidth = L.DomUtil.getStyle(this.getElement(), 'width');
-    var originalImageHeight = L.DomUtil.getStyle(this.getElement(), 'height');
-    var aspectRatio =
+    const map = this._map;
+    const originalImageWidth = L.DomUtil.getStyle(this.getElement(), 'width');
+    const originalImageHeight = L.DomUtil.getStyle(this.getElement(), 'height');
+    const aspectRatio =
         parseInt(originalImageWidth) / parseInt(originalImageHeight);
-    var imageHeight = this.options.height;
-    var imageWidth = parseInt(aspectRatio * imageHeight);
-    var center = map.project(map.getCenter());
-    var offset = L.point(imageWidth, imageHeight).divideBy(2);
+    const imageHeight = this.options.height;
+    const imageWidth = parseInt(aspectRatio * imageHeight);
+    const center = map.project(map.getCenter());
+    const offset = L.point(imageWidth, imageHeight).divideBy(2);
     if (this.options.corners) {
       this._corners = this.options.corners;
     } else {
@@ -134,13 +134,13 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   _singleClickListeners() {
-    var map = this._map;
+    const map = this._map;
     L.DomEvent.off(map, 'click', this.deselect, this);
     L.DomEvent.on(map, 'singleclick', this.deselect, this);
   },
 
   _resetClickListeners() {
-    var map = this._map;
+    const map = this._map;
     L.DomEvent.on(map, 'click', this.deselect, this);
     L.DomEvent.off(map, 'singleclick', this.deselect, this);
   },
@@ -150,7 +150,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   deselect() {
-    var edit = this.editing;
+    const edit = this.editing;
     if (!edit.enabled()) { return; }
 
     edit._removeToolbar();
@@ -162,8 +162,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   select(e) {
-    var edit = this.editing;
-    var eP = this.eP;
+    const edit = this.editing;
+    const eP = this.eP;
 
     if (!edit.enabled()) { return; }
     if (e) { L.DomEvent.stopPropagation(e); }
@@ -194,7 +194,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   setCorner(corner, latlng) {
-    var edit = this.editing;
+    const edit = this.editing;
 
     this._corners[corner] = latlng;
 
@@ -214,8 +214,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     if (map.options.crs == L.CRS.Simple) {
       return false;
     } else {
-      var exceedsTop;
-      var exceedsBottom;
+      let exceedsTop;
+      let exceedsBottom;
       if (zoom === 0) {
         exceedsTop = map.project(corner).y < 2;
         exceedsBottom = map.project(corner).y >= 255;
@@ -228,13 +228,13 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   setCorners(latlngObj) {
-    var map = this._map;
-    var zoom = map.getZoom();
-    var edit = this.editing;
-    var i = 0;
+    const map = this._map;
+    const zoom = map.getZoom();
+    const edit = this.editing;
+    let i = 0;
 
     // this is to fix https://github.com/publiclab/Leaflet.DistortableImage/issues/402
-    for (var k in latlngObj) {
+    for (let k in latlngObj) {
       if (this._cornerExceedsMapLats(zoom, latlngObj[k], map)) {
         // calling reset / update w/ the same corners bc it prevents a marker flicker for rotate
         this.setBounds(L.latLngBounds(this.getCorners()));
@@ -243,7 +243,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       }
     }
 
-    for (k in latlngObj) {
+    for (let k in latlngObj) {
       this._corners[i] = latlngObj[k];
       i += 1;
     }
@@ -261,13 +261,13 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   setCornersFromPoints(pointsObj) {
-    var map = this._map;
-    var zoom = map.getZoom();
-    var edit = this.editing;
-    var i = 0;
+    const map = this._map;
+    const zoom = map.getZoom();
+    const edit = this.editing;
+    let i = 0;
 
-    for (var k in pointsObj) {
-      var corner = map.layerPointToLatLng(pointsObj[k]);
+    for (let k in pointsObj) {
+      const corner = map.layerPointToLatLng(pointsObj[k]);
 
       if (this._cornerExceedsMapLats(zoom, corner, map)) {
         // calling reset / update w/ the same corners bc it prevents a marker flicker for rotate
@@ -277,7 +277,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       }
     }
 
-    for (k in pointsObj) {
+    for (let k in pointsObj) {
       this._corners[i] = map.layerPointToLatLng(pointsObj[k]);
       i += 1;
     }
@@ -295,11 +295,11 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   scaleBy(scale) {
-    var map = this._map;
-    var center = map.project(this.getCenter());
-    var i;
-    var p;
-    var scaledCorners = {};
+    const map = this._map;
+    const center = map.project(this.getCenter());
+    let i;
+    let p;
+    let scaledCorners = {};
 
     if (scale === 0) { return; }
 
@@ -318,19 +318,19 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   getAngle(unit = 'deg') {
-    var matrix = this.getElement().style[L.DomUtil.TRANSFORM]
+    const matrix = this.getElement().style[L.DomUtil.TRANSFORM]
         .split('matrix3d')[1]
         .slice(1, -1)
         .split(',');
 
-    var row0x = matrix[0];
-    var row0y = matrix[1];
-    var row1x = matrix[4];
-    var row1y = matrix[5];
+    const row0x = matrix[0];
+    const row0y = matrix[1];
+    const row1x = matrix[4];
+    const row1y = matrix[5];
 
-    var determinant = row0x * row1y - row0y * row1x;
+    const determinant = row0x * row1y - row0y * row1x;
 
-    var angle = L.TrigUtil.calcAngle(row0x, row0y, 'rad');
+    let angle = L.TrigUtil.calcAngle(row0x, row0y, 'rad');
 
     if (determinant < 0) {
       angle += angle < 0 ? Math.PI : -Math.PI;
@@ -346,20 +346,20 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   setAngle(angle, unit = 'deg') {
-    var currentAngle = this.getAngle(unit);
-    var angleToRotateBy = angle - currentAngle;
+    const currentAngle = this.getAngle(unit);
+    const angleToRotateBy = angle - currentAngle;
     this.rotateBy(angleToRotateBy, unit);
 
     return this;
   },
 
   rotateBy(angle, unit = 'deg') {
-    var map = this._map;
-    var center = map.project(this.getCenter());
-    var corners = {};
-    var i;
-    var p;
-    var q;
+    const map = this._map;
+    const center = map.project(this.getCenter());
+    let corners = {};
+    let i;
+    let p;
+    let q;
 
     if (unit === 'deg') {
       angle = L.TrigUtil.degreesToRadians(angle);
@@ -380,11 +380,11 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   dragBy(formerPoint, newPoint) {
-    var map = this._map;
-    var i;
-    var p;
-    var transCorners = {};
-    var delta = map.project(formerPoint).subtract(map.project(newPoint));
+    const map = this._map;
+    let i;
+    let p;
+    let transCorners = {};
+    const delta = map.project(formerPoint).subtract(map.project(newPoint));
 
     for (i = 0; i < 4; i++) {
       p = map.project(this.getCorner(i)).subtract(delta);
@@ -395,18 +395,18 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   restore() {
-    var map = this._map;
-    var center = this._initialDimensions.center;
-    var offset = this._initialDimensions.offset;
-    var zoom = this._initialDimensions.zoom;
-    var corners = [
+    const map = this._map;
+    const center = this._initialDimensions.center;
+    const offset = this._initialDimensions.offset;
+    const zoom = this._initialDimensions.zoom;
+    const corners = [
       center.subtract(offset),
       center.add(L.point(offset.x, -offset.y)),
       center.add(L.point(-offset.x, offset.y)),
       center.add(offset),
     ];
 
-    for (var i = 0; i < 4; i++) {
+    for (let i = 0; i < 4; i++) {
       if (!map.unproject(corners[i], zoom).equals(this.getCorner(i))) {
         this.setCorner(i, map.unproject(corners[i], zoom));
       }
@@ -427,22 +427,22 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     // Firefox 13 doesn't care
     // (same speed either way), Opera 12 doesn't support translate3d
 
-    var is3d = L.Browser.webkit3d;
-    var open = 'translate' + (is3d ? '3d' : '') + '(';
-    var close = (is3d ? ',0' : '') + ')';
+    const is3d = L.Browser.webkit3d;
+    const open = 'translate' + (is3d ? '3d' : '') + '(';
+    const close = (is3d ? ',0' : '') + ')';
 
     return open + point.x + 'px,' + point.y + 'px' + close;
   },
 
   _reset() {
-    var map = this._map;
-    var image = this.getElement();
-    var latLngToLayerPoint = L.bind(map.latLngToLayerPoint, map);
-    var transformMatrix = this
+    const map = this._map;
+    const image = this.getElement();
+    const latLngToLayerPoint = L.bind(map.latLngToLayerPoint, map);
+    const transformMatrix = this
         ._calculateProjectiveTransform(latLngToLayerPoint);
-    var topLeft = latLngToLayerPoint(this.getCorner(0));
-    var warp = L.DomUtil.getMatrixString(transformMatrix);
-    var translation = this._getTranslateString(topLeft);
+    const topLeft = latLngToLayerPoint(this.getCorner(0));
+    const warp = L.DomUtil.getMatrixString(transformMatrix);
+    const translation = this._getTranslateString(topLeft);
 
     /* See L.DomUtil.setPosition. Mainly for the purposes of L.Draggable. */
     image._leaflet_pos = topLeft;
@@ -465,17 +465,17 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
    * future transform which makes the transition appear smooth.
    */
   _animateZoom(event) {
-    var map = this._map;
-    var image = this.getElement();
-    var latLngToNewLayerPoint = function(latlng) {
+    const map = this._map;
+    const image = this.getElement();
+    const latLngToNewLayerPoint = function(latlng) {
       return map._latLngToNewLayerPoint(latlng, event.zoom, event.center);
     };
-    var transformMatrix = this._calculateProjectiveTransform(
+    const transformMatrix = this._calculateProjectiveTransform(
         latLngToNewLayerPoint
     );
-    var topLeft = latLngToNewLayerPoint(this.getCorner(0));
-    var warp = L.DomUtil.getMatrixString(transformMatrix);
-    var translation = this._getTranslateString(topLeft);
+    const topLeft = latLngToNewLayerPoint(this.getCorner(0));
+    const warp = L.DomUtil.getMatrixString(transformMatrix);
+    const translation = this._getTranslateString(topLeft);
 
     /* See L.DomUtil.setPosition. Mainly for the purposes of L.Draggable. */
     image._leaflet_pos = topLeft;
@@ -493,8 +493,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   // image (vertex) centroid calculation
   getCenter() {
-    var map = this._map;
-    var reduce = this.getCorners().reduce(function(agg, corner) {
+    const map = this._map;
+    const reduce = this.getCorners().reduce(function(agg, corner) {
       return agg.add(map.project(corner));
     }, L.point(0, 0));
     return map.unproject(reduce.divideBy(4));
@@ -504,11 +504,11 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     /* Setting reasonable but made-up image defaults
      * allow us to place images on the map before
      * they've finished downloading. */
-    var offset = latLngToCartesian(this.getCorner(0));
-    var w = this.getElement().offsetWidth || 500;
-    var h = this.getElement().offsetHeight || 375;
-    var c = [];
-    var j;
+    const offset = latLngToCartesian(this.getCorner(0));
+    const w = this.getElement().offsetWidth || 500;
+    const h = this.getElement().offsetHeight || 375;
+    let c = [];
+    let j;
     /* Convert corners to container points (i.e. cartesian coordinates). */
     for (j = 0; j < 4; j++) {
       c.push(latLngToCartesian(this.getCorner(j))._subtract(offset));
