@@ -414,7 +414,7 @@ L.DistortableImage.Edit = L.Handler.extend({
       let width = downloadable.width;
       let nw = map.latLngToLayerPoint(overlay.getCorner(0));
       let ne = map.latLngToLayerPoint(overlay.getCorner(1));
-       sw = map.latLngToLayerPoint(overlay.getCorner(2));
+      let sw = map.latLngToLayerPoint(overlay.getCorner(2));
       let se = map.latLngToLayerPoint(overlay.getCorner(3));
 
       // I think this is to move the image to the upper left corner,
