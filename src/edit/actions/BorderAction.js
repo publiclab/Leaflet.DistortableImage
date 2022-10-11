@@ -1,9 +1,9 @@
 L.BorderAction = L.EditAction.extend({
   initialize(map, overlay, options) {
-    var edit = overlay.editing;
-    var mode = edit._mode;
-    var use;
-    var tooltip;
+    let edit = overlay.editing;
+    let mode = edit._mode;
+    let use;
+    let tooltip;
 
     if (edit._outlined) {
       use = 'border_outer';
@@ -28,7 +28,7 @@ L.BorderAction = L.EditAction.extend({
   },
 
   addHooks() {
-    var edit = this._overlay.editing;
+    let edit = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'border_clear', 'border_outer');
     L.IconUtil.toggleTitle(this._link, 'Remove Border', 'Add Border');
