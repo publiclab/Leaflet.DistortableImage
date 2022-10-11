@@ -22,7 +22,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   /* Run on image selection. */
   addHooks() {
-    var overlay = this._overlay;
+    const overlay = this._overlay;
 
     this.editActions = this.options.actions;
 
@@ -48,15 +48,15 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   /* Run on image deselection. */
   removeHooks() {
-    var overlay = this._overlay;
-    var eP = this.parentGroup;
+    const overlay = this._overlay;
+    const eP = this.parentGroup;
 
     // First, check if dragging exists - it may be off due to locking
     this._disableDragging();
 
     if (this.toolbar) { this._removeToolbar(); }
 
-    for (var handle in this._handles) {
+    for (let handle in this._handles) {
       L.DomUtil.remove(handle);
     }
 
@@ -92,8 +92,8 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._modes = {};
     // passed from L.DistortablImage.PopupBar. If the mode is one
     // of the current toolbar actions, adds it to this._modes
-    for (var mode in L.DistortableImage.Edit.MODES) {
-      var action = L.DistortableImage.Edit.MODES[mode];
+    for (let mode in L.DistortableImage.Edit.MODES) {
+      let action = L.DistortableImage.Edit.MODES[mode];
       if (this.editActions.indexOf(action) !== -1) {
         this._modes[mode] = action;
       }
@@ -108,8 +108,8 @@ L.DistortableImage.Edit = L.Handler.extend({
 
 
   _initHandles() {
-    var overlay = this._overlay;
-    var i;
+    const overlay = this._overlay;
+    let i;
 
     this._dragHandles = L.layerGroup();
     for (i = 0; i < 4; i++) {
@@ -153,7 +153,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _appendHandlesandDragable() {
-    var ov = this._overlay;
+    const ov = this._overlay;
 
     // won't throw error if user adds 0 mode actions to toolbar
     if (!this._mode) {
@@ -173,10 +173,10 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _onKeyDown(e) {
-    var keymap = this.options.keymap;
-    var handlerName = keymap[e.key];
-    var ov = this._overlay;
-    var eP = this.parentGroup;
+    const keymap = this.options.keymap;
+    const handlerName = keymap[e.key];
+    const ov = this._overlay;
+    const eP = this.parentGroup;
 
     if (eP && eP.anyCollected()) { return; }
 
@@ -196,7 +196,7 @@ L.DistortableImage.Edit = L.Handler.extend({
         this._removeToolbar();
         this.editActions[idx] = next;
         this._addToolbar();
-        for (var mode in L.DistortableImage.Edit.MODES) {
+        for (let mode in L.DistortableImage.Edit.MODES) {
           if (L.DistortableImage.Edit.MODES[mode] === old) {
             delete this._modes[mode];
             this._nextOrNone(mode);
@@ -215,7 +215,7 @@ L.DistortableImage.Edit = L.Handler.extend({
       this._removeToolbar();
       this.editActions.push(value);
       this._addToolbar();
-      for (var mode in L.DistortableImage.Edit.MODES) {
+      for (let mode in L.DistortableImage.Edit.MODES) {
         if (L.DistortableImage.Edit.MODES[mode] === value) {
           this._modes[mode] = value;
         }
@@ -235,7 +235,7 @@ L.DistortableImage.Edit = L.Handler.extend({
         this._removeToolbar();
         this.editActions.splice(idx, 1);
         this._addToolbar();
-        for (var mode in L.DistortableImage.Edit.MODES) {
+        for (let mode in L.DistortableImage.Edit.MODES) {
           if (L.DistortableImage.Edit.MODES[mode] === value) {
             delete this._modes[mode];
             this._nextOrNone(mode);
@@ -262,8 +262,8 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _removeToolbar() {
-    var ov = this._overlay;
-    var map = ov._map;
+    const ov = this._overlay;
+    let map = ov._map;
 
     if (this.toolbar) {
       map.removeLayer(this.toolbar);
@@ -272,8 +272,8 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _enableDragging() {
-    var overlay = this._overlay;
-    var map = overlay._map;
+    let overlay = this._overlay;
+    const map = overlay._map;
 
     this.dragging = new L.Draggable(overlay.getElement());
     this.dragging.enable();
@@ -289,11 +289,11 @@ L.DistortableImage.Edit = L.Handler.extend({
      * distort transformations that we set when it calls L.DomUtil.setPosition.
      */
     this.dragging._updatePosition = function() {
-      var topLeft = overlay.getCorner(0);
-      var delta = this._newPos.subtract(map.latLngToLayerPoint(topLeft));
-      var currentPoint;
-      var corners = {};
-      var i;
+      const topLeft = overlay.getCorner(0);
+      const delta = this._newPos.subtract(map.latLngToLayerPoint(topLeft));
+      let currentPoint;
+      let corners = {};
+      let i;
 
       this.fire('predrag');
 
@@ -346,8 +346,8 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _toggleOpacity() {
-    var image = this._overlay.getElement();
-    var opacity;
+    const image = this._overlay.getElement();
+    let opacity;
 
     if (!this.hasTool(L.OpacityAction)) { return; }
 
@@ -361,8 +361,8 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _toggleBorder() {
-    var image = this._overlay.getElement();
-    var outline;
+    const image = this._overlay.getElement();
+    let outline;
 
     if (!this.hasTool(L.BorderAction)) { return; }
 
@@ -381,12 +381,12 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _removeOverlay() {
-    var ov = this._overlay;
-    var eP = this.parentGroup;
+    let ov = this._overlay;
+    const eP = this.parentGroup;
 
     if (this.isMode('lock') || !this.hasTool(L.DeleteAction)) { return; }
 
-    var choice = L.DomUtil.confirmDelete();
+    const choice = L.DomUtil.confirmDelete();
     if (!choice) { return; }
 
     this._removeToolbar();
@@ -397,25 +397,25 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   // Based on https://github.com/publiclab/mapknitter/blob/8d94132c81b3040ae0d0b4627e685ff75275b416/app/assets/javascripts/mapknitter/Map.js#L47-L82
   _getExport() {
-    var overlay = this._overlay;
-    var map = overlay._map;
-    var img = overlay.getElement();
+    let overlay = this._overlay;
+    let map = overlay._map;
+    let img = overlay.getElement();
 
     if (!this.hasTool(L.ExportAction)) { return; }
 
     // make a new image
-    var downloadable = new Image();
+    let downloadable = new Image();
 
     downloadable.id = downloadable.id || 'tempId12345';
     document.body.appendChild(downloadable);
 
     downloadable.onload = function onLoadDownloadableImage() {
-      var height = downloadable.height;
-      var width = downloadable.width;
-      var nw = map.latLngToLayerPoint(overlay.getCorner(0));
-      var ne = map.latLngToLayerPoint(overlay.getCorner(1));
-      var sw = map.latLngToLayerPoint(overlay.getCorner(2));
-      var se = map.latLngToLayerPoint(overlay.getCorner(3));
+      let height = downloadable.height;
+      let width = downloadable.width;
+      let nw = map.latLngToLayerPoint(overlay.getCorner(0));
+      let ne = map.latLngToLayerPoint(overlay.getCorner(1));
+      let sw = map.latLngToLayerPoint(overlay.getCorner(2));
+      let se = map.latLngToLayerPoint(overlay.getCorner(3));
 
       // I think this is to move the image to the upper left corner,
       // eslint-disable-next-line max-len
@@ -455,7 +455,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _stackUp() {
-    var t = this._toggledImage;
+    let t = this._toggledImage;
 
     if (!t || !this.hasTool(L.StackAction)) { return; }
 
@@ -465,7 +465,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _stackDown() {
-    var t = this._toggledImage;
+    let t = this._toggledImage;
 
     if (t || !this.hasTool(L.StackAction)) { return; }
 
@@ -475,9 +475,9 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _unlock() {
-    var ov = this._overlay;
-    var map = ov._map;
-    var eP = this.parentGroup;
+    let ov = this._overlay;
+    let map = ov._map;
+    const eP = this.parentGroup;
 
     if (!this.isMode('lock')) { return; }
     if ((eP && !eP.isCollected(ov)) || !eP) {
@@ -497,9 +497,9 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _lock() {
-    var ov = this._overlay;
-    var map = ov._map;
-    var eP = this.parentGroup;
+    const ov = this._overlay;
+    const map = ov._map;
+    const eP = this.parentGroup;
 
     if (this.isMode('lock')) { return; }
     if ((eP && !eP.isCollected(ov)) || !eP) {
@@ -518,7 +518,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _showMarkers(e) {
-    var eP = this.parentGroup;
+    const eP = this.parentGroup;
 
     if (!this.currentHandle) { return; }
     // only markers we want in collect interface for now is lock
@@ -532,8 +532,8 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _hideMarkers() {
-    var ov = this._overlay;
-    var eP = this.parentGroup;
+    const ov = this._overlay;
+    const eP = this.parentGroup;
 
     // workaround for race condition w/ feature group
     if (!this._handles) { this._initHandles(); }
@@ -549,9 +549,9 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _updateHandle() {
-    var ov = this._overlay;
-    var map = ov._map;
-    var mode = this.getMode();
+    const ov = this._overlay;
+    let map = ov._map;
+    const mode = this.getMode();
 
     if (this.currentHandle) { map.removeLayer(this.currentHandle); }
     this.currentHandle = mode === '' ? '' : this._handles[mode];
@@ -561,12 +561,12 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _addToolbar() {
-    var ov = this._overlay;
-    var eP = this.parentGroup;
-    var map = ov._map;
+    let ov = this._overlay;
+    const eP = this.parentGroup;
+    let map = ov._map;
     // Find the topmost point on the image.
-    var corners = ov.getCorners();
-    var maxLat = -Infinity;
+    const corners = ov.getCorners();
+    let maxLat = -Infinity;
 
     if (eP && eP.anyCollected()) {
       eP.editing._addToolbar();
@@ -575,14 +575,14 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     if (ov.options.suppressToolbar || this.toolbar) { return; }
 
-    for (var i = 0; i < corners.length; i++) {
+    for (let i = 0; i < corners.length; i++) {
       if (corners[i].lat > maxLat) {
         maxLat = corners[i].lat;
       }
     }
 
     // Longitude is based on the centroid of the image.
-    var raisedPoint = ov.getCenter();
+    let raisedPoint = ov.getCenter();
     raisedPoint.lat = maxLat;
 
     this.toolbar = L.distortableImage.popupBar(raisedPoint, {
@@ -597,21 +597,21 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _updateToolbarPos() {
-    var overlay = this._overlay;
+    const overlay = this._overlay;
     // Find the topmost point on the image.
-    var corners = overlay.getCorners();
-    var toolbar = this.toolbar;
-    var maxLat = -Infinity;
+    const corners = overlay.getCorners();
+    let toolbar = this.toolbar;
+    let maxLat = -Infinity;
 
     if (toolbar && toolbar instanceof L.DistortableImage.PopupBar) {
-      for (var i = 0; i < corners.length; i++) {
+      for (let i = 0; i < corners.length; i++) {
         if (corners[i].lat > maxLat) {
           maxLat = corners[i].lat;
         }
       }
 
       // Longitude is based on the centroid of the image.
-      var raisedPoint = overlay.getCenter();
+      let raisedPoint = overlay.getCenter();
       raisedPoint.lat = maxLat;
 
       if (!overlay.options.suppressToolbar) {
@@ -639,9 +639,9 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   setMode(newMode) {
-    var ov = this._overlay;
-    var eP = this.parentGroup;
-    var mode = this.getMode();
+    const ov = this._overlay;
+    const eP = this.parentGroup;
+    let mode = this.getMode();
 
     if (mode === newMode || !this.hasMode(newMode) || !this.enabled()) {
       return;
@@ -664,12 +664,12 @@ L.DistortableImage.Edit = L.Handler.extend({
     * the map and fire the handler that shows map location labels on map dblclick.
     */
   nextMode(e) {
-    var mode = this.getMode();
-    var eP = this.parentGroup;
-    var modesArray = Object.keys(this.getModes());
-    var idx = modesArray.indexOf(mode);
-    var nextIdx = (idx + 1) % modesArray.length;
-    var newMode = modesArray[nextIdx];
+    let mode = this.getMode();
+    const eP = this.parentGroup;
+    let modesArray = Object.keys(this.getModes());
+    let idx = modesArray.indexOf(mode);
+    let nextIdx = (idx + 1) % modesArray.length;
+    let newMode = modesArray[nextIdx];
 
     if (e) {
       if (eP && eP.anyCollected()) { return; }
