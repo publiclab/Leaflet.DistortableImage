@@ -13,7 +13,7 @@ L.OpacityAction = L.EditAction.extend({
       tooltip = overlay.options.translation.makeImageTransparent;
     }
 
-    options = options || {}
+    options = options || {};
     options.toolbarIcon = {
       svg: true,
       html: use,
