@@ -1,8 +1,8 @@
 L.StackAction = L.EditAction.extend({
   initialize(map, overlay, options) {
-    var edit = overlay.editing;
-    var use;
-    var tooltip;
+    let edit = overlay.editing;
+    let use;
+    let tooltip;
 
     if (edit._toggledImage) {
       use = 'flip_to_back';
@@ -27,7 +27,7 @@ L.StackAction = L.EditAction.extend({
   },
 
   addHooks() {
-    var edit = this._overlay.editing;
+    let edit = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'flip_to_front', 'flip_to_back');
     L.IconUtil.toggleTitle(this._link, 'Stack to Front', 'Stack to Back');

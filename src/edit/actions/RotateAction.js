@@ -13,7 +13,7 @@ L.RotateAction = L.EditAction.extend({
   },
 
   addHooks() {
-    var edit = this._overlay.editing;
+    let edit = this._overlay.editing;
     edit._rotateMode();
   },
 });
