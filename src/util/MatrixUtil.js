@@ -11,14 +11,14 @@ L.MatrixUtil = {
 
   // multiply two 3*3 matrices
   multmm(a, b) {
-    var c = [];
-    var i;
+    const c = [];
+    let i;
 
     for (i = 0; i < 3; i++) {
-      for (var j = 0; j < 3; j++) {
+      for (let j = 0; j < 3; j++) {
         var cij = 0;
 
-        for (var k = 0; k < 3; k++) {
+        for (let k = 0; k < 3; k++) {
           cij += a[3*i + k]*b[3*k + j];
         }
 
@@ -40,9 +40,9 @@ L.MatrixUtil = {
 
   // multiply a scalar and a 3*3 matrix
   multsm(s, m) {
-    var matrix = [];
+    const matrix = [];
 
-    for (var i = 0, l = m.length; i < l; i++) {
+    for (let i = 0, l = m.length; i < l; i++) {
       matrix.push(s*m[i]);
     }
 
@@ -50,12 +50,12 @@ L.MatrixUtil = {
   },
 
   basisToPoints(x1, y1, x2, y2, x3, y3, x4, y4) {
-    var m = [
+    const m = [
       x1, x2, x3,
       y1, y2, y3,
       1, 1, 1,
     ];
-    var v = L.MatrixUtil.multmv(L.MatrixUtil.adj(m), [x4, y4, 1]);
+    let v = L.MatrixUtil.multmv(L.MatrixUtil.adj(m), [x4, y4, 1]);
 
     return L.MatrixUtil.multmm(m, [
       v[0], 0, 0,
@@ -65,7 +65,7 @@ L.MatrixUtil = {
   },
 
   project(m, x, y) {
-    var v = L.MatrixUtil.multmv(m, [x, y, 1]);
+    let v = L.MatrixUtil.multmv(m, [x, y, 1]);
 
     return [v[0]/v[2], v[1]/v[2]];
   },
@@ -76,9 +76,9 @@ L.MatrixUtil = {
       x3s, y3s, x3d, y3d,
       x4s, y4s, x4d, y4d
   ) {
-    var s = L.MatrixUtil.basisToPoints(x1s, y1s, x2s, y2s, x3s, y3s, x4s, y4s);
-    var d = L.MatrixUtil.basisToPoints(x1d, y1d, x2d, y2d, x3d, y3d, x4d, y4d);
-    var m = L.MatrixUtil.multmm(d, L.MatrixUtil.adj(s));
+    let s = L.MatrixUtil.basisToPoints(x1s, y1s, x2s, y2s, x3s, y3s, x4s, y4s);
+    let d = L.MatrixUtil.basisToPoints(x1d, y1d, x2d, y2d, x3d, y3d, x4d, y4d);
+    let m = L.MatrixUtil.multmm(d, L.MatrixUtil.adj(s));
 
     // Normalize to the unique matrix with m[8] == 1.
     // See: http://franklinta.com/2014/09/08/computing-css-matrix3d-transforms/
