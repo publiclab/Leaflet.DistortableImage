@@ -42,7 +42,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     const container = L.DomUtil.create('div', 'ldi-keymapper-hide');
     container.setAttribute('id', 'ldi-keymapper');
 
-    let divider = L.DomUtil.create('br', 'divider');
+    const divider = L.DomUtil.create('br', 'divider');
     container.appendChild(divider);
 
     return container;
