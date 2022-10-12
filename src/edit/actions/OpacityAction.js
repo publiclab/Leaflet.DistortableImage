@@ -1,6 +1,6 @@
 L.OpacityAction = L.EditAction.extend({
   initialize(map, overlay, options) {
-    let edit = overlay.editing;
+    const edit = overlay.editing;
     const mode = edit._mode;
     let use;
     let tooltip;
