@@ -80,7 +80,7 @@ L.Map.BoxCollector = L.Map.BoxZoom.extend({
     this._point = this._map.mouseEventToContainerPoint(e);
 
     this._bounds = L.bounds(this._startPoint, this._point);
-    var size = this._bounds.getSize();
+    let size = this._bounds.getSize();
 
     L.DomUtil.setPosition(this._box, this._bounds.min);
 
@@ -119,13 +119,13 @@ L.Map.BoxCollector = L.Map.BoxZoom.extend({
     this._resetStateTimeout = setTimeout(
         L.Util.bind(this._resetState, this), 0);
 
-    var bounds = L.latLngBounds(
+    let bounds = L.latLngBounds(
         this._map.containerPointToLatLng(this._bounds.getBottomLeft()),
         this._map.containerPointToLatLng(this._bounds.getTopRight())
     );
 
-    var zoom = this._map.getZoom();
-    var center = this._map.getCenter();
+    let zoom = this._map.getZoom();
+    let center = this._map.getCenter();
 
     // calls the `project` method but 1st updates the pixel origin - see https://github.com/publiclab/Leaflet.DistortableImage/pull/344
     bounds = this._map._latLngBoundsToNewLayerBounds(bounds, zoom, center);
