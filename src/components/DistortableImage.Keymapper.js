@@ -128,7 +128,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
   _injectIconSet() {
     if (document.querySelector('#keymapper-iconset')) { return; }
 
-   const el = L.DomUtil.create('div', '');
+    const el = L.DomUtil.create('div', '');
     el.id = 'keymapper-iconset';
     el.setAttribute('hidden', 'hidden');
 
