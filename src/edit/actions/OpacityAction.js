@@ -1,9 +1,9 @@
 L.OpacityAction = L.EditAction.extend({
   initialize(map, overlay, options) {
-    var edit = overlay.editing;
-    var mode = edit._mode;
-    var use;
-    var tooltip;
+    const edit = overlay.editing;
+    const mode = edit._mode;
+    let use;
+    let tooltip;
 
     if (edit._transparent) {
       use = 'opacity_empty';
@@ -27,8 +27,8 @@ L.OpacityAction = L.EditAction.extend({
   },
 
   addHooks() {
-    var edit = this._overlay.editing;
-    var link = this._link;
+    const edit = this._overlay.editing;
+    const link = this._link;
 
     L.IconUtil.toggleXlink(link, 'opacity', 'opacity_empty');
     L.IconUtil.toggleTitle(link, 'Make Image Transparent', 'Make Image Opaque');
