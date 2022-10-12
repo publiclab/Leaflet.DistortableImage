@@ -13,7 +13,7 @@ L.DragAction = L.EditAction.extend({
   },
 
   addHooks: function() {
-    let edit = this._overlay.editing;
+    const edit = this._overlay.editing;
     edit._dragMode();
   },
 });
