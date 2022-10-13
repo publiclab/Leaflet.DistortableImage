@@ -17,7 +17,7 @@ L.IconUtil = {
   },
 
   addClassToSvg(container, loader) {
-    var svg = container.querySelector('svg');
+    const svg = container.querySelector('svg');
 
     if (svg) {
       L.DomUtil.addClass(svg, loader);
@@ -33,9 +33,9 @@ L.IconUtil = {
       ref2 = '#' + ref2;
     }
 
-    var use = container.querySelector('use');
+    const use = container.querySelector('use');
     if (use) {
-      var toggled = use.getAttribute('xlink:href') === ref1 ? ref2 : ref1;
+      const toggled = use.getAttribute('xlink:href') === ref1 ? ref2 : ref1;
       use.setAttribute('xlink:href', toggled);
       return toggled;
     }
@@ -43,7 +43,7 @@ L.IconUtil = {
   },
 
   toggleTitle(container, title1, title2) {
-    var toggled = container.getAttribute('title') === title1 ? title2 : title1;
+    const toggled = container.getAttribute('title') === title1 ? title2 : title1;
 
     container.setAttribute('title', toggled);
     if (container.hasAttribute('aria-label')) {
