@@ -10,7 +10,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     selected: false,
   },
 
-  initialize: function(url, options) {
+  initialize(url, options) {
     L.setOptions(this, options);
     L.Utils.initTranslation.call(this);
 
@@ -21,7 +21,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this.rotation = {};
   },
 
-  onAdd: function(map) {
+  onAdd(map) {
     this._map = map;
     if (!this.getElement()) { this._initImage(); }
 
@@ -83,7 +83,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this.fire('add');
   },
 
-  onRemove: function(map) {
+  onRemove(map) {
     L.DomEvent.off(this.getElement(), 'click', this.select, this);
     L.DomEvent.off(map, {
       singleclickon: this._singleClickListeners,
@@ -98,7 +98,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     L.ImageOverlay.prototype.onRemove.call(this, map);
   },
 
-  _initImageDimensions: function() {
+  _initImageDimensions() {
     var map = this._map;
     var originalImageWidth = L.DomUtil.getStyle(this.getElement(), 'width');
     var originalImageHeight = L.DomUtil.getStyle(this.getElement(), 'height');
@@ -128,28 +128,28 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this.setBounds(L.latLngBounds(this.getCorners()));
   },
 
-  _singleClick: function(e) {
+  _singleClick(e) {
     if (e.type === 'singleclick') { this.deselect(); }
     else { return; }
   },
 
-  _singleClickListeners: function() {
+  _singleClickListeners() {
     var map = this._map;
     L.DomEvent.off(map, 'click', this.deselect, this);
     L.DomEvent.on(map, 'singleclick', this.deselect, this);
   },
 
-  _resetClickListeners: function() {
+  _resetClickListeners() {
     var map = this._map;
     L.DomEvent.on(map, 'click', this.deselect, this);
     L.DomEvent.off(map, 'singleclick', this.deselect, this);
   },
 
-  isSelected: function() {
+  isSelected() {
     return this._selected;
   },
 
-  deselect: function() {
+  deselect() {
     var edit = this.editing;
     if (!edit.enabled()) { return; }
 
@@ -161,7 +161,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return this;
   },
 
-  select: function(e) {
+  select(e) {
     var edit = this.editing;
     var eP = this.eP;
 
@@ -185,7 +185,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return this;
   },
 
-  _programmaticGrouping: function() {
+  _programmaticGrouping() {
     this._map.eachLayer((layer) => {
       if (layer instanceof L.DistortableImageOverlay) {
         layer.deselect();
@@ -193,7 +193,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     });
   },
 
-  setCorner: function(corner, latlng) {
+  setCorner(corner, latlng) {
     var edit = this.editing;
 
     this._corners[corner] = latlng;
@@ -210,7 +210,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return this;
   },
 
-  _cornerExceedsMapLats: function(zoom, corner, map) {
+  _cornerExceedsMapLats(zoom, corner, map) {
     if (map.options.crs == L.CRS.Simple) {
       return false;
     } else {
@@ -227,7 +227,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     }
   },
 
-  setCorners: function(latlngObj) {
+  setCorners(latlngObj) {
     var map = this._map;
     var zoom = map.getZoom();
     var edit = this.editing;
@@ -260,7 +260,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return this;
   },
 
-  setCornersFromPoints: function(pointsObj) {
+  setCornersFromPoints(pointsObj) {
     var map = this._map;
     var zoom = map.getZoom();
     var edit = this.editing;
@@ -294,7 +294,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return this;
   },
 
-  scaleBy: function(scale) {
+  scaleBy(scale) {
     var map = this._map;
     var center = map.project(this.getCenter());
     var i;
@@ -317,7 +317,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return this;
   },
 
-  getAngle: function(unit = 'deg') {
+  getAngle(unit = 'deg') {
     var matrix = this.getElement().style[L.DomUtil.TRANSFORM]
         .split('matrix3d')[1]
         .slice(1, -1)
@@ -345,7 +345,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
         L.Util.formatNum(angle, 2);
   },
 
-  setAngle: function(angle, unit = 'deg') {
+  setAngle(angle, unit = 'deg') {
     var currentAngle = this.getAngle(unit);
     var angleToRotateBy = angle - currentAngle;
     this.rotateBy(angleToRotateBy, unit);
@@ -353,7 +353,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return this;
   },
 
-  rotateBy: function(angle, unit = 'deg') {
+  rotateBy(angle, unit = 'deg') {
     var map = this._map;
     var center = map.project(this.getCenter());
     var corners = {};
@@ -379,7 +379,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return this;
   },
 
-  dragBy: function(formerPoint, newPoint) {
+  dragBy(formerPoint, newPoint) {
     var map = this._map;
     var i;
     var p;
@@ -394,7 +394,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this.setCorners(transCorners);
   },
 
-  restore: function() {
+  restore() {
     var map = this._map;
     var center = this._initialDimensions.center;
     var offset = this._initialDimensions.offset;
@@ -420,7 +420,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
   /* Copied from Leaflet v0.7 https://github.com/Leaflet/Leaflet/blob/66282f14bcb180ec87d9818d9f3c9f75afd01b30/src/dom/DomUtil.js#L189-L199 */
   /* since L.DomUtil.getTranslateString() is deprecated in Leaflet v1.0 */
-  _getTranslateString: function(point) {
+  _getTranslateString(point) {
     // on WebKit browsers (Chrome/Safari/iOS Safari/Android)
     // using translate3d instead of translate
     // makes animation smoother as it ensures HW accel is used.
@@ -434,7 +434,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return open + point.x + 'px,' + point.y + 'px' + close;
   },
 
-  _reset: function() {
+  _reset() {
     var map = this._map;
     var image = this.getElement();
     var latLngToLayerPoint = L.bind(map.latLngToLayerPoint, map);
@@ -464,7 +464,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
    * Leaflet then generates a CSS3 animation between the current transform and
    * future transform which makes the transition appear smooth.
    */
-  _animateZoom: function(event) {
+  _animateZoom(event) {
     var map = this._map;
     var image = this.getElement();
     var latLngToNewLayerPoint = function(latlng) {
@@ -483,16 +483,16 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     image.style[L.DomUtil.TRANSFORM] = [translation, warp].join(' ');
   },
 
-  getCorners: function() {
+  getCorners() {
     return this._corners;
   },
 
-  getCorner: function(i) {
+  getCorner(i) {
     return this._corners[i];
   },
 
   // image (vertex) centroid calculation
-  getCenter: function() {
+  getCenter() {
     var map = this._map;
     var reduce = this.getCorners().reduce(function(agg, corner) {
       return agg.add(map.project(corner));
@@ -500,7 +500,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return map.unproject(reduce.divideBy(4));
   },
 
-  _calculateProjectiveTransform: function(latLngToCartesian) {
+  _calculateProjectiveTransform(latLngToCartesian) {
     /* Setting reasonable but made-up image defaults
      * allow us to place images on the map before
      * they've finished downloading. */
