@@ -1,6 +1,6 @@
 L.GeolocateAction = L.EditAction.extend({
   initialize(map, overlay, options) {
-    var edit = overlay.editing;
+    const edit = overlay.editing;
 
     options = options || {};
     options.toolbarIcon = {
@@ -14,7 +14,7 @@ L.GeolocateAction = L.EditAction.extend({
   },
 
   addHooks() {
-    var image = this._overlay.getElement();
+    let image = this._overlay.getElement();
 
     EXIF.getData(image, L.EXIF(image));
   },
