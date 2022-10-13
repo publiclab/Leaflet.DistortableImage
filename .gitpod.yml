@@ -1,0 +1,17 @@
+tasks:
+  - init: npm i && export CHROME_BIN=/usr/bin/chromium-browser
+    command: NODE_ENV=production node_modules/grunt/bin/grunt webpack && npm run serve:dev
+ports:
+  - port: 8081
+    onOpen: open-preview
+
+github:
+  prebuilds:
+    main: true
+    branches: true
+    pullRequests: true
+    pullRequestsFromForks: true
+    addCheck: true
+    addComment: true
+    addBadge: false
+    addLabel: false 

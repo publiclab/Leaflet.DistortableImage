@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Leaflet.DistortableImage Example</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale=1.0, user-scalable=no"/>
+  <meta http-equiv="x-ua-compatible" content="ie=edge"/>
+
+  <link rel="stylesheet" href="../node_modules/leaflet/dist/leaflet.css">
+  <link rel="stylesheet" href="../dist/vendor.css">
+  <link rel="stylesheet" href="../dist/leaflet.distortableimage.css" media="screen" title="no title">
+
+  <script src="../node_modules/leaflet/dist/leaflet.js" type="text/javascript" charset="utf-8"></script>
+  <script src="../dist/vendor.js"></script>
+  <script src="../dist/leaflet.distortableimage.js"></script>
+</head>
+<body style="margin:0;">
+
+  <form id="test_form" >
+    <input type="file" class="ldi" id="inputimage" accept="image/*">
+  </form>
+
+  <div id="map" style="width:100%; height:100%; position:absolute; top:0;"></div>
+
+  <script>
+    var map;
+
+    (function() {
+      map = L.map('map').setView([51.505, -0.13], 13);
+      map.addGoogleMutant();
+
+      map.whenReady(function() {
+        img = L.distortableImageOverlay('example.jpg', {
+          corners: [
+            L.latLng(51.52, -0.14),
+            L.latLng(51.52,-0.10),
+            L.latLng(51.50, -0.14),
+            L.latLng(51.50,-0.10),
+          ],
+          mode: 'lock',
+        });
+
+        // create a second image
+        img2 = L.distortableImageOverlay('example.jpg', {
+          corners: [
+            L.latLng(51.51, -0.20),
+            L.latLng(51.51,-0.16),
+            L.latLng(51.49, -0.21),
+            L.latLng(51.49,-0.17),
+          ],
+          mode: 'freeRotate',
+          suppressToolbar: true,
+        });
+
+        var json = [{"nodes":[
+                {"lat":"41.8200378187","lon":"-71.4034409085"},
+                {"lat":"41.8199873593","lon":"-71.4030021564"},
+                {"lat":"41.8196229772","lon":"-71.4029728831"},
+                {"lat":"41.8198214546","lon":"-71.4034614433"}
+            ],
+            "cm_per_pixel":23.0934,
+            "src":"https://s3.amazonaws.com/grassrootsmapping/warpables/312455/test.png"},
+            {"nodes":[
+                {"lat":"41.819898342","lon":"-71.4035387139"},
+                {"lat":"41.819898342","lon":"-71.4028493862"},
+                {"lat":"41.8195005594","lon":"-71.4028493862"},
+                {"lat":"41.8195005594","lon":"-71.4035387139"}
+            ],
+            "cm_per_pixel":35.8578,
+            "src":"https://s3.amazonaws.com/grassrootsmapping/warpables/320983/test.png"}
+        ];
+
+        // customize the function that starts up the export
+        const fetchStatusUrl = (mergedOpts) => {
+          const form = new FormData();
+          form.append('collection', JSON.stringify(mergedOpts.collection));
+          form.append('scale', prompt("Choose a scale or use the default (cm per pixel):", 100) || mergedOpts.scale);
+          form.append('upload', true);
+
+          const reqOpts = {method: 'POST', body: form};
+          const req = new Request(mergedOpts.exportStartUrl, reqOpts);
+
+          fetch(req).then((res) => {
+            if (res.ok) {
+              return res.text();
+            }
+          }).then(mergedOpts.handleStatusRes);
+        };
+
+        // receives the URL of status.json, and starts running the updater to repeatedly fetch from status.json;
+        // this may be overridden to integrate with any UI
+        const handleStatusRes = (data) => {
+          statusUrl = data.split('please visit, ')[1];
+
+          /*
+            if we are getting status updates, repeatedly fetch the status.json:
+
+            this.updateInterval = setInterval(() => {
+              const reqOpts = {method: 'GET'};
+              const req = new Request(`${data}?${Date.now()}`, reqOpts);
+              fetch(req).then((res) => {
+                if (res.ok) {
+                  return res.text();
+                }
+              }).then(opts.updater);
+            }, opts.frequency);
+
+          */
+
+          // but in this example, we're not; we just get the URL of the finished image;
+          // we should initiate the download?
+          window.location = statusUrl;
+        };
+
+        // initialize the collection:
+        imgGroup = L.distortableCollection({
+          exportOpts: {
+            collection: json, // here we override the image data sent with a custom set
+            fetchStatusUrl: fetchStatusUrl,
+            handleStatusRes: handleStatusRes,
+            exportUrl: '//34.74.118.242/api/v2/export/', // used to
+            exportStartUrl: '//34.74.118.242/api/v2/export/', // used to initiate the export
+
+            // From this alternative exporter, we'll get a response like:
+            // "Your Image is exporting, to load Image please visit, http://34.74.118.242/api/v2/status/?pid=3d8233faa2ade0f0cee400fba1170890-7153"
+            // So, we can splice like this: response.split("please visit, ")[1]
+            // and get http://34.74.118.242/api/v2/status/?pid=3d8233faa2ade0f0cee400fba1170890-7153
+            // Noting, however, later we will expect to get a full Google Cloud Storage URL.
+
+            // remaining defaults are as follows, in /src/edit/DistortableCollection.Edit.js:
+            // collection = opts.collection || this._group.generateExportJson();
+            // frequency = opts.frequency || 3000;
+            // scale = opts.scale || 100; // switch it to _getAvgCmPerPixel !
+            // updater: function(json) {}  // a function to handle the result of repeated fetching of the status.json file
+            // fetchStatusUrl = opts.fetchStatusUrl || _defaultFetchStatusUrl;
+            // handleStatusRes = opts.handleStatusRes || _defaultHandleStatusRes;
+            // exportStartUrl = opts.exportStartUrl || '//export.mapknitter.org/export';
+            // exportUrl = opts.exportUrl || 'http://export.mapknitter.org/';
+          },
+        }).addTo(map);
+
+        imgGroup.addLayer(img);
+        imgGroup.addLayer(img2);
+      });
+    })();
+  </script>
+</html>

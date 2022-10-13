@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Leaflet.DistortableImage Example</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale=1.0, user-scalable=no"/>
+  <meta http-equiv="x-ua-compatible" content="ie=edge"/>
+
+  <link rel="stylesheet" href="../node_modules/leaflet/dist/leaflet.css">
+  <link rel="stylesheet" href="../dist/vendor.css">
+  <link rel="stylesheet" href="../dist/leaflet.distortableimage.css" media="screen" title="no title">
+
+  <script src="../node_modules/leaflet/dist/leaflet.js" type="text/javascript" charset="utf-8"></script>
+  <script src="../dist/vendor.js"></script>
+  <script src="../dist/leaflet.distortableimage.js"></script>
+</head>
+<body style="margin:0;">
+
+  <form id="test_form" >
+    <input type="file" class="ldi" id="inputimage" accept="image/*">
+  </form>
+
+  <div id="map" style="width:100%; height:100%; position:absolute; top:0;"></div>
+
+  <script>
+    var map;
+
+    (function(){
+      map = L.map('map').setView([51.505, -0.09], 13);
+      map.addGoogleMutant();
+
+      map.whenReady(function() {
+        img = L.distortableImageOverlay('example.jpg', {
+          selected: true,
+        }).addTo(map);
+
+        // Wait until image is loaded before setting up DOM element listeners
+        L.DomEvent.on(img.getElement(), 'load', function() {
+          L.DomEvent.on(img, 'edit', function() { alert('edited'); });
+          L.DomEvent.on(img.getElement(), 'mouseup touchend', function() { alert('edited'); });
+        });
+      });
+    })();
+  </script>
+</html>

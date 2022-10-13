@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Leaflet.DistortableImage Example</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale=1.0, user-scalable=no"/>
+  <meta http-equiv="x-ua-compatible" content="ie=edge"/>
+
+  <link rel="stylesheet" href="../node_modules/leaflet/dist/leaflet.css">
+  <link rel="stylesheet" href="../dist/vendor.css">
+  <link rel="stylesheet" href="../dist/leaflet.distortableimage.css" media="screen" title="no title">
+
+  <script src="../node_modules/leaflet/dist/leaflet.js" type="text/javascript" charset="utf-8"></script>
+  <script src="../dist/vendor.js"></script>
+  <script src="../dist/leaflet.distortableimage.js"></script>
+</head>
+<body style="margin:0;">
+
+  <form id="test_form" >
+    <input type="file" class="ldi" id="inputimage" accept="image/*">
+  </form>
+
+  <div id="map" style="width:100%; height:100%; position:absolute; top:0;"></div>
+
+  <script>
+    var map;
+
+    (function(){
+      map = L.map('map').setView([51.505, -0.09], 13);
+      map.addGoogleMutant();
+
+      map.whenReady(function() {
+        img = L.distortableImageOverlay('example.jpg', {
+          corners: [
+            L.latLng(51.52, -0.14),
+            L.latLng(51.52,-0.10),
+            L.latLng(51.50, -0.14),
+            L.latLng(51.50,-0.10),
+          ],
+          mode: 'lock',
+        });
+
+        // create a second image
+        img2 = L.distortableImageOverlay('example.jpg', {
+          corners: [
+            L.latLng(51.51, -0.20),
+            L.latLng(51.51,-0.16),
+            L.latLng(51.49, -0.21),
+            L.latLng(51.49,-0.17),
+          ],
+          mode: 'freeRotate',
+          suppressToolbar: true,
+        });
+
+        img3 = L.distortableImageOverlay('example.jpg', {
+          corners: [
+            L.latLng(51.50, -0.13),
+            L.latLng(51.50,-0.09),
+            L.latLng(51.48, -0.14),
+            L.latLng(51.48,-0.10),
+          ],
+          actions: [L.DistortAction, L.FreeRotateAction, L.LockAction, L.OpacityAction, L.DeleteAction],
+        });
+
+        img4 = L.distortableImageOverlay('example.jpg', {
+          actions: [L.ScaleAction, L.DistortAction, L.RotateAction, L.FreeRotateAction, L.LockAction, L.OpacityAction, L.DeleteAction],
+          corners: [
+            L.latLng(51.51, -0.07),
+            L.latLng(51.51,-0.03),
+            L.latLng(51.49, -0.08),
+            L.latLng(51.49,-0.04),
+          ],
+        });
+
+        imgGroup = L.distortableCollection().addTo(map);
+
+        /* TODO: make an addLayers func */
+        imgGroup.addLayer(img);
+        imgGroup.addLayer(img2);
+        imgGroup.addLayer(img3);
+        imgGroup.addLayer(img4);
+      });
+    })();
+  </script>
+</html>

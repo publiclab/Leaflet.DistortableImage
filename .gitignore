@@ -1,0 +1,10 @@
+node_modules
+coverage
+todo.txt
+*.swp
+*.swo
+package-lock.json
+.DS_Store
+dist/*
+!dist/leaflet.distortableimage.css
+!dist/leaflet.distortableimage.js
