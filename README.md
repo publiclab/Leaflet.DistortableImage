@@ -856,6 +856,9 @@ imgGroup = L.distortableCollection({
 ```
 
 ---
+## MISCELLENEOUS
+[prototype demo of mapknitter](https://publiclab.github.io/Leaflet.DistortableImage/examples/archive)
+This is a page that will host the upcoming mapknitter the ReadMe will be updated after the production. 
 
 ## Contributing
 
