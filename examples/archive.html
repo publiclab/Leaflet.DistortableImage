@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
+    <script src="../src/DistortableCollection.js"></script>
+    <script src="https://use.fontawesome.com/31d9fc76ff.js"></script>
     <script src="../node_modules/leaflet/dist/leaflet.js" type="text/javascript" charset="utf-8"></script>
     <script src="../dist/vendor.js"></script>
     <script src="../dist/leaflet.distortableimage.js"></script>
@@ -65,13 +67,18 @@
   </body>
 
   <script>
-    let map;
+    let map = L.map('map').setView([51.505, -0.09], 13);
     let welcomeModal = document.getElementById('welcomeModal');
     let sidebar = document.getElementById('offcanvasRight');
     let form = document.getElementById('form');
     let input = document.getElementById('input');
     let responseText = document.getElementById('response');
     let imageContainer = document.getElementById('imgContainer');
+    let imageGroup = L.distortableCollection().addTo(map)
+
+    const saveButton = document.createElement('button');
+    saveButton.innerHTML = '<i class="fa fa-floppy-o" aria-hidden="true"></i>';
+    sidebar.appendChild(saveButton);
 
     const setupMap = () => {
       map = L.map('map').setView([51.505, -0.09], 13);
@@ -104,17 +111,20 @@
                 let imageRow = document.createElement('div');
                 let image = new Image(150, 150);
                 let placeButton = document.createElement('a');
-
+                let imageArray=[];
                 placeButton.classList.add('btn', 'btn-sm', 'btn-outline-secondary', 'place-button');
                 placeButton.innerHTML = 'Place on map';
-
+                let imageGroup = L.distortableCollection().addTo(map)
                 image.src = `${url.replace('metadata', 'download')}/${file.name}`;
-
                 imageRow.classList.add('d-flex', 'justify-content-between', 'align-items-center', 'mb-4', 'pe-5');
                 imageRow.append(image, placeButton);
-
+                imageArray.push[image]
                 imageContainer.appendChild(imageRow);
                 imageCount++;
+                
+                for(let i=0; i<imageArray.length;i++){
+                  imageGroup.addLayer(image[i])
+                }
               }
             });
             responseText.innerHTML = imageCount ? `${imageCount} image(s) fetched successfully.` : 'No images found in the link provided...'
@@ -129,6 +139,8 @@
           bootstrap.Modal.getInstance(welcomeModal).hide();
         });
     });
+
+    saveButton.addEventListener('click',generateExportJson(imageGroup))
 
     welcomeModal.addEventListener('hidden.bs.modal', (event) => {
       new bootstrap.Offcanvas(sidebar).show();
