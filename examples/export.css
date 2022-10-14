@@ -1,0 +1,47 @@
+.drag_n_drop{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    padding: 10px;
+    z-index:1000;
+}
+.container {
+    position: relative;
+  
+}
+.container input {
+    border: 1px solid #92b0b3;
+    background: #f1f1f1;
+    outline: 3px dashed #4CAF50;
+    outline-offset: -10px;
+    padding: 60px 0px 60px 60px;
+    text-align: center !important;
+    width: 300px;
+}
+ 
+.container input:hover {
+    background: #ddd;
+}
+ 
+.container:before {
+    position: absolute;
+    left: 70px;
+    top:100px;
+    content: " (or) drag image onto page to add";
+    color: #4CAF50;
+    font-weight: 300;
+    
+}
+ 
+.upload_btn {
+    margin-left: 130px;
+    background-color: #4CAF50; 
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+}
