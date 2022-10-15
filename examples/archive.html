@@ -108,6 +108,26 @@
                 placeButton.classList.add('btn', 'btn-sm', 'btn-outline-secondary', 'place-button');
                 placeButton.innerHTML = 'Place on map';
 
+                placeButton.addEventListener('click', (event) => {
+                  if(!placeButton.getElementsByClassName('fa-spinner')[0]){
+                    const spinner = document.createElement('i')
+                    spinner.setAttribute('class', "fa fa-spinner fa-spin")
+                    spinner.setAttribute('font-family', 'font awesome')
+  
+                    if (event.target.classList.contains('place-button')){
+                      placeButton.appendChild(spinner)
+                    }
+  
+                    let imageURL = event.target.previousElementSibling.src;
+                    let image = L.distortableImageOverlay(imageURL);
+                    map.imgGroup.addLayer(image)
+  
+                    image.addEventListener('load', () => {
+                      placeButton.removeChild(spinner)
+                    })
+                  }
+                })
+
                 image.src = `${url.replace('metadata', 'download')}/${file.name}`;
 
                 imageRow.classList.add('d-flex', 'justify-content-between', 'align-items-center', 'mb-4', 'pe-5');
