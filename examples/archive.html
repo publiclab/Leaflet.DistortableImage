@@ -67,7 +67,7 @@
   </body>
 
   <script>
-    let map = L.map('map').setView([51.505, -0.09], 13);
+    let map;
     let welcomeModal = document.getElementById('welcomeModal');
     let sidebar = document.getElementById('offcanvasRight');
     let form = document.getElementById('form');
@@ -75,6 +75,7 @@
     let responseText = document.getElementById('response');
     let imageContainer = document.getElementById('imgContainer');
     let imageGroup = L.distortableCollection().addTo(map)
+    let placedImagesArray=[];
 
     const saveButton = document.createElement('button');
     saveButton.innerHTML = '<i class="fa fa-floppy-o" aria-hidden="true"></i>';
@@ -111,20 +112,17 @@
                 let imageRow = document.createElement('div');
                 let image = new Image(150, 150);
                 let placeButton = document.createElement('a');
-                let imageArray=[];
                 placeButton.classList.add('btn', 'btn-sm', 'btn-outline-secondary', 'place-button');
                 placeButton.innerHTML = 'Place on map';
-                let imageGroup = L.distortableCollection().addTo(map)
+                let imageGroup = L.distortableCollection()
                 image.src = `${url.replace('metadata', 'download')}/${file.name}`;
                 imageRow.classList.add('d-flex', 'justify-content-between', 'align-items-center', 'mb-4', 'pe-5');
                 imageRow.append(image, placeButton);
-                imageArray.push[image]
+  
                 imageContainer.appendChild(imageRow);
                 imageCount++;
                 
-                for(let i=0; i<imageArray.length;i++){
-                  imageGroup.addLayer(image[i])
-                }
+               
               }
             });
             responseText.innerHTML = imageCount ? `${imageCount} image(s) fetched successfully.` : 'No images found in the link provided...'
@@ -151,6 +149,8 @@
         let imageURL = event.target.previousElementSibling.src;
         let image = L.distortableImageOverlay(imageURL);
         map.imgGroup.addLayer(image);
+        placedImagesArray.push[image]
+        imageGroup.addLayer(image[i])
       }
     });
   </script>
