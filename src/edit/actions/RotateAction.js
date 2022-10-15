@@ -1,5 +1,5 @@
 L.RotateAction = L.EditAction.extend({
-  initialize: function(map, overlay, options) {
+  initialize(map, overlay, options) {
     options = options || {};
     options.toolbarIcon = {
       svg: true,
@@ -12,8 +12,8 @@ L.RotateAction = L.EditAction.extend({
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
-  addHooks: function() {
-    var edit = this._overlay.editing;
+  addHooks() {
+    const edit = this._overlay.editing;
     edit._rotateMode();
   },
 });
