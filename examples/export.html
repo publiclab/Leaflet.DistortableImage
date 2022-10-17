@@ -25,24 +25,34 @@
   
   <!---------------drag and drop feature--------
 ---------------------------------->
-  <div class="drag_n_drop">
-    <div class="container">
-      <input type="file" multiple="true" id="file_upload" />
-   </div>
-   <br>
-   <button class="upload_btn" onclick="upload_files()">Upload</button>
-  </div>
+  <form >
+    <div class="drag_n_drop">
+      <div class="container">
+        <input type="file" multiple="true" id="file_upload" />
+     </div>
+     <br>
+     <button class="upload_btn" onclick="upload_files()">Upload</button>
+    </div>
+  </form>
 <!-- html for this feature ends here-->
 
 
   <script>
 
-     /*--drageand drop feature javascript-------
+     /*--drag and drop feature javascript-------
     -------------------------------------------*/
 
     /*get file by id*/
     const upload_files = () => {
       let files = document.getElementById('file_upload').files;
+      
+      //save file to local storage
+      const reader = new FileReader();
+      reader.addEventListener("load", () => {
+        windows.localStorage.setItem("recent-image", reader.result)
+
+      })
+      reader.readAsDataURL(files[0])
 
       /*make sure atleast one file is selected*/
       if(files.length==0){
@@ -68,7 +78,7 @@
       map.addGoogleMutant();
 
       map.whenReady(function() {
-        img = L.distortableImageOverlay('example.jpg', {
+        img = L.distortableImageOverlay(localStorage.getItem("recent-image"), {
           corners: [
             L.latLng(51.52, -0.14),
             L.latLng(51.52,-0.10),
@@ -79,6 +89,7 @@
         });
 
         // create a second image
+        /*
         img2 = L.distortableImageOverlay('example.jpg', {
           corners: [
             L.latLng(51.51, -0.20),
@@ -88,7 +99,7 @@
           ],
           mode: 'freeRotate',
           suppressToolbar: true,
-        });
+        });*/
 
         let json = [{"nodes":[
                 {"lat":"41.8200378187","lon":"-71.4034409085"},
