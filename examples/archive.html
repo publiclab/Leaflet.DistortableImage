@@ -154,12 +154,5 @@
       new bootstrap.Offcanvas(sidebar).show();
     });
 
-    document.addEventListener("click", (event) => {
-      if (event.target.classList.contains('place-button')) {
-        let imageURL = event.target.previousElementSibling.src;
-        let image = L.distortableImageOverlay(imageURL);
-        map.imgGroup.addLayer(image);
-      }
-    });
   </script>
 </html>
