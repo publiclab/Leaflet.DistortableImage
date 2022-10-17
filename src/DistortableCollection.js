@@ -1,3 +1,4 @@
+const arr = [];
 L.DistortableCollection = L.FeatureGroup.extend({
   options: {
     editable: true,
@@ -100,7 +101,19 @@ L.DistortableCollection = L.FeatureGroup.extend({
       /* conditional prevents disabled images from flickering multi-select mode */
       if (layer.editing.enabled()) {
         L.DomUtil.toggleClass(e.target, 'collected');
+        if (arr.length) {
+          console.log('Not Empty');
+          arr.map((each) => {
+            if (each._leaflet_id === e._leaflet_id) {
+              arr.splice(1, arr.indexOf(each));
+            }
+          });
+        } else {
+          console.log('Empty');
+          arr.push(e.target);
+        }
       }
+      console.log(arr);
     }
 
     if (this.anyCollected()) { layer.deselect(); }

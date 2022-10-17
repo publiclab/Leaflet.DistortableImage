@@ -194,6 +194,7 @@ ansiHTML.reset()
   \**************************************/
 /***/ (function() {
 
+var arr = [];
 L.DistortableCollection = L.FeatureGroup.extend({
   options: {
     editable: true,
@@ -293,7 +294,21 @@ L.DistortableCollection = L.FeatureGroup.extend({
       /* conditional prevents disabled images from flickering multi-select mode */
       if (layer.editing.enabled()) {
         L.DomUtil.toggleClass(e.target, 'collected');
+
+        if (arr.length) {
+          console.log('Not Empty');
+          arr.map(function (each) {
+            if (each._leaflet_id === e._leaflet_id) {
+              arr.splice(1, arr.indexOf(each));
+            }
+          });
+        } else {
+          console.log('Empty');
+          arr.push(e.target);
+        }
       }
+
+      console.log(arr);
     }
 
     if (this.anyCollected()) {
@@ -7257,7 +7272,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "87b98ffdf33f93a8056c"; }
+/******/ 		__webpack_require__.h = function() { return "ac3285605704de34d6e5"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
