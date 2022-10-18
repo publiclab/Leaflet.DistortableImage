@@ -108,27 +108,21 @@
                 placeButton.classList.add('btn', 'btn-sm', 'btn-outline-secondary', 'place-button');
                 placeButton.innerHTML = 'Place on map ';
 
-                document.addEventListener('click', (event) => {
-                    if(event.target.classList.contains('place-button')){
-                      const targetPlaceButton = event.target;
-                      
-                    if(!targetPlaceButton.getElementsByClassName('fa-spinner')[0]){
-                      const spinner = document.createElement('i')
-                      spinner.setAttribute('class', "fa fa-spinner fa-spin")
-                      spinner.setAttribute('font-family', 'font awesome')
-    
-                      if (event.target.classList.contains('place-button')){
-                        targetPlaceButton.appendChild(spinner)
-                      }
-    
-                      let imageURL = event.target.previousElementSibling.src;
-                      let image = L.distortableImageOverlay(imageURL);
-                      map.imgGroup.addLayer(image)
-    
-                      image.addEventListener('load', () => {
-                        targetPlaceButton.removeChild(spinner)
-                      })
-                    }
+                placeButton.addEventListener('click', (event) => {
+                  if(!placeButton.getElementsByClassName('fa-spinner')[0]){
+                    const spinner = document.createElement('i')
+                    spinner.setAttribute('class', "fa fa-spinner fa-spin")
+                    spinner.setAttribute('font-family', 'font awesome')
+  
+                    placeButton.appendChild(spinner)
+  
+                    let imageURL = event.target.previousElementSibling.src;
+                    let image = L.distortableImageOverlay(imageURL);
+                    map.imgGroup.addLayer(image)
+  
+                    image.addEventListener('load', () => {
+                      placeButton.removeChild(spinner)
+                    })
                   }
                 })
 
