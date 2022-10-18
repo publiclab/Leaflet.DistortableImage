@@ -101,17 +101,28 @@ L.DistortableCollection = L.FeatureGroup.extend({
       /* conditional prevents disabled images from flickering multi-select mode */
       if (layer.editing.enabled()) {
         L.DomUtil.toggleClass(e.target, 'collected');
-        if (arr.length) {
-          console.log('Not Empty');
-          arr.map((each) => {
-            if (each._leaflet_id === e._leaflet_id) {
-              arr.splice(1, arr.indexOf(each));
-            }
-          });
+        const newArr = arr.every((each) => {
+          return each._leaflet_id !== layer._leaflet_id;
+        });
+        if (newArr) {
+          arr.push(layer);
         } else {
-          console.log('Empty');
-          arr.push(e.target);
+          arr.splice(arr.indexOf(layer), 1);
         }
+        // if (arr.length) {
+        //   console.log('Not Empty');
+        //   // arr.map((each) => {
+        //   //   if (each._leaflet_id !== e._leaflet_id) {
+        //   //     arr.push(e.target);
+        //   //   } else {
+        //   //     console.log(arr.indexOf(each));
+        //   //     // arr.splice(1, arr.indexOf(each));
+        //   //   }
+        //   // });
+        // } else {
+        //   console.log('Empty');
+        //   arr.push(e.target);
+        // }
       }
       console.log(arr);
     }
@@ -207,6 +218,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     json.images = [];
 
     this.eachLayer(function(layer) {
+      console.log(layer);
       if (this.isCollected(layer)) {
         let sections = layer._image.src.split('/');
         let filename = sections[sections.length-1];
@@ -218,7 +230,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
           {lat: zc[2].lat, lon: zc[2].lng},
         ];
         json.images.push({
-          id: this.getLayerId(layer),
+          id: layer._leaflet_id,
           src: layer._image.src,
           width: layer._image.width,
           height: layer._image.height,
@@ -229,9 +241,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
       }
     }, this);
 
-    json.images = json.images.reverse();
+    // json.images = json.images.reverse();
     json.avg_cm_per_pixel = this._getAvgCmPerPixel(json.images);
-
+    console.log(json.images);
     return json;
   },
 });

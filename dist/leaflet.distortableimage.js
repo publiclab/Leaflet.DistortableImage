@@ -294,18 +294,29 @@ L.DistortableCollection = L.FeatureGroup.extend({
       /* conditional prevents disabled images from flickering multi-select mode */
       if (layer.editing.enabled()) {
         L.DomUtil.toggleClass(e.target, 'collected');
+        var newArr = arr.every(function (each) {
+          return each._leaflet_id !== layer._leaflet_id;
+        });
 
-        if (arr.length) {
-          console.log('Not Empty');
-          arr.map(function (each) {
-            if (each._leaflet_id === e._leaflet_id) {
-              arr.splice(1, arr.indexOf(each));
-            }
-          });
+        if (newArr) {
+          arr.push(layer);
         } else {
-          console.log('Empty');
-          arr.push(e.target);
-        }
+          arr.splice(arr.indexOf(layer), 1);
+        } // if (arr.length) {
+        //   console.log('Not Empty');
+        //   // arr.map((each) => {
+        //   //   if (each._leaflet_id !== e._leaflet_id) {
+        //   //     arr.push(e.target);
+        //   //   } else {
+        //   //     console.log(arr.indexOf(each));
+        //   //     // arr.splice(1, arr.indexOf(each));
+        //   //   }
+        //   // });
+        // } else {
+        //   console.log('Empty');
+        //   arr.push(e.target);
+        // }
+
       }
 
       console.log(arr);
@@ -412,6 +423,8 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var json = {};
     json.images = [];
     this.eachLayer(function (layer) {
+      console.log(layer);
+
       if (this.isCollected(layer)) {
         var sections = layer._image.src.split('/');
 
@@ -431,7 +444,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
           lon: zc[2].lng
         }];
         json.images.push({
-          id: this.getLayerId(layer),
+          id: layer._leaflet_id,
           src: layer._image.src,
           width: layer._image.width,
           height: layer._image.height,
@@ -440,9 +453,10 @@ L.DistortableCollection = L.FeatureGroup.extend({
           cm_per_pixel: L.ImageUtil.getCmPerPixel(layer)
         });
       }
-    }, this);
-    json.images = json.images.reverse();
+    }, this); // json.images = json.images.reverse();
+
     json.avg_cm_per_pixel = this._getAvgCmPerPixel(json.images);
+    console.log(json.images);
     return json;
   }
 });
@@ -7272,7 +7286,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "ac3285605704de34d6e5"; }
+/******/ 		__webpack_require__.h = function() { return "c611f1590ac9d7a633b2"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
