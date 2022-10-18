@@ -73,7 +73,7 @@
     let input = document.getElementById('input');
     let responseText = document.getElementById('response');
     let imageContainer = document.getElementById('imgContainer');
-    let imageGroup = L.distortableCollection().addTo(map)
+    let placedImagesCollection = L.distortableCollection()
     let placedImagesArray=[];
 
     const saveButton = document.createElement('button');
@@ -121,7 +121,6 @@
 
                 placeButton.classList.add('btn', 'btn-sm', 'btn-outline-secondary', 'place-button');
                 placeButton.innerHTML = 'Place on map';
-                let imageGroup = L.distortableCollection()
                 image.src = `${url.replace('metadata', 'download')}/${file.name}`;
                 imageRow.classList.add('d-flex', 'justify-content-between', 'align-items-center', 'mb-4', 'pe-5');
                 imageRow.append(image, placeButton);
@@ -145,7 +144,9 @@
         });
     });
 
-    saveButton.addEventListener('click',generateExportJson(imageGroup))
+    saveButton.addEventListener('click', function() {
+      alert(placedImagesCollection.generateExportJson()); // we'll do something better than alert in the next PR
+    }
 
     welcomeModal.addEventListener('hidden.bs.modal', (event) => {
       new bootstrap.Offcanvas(sidebar).show();
@@ -157,7 +158,7 @@
         let image = L.distortableImageOverlay(imageURL);
         map.imgGroup.addLayer(image);
         placedImagesArray.push[image]
-        imageGroup.addLayer(image[i])
+        imageGroup.addLayer(image)
       }
     });
   </script>
