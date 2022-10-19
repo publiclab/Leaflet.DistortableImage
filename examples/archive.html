@@ -7,6 +7,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge"/>
     <link rel="stylesheet" href="../node_modules/leaflet/dist/leaflet.css">
     <link rel="stylesheet" href="../dist/vendor.css">
+    <link rel="stylesheet" href="archive.css">
     <link rel="stylesheet" href="../dist/leaflet.distortableimage.css" media="screen" title="no title">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -16,10 +17,42 @@
     <script src="../dist/leaflet.distortableimage.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="./js/archiveMap.js"></script>
+    <script src="./js/archiveSidebar.js"></script>
   </head>
 
   <body style="margin:0;">
-    
+    <div class="drop_zone">
+
+      <div class="tab tab2">
+        <input class="upload" draggable="true"  type="file" id="file-input" accept="image/png, image/jpeg" onchange="preview()" multiple="true">
+          <label for="file-input">
+              <i class="fas fa-upload"></i> &nbsp; Choose A Photo
+          </label>
+          <p id="num-of-files">No Files Chosen</p>
+          <div id="images"></div>
+      </div>
+
+        <div id="dropZone" class="tab tab1">
+          <form id="test_form">
+            <input type="file" class="ldi" id="inputimage" accept="image/*" />
+          </form>
+          <div id="map" style="width:100%; height:100%; position:absolute; top:0;"></div>
+          <div class="text">
+            <h1 class="">DRAG AND DROP YOUR FILES <br> HERE</h1> 
+          </div>
+        </div>
+  
+    </div>
+
+
+
+
+
+
+    <!--
+
+  
     <div class="modal fade" id="welcomeModal" aria-labelledby="exampleModalLabel" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content bg-light">
@@ -61,10 +94,30 @@
         <p id="response" class="mb-5">No link = No images...</p>
         <div id="imgContainer"></div>
       </div>
-    </div>
+    </div>  -->
   </body>
 
   <script>
+     /*--drag and drop feature for local storage-*/
+     let map;
+    (function() {
+      map = L.map('map').setView([51.505, -0.09], 13);
+      map.addGoogleMutant();
+
+      map.whenReady(function() {
+        img = L.distortableImageOverlay(localStorage.getItem("recent-image"), {
+          selected: true,
+          fullResolutionSrc: 'large.jpg',
+        }).addTo(map);
+      });
+    })();
+      /*
+
+
+
+
+
+    /*
     let map;
     let welcomeModal = document.getElementById('welcomeModal');
     let sidebar = document.getElementById('offcanvasRight');
@@ -95,6 +148,7 @@
     form.addEventListener('submit', (event) => {
       event.preventDefault();
       const url = input.value.replace('details', 'metadata');
+      let fetchedFrom
       axios.get(url)
         .then((response) => {
           if (response.data.files && response.data.files.length != 0) {
@@ -104,9 +158,33 @@
                 let imageRow = document.createElement('div');
                 let image = new Image(150, 150);
                 let placeButton = document.createElement('a');
+                fetchedFrom = document.createElement('p');
+                fetchedFromUrl = document.createElement('a');
+                fetchedFromUrl.setAttribute('href', input.value);
+                fetchedFromUrl.setAttribute('target', '_blank');
+                fetchedFromUrl.innerHTML = 'this Internet Archive Collection';
+                fetchedFrom.appendChild(fetchedFromUrl)
 
                 placeButton.classList.add('btn', 'btn-sm', 'btn-outline-secondary', 'place-button');
-                placeButton.innerHTML = 'Place on map';
+                placeButton.innerHTML = 'Place on map ';
+
+                placeButton.addEventListener('click', (event) => {
+                  if(!placeButton.getElementsByClassName('fa-spinner')[0]){
+                    const spinner = document.createElement('i')
+                    spinner.setAttribute('class', "fa fa-spinner fa-spin")
+                    spinner.setAttribute('font-family', 'font awesome')
+  
+                    placeButton.appendChild(spinner)
+  
+                    let imageURL = event.target.previousElementSibling.src;
+                    let image = L.distortableImageOverlay(imageURL);
+                    map.imgGroup.addLayer(image)
+  
+                    image.addEventListener('load', () => {
+                      placeButton.removeChild(spinner)
+                    })
+                  }
+                })
 
                 image.src = `${url.replace('metadata', 'download')}/${file.name}`;
 
@@ -117,7 +195,7 @@
                 imageCount++;
               }
             });
-            responseText.innerHTML = imageCount ? `${imageCount} image(s) fetched successfully.` : 'No images found in the link provided...'
+            responseText.innerHTML = imageCount ? `${imageCount} image(s) fetched successfully from ${fetchedFrom.innerHTML}.` : 'No images found in the link provided...'
           } else {
             responseText.innerHTML = 'No images found in the link provided...'
           }
@@ -133,13 +211,6 @@
     welcomeModal.addEventListener('hidden.bs.modal', (event) => {
       new bootstrap.Offcanvas(sidebar).show();
     });
-
-    document.addEventListener("click", (event) => {
-      if (event.target.classList.contains('place-button')) {
-        let imageURL = event.target.previousElementSibling.src;
-        let image = L.distortableImageOverlay(imageURL);
-        map.imgGroup.addLayer(image);
-      }
-    });
+ */
   </script>
 </html>
