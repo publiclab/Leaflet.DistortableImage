@@ -20,13 +20,32 @@
 
   <body style="margin:0;">
     
+      <div class="modal fade" id="warningModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content bg-light">
+          <div class="modal-header d-block">
+             <div class="d-flex justify-content-between align-items-center">
+             <h2 class="modal-title">Notification</h2>
+             <button type="button" class="btn-close" id="warningModalCloseBtn" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+          </div>
+          <div class="modal-body">
+            <p>You have not provided a link to images to be placed on the map.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="warningModalOpenModal" data-dismiss="modal">Input link</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="modal fade" id="welcomeModal" aria-labelledby="exampleModalLabel" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content bg-light">
           <div class="modal-header d-block">
             <div class="d-flex justify-content-between align-items-center">
               <h2 class="modal-title">Welcome to MapKnitter Lite</h2>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <button type="button" class="btn-close" id="closeBtn" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <p> <small>(while MapKnitter is offline)</small> </p>
           </div>
@@ -68,6 +87,10 @@
 
   <script>
     let map;
+     let isSidebarDisplayed = false;
+    let showWarningModal = false;
+    let showSidebar = false;
+    let validateUrl = false;
     let welcomeModal = document.getElementById('welcomeModal');
     let sidebar = document.getElementById('offcanvasRight');
     let form = document.getElementById('form');
@@ -76,6 +99,11 @@
     let imageContainer = document.getElementById('imgContainer');
     let modalToggle = document.getElementById('modalToggle')
     let mapToggle = document.getElementById('mapToggle')
+    let mapCanvas = document.getElementById('map'); 
+    let welcomeModalCloseBtn = document.getElementById('closeBtn');
+    let warningModal = document.getElementById('warningModal');
+    let warningModalCloseBtn = document.getElementById('warningModalCloseBtn');
+    let warningModalOpenModal = document.getElementById('warningModalOpenModal')
 
     const setupMap = () => {
       map = L.map('map').setView([51.505, -0.09], 13);
@@ -95,10 +123,20 @@
 
     setupMap();
     setupCollection();
+
+    mapCanvas.addEventListener('click', (event) => {
+      if(isSidebarDisplayed) {
+       bootstrap.Offcanvas.getInstance(sidebar).hide();
+      }
+    });
     
     form.addEventListener('submit', (event) => {
       event.preventDefault();
       const url = input.value.replace('details', 'metadata');
+      if(url){
+        validateUrl = true;
+        showWarningModal = false;
+      }
       let fetchedFrom
       axios.get(url)
         .then((response) => {
@@ -140,14 +178,46 @@
           bootstrap.Modal.getInstance(welcomeModal).hide();
         });
     });
+ 
+    welcomeModalCloseBtn.addEventListener('click', (event) => {
+      showWarningModal = true; 
+    });
+
+    welcomeModal.addEventListener('hide.bs.modal', (event) => {
+      showSidebar = true;
+    });
 
     welcomeModal.addEventListener('hidden.bs.modal', (event) => {
-      new bootstrap.Offcanvas(sidebar).show();
+      if(showWarningModal) {
+        showWarningModal = false;
+        return new bootstrap.Modal(warningModal).show();
+      } 
+
+      if(showSidebar) {
+        showSidebar = false;
+        isSidebarDisplayed = true;
+        return new bootstrap.Offcanvas(sidebar).show();
+      }
+    });
+
+    warningModalOpenModal.addEventListener('click', (event)=>{
+        bootstrap.Modal.getInstance(warningModal).hide();
+        bootstrap.Modal.getInstance(welcomeModal).show();
+    })
+   
+    warningModalCloseBtn.addEventListener('click', (event) => {
+      bootstrap.Modal.getInstance(warningModal).hide();
     });
     
     mapToggle.addEventListener('click', (event)=>{
-           new bootstrap.Offcanvas(sidebar).show();
+      if(validateUrl){
+      return  new bootstrap.Offcanvas(sidebar).show();
+      }else{
+        showWarningModal = true
+        return new bootstrap.Modal(warningModal).show();
+      }
     })
+
     modalToggle.addEventListener('click', (event)=>{
             if(sidebar.classList.contains('show')){
               sidebar.classList.remove('show')
