@@ -1,0 +1,86 @@
+.drop_zone {
+    margin: 1rem auto;
+    display: flex;
+   
+    height: 160px;
+    border-radius: 15px;
+  }
+  
+  
+  .overlay {
+        
+        content: '';
+        top: 20%;
+        left:20%;
+        right:20%;
+        bottom: 0;
+        background: rgb(248, 246, 246);
+        opacity: 0.5;
+        
+    
+  }
+
+.flex-container{
+  display: flex;
+  flex-direction: row;
+}
+
+
+
+  /*css for sidabar*/
+.tab2{
+  background-color: #ffffff;
+  position: relative;
+  width: 50%;
+  padding: 10px 10px;
+  border-radius: 7px;
+  box-shadow: 0 20px 35px rgba(0,0,0,0.05);
+}
+  .tab2{
+    height: 60%;
+    flex-basis: 20%;
+    position: relative;
+    z-index: 1000;
+    background-color: #ffffff;
+    
+}
+.upload{
+    display: none;
+}
+label{
+    display: block;
+    position: relative;
+    background-color: #025bee;
+    color: #ffffff;
+    font-size: 18px;
+    text-align: center;
+    width: 300px;
+    padding: 18px 0;
+    margin: auto;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.tab2 p{
+    text-align: center;
+    margin: 20px 0 30px 0;
+}
+#images{
+    width: 90%;
+    position: relative;
+    margin: auto;
+    display: flex;
+    justify-content: space-evenly;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+figure{
+    width: 45%;
+}
+img{
+    width: 100%;
+}
+figcaption{
+    text-align: center;
+    font-size: 2.4vmin;
+    margin-top: 0.5vmin;
+}
