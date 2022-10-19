@@ -164,7 +164,7 @@
     });
 
     saveButton.addEventListener('click', function() {
-      alert(placedImagesCollection.generateExportJson()); // we'll do something better than alert in the next PR
+      alert(JSON.stringify(placedImagesCollection.generateExportJson())); // we'll do something better than alert in the next PR
     }
 
     welcomeModal.addEventListener('hidden.bs.modal', (event) => {
