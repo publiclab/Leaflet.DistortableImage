@@ -133,9 +133,11 @@
                     let imageURL = event.target.previousElementSibling.src;
                     let image = L.distortableImageOverlay(imageURL);
                     map.imgGroup.addLayer(image)
-  
+                    placedImagesArray.push(image)
+                    placedImagesCollection.addLayer(image)
                     image.addEventListener('load', () => {
                       placeButton.removeChild(spinner)
+                     
                     })
                   }
                 })
