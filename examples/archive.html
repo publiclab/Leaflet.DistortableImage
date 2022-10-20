@@ -134,7 +134,10 @@
                     let image = L.distortableImageOverlay(imageURL);
                     map.imgGroup.addLayer(image)
                     placedImagesArray.push(image)
-                    placedImagesCollection.addLayer(image)
+                    for(let i=0; i<placedImagesArray.length;i++){
+                      placedImagesCollection.addLayer(placedImagesArray[i])
+                    }
+                   
                     image.addEventListener('load', () => {
                       placeButton.removeChild(spinner)
                      
@@ -166,7 +169,7 @@
     });
 
     saveButton.addEventListener('click', function() {
-      alert(JSON.stringify(placedImagesCollection.generateExportJson())); // we'll do something better than alert in the next PR
+      alert(JSON.stringify(placedImagesCollection.generateExportJson(isCollected))); // we'll do something better than alert in the next PR
     });
 
     welcomeModal.addEventListener('hidden.bs.modal', (event) => {
