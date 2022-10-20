@@ -16,7 +16,7 @@ L.LockHandle = L.EditHandle.extend({
   },
 
   _bindListeners() {
-    var icon = this.getElement();
+    const icon = this.getElement();
 
     L.EditHandle.prototype._bindListeners.call(this);
 
@@ -29,7 +29,7 @@ L.LockHandle = L.EditHandle.extend({
   },
 
   _unbindListeners() {
-    var icon = this.getElement();
+    const icon = this.getElement();
 
     L.EditHandle.prototype._bindListeners.call(this);
 
@@ -50,15 +50,15 @@ L.LockHandle = L.EditHandle.extend({
   },
 
   _tooltipOn(e) {
-    var eP = this._handled.parentGroup;
-    var edit = eP ? eP.editing : this._handled.editing;
+    const eP = this._handled.parentGroup;
+    const edit = eP ? eP.editing : this._handled.editing;
 
     if (e.shiftKey) { return; }
     if (!this._handled.isSelected() && (eP && !eP.isCollected(this._handled))) {
       return;
     }
 
-    var handlesArr = edit._lockHandles;
+    const handlesArr = edit._lockHandles;
 
     this._timer = setTimeout(L.bind(function() {
       if (this._timeout) { clearTimeout(this._timeout); }
@@ -76,15 +76,15 @@ L.LockHandle = L.EditHandle.extend({
   },
 
   _tooltipOff(e) {
-    var eP = this._handled.parentGroup;
-    var edit = eP ? eP.editing : this._handled.editing;
+    const eP = this._handled.parentGroup;
+    const edit = eP ? eP.editing : this._handled.editing;
 
     if (e.shiftKey) { return; }
     if (!this._handled.isSelected() && (eP && !eP.isCollected(this._handled))) {
       return;
     }
 
-    var handlesArr = edit._lockHandles;
+    const handlesArr = edit._lockHandles;
 
     if (e.currentTarget === document) {
       handlesArr.eachLayer(function(handle) {
