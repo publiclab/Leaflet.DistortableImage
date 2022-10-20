@@ -40,7 +40,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       this._initImageDimensions();
 
       if (this.options.rotation) {
-        const units = this.options.rotation.deg ? 'deg' : 'rad';
+        const units = this.options.rotation.deg >=  0 ? 'deg' : 'rad';
         this.setAngle(this.options.rotation[units], units);
       } else {
         this.rotation = {deg: 0, rad: 0};
