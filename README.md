@@ -165,7 +165,7 @@ Values available to pass to `mode` are:
 * **freeRotate**: Combines the rotate and scale modes into one.
 * **lock**: Locks the image in place. Disables any user gestures, toolbar actions, or hotkeys that are not associated with mode. Exception: `L.ExportAction` will still be enabled.
 
-In the below example, the image will be initialiazed with "freeRotate" handles:
+In the below example, the image will be initialized with "freeRotate" handles:
 
 ```js
 img = L.distortableImageOverlay('example.jpg', {
