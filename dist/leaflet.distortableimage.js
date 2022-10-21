@@ -669,7 +669,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return this;
   },
   _cornerExceedsMapLats: function _cornerExceedsMapLats(zoom, corner, map) {
-    if (map.options.crs == L.CRS.Simple) {
+    if (map.options.crs.Simple == L.CRS.Simple) {
       return false;
     } else {
       var exceedsTop;
@@ -3898,9 +3898,9 @@ L.Map.DoubleClickZoom.include({
       } else {
         // manually fire doubleclick event only for touch screens that don't natively fire it
         if (L.Browser.touch && oe && oe.sourceCapabilities.firesTouchEvents) {
-          // in `DoubleClickLabels.js`, we just do map.fire('dblclick') bc `_onDoublClick` doesn't use the
-          // passed "e" (for now). To generate a 'real' DOM event that will have all of its corresponding core
-          // properties (originalEvent, latlng, etc.), use Leaflet's `#map._fireDOMEvent` (Leaflet 1.5.1 source)
+          /*  in `DoubleClickLabels.js`, we just do map.fire('dblclick') bc `_onDoublClick` doesn't use the
+          passed "e" (for now). To generate a 'real' DOM event that will have all of its corresponding core
+          properties (originalEvent, latlng, etc.), use Leaflet's `#map._fireDOMEvent` (Leaflet 1.5.1 source) */
           map._fireDOMEvent(oe, 'dblclick', [map]);
         }
       }
@@ -7257,7 +7257,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "87b98ffdf33f93a8056c"; }
+/******/ 		__webpack_require__.h = function() { return "37b364fc20a6d49cfee1"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
