@@ -34,7 +34,7 @@ Compatible with Leaflet 1.0.0 and greater
 
  ### MapKnitter Lite 
 
-Check out an early prototype of the Mapknitter Lite project [here](https://publiclab.github.io/Leaflet.DistortableImage/examples/archive)
+Check out an early prototype of the [Mapknitter Lite project](https://publiclab.github.io/Leaflet.DistortableImage/examples/archive)
 
 ## Demo
 
