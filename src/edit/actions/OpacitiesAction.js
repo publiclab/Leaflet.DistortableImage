@@ -9,7 +9,7 @@ L.OpacitiesAction = L.EditAction.extend({
       use = 'opacity_empty';
       tooltip = overlay.options.translation.makeImageOpaque;
     } else {
-      use = 'opacity';
+      use = 'opacities';
       tooltip = overlay.options.translation.makeImageTransparent;
     }
 
@@ -30,7 +30,7 @@ L.OpacitiesAction = L.EditAction.extend({
     const edit = this._overlay.editing;
     const link = this._link;
 
-    L.IconUtil.toggleXlink(link, 'opacity', 'opacity_empty');
+    L.IconUtil.toggleXlink(link, 'opacities', 'opacity_empty');
     L.IconUtil.toggleTitle(link, 'Make Image Transparent', 'Make Image Opaque');
     edit._toggleOpacity();
   },
