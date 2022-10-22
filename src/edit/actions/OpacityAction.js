@@ -5,8 +5,6 @@ L.OpacityAction = L.EditAction.extend({
     let use;
     let tooltip;
 
-    use = 'opacity';
-    /*
     if (edit._transparent) {
       use = 'opacity_empty';
       tooltip = overlay.options.translation.makeImageOpaque;
@@ -14,7 +12,6 @@ L.OpacityAction = L.EditAction.extend({
       use = 'opacity';
       tooltip = overlay.options.translation.makeImageTransparent;
     }
-    */
 
     options = options || {};
     options.toolbarIcon = {
@@ -24,7 +21,7 @@ L.OpacityAction = L.EditAction.extend({
       className: mode === 'lock' ? 'disabled' : '',
     };
 
-    //L.DistortableImage.action_map.o = mode === 'lock' ? '' : '_toggleOpacity';
+    L.DistortableImage.action_map.o = mode === 'lock' ? '' : '_toggleOpacity';
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
@@ -35,6 +32,6 @@ L.OpacityAction = L.EditAction.extend({
 
     L.IconUtil.toggleXlink(link, 'opacity', 'opacity_empty');
     L.IconUtil.toggleTitle(link, 'Make Image Transparent', 'Make Image Opaque');
-    //edit._toggleOpacity();
+    edit._toggleOpacity();
   },
 });
