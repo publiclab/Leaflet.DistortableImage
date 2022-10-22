@@ -1,4 +1,4 @@
-node_modules/*
+node_modules
 coverage
 todo.txt
 *.swp
@@ -10,5 +10,4 @@ dist/*
 !dist/leaflet.distortableimage.js
 !dist/vendor.js
 !dist/vendor.css
-!node_modules/leaflet/dist/leaflet.css
-!node_modules/leaflet/dist/leaflet.js
+!dist/leaflet.distortableimage.js.map
