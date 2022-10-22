@@ -3,7 +3,7 @@ L.DistortableImage = L.DistortableImage || {};
 // holds the keybindings & toolbar API for an individual image instance
 L.DistortableImage.Edit = L.Handler.extend({
   options: {
-    opacity: 0.7,
+    opacity: 0.5,
     outline: '1px solid red',
     keymap: L.distortableImage.action_map,
   },

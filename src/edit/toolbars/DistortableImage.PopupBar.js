@@ -51,6 +51,7 @@ L.DistortableImageOverlay.addInitHook(function() {
     L.FreeRotateAction,
     L.LockAction,
     L.OpacityAction,
+    L.OpacitiesAction,
     L.BorderAction,
     L.ExportAction,
     L.DeleteAction,
