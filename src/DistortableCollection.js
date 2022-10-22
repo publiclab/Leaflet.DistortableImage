@@ -218,7 +218,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     json.images = json.images.reverse();
     json.avg_cm_per_pixel = this._getAvgCmPerPixel(json.images);
-
+    json.images.map(each=> localStorage.setItem('locations', JSON.stringify(each.nodes)))
     return json;
   },
 });
