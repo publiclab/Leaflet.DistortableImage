@@ -8,3 +8,7 @@ package-lock.json
 dist/*
 !dist/leaflet.distortableimage.css
 !dist/leaflet.distortableimage.js
+!dist/vendor.js
+!dist/vendor.css
+!node_modules/leaflet/dist/leaflet.css
+!node_modules/leaflet/dist/leaflet.js
