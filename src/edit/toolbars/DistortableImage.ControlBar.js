@@ -25,7 +25,7 @@ L.DistortableCollection.addInitHook(function() {
     unlock: L.UnlockAction,
   };
 
-  var a = this.options.actions ? this.options.actions : this.ACTIONS;
+  const a = this.options.actions ? this.options.actions : this.ACTIONS;
 
   this.editing = L.distortableCollection.edit(this, {actions: a});
 });
