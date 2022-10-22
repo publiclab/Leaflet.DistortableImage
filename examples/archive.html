@@ -95,7 +95,9 @@
     form.addEventListener('submit', (event) => {
       event.preventDefault();
       const url = input.value.replace('details', 'metadata');
-      let fetchedFrom
+      let fetchedFrom;
+      
+      //-------SEGUN BEGIN WORK FROM HERE
       axios.get(url)
         .then((response) => {
           if (response.data.files && response.data.files.length != 0) {
