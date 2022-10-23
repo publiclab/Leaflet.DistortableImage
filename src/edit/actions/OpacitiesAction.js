@@ -145,10 +145,8 @@ const Cancel = L.EditAction.extend({
     console.warn(this);
     console.warn(this._overlay);
     console.warn(this.overlay);
-    console.warn(Cancel.overlay);
-    console.warn(this.myAction);
 
-    this._overlay.disable();
     this.disable();
+    this._disableAction();
   },
 });
