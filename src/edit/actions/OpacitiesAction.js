@@ -25,18 +25,19 @@ L.OpacitiesAction = L.EditAction.extend({
       actions: [World, Eiffel, Cancel],
     });
 
-    L.DistortableImage.action_map.o = mode === 'lock' ? '' : '_toggleOpacity';
+    // L.DistortableImage.action_map.o = mode === 'lock' ? '' : '_toggleOpacity';
 
+    L.setOptions(this, options);
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
   addHooks() {
-    const edit = this._overlay.editing;
+    // const edit = this._overlay.editing;
     const link = this._link;
 
     L.IconUtil.toggleXlink(link, 'opacities', 'opacity_empty');
     L.IconUtil.toggleTitle(link, 'Make Image Transparent', 'Make Image Opaque');
-    edit._toggleOpacity();
+    // edit._toggleOpacity();
   },
 });
 
