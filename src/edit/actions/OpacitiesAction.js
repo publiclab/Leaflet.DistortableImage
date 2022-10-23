@@ -35,16 +35,16 @@ L.OpacitiesAction = L.EditAction.extend({
     console.log(this.subToolBar);
     console.log(this.subToolBar._ul.hidden);
     console.log(this._overlay.editing);
+    console.log(this._overlay.editing.getModes());
 
-    if (this_overlay.isMode('opacities')) {
+    if (this._overlay.isMode('opacities')) {
       this.subToolBar.disable();
       this.subToolBar.hide();
-      edit.setMode('');
     } else {
       this.subToolBar.enabled();
       this.subToolBar.show();
-      edit._opacitiesMode();
     };
+    edit._toggleOpacitiesMode();
 
     // const edit = this._overlay.editing;
     // const link = this._link;

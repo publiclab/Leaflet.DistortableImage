@@ -344,6 +344,14 @@ L.DistortableImage.Edit = L.Handler.extend({
     this.setMode('opacities');
   },
 
+  _toggleOpacitiesMode() {
+    if (this.isMode('opacities')) {
+      this.setMode('');
+    } else {
+      this._opacitiesMode();
+    };
+  },
+
   _toggleLockMode() {
     if (this.isMode('lock')) { this._unlock(); }
     else { this._lock(); }
