@@ -58,7 +58,7 @@ var OpacitiesBar0 = OpacitiesSubAction.extend({
   options: {
     toolbarIcon: {
       html: 0,
-      tooltip: 'Opacity 20%',
+      tooltip: 'Opacity 0%',
       className: 'leaflet-toolbar-icon-vertical',
       style: 'background-color:#000; opacity:0.1',
     },
