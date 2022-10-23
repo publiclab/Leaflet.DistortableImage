@@ -146,6 +146,7 @@ const Cancel = L.EditAction.extend({
     console.warn(this._overlay);
 
     this.disable();
+    this._overlay.disable();
     this._overlay._disableAction();
   },
 });
