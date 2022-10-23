@@ -222,8 +222,8 @@ a.leaflet-toolbar-icon[title='Loading...'] {
 }
 
 .leaflet-toolbar-icon-vertical {
-  background-color: rgba(255, 255, 255, 1);
-  border: inset 0.5px lightgray;
+  background-color: rgba(255, 255, 255, 1) !important;
+  border: inset 0.5px lightgray !important;
   float: none !important;
   margin: auto !important;
 }

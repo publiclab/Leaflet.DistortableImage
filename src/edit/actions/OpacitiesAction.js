@@ -22,7 +22,7 @@ L.OpacitiesAction = L.EditAction.extend({
     };
 
     options.subToolbar = new L.Toolbar2({
-      actions: [OpacitiesBar100, OpacitiesBar80, OpacitiesBar60, OpacitiesBar40, OpacitiesBar20, OpacitiesBar1, Cancel],
+      actions: [OpacitiesBar100, OpacitiesBar80, OpacitiesBar60, OpacitiesBar40, OpacitiesBar20, OpacitiesBar0, Cancel],
     });
 
     // L.DistortableImage.action_map.o = mode === 'lock' ? '' : '_toggleOpacity';
@@ -54,14 +54,13 @@ var OpacitiesSubAction = L.Toolbar2.Action.extend({
   },
 });
 
-var OpacitiesBar1 = OpacitiesSubAction.extend({
-  opacity: 1,
+var OpacitiesBar0 = OpacitiesSubAction.extend({
   options: {
     toolbarIcon: {
-      html: () => this.opacity,
-      tooltip: () => 'Opacity ' + this.opacity + '%',
+      html: 0,
+      tooltip: 'Opacity 20%',
       className: 'leaflet-toolbar-icon-vertical',
-      style: () => 'background-color:#000; opacity:' + this.opacity/100,
+      style: 'background-color:#000; opacity:0.1',
     },
   },
   addHooks: () => {
@@ -71,13 +70,12 @@ var OpacitiesBar1 = OpacitiesSubAction.extend({
 });
 
 var OpacitiesBar20 = OpacitiesSubAction.extend({
-  opacity: 20,
   options: {
     toolbarIcon: {
-      html: () => this.opacity,
-      tooltip: () => 'Opacity ' + this.opacity + '%',
+      html: 20,
+      tooltip: 'Opacity 20%',
       className: 'leaflet-toolbar-icon-vertical',
-      style: () => 'background-color:#000; opacity:' + this.opacity/100,
+      style: 'background-color:#000; opacity:20',
     },
   },
   addHooks: () => {
@@ -87,13 +85,12 @@ var OpacitiesBar20 = OpacitiesSubAction.extend({
 });
 
 var OpacitiesBar40 = OpacitiesSubAction.extend({
-  opacity: 40,
   options: {
     toolbarIcon: {
-      html: () => this.opacity,
-      tooltip: () => 'Opacity ' + this.opacity + '%',
+      html: 40,
+      tooltip: 'Opacity 40%',
       className: 'leaflet-toolbar-icon-vertical',
-      style: () => 'background-color:#000; opacity:' + this.opacity/100,
+      style: 'background-color:#000; opacity:0.4',
     },
   },
   addHooks: () => {
@@ -103,13 +100,12 @@ var OpacitiesBar40 = OpacitiesSubAction.extend({
 });
 
 var OpacitiesBar60 = OpacitiesSubAction.extend({
-  opacity: 60,
   options: {
     toolbarIcon: {
-      html: () => this.opacity,
-      tooltip: () => 'Opacity ' + this.opacity + '%',
+      html: 60,
+      tooltip: 'Opacity 60%',
       className: 'leaflet-toolbar-icon-vertical',
-      style: () => 'background-color:#000; opacity:' + this.opacity/100,
+      style: 'background-color:#000; opacity:0.6',
     },
   },
   addHooks: () => {
@@ -119,13 +115,12 @@ var OpacitiesBar60 = OpacitiesSubAction.extend({
 });
 
 var OpacitiesBar80 = OpacitiesSubAction.extend({
-  opacity: 80,
   options: {
     toolbarIcon: {
-      html: () => this.opacity,
-      tooltip: () => 'Opacity ' + this.opacity + '%',
+      html: 80,
+      tooltip: 'Opacity 80%',
       className: 'leaflet-toolbar-icon-vertical',
-      style: () => 'background-color:#000; opacity:' + this.opacity/100,
+      style: 'background-color:#000; opacity:0.8',
     },
   },
   addHooks: () => {
@@ -135,13 +130,12 @@ var OpacitiesBar80 = OpacitiesSubAction.extend({
 });
 
 var OpacitiesBar100 = OpacitiesSubAction.extend({
-  opacity: 100,
   options: {
     toolbarIcon: {
-      html: () => this.opacity,
-      tooltip: () => 'Opacity ' + this.opacity + '%',
+      html: 100,
+      tooltip: 'Opacity 100%',
       className: 'leaflet-toolbar-icon-vertical',
-      style: () => 'background-color:#000; opacity:' + this.opacity/100,
+      style: 'background-color:#000; opacity:1',
     },
   },
   addHooks: () => {
