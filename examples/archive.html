@@ -95,9 +95,6 @@
     form.addEventListener('submit', (event) => {
       event.preventDefault();
       const url = input.value.replace('details', 'metadata');
-      let splitUrl = url.split('/');
-      let detectKey = splitUrl[splitUrl.length - 2];
-      console.log("detected key", detectKey);
       let fetchedFrom
       axios.get(url)
         .then((response) => {
