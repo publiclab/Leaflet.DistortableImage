@@ -33,22 +33,22 @@ L.OpacitiesAction = L.EditAction.extend({
 
   addHooks() {
     // const edit = this._overlay.editing;
-    const link = this._link;
+    // const link = this._link;
 
-    L.IconUtil.toggleXlink(link, 'opacities', 'opacity_empty');
-    L.IconUtil.toggleTitle(link, 'Make Image Transparent', 'Make Image Opaque');
+    // L.IconUtil.toggleXlink(link, 'opacities', 'opacity_empty');
+    // L.IconUtil.toggleTitle(link, 'Make Image Transparent', 'Make Image Opaque');
     // edit._toggleOpacity();
   },
 });
 
 
 var ImmediateSubAction = L.Toolbar2.Action.extend({
-  initialize: function(map, myAction) {
+  initialize(map, myAction) {
     this.map = map;
     this.myAction = myAction;
     L.Toolbar2.Action.prototype.initialize.call(this);
   },
-  addHooks: function() {
+  addHooks() {
     this.myAction.disable();
   },
 });
