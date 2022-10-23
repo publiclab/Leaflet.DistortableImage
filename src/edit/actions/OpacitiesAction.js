@@ -22,7 +22,7 @@ L.OpacitiesAction = L.EditAction.extend({
     };
 
     options.subToolbar = new L.Toolbar2({
-      actions: [World, Eiffel, Cancel],
+      actions: [World, Eiffel],
     });
 
     // L.DistortableImage.action_map.o = mode === 'lock' ? '' : '_toggleOpacity';
@@ -72,6 +72,7 @@ var Eiffel = ImmediateSubAction.extend({
     toolbarIcon: {
       html: '<input type="range" orient="vertical" />',
       tooltip: 'Go to the Eiffel Tower',
+      className: 'leaflet-toolbar-icon-vertical',
     },
   },
   addHooks: function() {
