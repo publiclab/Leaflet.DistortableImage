@@ -21,10 +21,9 @@ L.OpacitiesAction = L.EditAction.extend({
       className: mode === 'lock' ? 'disabled' : '',
     };
 
-    options.subToolbar = new L.Toolbar2({
+    this.subToolBar = options.subToolbar = new L.Toolbar2({
       actions: [OpacitiesBar100, OpacitiesBar80, OpacitiesBar60, OpacitiesBar40, OpacitiesBar20, OpacitiesBar0, Cancel],
     });
-
     // L.DistortableImage.action_map.o = mode === 'lock' ? '' : '_toggleOpacity';
 
     // L.setOptions(this, options);
@@ -32,6 +31,10 @@ L.OpacitiesAction = L.EditAction.extend({
   },
 
   addHooks() {
+    console.log(this.subToolBar);
+    if (this.subToolBar) {
+
+    }
     // const edit = this._overlay.editing;
     // const link = this._link;
 
@@ -142,9 +145,6 @@ const Cancel = L.EditAction.extend({
   },
 
   addHooks() {
-    console.warn(this);
-    console.warn(this._overlay);
-
     this.disable();
     this.toolbar._hide();
   },
