@@ -135,7 +135,7 @@ var Cancel = L.EditAction.extend({
   options: {
     toolbarIcon: {
       /* html: '<i class="fa fa-times"></i>', */
-      html: '&#10006',
+      html: '&#10006;',
       tooltip: 'Cancel',
       className: 'leaflet-toolbar-icon-vertical',
     },
