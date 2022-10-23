@@ -133,9 +133,8 @@ const OpacitiesBar100 = L.EditAction.extend({
 
 const Cancel = L.EditAction.extend({
   initialize(map, overlay, options) {
-    console.log(map);
-    console.log(overlay);
-    console.log(map);
+    this.map = map;
+    this.myAction = overlay;
 
     options = options || {};
     options.toolbarIcon = {
@@ -149,7 +148,12 @@ const Cancel = L.EditAction.extend({
   },
 
   addHooks: () => {
-    console.warn(opacitiesAction);
+    console.warn(this);
+    console.warn(this._overlay);
+    console.warn(this.overlay);
+    console.warn(Cancel.overlay);
+    console.warn(this.myAction);
+
     opacitiesAction._overlay.disable();
     // opacitiesAction.disable();
     this.disable();
