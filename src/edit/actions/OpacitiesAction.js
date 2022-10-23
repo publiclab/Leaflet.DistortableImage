@@ -18,7 +18,7 @@ L.OpacitiesAction = L.EditAction.extend({
       svg: true,
       html: use,
       tooltip: tooltip,
-      className: mode === 'lock' ? 'disabled' : '',
+      className: mode === 'lock' ? 'disabled' : 'subtoolbar-enabled',
     };
 
     this.subToolBar = options.subToolbar = new L.Toolbar2({
@@ -32,9 +32,10 @@ L.OpacitiesAction = L.EditAction.extend({
 
   addHooks() {
     console.log(this.subToolBar);
-    console.log(this.subToolBar.enabled());
-    (this.subToolBar.enabled()) ? this.subToolBar.disable() : this.subToolBar.enabled();
-    (this.subToolBar.enabled()) ? this.subToolBar.hide() : this.subToolBar.show();
+    console.log(this.subToolBar._ul.hidden);
+    console.log(this._overlay.editing);
+    (this.subToolBar._ul.hidden) ? this.subToolBar.disable() : this.subToolBar.enabled();
+    (this.subToolBar._ul.hidden) ? this.subToolBar.hide() : this.subToolBar.show();
 
     // const edit = this._overlay.editing;
     // const link = this._link;
