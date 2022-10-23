@@ -41,7 +41,7 @@ const opacitiesAction = L.OpacitiesAction = L.EditAction.extend({
   },
 });
 
-var OpacitiesBar0 = L.EditAction.extend({
+const OpacitiesBar0 = L.EditAction.extend({
   options: {
     toolbarIcon: {
       html: '',
@@ -56,7 +56,7 @@ var OpacitiesBar0 = L.EditAction.extend({
   },
 });
 
-var OpacitiesBar20 = L.EditAction.extend({
+const OpacitiesBar20 = L.EditAction.extend({
   options: {
     toolbarIcon: {
       html: '',
@@ -71,7 +71,7 @@ var OpacitiesBar20 = L.EditAction.extend({
   },
 });
 
-var OpacitiesBar40 = L.EditAction.extend({
+const OpacitiesBar40 = L.EditAction.extend({
   options: {
     toolbarIcon: {
       html: '',
@@ -86,7 +86,7 @@ var OpacitiesBar40 = L.EditAction.extend({
   },
 });
 
-var OpacitiesBar60 = L.EditAction.extend({
+const OpacitiesBar60 = L.EditAction.extend({
   options: {
     toolbarIcon: {
       html: '',
@@ -101,7 +101,7 @@ var OpacitiesBar60 = L.EditAction.extend({
   },
 });
 
-var OpacitiesBar80 = L.EditAction.extend({
+const OpacitiesBar80 = L.EditAction.extend({
   options: {
     toolbarIcon: {
       html: '',
@@ -116,7 +116,7 @@ var OpacitiesBar80 = L.EditAction.extend({
   },
 });
 
-var OpacitiesBar100 = L.EditAction.extend({
+const OpacitiesBar100 = L.EditAction.extend({
   options: {
     toolbarIcon: {
       html: '',
@@ -133,6 +133,10 @@ var OpacitiesBar100 = L.EditAction.extend({
 
 const Cancel = L.EditAction.extend({
   initialize(map, overlay, options) {
+    console.log(map);
+    console.log(overlay);
+    console.log(map);
+
     options = options || {};
     options.toolbarIcon = {
       html: '&#10006;',
