@@ -21,6 +21,10 @@ L.OpacitiesAction = L.EditAction.extend({
       className: mode === 'lock' ? 'disabled' : '',
     };
 
+    options.subToolbar = new L.Toolbar2({
+      actions: [World, Eiffel, Cancel],
+    });
+
     L.DistortableImage.action_map.o = mode === 'lock' ? '' : '_toggleOpacity';
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
@@ -33,5 +37,50 @@ L.OpacitiesAction = L.EditAction.extend({
     L.IconUtil.toggleXlink(link, 'opacities', 'opacity_empty');
     L.IconUtil.toggleTitle(link, 'Make Image Transparent', 'Make Image Opaque');
     edit._toggleOpacity();
+  },
+});
+
+
+var ImmediateSubAction = L.Toolbar2.Action.extend({
+  initialize: function(map, myAction) {
+    this.map = map;
+    this.myAction = myAction;
+    L.Toolbar2.Action.prototype.initialize.call(this);
+  },
+  addHooks: function() {
+    this.myAction.disable();
+  },
+});
+
+var World = ImmediateSubAction.extend({
+  options: {
+    toolbarIcon: {
+      html: 'World',
+      tooltip: 'See the whole world',
+    },
+  },
+  addHooks: function() {
+    this.map.setView([0, 0], 0);
+    ImmediateSubAction.prototype.addHooks.call(this);
+  },
+});
+var Eiffel = ImmediateSubAction.extend({
+  options: {
+    toolbarIcon: {
+      html: 'Eiffel Tower',
+      tooltip: 'Go to the Eiffel Tower',
+    },
+  },
+  addHooks: function() {
+    this.map.setView([48.85815, 2.29420], 19);
+    ImmediateSubAction.prototype.addHooks.call(this);
+  },
+});
+var Cancel = ImmediateSubAction.extend({
+  options: {
+    toolbarIcon: {
+      html: '<i class="fa fa-times"></i>',
+      tooltip: 'Cancel',
+    },
   },
 });
