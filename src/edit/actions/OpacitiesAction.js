@@ -32,6 +32,7 @@ L.OpacitiesAction = L.EditAction.extend({
 
   addHooks() {
     console.log(this.subToolBar);
+    console.log(this.subToolBar.isPopupOpen());
     if (this.subToolBar) {
 
     }
