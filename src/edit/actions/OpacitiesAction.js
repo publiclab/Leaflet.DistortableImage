@@ -64,7 +64,7 @@ var OpacitiesBar = OpacitiesSubAction.extend({
   },
   addHooks: function() {
     this.map.setView([48.85815, 2.29420], 19);
-    ImmediateSubAction.prototype.addHooks.call(this);
+    OpacitiesSubAction.prototype.addHooks.call(this);
   },
 });
 
