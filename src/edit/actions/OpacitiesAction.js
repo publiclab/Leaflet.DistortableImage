@@ -146,7 +146,8 @@ const Cancel = L.EditAction.extend({
 
   addHooks: () => {
     console.warn(opacitiesAction);
-    opacitiesAction_overlay.disable();
+    opacitiesAction._overlay.disable();
+    // opacitiesAction.disable();
     this.disable();
   },
 });
