@@ -32,10 +32,10 @@ L.OpacitiesAction = L.EditAction.extend({
 
   addHooks() {
     console.log(this.subToolBar);
-    console.log(this.subToolBar.isPopupOpen());
-    if (this.subToolBar) {
+    console.log(this.subToolBar.enabled());
+    (this.subToolBar.enabled()) ? this.subToolBar.disable() : this.subToolBar.enabled();
+    (this.subToolBar.enabled()) ? this.subToolBar.hide() : this.subToolBar.show();
 
-    }
     // const edit = this._overlay.editing;
     // const link = this._link;
 
