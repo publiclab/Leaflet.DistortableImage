@@ -75,7 +75,7 @@ var OpacitiesBar20 = L.EditAction.extend({
       html: 20,
       tooltip: 'Opacity 20%',
       className: 'leaflet-toolbar-icon-vertical',
-      style: 'background-color:#000; opacity:20;',
+      style: 'background-color:#000; opacity:0.2;',
     },
   },
   addHooks: () => {
@@ -153,5 +153,8 @@ var Cancel = L.EditAction.extend({
       className: 'leaflet-toolbar-icon-vertical',
 
     },
+  },
+  addHooks: () => {
+    this.disable();
   },
 });
