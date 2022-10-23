@@ -22,7 +22,7 @@ L.OpacitiesAction = L.EditAction.extend({
     };
 
     options.subToolbar = new L.Toolbar2({
-      actions: [World, Eiffel],
+      actions: [OpacitiesBar, Cancel],
     });
 
     // L.DistortableImage.action_map.o = mode === 'lock' ? '' : '_toggleOpacity';
@@ -54,25 +54,12 @@ var ImmediateSubAction = L.Toolbar2.Action.extend({
   },
 });
 
-var World = ImmediateSubAction.extend({
-  options: {
-    toolbarIcon: {
-      html: 'World',
-      tooltip: 'See the whole world',
-      className: 'leaflet-toolbar-icon-vertical',
-    },
-  },
-  addHooks: function() {
-    this.map.setView([0, 0], 0);
-    ImmediateSubAction.prototype.addHooks.call(this);
-  },
-});
-var Eiffel = ImmediateSubAction.extend({
+var OpacitiesBar = ImmediateSubAction.extend({
   options: {
     toolbarIcon: {
       html: '<input type="range" orient="vertical" />',
       tooltip: 'Go to the Eiffel Tower',
-      className: 'leaflet-toolbar-icon-vertical',
+      className: 'leaflet-toolbar-icon-vertical leaflet-toolbar-icon-range',
     },
   },
   addHooks: function() {
@@ -80,7 +67,7 @@ var Eiffel = ImmediateSubAction.extend({
     ImmediateSubAction.prototype.addHooks.call(this);
   },
 });
-/*
+
 var Cancel = ImmediateSubAction.extend({
   options: {
     toolbarIcon: {
@@ -89,4 +76,3 @@ var Cancel = ImmediateSubAction.extend({
     },
   },
 });
-*/
