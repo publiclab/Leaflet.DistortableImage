@@ -54,7 +54,7 @@ var OpacitiesSubAction = L.Toolbar2.Action.extend({
   },
 });
 
-var OpacitiesBar0 = OpacitiesSubAction.extend({
+var OpacitiesBar0 = L.EditAction.extend({
   options: {
     toolbarIcon: {
       html: 0,
@@ -69,7 +69,7 @@ var OpacitiesBar0 = OpacitiesSubAction.extend({
   },
 });
 
-var OpacitiesBar20 = OpacitiesSubAction.extend({
+var OpacitiesBar20 = L.EditAction.extend({
   options: {
     toolbarIcon: {
       html: 20,
@@ -84,7 +84,7 @@ var OpacitiesBar20 = OpacitiesSubAction.extend({
   },
 });
 
-var OpacitiesBar40 = OpacitiesSubAction.extend({
+var OpacitiesBar40 = L.EditAction.extend({
   options: {
     toolbarIcon: {
       html: 40,
@@ -99,7 +99,7 @@ var OpacitiesBar40 = OpacitiesSubAction.extend({
   },
 });
 
-var OpacitiesBar60 = OpacitiesSubAction.extend({
+var OpacitiesBar60 = L.EditAction.extend({
   options: {
     toolbarIcon: {
       html: 60,
@@ -114,7 +114,7 @@ var OpacitiesBar60 = OpacitiesSubAction.extend({
   },
 });
 
-var OpacitiesBar80 = OpacitiesSubAction.extend({
+var OpacitiesBar80 = L.EditAction.extend({
   options: {
     toolbarIcon: {
       html: 80,
@@ -129,7 +129,7 @@ var OpacitiesBar80 = OpacitiesSubAction.extend({
   },
 });
 
-var OpacitiesBar100 = OpacitiesSubAction.extend({
+var OpacitiesBar100 = L.EditAction.extend({
   options: {
     toolbarIcon: {
       html: 100,
@@ -144,10 +144,11 @@ var OpacitiesBar100 = OpacitiesSubAction.extend({
   },
 });
 
-var Cancel = OpacitiesSubAction.extend({
+var Cancel = L.EditAction.extend({
   options: {
     toolbarIcon: {
-      html: '<i class="fa fa-times"></i>',
+      /* html: '<i class="fa fa-times"></i>', */
+      html: 'x',
       tooltip: 'Cancel',
       className: 'leaflet-toolbar-icon-vertical',
 
