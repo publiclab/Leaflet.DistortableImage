@@ -11,7 +11,7 @@ L.DistortHandle = L.EditHandle.extend({
   },
 
   _onHandleDrag() {
-    let overlay = this._handled;
+    const overlay = this._handled;
 
     overlay.setCorner(this._corner, this.getLatLng());
   },
