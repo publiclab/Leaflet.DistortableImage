@@ -95,13 +95,7 @@
     form.addEventListener('submit', (event) => {
       event.preventDefault();
       const url = input.value.replace('details', 'metadata');
-      let splitUrl = url.split('/');
-      let detectKey = splitUrl[splitUrl.length - 2];
-      console.log("detected key", detectKey);
       let fetchedFrom
-      let splitUrl = url.split('/');
-      let detectKey = splitUrl[splitUrl.length - 2];
-      console.log(detectKey);
       axios.get(url)
         .then((response) => {
           if (response.data.files && response.data.files.length != 0) {
