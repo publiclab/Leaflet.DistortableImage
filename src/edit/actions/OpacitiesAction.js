@@ -44,7 +44,7 @@ L.OpacitiesAction = L.EditAction.extend({
 var OpacitiesBar0 = L.EditAction.extend({
   options: {
     toolbarIcon: {
-      html: 0,
+      html: '',
       tooltip: 'Opacity 0%',
       className: 'leaflet-toolbar-icon-vertical',
       style: 'background-color:#000; opacity:0.01;',
@@ -59,7 +59,7 @@ var OpacitiesBar0 = L.EditAction.extend({
 var OpacitiesBar20 = L.EditAction.extend({
   options: {
     toolbarIcon: {
-      html: 20,
+      html: '',
       tooltip: 'Opacity 20%',
       className: 'leaflet-toolbar-icon-vertical',
       style: 'background-color:#000; opacity:0.2;',
@@ -74,7 +74,7 @@ var OpacitiesBar20 = L.EditAction.extend({
 var OpacitiesBar40 = L.EditAction.extend({
   options: {
     toolbarIcon: {
-      html: 40,
+      html: '',
       tooltip: 'Opacity 40%',
       className: 'leaflet-toolbar-icon-vertical',
       style: 'background-color:#000; opacity:0.4;',
@@ -89,7 +89,7 @@ var OpacitiesBar40 = L.EditAction.extend({
 var OpacitiesBar60 = L.EditAction.extend({
   options: {
     toolbarIcon: {
-      html: 60,
+      html: '',
       tooltip: 'Opacity 60%',
       className: 'leaflet-toolbar-icon-vertical',
       style: 'background-color:#000; opacity:0.6;',
@@ -104,7 +104,7 @@ var OpacitiesBar60 = L.EditAction.extend({
 var OpacitiesBar80 = L.EditAction.extend({
   options: {
     toolbarIcon: {
-      html: 80,
+      html: '',
       tooltip: 'Opacity 80%',
       className: 'leaflet-toolbar-icon-vertical',
       style: 'background-color:#000; opacity:0.8;',
@@ -119,7 +119,7 @@ var OpacitiesBar80 = L.EditAction.extend({
 var OpacitiesBar100 = L.EditAction.extend({
   options: {
     toolbarIcon: {
-      html: 100,
+      html: '',
       tooltip: 'Opacity 100%',
       className: 'leaflet-toolbar-icon-vertical',
       style: 'background-color:#000; opacity:1;',
@@ -132,19 +132,22 @@ var OpacitiesBar100 = L.EditAction.extend({
 });
 
 var Cancel = L.EditAction.extend({
-  options: {
-    toolbarIcon: {
-      /* html: '<i class="fa fa-times"></i>', */
+  initialize(map, overlay, options) {
+    options = options || {};
+    options.toolbarIcon = {
+      svg: false,
       html: '&#10006;',
       tooltip: 'Cancel',
       className: 'leaflet-toolbar-icon-vertical',
-      style: 'font-size: 1.25rem;',
-    },
+    };
+
+    L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
+
   addHooks: () => {
-    const edit = this._overlay;
-    console.warn(edit);
+    console.warn(this);
     this.overlay.disable();
+    this._overlay.disable();
     this.disable();
   },
 });
