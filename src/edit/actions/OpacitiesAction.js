@@ -149,6 +149,8 @@ var Cancel = OpacitiesSubAction.extend({
     toolbarIcon: {
       html: '<i class="fa fa-times"></i>',
       tooltip: 'Cancel',
+      className: 'leaflet-toolbar-icon-vertical',
+
     },
   },
 });
