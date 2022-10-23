@@ -27,7 +27,7 @@ L.OpacitiesAction = L.EditAction.extend({
 
     // L.DistortableImage.action_map.o = mode === 'lock' ? '' : '_toggleOpacity';
 
-    L.setOptions(this, options);
+    // L.setOptions(this, options);
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
@@ -135,14 +135,14 @@ var Cancel = L.EditAction.extend({
   options: {
     toolbarIcon: {
       /* html: '<i class="fa fa-times"></i>', */
-      html: 'x',
+      html: '&#10006',
       tooltip: 'Cancel',
       className: 'leaflet-toolbar-icon-vertical',
-
     },
   },
   addHooks: () => {
-    this._overlay.disable();
+    console.warn('EXECUTAT');
+    this.overlay.disable();
     this.disable();
   },
 });
