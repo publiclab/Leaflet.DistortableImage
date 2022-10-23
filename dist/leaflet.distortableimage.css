@@ -221,6 +221,11 @@ a.leaflet-toolbar-icon[title='Loading...'] {
   fill: #c10d0d;
 }
 
+.leaflet-toolbar-icon-vertical {
+  background-color: rgba(0, 0, 0, 1);
+  border: inset 0.5px lightgray;
+}
+
 input[type="text"]::-webkit-input-placeholder {
   color: #979797;
 }

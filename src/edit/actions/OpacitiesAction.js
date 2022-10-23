@@ -44,8 +44,9 @@ L.OpacitiesAction = L.EditAction.extend({
 
 var ImmediateSubAction = L.Toolbar2.Action.extend({
   initialize(map, myAction) {
-    this.map = map;
-    this.myAction = myAction;
+    map = map;
+    myAction = myAction;
+
     L.Toolbar2.Action.prototype.initialize.call(this);
   },
   addHooks() {
@@ -58,6 +59,7 @@ var World = ImmediateSubAction.extend({
     toolbarIcon: {
       html: 'World',
       tooltip: 'See the whole world',
+      className: 'leaflet-toolbar-icon-vertical',
     },
   },
   addHooks: function() {
@@ -68,7 +70,7 @@ var World = ImmediateSubAction.extend({
 var Eiffel = ImmediateSubAction.extend({
   options: {
     toolbarIcon: {
-      html: 'Eiffel Tower',
+      html: '<input type="range" orient="vertical" />',
       tooltip: 'Go to the Eiffel Tower',
     },
   },
@@ -77,6 +79,7 @@ var Eiffel = ImmediateSubAction.extend({
     ImmediateSubAction.prototype.addHooks.call(this);
   },
 });
+/*
 var Cancel = ImmediateSubAction.extend({
   options: {
     toolbarIcon: {
@@ -85,3 +88,4 @@ var Cancel = ImmediateSubAction.extend({
     },
   },
 });
+*/
