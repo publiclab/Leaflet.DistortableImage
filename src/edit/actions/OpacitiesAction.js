@@ -1,4 +1,4 @@
-const opacitiesAction = L.OpacitiesAction = L.EditAction.extend({
+L.OpacitiesAction = L.EditAction.extend({
   initialize(map, overlay, options) {
     const edit = overlay.editing;
     const mode = edit._mode;
@@ -132,30 +132,23 @@ const OpacitiesBar100 = L.EditAction.extend({
 });
 
 const Cancel = L.EditAction.extend({
-  initialize(map, overlay, options) {
-    this.map = map;
-    this.myAction = overlay;
-
-    options = options || {};
-    options.toolbarIcon = {
+  options: {
+    toolbarIcon: {
       html: '&#10006;',
       tooltip: 'Cancel',
       className: 'leaflet-toolbar-icon-vertical',
       style: 'font-size:1.25rem;',
-    };
-
-    L.EditAction.prototype.initialize.call(this, map, overlay, options);
+    },
   },
 
-  addHooks: () => {
+  addHooks() {
     console.warn(this);
     console.warn(this._overlay);
     console.warn(this.overlay);
     console.warn(Cancel.overlay);
     console.warn(this.myAction);
 
-    opacitiesAction._overlay.disable();
-    // opacitiesAction.disable();
+    this._overlay.disable();
     this.disable();
   },
 });
