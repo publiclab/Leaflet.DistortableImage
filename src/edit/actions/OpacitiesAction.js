@@ -22,7 +22,7 @@ L.OpacitiesAction = L.EditAction.extend({
     };
 
     options.subToolbar = new L.Toolbar2({
-      actions: [OpacitiesBar, Cancel],
+      actions: [OpacitiesBar100, OpacitiesBar80, OpacitiesBar60, OpacitiesBar40, OpacitiesBar20, OpacitiesBar1, Cancel],
     });
 
     // L.DistortableImage.action_map.o = mode === 'lock' ? '' : '_toggleOpacity';
@@ -54,16 +54,98 @@ var OpacitiesSubAction = L.Toolbar2.Action.extend({
   },
 });
 
-var OpacitiesBar = OpacitiesSubAction.extend({
+var OpacitiesBar1 = OpacitiesSubAction.extend({
+  opacity: 1,
   options: {
     toolbarIcon: {
-      html: '<div><input type="range" orient="vertical" min="0" max="100" step="10"/></div>',
-      tooltip: 'Go to the Eiffel Tower',
-      className: 'leaflet-toolbar-icon-vertical leaflet-toolbar-icon-range',
+      html: () => this.opacity,
+      tooltip: () => 'Opacity ' + this.opacity + '%',
+      className: 'leaflet-toolbar-icon-vertical',
+      style: () => 'background-color:#000; opacity:' + this.opacity/100,
     },
   },
-  addHooks: function() {
-    this.map.setView([48.85815, 2.29420], 19);
+  addHooks: () => {
+    // this.map.setView([48.85815, 2.29420], 19);
+    OpacitiesSubAction.prototype.addHooks.call(this);
+  },
+});
+
+var OpacitiesBar20 = OpacitiesSubAction.extend({
+  opacity: 20,
+  options: {
+    toolbarIcon: {
+      html: () => this.opacity,
+      tooltip: () => 'Opacity ' + this.opacity + '%',
+      className: 'leaflet-toolbar-icon-vertical',
+      style: () => 'background-color:#000; opacity:' + this.opacity/100,
+    },
+  },
+  addHooks: () => {
+    // this.map.setView([48.85815, 2.29420], 19);
+    OpacitiesSubAction.prototype.addHooks.call(this);
+  },
+});
+
+var OpacitiesBar40 = OpacitiesSubAction.extend({
+  opacity: 40,
+  options: {
+    toolbarIcon: {
+      html: () => this.opacity,
+      tooltip: () => 'Opacity ' + this.opacity + '%',
+      className: 'leaflet-toolbar-icon-vertical',
+      style: () => 'background-color:#000; opacity:' + this.opacity/100,
+    },
+  },
+  addHooks: () => {
+    // this.map.setView([48.85815, 2.29420], 19);
+    OpacitiesSubAction.prototype.addHooks.call(this);
+  },
+});
+
+var OpacitiesBar60 = OpacitiesSubAction.extend({
+  opacity: 60,
+  options: {
+    toolbarIcon: {
+      html: () => this.opacity,
+      tooltip: () => 'Opacity ' + this.opacity + '%',
+      className: 'leaflet-toolbar-icon-vertical',
+      style: () => 'background-color:#000; opacity:' + this.opacity/100,
+    },
+  },
+  addHooks: () => {
+    // this.map.setView([48.85815, 2.29420], 19);
+    OpacitiesSubAction.prototype.addHooks.call(this);
+  },
+});
+
+var OpacitiesBar80 = OpacitiesSubAction.extend({
+  opacity: 80,
+  options: {
+    toolbarIcon: {
+      html: () => this.opacity,
+      tooltip: () => 'Opacity ' + this.opacity + '%',
+      className: 'leaflet-toolbar-icon-vertical',
+      style: () => 'background-color:#000; opacity:' + this.opacity/100,
+    },
+  },
+  addHooks: () => {
+    // this.map.setView([48.85815, 2.29420], 19);
+    OpacitiesSubAction.prototype.addHooks.call(this);
+  },
+});
+
+var OpacitiesBar100 = OpacitiesSubAction.extend({
+  opacity: 100,
+  options: {
+    toolbarIcon: {
+      html: () => this.opacity,
+      tooltip: () => 'Opacity ' + this.opacity + '%',
+      className: 'leaflet-toolbar-icon-vertical',
+      style: () => 'background-color:#000; opacity:' + this.opacity/100,
+    },
+  },
+  addHooks: () => {
+    // this.map.setView([48.85815, 2.29420], 19);
     OpacitiesSubAction.prototype.addHooks.call(this);
   },
 });

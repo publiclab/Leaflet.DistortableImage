@@ -222,21 +222,23 @@ a.leaflet-toolbar-icon[title='Loading...'] {
 }
 
 .leaflet-toolbar-icon-vertical {
-  background-color: rgba(0, 0, 0, 1);
+  background-color: rgba(255, 255, 255, 1);
   border: inset 0.5px lightgray;
+  float: none !important;
+  margin: auto !important;
 }
 
 .leaflet-toolbar-1 {
   border-radius: 0px 0px 4px 4px !important;
 }
 .leaflet-toolbar-icon-range {
-    display: inline-block !important;
-    /*writing-mode: bt-lr !important;
+    /*display: inline-block !important;
+    writing-mode: bt-lr !important;
     appearance: slider-vertical !important;
-    -webkit-appearance: slider-vertical !important;*/
+    -webkit-appearance: slider-vertical !important;
     transform: rotate(90deg);
     width: auto;
-    height: 120px !important;
+    height: 120px !important;*/
     float: none !important;
     margin: auto !important;
 }
