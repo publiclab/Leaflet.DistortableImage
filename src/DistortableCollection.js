@@ -218,7 +218,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     json.images = json.images.reverse();
     json.avg_cm_per_pixel = this._getAvgCmPerPixel(json.images);
-    json.images.map(each=> localStorage.setItem('locations', JSON.stringify(each.nodes)));
+    var jsonImages = json.images
     return json;
   },
 });
@@ -226,3 +226,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 L.distortableCollection = function(id, options) {
   return new L.DistortableCollection(id, options);
 };
+
+function savetoLocalStorage(jsonImages){
+  json.images.map(each=> localStorage.setItem('locations', JSON.stringify(each.nodes)));
+}
