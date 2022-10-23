@@ -145,9 +145,9 @@ var Cancel = L.EditAction.extend({
   },
 
   addHooks: () => {
-    console.warn(this);
-    this.overlay.disable();
-    this._overlay.disable();
+    const overlay = this._overlay;
+    console.warn(overlay);
+    overlay.disable();
     this.disable();
   },
 });
