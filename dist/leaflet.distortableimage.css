@@ -227,14 +227,14 @@ a.leaflet-toolbar-icon[title='Loading...'] {
 }
 
 .leaflet-toolbar-1 {
-  border-radius: 0px 4px !important;
+  border-radius: 0px 0px 4px 4px !important;
 }
 .leaflet-toolbar-icon-range {
-    writing-mode: bt-lr;
-    -webkit-appearance: slider-vertical;
-    appearance: slider-vertical;
+    writing-mode: bt-lr !important;
+    appearance: slider-vertical !important;
+    -webkit-appearance: slider-vertical !important;
     width: auto;
-    height: 100px !important;
+    height: 120px !important;
     float: none !important;
     margin: auto !important;
 }

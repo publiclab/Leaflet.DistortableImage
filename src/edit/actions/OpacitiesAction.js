@@ -57,7 +57,7 @@ var ImmediateSubAction = L.Toolbar2.Action.extend({
 var OpacitiesBar = ImmediateSubAction.extend({
   options: {
     toolbarIcon: {
-      html: '<input type="range" orient="vertical" />',
+      html: '<input type="range" orient="vertical" min="0" max="100" step="10"/>',
       tooltip: 'Go to the Eiffel Tower',
       className: 'leaflet-toolbar-icon-vertical leaflet-toolbar-icon-range',
     },
