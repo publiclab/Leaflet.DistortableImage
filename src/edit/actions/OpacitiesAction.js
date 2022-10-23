@@ -42,7 +42,7 @@ L.OpacitiesAction = L.EditAction.extend({
 });
 
 
-var ImmediateSubAction = L.Toolbar2.Action.extend({
+var OpacitiesSubAction = L.Toolbar2.Action.extend({
   initialize(map, myAction) {
     map = map;
     myAction = myAction;
@@ -54,10 +54,10 @@ var ImmediateSubAction = L.Toolbar2.Action.extend({
   },
 });
 
-var OpacitiesBar = ImmediateSubAction.extend({
+var OpacitiesBar = OpacitiesSubAction.extend({
   options: {
     toolbarIcon: {
-      html: '<input type="range" orient="vertical" min="0" max="100" step="10"/>',
+      html: '<div><input type="range" orient="vertical" min="0" max="100" step="10"/></div>',
       tooltip: 'Go to the Eiffel Tower',
       className: 'leaflet-toolbar-icon-vertical leaflet-toolbar-icon-range',
     },
@@ -68,7 +68,7 @@ var OpacitiesBar = ImmediateSubAction.extend({
   },
 });
 
-var Cancel = ImmediateSubAction.extend({
+var Cancel = OpacitiesSubAction.extend({
   options: {
     toolbarIcon: {
       html: '<i class="fa fa-times"></i>',

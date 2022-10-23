@@ -230,6 +230,7 @@ a.leaflet-toolbar-icon[title='Loading...'] {
   border-radius: 0px 0px 4px 4px !important;
 }
 .leaflet-toolbar-icon-range {
+    display: inline-block !important;
     writing-mode: bt-lr !important;
     appearance: slider-vertical !important;
     -webkit-appearance: slider-vertical !important;
