@@ -31,11 +31,20 @@ L.OpacitiesAction = L.EditAction.extend({
   },
 
   addHooks() {
+    const edit = this._ovelay.editing;
     console.log(this.subToolBar);
     console.log(this.subToolBar._ul.hidden);
     console.log(this._overlay.editing);
-    (this.subToolBar._ul.hidden) ? this.subToolBar.disable() : this.subToolBar.enabled();
-    (this.subToolBar._ul.hidden) ? this.subToolBar.hide() : this.subToolBar.show();
+
+    if (this_overlay.isMode('opacities')) {
+      this.subToolBar.disable();
+      this.subToolBar.hide();
+      edit.setMode('');
+    } else {
+      this.subToolBar.enabled();
+      this.subToolBar.show();
+      edit._opacitiesMode();
+    };
 
     // const edit = this._overlay.editing;
     // const link = this._link;

@@ -340,6 +340,10 @@ L.DistortableImage.Edit = L.Handler.extend({
     this.setMode('freeRotate');
   },
 
+  _opacitiesMode() {
+    this.setMode('opacities');
+  },
+
   _toggleLockMode() {
     if (this.isMode('lock')) { this._unlock(); }
     else { this._lock(); }
