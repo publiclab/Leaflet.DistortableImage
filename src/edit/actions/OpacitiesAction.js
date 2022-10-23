@@ -47,7 +47,7 @@ var OpacitiesBar0 = L.EditAction.extend({
       html: 0,
       tooltip: 'Opacity 0%',
       className: 'leaflet-toolbar-icon-vertical',
-      style: 'background-color:#000; opacity:0.1;',
+      style: 'background-color:#000; opacity:0.01;',
     },
   },
   addHooks: () => {
@@ -138,10 +138,12 @@ var Cancel = L.EditAction.extend({
       html: '&#10006;',
       tooltip: 'Cancel',
       className: 'leaflet-toolbar-icon-vertical',
+      style: 'font-size: 1.25rem;',
     },
   },
   addHooks: () => {
-    console.warn('EXECUTAT');
+    const edit = this._overlay;
+    console.warn(edit);
     this.overlay.disable();
     this.disable();
   },
