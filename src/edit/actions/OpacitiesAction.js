@@ -60,7 +60,7 @@ var OpacitiesBar0 = OpacitiesSubAction.extend({
       html: 0,
       tooltip: 'Opacity 0%',
       className: 'leaflet-toolbar-icon-vertical',
-      style: 'background-color:#000; opacity:0.1',
+      style: 'background-color:#000; opacity:0.1;',
     },
   },
   addHooks: () => {
@@ -75,7 +75,7 @@ var OpacitiesBar20 = OpacitiesSubAction.extend({
       html: 20,
       tooltip: 'Opacity 20%',
       className: 'leaflet-toolbar-icon-vertical',
-      style: 'background-color:#000; opacity:20',
+      style: 'background-color:#000; opacity:20;',
     },
   },
   addHooks: () => {
@@ -90,7 +90,7 @@ var OpacitiesBar40 = OpacitiesSubAction.extend({
       html: 40,
       tooltip: 'Opacity 40%',
       className: 'leaflet-toolbar-icon-vertical',
-      style: 'background-color:#000; opacity:0.4',
+      style: 'background-color:#000; opacity:0.4;',
     },
   },
   addHooks: () => {
@@ -105,7 +105,7 @@ var OpacitiesBar60 = OpacitiesSubAction.extend({
       html: 60,
       tooltip: 'Opacity 60%',
       className: 'leaflet-toolbar-icon-vertical',
-      style: 'background-color:#000; opacity:0.6',
+      style: 'background-color:#000; opacity:0.6;',
     },
   },
   addHooks: () => {
@@ -120,7 +120,7 @@ var OpacitiesBar80 = OpacitiesSubAction.extend({
       html: 80,
       tooltip: 'Opacity 80%',
       className: 'leaflet-toolbar-icon-vertical',
-      style: 'background-color:#000; opacity:0.8',
+      style: 'background-color:#000; opacity:0.8;',
     },
   },
   addHooks: () => {
@@ -135,7 +135,7 @@ var OpacitiesBar100 = OpacitiesSubAction.extend({
       html: 100,
       tooltip: 'Opacity 100%',
       className: 'leaflet-toolbar-icon-vertical',
-      style: 'background-color:#000; opacity:1',
+      style: 'background-color:#000; opacity:1;',
     },
   },
   addHooks: () => {

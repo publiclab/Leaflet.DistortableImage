@@ -231,7 +231,7 @@ a.leaflet-toolbar-icon[title='Loading...'] {
   border-right: 0 !important;
   text-align: center !important;
   text-decoration: none !important;
-  background-color: #fff !important;
+  background-color: #fff;
   border: inset 0.5px lightgray !important;
   font-weight: bold !important;
   float: none !important;

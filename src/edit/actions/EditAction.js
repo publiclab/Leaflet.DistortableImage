@@ -40,6 +40,7 @@ L.EditAction = L.Toolbar2.Action.extend({
 
     this._link.setAttribute('href', '#');
     this._link.setAttribute('title', iconOptions.tooltip);
+    console.warn(JSON.stringify(iconOptions));
     if (iconOptions.style) { this._link.setAttribute('style', iconOptions.style); };
     this._link.setAttribute('role', 'button');
 
