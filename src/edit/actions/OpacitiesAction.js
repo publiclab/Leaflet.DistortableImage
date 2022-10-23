@@ -41,19 +41,6 @@ L.OpacitiesAction = L.EditAction.extend({
   },
 });
 
-
-var OpacitiesSubAction = L.Toolbar2.Action.extend({
-  initialize(map, myAction) {
-    map = map;
-    myAction = myAction;
-
-    L.Toolbar2.Action.prototype.initialize.call(this);
-  },
-  addHooks() {
-    this.myAction.disable();
-  },
-});
-
 var OpacitiesBar0 = L.EditAction.extend({
   options: {
     toolbarIcon: {
@@ -65,7 +52,7 @@ var OpacitiesBar0 = L.EditAction.extend({
   },
   addHooks: () => {
     // this.map.setView([48.85815, 2.29420], 19);
-    OpacitiesSubAction.prototype.addHooks.call(this);
+    // OpacitiesSubAction.prototype.addHooks.call(this);
   },
 });
 
@@ -80,7 +67,7 @@ var OpacitiesBar20 = L.EditAction.extend({
   },
   addHooks: () => {
     // this.map.setView([48.85815, 2.29420], 19);
-    OpacitiesSubAction.prototype.addHooks.call(this);
+    // OpacitiesSubAction.prototype.addHooks.call(this);
   },
 });
 
@@ -95,7 +82,7 @@ var OpacitiesBar40 = L.EditAction.extend({
   },
   addHooks: () => {
     // this.map.setView([48.85815, 2.29420], 19);
-    OpacitiesSubAction.prototype.addHooks.call(this);
+    // OpacitiesSubAction.prototype.addHooks.call(this);
   },
 });
 
@@ -110,7 +97,7 @@ var OpacitiesBar60 = L.EditAction.extend({
   },
   addHooks: () => {
     // this.map.setView([48.85815, 2.29420], 19);
-    OpacitiesSubAction.prototype.addHooks.call(this);
+    // OpacitiesSubAction.prototype.addHooks.call(this);
   },
 });
 
@@ -125,7 +112,7 @@ var OpacitiesBar80 = L.EditAction.extend({
   },
   addHooks: () => {
     // this.map.setView([48.85815, 2.29420], 19);
-    OpacitiesSubAction.prototype.addHooks.call(this);
+    // OpacitiesSubAction.prototype.addHooks.call(this);
   },
 });
 
@@ -140,7 +127,7 @@ var OpacitiesBar100 = L.EditAction.extend({
   },
   addHooks: () => {
     // this.map.setView([48.85815, 2.29420], 19);
-    OpacitiesSubAction.prototype.addHooks.call(this);
+    // OpacitiesSubAction.prototype.addHooks.call(this);
   },
 });
 
@@ -155,6 +142,7 @@ var Cancel = L.EditAction.extend({
     },
   },
   addHooks: () => {
+    this._overlay.disable();
     this.disable();
   },
 });

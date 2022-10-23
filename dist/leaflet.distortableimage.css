@@ -226,7 +226,6 @@ a.leaflet-toolbar-icon[title='Loading...'] {
   width: 30px !important;
   height: 30px !important;
   line-height: 30px !important;
-  /*margin-right: 0 !important;*/
   padding-right: 0 !important;
   border-right: 0 !important;
   text-align: center !important;
@@ -240,7 +239,9 @@ a.leaflet-toolbar-icon[title='Loading...'] {
 
 .leaflet-toolbar-1 {
   border-radius: 0px 0px 4px 4px !important;
+  background-color: #fff !important;
 }
+
 .leaflet-toolbar-icon-range {
     /*display: inline-block !important;
     writing-mode: bt-lr !important;
