@@ -17,28 +17,16 @@ opacities = opacities.map((o) => {
   });
 });
 
-console.log(opacities);
-
 L.OpacitiesAction = L.EditAction.extend({
   initialize(map, overlay, options) {
     const edit = overlay.editing;
     const mode = edit._mode;
-    let use;
-    let tooltip;
-
-    if (edit._transparent) {
-      use = 'opacity_empty';
-      tooltip = overlay.options.translation.makeImageOpaque;
-    } else {
-      use = 'opacities';
-      tooltip = overlay.options.translation.makeImageTransparent;
-    }
 
     options = options || {};
     options.toolbarIcon = {
       svg: true,
-      html: use,
-      tooltip: tooltip,
+      html: 'opacities',
+      tooltip: 'Set custom opacity',
       className: mode === 'lock' ? 'disabled' : '',
     };
 
