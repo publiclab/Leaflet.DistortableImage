@@ -23,10 +23,19 @@ L.EditAction = L.Toolbar2.Action.extend({
     this._injectIconSet();
   },
 
+  enable(e) {
+    if (e) { L.DomEvent.preventDefault(e); };
+    if (e) { L.DomEvent.stopPropagation(e); };
+    if (this._enabled) { return; };
+    this._enabled = true;
+    if (this.addHooks) { this.addHooks(); };
+  },
+
   _createIcon(toolbar, container, args) {
     const iconOptions = this.options.toolbarIcon;
     const className = iconOptions.className;
     const edit = this._overlay.editing;
+    const style = this.options.toolbarIcon.style;
 
     this.toolbar = toolbar;
     this._icon = L.DomUtil.create('li', '', container);
@@ -40,7 +49,7 @@ L.EditAction = L.Toolbar2.Action.extend({
 
     this._link.setAttribute('href', '#');
     this._link.setAttribute('title', iconOptions.tooltip);
-    if (iconOptions.style) { this._link.setAttribute('style', iconOptions.style); };
+    if (style) { this._link.setAttribute('style', style); };
     this._link.setAttribute('role', 'button');
 
     L.DomUtil.addClass(this._link, this.constructor.baseClass);

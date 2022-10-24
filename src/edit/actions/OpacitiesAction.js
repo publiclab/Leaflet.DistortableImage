@@ -1,3 +1,24 @@
+let opacities = [100, 80, 60, 40, 20, 0];
+
+opacities = opacities.map((o) => {
+  return L.EditAction.extend({
+    options: {
+      toolbarIcon: {
+        html: '',
+        tooltip: 'Opacity ' + o +'%',
+        className: 'leaflet-toolbar-icon-vertical',
+        style: 'background-color:#000; opacity:' + o/100 + ';',
+      },
+    },
+    addHooks() {
+      console.log(this);
+      this._overlay.editing._setOpacities(o/100);
+    },
+  });
+});
+
+console.log(opacities);
+
 L.OpacitiesAction = L.EditAction.extend({
   initialize(map, overlay, options) {
     const edit = overlay.editing;
@@ -18,145 +39,30 @@ L.OpacitiesAction = L.EditAction.extend({
       svg: true,
       html: use,
       tooltip: tooltip,
-      className: mode === 'lock' ? 'disabled' : 'subtoolbar-enabled',
+      className: mode === 'lock' ? 'disabled' : '',
     };
 
-    this.subToolBar = options.subToolbar = new L.Toolbar2({
-      actions: [OpacitiesBar100, OpacitiesBar80, OpacitiesBar60, OpacitiesBar40, OpacitiesBar20, OpacitiesBar0, Cancel],
+    options.subToolbar = new L.Toolbar2({
+      actions: opacities,
     });
-    // L.DistortableImage.action_map.o = mode === 'lock' ? '' : '_toggleOpacity';
 
-    // L.setOptions(this, options);
+    L.DistortableImage.action_map.o = mode === 'lock' ? '' : '_toggleOpacities';
+
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
   addHooks() {
-    const edit = this._overlay.editing;
-    console.log(this.subToolBar);
-    console.log(this.subToolBar._ul.hidden);
-    console.log(edit);
-    console.log(edit.getModes());
-
-    if (this._overlay.isMode('opacities')) {
-      this.subToolBar.disable();
-      this.subToolBar.hide();
+    const link = this._link;
+    if (L.DomUtil.hasClass(link, 'subtoolbar_enabled')) {
+      L.DomUtil.removeClass(link, 'subtoolbar_enabled');
+      setTimeout(() => {
+        this.options.subToolbar._hide();
+      }, 100);
     } else {
-      this.subToolBar.enabled();
-      this.subToolBar.show();
+      L.DomUtil.addClass(link, 'subtoolbar_enabled');
     };
-    edit._toggleOpacitiesMode();
 
-    // const edit = this._overlay.editing;
-    // const link = this._link;
-
-    // L.IconUtil.toggleXlink(link, 'opacities', 'opacity_empty');
-    // L.IconUtil.toggleTitle(link, 'Make Image Transparent', 'Make Image Opaque');
-    // edit._toggleOpacity();
-  },
-});
-
-const OpacitiesBar0 = L.EditAction.extend({
-  options: {
-    toolbarIcon: {
-      html: '',
-      tooltip: 'Opacity 0%',
-      className: 'leaflet-toolbar-icon-vertical',
-      style: 'background-color:#000; opacity:0.01;',
-    },
-  },
-  addHooks: () => {
-    // this.map.setView([48.85815, 2.29420], 19);
-    // OpacitiesSubAction.prototype.addHooks.call(this);
-  },
-});
-
-const OpacitiesBar20 = L.EditAction.extend({
-  options: {
-    toolbarIcon: {
-      html: '',
-      tooltip: 'Opacity 20%',
-      className: 'leaflet-toolbar-icon-vertical',
-      style: 'background-color:#000; opacity:0.2;',
-    },
-  },
-  addHooks: () => {
-    // this.map.setView([48.85815, 2.29420], 19);
-    // OpacitiesSubAction.prototype.addHooks.call(this);
-  },
-});
-
-const OpacitiesBar40 = L.EditAction.extend({
-  options: {
-    toolbarIcon: {
-      html: '',
-      tooltip: 'Opacity 40%',
-      className: 'leaflet-toolbar-icon-vertical',
-      style: 'background-color:#000; opacity:0.4;',
-    },
-  },
-  addHooks: () => {
-    // this.map.setView([48.85815, 2.29420], 19);
-    // OpacitiesSubAction.prototype.addHooks.call(this);
-  },
-});
-
-const OpacitiesBar60 = L.EditAction.extend({
-  options: {
-    toolbarIcon: {
-      html: '',
-      tooltip: 'Opacity 60%',
-      className: 'leaflet-toolbar-icon-vertical',
-      style: 'background-color:#000; opacity:0.6;',
-    },
-  },
-  addHooks: () => {
-    // this.map.setView([48.85815, 2.29420], 19);
-    // OpacitiesSubAction.prototype.addHooks.call(this);
-  },
-});
-
-const OpacitiesBar80 = L.EditAction.extend({
-  options: {
-    toolbarIcon: {
-      html: '',
-      tooltip: 'Opacity 80%',
-      className: 'leaflet-toolbar-icon-vertical',
-      style: 'background-color:#000; opacity:0.8;',
-    },
-  },
-  addHooks: () => {
-    // this.map.setView([48.85815, 2.29420], 19);
-    // OpacitiesSubAction.prototype.addHooks.call(this);
-  },
-});
-
-const OpacitiesBar100 = L.EditAction.extend({
-  options: {
-    toolbarIcon: {
-      html: '',
-      tooltip: 'Opacity 100%',
-      className: 'leaflet-toolbar-icon-vertical',
-      style: 'background-color:#000; opacity:1;',
-    },
-  },
-  addHooks: () => {
-    // this.map.setView([48.85815, 2.29420], 19);
-    // OpacitiesSubAction.prototype.addHooks.call(this);
-  },
-});
-
-const Cancel = L.EditAction.extend({
-  options: {
-    toolbarIcon: {
-      html: '&#10006;',
-      tooltip: 'Cancel',
-      className: 'leaflet-toolbar-icon-vertical',
-      style: 'font-size:1.25rem;',
-    },
-  },
-
-  addHooks() {
-    this.disable();
-    this.toolbar._hide();
+    L.IconUtil.toggleXlink(link, 'opacities', 'cancel');
+    L.IconUtil.toggleTitle(link, 'Make Image Transparent', 'Cancel');
   },
 });

@@ -14,6 +14,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._mode = overlay.options.mode;
     this._transparent = false;
     this._outlined = false;
+    this._opacity = 1;
 
     L.setOptions(this, options);
 
@@ -31,7 +32,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._initModes();
     this._initHandles();
     this._appendHandlesandDragable();
-
 
     if (overlay.isSelected() && !overlay.options.suppressToolbar) {
       this._addToolbar();
@@ -340,18 +340,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     this.setMode('freeRotate');
   },
 
-  _opacitiesMode() {
-    this.setMode('opacities');
-  },
-
-  _toggleOpacitiesMode() {
-    if (this.isMode('opacities')) {
-      this.setMode('');
-    } else {
-      this._opacitiesMode();
-    };
-  },
-
   _toggleLockMode() {
     if (this.isMode('lock')) { this._unlock(); }
     else { this._lock(); }
@@ -365,6 +353,20 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     this._transparent = !this._transparent;
     opacity = this._transparent ? this.options.opacity : 1;
+
+    L.DomUtil.setOpacity(image, opacity);
+    image.setAttribute('opacity', opacity);
+
+    this._refresh();
+  },
+
+  _setOpacities(o) {
+    const image = this._overlay.getElement();
+    let opacity = o;
+
+    if (!this.hasTool(L.OpacitiesAction)) { return; }
+
+    (this.opacity < 1) ? this._transparent = true : this._transparent = false;
 
     L.DomUtil.setOpacity(image, opacity);
     image.setAttribute('opacity', opacity);
