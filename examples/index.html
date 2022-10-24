@@ -14,13 +14,16 @@
     <script src="../dist/vendor.js"></script>
     <script src="../dist/leaflet.distortableimage.js"></script>
   </head>
-  <body style="margin:0;">
-    <form id="test_form">
-      <input type="file" class="ldi" id="inputimage" accept="image/*" />
-    </form>
 
-    <div id="map" style="width:100%; height:100%; position:absolute; top:0;"></div>
-  </body>
+  <body style="margin:0;">
+    <main>
+      <form id="test_form">
+        <input type="file" class="ldi" id="inputimage" accept="image/*" />
+      </form>
+  
+      <div id="map" style="width:100%; height:100%; position:absolute; top:0;"></div>
+    </main>
+  
   <script>
     let map;
 
@@ -36,4 +39,6 @@
       });
     })();
   </script>
+
+  </body>
 </html>
