@@ -11,3 +11,5 @@ let map;
     }).addTo(map);
   });
 })();
+
+L.Control.geocoder().addTo(map);

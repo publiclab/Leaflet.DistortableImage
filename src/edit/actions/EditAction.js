@@ -71,7 +71,7 @@ L.EditAction = L.Toolbar2.Action.extend({
       return;
     }
 
-    let el = document.createElement('div');
+    const el = document.createElement('div');
     el.id = 'iconset';
     el.setAttribute('hidden', 'hidden');
     el.innerHTML = new L.ToolbarIconSet().render();

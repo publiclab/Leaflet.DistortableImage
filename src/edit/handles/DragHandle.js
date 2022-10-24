@@ -10,7 +10,7 @@ L.DragHandle = L.EditHandle.extend({
   },
 
   _onHandleDrag() {
-    let overlay = this._handled;
+    const overlay = this._handled;
     const formerLatLng = overlay.getCorner(this._corner);
     const newLatLng = this.getLatLng();
 
