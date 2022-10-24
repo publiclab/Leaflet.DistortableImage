@@ -20,32 +20,13 @@
 
   <body style="margin:0;">
     
-      <div class="modal fade" id="warningModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content bg-light">
-          <div class="modal-header d-block">
-             <div class="d-flex justify-content-between align-items-center">
-             <h2 class="modal-title">Notification</h2>
-             <button type="button" class="btn-close" id="warningModalCloseBtn" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-          </div>
-          <div class="modal-body">
-            <p>You have not provided a link to images to be placed on the map.</p>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-primary" id="warningModalOpenModal" data-dismiss="modal">Input link</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <div class="modal fade" id="welcomeModal" aria-labelledby="exampleModalLabel" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content bg-light">
           <div class="modal-header d-block">
             <div class="d-flex justify-content-between align-items-center">
               <h2 class="modal-title">Welcome to MapKnitter Lite</h2>
-              <button type="button" class="btn-close" id="closeBtn" data-bs-dismiss="modal" aria-label="Close"></button>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ></button>
             </div>
             <p> <small>(while MapKnitter is offline)</small> </p>
           </div>
@@ -69,12 +50,12 @@
     </div>
 
     <div id="map" style="width:100%; height:100%; position:absolute; top:0;"></div>
-    <i title="Open Sidebar" id="mapToggle" class="fa fa-bars fa-3x " style="position: absolute; right: 0; margin: 1rem; cursor: pointer; z-index: 400; color: white;" aria-hidden="true"></i>
+    <i title="Open Sidebar" id="mapToggle" title="Open Sidebar" class="fa fa-bars fa-3x " style="position: absolute; right: 0; margin: 1rem; z-index: 900; color: white;" aria-hidden="true"></i>
 
     <div class="offcanvas offcanvas-end" data-bs-backdrop="false" data-bs-keyboard="false" tabindex="1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
       <div class="offcanvas-header">
         <h3 id="offcanvasRightLabel">Images</h3>
-            <i title="Close Sidebar" id="modalToggle" class=" fa fa-times fa-3x " style="position: absolute; right: 0; margin: 1rem; cursor: pointer; color: #00000070;" aria-hidden="true"></i>
+            <i title="Close Sidebar" id="modalToggle" title="Close Sidebar" class=" fa fa-times fa-3x " style="position: absolute; right: 0; margin: 1rem; color: #00000070;" aria-hidden="true"></i>
         <button type="button" class="btn btn-primary d-sm-none" data-bs-dismiss="offcanvas" aria-label="Close">View Map</button>
       </div>
       <hr>
@@ -87,10 +68,6 @@
 
   <script>
     let map;
-     let isSidebarDisplayed = false;
-    let showWarningModal = false;
-    let showSidebar = false;
-    let validateUrl = false;
     let welcomeModal = document.getElementById('welcomeModal');
     let sidebar = document.getElementById('offcanvasRight');
     let form = document.getElementById('form');
@@ -99,11 +76,6 @@
     let imageContainer = document.getElementById('imgContainer');
     let modalToggle = document.getElementById('modalToggle')
     let mapToggle = document.getElementById('mapToggle')
-    let mapCanvas = document.getElementById('map'); 
-    let welcomeModalCloseBtn = document.getElementById('closeBtn');
-    let warningModal = document.getElementById('warningModal');
-    let warningModalCloseBtn = document.getElementById('warningModalCloseBtn');
-    let warningModalOpenModal = document.getElementById('warningModalOpenModal')
 
     const setupMap = () => {
       map = L.map('map').setView([51.505, -0.09], 13);
@@ -123,20 +95,10 @@
 
     setupMap();
     setupCollection();
-
-    mapCanvas.addEventListener('click', (event) => {
-      if(isSidebarDisplayed) {
-       bootstrap.Offcanvas.getInstance(sidebar).hide();
-      }
-    });
     
     form.addEventListener('submit', (event) => {
       event.preventDefault();
       const url = input.value.replace('details', 'metadata');
-      if(url){
-        validateUrl = true;
-        showWarningModal = false;
-      }
       let fetchedFrom
       axios.get(url)
         .then((response) => {
@@ -155,25 +117,7 @@
                 fetchedFrom.appendChild(fetchedFromUrl)
 
                 placeButton.classList.add('btn', 'btn-sm', 'btn-outline-secondary', 'place-button');
-                placeButton.innerHTML = 'Place on map ';
-
-                placeButton.addEventListener('click', (event) => {
-                  if(!placeButton.getElementsByClassName('fa-spinner')[0]){
-                    const spinner = document.createElement('i')
-                    spinner.setAttribute('class', "fa fa-spinner fa-spin")
-                    spinner.setAttribute('font-family', 'font awesome')
-  
-                    placeButton.appendChild(spinner)
-  
-                    let imageURL = event.target.previousElementSibling.src;
-                    let image = L.distortableImageOverlay(imageURL);
-                    map.imgGroup.addLayer(image)
-  
-                    image.addEventListener('load', () => {
-                      placeButton.removeChild(spinner)
-                    })
-                  }
-                })
+                placeButton.innerHTML = 'Place on map';
 
                 image.src = `${url.replace('metadata', 'download')}/${file.name}`;
 
@@ -196,51 +140,31 @@
           bootstrap.Modal.getInstance(welcomeModal).hide();
         });
     });
- 
-    welcomeModalCloseBtn.addEventListener('click', (event) => {
-      showWarningModal = true; 
-    });
-
-    welcomeModal.addEventListener('hide.bs.modal', (event) => {
-      showSidebar = true;
-    });
 
     welcomeModal.addEventListener('hidden.bs.modal', (event) => {
-      if(showWarningModal) {
-        showWarningModal = false;
-        return new bootstrap.Modal(warningModal).show();
-      } 
-
-      if(showSidebar) {
-        showSidebar = false;
-        isSidebarDisplayed = true;
-        return new bootstrap.Offcanvas(sidebar).show();
-      }
+        new bootstrap.Offcanvas(sidebar).show();
     });
 
-    warningModalOpenModal.addEventListener('click', (event)=>{
-        bootstrap.Modal.getInstance(warningModal).hide();
-        bootstrap.Modal.getInstance(welcomeModal).show();
+
+    map.addEventListener('click', (event)=>{
+       sidebar.classList.remove('show')
     })
-   
-    warningModalCloseBtn.addEventListener('click', (event) => {
-      bootstrap.Modal.getInstance(warningModal).hide();
-    });
     
     mapToggle.addEventListener('click', (event)=>{
-      if(validateUrl){
-      return  new bootstrap.Offcanvas(sidebar).show();
-      }else{
-        showWarningModal = true
-        return new bootstrap.Modal(warningModal).show();
-      }
+           new bootstrap.Offcanvas(sidebar).show();
     })
-
     modalToggle.addEventListener('click', (event)=>{
             if(sidebar.classList.contains('show')){
               sidebar.classList.remove('show')
             }
     })
 
+    document.addEventListener("click", (event) => {
+      if (event.target.classList.contains('place-button')) {
+        let imageURL = event.target.previousElementSibling.src;
+        let image = L.distortableImageOverlay(imageURL);
+        map.imgGroup.addLayer(image);
+      }
+    });
   </script>
 </html>
