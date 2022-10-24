@@ -35,7 +35,7 @@
 
   <script type="text/javascript">
   
-    var map;
+    const map;
   
     (function () {
 
@@ -63,9 +63,9 @@
       imgGroup.addLayer(img);
       imgGroup.addLayer(img2);
 
-      var pane = map.getPane('overlayPane')
+      const pane = map.getPane('overlayPane')
 
-      var paneCorner = document.createElement('div');
+     const paneCorner = document.createElement('div');
       paneCorner.style.width = '12px';
       paneCorner.style.height = '12px';
       paneCorner.style.borderTop = '2px red solid';
@@ -73,14 +73,14 @@
 
       pane.appendChild(paneCorner);
 
-      var crsMarker = L.marker(map.unproject([0, 0]), {
+      const crsMarker = L.marker(map.unproject([0, 0]), {
         icon: L.divIcon({
           className: 'crsMarker',
           iconAnchor: [0, 0]
         })
       }).addTo(map);
 
-      var imageOffsetLine = L.polyline([[0, 0], [0, 0]], { color: 'skyblue' }).addTo(map);
+     const imageOffsetLine = L.polyline([[0, 0], [0, 0]], { color: 'skyblue' }).addTo(map);
 
       function info() {
         var pixelOrigin = map.getPixelOrigin();
