@@ -1,6 +1,9 @@
-let opacities = [100, 80, 60, 40, 20, 0]; // Set integer values from 0 to 100.
+let opacities = [100, 80, 60, 40, 20, 0]; // Set numeric values from 0 to 100.
 
 opacities = opacities.map((o) => {
+  (isNaN(o) || o > 100) ? o = 100 : o;
+  (o < 0) ? o = 0 : o;
+
   return L.EditAction.extend({
     options: {
       toolbarIcon: {
@@ -11,11 +14,12 @@ opacities = opacities.map((o) => {
       },
     },
     addHooks() {
-      console.log(this);
       this._overlay.editing._setOpacities(o/100);
     },
   });
 });
+
+console.log(opacities);
 
 L.OpacitiesAction = L.EditAction.extend({
   initialize(map, overlay, options) {
