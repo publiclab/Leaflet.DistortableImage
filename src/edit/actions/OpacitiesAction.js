@@ -1,4 +1,4 @@
-let opacities = [100, 80, 60, 40, 20, 0];
+let opacities = [100, 80, 60, 40, 20, 0]; // Set integer values from 0 to 100.
 
 opacities = opacities.map((o) => {
   return L.EditAction.extend({
