@@ -7,8 +7,8 @@ L.Map.mergeOptions({
  * is used unless the options 'labels: false' or 'doubleClickZoom: false` were passed to it.
  */
 L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
-  enable: function() {
-    var map = this._map;
+  enable() {
+    const map = this._map;
 
     if (this._enabled) { return this; }
 
@@ -24,7 +24,7 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
     return this;
   },
 
-  disable: function() {
+  disable() {
     if (!this._enabled) { return this; }
 
     this._enabled = false;
@@ -33,9 +33,9 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
     return this;
   },
 
-  _fireIfSingle: function(e) {
-    var map = this._map;
-    var oe = e.originalEvent;
+  _fireIfSingle(e) {
+    const map = this._map;
+    const oe = e.originalEvent;
 
     // prevents deselection in case of box selector
     if (oe && oe.shiftKey) { return; }
@@ -54,9 +54,9 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
     }, 250);
   },
 
-  _onDoubleClick: function() {
-    var map = this._map;
-    var labels = map._labels;
+  _onDoubleClick() {
+    const map = this._map;
+    const labels = map._labels;
 
     setTimeout(function() {
       map._clicked = 0;

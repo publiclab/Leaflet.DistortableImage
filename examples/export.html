@@ -23,7 +23,7 @@
   <div id="map" style="width:100%; height:100%; position:absolute; top:0;"></div>
 
   <script>
-    var map;
+    let map;
 
     (function() {
       map = L.map('map').setView([51.505, -0.13], 13);
@@ -52,7 +52,7 @@
           suppressToolbar: true,
         });
 
-        var json = [{"nodes":[
+        let json = [{"nodes":[
                 {"lat":"41.8200378187","lon":"-71.4034409085"},
                 {"lat":"41.8199873593","lon":"-71.4030021564"},
                 {"lat":"41.8196229772","lon":"-71.4029728831"},

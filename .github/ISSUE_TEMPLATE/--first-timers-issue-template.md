@@ -1,3 +1,18 @@
+---
+name: "\U00002728 First Timers Only issue"
+about: Open a First Timers Only issue for someone
+title: ''
+labels: fto-candidate
+assignees: ''
+
+---
+
+### 💡Format this Issue Into a First Timers Issue
+
+This has been marked as a good candidate for becoming a [first-timers-only issue](https://code.publiclab.org/#r=all) like these, meaning that it's **simple, self-contained**, and with some extra formatting✍️, could be a great entry point for a new contributor. If you're familiar enough with this code, please consider **reformatting it as a first-timers-only issue**, and then ping @publiclab/reviewers to get it labeled🏷. Or, if this is not your first time, **try to solve it yourself**🧑‍💻!
+
+---
+
 Hi, this is a [first-timers-only issue](https://code.publiclab.org/#r=all). This means we've worked to make it more legible to folks who either **haven't contributed to our codebase before, or even folks who haven't contributed to open source before**.
 
 If that's you, we're interested in helping you take the first step and can answer questions and help you out as you do. Note that we're especially interested in contributions from people from underrepresented groups in free and open-source software!
@@ -50,6 +65,6 @@ Leave a comment below!
 
 ### Is someone else already working on this?
 
-We encourage you to link to this issue by mentioning the issue # in your pull request, so we can see if someone's already started on it. **If someone seems stuck, offer them some help!** Otherwise, [take a look at some other issues you can help with](https://publiclab.github.io/community-toolbox/#r=all). Thanks!
+We encourage you to link to this issue by mentioning the issue # in your pull request, so we can see if someone's already started on it. **If someone seem stuck, offer them some help!** Otherwise, [take a look at some other issues you can help with](https://publiclab.github.io/community-toolbox/#r=all). Thanks!
 
 (This issue was created by [First-Timers-Bot](https://github.com/hoodiehq/first-timers-bot).)
