@@ -8,7 +8,7 @@ L.DistortAction = L.EditAction.extend({
       className: "distort",
     };
 
-    L.DistortableImage.action_map.d = "_distortMode";
+    L.DistortableImage.action_map.d = '_distortMode';
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
