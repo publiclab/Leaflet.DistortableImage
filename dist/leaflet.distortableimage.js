@@ -450,7 +450,7 @@ function savetoLocalStorage(jsonImages) {
 
 function downloadFromLocalStorage(getImages) {
   var obj = localStorage.getItem('locations');
-  var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj, prettyJson));
+  var data = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(obj, prettyJson));
   var a = document.createElement('a');
   a.href = 'data:' + data;
   a.download = 'mapknitter.json'; // a.innerHTML = 'download JSON';
@@ -462,7 +462,7 @@ function downloadFromLocalStorage(getImages) {
 function prettyJson(key, value) {
   // return value.replace(/[^\w\s]/gi, '\n');
   // (/\n/g, "\r\n")
-  return value.replace(/\n/g, "\\\\n").replace(/\r/g, "\\\\r").replace(/\t/g, "\\\\t");
+  return value.replace(/\n/g, '\\\\n').replace(/\r/g, '\\\\r').replace(/\t/g, '\\\\t');
 }
 
 /***/ }),
@@ -7286,7 +7286,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "ab57f7623533f6402f38"; }
+/******/ 		__webpack_require__.h = function() { return "9e810f114482d5a79099"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
