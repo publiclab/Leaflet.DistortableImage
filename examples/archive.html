@@ -109,6 +109,13 @@
                 let image = new Image(150, 150);
                 let placeButton = document.createElement('a');
                 fetchedFrom = document.createElement('p');
+                
+                let characterNum = 28;
+                let imageName = input;
+                imageName = ImageName.value.slice (characterNum);
+                imageName = imageName.replaceAll ('-', ' ')
+                let newStr = imageName.charAt(0).toupperCase() + imageName.slice(1)
+                
                 fetchedFromUrl = document.createElement('a');
                 fetchedFromUrl.setAttribute('href', input.value);
                 fetchedFromUrl.setAttribute('target', '_blank');
@@ -117,6 +124,10 @@
 
                 placeButton.classList.add('btn', 'btn-sm', 'btn-outline-secondary', 'place-button');
                 placeButton.innerHTML = 'Place on map ';
+                
+                let imageTitle = document.createElement ('div');
+                imageTitle.classList.add ('mb-4');
+                imageTitle.innerHTML = newStr
 
                 placeButton.addEventListener('click', (event) => {
                   if(!placeButton.getElementsByClassName('fa-spinner')[0]){
@@ -142,6 +153,7 @@
                 imageRow.append(image, placeButton);
 
                 imageContainer.appendChild(imageRow);
+                imageContainer.appendChild(imageTitle);
                 imageCount++;
               }
             });
