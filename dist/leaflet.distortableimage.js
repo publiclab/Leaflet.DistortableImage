@@ -683,7 +683,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return this;
   },
   _cornerExceedsMapLats: function _cornerExceedsMapLats(zoom, corner, map) {
-    if (map.options.crs == L.CRS.Simple) {
+    if (map.options.crs.Simple == L.CRS.Simple) {
       return false;
     } else {
       var exceedsTop;
@@ -7271,7 +7271,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "16ce21f2c2f39ae2a98d"; }
+/******/ 		__webpack_require__.h = function() { return "91cb9924f808c37e539c"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
