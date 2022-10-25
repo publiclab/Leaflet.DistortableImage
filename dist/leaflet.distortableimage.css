@@ -226,15 +226,16 @@ a.leaflet-toolbar-icon[title='Loading...'] {
   width: 30px !important;
   height: 30px !important;
   line-height: 30px !important;
-  padding-right: 0 !important;
+  padding: 0 !important;
   text-align: center !important;
   text-decoration: none !important;
   background-color: #fff;
   border: inset 0.5px lightgray !important;
+  font-size: 12px !important;
   font-weight: bold !important;
+  color:#0087A8 !important;
   float: none !important;
   margin: auto !important;
-  opacity:0;
 }
 
 .leaflet-toolbar-1 li:last-child a {
