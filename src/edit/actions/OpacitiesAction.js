@@ -7,10 +7,10 @@ opacities = opacities.map((o) => {
   return L.EditAction.extend({
     options: {
       toolbarIcon: {
-        html: '',
+        html: o,
         tooltip: 'Opacity ' + o +'%',
         className: 'leaflet-toolbar-icon-vertical',
-        style: 'color:#000; background-color:rgb(' + (100 - o) + '%,' + (100 - o) + '%,' + (100 - o) + '%); opacity:1;',
+        style: 'background-color:rgb(' + (100 - o) + '%,' + (100 - o) + '%,' + (100 - o) + '%);',
       },
     },
     addHooks() {
