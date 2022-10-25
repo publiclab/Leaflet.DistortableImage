@@ -236,6 +236,7 @@ a.leaflet-toolbar-icon[title='Loading...'] {
   color:#0087A8 !important;
   float: none !important;
   margin: auto !important;
+  z-index:999;
 }
 
 .leaflet-toolbar-1 li:last-child a {
