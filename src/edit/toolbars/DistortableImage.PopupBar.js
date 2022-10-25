@@ -25,7 +25,7 @@ L.DistortableImage.PopupBar = L.Toolbar2.Popup.extend({
   },
 
   clickTool(name) {
-    const tools = this.tools();
+    let tools = this.tools();
     for (let i = 0; i < tools.length; i++) {
       let tool = tools.item(i).children[0];
       if (L.DomUtil.hasClass(tool, name)) {
