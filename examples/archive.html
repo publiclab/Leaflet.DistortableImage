@@ -19,113 +19,33 @@
   </head>
 
   <body style="margin:0;">
-    
-    <div class="modal fade" id="welcomeModal" aria-labelledby="exampleModalLabel" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content bg-light">
-          <div class="modal-header d-block">
-            <div class="d-flex justify-content-between align-items-center">
-              <h2 class="modal-title">Welcome to MapKnitter Lite</h2>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <p> <small>(while MapKnitter is offline)</small> </p>
+      <div class="flex-container">
+        <div id="dropZone" class="flex-item flex-item1">
+          <div id="map" style="width:100%; height:100%; position:absolute; top:0;"></div>
+        </div> 
+        <div id="info"><h1>DRAG FILES HERE TO EDIT</h1></div>
+          <div id="main" class="openbar">
+            <a class="archive" href="archive.org.html" target="_blank">archive.org</a>
           </div>
-          <div class="modal-body">
-            <p>First, you’ll need to go to <a href="https://archive.org/" target="_blank">archive.org</a>, create an account, and then upload your images.
-              <a href="https://archive.org/embed/help-upload-overview" target="_blank">Watch this helpful video guide.</a>
-            </p>
-            <p>You’ll get an address that looks like this:
-              <a href="https://archive.org/details/texas-barnraising/" target="_blank">
-                https://archive.org/details/texas-barnraising/
-              </a>
-            </p>
-            <p>Paste it here to begin:</p>
-            <form id="form">
-              <input id="input" type="text" class="form-control" placeholder="https://archive.org/details/..." required>
-              <button type="submit" class="btn btn-primary mt-4 mb-5">Begin</button>
-            </form>
-          </div>
-        </div>
       </div>
-    </div>
-
-    <div id="map" style="width:100%; height:100%; position:absolute; top:0;"></div>
-
-    <div class="offcanvas offcanvas-end" data-bs-backdrop="false" data-bs-keyboard="false" tabindex="1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
-      <div class="offcanvas-header">
-        <h3 id="offcanvasRightLabel">Images</h3>
-        <button type="button" class="btn btn-primary d-sm-none" data-bs-dismiss="offcanvas" aria-label="Close">View Map</button>
-      </div>
-      <hr>
-      <div class="offcanvas-body">
-        <p id="response" class="mb-5">No link = No images...</p>
-        <div id="imgContainer"></div>
-      </div>
-    </div>
-  </body>
-
+   </body>
   <script>
-    let map;
-    let welcomeModal = document.getElementById('welcomeModal');
-    let sidebar = document.getElementById('offcanvasRight');
-    let form = document.getElementById('form');
-    let input = document.getElementById('input');
-    let responseText = document.getElementById('response');
-    let imageContainer = document.getElementById('imgContainer');
+    //display uploaded image
+  let map;
+      (function() {
+        map = L.map('map').setView([51.505, -0.09], 13);
+        map.addGoogleMutant();
 
-    const setupMap = () => {
-      map = L.map('map').setView([51.505, -0.09], 13);
+        map.whenReady(function() {
       
-      map.attributionControl.setPosition('bottomleft');
+          img = L.distortableImageOverlay(localStorage.getItem("recent-image"), {
+            selected: true,
+            fullResolutionSrc: 'large.jpg',
+            }).addTo(map);
+          });
+        })();
 
-      map.addGoogleMutant();
-
-      map.whenReady(() => {
-        new bootstrap.Modal(welcomeModal).show();
-      });
-    }
-    setupMap();
+       L.Control.geocoder().addTo(map);
     
-    form.addEventListener('submit', (event) => {
-      event.preventDefault();
-      const url = input.value.replace('details', 'metadata');
-      axios.get(url)
-        .then((response) => {
-          if (response.data.files && response.data.files.length != 0) {
-            let imageCount = 0;
-            response.data.files.forEach(file => {
-              if (file.format === 'PNG' || file.format === 'JPEG'){
-                let imageRow = document.createElement('div');
-                let image = new Image(150, 150);
-                let placeButton = document.createElement('a');
-
-                placeButton.classList.add('btn', 'btn-sm', 'btn-outline-secondary');
-                placeButton.innerHTML = 'Place on map';
-
-                image.src = `${url.replace('metadata', 'download')}/${file.name}`;
-
-                imageRow.classList.add('d-flex', 'justify-content-between', 'align-items-center', 'mb-4', 'pe-5');
-                imageRow.append(image, placeButton);
-
-                imageContainer.appendChild(imageRow);
-                imageCount++;
-              }
-            });
-            responseText.innerHTML = imageCount ? `${imageCount} image(s) fetched successfully.` : 'No images found in the link provided...'
-          } else {
-            responseText.innerHTML = 'No images found in the link provided...'
-          }
-        })
-        .catch((error) => {
-          responseText.innerHTML = 'Uh-oh! Something\'s not right with the link provided!'
-        })
-        .finally(() => {
-          bootstrap.Modal.getInstance(welcomeModal).hide();
-        });
-    });
-
-    welcomeModal.addEventListener('hidden.bs.modal', (event) => {
-      new bootstrap.Offcanvas(sidebar).show();
-    });
-  </script>
+    </script>
 </html>
