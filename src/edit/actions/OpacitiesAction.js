@@ -10,7 +10,7 @@ opacities = opacities.map((o) => {
         html: '',
         tooltip: 'Opacity ' + o +'%',
         className: 'leaflet-toolbar-icon-vertical',
-        style: 'background-color:#000; opacity:' + o/100 + ';',
+        style: 'color:#000; background-color:rgb(' + (100 - o) + '%,' + (100 - o) + '%,' + (100 - o) + '%); opacity:1;',
       },
     },
     addHooks() {

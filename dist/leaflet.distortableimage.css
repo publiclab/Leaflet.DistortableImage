@@ -234,11 +234,11 @@ a.leaflet-toolbar-icon[title='Loading...'] {
   font-weight: bold !important;
   float: none !important;
   margin: auto !important;
+  opacity:0;
 }
 
-.leaflet-toolbar-1 {
+.leaflet-toolbar-1 li:last-child a {
   border-radius: 0px 0px 4px 4px !important;
-  background-color: #fff !important;
 }
 
 input[type="text"]::-webkit-input-placeholder {
