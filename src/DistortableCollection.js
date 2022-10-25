@@ -229,5 +229,6 @@ L.distortableCollection = function(id, options) {
 };
 
 function savetoLocalStorage(jsonImages) {
-  json.images.map(each=> localStorage.setItem('locations', JSON.stringify(each.nodes)));
+  var result = jsonImages.map(img => ({ value: img.nodes }));
+ localStorage.setItem('locations', JSON.stringify(result));
 }

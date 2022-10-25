@@ -428,9 +428,8 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
     json.images = json.images.reverse();
     json.avg_cm_per_pixel = this._getAvgCmPerPixel(json.images);
-    json.images.map(function (each) {
-      return localStorage.setItem('locations', JSON.stringify(each.nodes));
-    });
+    var jsonImages = json.images;
+    savetoLocalStorage(jsonImages);
     return json;
   }
 });
@@ -438,6 +437,15 @@ L.DistortableCollection = L.FeatureGroup.extend({
 L.distortableCollection = function (id, options) {
   return new L.DistortableCollection(id, options);
 };
+
+function savetoLocalStorage(jsonImages) {
+  var result = jsonImages.map(function (img) {
+    return {
+      value: img.nodes
+    };
+  });
+  localStorage.setItem('locations', JSON.stringify(result));
+}
 
 /***/ }),
 
@@ -7260,7 +7268,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "6fc05bf64e32380618da"; }
+/******/ 		__webpack_require__.h = function() { return "3ed6493ff558afe3d9e0"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
