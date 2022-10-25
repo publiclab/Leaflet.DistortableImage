@@ -56,7 +56,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     if (this.toolbar) { this._removeToolbar(); }
 
-    for (let handle in this._handles) {
+    for (const handle in this._handles) {
       L.DomUtil.remove(handle);
     }
 
@@ -92,8 +92,8 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._modes = {};
     // passed from L.DistortablImage.PopupBar. If the mode is one
     // of the current toolbar actions, adds it to this._modes
-    for (let mode in L.DistortableImage.Edit.MODES) {
-      let action = L.DistortableImage.Edit.MODES[mode];
+    for (const mode in L.DistortableImage.Edit.MODES) {
+      const action = L.DistortableImage.Edit.MODES[mode];
       if (this.editActions.indexOf(action) !== -1) {
         this._modes[mode] = action;
       }
@@ -196,7 +196,7 @@ L.DistortableImage.Edit = L.Handler.extend({
         this._removeToolbar();
         this.editActions[idx] = next;
         this._addToolbar();
-        for (let mode in L.DistortableImage.Edit.MODES) {
+        for (const mode in L.DistortableImage.Edit.MODES) {
           if (L.DistortableImage.Edit.MODES[mode] === old) {
             delete this._modes[mode];
             this._nextOrNone(mode);
@@ -215,7 +215,7 @@ L.DistortableImage.Edit = L.Handler.extend({
       this._removeToolbar();
       this.editActions.push(value);
       this._addToolbar();
-      for (let mode in L.DistortableImage.Edit.MODES) {
+      for (const mode in L.DistortableImage.Edit.MODES) {
         if (L.DistortableImage.Edit.MODES[mode] === value) {
           this._modes[mode] = value;
         }
@@ -235,7 +235,7 @@ L.DistortableImage.Edit = L.Handler.extend({
         this._removeToolbar();
         this.editActions.splice(idx, 1);
         this._addToolbar();
-        for (let mode in L.DistortableImage.Edit.MODES) {
+        for (const mode in L.DistortableImage.Edit.MODES) {
           if (L.DistortableImage.Edit.MODES[mode] === value) {
             delete this._modes[mode];
             this._nextOrNone(mode);
@@ -263,7 +263,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _removeToolbar() {
     const ov = this._overlay;
-    let map = ov._map;
+    const map = ov._map;
 
     if (this.toolbar) {
       map.removeLayer(this.toolbar);
@@ -272,7 +272,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _enableDragging() {
-    let overlay = this._overlay;
+    const overlay = this._overlay;
     const map = overlay._map;
 
     this.dragging = new L.Draggable(overlay.getElement());
@@ -292,7 +292,7 @@ L.DistortableImage.Edit = L.Handler.extend({
       const topLeft = overlay.getCorner(0);
       const delta = this._newPos.subtract(map.latLngToLayerPoint(topLeft));
       let currentPoint;
-      let corners = {};
+      const corners = {};
       let i;
 
       this.fire('predrag');
@@ -395,7 +395,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _removeOverlay() {
-    let ov = this._overlay;
+    const ov = this._overlay;
     const eP = this.parentGroup;
 
     if (this.isMode('lock') || !this.hasTool(L.DeleteAction)) { return; }
@@ -411,25 +411,25 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   // Based on https://github.com/publiclab/mapknitter/blob/8d94132c81b3040ae0d0b4627e685ff75275b416/app/assets/javascripts/mapknitter/Map.js#L47-L82
   _getExport() {
-    let overlay = this._overlay;
-    let map = overlay._map;
-    let img = overlay.getElement();
+    const overlay = this._overlay;
+    const map = overlay._map;
+    const img = overlay.getElement();
 
     if (!this.hasTool(L.ExportAction)) { return; }
 
     // make a new image
-    let downloadable = new Image();
+    const downloadable = new Image();
 
     downloadable.id = downloadable.id || 'tempId12345';
     document.body.appendChild(downloadable);
 
     downloadable.onload = function onLoadDownloadableImage() {
-      let height = downloadable.height;
-      let width = downloadable.width;
-      let nw = map.latLngToLayerPoint(overlay.getCorner(0));
-      let ne = map.latLngToLayerPoint(overlay.getCorner(1));
-      let sw = map.latLngToLayerPoint(overlay.getCorner(2));
-      let se = map.latLngToLayerPoint(overlay.getCorner(3));
+      const height = downloadable.height;
+      const width = downloadable.width;
+      const nw = map.latLngToLayerPoint(overlay.getCorner(0));
+      const ne = map.latLngToLayerPoint(overlay.getCorner(1));
+      const sw = map.latLngToLayerPoint(overlay.getCorner(2));
+      const se = map.latLngToLayerPoint(overlay.getCorner(3));
 
       // I think this is to move the image to the upper left corner,
       // eslint-disable-next-line max-len
@@ -469,7 +469,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _stackUp() {
-    let t = this._toggledImage;
+    const t = this._toggledImage;
 
     if (!t || !this.hasTool(L.StackAction)) { return; }
 
@@ -479,7 +479,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _stackDown() {
-    let t = this._toggledImage;
+    const t = this._toggledImage;
 
     if (t || !this.hasTool(L.StackAction)) { return; }
 
@@ -489,8 +489,8 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _unlock() {
-    let ov = this._overlay;
-    let map = ov._map;
+    const ov = this._overlay;
+    const map = ov._map;
     const eP = this.parentGroup;
 
     if (!this.isMode('lock')) { return; }
@@ -564,7 +564,7 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _updateHandle() {
     const ov = this._overlay;
-    let map = ov._map;
+    const map = ov._map;
     const mode = this.getMode();
 
     if (this.currentHandle) { map.removeLayer(this.currentHandle); }
@@ -575,9 +575,9 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
 
   _addToolbar() {
-    let ov = this._overlay;
+    const ov = this._overlay;
     const eP = this.parentGroup;
-    let map = ov._map;
+    const map = ov._map;
     // Find the topmost point on the image.
     const corners = ov.getCorners();
     let maxLat = -Infinity;
@@ -596,7 +596,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     }
 
     // Longitude is based on the centroid of the image.
-    let raisedPoint = ov.getCenter();
+    const raisedPoint = ov.getCenter();
     raisedPoint.lat = maxLat;
 
     this.toolbar = L.distortableImage.popupBar(raisedPoint, {
@@ -614,7 +614,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     const overlay = this._overlay;
     // Find the topmost point on the image.
     const corners = overlay.getCorners();
-    let toolbar = this.toolbar;
+    const toolbar = this.toolbar;
     let maxLat = -Infinity;
 
     if (toolbar && toolbar instanceof L.DistortableImage.PopupBar) {
@@ -625,7 +625,7 @@ L.DistortableImage.Edit = L.Handler.extend({
       }
 
       // Longitude is based on the centroid of the image.
-      let raisedPoint = overlay.getCenter();
+      const raisedPoint = overlay.getCenter();
       raisedPoint.lat = maxLat;
 
       if (!overlay.options.suppressToolbar) {
@@ -655,7 +655,7 @@ L.DistortableImage.Edit = L.Handler.extend({
   setMode(newMode) {
     const ov = this._overlay;
     const eP = this.parentGroup;
-    let mode = this.getMode();
+    const mode = this.getMode();
 
     if (mode === newMode || !this.hasMode(newMode) || !this.enabled()) {
       return;
@@ -678,12 +678,12 @@ L.DistortableImage.Edit = L.Handler.extend({
     * the map and fire the handler that shows map location labels on map dblclick.
     */
   nextMode(e) {
-    let mode = this.getMode();
+    const mode = this.getMode();
     const eP = this.parentGroup;
-    let modesArray = Object.keys(this.getModes());
-    let idx = modesArray.indexOf(mode);
-    let nextIdx = (idx + 1) % modesArray.length;
-    let newMode = modesArray[nextIdx];
+    const modesArray = Object.keys(this.getModes());
+    const idx = modesArray.indexOf(mode);
+    const nextIdx = (idx + 1) % modesArray.length;
+    const newMode = modesArray[nextIdx];
 
     if (e) {
       if (eP && eP.anyCollected()) { return; }
