@@ -3,7 +3,7 @@ L.DistortAction = L.EditAction.extend({
     options = options || {};
     options.toolbarIcon = {
       svg: true,
-      html: "distort",
+      html: 'distort',
       tooltip: overlay.options.translation.distortImage,
       className: "distort",
     };
