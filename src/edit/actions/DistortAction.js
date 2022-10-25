@@ -5,7 +5,7 @@ L.DistortAction = L.EditAction.extend({
       svg: true,
       html: 'distort',
       tooltip: overlay.options.translation.distortImage,
-      className: "distort",
+      className: 'distort',
     };
 
     L.DistortableImage.action_map.d = '_distortMode';
