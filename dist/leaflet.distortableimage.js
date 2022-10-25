@@ -444,7 +444,25 @@ function savetoLocalStorage(jsonImages) {
       value: img.nodes
     };
   });
-  localStorage.setItem('locations', JSON.stringify(result));
+  var getImages = localStorage.setItem('locations', JSON.stringify(result));
+  downloadFromLocalStorage(getImages);
+}
+
+function downloadFromLocalStorage(getImages) {
+  var obj = localStorage.getItem('locations');
+  var data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(obj, prettyJson));
+  var a = document.createElement('a');
+  a.href = 'data:' + data;
+  a.download = 'mapknitter.json'; // a.innerHTML = 'download JSON';
+  // console.log(a);
+
+  a.click();
+}
+
+function prettyJson(key, value) {
+  // return value.replace(/[^\w\s]/gi, '\n');
+  // (/\n/g, "\r\n")
+  return value.replace(/\n/g, "\\\\n").replace(/\r/g, "\\\\r").replace(/\t/g, "\\\\t");
 }
 
 /***/ }),
@@ -7268,7 +7286,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "8248f1eca38195f7540d"; }
+/******/ 		__webpack_require__.h = function() { return "ab57f7623533f6402f38"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
