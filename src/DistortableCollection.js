@@ -109,20 +109,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
         } else {
           arr.splice(arr.indexOf(layer), 1);
         }
-        // if (arr.length) {
-        //   console.log('Not Empty');
-        //   // arr.map((each) => {
-        //   //   if (each._leaflet_id !== e._leaflet_id) {
-        //   //     arr.push(e.target);
-        //   //   } else {
-        //   //     console.log(arr.indexOf(each));
-        //   //     // arr.splice(1, arr.indexOf(each));
-        //   //   }
-        //   // });
-        // } else {
-        //   console.log('Empty');
-        //   arr.push(e.target);
-        // }
       }
       console.log(arr);
     }
@@ -241,9 +227,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
       }
     }, this);
 
-    // json.images = json.images.reverse();
+    json.images = json.images.reverse();
     json.avg_cm_per_pixel = this._getAvgCmPerPixel(json.images);
-    console.log(json.images);
+
     return json;
   },
 });

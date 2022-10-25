@@ -302,21 +302,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
           arr.push(layer);
         } else {
           arr.splice(arr.indexOf(layer), 1);
-        } // if (arr.length) {
-        //   console.log('Not Empty');
-        //   // arr.map((each) => {
-        //   //   if (each._leaflet_id !== e._leaflet_id) {
-        //   //     arr.push(e.target);
-        //   //   } else {
-        //   //     console.log(arr.indexOf(each));
-        //   //     // arr.splice(1, arr.indexOf(each));
-        //   //   }
-        //   // });
-        // } else {
-        //   console.log('Empty');
-        //   arr.push(e.target);
-        // }
-
+        }
       }
 
       console.log(arr);
@@ -453,10 +439,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
           cm_per_pixel: L.ImageUtil.getCmPerPixel(layer)
         });
       }
-    }, this); // json.images = json.images.reverse();
-
+    }, this);
+    json.images = json.images.reverse();
     json.avg_cm_per_pixel = this._getAvgCmPerPixel(json.images);
-    console.log(json.images);
     return json;
   }
 });
@@ -7286,7 +7271,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "c611f1590ac9d7a633b2"; }
+/******/ 		__webpack_require__.h = function() { return "16ce21f2c2f39ae2a98d"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
