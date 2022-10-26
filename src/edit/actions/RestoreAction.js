@@ -1,7 +1,7 @@
 L.RestoreAction = L.EditAction.extend({
   initialize(map, overlay, options) {
-    let mode = L.Utils.getNestedVal(overlay, 'editing', '_mode');
-    let edited = overlay.edited;
+    const mode = L.Utils.getNestedVal(overlay, 'editing', '_mode');
+    const edited = overlay.edited;
 
     options = options || {};
     options.toolbarIcon = {

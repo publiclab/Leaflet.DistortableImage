@@ -95,6 +95,10 @@
     form.addEventListener('submit', (event) => {
       event.preventDefault();
       const url = input.value.replace('details', 'metadata');
+      let splitUrl = url.split('/');
+      let detectKey = splitUrl[splitUrl.length - 2];
+      console.log("detected key", detectKey);
+      let fetchedFrom
       axios.get(url)
         .then((response) => {
           if (response.data.files && response.data.files.length != 0) {
@@ -104,9 +108,33 @@
                 let imageRow = document.createElement('div');
                 let image = new Image(150, 150);
                 let placeButton = document.createElement('a');
+                fetchedFrom = document.createElement('p');
+                fetchedFromUrl = document.createElement('a');
+                fetchedFromUrl.setAttribute('href', input.value);
+                fetchedFromUrl.setAttribute('target', '_blank');
+                fetchedFromUrl.innerHTML = 'this Internet Archive Collection';
+                fetchedFrom.appendChild(fetchedFromUrl)
 
                 placeButton.classList.add('btn', 'btn-sm', 'btn-outline-secondary', 'place-button');
-                placeButton.innerHTML = 'Place on map';
+                placeButton.innerHTML = 'Place on map ';
+
+                placeButton.addEventListener('click', (event) => {
+                  if(!placeButton.getElementsByClassName('fa-spinner')[0]){
+                    const spinner = document.createElement('i')
+                    spinner.setAttribute('class', "fa fa-spinner fa-spin")
+                    spinner.setAttribute('font-family', 'font awesome')
+  
+                    placeButton.appendChild(spinner)
+  
+                    let imageURL = event.target.previousElementSibling.src;
+                    let image = L.distortableImageOverlay(imageURL);
+                    map.imgGroup.addLayer(image)
+  
+                    image.addEventListener('load', () => {
+                      placeButton.removeChild(spinner)
+                    })
+                  }
+                })
 
                 image.src = `${url.replace('metadata', 'download')}/${file.name}`;
 
@@ -117,7 +145,7 @@
                 imageCount++;
               }
             });
-            responseText.innerHTML = imageCount ? `${imageCount} image(s) fetched successfully.` : 'No images found in the link provided...'
+            responseText.innerHTML = imageCount ? `${imageCount} image(s) fetched successfully from ${fetchedFrom.innerHTML}.` : 'No images found in the link provided...'
           } else {
             responseText.innerHTML = 'No images found in the link provided...'
           }
@@ -134,12 +162,5 @@
       new bootstrap.Offcanvas(sidebar).show();
     });
 
-    document.addEventListener("click", (event) => {
-      if (event.target.classList.contains('place-button')) {
-        let imageURL = event.target.previousElementSibling.src;
-        let image = L.distortableImageOverlay(imageURL);
-        map.imgGroup.addLayer(image);
-      }
-    });
   </script>
 </html>

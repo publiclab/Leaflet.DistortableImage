@@ -40,7 +40,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       this._initImageDimensions();
 
       if (this.options.rotation) {
-        const units = this.options.rotation.deg ? 'deg' : 'rad';
+        const units = this.options.rotation.deg >= 0 ? 'deg' : 'rad';
         this.setAngle(this.options.rotation[units], units);
       } else {
         this.rotation = {deg: 0, rad: 0};
@@ -211,7 +211,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   _cornerExceedsMapLats(zoom, corner, map) {
-    if (map.options.crs == L.CRS.Simple) {
+    if (map.options.crs.Simple == L.CRS.Simple) {
       return false;
     } else {
       let exceedsTop;
@@ -234,7 +234,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     let i = 0;
 
     // this is to fix https://github.com/publiclab/Leaflet.DistortableImage/issues/402
-    for (let k in latlngObj) {
+    for (const k in latlngObj) {
       if (this._cornerExceedsMapLats(zoom, latlngObj[k], map)) {
         // calling reset / update w/ the same corners bc it prevents a marker flicker for rotate
         this.setBounds(L.latLngBounds(this.getCorners()));
@@ -243,7 +243,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       }
     }
 
-    for (let k in latlngObj) {
+    for (const k in latlngObj) {
       this._corners[i] = latlngObj[k];
       i += 1;
     }
@@ -266,7 +266,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     const edit = this.editing;
     let i = 0;
 
-    for (let k in pointsObj) {
+    for (const k in pointsObj) {
       const corner = map.layerPointToLatLng(pointsObj[k]);
 
       if (this._cornerExceedsMapLats(zoom, corner, map)) {
@@ -277,7 +277,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       }
     }
 
-    for (let k in pointsObj) {
+    for (const k in pointsObj) {
       this._corners[i] = map.layerPointToLatLng(pointsObj[k]);
       i += 1;
     }
@@ -299,7 +299,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     const center = map.project(this.getCenter());
     let i;
     let p;
-    let scaledCorners = {};
+    const scaledCorners = {};
 
     if (scale === 0) { return; }
 
@@ -356,7 +356,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   rotateBy(angle, unit = 'deg') {
     const map = this._map;
     const center = map.project(this.getCenter());
-    let corners = {};
+    const corners = {};
     let i;
     let p;
     let q;
@@ -383,7 +383,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     const map = this._map;
     let i;
     let p;
-    let transCorners = {};
+    const transCorners = {};
     const delta = map.project(formerPoint).subtract(map.project(newPoint));
 
     for (i = 0; i < 4; i++) {
@@ -507,7 +507,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     const offset = latLngToCartesian(this.getCorner(0));
     const w = this.getElement().offsetWidth || 500;
     const h = this.getElement().offsetHeight || 375;
-    let c = [];
+    const c = [];
     let j;
     /* Convert corners to container points (i.e. cartesian coordinates). */
     for (j = 0; j < 4; j++) {
