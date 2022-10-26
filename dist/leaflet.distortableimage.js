@@ -489,7 +489,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       _this._initImageDimensions();
 
       if (_this.options.rotation) {
-        var units = _this.options.rotation.deg ? 'deg' : 'rad';
+        var units = _this.options.rotation.deg >= 0 ? 'deg' : 'rad';
 
         _this.setAngle(_this.options.rotation[units], units);
       } else {
@@ -7257,7 +7257,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "b3dd04f4f1757c896904"; }
+/******/ 		__webpack_require__.h = function() { return "e656f40e04ba48ad0291"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */

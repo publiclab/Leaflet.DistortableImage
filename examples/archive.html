@@ -103,7 +103,12 @@
 
     function extractKey() {
       let getUrl;
-      if(!input.value.includes('archive.org/details/') && !input.value.includes('https://'))
+      if(input.value.includes('http:'))
+      {
+        getUrl = input.value.replace('http:', 'https:')
+        showImages(getUrl);
+      }
+      else if(!input.value.includes('archive.org/details/') && !input.value.includes('https://'))
       {
         getUrl = `https://archive.org/details/${input.value}/`;
         showImages(getUrl); 
