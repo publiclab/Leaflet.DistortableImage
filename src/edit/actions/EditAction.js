@@ -41,9 +41,9 @@ L.EditAction = L.Toolbar2.Action.extend({
     this._link.setAttribute('href', '#');
     // this._link.setAttribute('title', iconOptions.tooltip);
     this._link.setAttribute('role', 'button');
-    this._link.setAttribute('data-bs-toggle', 'top')
-    this._link.setAttribute('data-bs-placement', 'bottom')
-    this._link.setAttribute('data-bs-title', iconOptions.tooltip)
+    this._link.setAttribute('data-bs-toggle', 'top');
+    this._link.setAttribute('data-bs-placement', 'bottom');
+    this._link.setAttribute('data-bs-title', iconOptions.tooltip);
 
     L.DomUtil.addClass(this._link, this.constructor.baseClass);
 
