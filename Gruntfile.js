@@ -1,8 +1,8 @@
 const webpackConfig = require('./webpack.config.js');
 
-module.exports = function(grunt) {
+module.exports = (grunt)=> {
   // load npm tasks for grunt-* libs, excluding grunt-cli
-  require('matchdep').filterDev('{grunt,gruntify}-*').filter(function(pkg) {
+  require('matchdep').filterDev('{grunt,gruntify}-*').filter((pkg) =>  {
     return ['grunt-cli'].indexOf(pkg) < 0;
   }).forEach(grunt.loadNpmTasks);
 
@@ -98,7 +98,7 @@ module.exports = function(grunt) {
   // recompile svg icon sprite
   grunt.registerTask('icons', ['svgmin', 'svg_sprite']);
 
-  grunt.registerTask('coverage', 'CLI reporter for karma-coverage', function() {
+  grunt.registerTask('coverage', 'CLI reporter for karma-coverage', ()=> {
     var coverageReports = grunt.file.expand('coverage/*/coverage.txt');
     var reports = {};
     var report; var i; var len;
