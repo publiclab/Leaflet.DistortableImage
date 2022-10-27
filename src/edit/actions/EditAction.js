@@ -23,14 +23,6 @@ L.EditAction = L.Toolbar2.Action.extend({
     this._injectIconSet();
   },
 
-  enable(e) {
-    if (e) { L.DomEvent.preventDefault(e); };
-    if (e) { L.DomEvent.stopPropagation(e); };
-    if (this._enabled) { return; };
-    this._enabled = true;
-    if (this.addHooks) { this.addHooks(); };
-  },
-
   _createIcon(toolbar, container, args) {
     const iconOptions = this.options.toolbarIcon;
     const className = iconOptions.className;
