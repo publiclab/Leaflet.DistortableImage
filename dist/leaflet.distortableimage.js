@@ -489,7 +489,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       _this._initImageDimensions();
 
       if (_this.options.rotation) {
-        var units = _this.options.rotation.deg ? 'deg' : 'rad';
+        var units = _this.options.rotation.deg >= 0 ? 'deg' : 'rad';
 
         _this.setAngle(_this.options.rotation[units], units);
       } else {
@@ -2462,11 +2462,16 @@ L.EditAction = L.Toolbar2.Action.extend({
       this._link.innerHTML = iconOptions.html;
     }
 
-    this._link.setAttribute('href', '#');
+    this._link.setAttribute('href', '#'); // this._link.setAttribute('title', iconOptions.tooltip);
 
-    this._link.setAttribute('title', iconOptions.tooltip);
 
     this._link.setAttribute('role', 'button');
+
+    this._link.setAttribute('data-bs-toggle', 'top');
+
+    this._link.setAttribute('data-bs-placement', 'bottom');
+
+    this._link.setAttribute('data-bs-title', iconOptions.tooltip);
 
     L.DomUtil.addClass(this._link, this.constructor.baseClass);
 
@@ -7257,7 +7262,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "91cb9924f808c37e539c"; }
+/******/ 		__webpack_require__.h = function() { return "2bc6040703af30745ee2"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
