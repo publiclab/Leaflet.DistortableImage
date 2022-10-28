@@ -2467,9 +2467,9 @@ L.EditAction = L.Toolbar2.Action.extend({
 
     this._link.setAttribute('role', 'button');
 
-    this._link.setAttribute('data-bs-toggle', 'top');
+    this._link.setAttribute('data-bs-toggle', 'tooltip');
 
-    this._link.setAttribute('data-bs-placement', 'bottom');
+    this._link.setAttribute('data-bs-placement', 'top');
 
     this._link.setAttribute('data-bs-title', iconOptions.tooltip);
 
@@ -7262,7 +7262,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "b221ef1d217ffbd4c281"; }
+/******/ 		__webpack_require__.h = function() { return "2805f7beafd7453f7d08"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
