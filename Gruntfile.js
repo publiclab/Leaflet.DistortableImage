@@ -95,6 +95,7 @@ module.exports = function (grunt) {
     "eslint",
     "karma:development:start",
     "coverage",
+
     "webpack",
   ]);
 
