@@ -14,7 +14,7 @@ L.GeolocateAction = L.EditAction.extend({
   },
 
   addHooks() {
-    let image = this._overlay.getElement();
+    const image = this._overlay.getElement();
 
     EXIF.getData(image, L.EXIF(image));
   },
