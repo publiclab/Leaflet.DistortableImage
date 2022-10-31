@@ -107,7 +107,7 @@
 
     function extractKey() {
       let getUrl;
-      if(!input.value.includes('archive.org/details/') && !input.value.includes('https://') && !input.value.includes('http://'))
+      if(!input.value.includes('archive.org/details/') && !input.value.includes('https://'))
       {
         getUrl = `https://archive.org/details/${input.value}/`;
         showImages(getUrl); 
