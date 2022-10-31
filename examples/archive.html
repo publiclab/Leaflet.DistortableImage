@@ -98,7 +98,33 @@
     
     form.addEventListener('submit', (event) => {
       event.preventDefault();
-      const url = input.value.replace('details', 'metadata');
+      extractKey();
+    });
+
+    welcomeModal.addEventListener('hidden.bs.modal', (event) => {
+      new bootstrap.Offcanvas(sidebar).show();
+    });
+
+    function extractKey() {
+      let getUrl;
+      if(!input.value.includes('archive.org/details/') && !input.value.includes('https://'))
+      {
+        getUrl = `https://archive.org/details/${input.value}/`;
+        showImages(getUrl); 
+      }
+      else if(!input.value.includes('https://')) {
+        getUrl = `https://${input.value}`;
+        showImages(getUrl);   
+      }
+      else
+      {
+        getUrl = input.value;
+        showImages(getUrl)
+      }
+    }
+
+    function showImages(getUrl) {
+      const url = getUrl.replace('details', 'metadata');
       let fetchedFrom
       axios.get(url)
         .then((response) => {
@@ -139,7 +165,7 @@
         .finally(() => {
           bootstrap.Modal.getInstance(welcomeModal).hide();
         });
-    });
+    }
 
     welcomeModal.addEventListener('hidden.bs.modal', (event) => {
         new bootstrap.Offcanvas(sidebar).show();
