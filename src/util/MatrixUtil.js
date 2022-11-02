@@ -55,7 +55,7 @@ L.MatrixUtil = {
       y1, y2, y3,
       1, 1, 1,
     ];
-    let v = L.MatrixUtil.multmv(L.MatrixUtil.adj(m), [x4, y4, 1]);
+    const v = L.MatrixUtil.multmv(L.MatrixUtil.adj(m), [x4, y4, 1]);
 
     return L.MatrixUtil.multmm(m, [
       v[0], 0, 0,
@@ -65,7 +65,7 @@ L.MatrixUtil = {
   },
 
   project(m, x, y) {
-    let v = L.MatrixUtil.multmv(m, [x, y, 1]);
+    const v = L.MatrixUtil.multmv(m, [x, y, 1]);
 
     return [v[0]/v[2], v[1]/v[2]];
   },
@@ -76,9 +76,9 @@ L.MatrixUtil = {
       x3s, y3s, x3d, y3d,
       x4s, y4s, x4d, y4d
   ) {
-    let s = L.MatrixUtil.basisToPoints(x1s, y1s, x2s, y2s, x3s, y3s, x4s, y4s);
-    let d = L.MatrixUtil.basisToPoints(x1d, y1d, x2d, y2d, x3d, y3d, x4d, y4d);
-    let m = L.MatrixUtil.multmm(d, L.MatrixUtil.adj(s));
+    const s = L.MatrixUtil.basisToPoints(x1s, y1s, x2s, y2s, x3s, y3s, x4s, y4s);
+    const d = L.MatrixUtil.basisToPoints(x1d, y1d, x2d, y2d, x3d, y3d, x4d, y4d);
+    const m = L.MatrixUtil.multmm(d, L.MatrixUtil.adj(s));
 
     // Normalize to the unique matrix with m[8] == 1.
     // See: http://franklinta.com/2014/09/08/computing-css-matrix3d-transforms/

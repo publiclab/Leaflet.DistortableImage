@@ -101,6 +101,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
       /* conditional prevents disabled images from flickering multi-select mode */
       if (layer.editing.enabled()) {
         L.DomUtil.toggleClass(e.target, 'collected');
+        // re-order layers by ... to match their display order in UI
         const newArr = arr.every((each) => {
           return each._leaflet_id !== layer._leaflet_id;
         });
@@ -141,7 +142,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
       layer._dragStartPoints = {};
       layer.deselect();
       for (i = 0; i < 4; i++) {
-        let c = layer.getCorner(i);
+        const c = layer.getCorner(i);
         layer._dragStartPoints[i] = map.latLngToLayerPoint(c);
       }
     });
@@ -183,7 +184,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     let i;
 
     layersToMove.forEach((layer) => {
-      let movedPoints = {};
+      const movedPoints = {};
       for (i = 0; i < 4; i++) {
         movedPoints[i] = p.transform(layer._dragStartPoints[i]);
       }
@@ -205,10 +206,10 @@ L.DistortableCollection = L.FeatureGroup.extend({
     this.eachLayer(function(layer) {
       console.log(layer);
       if (this.isCollected(layer)) {
-        let sections = layer._image.src.split('/');
-        let filename = sections[sections.length-1];
-        let zc = layer.getCorners();
-        let corners = [
+        const sections = layer._image.src.split('/');
+        const filename = sections[sections.length-1];
+        const zc = layer.getCorners();
+        const corners = [
           {lat: zc[0].lat, lon: zc[0].lng},
           {lat: zc[1].lat, lon: zc[1].lng},
           {lat: zc[3].lat, lon: zc[3].lng},
