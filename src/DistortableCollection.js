@@ -110,7 +110,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
           arr.splice(arr.indexOf(layer), 1);
         }
       }
-      console.log(arr);
     }
 
     if (this.anyCollected()) { layer.deselect(); }

@@ -38,7 +38,6 @@
             L.latLng(51.50,-0.10),
           ],
           mode: 'lock',
-             alt:'img',
         });
 
         // create a second image
@@ -51,7 +50,6 @@
           ],
           mode: 'freeRotate',
           suppressToolbar: true,
-             alt:'img2',
         });
 
         img3 = L.distortableImageOverlay('example.jpg', {
@@ -62,7 +60,6 @@
             L.latLng(51.48,-0.10),
           ],
           actions: [L.DistortAction, L.FreeRotateAction, L.LockAction, L.OpacityAction, L.DeleteAction, L.StackAction],
-             alt:'img3',
         });
 
         img4 = L.distortableImageOverlay('example.jpg', {
@@ -72,8 +69,7 @@
             L.latLng(51.51,-0.03),
             L.latLng(51.49, -0.08),
             L.latLng(51.49,-0.04),
-          ],
-          alt:'img4',
+          ]
         });
 
         imgGroup = L.distortableCollection().addTo(map);
