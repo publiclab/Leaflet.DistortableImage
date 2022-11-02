@@ -8,7 +8,7 @@
         img = L.distortableImageOverlay('example.jpg', {
             corners: [   
             L.latLng(51.52, -0.14),
--           L.latLng(51.52,-0.10),
+           L.latLng(51.52,-0.10),
 -           L.latLng(51.50, -0.14),
 -           L.latLng(51.50,-0.10),
                ],
