@@ -1,10 +1,10 @@
 const webpackConfig = require("./webpack.config.js");
 
-module.exports = function (grunt) {
+module.exports = (grunt)=>{
   // load npm tasks for grunt-* libs, excluding grunt-cli
   require("matchdep")
     .filterDev("{grunt,gruntify}-*")
-    .filter(function (pkg) {
+    .filter((pkg)=>{
       return ["grunt-cli"].indexOf(pkg) < 0;
     })
     .forEach(grunt.loadNpmTasks);
@@ -105,7 +105,7 @@ module.exports = function (grunt) {
   grunt.registerTask(
     "coverage",
     "CLI reporter for karma-coverage",
-    function () {
+      ()=>{
       let coverageReports = grunt.file.expand("coverage/*/coverage.txt");
       let reports = {};
       let report;
