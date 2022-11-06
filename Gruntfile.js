@@ -105,7 +105,7 @@ module.exports = (grunt) => {
   grunt.registerTask(
     "coverage",
     "CLI reporter for karma-coverage",
-      ()=>{
+    () => {
       let coverageReports = grunt.file.expand("coverage/*/coverage.txt");
       let reports = {};
       let report;
