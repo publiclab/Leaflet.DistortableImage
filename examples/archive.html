@@ -112,8 +112,14 @@
         getUrl = `https://archive.org/details/${input.value}/`;
         showImages(getUrl); 
       }
-      else if(!input.value.includes('https://')) {
+      else if(!input.value.includes('https://') && !input.value.includes('http://') && input.value.includes('archive.org/details/')) {
         getUrl = `https://${input.value}`;
+        showImages(getUrl);   
+      }
+      else if(input.value.includes('http://')) {
+        getUrl = input.value.replace('http:', 'https:');
+        input.value = getUrl;
+        console.log('input', input.value);
         showImages(getUrl);   
       }
       else
