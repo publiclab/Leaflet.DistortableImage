@@ -239,8 +239,8 @@ a.leaflet-toolbar-icon[title='Loading...'] {
   z-index:900;
 }
 
-.leaflet-toolbar-1 li:last-child a {
-  border-radius: 0px 0px 4px 4px !important;
+.leaflet-toolbar-1 li:first-child a {
+  border-radius: 4px 4px 0px 0px !important;
 }
 
 input[type="text"]::-webkit-input-placeholder {
