@@ -221,6 +221,28 @@ a.leaflet-toolbar-icon[title='Loading...'] {
   fill: #c10d0d;
 }
 
+.leaflet-toolbar-icon-vertical {
+  display: block !important;
+  width: 30px !important;
+  height: 30px !important;
+  line-height: 30px !important;
+  padding: 0 !important;
+  text-align: center !important;
+  text-decoration: none !important;
+  background-color: #fff;
+  border: inset 0.5px lightgray !important;
+  font-size: 12px !important;
+  font-weight: bold !important;
+  color:#0087A8 !important;
+  float: none !important;
+  margin: auto !important;
+  z-index:900;
+}
+
+.leaflet-toolbar-1 li:last-child a {
+  border-radius: 0px 0px 4px 4px !important;
+}
+
 input[type="text"]::-webkit-input-placeholder {
   color: #979797;
 }

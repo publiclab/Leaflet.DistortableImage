@@ -27,6 +27,7 @@ L.EditAction = L.Toolbar2.Action.extend({
     const iconOptions = this.options.toolbarIcon;
     const className = iconOptions.className;
     const edit = this._overlay.editing;
+    const style = this.options.toolbarIcon.style;
 
     this.toolbar = toolbar;
     this._icon = L.DomUtil.create('li', '', container);
@@ -40,6 +41,7 @@ L.EditAction = L.Toolbar2.Action.extend({
 
     this._link.setAttribute('href', '#');
     this._link.setAttribute('title', iconOptions.tooltip);
+    if (style) { this._link.setAttribute('style', style); };
     this._link.setAttribute('role', 'button');
 
     L.DomUtil.addClass(this._link, this.constructor.baseClass);
