@@ -19,7 +19,49 @@ opacities = opacities.map((o) => {
   });
 });
 
-console.log(opacities);
+L.OpacitiesToolbar2 = L.Toolbar2.extend({
+  options: {
+    className: '',
+    filter: function() { return true; },
+    actions: [],
+    style: `translate(-1px, -${ (opacities.length + 1) * 30 }px)`,
+  },
+
+  appendToContainer(container) {
+    let baseClass = this.constructor.baseClass + '-' + this._calculateDepth();
+    let className = baseClass + ' ' + this.options.className;
+    let Action; let action;
+    let i; let j; let l; let m;
+
+    this._container = container;
+    this._ul = L.DomUtil.create('ul', className, container);
+    this._ul.style.transform = ( this.options.style ) ? this.options.style : '';
+
+    // Ensure that clicks, drags, etc. don't bubble up to the map.
+    // These are the map events that the L.Draw.Polyline handler listens for.
+    // Note that L.Draw.Polyline listens to 'mouseup', not 'mousedown', but
+    // if only 'mouseup' is silenced, then the map gets stuck in a halfway
+    // state because it receives a 'mousedown' event and is waiting for the
+    // corresponding 'mouseup' event.
+    this._disabledEvents = [
+      'click', 'mousemove', 'dblclick',
+      'mousedown', 'mouseup', 'touchstart',
+    ];
+
+    for (j = 0, m = this._disabledEvents.length; j < m; j++) {
+      L.DomEvent.on(this._ul, this._disabledEvents[j], L.DomEvent.stopPropagation);
+    }
+
+    /* Instantiate each toolbar action and add its corresponding toolbar icon. */
+    for (i = 0, l = this.options.actions.length; i < l; i++) {
+      Action = this._getActionConstructor(this.options.actions[i]);
+
+      action = new Action();
+      action._createIcon(this, this._ul, this._arguments);
+    }
+  },
+});
+
 
 L.OpacitiesAction = L.EditAction.extend({
   initialize(map, overlay, options) {
@@ -34,7 +76,7 @@ L.OpacitiesAction = L.EditAction.extend({
       className: mode === 'lock' ? 'disabled' : '',
     };
 
-    options.subToolbar = new L.Toolbar2({
+    options.subToolbar = new L.OpacitiesToolbar2({
       actions: opacities,
     });
 
