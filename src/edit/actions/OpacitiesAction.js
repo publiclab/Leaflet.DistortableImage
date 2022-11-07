@@ -24,7 +24,7 @@ L.OpacitiesToolbar2 = L.Toolbar2.extend({
     className: '',
     filter: function() { return true; },
     actions: [],
-    style: `translate(-1px, -${ (opacities.length + 1) * 30 }px)`,
+    style: `translate(-1px, -${ ((opacities.length + 1) * 30) + 13 }px)`,
   },
 
   appendToContainer(container) {
