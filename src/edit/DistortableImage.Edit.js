@@ -362,14 +362,13 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _setOpacities(o) {
     const image = this._overlay.getElement();
-    let opacity = o;
-
+    this._opacity = o;
     if (!this.hasTool(L.OpacitiesAction)) { return; }
 
-    (this.opacity < 1) ? this._transparent = true : this._transparent = false;
+    (this._opacity < 1) ? this._transparent = true : this._transparent = false;
 
-    L.DomUtil.setOpacity(image, opacity);
-    image.setAttribute('opacity', opacity);
+    L.DomUtil.setOpacity(image, this._opacity);
+    image.setAttribute('opacity', this._opacity);
 
     this._refresh();
   },
