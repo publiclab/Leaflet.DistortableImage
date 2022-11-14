@@ -1,38 +1,35 @@
 let opacities = [100, 80, 60, 40, 20, 0]; // Set numeric values from 0 to 100.
 
-// Add custom CSS scripts and overwrites
-if ([...document.styleSheets].every((sheet => sheet.title != 'Subtoolbar_css_overwrites'))) {
-  const subtoolbarCss = new CSSStyleSheet();
-  subtoolbarCss.title = 'Subtoolbar_css_overwrites';
-  subtoolbarCss.insertRule(
-      `.leaflet-toolbar-icon-vertical {
-          box-sizing: border-box !important;
-          display: block !important;
-          width: 30px !important;
-          height: 30px !important;
-          line-height: 30px !important;
-          padding: 0 !important;
-          text-align: center !important;
-          text-decoration: none !important;
-          background-color: #fff;
-          border: inset 0.5px lightgray !important;
-          font-size: 12px !important;
-          font-weight: bold !important;
-          color:#0087A8 !important;
-          float: none !important;
-          margin: auto !important;
-          z-index:900 !important;
-        }
-      `
-  );
+// Add custom CSS scripts and overwrites. Pending for better implementation of CSSStyleSheet in browsers.
+const subtoolbarCss = new CSSStyleSheet();
+subtoolbarCss.replaceSync(
+    `.leaflet-toolbar-icon-vertical {
+        box-sizing: border-box !important;
+        display: block !important;
+        width: 30px !important;
+        height: 30px !important;
+        line-height: 30px !important;
+        padding: 0 !important;
+        text-align: center !important;
+        text-decoration: none !important;
+        background-color: #fff;
+        border: inset 0.5px lightgray !important;
+        font-size: 12px !important;
+        font-weight: bold !important;
+        color:#0087A8 !important;
+        float: none !important;
+        margin: auto !important;
+        z-index:900 !important;
+      }
+    `
+);
 
-  subtoolbarCss.insertRule(
-      `.leaflet-toolbar-1 li:first-child a {
-          border-radius: 4px 4px 0px 0px !important;
-      }`
-  );
-  document.adoptedStyleSheets = [...document.adoptedStyleSheets, subtoolbarCss];
-}
+subtoolbarCss.insertRule(
+    `.leaflet-toolbar-1 li:first-child a {
+        border-radius: 4px 4px 0px 0px !important;
+    }`
+);
+document.adoptedStyleSheets = [subtoolbarCss];
 
 opacities = opacities.map((o) => {
   (isNaN(o) || o > 100) ? o = 100 : o;
