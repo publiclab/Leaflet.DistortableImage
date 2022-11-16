@@ -5,11 +5,11 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <meta http-equiv="x-ua-compatible" content="ie=edge"/>
-
     <link rel="stylesheet" href="../node_modules/leaflet/dist/leaflet.css">
     <link rel="stylesheet" href="../dist/vendor.css">
     <link rel="stylesheet" href="../dist/leaflet.distortableimage.css" media="screen" title="no title">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <script src="../node_modules/leaflet/dist/leaflet.js" type="text/javascript" charset="utf-8"></script>
     <script src="../dist/vendor.js"></script>
@@ -26,7 +26,7 @@
           <div class="modal-header d-block">
             <div class="d-flex justify-content-between align-items-center">
               <h2 class="modal-title">Welcome to MapKnitter Lite</h2>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ></button>
             </div>
             <p> <small>(while MapKnitter is offline)</small> </p>
           </div>
@@ -50,10 +50,12 @@
     </div>
 
     <div id="map" style="width:100%; height:100%; position:absolute; top:0;"></div>
+    <i title="Open Sidebar" id="mapToggle" title="Open Sidebar" class="fa fa-bars fa-3x " style="position: absolute; right: 0; margin: 1rem; z-index: 900; color: white; cursor: pointer;" aria-hidden="true"></i>
 
     <div class="offcanvas offcanvas-end" data-bs-backdrop="false" data-bs-keyboard="false" tabindex="1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
       <div class="offcanvas-header">
         <h3 id="offcanvasRightLabel">Images</h3>
+            <i title="Close Sidebar" id="modalToggle" title="Close Sidebar" class=" fa fa-times fa-3x " style="cursor: pointer; position: absolute; right: 0; margin: 1rem; color: #00000070;" aria-hidden="true"></i>
         <button type="button" class="btn btn-primary d-sm-none" data-bs-dismiss="offcanvas" aria-label="Close">View Map</button>
       </div>
       <hr>
@@ -72,6 +74,8 @@
     let input = document.getElementById('input');
     let responseText = document.getElementById('response');
     let imageContainer = document.getElementById('imgContainer');
+    let modalToggle = document.getElementById('modalToggle')
+    let mapToggle = document.getElementById('mapToggle')
 
     const setupMap = () => {
       map = L.map('map').setView([51.505, -0.09], 13);
@@ -94,7 +98,40 @@
     
     form.addEventListener('submit', (event) => {
       event.preventDefault();
-      const url = input.value.replace('details', 'metadata');
+      extractKey();
+    });
+
+    welcomeModal.addEventListener('hidden.bs.modal', (event) => {
+      new bootstrap.Offcanvas(sidebar).show();
+    });
+
+    function extractKey() {
+      let getUrl;
+      if(!input.value.includes('archive.org/details/') && !input.value.includes('https://'))
+      {
+        getUrl = `https://archive.org/details/${input.value}/`;
+        showImages(getUrl); 
+      }
+      else if(!input.value.includes('https://') && !input.value.includes('http://') && input.value.includes('archive.org/details/')) {
+        getUrl = `https://${input.value}`;
+        showImages(getUrl);   
+      }
+      else if(input.value.includes('http://')) {
+        getUrl = input.value.replace('http:', 'https:');
+        input.value = getUrl;
+        console.log('input', input.value);
+        showImages(getUrl);   
+      }
+      else
+      {
+        getUrl = input.value;
+        showImages(getUrl)
+      }
+    }
+
+    function showImages(getUrl) {
+      const url = getUrl.replace('details', 'metadata');
+      let fetchedFrom
       axios.get(url)
         .then((response) => {
           if (response.data.files && response.data.files.length != 0) {
@@ -104,6 +141,12 @@
                 let imageRow = document.createElement('div');
                 let image = new Image(150, 150);
                 let placeButton = document.createElement('a');
+                fetchedFrom = document.createElement('p');
+                fetchedFromUrl = document.createElement('a');
+                fetchedFromUrl.setAttribute('href', input.value);
+                fetchedFromUrl.setAttribute('target', '_blank');
+                fetchedFromUrl.innerHTML = 'this Internet Archive Collection';
+                fetchedFrom.appendChild(fetchedFromUrl)
 
                 placeButton.classList.add('btn', 'btn-sm', 'btn-outline-secondary', 'place-button');
                 placeButton.innerHTML = 'Place on map';
@@ -117,7 +160,7 @@
                 imageCount++;
               }
             });
-            responseText.innerHTML = imageCount ? `${imageCount} image(s) fetched successfully.` : 'No images found in the link provided...'
+            responseText.innerHTML = imageCount ? `${imageCount} image(s) fetched successfully from ${fetchedFrom.innerHTML}.` : 'No images found in the link provided...'
           } else {
             responseText.innerHTML = 'No images found in the link provided...'
           }
@@ -128,11 +171,25 @@
         .finally(() => {
           bootstrap.Modal.getInstance(welcomeModal).hide();
         });
-    });
+    }
 
     welcomeModal.addEventListener('hidden.bs.modal', (event) => {
-      new bootstrap.Offcanvas(sidebar).show();
+        new bootstrap.Offcanvas(sidebar).show();
     });
+
+
+    map.addEventListener('click', (event)=>{
+       sidebar.classList.remove('show')
+    })
+    
+    mapToggle.addEventListener('click', (event)=>{
+           new bootstrap.Offcanvas(sidebar).show();
+    })
+    modalToggle.addEventListener('click', (event)=>{
+            if(sidebar.classList.contains('show')){
+              sidebar.classList.remove('show')
+            }
+    })
 
     document.addEventListener("click", (event) => {
       if (event.target.classList.contains('place-button')) {

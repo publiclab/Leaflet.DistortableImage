@@ -24,9 +24,9 @@ L.EditAction = L.Toolbar2.Action.extend({
   },
 
   _createIcon(toolbar, container, args) {
-    var iconOptions = this.options.toolbarIcon;
-    var className = iconOptions.className;
-    var edit = this._overlay.editing;
+    const iconOptions = this.options.toolbarIcon;
+    const className = iconOptions.className;
+    const edit = this._overlay.editing;
 
     this.toolbar = toolbar;
     this._icon = L.DomUtil.create('li', '', container);
@@ -58,7 +58,7 @@ L.EditAction = L.Toolbar2.Action.extend({
 
     L.DomEvent.on(this._link, 'click', this.enable, this);
     L.DomEvent.on(this._overlay, 'update', () => {
-      var match = this._link.innerHTML.match(/xlink:href="#restore"/);
+      const match = this._link.innerHTML.match(/xlink:href="#restore"/);
       if (match && match.length === 1) { this._enableAction(); }
     });
 
@@ -71,7 +71,7 @@ L.EditAction = L.Toolbar2.Action.extend({
       return;
     }
 
-    var el = document.createElement('div');
+    const el = document.createElement('div');
     el.id = 'iconset';
     el.setAttribute('hidden', 'hidden');
     el.innerHTML = new L.ToolbarIconSet().render();

@@ -1,8 +1,8 @@
 L.ExportAction = L.EditAction.extend({
   // This function is executed every time we select an image
   initialize(map, overlay, options) {
-    var edit = overlay.editing;
-    var tooltip;
+    const edit = overlay.editing;
+    let tooltip;
 
     this.isExporting = false;
     this.mouseLeaveSkip = true;
@@ -27,7 +27,7 @@ L.ExportAction = L.EditAction.extend({
   },
 
   addHooks() {
-    var edit = this._overlay.editing;
+    const edit = this._overlay.editing;
 
     if (edit instanceof L.DistortableImage.Edit) {
       edit._getExport();
@@ -41,7 +41,7 @@ L.ExportAction = L.EditAction.extend({
       this.isHooksExecuted = true;
     }
 
-    var exportTool = this._link.parentElement;
+    const exportTool = this._link.parentElement;
 
     this.mouseEnterHandler = this.handleMouseEnter.bind(this);
     this.mouseLeaveHandler = this.handleMouseLeave.bind(this);
@@ -92,10 +92,10 @@ L.ExportAction = L.EditAction.extend({
   },
 
   handleMouseLeave() {
-    if (!this.mouseLeaveSkip) {
-      this.renderExportIcon();
-    } else {
+    if (this.mouseLeaveSkip) {
       this.mouseLeaveSkip = false;
+    } else {
+      this.renderExportIcon();
     }
   },
 

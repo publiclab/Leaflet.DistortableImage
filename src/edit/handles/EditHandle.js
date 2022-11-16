@@ -1,13 +1,13 @@
 L.EditHandle = L.Marker.extend({
-  initialize: function(overlay, corner, options) {
-    var latlng = overlay.getCorner(corner);
+  initialize(overlay, corner, options) {
+    const latlng = overlay.getCorner(corner);
 
     L.setOptions(this, options);
 
     this._handled = overlay;
     this._corner = corner;
 
-    var markerOptions = {
+    const markerOptions = {
       draggable: true,
       zIndexOffset: 10,
     };
@@ -19,31 +19,31 @@ L.EditHandle = L.Marker.extend({
     L.Marker.prototype.initialize.call(this, latlng, markerOptions);
   },
 
-  onAdd: function(map) {
+  onAdd(map) {
     L.Marker.prototype.onAdd.call(this, map);
     this._bindListeners();
     this.updateHandle();
   },
 
-  onRemove: function(map) {
+  onRemove(map) {
     this._unbindListeners();
     L.Marker.prototype.onRemove.call(this, map);
   },
 
-  _onHandleDragStart: function() {
+  _onHandleDragStart() {
     this._handled.fire('editstart');
   },
 
-  _onHandleDragEnd: function() {
+  _onHandleDragEnd() {
     this._fireEdit();
   },
 
-  _fireEdit: function() {
+  _fireEdit() {
     this._handled.edited = true;
     this._handled.fire('edit');
   },
 
-  _bindListeners: function() {
+  _bindListeners() {
     this.on({
       contextmenu: L.DomEvent.stop,
       dragstart: this._onHandleDragStart,
@@ -55,7 +55,7 @@ L.EditHandle = L.Marker.extend({
     this._handled.on('update', this.updateHandle, this);
   },
 
-  _unbindListeners: function() {
+  _unbindListeners() {
     this.off({
       contextmenu: L.DomEvent.stop,
       dragstart: this._onHandleDragStart,
@@ -68,40 +68,41 @@ L.EditHandle = L.Marker.extend({
   },
 
   /* Takes two latlngs and calculates the scaling difference. */
-  _calculateScalingFactor: function(latlngA, latlngB) {
-    var overlay = this._handled;
-    var map = overlay._map;
+  _calculateScalingFactor(latlngA, latlngB) {
+    const overlay = this._handled;
+    const map = overlay._map;
 
-    var centerPoint = map.latLngToLayerPoint(overlay.getCenter());
-    var formerPoint = map.latLngToLayerPoint(latlngA);
-    var newPoint = map.latLngToLayerPoint(latlngB);
-    var formerRadiusSquared = this._d2(centerPoint, formerPoint);
-    var newRadiusSquared = this._d2(centerPoint, newPoint);
+    const centerPoint = map.latLngToLayerPoint(overlay.getCenter());
+    const formerPoint = map.latLngToLayerPoint(latlngA);
+    const newPoint = map.latLngToLayerPoint(latlngB);
+    const formerRadiusSquared = this._d2(centerPoint, formerPoint);
+    const newRadiusSquared = this._d2(centerPoint, newPoint);
 
     return Math.sqrt(newRadiusSquared / formerRadiusSquared);
   },
 
   /* Distance between two points in cartesian space, squared (distance formula). */
-  _d2: function(a, b) {
-    var dx = a.x - b.x;
-    var dy = a.y - b.y;
+  _d2(a, b) {
+    const dx = a.x - b.x;
+    const dy = a.y - b.y;
 
     return Math.pow(dx, 2) + Math.pow(dy, 2);
   },
 
   /* Takes two latlngs and calculates the angle between them. */
-  calculateAngleDelta: function(latlngA, latlngB) {
-    var overlay = this._handled;
-    var map = overlay._map;
+  calculateAngleDelta(latlngA, latlngB) {
+    const overlay = this._handled;
+    const map = overlay._map;
 
-    var centerPoint = map.latLngToLayerPoint(overlay.getCenter());
-    var formerPoint = map.latLngToLayerPoint(latlngA);
-    var newPoint = map.latLngToLayerPoint(latlngB);
 
-    var initialAngle = (
+    const centerPoint = map.latLngToLayerPoint(overlay.getCenter());
+    const formerPoint = map.latLngToLayerPoint(latlngA);
+    const newPoint = map.latLngToLayerPoint(latlngB);
+
+    const initialAngle = (
       Math.atan2(centerPoint.y - formerPoint.y, centerPoint.x - formerPoint.x)
     );
-    var newAngle = (
+    const newAngle = (
       Math.atan2(centerPoint.y - newPoint.y, centerPoint.x - newPoint.x)
     );
 
