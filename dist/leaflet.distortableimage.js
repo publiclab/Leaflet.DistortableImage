@@ -2625,10 +2625,10 @@ L.ExportAction = L.EditAction.extend({
     this.renderCancelIcon();
   },
   handleMouseLeave: function handleMouseLeave() {
-    if (!this.mouseLeaveSkip) {
-      this.renderExportIcon();
-    } else {
+    if (this.mouseLeaveSkip) {
       this.mouseLeaveSkip = false;
+    } else {
+      this.renderExportIcon();
     }
   },
   renderDownloadIcon: function renderDownloadIcon() {
@@ -7271,7 +7271,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "00e2261726d348abfb51"; }
+/******/ 		__webpack_require__.h = function() { return "b7909df312418cba49e4"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
