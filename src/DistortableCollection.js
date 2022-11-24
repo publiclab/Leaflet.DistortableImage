@@ -101,7 +101,8 @@ L.DistortableCollection = L.FeatureGroup.extend({
       /* conditional prevents disabled images from flickering multi-select mode */
       if (layer.editing.enabled()) {
         L.DomUtil.toggleClass(e.target, 'collected');
-        // re-order layers by ... to match their display order in UI
+        // re-order layers by _leaflet_id to match their display order in UI
+        // add new layer to right position and avoid repitition
         const newArr = arr.every((each) => {
           return each._leaflet_id !== layer._leaflet_id;
         });
