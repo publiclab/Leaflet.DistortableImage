@@ -409,7 +409,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var json = {};
     json.images = [];
     this.eachLayer(function (layer) {
-      console.log(layer);
 
       if (this.isCollected(layer)) {
         var sections = layer._image.src.split('/');
