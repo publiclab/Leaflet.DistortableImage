@@ -205,7 +205,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
     json.images = [];
 
     this.eachLayer(function(layer) {
-      console.log(layer);
       if (this.isCollected(layer)) {
         const sections = layer._image.src.split('/');
         const filename = sections[sections.length-1];
