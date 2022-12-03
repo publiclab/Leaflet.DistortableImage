@@ -10,7 +10,7 @@ let mapToggle = document.getElementById('mapToggle')
 
 const setupMap = () => {
   map = L.map('map').setView([51.505, -0.09], 13);
-  
+
   map.attributionControl.setPosition('bottomleft');
 
   map.addGoogleMutant();
