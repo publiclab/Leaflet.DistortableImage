@@ -194,6 +194,7 @@ ansiHTML.reset()
   \**************************************/
 /***/ (function() {
 
+var arr = [];
 L.DistortableCollection = L.FeatureGroup.extend({
   options: {
     editable: true,
@@ -292,7 +293,18 @@ L.DistortableCollection = L.FeatureGroup.extend({
     if (e.shiftKey) {
       /* conditional prevents disabled images from flickering multi-select mode */
       if (layer.editing.enabled()) {
-        L.DomUtil.toggleClass(e.target, 'collected');
+        L.DomUtil.toggleClass(e.target, 'collected'); // re-order layers by _leaflet_id to match their display order in UI
+        // add new layer to right position and avoid repitition
+
+        var newArr = arr.every(function (each) {
+          return each._leaflet_id !== layer._leaflet_id;
+        });
+
+        if (newArr) {
+          arr.push(layer);
+        } else {
+          arr.splice(arr.indexOf(layer), 1);
+        }
       }
     }
 
@@ -397,6 +409,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var json = {};
     json.images = [];
     this.eachLayer(function (layer) {
+
       if (this.isCollected(layer)) {
         var sections = layer._image.src.split('/');
 
@@ -416,7 +429,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
           lon: zc[2].lng
         }];
         json.images.push({
-          id: this.getLayerId(layer),
+          id: layer._leaflet_id,
           src: layer._image.src,
           width: layer._image.width,
           height: layer._image.height,
@@ -7257,7 +7270,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "b7909df312418cba49e4"; }
+/******/ 		__webpack_require__.h = function() { return "84de0e8228808b232e34"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
