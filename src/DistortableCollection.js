@@ -1,3 +1,4 @@
+const arr = [];
 L.DistortableCollection = L.FeatureGroup.extend({
   options: {
     editable: true,
@@ -100,6 +101,16 @@ L.DistortableCollection = L.FeatureGroup.extend({
       /* conditional prevents disabled images from flickering multi-select mode */
       if (layer.editing.enabled()) {
         L.DomUtil.toggleClass(e.target, 'collected');
+        // re-order layers by _leaflet_id to match their display order in UI
+        // add new layer to right position and avoid repitition
+        const newArr = arr.every((each) => {
+          return each._leaflet_id !== layer._leaflet_id;
+        });
+        if (newArr) {
+          arr.push(layer);
+        } else {
+          arr.splice(arr.indexOf(layer), 1);
+        }
       }
     }
 
@@ -132,7 +143,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
       layer._dragStartPoints = {};
       layer.deselect();
       for (i = 0; i < 4; i++) {
-        let c = layer.getCorner(i);
+        const c = layer.getCorner(i);
         layer._dragStartPoints[i] = map.latLngToLayerPoint(c);
       }
     });
@@ -174,7 +185,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     let i;
 
     layersToMove.forEach((layer) => {
-      let movedPoints = {};
+      const movedPoints = {};
       for (i = 0; i < 4; i++) {
         movedPoints[i] = p.transform(layer._dragStartPoints[i]);
       }
@@ -195,17 +206,17 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     this.eachLayer(function(layer) {
       if (this.isCollected(layer)) {
-        let sections = layer._image.src.split('/');
-        let filename = sections[sections.length-1];
-        let zc = layer.getCorners();
-        let corners = [
+        const sections = layer._image.src.split('/');
+        const filename = sections[sections.length-1];
+        const zc = layer.getCorners();
+        const corners = [
           {lat: zc[0].lat, lon: zc[0].lng},
           {lat: zc[1].lat, lon: zc[1].lng},
           {lat: zc[3].lat, lon: zc[3].lng},
           {lat: zc[2].lat, lon: zc[2].lng},
         ];
         json.images.push({
-          id: this.getLayerId(layer),
+          id: layer._leaflet_id,
           src: layer._image.src,
           width: layer._image.width,
           height: layer._image.height,

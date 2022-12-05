@@ -194,6 +194,7 @@ ansiHTML.reset()
   \**************************************/
 /***/ (function() {
 
+var arr = [];
 L.DistortableCollection = L.FeatureGroup.extend({
   options: {
     editable: true,
@@ -292,7 +293,18 @@ L.DistortableCollection = L.FeatureGroup.extend({
     if (e.shiftKey) {
       /* conditional prevents disabled images from flickering multi-select mode */
       if (layer.editing.enabled()) {
-        L.DomUtil.toggleClass(e.target, 'collected');
+        L.DomUtil.toggleClass(e.target, 'collected'); // re-order layers by _leaflet_id to match their display order in UI
+        // add new layer to right position and avoid repitition
+
+        var newArr = arr.every(function (each) {
+          return each._leaflet_id !== layer._leaflet_id;
+        });
+
+        if (newArr) {
+          arr.push(layer);
+        } else {
+          arr.splice(arr.indexOf(layer), 1);
+        }
       }
     }
 
@@ -397,6 +409,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var json = {};
     json.images = [];
     this.eachLayer(function (layer) {
+
       if (this.isCollected(layer)) {
         var sections = layer._image.src.split('/');
 
@@ -416,7 +429,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
           lon: zc[2].lng
         }];
         json.images.push({
-          id: this.getLayerId(layer),
+          id: layer._leaflet_id,
           src: layer._image.src,
           width: layer._image.width,
           height: layer._image.height,
@@ -489,7 +502,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       _this._initImageDimensions();
 
       if (_this.options.rotation) {
-        var units = _this.options.rotation.deg ? 'deg' : 'rad';
+        var units = _this.options.rotation.deg >= 0 ? 'deg' : 'rad';
 
         _this.setAngle(_this.options.rotation[units], units);
       } else {
@@ -669,7 +682,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     return this;
   },
   _cornerExceedsMapLats: function _cornerExceedsMapLats(zoom, corner, map) {
-    if (map.options.crs == L.CRS.Simple) {
+    if (map.options.crs.Simple == L.CRS.Simple) {
       return false;
     } else {
       var exceedsTop;
@@ -2611,10 +2624,10 @@ L.ExportAction = L.EditAction.extend({
     this.renderCancelIcon();
   },
   handleMouseLeave: function handleMouseLeave() {
-    if (!this.mouseLeaveSkip) {
-      this.renderExportIcon();
-    } else {
+    if (this.mouseLeaveSkip) {
       this.mouseLeaveSkip = false;
+    } else {
+      this.renderExportIcon();
     }
   },
   renderDownloadIcon: function renderDownloadIcon() {
@@ -3898,9 +3911,9 @@ L.Map.DoubleClickZoom.include({
       } else {
         // manually fire doubleclick event only for touch screens that don't natively fire it
         if (L.Browser.touch && oe && oe.sourceCapabilities.firesTouchEvents) {
-          // in `DoubleClickLabels.js`, we just do map.fire('dblclick') bc `_onDoublClick` doesn't use the
-          // passed "e" (for now). To generate a 'real' DOM event that will have all of its corresponding core
-          // properties (originalEvent, latlng, etc.), use Leaflet's `#map._fireDOMEvent` (Leaflet 1.5.1 source)
+          /*  in `DoubleClickLabels.js`, we just do map.fire('dblclick') bc `_onDoublClick` doesn't use the
+          passed "e" (for now). To generate a 'real' DOM event that will have all of its corresponding core
+          properties (originalEvent, latlng, etc.), use Leaflet's `#map._fireDOMEvent` (Leaflet 1.5.1 source) */
           map._fireDOMEvent(oe, 'dblclick', [map]);
         }
       }
@@ -7257,7 +7270,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "87b98ffdf33f93a8056c"; }
+/******/ 		__webpack_require__.h = function() { return "84de0e8228808b232e34"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
