@@ -409,7 +409,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var json = {};
     json.images = [];
     this.eachLayer(function (layer) {
-
       if (this.isCollected(layer)) {
         var sections = layer._image.src.split('/');
 
@@ -7270,7 +7269,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "84de0e8228808b232e34"; }
+/******/ 		__webpack_require__.h = function() { return "e74ca99591694a12fb9d"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
