@@ -230,6 +230,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
     json.images = json.images.reverse();
     json.avg_cm_per_pixel = this._getAvgCmPerPixel(json.images);
 
+    var jsonImages = json.images;
+    savetoLocalStorage(jsonImages);
+
     return json;
   },
 });
@@ -237,3 +240,28 @@ L.DistortableCollection = L.FeatureGroup.extend({
 L.distortableCollection = function(id, options) {
   return new L.DistortableCollection(id, options);
 };
+
+function savetoLocalStorage(jsonImages) {
+  var result = jsonImages.map(img => ({value: img.nodes}));
+  var getImages = localStorage.setItem('locations', JSON.stringify(result));
+  downloadFromLocalStorage(getImages);
+}
+
+function downloadFromLocalStorage(getImages) {
+  var obj = localStorage.getItem('locations');
+  var data = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(obj, prettyJson));
+  var a = document.createElement('a');
+  a.href = 'data:' + data;
+  a.download = 'mapknitter.json';
+  // a.innerHTML = 'download JSON';
+  // console.log(a);
+  a.click();
+}
+
+function prettyJson(key, value) {
+  // return value.replace(/[^\w\s]/gi, '\n');
+  // (/\n/g, "\r\n")
+  return value.replace(/\n/g, '\\\\n').replace(/\r/g, '\\\\r').replace(/\t/g, '\\\\t');
+}
+
+
