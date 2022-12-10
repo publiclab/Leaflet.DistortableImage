@@ -47,7 +47,6 @@ L.ExportAction = L.EditAction.extend({
     this.mouseLeaveHandler = this.handleMouseLeave.bind(this);
 
     L.DomEvent.on(exportTool, 'click', function() {
-      console.log('Inside export tool');
       if (!this.isExporting) {
         this.isExporting = true;
         this.renderExportIcon();

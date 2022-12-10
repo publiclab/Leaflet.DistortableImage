@@ -2586,8 +2586,6 @@ L.ExportAction = L.EditAction.extend({
     this.mouseEnterHandler = this.handleMouseEnter.bind(this);
     this.mouseLeaveHandler = this.handleMouseLeave.bind(this);
     L.DomEvent.on(exportTool, 'click', function () {
-      console.log('Inside export tool');
-
       if (!this.isExporting) {
         this.isExporting = true;
         this.renderExportIcon();
@@ -7271,7 +7269,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "4d77a075775d6ccd1c1a"; }
+/******/ 		__webpack_require__.h = function() { return "08ad7abcac5001755a15"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
