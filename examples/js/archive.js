@@ -100,7 +100,6 @@ function showImages(getUrl) {
         }
       })
       .catch((error) => {
-        console.log(error)
         responseText.innerHTML = 'Uh-oh! Something\'s not right with the link provided!';
       })
       .finally(() => {
