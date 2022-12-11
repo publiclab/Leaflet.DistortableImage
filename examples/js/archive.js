@@ -59,36 +59,40 @@ function extractKey() {
   }
 }
 
+let imageCount = 0;
+let fetchedFrom;
+function renderImages(file, url) {
+  if (file.format === 'PNG' || file.format === 'JPEG') {
+    const imageRow = document.createElement('div');
+    const image = new Image(150, 150);
+    const placeButton = document.createElement('a');
+    fetchedFrom = document.createElement('p');
+    const fetchedFromUrl = document.createElement('a');
+    fetchedFromUrl.setAttribute('href', input.value);
+    fetchedFromUrl.setAttribute('target', '_blank');
+    fetchedFromUrl.innerHTML = 'this Internet Archive Collection';
+    fetchedFrom.appendChild(fetchedFromUrl);
+
+    placeButton.classList.add('btn', 'btn-sm', 'btn-outline-secondary', 'place-button');
+    placeButton.innerHTML = 'Place on map';
+
+    image.src = `${url.replace('metadata', 'download')}/${file.name}`;
+    imageRow.classList.add('d-flex', 'justify-content-between', 'align-items-center', 'mb-4', 'pe-5');
+    imageRow.append(image, placeButton);
+
+    imageContainer.appendChild(imageRow);
+    imageCount++;
+  }
+}
+
 function showImages(getUrl) {
   const url = getUrl.replace('details', 'metadata');
-  let fetchedFrom;
+
   axios.get(url)
       .then((response) => {
         if (response.data.files && response.data.files.length != 0) {
-          let imageCount = 0;
           response.data.files.forEach((file) => {
-            if (file.format === 'PNG' || file.format === 'JPEG') {
-              const imageRow = document.createElement('div');
-              const image = new Image(150, 150);
-              const placeButton = document.createElement('a');
-              fetchedFrom = document.createElement('p');
-              fetchedFromUrl = document.createElement('a');
-              fetchedFromUrl.setAttribute('href', input.value);
-              fetchedFromUrl.setAttribute('target', '_blank');
-              fetchedFromUrl.innerHTML = 'this Internet Archive Collection';
-              fetchedFrom.appendChild(fetchedFromUrl);
-
-              placeButton.classList.add('btn', 'btn-sm', 'btn-outline-secondary', 'place-button');
-              placeButton.innerHTML = 'Place on map';
-
-              image.src = `${url.replace('metadata', 'download')}/${file.name}`;
-
-              imageRow.classList.add('d-flex', 'justify-content-between', 'align-items-center', 'mb-4', 'pe-5');
-              imageRow.append(image, placeButton);
-
-              imageContainer.appendChild(imageRow);
-              imageCount++;
-            }
+            renderImages(file, url);
           });
           responseText.innerHTML = imageCount ? `${imageCount} image(s) fetched successfully from ${fetchedFrom.innerHTML}.` : 'No images found in the link provided...';
         } else {
@@ -96,6 +100,7 @@ function showImages(getUrl) {
         }
       })
       .catch((error) => {
+        console.log(error)
         responseText.innerHTML = 'Uh-oh! Something\'s not right with the link provided!';
       })
       .finally(() => {
