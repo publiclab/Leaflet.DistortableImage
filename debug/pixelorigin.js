@@ -1,26 +1,23 @@
-let map;
+const map;
 
 (function () {
-  let trd = [33, 0];
 
-  map = L.map("map", {
+  var trd = [33, 0];
+
+  map = L.map('map', {
     center: [33, 0],
-    zoom: 2,
+    zoom: 2
   });
 
-  let positron = L.tileLayer(
-    "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
-    {
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attribution">CARTO</a>',
-    }
-  ).addTo(map);
+  var positron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attribution">CARTO</a>'
+  }).addTo(map);
 
-  img = L.distortableImageOverlay("../examples/example.jpg", {
+  img = L.distortableImageOverlay('../examples/example.jpg', {
     selected: true,
   });
 
-  img2 = L.distortableImageOverlay("../examples/example.jpg", {
+  img2 = L.distortableImageOverlay('../examples/example.jpg', {
     selected: true,
   });
 
@@ -29,62 +26,41 @@ let map;
   imgGroup.addLayer(img);
   imgGroup.addLayer(img2);
 
-  let pane = map.getPane("overlayPane");
+  const pane = map.getPane('overlayPane')
 
-  let paneCorner = document.createElement("div");
-  paneCorner.style.width = "12px";
-  paneCorner.style.height = "12px";
-  paneCorner.style.borderTop = "2px red solid";
-  paneCorner.style.borderLeft = "2px red solid";
+ const paneCorner = document.createElement('div');
+  paneCorner.style.width = '12px';
+  paneCorner.style.height = '12px';
+  paneCorner.style.borderTop = '2px red solid';
+  paneCorner.style.borderLeft = '2px red solid';
 
   pane.appendChild(paneCorner);
 
-  let crsMarker = L.marker(map.unproject([0, 0]), {
+  const crsMarker = L.marker(map.unproject([0, 0]), {
     icon: L.divIcon({
-      className: "crsMarker",
-      iconAnchor: [0, 0],
-    }),
+      className: 'crsMarker',
+      iconAnchor: [0, 0]
+    })
   }).addTo(map);
 
-  let imageOffsetLine = L.polyline(
-    [
-      [0, 0],
-      [0, 0],
-    ],
-    { color: "skyblue" }
-  ).addTo(map);
+ const imageOffsetLine = L.polyline([[0, 0], [0, 0]], { color: 'skyblue' }).addTo(map);
 
   function info() {
-    let pixelOrigin = map.getPixelOrigin();
-    let imagePixelCoords = map.project(trd, map.getZoom());
-    let imageOffset = img._image._leaflet_pos;
+    var pixelOrigin = map.getPixelOrigin();
+    var imagePixelCoords = map.project(trd, map.getZoom());
+    var imageOffset = img._image._leaflet_pos;
 
-    document.getElementById("info").innerHTML =
+    document.getElementById('info').innerHTML =
       '<div style="color: green">CRS origin: 0,0</div>' +
-      '<div style="color: red">px origin: &Delta;' +
-      pixelOrigin.x +
-      "," +
-      pixelOrigin.y +
-      "</div>" +
-      '<div style="color: blue">image px coords:' +
-      imagePixelCoords.x.toFixed(2) +
-      "," +
-      imagePixelCoords.y.toFixed(2) +
-      "</div>" +
-      '<div style="color: skyblue">image pane offset: &Delta;' +
-      imageOffset.x +
-      "," +
-      imageOffset.y +
-      "</div>";
+      '<div style="color: red">px origin: &Delta;' + pixelOrigin.x + ',' + pixelOrigin.y + '</div>' +
+      '<div style="color: blue">image px coords:' + imagePixelCoords.x.toFixed(2) + ',' + imagePixelCoords.y.toFixed(2) + '</div>' +
+      '<div style="color: skyblue">image pane offset: &Delta;' + imageOffset.x + ',' + imageOffset.y + '</div>';
 
-    imageOffsetLine.setLatLngs([
-      map.unproject(pixelOrigin),
-      map.unproject(pixelOrigin.add(imageOffset)),
-    ]);
+    imageOffsetLine.setLatLngs([map.unproject(pixelOrigin), map.unproject(pixelOrigin.add(imageOffset))]);
   }
 
-  L.DomEvent.on(img._image, "load", function () {
-    map.on("load move moveend zoomend viewreset", info);
+  L.DomEvent.on(img._image, 'load', function() {
+    map.on('load move moveend zoomend viewreset', info)
     info();
   });
 })();
