@@ -1,3 +1,4 @@
+const arr = [];
 L.DistortableCollection = L.FeatureGroup.extend({
   options: {
     editable: true,
@@ -100,6 +101,16 @@ L.DistortableCollection = L.FeatureGroup.extend({
       /* conditional prevents disabled images from flickering multi-select mode */
       if (layer.editing.enabled()) {
         L.DomUtil.toggleClass(e.target, 'collected');
+        // re-order layers by _leaflet_id to match their display order in UI
+        // add new layer to right position and avoid repitition
+        const newArr = arr.every((each) => {
+          return each._leaflet_id !== layer._leaflet_id;
+        });
+        if (newArr) {
+          arr.push(layer);
+        } else {
+          arr.splice(arr.indexOf(layer), 1);
+        }
       }
     }
 
@@ -205,7 +216,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
           {lat: zc[2].lat, lon: zc[2].lng},
         ];
         json.images.push({
-          id: this.getLayerId(layer),
+          id: layer._leaflet_id,
           src: layer._image.src,
           width: layer._image.width,
           height: layer._image.height,
