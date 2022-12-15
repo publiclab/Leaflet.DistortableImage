@@ -1,6 +1,6 @@
 let map;
 const welcomeModal = document.getElementById('welcomeModal');
-const restoreWelcomeModal = document.getElementById('restoreWelcomeModal');
+const restoreWelcomeModal = document.getElementById('restoreWelcomeModalBtn');
 const sidebar = document.getElementById('offcanvasRight');
 const form = document.getElementById('form');
 const input = document.getElementById('input');
@@ -32,9 +32,9 @@ form.addEventListener('submit', (event) => {
   extractKey();
 });
 
-welcomeModal.addEventListener('hidden.bs.modal', (event) => {
-  new bootstrap.Offcanvas(sidebar).show();
-});
+// welcomeModal.addEventListener('hidden.bs.modal', (event) => {
+//   new bootstrap.Offcanvas(sidebar).show();
+// });
 
 function extractKey() {
   let getUrl;
@@ -110,6 +110,7 @@ function showImages(getUrl) {
 
 welcomeModal.addEventListener('hidden.bs.modal', (event) => {
   new bootstrap.Offcanvas(sidebar).show();
+  // new bootstrap.Offcanvas(sidebar).show();
 });
 
 restoreWelcomeModal.addEventListener('click', (event) => {
@@ -122,6 +123,7 @@ map.addEventListener('click', (event) => {
 });
 
 mapToggle.addEventListener('click', (event) => {
+  // bootstrap.Offcanvas(sidebar).show();
   new bootstrap.Offcanvas(sidebar).show();
 });
 
