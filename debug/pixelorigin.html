@@ -86,7 +86,7 @@
         var pixelOrigin = map.getPixelOrigin();
         var imagePixelCoords = map.project(trd, map.getZoom());
         var imageOffset = img._image._leaflet_pos;
-
+//querySelector() returns the first Element within the document 
         document.getElementById('info').innerHTML =
           '<div style="color: green">CRS origin: 0,0</div>' +
           '<div style="color: red">px origin: &Delta;' + pixelOrigin.x + ',' + pixelOrigin.y + '</div>' +
