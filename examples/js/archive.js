@@ -1,3 +1,4 @@
+// Extension in progress
 let map;
 const welcomeModal = document.getElementById('welcomeModal');
 const sidebar = document.getElementById('offcanvasRight');
