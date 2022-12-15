@@ -1,6 +1,6 @@
-// Extension in progress
 let map;
 const welcomeModal = document.getElementById('welcomeModal');
+const restoreWelcomeModal = document.getElementById('restoreWelcomeModal');
 const sidebar = document.getElementById('offcanvasRight');
 const form = document.getElementById('form');
 const input = document.getElementById('input');
@@ -110,6 +110,11 @@ function showImages(getUrl) {
 
 welcomeModal.addEventListener('hidden.bs.modal', (event) => {
   new bootstrap.Offcanvas(sidebar).show();
+});
+
+restoreWelcomeModal.addEventListener('click', (event) => {
+  bootstrap.Modal.getInstance(welcomeModal).show();
+  input.value='';
 });
 
 map.addEventListener('click', (event) => {
