@@ -1,0 +1,55 @@
+  .overlay {
+        content: '';
+        top: 20%;
+        left:20%;
+        right:20%;
+        bottom: 0;
+        background: rgb(248, 246, 246);
+        opacity: 0.5;
+  }
+
+  .openbar{
+      position: relative;
+      z-index: 1000;
+      position: fixed; 
+      bottom: 5%;
+      right: 0;
+     }
+
+    .openbar a:hover {
+      color: #f1f1f1;
+    }
+
+    .archive {
+      font-size: 16px;
+      font-family: 'Courier New', Courier, monospace;
+      cursor: pointer;
+      background-color: #fff;
+      color: #111;
+      padding: 10px 10px;
+      border: solid 1px black;
+    }
+    .archive a:hover{
+      color:rgb(6, 200, 6)
+    }
+    
+     #info {
+      position: fixed;
+      top: 10%;
+      left: 40%;
+      z-index: 1000;
+      color: #fff;
+      visibility: visible; 
+      -webkit-animation: fadeinout 6s linear forwards;
+      animation: fadeinout 6s linear forwards;
+      opacity: 0;
+
+  }
+  
+  @-webkit-keyframes fadeinout {
+    50% { opacity: 1; }
+  }
+  
+  @keyframes fadeinout {
+    50% { opacity: 1; }
+  }
