@@ -10,7 +10,7 @@
 
   .openbar{
       position: relative;
-      z-index: 1000;
+      z-index: 900;
       position: fixed; 
       bottom: 40px;
       right: 0px;     
@@ -31,6 +31,7 @@
       border: solid 1px black;
       display: flex;
       align-items: center;
+      padding-left: 40px;
     }
     .archive a:hover{
       color:rgb(6, 200, 6)
@@ -42,19 +43,6 @@
       margin: 0;
     }
 
-    
-     #info {
-      position: fixed;
-      top: 10%;
-      left: 40%;
-      z-index: 1000;
-      color: #fff;
-      visibility: visible; 
-      -webkit-animation: fadeinout 6s linear forwards;
-      animation: fadeinout 6s linear forwards;
-      opacity: 0;
-
-  }
   
   @-webkit-keyframes fadeinout {
     50% { opacity: 1; }
