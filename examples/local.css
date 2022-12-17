@@ -12,14 +12,15 @@
       position: relative;
       z-index: 1000;
       position: fixed; 
-      bottom: 5%;
-      right: 0;
+      bottom: 40px;
+      right: 0px;     
+      transition: all 1s ease-out;
      }
 
-    .openbar a:hover {
-      color: #f1f1f1;
-    }
-
+     .close{
+      right: -620px;
+     }
+     
     .archive {
       font-size: 16px;
       font-family: 'Courier New', Courier, monospace;
@@ -28,10 +29,19 @@
       color: #111;
       padding: 10px 10px;
       border: solid 1px black;
+      display: flex;
+      align-items: center;
     }
     .archive a:hover{
       color:rgb(6, 200, 6)
     }
+    .archive div {
+      margin-left: 10px;
+    }
+    .archive div p{
+      margin: 0;
+    }
+
     
      #info {
       position: fixed;

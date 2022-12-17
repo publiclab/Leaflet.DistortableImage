@@ -1,3 +1,14 @@
+// handle info open and close
+const infoBtn = document.getElementById('infoBtn');
+const infoBar = document.getElementById('main');
+
+infoBtn.addEventListener('click', () => {
+  if (infoBar.classList.contains('close')) {
+    infoBar.classList.remove('close');
+  } else {
+    infoBar.classList.add('close');
+  }
+});
 
 const uploadFiles = () => {
   const dropZone = document.getElementById('dropZone');
