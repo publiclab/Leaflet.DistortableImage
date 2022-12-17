@@ -32,10 +32,6 @@ form.addEventListener('submit', (event) => {
   extractKey();
 });
 
-welcomeModal.addEventListener('hidden.bs.modal', (event) => {
-  new bootstrap.Offcanvas(sidebar).show();
-});
-
 function extractKey() {
   let getUrl;
   if (!input.value.includes('archive.org/details/') && !input.value.includes('https://'))
