@@ -1,40 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>MapKnitter Lite</title>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-    <meta http-equiv="x-ua-compatible" content="ie=edge"/>
-    <link rel="stylesheet" href="../node_modules/leaflet/dist/leaflet.css">
-    <link rel="stylesheet" href="../dist/vendor.css">
-    <link rel="stylesheet" href="../dist/leaflet.distortableimage.css" media="screen" title="no title">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<head>
+  <title>MapKnitter Lite</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <meta http-equiv="x-ua-compatible" content="ie=edge"/>
+ 
+  <link rel="stylesheet" href="../node_modules/leaflet/dist/leaflet.css">
+  <link rel="stylesheet" href="../dist/vendor.css">
+  <link rel="stylesheet" href="../dist/leaflet.distortableimage.css" media="screen" title="no title">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
 
-    <script src="../node_modules/leaflet/dist/leaflet.js" type="text/javascript" charset="utf-8"></script>
-    <script src="../dist/vendor.js"></script>
-    <script src="../dist/leaflet.distortableimage.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-  </head>
+  <script src="../node_modules/leaflet/dist/leaflet.js" type="text/javascript" charset="utf-8"></script>
+  <script src="../dist/vendor.js"></script>
+  <script src="../dist/leaflet.distortableimage.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=<key>&libraries=places"></script>
+  <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+  <script src="../dist/leaflet.distortableimage.js"></script>
+  <script src="./js/archive.js" defer></script>
+</head>
+<body style="margin:0;">
+      
+  <div class="modal fade" id="welcomeModal" aria-labelledby="exampleModalLabel" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+          <div class="modal-content bg-light">
+            <div class="modal-header d-block">
+              <div class="d-flex justify-content-between align-items-center">
+                <h2 class="modal-title">Welcome to MapKnitter Lite</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ></button>
+              </div>
+              <p> <small>(while MapKnitter is offline)</small> </p>
 
-  <body style="margin:0;">
-    
-    <div class="modal fade" id="welcomeModal" aria-labelledby="exampleModalLabel" tabindex="-1" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content bg-light">
-          <div class="modal-header d-block">
-            <div class="d-flex justify-content-between align-items-center">
-              <h2 class="modal-title">Welcome to MapKnitter Lite</h2>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ></button>
             </div>
-            <p> <small>(while MapKnitter is offline)</small> </p>
-          </div>
-          <div class="modal-body">
-            <p>First, you’ll need to go to <a href="https://archive.org/" target="_blank">archive.org</a>, create an account, and then upload your images.
-              <a href="https://archive.org/embed/help-upload-overview" target="_blank">Watch this helpful video guide.</a>
-            </p>
-            <p>You’ll get an address that looks like this:
+            <div class="modal-body">
+              <p>First, you’ll need to go to <a href="https://archive.org/" target="_blank">archive.org</a>, create an account, and then upload your images.
+                <a href="https://archive.org/embed/help-upload-overview" target="_blank">Watch this helpful video guide.</a>
+              </p>
+              <p>You’ll get an address that looks like this:
               <a href="https://archive.org/details/texas-barnraising/" target="_blank">
                 https://archive.org/details/texas-barnraising/
               </a>
@@ -44,159 +50,33 @@
               <input id="input" type="text" class="form-control" placeholder="https://archive.org/details/..." required>
               <button type="submit" class="btn btn-primary mt-4 mb-5">Begin</button>
             </form>
+            <p>
+                <a href="local.html">Click here</a> to try this offline with local files only.
+              </p>
           </div>
         </div>
       </div>
-    </div>
+  </div>
+    
+  <i title="Open Sidebar" id="mapToggle" class="fa fa-bars fa-3x " style="position: absolute; right: 0; top:30px; margin: 1rem; z-index: 900; color: white; cursor: pointer;" aria-hidden="true"></i>
+    
+  <div id="map" style="width:100%; height:100%; position:absolute; top:0;"></div>
 
-    <div id="map" style="width:100%; height:100%; position:absolute; top:0;"></div>
-    <i title="Open Sidebar" id="mapToggle" title="Open Sidebar" class="fa fa-bars fa-3x " style="position: absolute; right: 0; margin: 1rem; z-index: 900; color: white; cursor: pointer;" aria-hidden="true"></i>
-
-    <div class="offcanvas offcanvas-end" data-bs-backdrop="false" data-bs-keyboard="false" tabindex="1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+  <div class="offcanvas offcanvas-end" data-bs-backdrop="false" data-bs-keyboard="false" tabindex="1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
       <div class="offcanvas-header">
         <h3 id="offcanvasRightLabel">Images</h3>
-            <i title="Close Sidebar" id="modalToggle" title="Close Sidebar" class=" fa fa-times fa-3x " style="cursor: pointer; position: absolute; right: 0; margin: 1rem; color: #00000070;" aria-hidden="true"></i>
-        <button type="button" class="btn btn-primary d-sm-none" data-bs-dismiss="offcanvas" aria-label="Close">View Map</button>
+        <button type="button" id="restoreWelcomeModalBtn" class="btn btn-primary" data-bs-dismiss="offcanvas" aria-label="Close">Get Image</button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="offcanvas" aria-label="Close">View Map</button>
       </div>
       <hr>
       <div class="offcanvas-body">
         <p id="response" class="mb-5">No link = No images...</p>
         <div id="imgContainer"></div>
       </div>
-    </div>
-  </body>
+  </div>
 
-  <script>
-    let map;
-    let welcomeModal = document.getElementById('welcomeModal');
-    let sidebar = document.getElementById('offcanvasRight');
-    let form = document.getElementById('form');
-    let input = document.getElementById('input');
-    let responseText = document.getElementById('response');
-    let imageContainer = document.getElementById('imgContainer');
-    let modalToggle = document.getElementById('modalToggle')
-    let mapToggle = document.getElementById('mapToggle')
-
-    const setupMap = () => {
-      map = L.map('map').setView([51.505, -0.09], 13);
-      
-      map.attributionControl.setPosition('bottomleft');
-
-      map.addGoogleMutant();
-
-      map.whenReady(() => {
-        new bootstrap.Modal(welcomeModal).show();
-      });
-    };
-
-    const setupCollection = () => {
-      map.imgGroup = L.distortableCollection().addTo(map);
-    };
-
-    setupMap();
-    setupCollection();
-    
-    form.addEventListener('submit', (event) => {
-      event.preventDefault();
-      extractKey();
-    });
-
-    welcomeModal.addEventListener('hidden.bs.modal', (event) => {
-      new bootstrap.Offcanvas(sidebar).show();
-    });
-
-    function extractKey() {
-      let getUrl;
-      if(!input.value.includes('archive.org/details/') && !input.value.includes('https://'))
-      {
-        getUrl = `https://archive.org/details/${input.value}/`;
-        showImages(getUrl); 
-      }
-      else if(!input.value.includes('https://') && !input.value.includes('http://') && input.value.includes('archive.org/details/')) {
-        getUrl = `https://${input.value}`;
-        showImages(getUrl);   
-      }
-      else if(input.value.includes('http://')) {
-        getUrl = input.value.replace('http:', 'https:');
-        input.value = getUrl;
-        console.log('input', input.value);
-        showImages(getUrl);   
-      }
-      else
-      {
-        getUrl = input.value;
-        showImages(getUrl)
-      }
-    }
-
-    function showImages(getUrl) {
-      const url = getUrl.replace('details', 'metadata');
-      let fetchedFrom
-      axios.get(url)
-        .then((response) => {
-          if (response.data.files && response.data.files.length != 0) {
-            let imageCount = 0;
-            response.data.files.forEach(file => {
-              if (file.format === 'PNG' || file.format === 'JPEG'){
-                let imageRow = document.createElement('div');
-                let image = new Image(150, 150);
-                let placeButton = document.createElement('a');
-                fetchedFrom = document.createElement('p');
-                fetchedFromUrl = document.createElement('a');
-                fetchedFromUrl.setAttribute('href', input.value);
-                fetchedFromUrl.setAttribute('target', '_blank');
-                fetchedFromUrl.innerHTML = 'this Internet Archive Collection';
-                fetchedFrom.appendChild(fetchedFromUrl)
-
-                placeButton.classList.add('btn', 'btn-sm', 'btn-outline-secondary', 'place-button');
-                placeButton.innerHTML = 'Place on map';
-
-                image.src = `${url.replace('metadata', 'download')}/${file.name}`;
-
-                imageRow.classList.add('d-flex', 'justify-content-between', 'align-items-center', 'mb-4', 'pe-5');
-                imageRow.append(image, placeButton);
-
-                imageContainer.appendChild(imageRow);
-                imageCount++;
-              }
-            });
-            responseText.innerHTML = imageCount ? `${imageCount} image(s) fetched successfully from ${fetchedFrom.innerHTML}.` : 'No images found in the link provided...'
-          } else {
-            responseText.innerHTML = 'No images found in the link provided...'
-          }
-        })
-        .catch((error) => {
-          responseText.innerHTML = 'Uh-oh! Something\'s not right with the link provided!'
-        })
-        .finally(() => {
-          bootstrap.Modal.getInstance(welcomeModal).hide();
-        });
-    }
-
-    welcomeModal.addEventListener('hidden.bs.modal', (event) => {
-        new bootstrap.Offcanvas(sidebar).show();
-    });
-
-
-    map.addEventListener('click', (event)=>{
-       sidebar.classList.remove('show')
-    })
-    
-    mapToggle.addEventListener('click', (event)=>{
-           new bootstrap.Offcanvas(sidebar).show();
-    })
-    modalToggle.addEventListener('click', (event)=>{
-            if(sidebar.classList.contains('show')){
-              sidebar.classList.remove('show')
-            }
-    })
-
-    document.addEventListener("click", (event) => {
-      if (event.target.classList.contains('place-button')) {
-        let imageURL = event.target.previousElementSibling.src;
-        let image = L.distortableImageOverlay(imageURL);
-        map.imgGroup.addLayer(image);
-      }
-    });
-  </script>
+</body>
 </html>
+
+        
+
