@@ -149,9 +149,12 @@ function showImages(getUrl) {
   axios.get(url)
       .then((response) => {
         if (response.data.files && response.data.files.length != 0) {
-          response.data.files.forEach((file) => {
-            renderImages(file, url);
-          });
+          count = response.data.files.filter((file)=> {
+            if (file.format === 'PNG' || file.format === 'JPEG' || file.format.includes('Thumb') ) {
+              return file;
+            }
+          }).length;
+          renderImages(response.data.files, url, count);
           responseText.innerHTML = imageCount ? `${imageCount} image(s) fetched successfully from ${fetchedFrom.innerHTML}.` : 'No images found in the link provided...';
         } else {
           responseText.innerHTML = 'No images found in the link provided...';
