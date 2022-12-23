@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', uploadFiles);
 
 // display uploaded image
 const loadMap = (image) => {
-  map.whenReady(function () {
+  map.whenReady(function() {
     img = L.distortableImageOverlay(image, {
       selected: true,
       fullResolutionSrc: 'large.jpg',
@@ -70,7 +70,7 @@ window.addEventListener('beforeunload', (e) => {
 
 
 let map;
-(function () {
+(function() {
   map = L.map('map').setView([51.505, -0.09], 13);
   map.addGoogleMutant();
 })();
