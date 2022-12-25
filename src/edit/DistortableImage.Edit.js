@@ -347,12 +347,11 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _toggleOpacity() {
     const image = this._overlay.getElement();
-    let opacity;
 
     if (!this.hasTool(L.OpacityAction)) { return; }
 
     this._transparent = !this._transparent;
-    opacity = this._transparent ? this.options.opacity : 1;
+    const opacity = this._transparent ? this.options.opacity : 1;
 
     L.DomUtil.setOpacity(image, opacity);
     image.setAttribute('opacity', opacity);
@@ -362,12 +361,11 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _toggleBorder() {
     const image = this._overlay.getElement();
-    let outline;
 
     if (!this.hasTool(L.BorderAction)) { return; }
 
     this._outlined = !this._outlined;
-    outline = this._outlined ? this.options.outline : 'none';
+    const outline = this._outlined ? this.options.outline : 'none';
 
     image.style.outline = outline;
 
