@@ -1,9 +1,9 @@
 L.ImageUtil = {
 
   getCmPerPixel(overlay) {
-    var map = overlay._map;
+    const map = overlay._map;
 
-    var dist = map
+    const dist = map
         .latLngToLayerPoint(overlay.getCorner(0))
         .distanceTo(map.latLngToLayerPoint(overlay.getCorner(1)));
 
