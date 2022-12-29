@@ -49,13 +49,13 @@ const handleDrop = (e) => {
   const form = new FormData();
   form.append('scale', prompt('Choose a scale to download image or use the default (cm per pixel):', 100) || mergedOpts.scale);
 
-  var files = e.dataTransfer.files;
+  const files = e.dataTransfer.files;
   // eslint-disable-next-line no-unused-vars
-  for (var i = 0, f; (f = files[i]); i++) {
+  for (let i = 0, f; (f = files[i]); i++) {
     const reader = new FileReader();
     // save file to local storage
     reader.addEventListener('load', () => {
-      loadMap( reader.result);
+      loadMap(reader.result);
     });
     reader.readAsDataURL(files[i]);
     // Read the File objects in this FileList.

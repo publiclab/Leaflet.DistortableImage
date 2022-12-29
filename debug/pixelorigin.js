@@ -2,14 +2,14 @@ const map;
 
 (function () {
 
-  var trd = [33, 0];
+  const trd = [33, 0];
 
   map = L.map('map', {
     center: [33, 0],
     zoom: 2
   });
 
-  var positron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+  const positron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attribution">CARTO</a>'
   }).addTo(map);
 
@@ -46,9 +46,9 @@ const map;
  const imageOffsetLine = L.polyline([[0, 0], [0, 0]], { color: 'skyblue' }).addTo(map);
 
   function info() {
-    var pixelOrigin = map.getPixelOrigin();
-    var imagePixelCoords = map.project(trd, map.getZoom());
-    var imageOffset = img._image._leaflet_pos;
+    const pixelOrigin = map.getPixelOrigin();
+    const imagePixelCoords = map.project(trd, map.getZoom());
+    const imageOffset = img._image._leaflet_pos;
 
     document.getElementById('info').innerHTML =
       '<div style="color: green">CRS origin: 0,0</div>' +
