@@ -1,6 +1,7 @@
 node_modules
 coverage
 todo.txt
+observation.txt
 *.swp
 *.swo
 package-lock.json

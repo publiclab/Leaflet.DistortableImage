@@ -8,6 +8,7 @@ let map;
     img = L.distortableImageOverlay('example.jpg', {
       selected: true,
       fullResolutionSrc: 'large.jpg',
+      tooltipText: 'Aerial map of NY', // is it actually New York?? ...hardcoded into place since it's for example purposes only
     }).addTo(map);
   });
 })();

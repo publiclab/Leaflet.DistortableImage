@@ -465,8 +465,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     editable: true,
     mode: 'distort',
     selected: false,
-    // - SEGUN ------------------------------------------------------------------------------------------------------------------------------
-    interactive: true
+    // SEGUN ------------------------------------------------------------------------------------------------------------------------------
+    interactive: true,
+    tooltipText: 'Unknow image' // SEGUN ------------------------------------------------------------------------------------------------------------------------------
+
   },
   initialize: function initialize(url, options) {
     L.setOptions(this, options);
@@ -478,6 +480,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this.rotation = {}; // SEGUN ------------------------------------------------------------------------------------------------------------------------------
 
     this.interactive = this.options.interactive;
+    this.tooltipText = options.tooltipText; // SEGUN ------------------------------------------------------------------------------------------------------------------------------
   },
   onAdd: function onAdd(map) {
     var _this = this;
@@ -559,44 +562,11 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     }
 
     this.fire('add'); // SEGUN ------------------------------------------------------------------------------------------------------------------------------
-    // OPTION 1
-    // let cursorX = 0;
 
-    var cursorY = 0; // store previous values of x and y coordinates
-
-    var index = 0;
-    var prevXval = [];
-    var prevYval = [];
-    var newPosX = 0;
-    L.DomEvent.on(this.getElement(), 'mouseover mousemove', // {mouseover: onMouseOver, mousemove: onMouseMove},
-    function (ev) {
-      console.log('mouseOVER_DONE');
-      console.log('mousemove_DONE');
-      console.log('CursorLatLngOnImageOverlay - x-axis:', ev.x);
-      console.log('CursorLatLngOnImageOverlay - y-axis:', ev.y);
-      cursorX = ev.x;
-      cursorY = ev.y;
-      prevXval[index] = ev.x;
-      prevYval[index] = ev.y;
-      newPosX = prevXval[index - 1] - prevXval[index];
-      ++index; // this.bindTooltip('Map of Port Harcourt', {sticky: true, direction: top, offset: L.point([cursorX - 920, cursorY - 500])}).openTooltip(); // {permanent: true, sticky: true, interactive: true}
-
-      _this.bindTooltip('Map of Port Harcourt', {
-        sticky: true,
-        direction: top,
-        offset: L.point([newPosX, cursorY - 500])
-      }).openTooltip(); // {permanent: true, sticky: true, interactive: true}
-
-    }, this);
-    L.DomEvent.on(this.getElement(), 'mouseout', function () {
-      console.log('mouseOUT_DONE');
-
-      _this.closeTooltip();
-    }, this); // ENDS ------------------------------------------------------------------------------------------------------------------------------
+    L.DomEvent.on(this.getElement(), 'mouseover mousemove', this._activateTooltip, this);
+    L.DomEvent.on(this.getElement(), 'mouseout', this._closeTooltip, this);
   },
   onRemove: function onRemove(map) {
-    var _this2 = this;
-
     L.DomEvent.off(this.getElement(), 'click', this.select, this);
     L.DomEvent.off(map, {
       singleclickon: this._singleClickListeners,
@@ -610,13 +580,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     }
 
     this.fire('remove');
-    L.ImageOverlay.prototype.onRemove.call(this, map); // SEGUN ------------------------------------------------------------------------------------------------------------------------------
+    L.ImageOverlay.prototype.onRemove.call(this, map); // SEGUN -----------------------------------------------------------------------------------------------------------------------------
 
-    L.DomEvent.off(this.getElement(), 'mouseover', function () {
-      console.log('MouseoverENDED');
-
-      _this2.unbindTooltip();
-    }, this); // ENDS ------------------------------------------------------------------------------------------------------------------------------
+    L.DomEvent.off(this.getElement(), 'mouseover', this._deactivateTooltip, this); // ENDS ------------------------------------------------------------------------------------------------------------------------------
   },
   _initImageDimensions: function _initImageDimensions() {
     var map = this._map;
@@ -659,7 +625,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     L.DomEvent.off(map, 'singleclick', this.deselect, this);
   },
   isSelected: function isSelected() {
-    return this._selected;
+    return this._selected; // this._selected
   },
   deselect: function deselect() {
     var edit = this.editing;
@@ -744,6 +710,43 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       return exceedsTop || exceedsBottom;
     }
   },
+  // SEGUN -------------------------------------------------------------------------------------------------------------------------------
+  // Work in progress on this function
+  _activateTooltip: function _activateTooltip(ev) {
+    var index = 0;
+    var xAxis = []; // stores previous values of x coordinate
+
+    var yAxis = []; // stores previous values of y coordinate, may be needed later
+    // let newPosX = 0;
+
+    if (!this._selected) {
+      // Consider using "if (!this.selected)" instead
+      // console.log('mouseOVER_DONE/mouseMOVE_DONE-TOOLTIP-ACTIVATED'); // To be deleted
+      // console.log('x-axis:', ev.x); // To be deleted
+      // console.log('y-axis:', ev.y); // To be deleted
+      xAxis[index] = ev.x;
+      yAxis[index] = ev.y; // May be needed later
+      // newPosX = xAxis[index-1] - xAxis[index]; // - works but not perfect
+      // newPosX = (xAxis[index-1] - xAxis[index]) - ((xAxis[index])/4); // - better than above but not perfect
+      // newPosX =(xAxis[index-1] - xAxis[index]) - (xAxis[index] - this.imageWidth); // - works but no perfect
+
+      ++index;
+      this.bindTooltip(this.tooltipText, {
+        sticky: true,
+        direction: 'top',
+        offset: L.point([ev.x - 700, ev.y - 500])
+      }).openTooltip(); // POC only, work still in progress on this - hardcoded, works not perfect yet
+    }
+  },
+  _closeTooltip: function _closeTooltip() {
+    // console.log('mouseOUT_DONE-TOOLTIP-CLOSED'); // To be deleted
+    this.closeTooltip();
+  },
+  _deactivateTooltip: function _deactivateTooltip() {
+    // console.log('MouseoverENDED & mousemoveENDED-TOOLTIP-DEACTIVATED'); - To be deleted
+    this.unbindTooltip();
+  },
+  // ENDS ------------------------------------------------------------------------------------------------------------------------------
   setCorners: function setCorners(latlngObj) {
     var map = this._map;
     var zoom = map.getZoom();
@@ -1017,7 +1020,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 });
 
 L.distortableImageOverlay = function (id, options) {
-  return new L.DistortableImageOverlay(id, options);
+  // remove temp
+  return new L.DistortableImageOverlay(id, options); // remove temp
 };
 
 L.Map.addInitHook(function () {
@@ -7315,7 +7319,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "9cb223fc0c24072c24f2"; }
+/******/ 		__webpack_require__.h = function() { return "62d7c36f7dc3388929e9"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
