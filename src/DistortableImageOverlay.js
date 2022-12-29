@@ -8,6 +8,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     editable: true,
     mode: 'distort',
     selected: false,
+    // - SEGUN ------------------------------------------------------------------------------------------------------------------------------
+    interactive: true,
   },
 
   initialize(url, options) {
@@ -19,6 +21,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this._selected = this.options.selected;
     this._url = url;
     this.rotation = {};
+    // SEGUN ------------------------------------------------------------------------------------------------------------------------------
+    this.interactive = this.options.interactive;
   },
 
   onAdd(map) {
@@ -81,6 +85,53 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     }
 
     this.fire('add');
+
+    // SEGUN ------------------------------------------------------------------------------------------------------------------------------
+    // OPTION 1
+    // let cursorX = 0;
+    let cursorY = 0;
+
+    // store previous values of x and y coordinates
+    let index = 0;
+    let prevXval = [];
+    let prevYval = [];
+    let newPosX = 0;
+
+
+    L.DomEvent.on(
+        this.getElement(),
+        'mouseover mousemove',
+        // {mouseover: onMouseOver, mousemove: onMouseMove},
+        (ev) => {
+          console.log('mouseOVER_DONE');
+          console.log('mousemove_DONE');
+          console.log('CursorLatLngOnImageOverlay - x-axis:', ev.x);
+          console.log('CursorLatLngOnImageOverlay - y-axis:', ev.y);
+          cursorX = ev.x;
+          cursorY = ev.y;
+
+          prevXval[index] = ev.x;
+          prevYval[index] = ev.y;
+
+          newPosX = prevXval[index-1] - prevXval[index];
+          ++index;
+
+          // this.bindTooltip('Map of Port Harcourt', {sticky: true, direction: top, offset: L.point([cursorX - 920, cursorY - 500])}).openTooltip(); // {permanent: true, sticky: true, interactive: true}
+          this.bindTooltip('Map of Port Harcourt', {sticky: true, direction: top, offset: L.point([newPosX, cursorY - 500])}).openTooltip(); // {permanent: true, sticky: true, interactive: true}
+        },
+        this
+    );
+
+    L.DomEvent.on(
+        this.getElement(),
+        'mouseout',
+        () => {
+          console.log('mouseOUT_DONE');
+          this.closeTooltip();
+        },
+        this
+    );
+    // ENDS ------------------------------------------------------------------------------------------------------------------------------
   },
 
   onRemove(map) {
@@ -96,6 +147,17 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this.fire('remove');
 
     L.ImageOverlay.prototype.onRemove.call(this, map);
+
+    // SEGUN ------------------------------------------------------------------------------------------------------------------------------
+    L.DomEvent.off(this.getElement(),
+        'mouseover',
+        () => {
+          console.log('MouseoverENDED');
+          this.unbindTooltip();
+        },
+        this
+    );
+    // ENDS ------------------------------------------------------------------------------------------------------------------------------
   },
 
   _initImageDimensions() {

@@ -464,7 +464,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     edgeMinWidth: 50,
     editable: true,
     mode: 'distort',
-    selected: false
+    selected: false,
+    // - SEGUN ------------------------------------------------------------------------------------------------------------------------------
+    interactive: true
   },
   initialize: function initialize(url, options) {
     L.setOptions(this, options);
@@ -473,7 +475,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this.editable = this.options.editable;
     this._selected = this.options.selected;
     this._url = url;
-    this.rotation = {};
+    this.rotation = {}; // SEGUN ------------------------------------------------------------------------------------------------------------------------------
+
+    this.interactive = this.options.interactive;
   },
   onAdd: function onAdd(map) {
     var _this = this;
@@ -554,9 +558,45 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       L.DomEvent.on(map, 'click', this.deselect, this);
     }
 
-    this.fire('add');
+    this.fire('add'); // SEGUN ------------------------------------------------------------------------------------------------------------------------------
+    // OPTION 1
+    // let cursorX = 0;
+
+    var cursorY = 0; // store previous values of x and y coordinates
+
+    var index = 0;
+    var prevXval = [];
+    var prevYval = [];
+    var newPosX = 0;
+    L.DomEvent.on(this.getElement(), 'mouseover mousemove', // {mouseover: onMouseOver, mousemove: onMouseMove},
+    function (ev) {
+      console.log('mouseOVER_DONE');
+      console.log('mousemove_DONE');
+      console.log('CursorLatLngOnImageOverlay - x-axis:', ev.x);
+      console.log('CursorLatLngOnImageOverlay - y-axis:', ev.y);
+      cursorX = ev.x;
+      cursorY = ev.y;
+      prevXval[index] = ev.x;
+      prevYval[index] = ev.y;
+      newPosX = prevXval[index - 1] - prevXval[index];
+      ++index; // this.bindTooltip('Map of Port Harcourt', {sticky: true, direction: top, offset: L.point([cursorX - 920, cursorY - 500])}).openTooltip(); // {permanent: true, sticky: true, interactive: true}
+
+      _this.bindTooltip('Map of Port Harcourt', {
+        sticky: true,
+        direction: top,
+        offset: L.point([newPosX, cursorY - 500])
+      }).openTooltip(); // {permanent: true, sticky: true, interactive: true}
+
+    }, this);
+    L.DomEvent.on(this.getElement(), 'mouseout', function () {
+      console.log('mouseOUT_DONE');
+
+      _this.closeTooltip();
+    }, this); // ENDS ------------------------------------------------------------------------------------------------------------------------------
   },
   onRemove: function onRemove(map) {
+    var _this2 = this;
+
     L.DomEvent.off(this.getElement(), 'click', this.select, this);
     L.DomEvent.off(map, {
       singleclickon: this._singleClickListeners,
@@ -570,7 +610,13 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     }
 
     this.fire('remove');
-    L.ImageOverlay.prototype.onRemove.call(this, map);
+    L.ImageOverlay.prototype.onRemove.call(this, map); // SEGUN ------------------------------------------------------------------------------------------------------------------------------
+
+    L.DomEvent.off(this.getElement(), 'mouseover', function () {
+      console.log('MouseoverENDED');
+
+      _this2.unbindTooltip();
+    }, this); // ENDS ------------------------------------------------------------------------------------------------------------------------------
   },
   _initImageDimensions: function _initImageDimensions() {
     var map = this._map;
@@ -7269,7 +7315,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "e74ca99591694a12fb9d"; }
+/******/ 		__webpack_require__.h = function() { return "9cb223fc0c24072c24f2"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */

@@ -1,4 +1,5 @@
 let map;
+// const imageOverlaytooltipText;
 const welcomeModal = document.getElementById('welcomeModal');
 const tileMap = document.getElementById('map');
 const restoreWelcomeModal = document.getElementById('restoreWelcomeModalBtn');
@@ -91,6 +92,11 @@ function showImages(getUrl) {
         if (response.data.files && response.data.files.length != 0) {
           response.data.files.forEach((file) => {
             renderImages(file, url);
+            // SEGUN ---------------------------------------------------------------------------------------------------------------------------
+            // console.log('Test-check');
+            // console.log(response.data.metadata.description);
+            // imageOverlaytooltipText = response.data.metadata.description; - Uncomment to pass
+          // SEGUN ------------------------------------------------------------------------------------------------------------------------------
           });
           responseText.innerHTML = imageCount ? `${imageCount} image(s) fetched successfully from ${fetchedFrom.innerHTML}.` : 'No images found in the link provided...';
         } else {
@@ -122,6 +128,7 @@ tileMap.addEventListener('click', (event) => {
   bootstrap.Offcanvas.getInstance(sidebar).hide();
 });
 
+
 document.addEventListener('click', (event) => {
   if (event.target.classList.contains('place-button')) {
     const imageURL = event.target.previousElementSibling.src;
@@ -129,3 +136,7 @@ document.addEventListener('click', (event) => {
     map.imgGroup.addLayer(image);
   }
 });
+
+// SEGUN ------------------------------------------------------------------------------------------------------------------------------
+
+
