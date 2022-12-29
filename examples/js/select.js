@@ -13,6 +13,7 @@ let map;
         L.latLng(51.50, -0.10),
       ],
       mode: 'lock',
+      tooltipText: 'Map of NY', // If needed, consider using dynamic value for key 'tooltipText'
     });
 
     // create a second image
@@ -25,6 +26,7 @@ let map;
       ],
       mode: 'freeRotate',
       suppressToolbar: true,
+      tooltipText: 'Map of NY', // If needed, consider using dynamic value for key 'tooltipText'
     });
 
     img3 = L.distortableImageOverlay('example.jpg', {
@@ -42,6 +44,7 @@ let map;
         L.DeleteAction,
         L.StackAction,
       ],
+      tooltipText: 'Map of NY', // If needed, consider using dynamic value for key 'tooltipText'
     });
 
     img4 = L.distortableImageOverlay('example.jpg', {
@@ -61,6 +64,7 @@ let map;
         L.latLng(51.49, -0.08),
         L.latLng(51.49, -0.04),
       ],
+      tooltipText: 'Map of NY', // If needed, consider using dynamic value for key 'tooltipText'
     });
 
     imgGroup = L.distortableCollection().addTo(map);
