@@ -59,87 +59,82 @@ function extractKey() {
 
 let imageCount = 0;
 let fetchedFrom;
+
+// the imgsBelow function is called when the images and thumbnails gotten from the data fetched are below 100
+// it renders the images in the sidebar
+const imgsBelow = (imgs, url) => {
+  imgs.forEach((file) => {
+    const imageRow = document.createElement('div');
+    const image = new Image(150, 150);
+    const placeButton = document.createElement('a');
+    fetchedFrom = document.createElement('p');
+    const fetchedFromUrl = document.createElement('a');
+    fetchedFromUrl.setAttribute('href', input.value);
+    fetchedFromUrl.setAttribute('target', '_blank');
+    fetchedFromUrl.innerHTML = 'this Internet Archive Collection';
+    fetchedFrom.appendChild(fetchedFromUrl);
+
+    placeButton.classList.add('btn', 'btn-sm', 'btn-outline-secondary', 'place-button');
+    placeButton.innerHTML = 'Place on map';
+    image.setAttribute('data-original-image', `${url.replace('metadata', 'download')}/${file.name}`);
+    image.src = `${url.replace('metadata', 'download')}/${file.name}`;
+    imageRow.classList.add('d-flex', 'justify-content-between', 'align-items-center', 'mb-4', 'pe-5');
+    imageRow.append(image, placeButton);
+    imageContainer.appendChild(imageRow);
+    imageCount++;
+  });
+};
+
+// this function is called when there are more than a 100 images and thumbnails in data fetched and also if there are not enough thumbnails per image
+// it takes in three arguments thumbs, url and imgs
+// using defualt function parameters and a logical OR, it is reuseable as a graceful failsafe for when there are no thumbnails for all images.
+const getThumbs = (thumbs = [], url, imgs) => {
+  const display = thumbs || imgs;
+
+  display.forEach((file) => {
+    const imageRow = document.createElement('div');
+    const image = new Image(65, 65);
+    const placeButton = document.createElement('a');
+    fetchedFrom = document.createElement('p');
+    const fetchedFromUrl = document.createElement('a');
+    fetchedFromUrl.setAttribute('href', input.value);
+    fetchedFromUrl.setAttribute('target', '_blank');
+    fetchedFromUrl.innerHTML = 'this Internet Archive Collection';
+    fetchedFrom.appendChild(fetchedFromUrl);
+    const fileName = document.createElement('p');
+    fileName.innerHTML = file.name;
+    fileName.classList.add('m-0');
+    fileName.style.fontSize = '12px';
+
+    placeButton.classList.add('btn', 'btn-sm', 'btn-outline-secondary', 'place-button', 'mt-1');
+    placeButton.innerHTML = 'Place';
+    placeButton.setAttribute('title', 'Place image on map');
+
+    image.setAttribute('data-original', `${url.replace('metadata', 'download')}/${thumbs ? file.original : file.name}`);
+    image.src = `${url.replace('metadata', 'download')}/${file.name}`;
+    imageRow.classList.add('col-4', 'd-flex', 'flex-column', 'p-2', 'align-items-center');
+    imageRow.append(image, placeButton, fileName);
+    imageContainer.appendChild(imageRow);
+    imageContainer.setAttribute('class', 'row');
+    imageCount++;
+  });
+};
+
+
+// renderImages function is to render the images fetched from IA
 function renderImages(files, url, count) {
+  // thumbs variable is to extract the thumbnail files from the fetched data
   const thumbs = files.filter(file => file.source === 'derivative');
+  // images variable is to extract the actual image files from the fetched data
   const images = files.filter(file => file.format === 'PNG' || file.format === 'JPEG');
 
+  // this if check is to check the amount of image files and thumbnail files is below 100, afterwhich if true it renders the images in the sidebar
   if (count < 100) {
-    images.forEach((file) => {
-      const imageRow = document.createElement('div');
-      const image = new Image(150, 150);
-      const placeButton = document.createElement('a');
-      fetchedFrom = document.createElement('p');
-      const fetchedFromUrl = document.createElement('a');
-      fetchedFromUrl.setAttribute('href', input.value);
-      fetchedFromUrl.setAttribute('target', '_blank');
-      fetchedFromUrl.innerHTML = 'this Internet Archive Collection';
-      fetchedFrom.appendChild(fetchedFromUrl);
-
-      placeButton.classList.add('btn', 'btn-sm', 'btn-outline-secondary', 'place-button');
-      placeButton.innerHTML = 'Place on map';
-      image.setAttribute('data-original-image', `${url.replace('metadata', 'download')}/${file.name}`);
-      image.src = `${url.replace('metadata', 'download')}/${file.name}`;
-      imageRow.classList.add('d-flex', 'justify-content-between', 'align-items-center', 'mb-4', 'pe-5');
-      imageRow.append(image, placeButton);
-      imageContainer.appendChild(imageRow);
-      imageCount++;
-    });
-  } else if (thumbs.length === images.length) {
-    thumbs.forEach((file) => {
-      const imageRow = document.createElement('div');
-      const image = new Image(65, 65);
-      const placeButton = document.createElement('a');
-      fetchedFrom = document.createElement('p');
-      const fetchedFromUrl = document.createElement('a');
-      fetchedFromUrl.setAttribute('href', input.value);
-      fetchedFromUrl.setAttribute('target', '_blank');
-      fetchedFromUrl.innerHTML = 'this Internet Archive Collection';
-      fetchedFrom.appendChild(fetchedFromUrl);
-      const fileName = document.createElement('p');
-      fileName.innerHTML = file.name;
-      fileName.classList.add('m-0');
-      fileName.style.fontSize = '12px';
-
-      placeButton.classList.add('btn', 'btn-sm', 'btn-outline-secondary', 'place-button', 'mt-1');
-      placeButton.innerHTML = 'Place';
-      placeButton.setAttribute('title', 'Place image on map');
-
-      image.setAttribute('data-original', `${url.replace('metadata', 'download')}/${file.original}`);
-      image.src = `${url.replace('metadata', 'download')}/${file.name}`;
-      imageRow.classList.add('col-4', 'd-flex', 'flex-column', 'p-2', 'align-items-center');
-      imageRow.append(image, placeButton, fileName);
-      imageContainer.appendChild(imageRow);
-      imageContainer.setAttribute('class', 'row');
-      imageCount++;
-    });
+    imgsBelow(images, url);
+  } else if (thumbs.length === images.length) { // <--- this check is to make sure there are thumbnails for each image, else it defaults to the last case
+    getThumbs(thumbs, url, images);
   } else {
-    images.forEach((file) => {
-      const imageRow = document.createElement('div');
-      const image = new Image(65, 65);
-      const placeButton = document.createElement('a');
-      fetchedFrom = document.createElement('p');
-      const fetchedFromUrl = document.createElement('a');
-      fetchedFromUrl.setAttribute('href', input.value);
-      fetchedFromUrl.setAttribute('target', '_blank');
-      fetchedFromUrl.innerHTML = 'this Internet Archive Collection';
-      fetchedFrom.appendChild(fetchedFromUrl);
-      const fileName = document.createElement('p');
-      fileName.innerHTML = file.name;
-      fileName.classList.add('m-0');
-      fileName.style.fontSize = '12px';
-
-      placeButton.classList.add('btn', 'btn-sm', 'btn-outline-secondary', 'place-button', 'mt-1');
-      placeButton.innerHTML = 'Place';
-      placeButton.setAttribute('title', 'Place image on map');
-
-      image.setAttribute('data-original', `${url.replace('metadata', 'download')}/${file.name}`);
-      image.src = `${url.replace('metadata', 'download')}/${file.name}`;
-      imageRow.classList.add('col-4', 'd-flex', 'flex-column', 'p-2', 'align-items-center');
-      imageRow.append(image, placeButton, fileName);
-      imageContainer.appendChild(imageRow);
-      imageContainer.setAttribute('class', 'row');
-      imageCount++;
-    });
+    getThumbs(false, url, images);
   }
 }
 
