@@ -42,7 +42,6 @@ const loadMap = (image) => {
       tooltipText: 'Map of NY', // If needed, consider using dynamic value for key 'tooltipText'
     }).addTo(map);
   });
-  console.log('Image from local.js', img);
 };
 
 const handleDrop = (e) => {

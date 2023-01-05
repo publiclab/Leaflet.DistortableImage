@@ -563,9 +563,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     }
 
     this.fire('add'); // SEGUN ------------------------------------------------------------------------------------------------------------------------------
-    // *L.DomEvent.on(this.getElement(), 'mouseover mousemove', this._activateTooltip, this);
-    // L.DomEvent.on(this.getElement(), 'mousemove', this._activateTooltip, this);
-    // *L.DomEvent.on(this.getElement(), 'mouseout', this._closeTooltip, this);
+
+    L.DomEvent.on(this.getElement(), 'mouseover mousemove', this._activateTooltip, this);
+    L.DomEvent.on(this.getElement(), 'mouseout', this._closeTooltip, this);
   },
   onRemove: function onRemove(map) {
     L.DomEvent.off(this.getElement(), 'click', this.select, this);
@@ -711,11 +711,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       return exceedsTop || exceedsBottom;
     }
   },
-  // // OPTION 2 -------------------------------------------------------------------------------------------------------------------------------
-  // _activateTooltip(ev) {
-  //   //  console.log('latlong at center', this.getCenter());
-  // },
-  // OPTION 1 SEGUN -------------------------------------------------------------------------------------------------------------------------------
+  // SEGUN -------------------------------------------------------------------------------------------------------------------------------
   // Work in progress on this function
   _activateTooltip: function _activateTooltip(ev) {
     var index = 0;
@@ -727,48 +723,20 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     if (!this._selected) {
       // Consider using "if (!this.selected)" instead
       // console.log('mouseOVER_DONE/mouseMOVE_DONE-TOOLTIP-ACTIVATED'); // To be deleted
-      console.log('ev:', ev); // To be deleted
-
-      console.log('x-axis:', ev.x); // To be deleted
-
-      console.log('y-axis:', ev.y); // To be deleted
-
+      // console.log('x-axis:', ev.x); // To be deleted
+      // console.log('y-axis:', ev.y); // To be deleted
       xAxis[index] = ev.x;
       yAxis[index] = ev.y; // May be needed later
       // newPosX = xAxis[index-1] - xAxis[index]; // - works but not perfect
       // newPosX = (xAxis[index-1] - xAxis[index]) - ((xAxis[index])/4); // - better than above but not perfect
       // newPosX =(xAxis[index-1] - xAxis[index]) - (xAxis[index] - this.imageWidth); // - works but no perfect
 
-      /*
-        248,373  541,373 --> x, y -- x diff = 293
-        249,562  541,561 --> x, y -- x diff = 292
-      */
-      // newPosX = ev.x + (ev.y/12);
-
-      ++index; // Calculate
-      // if (index != 0) {
-      //   if ((xAxis[index] > xAxis[index-1]) && ((yAxis[index] > yAxis[index-1]))) {  // cursor moves right-up
-      //     newPosX = xAxis[index] - xAxis[index-1];
-      //   } else if ((xAxis[index] > xAxis[index-1]) && ((yAxis[index] > yAxis[index-1]))) { // cursor moves right-down
-      //     // newPosX - (xAxis[index-1] - xAxis[index]);
-      //   }
-      //   // newPosX = (ev.x + (xAxis[index-1] - ev.x)) - 700;
-      //   // newPosY = (ev.y + (yAxis[index-1] - ev.y)) - 500;
-      //   // newPosX = (xAxis[index-1] - ev.x) - 700;
-      //   // newPosY = (yAxis[index-1] - ev.y) - 500;
-      // }
-
-      if (index != 0) {
-        newPosX = ev.x - (ev.x - xAxis[index - 1]) + 10;
-        newPosY = ev.y - (ev.x - xAxis[index - 1]) + 30;
-      }
-
-      this.bindTooltip(this.tooltipText, // {sticky: true, direction: 'top', offset: L.point([newPosX, newPosY])}).openTooltip();
-      {
+      ++index;
+      this.bindTooltip(this.tooltipText, {
         sticky: true,
         direction: 'top',
-        offset: L.point([ev.x, ev.y])
-      }).openTooltip(); // {sticky: true, direction: 'top', offset: L.point([ev.x - 700, ev.y - 500])}).openTooltip(); // POC only, work still in progress on this - hardcoded, works not perfect yet
+        offset: L.point([ev.x - 700, ev.y - 500])
+      }).openTooltip(); // POC only, work still in progress on this - hardcoded, works not perfect yet
     }
   },
   _closeTooltip: function _closeTooltip() {
@@ -7348,7 +7316,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "493561d37cd0443213e3"; }
+/******/ 		__webpack_require__.h = function() { return "f2ac3d8112acfafcb3f8"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */

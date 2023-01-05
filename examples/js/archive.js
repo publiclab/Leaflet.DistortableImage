@@ -1,5 +1,4 @@
 let map;
-// let image;
 let imageOverlaytooltipText;
 const welcomeModal = document.getElementById('welcomeModal');
 const tileMap = document.getElementById('map');
@@ -10,9 +9,6 @@ const input = document.getElementById('input');
 const responseText = document.getElementById('response');
 const imageContainer = document.getElementById('imgContainer');
 const mapToggle = document.getElementById('mapToggle');
-const imageOverlaytooltip = document.getElementById('imageOverlaytooltip');
-const tooltipText = document.getElementById('tooltiptext');
-
 
 const setupMap = () => {
   map = L.map('map').setView([51.505, -0.09], 13);
@@ -128,43 +124,13 @@ tileMap.addEventListener('click', (event) => {
   bootstrap.Offcanvas.getInstance(sidebar).hide();
 });
 
-// ---------------------------------------------------------------------------------------------
-// OPTION 1 - Runs independently of OPTION 2
 document.addEventListener('click', (event) => {
   if (event.target.classList.contains('place-button')) {
     const imageURL = event.target.previousElementSibling.src;
-    // const image = L.distortableImageOverlay(
-    image = L.distortableImageOverlay( // <= SEGUN
+    const image = L.distortableImageOverlay( // <= SEGUN
         imageURL,
         {tooltipText: imageOverlaytooltipText}
     );
     map.imgGroup.addLayer(image);
-  }
-});
-
-// ---------------------------------------------------------------------------------------------
-// OPTION 2.1 - To run this option, uncomment OPTION 1 above too as well
-document.addEventListener('mousemove', (event) => {
-  if (event.target.classList.contains('leaflet-image-layer')) {
-    if (!image.isSelected()) {
-      const xPos = event.layerX;
-      const yPos = event.layerY;
-
-      tooltipText.textContent = imageOverlaytooltipText;
-      imageOverlaytooltip.style.position = 'absolute';
-      imageOverlaytooltip.style.left = (xPos - 60) +'px';
-      imageOverlaytooltip.style.top = (yPos - 40) +'px';
-      imageOverlaytooltip.hidden = false;
-    }
-
-    if (image.isSelected()) {
-      imageOverlaytooltip.hidden = true;
-    }
-  }
-});
-
-document.addEventListener('mouseout', (event) => {
-  if (event.target.classList.contains('leaflet-image-layer')) {
-    imageOverlaytooltip.hidden = true;
   }
 });
