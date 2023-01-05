@@ -123,7 +123,6 @@ const getThumbs = (thumbs = [], url, imgs) => {
 };
 
 
-// renderImages function is to render the images fetched from IA
 function renderImages(files, url, count) {
   // thumbs variable is to extract the thumbnail files from the fetched data
   const thumbs = files.filter(file => file.source === 'derivative');
