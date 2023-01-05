@@ -60,13 +60,13 @@ function extractKey() {
 let imageCount = 0;
 let fetchedFrom;
 
-// the imgsBelow function is called when the images and thumbnails gotten from the data fetched are below 100
-// it renders the images in the sidebar
-const imgsBelow = (imgs, url) => {
-  imgs.forEach((file) => {
+
+const renderImages = (fullResImages, url) => {
+  fullResImages.forEach((file) => {
     const imageRow = document.createElement('div');
     const image = new Image(150, 150);
     const placeButton = document.createElement('a');
+    // link back to the images' source URL
     fetchedFrom = document.createElement('p');
     const fetchedFromUrl = document.createElement('a');
     fetchedFromUrl.setAttribute('href', input.value);
@@ -76,6 +76,7 @@ const imgsBelow = (imgs, url) => {
 
     placeButton.classList.add('btn', 'btn-sm', 'btn-outline-secondary', 'place-button');
     placeButton.innerHTML = 'Place on map';
+    // store the full-resolution image URL in a "data-original" attribute
     image.setAttribute('data-original-image', `${url.replace('metadata', 'download')}/${file.name}`);
     image.src = `${url.replace('metadata', 'download')}/${file.name}`;
     imageRow.classList.add('d-flex', 'justify-content-between', 'align-items-center', 'mb-4', 'pe-5');
@@ -85,13 +86,11 @@ const imgsBelow = (imgs, url) => {
   });
 };
 
-// this function is called when there are more than a 100 images and thumbnails in data fetched and also if there are not enough thumbnails per image
-// it takes in three arguments thumbs, url and imgs
-// using defualt function parameters and a logical OR, it is reuseable as a graceful failsafe for when there are no thumbnails for all images.
-const getThumbs = (thumbs = [], url, imgs) => {
-  const display = thumbs || imgs;
+// renders thumbnails or images in thumbnail size
+const renderThumbnails = (thumbnails = [], url, fullResImgs) => {
+  const imagesToRender = thumbnails || fullResImgs;
 
-  display.forEach((file) => {
+  imagesToRender.forEach((file) => {
     const imageRow = document.createElement('div');
     const image = new Image(65, 65);
     const placeButton = document.createElement('a');
@@ -112,7 +111,7 @@ const getThumbs = (thumbs = [], url, imgs) => {
     placeButton.setAttribute('title', 'Place image on map');
 
     // store the full-resolution image URL in a "data-original" attribute
-    image.setAttribute('data-original', `${url.replace('metadata', 'download')}/${thumbs ? file.original : file.name}`);
+    image.setAttribute('data-original', `${url.replace('metadata', 'download')}/${thumbnails ? file.original : file.name}`);
     image.src = `${url.replace('metadata', 'download')}/${file.name}`;
     imageRow.classList.add('col-4', 'd-flex', 'flex-column', 'p-2', 'align-items-center');
     imageRow.append(image, placeButton, fileName);
@@ -122,35 +121,26 @@ const getThumbs = (thumbs = [], url, imgs) => {
   });
 };
 
-
-function renderImages(files, url, count) {
-  // thumbs variable is to extract the thumbnail files from the fetched data
-  const thumbs = files.filter(file => file.source === 'derivative');
-  // images variable is to extract the actual image files from the fetched data
-  const images = files.filter(file => file.format === 'PNG' || file.format === 'JPEG');
-
-  // this if check is to check the amount of image files and thumbnail files is below 100, afterwhich if true it renders the images in the sidebar
-  if (count < 100) {
-    imgsBelow(images, url);
-  } else if (thumbs.length === images.length) { // <--- this check is to make sure there are thumbnails for each image, else it defaults to the last case
-    getThumbs(thumbs, url, images);
-  } else {
-    getThumbs(false, url, images);
-  }
-}
-
 function showImages(getUrl) {
   const url = getUrl.replace('details', 'metadata');
 
   axios.get(url)
       .then((response) => {
         if (response.data.files && response.data.files.length != 0) {
+          const imageThumbnails = response.data.files.filter(file => file.source === 'derivative');
+          const fullResImages = response.data.files.filter(file => file.format === 'PNG' || file.format === 'JPEG');
           count = response.data.files.filter((file)=> {
-            if (file.format === 'PNG' || file.format === 'JPEG' || file.format.includes('Thumb') ) {
-              return file;
-            }
+            if (file.format === 'PNG' || file.format === 'JPEG' || file.format.includes('Thumb')) return file;
           }).length;
-          renderImages(response.data.files, url, count);
+          if (count > 100) {
+            if (imageThumbnails.length === fullResImages.length) {
+              renderThumbnails(imageThumbnails, url, fullResImages);
+            } else {
+              renderThumbnails(false, url, fullResImages);
+            }
+          } else {
+            renderImages(fullResImages, url);
+          }
           responseText.innerHTML = imageCount ? `${imageCount} image(s) fetched successfully from ${fetchedFrom.innerHTML}.` : 'No images found in the link provided...';
         } else {
           responseText.innerHTML = 'No images found in the link provided...';
@@ -158,6 +148,7 @@ function showImages(getUrl) {
       })
       .catch((error) => {
         responseText.innerHTML = 'Uh-oh! Something\'s not right with the link provided!';
+        console.log(error);
       })
       .finally(() => {
         bootstrap.Modal.getInstance(welcomeModal).hide();
