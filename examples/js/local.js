@@ -39,6 +39,7 @@ const loadMap = (image) => {
     img = L.distortableImageOverlay(image, {
       selected: true,
       fullResolutionSrc: 'large.jpg',
+      tooltipText: 'Aerial map of NY',
     }).addTo(map);
   });
 };
