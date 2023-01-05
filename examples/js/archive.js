@@ -128,15 +128,8 @@ tileMap.addEventListener('click', (event) => {
   bootstrap.Offcanvas.getInstance(sidebar).hide();
 });
 
-<<<<<<< HEAD
 // ---------------------------------------------------------------------------------------------
 // OPTION 1 - Runs independently of OPTION 2
-=======
-<<<<<<< HEAD
-
-=======
->>>>>>> 008785ce8d7e04babeccdaf7aaf0a4d8b64b4bcb
->>>>>>> parent of 0c47683 (enabled tooltip feature on more sourcefiles)
 document.addEventListener('click', (event) => {
   if (event.target.classList.contains('place-button')) {
     const imageURL = event.target.previousElementSibling.src;

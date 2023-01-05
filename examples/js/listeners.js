@@ -7,6 +7,7 @@ let map;
   map.whenReady(function() {
     img = L.distortableImageOverlay('example.jpg', {
       selected: true,
+      tooltipText: 'Aerial map of NY', // hardcoded since it's for example purposes only
     }).addTo(map);
 
     // Wait until image is loaded before setting up DOM element listeners

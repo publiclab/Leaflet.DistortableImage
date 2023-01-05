@@ -13,6 +13,7 @@ let map;
         L.latLng(51.50, -0.10),
       ],
       mode: 'lock',
+      tooltipText: 'Aerial map of NY', // hardcoded since it's for example purposes only
     });
 
     // create a second image
@@ -25,6 +26,7 @@ let map;
       ],
       mode: 'freeRotate',
       suppressToolbar: true,
+      tooltipText: 'Aerial map of NY', // hardcoded since it's for example purposes only
     });
 
     let json = [{'nodes': [
