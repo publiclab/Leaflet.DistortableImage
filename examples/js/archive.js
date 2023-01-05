@@ -77,7 +77,7 @@ const renderImages = (fullResImages, url) => {
     placeButton.classList.add('btn', 'btn-sm', 'btn-outline-secondary', 'place-button');
     placeButton.innerHTML = 'Place on map';
     // store the full-resolution image URL in a "data-original" attribute
-    image.setAttribute('data-original-image', `${url.replace('metadata', 'download')}/${file.name}`);
+    image.setAttribute('data-original', `${url.replace('metadata', 'download')}/${file.name}`);
     image.src = `${url.replace('metadata', 'download')}/${file.name}`;
     imageRow.classList.add('d-flex', 'justify-content-between', 'align-items-center', 'mb-4', 'pe-5');
     imageRow.append(image, placeButton);
