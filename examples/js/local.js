@@ -39,7 +39,6 @@ const loadMap = (image) => {
     img = L.distortableImageOverlay(image, {
       selected: true,
       fullResolutionSrc: 'large.jpg',
-      tooltipText: 'Map of NY', // If needed, consider using dynamic value for key 'tooltipText'
     }).addTo(map);
   });
 };

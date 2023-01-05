@@ -124,6 +124,10 @@ tileMap.addEventListener('click', (event) => {
   bootstrap.Offcanvas.getInstance(sidebar).hide();
 });
 
+<<<<<<< HEAD
+
+=======
+>>>>>>> 008785ce8d7e04babeccdaf7aaf0a4d8b64b4bcb
 document.addEventListener('click', (event) => {
   if (event.target.classList.contains('place-button')) {
     const imageURL = event.target.previousElementSibling.src;
