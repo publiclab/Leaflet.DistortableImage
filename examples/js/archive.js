@@ -95,6 +95,7 @@ const getThumbs = (thumbs = [], url, imgs) => {
     const imageRow = document.createElement('div');
     const image = new Image(65, 65);
     const placeButton = document.createElement('a');
+    // link back to the images' source URL
     fetchedFrom = document.createElement('p');
     const fetchedFromUrl = document.createElement('a');
     fetchedFromUrl.setAttribute('href', input.value);
