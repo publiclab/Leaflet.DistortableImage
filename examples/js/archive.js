@@ -110,6 +110,7 @@ const getThumbs = (thumbs = [], url, imgs) => {
     placeButton.innerHTML = 'Place';
     placeButton.setAttribute('title', 'Place image on map');
 
+    // store the full-resolution image URL in a "data-original" attribute
     image.setAttribute('data-original', `${url.replace('metadata', 'download')}/${thumbs ? file.original : file.name}`);
     image.src = `${url.replace('metadata', 'download')}/${file.name}`;
     imageRow.classList.add('col-4', 'd-flex', 'flex-column', 'p-2', 'align-items-center');
