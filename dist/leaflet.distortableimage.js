@@ -563,8 +563,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     }
 
     this.fire('add'); // SEGUN ------------------------------------------------------------------------------------------------------------------------------
-    // L.DomEvent.on(this.getElement(), 'mouseover mousemove', this._activateTooltip, this);
-    // L.DomEvent.on(this.getElement(), 'mouseout', this._closeTooltip, this);
+
+    L.DomEvent.on(this.getElement(), 'mouseover mousemove', this._activateTooltip, this);
+    L.DomEvent.on(this.getElement(), 'mouseout', this._closeTooltip, this);
   },
   onRemove: function onRemove(map) {
     L.DomEvent.off(this.getElement(), 'click', this.select, this);
@@ -711,39 +712,25 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     }
   },
   // SEGUN -------------------------------------------------------------------------------------------------------------------------------
-  // Work in progress on this function
   _activateTooltip: function _activateTooltip(ev) {
-    var index = 0;
-    var xAxis = []; // stores previous values of x coordinate
-
-    var yAxis = []; // stores previous values of y coordinate, may be needed later
+    // let index = 0;
+    // const xAxis = []; // stores previous values of x coordinate
+    // const yAxis = []; // stores previous values of y coordinate, may be needed later
     // let newPosX = 0;
-
     if (!this._selected) {
-      // Consider using "if (!this.selected)" instead
-      // console.log('mouseOVER_DONE/mouseMOVE_DONE-TOOLTIP-ACTIVATED'); // To be deleted
-      // console.log('x-axis:', ev.x); // To be deleted
-      // console.log('y-axis:', ev.y); // To be deleted
-      xAxis[index] = ev.x;
-      yAxis[index] = ev.y; // May be needed later
-      // newPosX = xAxis[index-1] - xAxis[index]; // - works but not perfect
-      // newPosX = (xAxis[index-1] - xAxis[index]) - ((xAxis[index])/4); // - better than above but not perfect
-      // newPosX =(xAxis[index-1] - xAxis[index]) - (xAxis[index] - this.imageWidth); // - works but no perfect
-
-      ++index;
+      // xAxis[index] = ev.x;
+      // yAxis[index] = ev.y; // May be needed later
+      // ++index;
       this.bindTooltip(this.tooltipText, {
-        sticky: true,
-        direction: 'top',
-        offset: L.point([ev.x - 700, ev.y - 500])
-      }).openTooltip(); // POC only, work still in progress on this - hardcoded, works not perfect yet
+        direction: 'top'
+      }).openTooltip(); //  {sticky: true, direction: 'top', offset: L.point([ev.x - xAxis[index-1], ev.y])}).openTooltip(); - cursor consistently in same X-axis for each y-axis position
+      // {sticky: true, direction: 'top', offset: L.point([ev.x - 700, ev.y - 500])}).openTooltip();
     }
   },
   _closeTooltip: function _closeTooltip() {
-    // console.log('mouseOUT_DONE-TOOLTIP-CLOSED'); // To be deleted
     this.closeTooltip();
   },
   _deactivateTooltip: function _deactivateTooltip() {
-    // console.log('MouseoverENDED & mousemoveENDED-TOOLTIP-DEACTIVATED'); - To be deleted
     this.unbindTooltip();
   },
   // ENDS ------------------------------------------------------------------------------------------------------------------------------
@@ -7315,7 +7302,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "6fdbdb61bbb0dd0f8b15"; }
+/******/ 		__webpack_require__.h = function() { return "a5289b9128fad5053cbd"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
