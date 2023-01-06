@@ -91,9 +91,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this.fire('add');
 
     // SEGUN ------------------------------------------------------------------------------------------------------------------------------
-    L.DomEvent.on(this.getElement(), 'mouseover mousemove', this._activateTooltip, this);
+    // L.DomEvent.on(this.getElement(), 'mouseover mousemove', this._activateTooltip, this);
 
-    L.DomEvent.on(this.getElement(), 'mouseout', this._closeTooltip, this);
+    // L.DomEvent.on(this.getElement(), 'mouseout', this._closeTooltip, this);
   },
 
   onRemove(map) {
