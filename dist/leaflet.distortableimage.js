@@ -717,6 +717,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     // const xAxis = []; // stores previous values of x coordinate
     // const yAxis = []; // stores previous values of y coordinate, may be needed later
     // let newPosX = 0;
+    console.log('ev.x: ', ev.x, 'ev.y: ', ev.y);
+
     if (!this._selected) {
       // xAxis[index] = ev.x;
       // yAxis[index] = ev.y; // May be needed later
@@ -7302,7 +7304,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "81d46b266f3645c3d530"; }
+/******/ 		__webpack_require__.h = function() { return "847ac218345fd6ca06a2"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */

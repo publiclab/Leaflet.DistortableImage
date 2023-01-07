@@ -250,7 +250,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     // const xAxis = []; // stores previous values of x coordinate
     // const yAxis = []; // stores previous values of y coordinate, may be needed later
     // let newPosX = 0;
-
+    console.log('ev.x: ', ev.x, 'ev.y: ', ev.y);
     if (!this._selected) {
       // xAxis[index] = ev.x;
       // yAxis[index] = ev.y; // May be needed later
