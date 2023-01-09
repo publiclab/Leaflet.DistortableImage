@@ -15,6 +15,8 @@ L.DistortableCollection = L.FeatureGroup.extend({
     L.Utils.initTranslation.call(this);
 
     this.editable = this.options.editable;
+    this.tooltipControl = options.tooltipControl;
+    console.log('optionTest: tested'); // - delete
   },
 
   onAdd(map) {
@@ -30,13 +32,46 @@ L.DistortableCollection = L.FeatureGroup.extend({
      */
     this.on('layeradd', this._addEvents, this);
     this.on('layerremove', this._removeEvents, this);
+    L.DomEvent.on(this.tooltipControl, 'click', this._updateTooltipBtn, this);
+  },
+
+  _updateTooltipBtn(e) {
+    if (e.target.textContent === 'Open Tooltip') {
+      e.target.textContent = 'Close Tooltip';
+      this.eachLayer((layer) => {
+        L.DomEvent.on(layer.getElement(), 'mousemove', layer.activateTooltip, layer);
+        L.DomEvent.on(layer.getElement(), 'mouseout', layer.closeToolTip, layer);
+        e.target.textContent = 'Close Tooltip';
+      });
+
+      return;
+    }
+
+    if (e.target.textContent === 'Close Tooltip') {
+      e.target.textContent = 'Open Tooltip';
+      this.eachLayer((layer) => {
+        L.DomEvent.off(layer.getElement(), 'mouseout');
+        L.DomEvent.off(layer.getElement(), 'mousemove');
+      });
+
+      return;
+    }
   },
 
   onRemove() {
     if (this.editing) { this.editing.disable(); }
-
     this.off('layeradd', this._addEvents, this);
     this.off('layerremove', this._removeEvents, this);
+
+    if (e.target.textContent === 'Close Tooltip') {
+      e.target.textContent = 'Open Tooltip';
+      this.eachLayer((layer) => {
+        L.DomEvent.off(layer.getElement(), 'mouseout');
+        L.DomEvent.off(layer.getElement(), 'mousemove');
+      });
+
+      return;
+    }
   },
 
   _addEvents(e) {
