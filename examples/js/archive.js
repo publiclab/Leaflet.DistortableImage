@@ -67,6 +67,8 @@ let fetchedFrom;
 
 
 const renderImages = (fullResImages, url) => {
+  // console.log('fullResImages-inside render images: ', fullResImages);
+
   fullResImages.forEach((file) => {
     const imageRow = document.createElement('div');
     const image = new Image(150, 150);
@@ -94,6 +96,8 @@ const renderImages = (fullResImages, url) => {
 // renders thumbnails or images in thumbnail size
 const renderThumbnails = (thumbnails = [], url, fullResImgs) => {
   const imagesToRender = thumbnails || fullResImgs;
+
+  console.log('imagesToRender-inside render thumbnail: ', imagesToRender);
 
   imagesToRender.forEach((file) => {
     const imageRow = document.createElement('div');
@@ -132,10 +136,10 @@ function showImages(getUrl) {
   axios.get(url)
       .then((response) => {
         if (response.data.files && response.data.files.length != 0) {
-          response.data.files.forEach((file) => {
-            renderImages(file, url);
+          response.data.files.forEach(() => {
             imageTooltipText = response.data.metadata.description;
           });
+
           const imageThumbnails = response.data.files.filter(file => file.source === 'derivative');
           const fullResImages = response.data.files.filter(file => file.format === 'PNG' || file.format === 'JPEG');
           count = response.data.files.filter((file)=> {
