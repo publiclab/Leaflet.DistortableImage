@@ -132,7 +132,6 @@ function showImages(getUrl) {
   axios.get(url)
       .then((response) => {
         if (response.data.files && response.data.files.length != 0) {
-
           response.data.files.forEach((file) => {
             renderImages(file, url);
             imageOverlaytooltipText = response.data.metadata.description;
