@@ -1,7 +1,7 @@
 const range = document.getElementById('range');
-
 const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
+
 export class Paginate {
   constructor(url, count, fetchedImages, handleNext, handlePrev) {
     this.url = url;
@@ -99,19 +99,18 @@ export class Paginate {
   };
 
   clear(handleNext, handlePrev) {
-    console.log('clear ran');
     nextBtn.removeEventListener('click', handleNext);
     prevBtn.removeEventListener('click', handlePrev);
   };
 
   nextPage(currPage, imageContainer) {
-    const images = this.paginate(this.fetchedImages.filter(file => file.format === 'PNG' || file.format === 'JPEG'));
+    const pages = this.paginate(this.fetchedImages.filter(file => file.format === 'PNG' || file.format === 'JPEG')).length;
 
-    if (currPage < images.length) {
+    if (currPage < pages) {
       currPage = currPage + 1;
     }
 
-    if (currPage === images.length) {
+    if (currPage === pages) {
       currPage = 0;
     }
     imageContainer.textContent = '';
@@ -120,31 +119,14 @@ export class Paginate {
   };
 
   prevPage(currPage, imageContainer) {
-    const images = this.paginate(this.fetchedImages.filter(file => file.format === 'PNG' || file.format === 'JPEG'));
+    const pages = this.paginate(this.fetchedImages.filter(file => file.format === 'PNG' || file.format === 'JPEG')).length;
 
     if (currPage) {
       currPage = currPage - 1;
     } else {
-      currPage = images.length - 1;
+      currPage = pages - 1;
     }
     imageContainer.textContent = '';
     return currPage;
   }
 };
-
-
-// // <---------- pagination start
-// // next btn
-// function handleNext() {
-//   currPage = Paginate.nextPage( currPage, imageContainer);
-//   currPagination.processImgs(renderThumbnails, renderImages, count, currPage);
-// }
-// nextBtn.addEventListener('click', handleNext );
-
-// // previous btn
-// function handlePrev() {
-//   currPage = currPagination.prevPage(currPage, imageContainer);
-//   currPagination.processImgs(renderThumbnails, renderImages, count, currPage);
-// }
-// prevBtn.addEventListener('click', handlePrev);
-// // <------------------ pagination end

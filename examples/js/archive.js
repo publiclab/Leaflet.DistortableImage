@@ -16,7 +16,7 @@ let imageCount = 0;
 let fetchedFrom;
 let fetchedImages;
 let count;
-let currPagination;
+let currPagination; // currPagination is used to initiate the Paginate Class
 
 const setupMap = () => {
   map = L.map('map').setView([51.505, -0.09], 13);
@@ -66,7 +66,6 @@ function extractKey() {
   }
 }
 
-// <---------- pagination start
 // next btn
 function handleNext() {
   currPage = currPagination.nextPage( currPage, imageContainer);
@@ -80,8 +79,6 @@ function handlePrev() {
   currPagination.processImgs(renderThumbnails, renderImages, count, currPage);
 }
 prevBtn.addEventListener('click', handlePrev);
-// <------------------ pagination end
-
 
 const renderImages = (fullResImages, url) => {
   fullResImages.forEach((file) => {
@@ -144,8 +141,6 @@ const renderThumbnails = (thumbnails = [], url, fullResImgs) => {
   });
 };
 
-
-
 function showImages(getUrl) {
   const url = getUrl.replace('details', 'metadata');
 
@@ -157,6 +152,7 @@ function showImages(getUrl) {
             if (file.format === 'PNG' || file.format === 'JPEG' || file.format.includes('Thumb')) return file;
           }).length;
           fetchedImages = response.data.files; // <---- all files fetched
+          // runs a check to clear the sidebar, eventListeners and reset imageCount
           if (currPagination) currPagination.clear(handleNext, handlePrev); imageContainer.textContent = ''; imageCount = 0;
           currPagination = new Paginate(url, count, fetchedImages, handleNext, handlePrev);
           currPagination.processImgs(renderThumbnails, renderImages, count, currPage);
