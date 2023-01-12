@@ -25,7 +25,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
     this.interactive = this.options.interactive;
     this.tooltipText = options.tooltipText;
-    this.tooltipOpen = false;
+    this.tooltipOpen = options.tooltipOpen;
   },
 
   onAdd(map) {
