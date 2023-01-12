@@ -1883,14 +1883,12 @@ L.DistortableImage.Edit = L.Handler.extend({
   _toggleOpacity: function _toggleOpacity() {
     var image = this._overlay.getElement();
 
-    var opacity;
-
     if (!this.hasTool(L.OpacityAction)) {
       return;
     }
 
     this._transparent = !this._transparent;
-    opacity = this._transparent ? this.options.opacity : 1;
+    var opacity = this._transparent ? this.options.opacity : 1;
     L.DomUtil.setOpacity(image, opacity);
     image.setAttribute('opacity', opacity);
 
@@ -1899,14 +1897,12 @@ L.DistortableImage.Edit = L.Handler.extend({
   _toggleBorder: function _toggleBorder() {
     var image = this._overlay.getElement();
 
-    var outline;
-
     if (!this.hasTool(L.BorderAction)) {
       return;
     }
 
     this._outlined = !this._outlined;
-    outline = this._outlined ? this.options.outline : 'none';
+    var outline = this._outlined ? this.options.outline : 'none';
     image.style.outline = outline;
 
     this._refresh();
@@ -7269,7 +7265,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "06d4ae5e250bc7502b06"; }
+/******/ 		__webpack_require__.h = function() { return "bb8d7d924be57c6152b5"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
