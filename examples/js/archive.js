@@ -1,6 +1,6 @@
 let map;
 let image;
-let imageOverlaytooltipText;
+let imageTooltipText;
 const welcomeModal = document.getElementById('welcomeModal');
 const tileMap = document.getElementById('map');
 const restoreWelcomeModal = document.getElementById('restoreWelcomeModalBtn');
@@ -134,7 +134,7 @@ function showImages(getUrl) {
         if (response.data.files && response.data.files.length != 0) {
           response.data.files.forEach((file) => {
             renderImages(file, url);
-            imageOverlaytooltipText = response.data.metadata.description;
+            imageTooltipText = response.data.metadata.description;
           });
           const imageThumbnails = response.data.files.filter(file => file.source === 'derivative');
           const fullResImages = response.data.files.filter(file => file.format === 'PNG' || file.format === 'JPEG');
@@ -186,7 +186,7 @@ document.addEventListener('click', (event) => {
     const imageURL = event.target.previousElementSibling.src;
     image = L.distortableImageOverlay(
         imageURL,
-        {tooltipText: imageOverlaytooltipText}
+        {tooltipText: imageTooltipText}
     );
     map.imgGroup.addLayer(image);
   }

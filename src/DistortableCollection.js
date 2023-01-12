@@ -2,6 +2,7 @@ const arr = [];
 L.DistortableCollection = L.FeatureGroup.extend({
   options: {
     editable: true,
+    tooltipControl: document.createElement('button'),
     exportOpts: {
       exportStartUrl: '//export.mapknitter.org/export',
       statusUrl: '//export.mapknitter.org',
@@ -15,8 +16,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     L.Utils.initTranslation.call(this);
 
     this.editable = this.options.editable;
-    this.tooltipControl = options.tooltipControl;
-    console.log('optionTest: tested'); // - delete
+    this.tooltipControl = this.options.tooltipControl;
   },
 
   onAdd(map) {
