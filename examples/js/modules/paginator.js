@@ -1,8 +1,4 @@
-const range = document.getElementById('range');
-const prevBtn = document.getElementById('prevBtn');
-const nextBtn = document.getElementById('nextBtn');
-
-export class Paginate {
+export class Paginator {
   constructor(url, count, fetchedImages, handleNext, handlePrev) {
     this.url = url;
     this.count = count;

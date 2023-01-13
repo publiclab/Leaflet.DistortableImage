@@ -1,4 +1,5 @@
-import {Paginate} from './modules/pagination.js';
+import {Paginator} from './modules/paginator.js';
+
 let map;
 const welcomeModal = document.getElementById('welcomeModal');
 const tileMap = document.getElementById('map');
@@ -16,7 +17,7 @@ let imageCount = 0;
 let fetchedFrom;
 let fetchedImages;
 let count;
-let currPagination; // currPagination is used to initiate the Paginate Class
+let currPagination; // currPagination is used to initiate the Paginator Class
 
 const setupMap = () => {
   map = L.map('map').setView([51.505, -0.09], 13);
@@ -154,7 +155,7 @@ function showImages(getUrl) {
           fetchedImages = response.data.files; // <---- all files fetched
           // runs a check to clear the sidebar, eventListeners and reset imageCount
           if (currPagination) currPagination.clear(handleNext, handlePrev); imageContainer.textContent = ''; imageCount = 0;
-          currPagination = new Paginate(url, count, fetchedImages, handleNext, handlePrev);
+          currPagination = new Paginator(url, count, fetchedImages, handleNext, handlePrev);
           currPagination.processImgs(renderThumbnails, renderImages, count, currPage);
           responseText.innerHTML = imageCount ? `${imageCount} image(s) fetched successfully from ${fetchedFrom.innerHTML}.` : 'No images found in the link provided...';
         } else {
