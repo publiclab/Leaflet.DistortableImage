@@ -9,7 +9,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     mode: 'distort',
     selected: false,
     interactive: true,
-    tooltipText: 'Unknow image',
+    tooltipText: 'Unknown image', // default tooltipText
+    tooltipOpen: false,
   },
 
   initialize(url, options) {
@@ -236,17 +237,17 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     }
   },
 
-  _activateTooltip(ev) {
+  activateTooltip() {
     if (!this._selected) {
       this.bindTooltip(this.tooltipText, {direction: 'top'}).openTooltip();
     }
   },
 
-  _closeTooltip() {
+  closeToolTip() {
     this.closeTooltip();
   },
 
-  _deactivateTooltip() {
+  deactivateTooltip() {
     this.unbindTooltip();
   },
 
@@ -557,8 +558,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 });
 
-L.distortableImageOverlay = function(id, options) { // remove temp
-  return new L.DistortableImageOverlay(id, options); // remove temp
+L.distortableImageOverlay = function(id, options) {
+  return new L.DistortableImageOverlay(id, options);
 };
 
 L.Map.addInitHook(function() {

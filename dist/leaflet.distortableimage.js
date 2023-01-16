@@ -198,6 +198,8 @@ var arr = [];
 L.DistortableCollection = L.FeatureGroup.extend({
   options: {
     editable: true,
+    tooltipControl: document.createElement('button'),
+    // ************************transfer to archive.js file
     exportOpts: {
       exportStartUrl: '//export.mapknitter.org/export',
       statusUrl: '//export.mapknitter.org',
@@ -209,6 +211,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     L.FeatureGroup.prototype.initialize.call(this, options);
     L.Utils.initTranslation.call(this);
     this.editable = this.options.editable;
+    this.tooltipControl = this.options.tooltipControl;
   },
   onAdd: function onAdd(map) {
     L.FeatureGroup.prototype.onAdd.call(this, map);
@@ -225,6 +228,28 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     this.on('layeradd', this._addEvents, this);
     this.on('layerremove', this._removeEvents, this);
+    L.DomEvent.on(this.tooltipControl, 'click', this._updateTooltipBtn, this); // ************************transfer to archive.js file
+  },
+  _updateTooltipBtn: function _updateTooltipBtn(e) {
+    // ************************transfer to archive.js file
+    if (e.target.textContent === 'Open Tooltip') {
+      e.target.textContent = 'Close Tooltip';
+      this.eachLayer(function (layer) {
+        L.DomEvent.on(layer.getElement(), 'mousemove', layer.activateTooltip, layer);
+        L.DomEvent.on(layer.getElement(), 'mouseout', layer.closeToolTip, layer);
+        e.target.textContent = 'Close Tooltip';
+      });
+      return;
+    }
+
+    if (e.target.textContent === 'Close Tooltip') {
+      e.target.textContent = 'Open Tooltip';
+      this.eachLayer(function (layer) {
+        L.DomEvent.off(layer.getElement(), 'mouseout');
+        L.DomEvent.off(layer.getElement(), 'mousemove');
+      });
+      return;
+    }
   },
   onRemove: function onRemove() {
     if (this.editing) {
@@ -233,6 +258,16 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     this.off('layeradd', this._addEvents, this);
     this.off('layerremove', this._removeEvents, this);
+
+    if (e.target.textContent === 'Close Tooltip') {
+      // ************************transfer to archive.js file
+      e.target.textContent = 'Open Tooltip';
+      this.eachLayer(function (layer) {
+        L.DomEvent.off(layer.getElement(), 'mouseout');
+        L.DomEvent.off(layer.getElement(), 'mousemove');
+      });
+      return;
+    }
   },
   _addEvents: function _addEvents(e) {
     var layer = e.layer;
@@ -466,7 +501,13 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     mode: 'distort',
     selected: false,
     interactive: true,
+<<<<<<< HEAD
     tooltipText: 'Unknow image'
+=======
+    tooltipText: 'Unknown image',
+    // default tooltipText
+    tooltipOpen: false
+>>>>>>> 33ec3de (update)
   },
   initialize: function initialize(url, options) {
     L.setOptions(this, options);
@@ -477,7 +518,12 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this._url = url;
     this.rotation = {};
     this.interactive = this.options.interactive;
+<<<<<<< HEAD
     this.tooltipText = this.options.tooltipText;
+=======
+    this.tooltipText = options.tooltipText;
+    this.tooltipOpen = options.tooltipOpen;
+>>>>>>> 33ec3de (update)
   },
   onAdd: function onAdd(map) {
     var _this = this;
@@ -559,8 +605,11 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     }
 
     this.fire('add');
+<<<<<<< HEAD
     L.DomEvent.on(this.getElement(), 'mousemove', this._activateTooltip, this);
     L.DomEvent.on(this.getElement(), 'mouseout', this._closeTooltip, this);
+=======
+>>>>>>> 33ec3de (update)
   },
   onRemove: function onRemove(map) {
     L.DomEvent.off(this.getElement(), 'click', this.select, this);
@@ -577,7 +626,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
     this.fire('remove');
     L.ImageOverlay.prototype.onRemove.call(this, map);
+<<<<<<< HEAD
     L.DomEvent.off(this.getElement(), 'mouseover', this._deactivateTooltip, this);
+=======
+>>>>>>> 33ec3de (update)
   },
   _initImageDimensions: function _initImageDimensions() {
     var map = this._map;
@@ -705,17 +757,21 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       return exceedsTop || exceedsBottom;
     }
   },
+<<<<<<< HEAD
   _activateTooltip: function _activateTooltip(ev) {
+=======
+  activateTooltip: function activateTooltip() {
+>>>>>>> 33ec3de (update)
     if (!this._selected) {
       this.bindTooltip(this.tooltipText, {
         direction: 'top'
       }).openTooltip();
     }
   },
-  _closeTooltip: function _closeTooltip() {
+  closeToolTip: function closeToolTip() {
     this.closeTooltip();
   },
-  _deactivateTooltip: function _deactivateTooltip() {
+  deactivateTooltip: function deactivateTooltip() {
     this.unbindTooltip();
   },
   setCorners: function setCorners(latlngObj) {
@@ -991,8 +1047,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 });
 
 L.distortableImageOverlay = function (id, options) {
-  // remove temp
-  return new L.DistortableImageOverlay(id, options); // remove temp
+  return new L.DistortableImageOverlay(id, options);
 };
 
 L.Map.addInitHook(function () {
