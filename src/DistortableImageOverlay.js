@@ -8,10 +8,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     editable: true,
     mode: 'distort',
     selected: false,
-    // SEGUN ------------------------------------------------------------------------------------------------------------------------------
     interactive: true,
-    tooltipText: 'Unknow image', // default tooltipText
-    // SEGUN ------------------------------------------------------------------------------------------------------------------------------
+    tooltipText: 'Unknow image',
   },
 
   initialize(url, options) {
@@ -23,10 +21,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this._selected = this.options.selected;
     this._url = url;
     this.rotation = {};
-    // SEGUN ------------------------------------------------------------------------------------------------------------------------------
     this.interactive = this.options.interactive;
-    this.tooltipText = options.tooltipText;
-    // SEGUN ------------------------------------------------------------------------------------------------------------------------------
+    this.tooltipText = this.options.tooltipText;
   },
 
   onAdd(map) {
@@ -90,9 +86,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
     this.fire('add');
 
-    // SEGUN ------------------------------------------------------------------------------------------------------------------------------
-    L.DomEvent.on(this.getElement(), 'mouseover mousemove', this._activateTooltip, this);
-
+    L.DomEvent.on(this.getElement(), 'mousemove', this._activateTooltip, this);
     L.DomEvent.on(this.getElement(), 'mouseout', this._closeTooltip, this);
   },
 
@@ -110,9 +104,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
     L.ImageOverlay.prototype.onRemove.call(this, map);
 
-    // SEGUN -----------------------------------------------------------------------------------------------------------------------------
     L.DomEvent.off(this.getElement(), 'mouseover', this._deactivateTooltip, this);
-    // ENDS ------------------------------------------------------------------------------------------------------------------------------
   },
 
   _initImageDimensions() {
@@ -163,7 +155,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   isSelected() {
-    return this._selected; // this._selected
+    return this._selected;
   },
 
   deselect() {
@@ -244,21 +236,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     }
   },
 
-  // SEGUN -------------------------------------------------------------------------------------------------------------------------------
   _activateTooltip(ev) {
-    // let index = 0;
-    // const xAxis = []; // stores previous values of x coordinate
-    // const yAxis = []; // stores previous values of y coordinate, may be needed later
-    // let newPosX = 0;
-    console.log('ev.x: ', ev.x, 'ev.y: ', ev.y);
     if (!this._selected) {
-      // xAxis[index] = ev.x;
-      // yAxis[index] = ev.y; // May be needed later
-      // ++index;
-
       this.bindTooltip(this.tooltipText, {direction: 'top'}).openTooltip();
-      //  {sticky: true, direction: 'top', offset: L.point([ev.x - xAxis[index-1], ev.y])}).openTooltip(); - cursor consistently in same X-axis for each y-axis position
-      // {sticky: true, direction: 'top', offset: L.point([ev.x - 700, ev.y - 500])}).openTooltip();
     }
   },
 
@@ -269,7 +249,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   _deactivateTooltip() {
     this.unbindTooltip();
   },
-  // ENDS ------------------------------------------------------------------------------------------------------------------------------
 
   setCorners(latlngObj) {
     const map = this._map;
