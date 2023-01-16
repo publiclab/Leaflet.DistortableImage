@@ -242,12 +242,40 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       this.bindTooltip(this.tooltipText, {direction: 'top'}).openTooltip();
     }
   },
+  // SEGUN -------------------------------------------------------------------------------------------------------------------------------
+  // Work in progress on this function
+  // _activateTooltip(ev) {
+  //   let index = 0;
+  //   const xAxis = []; // stores previous values of x coordinate
+  //   const yAxis = []; // stores previous values of y coordinate, may be needed later
+  //   // let newPosX = 0;
 
-  closeToolTip() {
+  //   if (!this._selected) { // Consider using "if (!this.selected)" instead
+  //     // console.log('mouseOVER_DONE/mouseMOVE_DONE-TOOLTIP-ACTIVATED'); // To be deleted
+  //     // console.log('x-axis:', ev.x); // To be deleted
+  //     // console.log('y-axis:', ev.y); // To be deleted
+
+  //     xAxis[index] = ev.x;
+  //     yAxis[index] = ev.y; // May be needed later
+
+  //     // newPosX = xAxis[index-1] - xAxis[index]; // - works but not perfect
+  //     // newPosX = (xAxis[index-1] - xAxis[index]) - ((xAxis[index])/4); // - better than above but not perfect
+  //     // newPosX =(xAxis[index-1] - xAxis[index]) - (xAxis[index] - this.imageWidth); // - works but no perfect
+  //     ++index;
+
+  //     this.bindTooltip(
+  //         this.tooltipText,
+  //         {sticky: true, direction: 'top', offset: L.point([ev.x - 700, ev.y - 500])}).openTooltip(); // POC only, work still in progress on this - hardcoded, works not perfect yet
+  //   }
+  // },
+
+  _closeTooltip() {
+    // console.log('mouseOUT_DONE-TOOLTIP-CLOSED'); // To be deleted
     this.closeTooltip();
   },
 
-  deactivateTooltip() {
+  _deactivateTooltip() {
+    // console.log('MouseoverENDED & mousemoveENDED-TOOLTIP-DEACTIVATED'); - To be deleted
     this.unbindTooltip();
   },
 
