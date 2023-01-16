@@ -10,7 +10,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     selected: false,
     interactive: true,
     tooltipText: 'Unknown image',
-    tooltipOpen: false,
   },
 
   initialize(url, options) {
@@ -22,6 +21,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this._selected = this.options.selected;
     this._url = url;
     this.rotation = {};
+
     this.interactive = this.options.interactive;
     this.tooltipText = this.options.tooltipText;
   },
@@ -87,8 +87,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
     this.fire('add');
 
-    L.DomEvent.on(this.getElement(), 'mousemove', this._activateTooltip, this);
-    L.DomEvent.on(this.getElement(), 'mouseout', this._closeTooltip, this);
+    L.DomEvent.on(this.getElement(), 'mousemove', this.activateTooltip, this);
+    L.DomEvent.on(this.getElement(), 'mouseout', this.closeTooltip, this);
   },
 
   onRemove(map) {
@@ -105,7 +105,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
     L.ImageOverlay.prototype.onRemove.call(this, map);
 
-    L.DomEvent.off(this.getElement(), 'mouseover', this._deactivateTooltip, this);
+    L.DomEvent.on(this.getElement(), 'mouseout', this.closeTooltip, this);
+    L.DomEvent.off(this.getElement(), 'mousemove', this.deactivateTooltip, this);
   },
 
   _initImageDimensions() {
