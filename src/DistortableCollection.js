@@ -2,7 +2,6 @@ const arr = [];
 L.DistortableCollection = L.FeatureGroup.extend({
   options: {
     editable: true,
-    tooltipControl: document.createElement('button'), // ************************transfer to archive.js file
     exportOpts: {
       exportStartUrl: '//export.mapknitter.org/export',
       statusUrl: '//export.mapknitter.org',
@@ -16,7 +15,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
     L.Utils.initTranslation.call(this);
 
     this.editable = this.options.editable;
-    this.tooltipControl = this.options.tooltipControl;
   },
 
   onAdd(map) {
@@ -32,46 +30,12 @@ L.DistortableCollection = L.FeatureGroup.extend({
      */
     this.on('layeradd', this._addEvents, this);
     this.on('layerremove', this._removeEvents, this);
-    L.DomEvent.on(this.tooltipControl, 'click', this._updateTooltipBtn, this); // ************************transfer to archive.js file
-  },
-
-  _updateTooltipBtn(e) { // ************************transfer to archive.js file
-    if (e.target.textContent === 'Open Tooltip') {
-      e.target.textContent = 'Close Tooltip';
-      this.eachLayer((layer) => {
-        L.DomEvent.on(layer.getElement(), 'mousemove', layer.activateTooltip, layer);
-        L.DomEvent.on(layer.getElement(), 'mouseout', layer.closeToolTip, layer);
-        e.target.textContent = 'Close Tooltip';
-      });
-
-      return;
-    }
-
-    if (e.target.textContent === 'Close Tooltip') {
-      e.target.textContent = 'Open Tooltip';
-      this.eachLayer((layer) => {
-        L.DomEvent.off(layer.getElement(), 'mouseout');
-        L.DomEvent.off(layer.getElement(), 'mousemove');
-      });
-
-      return;
-    }
   },
 
   onRemove() {
     if (this.editing) { this.editing.disable(); }
     this.off('layeradd', this._addEvents, this);
     this.off('layerremove', this._removeEvents, this);
-
-    if (e.target.textContent === 'Close Tooltip') { // ************************transfer to archive.js file
-      e.target.textContent = 'Open Tooltip';
-      this.eachLayer((layer) => {
-        L.DomEvent.off(layer.getElement(), 'mouseout');
-        L.DomEvent.off(layer.getElement(), 'mousemove');
-      });
-
-      return;
-    }
   },
 
   _addEvents(e) {

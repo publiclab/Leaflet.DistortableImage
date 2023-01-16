@@ -21,9 +21,7 @@ const setupMap = () => {
 };
 
 const setupCollection = () => {
-  map.imgGroup = L.distortableCollection(
-      {tooltipControl: switchTooltipBtn} // Remove there will be no need to pass this object "distortableCollection" anymore
-  ).addTo(map);
+  map.imgGroup = L.distortableCollection().addTo(map);
 };
 
 setupMap();
@@ -130,10 +128,6 @@ function showImages(getUrl) {
   axios.get(url)
       .then((response) => {
         if (response.data.files && response.data.files.length != 0) {
-          response.data.files.forEach((file) => {
-            renderImages(file, url);
-          });
-
           const imageThumbnails = response.data.files.filter(file => file.source === 'derivative');
           const fullResImages = response.data.files.filter(file => file.format === 'PNG' || file.format === 'JPEG');
           count = response.data.files.filter((file)=> {
