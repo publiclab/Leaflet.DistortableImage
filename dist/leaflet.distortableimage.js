@@ -610,7 +610,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     L.DomEvent.on(this.getElement(), 'mousemove', this._activateTooltip, this);
     L.DomEvent.on(this.getElement(), 'mouseout', this._closeTooltip, this);
 =======
->>>>>>> 33ec3de (update)
+    this.fire('add'); // SEGUN ------------------------------------------------------------------------------------------------------------------------------
+    // L.DomEvent.on(this.getElement(), 'mouseover mousemove', this._activateTooltip, this);
+    // L.DomEvent.on(this.getElement(), 'mouseout', this._closeTooltip, this);
   },
   onRemove: function onRemove(map) {
     L.DomEvent.off(this.getElement(), 'click', this.select, this);
@@ -806,7 +808,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
   _deactivateTooltip: function _deactivateTooltip() {
     // console.log('MouseoverENDED & mousemoveENDED-TOOLTIP-DEACTIVATED'); - To be deleted
->>>>>>> parent of 1fcea57 (tooltip centered on image)
     this.unbindTooltip();
   },
   setCorners: function setCorners(latlngObj) {
