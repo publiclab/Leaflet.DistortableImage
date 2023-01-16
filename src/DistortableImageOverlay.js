@@ -237,15 +237,17 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     }
   },
 
-  _activateTooltip(ev) {
-    this.bindTooltip(this.tooltipText, {direction: 'top'}).openTooltip();
+  activateTooltip() {
+    if (!this._selected) {
+      this.bindTooltip(this.tooltipText, {direction: 'top'}).openTooltip();
+    }
   },
 
-  _closeTooltip() {
+  closeToolTip() {
     this.closeTooltip();
   },
 
-  _deactivateTooltip() {
+  deactivateTooltip() {
     this.unbindTooltip();
   },
 

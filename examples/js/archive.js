@@ -116,7 +116,13 @@ const renderThumbnails = (thumbnails = [], url, fullResImgs) => {
     image.src = `${url.replace('metadata', 'download')}/${file.name}`;
     imageRow.classList.add('col-4', 'd-flex', 'flex-column', 'p-2', 'align-items-center');
     imageRow.append(image, placeButton, fileName);
+    // store the full-resolution image URL in a "data-original" attribute
+    image.setAttribute('data-original', `${url.replace('metadata', 'download')}/${thumbnails ? file.original : file.name}`);
+    image.src = `${url.replace('metadata', 'download')}/${file.name}`;
+    imageRow.classList.add('col-4', 'd-flex', 'flex-column', 'p-2', 'align-items-center');
+    imageRow.append(image, placeButton, fileName);
     imageContainer.appendChild(imageRow);
+    imageContainer.setAttribute('class', 'row');
     imageContainer.setAttribute('class', 'row');
     imageCount++;
   });
@@ -149,6 +155,7 @@ function showImages(getUrl) {
       })
       .catch((error) => {
         responseText.innerHTML = 'Uh-oh! Something\'s not right with the link provided!';
+        console.log(error);
       })
       .finally(() => {
         bootstrap.Modal.getInstance(welcomeModal).hide();
