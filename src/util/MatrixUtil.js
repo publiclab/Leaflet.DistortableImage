@@ -16,7 +16,7 @@ L.MatrixUtil = {
 
     for (i = 0; i < 3; i++) {
       for (let j = 0; j < 3; j++) {
-        var cij = 0;
+        let cij = 0;
 
         for (let k = 0; k < 3; k++) {
           cij += a[3*i + k]*b[3*k + j];
