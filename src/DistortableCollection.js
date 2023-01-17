@@ -34,6 +34,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
   onRemove() {
     if (this.editing) { this.editing.disable(); }
+    
     this.off('layeradd', this._addEvents, this);
     this.off('layerremove', this._removeEvents, this);
   },
