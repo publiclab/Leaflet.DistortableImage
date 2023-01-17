@@ -466,7 +466,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     mode: 'distort',
     selected: false,
     interactive: true,
-    tooltipText: 'Unknown image'
+    tooltipText: ''
   },
   initialize: function initialize(url, options) {
     L.setOptions(this, options);
@@ -7286,7 +7286,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "9879b70368715db77abe"; }
+/******/ 		__webpack_require__.h = function() { return "1d513f6e6ef4497721d3"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */

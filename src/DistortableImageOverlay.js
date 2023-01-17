@@ -9,7 +9,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     mode: 'distort',
     selected: false,
     interactive: true,
-    tooltipText: 'Unknown image',
+    tooltipText: '',
   },
 
   initialize(url, options) {
