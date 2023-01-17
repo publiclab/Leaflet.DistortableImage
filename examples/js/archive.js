@@ -47,7 +47,6 @@ function extractKey() {
   else if (input.value.includes('http://')) {
     getUrl = input.value.replace('http:', 'https:');
     input.value = getUrl;
-    console.log('input', input.value);
     showImages(getUrl);
   }
   else
@@ -88,8 +87,6 @@ const renderImages = (fullResImages, url) => {
 // renders thumbnails or images in thumbnail size
 const renderThumbnails = (thumbnails = [], url, fullResImgs) => {
   const imagesToRender = thumbnails || fullResImgs;
-
-  console.log('imagesToRender-inside render thumbnail: ', imagesToRender);
 
   imagesToRender.forEach((file) => {
     const imageRow = document.createElement('div');
@@ -155,7 +152,6 @@ function showImages(getUrl) {
       })
       .catch((error) => {
         responseText.innerHTML = 'Uh-oh! Something\'s not right with the link provided!';
-        console.log(error);
       })
       .finally(() => {
         bootstrap.Modal.getInstance(welcomeModal).hide();
