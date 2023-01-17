@@ -1,11 +1,26 @@
+let thumbnailFunc;
+let imagesFunc;
+
 export class Paginator {
-  constructor(url, count, fetchedImages, handleNext, handlePrev) {
+  constructor(url, count, fetchedImages) {
     this.url = url;
     this.count = count;
     this.fetchedImages = fetchedImages;
-    nextBtn.addEventListener('click', handleNext);
-    prevBtn.addEventListener('click', handlePrev);
+    this.currPage = 0;
+    this.imageThumbnails = this.fetchedImages.filter(file => file.source === 'derivative');
+    this.fullResImages = this.fetchedImages.filter(file => file.format === 'PNG' || file.format === 'JPEG');
+    this.nextBtn = document.getElementById('nextBtn');
+    this.prevBtn = document.getElementById('prevBtn');
+    this.runNextPageMethod = this.nextPage.bind(this);
+    this.runPrevPageMethod = this.prevPage.bind(this);
+    // next btn
+    this.nextBtn.addEventListener('click', this.runNextPageMethod);
+    // previous btn
+    this.prevBtn.addEventListener('click', this.runPrevPageMethod);
+
+    myBtn.addEventListener('click', this.clear.bind(this));
   };
+
 
   paginate(images) {
     const imgsPerPage = 100;
@@ -78,51 +93,57 @@ export class Paginator {
     return this.fetchedImages.filter(file => file.format === 'PNG' || file.format === 'JPEG').length;
   };
 
-  processImgs(renderThumbnails, renderImages, count, currPage) {
-    const imageThumbnails = this.fetchedImages.filter(file => file.source === 'derivative');
-    const fullResImages = this.fetchedImages.filter(file => file.format === 'PNG' || file.format === 'JPEG');
-    range.innerHTML = this.getRange()[currPage];
+  processImgs(renderThumbnails, renderImages, count) {
+    thumbnailFunc = renderThumbnails;
+    imagesFunc = renderImages;
+    range.innerHTML = this.getRange()[this.currPage];
 
     if (count > 100) {
-      if (imageThumbnails.length === fullResImages.length) {
-        renderThumbnails(imageThumbnails, this.url, fullResImages);
+      if (this.imageThumbnails.length === this.fullResImages.length) {
+        renderThumbnails(this.imageThumbnails, this.url, this.fullResImages);
       } else {
-        renderThumbnails(false, this.url, fullResImages);
+        renderThumbnails(false, this.url, this.fullResImages);
       }
     } else {
-      renderImages(fullResImages, this.url);
+      renderImages(this.fullResImages, this.url);
     }
   };
 
-  clear(handleNext, handlePrev) {
-    nextBtn.removeEventListener('click', handleNext);
-    prevBtn.removeEventListener('click', handlePrev);
+  clear() {
+    console.log('clear method ran');
+    this.nextBtn.removeEventListener('click', this.runNextPageMethod);
+    this.prevBtn.removeEventListener('click', this.runPrevPageMethod);
   };
 
-  nextPage(currPage, imageContainer) {
+  nextPage() {
+    const pages = this.paginate(this.fetchedImages.filter(file => file.format === 'PNG' || file.format === 'JPEG')).length;
+    if (this.currPage < pages) {
+      this.currPage = this.currPage + 1;
+    }
+
+    if (this.currPage === pages) {
+      this.currPage = 0;
+    }
+    imgContainer.textContent = '';
+
+    this.processImgs(thumbnailFunc, imagesFunc, this.count);
+  }
+
+  prevPage() {
     const pages = this.paginate(this.fetchedImages.filter(file => file.format === 'PNG' || file.format === 'JPEG')).length;
 
-    if (currPage < pages) {
-      currPage = currPage + 1;
-    }
-
-    if (currPage === pages) {
-      currPage = 0;
-    }
-    imageContainer.textContent = '';
-
-    return currPage;
-  };
-
-  prevPage(currPage, imageContainer) {
-    const pages = this.paginate(this.fetchedImages.filter(file => file.format === 'PNG' || file.format === 'JPEG')).length;
-
-    if (currPage) {
-      currPage = currPage - 1;
+    if (this.currPage) {
+      this.currPage = this.currPage - 1;
     } else {
-      currPage = pages - 1;
+      this.currPage = pages - 1;
     }
-    imageContainer.textContent = '';
-    return currPage;
+
+    imgContainer.textContent = '';
+
+    this.processImgs(thumbnailFunc, imagesFunc, this.count);
+  }
+
+  imagesForPage(images) {
+    return this.paginate(images)[this.currPage];
   }
 };

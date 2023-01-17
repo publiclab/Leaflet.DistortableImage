@@ -10,9 +10,6 @@ const input = document.getElementById('input');
 const responseText = document.getElementById('response');
 const imageContainer = document.getElementById('imgContainer');
 const mapToggle = document.getElementById('mapToggle');
-const prevBtn = document.getElementById('prevBtn');
-const nextBtn = document.getElementById('nextBtn');
-let currPage = 0;
 let imageCount = 0;
 let fetchedFrom;
 let fetchedImages;
@@ -67,19 +64,6 @@ function extractKey() {
   }
 }
 
-// next btn
-function handleNext() {
-  currPage = currPagination.nextPage( currPage, imageContainer);
-  currPagination.processImgs(renderThumbnails, renderImages, count, currPage);
-}
-nextBtn.addEventListener('click', handleNext );
-
-// previous btn
-function handlePrev() {
-  currPage = currPagination.prevPage(currPage, imageContainer);
-  currPagination.processImgs(renderThumbnails, renderImages, count, currPage);
-}
-prevBtn.addEventListener('click', handlePrev);
 
 const renderImages = (fullResImages, url) => {
   fullResImages.forEach((file) => {
@@ -109,10 +93,10 @@ const renderImages = (fullResImages, url) => {
 // renders thumbnails or images in thumbnail size
 const renderThumbnails = (thumbnails = [], url, fullResImgs) => {
   const imagesToRender = thumbnails || fullResImgs;
-  const paginatedImages = currPagination.paginate(imagesToRender);
+  const currentPages = currPagination.imagesForPage(imagesToRender);
   imageCount = imagesToRender.length;
 
-  paginatedImages[currPage].forEach((file) => {
+  currentPages.forEach((file) => {
     const imageRow = document.createElement('div');
     const image = new Image(65, 65);
     const placeButton = document.createElement('a');
@@ -154,16 +138,15 @@ function showImages(getUrl) {
           }).length;
           fetchedImages = response.data.files; // <---- all files fetched
           // runs a check to clear the sidebar, eventListeners and reset imageCount
-          if (currPagination) currPagination.clear(handleNext, handlePrev); imageContainer.textContent = ''; imageCount = 0;
-          currPagination = new Paginator(url, count, fetchedImages, handleNext, handlePrev);
-          currPagination.processImgs(renderThumbnails, renderImages, count, currPage);
+          if (currPagination) currPagination.clear(); imageContainer.textContent = ''; imageCount = 0;
+          currPagination = new Paginator(url, count, fetchedImages);
+          currPagination.processImgs(renderThumbnails, renderImages, count);
           responseText.innerHTML = imageCount ? `${imageCount} image(s) fetched successfully from ${fetchedFrom.innerHTML}.` : 'No images found in the link provided...';
         } else {
           responseText.innerHTML = 'No images found in the link provided...';
         }
       })
       .catch((error) => {
-        console.log(error);
         responseText.innerHTML = 'Uh-oh! Something\'s not right with the link provided!';
       })
       .finally(() => {
