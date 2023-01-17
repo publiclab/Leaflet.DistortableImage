@@ -151,7 +151,7 @@ function showImages(getUrl) {
         }
       })
       .catch((error) => {
-        responseText.innerHTML = 'Uh-oh! Something\'s not right with the link provided!';
+        console.log(error);
       })
       .finally(() => {
         bootstrap.Modal.getInstance(welcomeModal).hide();
