@@ -13,7 +13,6 @@ const mapToggle = document.getElementById('mapToggle');
 let imageCount = 0;
 let fetchedFrom;
 let fetchedImages;
-let count;
 let currPagination; // currPagination is used to initiate the Paginator Class
 
 const setupMap = () => {
@@ -93,10 +92,10 @@ const renderImages = (fullResImages, url) => {
 // renders thumbnails or images in thumbnail size
 const renderThumbnails = (thumbnails = [], url, fullResImgs) => {
   const imagesToRender = thumbnails || fullResImgs;
-  const currentPages = currPagination.imagesForPage(imagesToRender);
+  const currentImages = currPagination.imagesForPage(imagesToRender);
   imageCount = imagesToRender.length;
 
-  currentPages.forEach((file) => {
+  currentImages.forEach((file) => {
     const imageRow = document.createElement('div');
     const image = new Image(65, 65);
     const placeButton = document.createElement('a');
@@ -132,21 +131,18 @@ function showImages(getUrl) {
   axios.get(url)
       .then((response) => {
         if (response.data.files && response.data.files.length != 0) {
-          // number of images (thumbnails and fullres files) in response data
-          count = response.data.files.filter((file)=> {
-            if (file.format === 'PNG' || file.format === 'JPEG' || file.format.includes('Thumb')) return file;
-          }).length;
           fetchedImages = response.data.files; // <---- all files fetched
           // runs a check to clear the sidebar, eventListeners and reset imageCount
           if (currPagination) currPagination.clear(); imageContainer.textContent = ''; imageCount = 0;
-          currPagination = new Paginator(url, count, fetchedImages);
-          currPagination.processImgs(renderThumbnails, renderImages, count);
+          currPagination = new Paginator(url, fetchedImages);
+          currPagination.processImgs(renderThumbnails, renderImages);
           responseText.innerHTML = imageCount ? `${imageCount} image(s) fetched successfully from ${fetchedFrom.innerHTML}.` : 'No images found in the link provided...';
         } else {
           responseText.innerHTML = 'No images found in the link provided...';
         }
       })
       .catch((error) => {
+        console.log(error);
         responseText.innerHTML = 'Uh-oh! Something\'s not right with the link provided!';
       })
       .finally(() => {

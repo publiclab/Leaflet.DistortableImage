@@ -2,10 +2,11 @@ let thumbnailFunc;
 let imagesFunc;
 
 export class Paginator {
-  constructor(url, count, fetchedImages) {
+  constructor(url, fetchedImages) {
     this.url = url;
-    this.count = count;
     this.fetchedImages = fetchedImages;
+    // number of images (thumbnails and fullres files) in response data
+    this.count = this.fetchedImages.filter((file)=> { if (file.format === 'PNG' || file.format === 'JPEG' || file.format.includes('Thumb')) return file}).length;
     this.currPage = 0;
     this.imageThumbnails = this.fetchedImages.filter(file => file.source === 'derivative');
     this.fullResImages = this.fetchedImages.filter(file => file.format === 'PNG' || file.format === 'JPEG');
@@ -17,8 +18,6 @@ export class Paginator {
     this.nextBtn.addEventListener('click', this.runNextPageMethod);
     // previous btn
     this.prevBtn.addEventListener('click', this.runPrevPageMethod);
-
-    myBtn.addEventListener('click', this.clear.bind(this));
   };
 
 
@@ -93,12 +92,12 @@ export class Paginator {
     return this.fetchedImages.filter(file => file.format === 'PNG' || file.format === 'JPEG').length;
   };
 
-  processImgs(renderThumbnails, renderImages, count) {
+  processImgs(renderThumbnails, renderImages) {
     thumbnailFunc = renderThumbnails;
     imagesFunc = renderImages;
     range.innerHTML = this.getRange()[this.currPage];
 
-    if (count > 100) {
+    if (this.count > 100) {
       if (this.imageThumbnails.length === this.fullResImages.length) {
         renderThumbnails(this.imageThumbnails, this.url, this.fullResImages);
       } else {
@@ -126,7 +125,7 @@ export class Paginator {
     }
     imgContainer.textContent = '';
 
-    this.processImgs(thumbnailFunc, imagesFunc, this.count);
+    this.processImgs(thumbnailFunc, imagesFunc);
   }
 
   prevPage() {
@@ -140,7 +139,7 @@ export class Paginator {
 
     imgContainer.textContent = '';
 
-    this.processImgs(thumbnailFunc, imagesFunc, this.count);
+    this.processImgs(thumbnailFunc, imagesFunc);
   }
 
   imagesForPage(images) {
