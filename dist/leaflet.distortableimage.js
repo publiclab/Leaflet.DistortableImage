@@ -405,6 +405,19 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, 0);
     return reduce / imgs.length;
   },
+  isJsonDetected: function isJsonDetected(currentURL) {
+    if (currentURL.includes('json')) {
+      startIndex = currentURL.lastIndexOf('.');
+      fileExtension = currentURL.slice(startIndex + 1);
+
+      if (fileExtension === 'json') {
+        console.log('Json found in map shareable link');
+        return true;
+      }
+    }
+
+    return false;
+  },
   generateExportJson: function generateExportJson() {
     var json = {};
     json.images = [];
@@ -7286,7 +7299,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "1d513f6e6ef4497721d3"; }
+/******/ 		__webpack_require__.h = function() { return "5aaeec55c8c25e11a614"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
