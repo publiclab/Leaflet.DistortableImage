@@ -1,0 +1,53 @@
+  .overlay {
+        content: '';
+        top: 20%;
+        left:20%;
+        right:20%;
+        bottom: 0;
+        background: rgb(248, 246, 246);
+        opacity: 0.5;
+  }
+
+  .openbar{
+      position: relative;
+      z-index: 900;
+      position: fixed; 
+      bottom: 40px;
+      right: 0px;     
+      transition: all 1s ease-out;
+     }
+
+     .close{
+      right: -620px;
+     }
+     
+    .archive {
+      font-size: 16px;
+      font-family: 'Courier New', Courier, monospace;
+      cursor: pointer;
+      background-color: #fff;
+      color: #111;
+      padding: 10px 10px;
+      border: solid 1px black;
+      display: flex;
+      align-items: center;
+      padding-left: 40px;
+    }
+    .archive a:hover{
+      color:rgb(6, 200, 6)
+    }
+    .archive div {
+      margin-left: 10px;
+    }
+    .archive div p{
+      margin: 0;
+    }
+
+  
+  @-webkit-keyframes fadeinout {
+    50% { opacity: 1; }
+  }
+  
+  @keyframes fadeinout {
+    50% { opacity: 1; }
+  }
