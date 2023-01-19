@@ -53,7 +53,6 @@ function extractKey() {
   else if (input.value.includes('http://')) {
     getUrl = input.value.replace('http:', 'https:');
     input.value = getUrl;
-    console.log('input', input.value);
     showImages(getUrl);
   }
   else
@@ -62,7 +61,6 @@ function extractKey() {
     showImages(getUrl);
   }
 }
-
 
 const renderImages = (fullResImages, url) => {
   fullResImages.forEach((file) => {
@@ -120,6 +118,11 @@ const renderThumbnails = (thumbnails = [], url, fullResImgs) => {
     image.src = `${url.replace('metadata', 'download')}/${file.name}`;
     imageRow.classList.add('col-4', 'd-flex', 'flex-column', 'p-2', 'align-items-center');
     imageRow.append(image, placeButton, fileName);
+    // store the full-resolution image URL in a "data-original" attribute
+    image.setAttribute('data-original', `${url.replace('metadata', 'download')}/${thumbnails ? file.original : file.name}`);
+    image.src = `${url.replace('metadata', 'download')}/${file.name}`;
+    imageRow.classList.add('col-4', 'd-flex', 'flex-column', 'p-2', 'align-items-center');
+    imageRow.append(image, placeButton, fileName);
     imageContainer.appendChild(imageRow);
     imageContainer.setAttribute('class', 'row');
   });
@@ -167,10 +170,23 @@ tileMap.addEventListener('click', (event) => {
   bootstrap.Offcanvas.getInstance(sidebar).hide();
 });
 
+function getImageName(imageURL) {
+  startIndex = imageURL.lastIndexOf('/') + 1;
+  endIndex = imageURL.lastIndexOf('.');
+  const imageName = imageURL.substring(startIndex, endIndex);
+
+  return imageName;
+}
+
 document.addEventListener('click', (event) => {
   if (event.target.classList.contains('place-button')) {
-    const imageURL = event.target.previousElementSibling.dataset.original;
-    const image = L.distortableImageOverlay(imageURL);
+    const imageURL = event.target.previousElementSibling.src;
+    const imageTooltipText = getImageName(imageURL);
+
+    const image = L.distortableImageOverlay(
+        imageURL,
+        {tooltipText: imageTooltipText}
+    );
     map.imgGroup.addLayer(image);
   }
 });
