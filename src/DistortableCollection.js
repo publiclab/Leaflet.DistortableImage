@@ -199,6 +199,22 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return reduce / imgs.length;
   },
 
+<<<<<<< HEAD
+=======
+  isJsonDetected(currentURL) {
+    if (currentURL.includes('?json=')) {
+      startIndex = currentURL.lastIndexOf('.');
+      fileExtension = currentURL.slice(startIndex + 1);
+
+      if (fileExtension === 'json') {
+        console.log('JSON found in map shareable link');
+        return true;
+      }
+    }
+    return false;
+  },
+
+>>>>>>> 66546e10 (jsdndetector rebased)
   generateExportJson() {
     const json = {};
     json.images = [];
