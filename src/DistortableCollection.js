@@ -199,8 +199,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return reduce / imgs.length;
   },
 
-<<<<<<< HEAD
-=======
   isJsonDetected(currentURL) {
     if (currentURL.includes('?json=')) {
       startIndex = currentURL.lastIndexOf('.');
@@ -214,7 +212,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return false;
   },
 
->>>>>>> 66546e10 (jsdndetector rebased)
   generateExportJson() {
     const json = {};
     json.images = [];
