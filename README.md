@@ -77,7 +77,7 @@ map.whenReady(function() {
 * [rotation](#rotation)
 * [selected](#selected)
 * [suppressToolbar](#Suppress-Toolbar)
-*  [tooltipText](#Tooltip-Text)
+* [tooltipText](#Tooltip-Text)
 ### Actions
 
 * `actions` (*optional*, default: [`L.DragAction`, `L.ScaleAction`, `L.DistortAction`, `L.RotateAction`, `L.FreeRotateAction`, `L.LockAction`, `L.OpacityAction`, `L.BorderAction`, `L.ExportAction`, `L.DeleteAction`], value: *array*)
