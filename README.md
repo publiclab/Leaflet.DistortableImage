@@ -334,8 +334,6 @@ imgGroup = L.distortableCollection({
   suppressToolbar: true,
 }).addTo(map);
 ```
-
-### UI and functionalities
   ### Tooltip Text
   `tooltipText` (*optional*, default: '', value: *string*)
 This provides the flexibility to add tooltip text to every image placed on the tile layer.
@@ -349,6 +347,7 @@ This provides the flexibility to add tooltip text to every image placed on the t
          {tooltipText: 'Sample text'}
   );
   ```
+### UI and functionalities
 
 Currently it supports multiple image selection and translations, and WIP we are working on porting all editing tools to work for it, such as opacity, etc. Image distortions (via modes) still use the single-image interface.
 
