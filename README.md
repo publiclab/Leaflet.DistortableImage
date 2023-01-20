@@ -338,8 +338,7 @@ imgGroup = L.distortableCollection({
 ### UI and functionalities
   ### Tooltip Text
   `tooltipText` (*optional*, default: '', value: *string*)
-
-  This provides the flexibility to add tooltip text to every image placed on the tile layer.
+This provides the flexibility to add tooltip text to every image placed on the tile layer.
 
   For ex.
 
