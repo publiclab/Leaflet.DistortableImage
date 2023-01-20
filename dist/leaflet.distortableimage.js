@@ -440,6 +440,8 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
     json.images = json.images.reverse();
     json.avg_cm_per_pixel = this._getAvgCmPerPixel(json.images);
+    var jsonImages = json.images;
+    savetoLocalStorage(jsonImages);
     return json;
   }
 });
@@ -447,6 +449,15 @@ L.DistortableCollection = L.FeatureGroup.extend({
 L.distortableCollection = function (id, options) {
   return new L.DistortableCollection(id, options);
 };
+
+function savetoLocalStorage(jsonImages) {
+  var result = jsonImages.map(function (img) {
+    return {
+      value: img.nodes
+    };
+  });
+  localStorage.setItem('locations', JSON.stringify(result));
+}
 
 /***/ }),
 
