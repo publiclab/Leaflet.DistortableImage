@@ -464,7 +464,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     edgeMinWidth: 50,
     editable: true,
     mode: 'distort',
-    selected: false
+    selected: false,
+    interactive: true,
+    tooltipText: ''
   },
   initialize: function initialize(url, options) {
     L.setOptions(this, options);
@@ -474,6 +476,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this._selected = this.options.selected;
     this._url = url;
     this.rotation = {};
+    this.interactive = this.options.interactive;
+    this.tooltipText = this.options.tooltipText;
   },
   onAdd: function onAdd(map) {
     var _this = this;
@@ -555,6 +559,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     }
 
     this.fire('add');
+    L.DomEvent.on(this.getElement(), 'mousemove', this.activateTooltip, this);
+    L.DomEvent.on(this.getElement(), 'mouseout', this.closeTooltip, this);
   },
   onRemove: function onRemove(map) {
     L.DomEvent.off(this.getElement(), 'click', this.select, this);
@@ -571,6 +577,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
     this.fire('remove');
     L.ImageOverlay.prototype.onRemove.call(this, map);
+    L.DomEvent.on(this.getElement(), 'mouseout', this.closeTooltip, this);
+    L.DomEvent.off(this.getElement(), 'mousemove', this.deactivateTooltip, this);
   },
   _initImageDimensions: function _initImageDimensions() {
     var map = this._map;
@@ -697,6 +705,19 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
       return exceedsTop || exceedsBottom;
     }
+  },
+  activateTooltip: function activateTooltip() {
+    if (!this._selected) {
+      this.bindTooltip(this.tooltipText, {
+        direction: 'top'
+      }).openTooltip();
+    }
+  },
+  closeToolTip: function closeToolTip() {
+    this.closeTooltip();
+  },
+  deactivateTooltip: function deactivateTooltip() {
+    this.unbindTooltip();
   },
   setCorners: function setCorners(latlngObj) {
     var map = this._map;
@@ -1883,14 +1904,12 @@ L.DistortableImage.Edit = L.Handler.extend({
   _toggleOpacity: function _toggleOpacity() {
     var image = this._overlay.getElement();
 
-    var opacity;
-
     if (!this.hasTool(L.OpacityAction)) {
       return;
     }
 
     this._transparent = !this._transparent;
-    opacity = this._transparent ? this.options.opacity : 1;
+    var opacity = this._transparent ? this.options.opacity : 1;
     L.DomUtil.setOpacity(image, opacity);
     image.setAttribute('opacity', opacity);
 
@@ -1899,14 +1918,12 @@ L.DistortableImage.Edit = L.Handler.extend({
   _toggleBorder: function _toggleBorder() {
     var image = this._overlay.getElement();
 
-    var outline;
-
     if (!this.hasTool(L.BorderAction)) {
       return;
     }
 
     this._outlined = !this._outlined;
-    outline = this._outlined ? this.options.outline : 'none';
+    var outline = this._outlined ? this.options.outline : 'none';
     image.style.outline = outline;
 
     this._refresh();
@@ -7269,7 +7286,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "d06aea7ce8d056523b19"; }
+/******/ 		__webpack_require__.h = function() { return "400e667cbaf175eb687b"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */

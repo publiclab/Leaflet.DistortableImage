@@ -34,7 +34,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
   onRemove() {
     if (this.editing) { this.editing.disable(); }
-
     this.off('layeradd', this._addEvents, this);
     this.off('layerremove', this._removeEvents, this);
   },
@@ -198,6 +197,19 @@ L.DistortableCollection = L.FeatureGroup.extend({
       return sum + img.cm_per_pixel;
     }, 0);
     return reduce / imgs.length;
+  },
+
+  isJsonDetected(currentURL) {
+    if (currentURL.includes('?json=')) {
+      startIndex = currentURL.lastIndexOf('.');
+      fileExtension = currentURL.slice(startIndex + 1);
+
+      if (fileExtension === 'json') {
+        console.log('JSON found in map shareable link');
+        return true;
+      }
+    }
+    return false;
   },
 
   generateExportJson() {

@@ -331,7 +331,7 @@ img2 = L.distortableImageOverlay('example.jpg', {
 
 // suppress collection toolbar accessed during multi-image selection
 imgGroup = L.distortableCollection({
-  supressToolbar: true,
+  suppressToolbar: true,
 }).addTo(map);
 ```
 
