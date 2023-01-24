@@ -204,10 +204,9 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
   _addToolbar() {
     const group = this._group;
-    const map = group._map;
+    // const map = group._map;
 
     if (group.options.suppressToolbar || this.toolbar) { return; }
-    
     // this is redundant as the controlbar is initialized in archive.js
     // this.toolbar = L.distortableImage.controlBar({
     //   actions: this.editActions,
@@ -216,7 +215,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
   },
 
   _removeToolbar() {
-    const map = this._group._map;
+    // const map = this._group._map;
     if (this.toolbar) {
       // if uncommented removes the toolbar when image is deselected
       // map.removeLayer(this.toolbar);

@@ -1382,8 +1382,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     clearInterval(this.updateInterval);
   },
   _addToolbar: function _addToolbar() {
-    var group = this._group;
-    var map = group._map;
+    var group = this._group; // const map = group._map;
 
     if (group.options.suppressToolbar || this.toolbar) {
       return;
@@ -1395,8 +1394,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
   },
   _removeToolbar: function _removeToolbar() {
-    var map = this._group._map;
-
+    // const map = this._group._map;
     if (this.toolbar) {
       // if uncommented removes the toolbar when image is deselected
       // map.removeLayer(this.toolbar);
@@ -7315,7 +7313,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "c657838d5b709a0690a2"; }
+/******/ 		__webpack_require__.h = function() { return "4cda7a6ab438af5c681b"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
