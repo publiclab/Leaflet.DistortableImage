@@ -463,7 +463,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
       var encodedFile = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(jsonImages));
       var a = document.createElement('a');
       a.href = 'data:' + encodedFile;
-      var fileName = prompt("Input filename");
+      var fileName = prompt('Input filename');
       a.download = fileName + '.json';
       a.click();
     }
@@ -7313,7 +7313,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "4cda7a6ab438af5c681b"; }
+/******/ 		__webpack_require__.h = function() { return "2fcc8de8296c6cd7948d"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
