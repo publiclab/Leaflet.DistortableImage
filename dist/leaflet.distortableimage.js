@@ -405,11 +405,25 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, 0);
     return reduce / imgs.length;
   },
+  isJsonDetected: function isJsonDetected(currentURL) {
+    if (currentURL.includes('?json=')) {
+      startIndex = currentURL.lastIndexOf('.');
+      fileExtension = currentURL.slice(startIndex + 1);
+
+      if (fileExtension === 'json') {
+        console.log('JSON found in map shareable link');
+        return true;
+      }
+    }
+
+    return false;
+  },
   generateExportJson: function generateExportJson() {
+    var allImages = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
     var json = {};
     json.images = [];
     this.eachLayer(function (layer) {
-      if (this.isCollected(layer)) {
+      if (allImages || this.isCollected(layer)) {
         var sections = layer._image.src.split('/');
 
         var filename = sections[sections.length - 1];
@@ -440,42 +454,25 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
     json.images = json.images.reverse();
     json.avg_cm_per_pixel = this._getAvgCmPerPixel(json.images);
-    var jsonImages = json.images;
-    savetoLocalStorage(jsonImages);
     return json;
+  },
+  downloadJson: function downloadJson() {
+    var jsonImages = this.generateExportJson(true).images; // a check to prevent download of empty file
+
+    if (jsonImages.length) {
+      var encodedFile = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(jsonImages));
+      var a = document.createElement('a');
+      a.href = 'data:' + encodedFile;
+      var fileName = prompt("Input filename");
+      a.download = fileName + '.json';
+      a.click();
+    }
   }
 });
 
 L.distortableCollection = function (id, options) {
   return new L.DistortableCollection(id, options);
 };
-
-function savetoLocalStorage(jsonImages) {
-  var result = jsonImages.map(function (img) {
-    return {
-      value: img.nodes
-    };
-  });
-  var getImages = localStorage.setItem('locations', JSON.stringify(result));
-  downloadFromLocalStorage(getImages);
-}
-
-function downloadFromLocalStorage(getImages) {
-  var obj = localStorage.getItem('locations');
-  var data = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(obj, prettyJson));
-  var a = document.createElement('a');
-  a.href = 'data:' + data;
-  a.download = 'mapknitter.json'; // a.innerHTML = 'download JSON';
-  // console.log(a);
-
-  a.click();
-}
-
-function prettyJson(key, value) {
-  // return value.replace(/[^\w\s]/gi, '\n');
-  // (/\n/g, "\r\n")
-  return value.replace(/\n/g, '\\\\n').replace(/\r/g, '\\\\r').replace(/\t/g, '\\\\t');
-}
 
 /***/ }),
 
@@ -1390,18 +1387,19 @@ L.DistortableCollection.Edit = L.Handler.extend({
 
     if (group.options.suppressToolbar || this.toolbar) {
       return;
-    }
+    } // this is redundant as the controlbar is initialized in archive.js
+    // this.toolbar = L.distortableImage.controlBar({
+    //   actions: this.editActions,
+    //   position: 'topleft',
+    // }).addTo(map, group);
 
-    this.toolbar = L.distortableImage.controlBar({
-      actions: this.editActions,
-      position: 'topleft'
-    }).addTo(map, group);
   },
   _removeToolbar: function _removeToolbar() {
     var map = this._group._map;
 
     if (this.toolbar) {
-      map.removeLayer(this.toolbar);
+      // if uncommented removes the toolbar when image is deselected
+      // map.removeLayer(this.toolbar);
       this.toolbar = false;
     } else {
       return false;
@@ -2611,6 +2609,7 @@ L.ExportAction = L.EditAction.extend({
       tooltip: tooltip
     };
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
+    this.map = map;
   },
   addHooks: function addHooks() {
     var edit = this._overlay.editing;
@@ -2633,6 +2632,7 @@ L.ExportAction = L.EditAction.extend({
     this.mouseLeaveHandler = this.handleMouseLeave.bind(this);
     L.DomEvent.on(exportTool, 'click', function () {
       if (!this.isExporting) {
+        this.map.imgGroup.downloadJson();
         this.isExporting = true;
         this.renderExportIcon();
         setTimeout(this.attachMouseEventListeners.bind(this, exportTool), 100);
@@ -7315,7 +7315,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "400e667cbaf175eb687b"; }
+/******/ 		__webpack_require__.h = function() { return "c657838d5b709a0690a2"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */

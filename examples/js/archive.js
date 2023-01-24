@@ -171,8 +171,8 @@ tileMap.addEventListener('click', (event) => {
 });
 
 function getImageName(imageURL) {
-  startIndex = imageURL.lastIndexOf('/') + 1;
-  endIndex = imageURL.lastIndexOf('.');
+  const startIndex = imageURL.lastIndexOf('/') + 1;
+  const endIndex = imageURL.lastIndexOf('.');
   const imageName = imageURL.substring(startIndex, endIndex);
 
   return imageName;
@@ -190,3 +190,14 @@ document.addEventListener('click', (event) => {
     map.imgGroup.addLayer(image);
   }
 });
+
+// adds toolbar to map
+L.distortableImage.controlBar({
+      actions:  [
+    L.ExportAction,
+    L.DeleteAction,
+    L.LockAction,
+    L.UnlockAction,
+  ],
+      position: 'topleft',
+    }).addTo(map, map.imgGroup);

@@ -13,7 +13,7 @@ L.ExportAction = L.EditAction.extend({
       tooltip = overlay.options.translation.exportImage;
     } else {
       L.DistortableImage.group_action_map.e = 'runExporter';
-      tooltip = overlay.options.translation.exportImages;
+      tooltip =  overlay.options.translation.exportImages;
     }
 
     options = options || {};
@@ -24,6 +24,7 @@ L.ExportAction = L.EditAction.extend({
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
+    this.map = map
   },
 
   addHooks() {
@@ -46,8 +47,10 @@ L.ExportAction = L.EditAction.extend({
     this.mouseEnterHandler = this.handleMouseEnter.bind(this);
     this.mouseLeaveHandler = this.handleMouseLeave.bind(this);
 
-    L.DomEvent.on(exportTool, 'click', function() {
+    L.DomEvent.on(exportTool, 'click', function () {
+    
       if (!this.isExporting) {
+        this.map.imgGroup.downloadJson()
         this.isExporting = true;
         this.renderExportIcon();
 

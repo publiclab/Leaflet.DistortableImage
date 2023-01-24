@@ -212,12 +212,12 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return false;
   },
 
-  generateExportJson() {
+  generateExportJson(allImages = false) {
     const json = {};
     json.images = [];
 
     this.eachLayer(function(layer) {
-      if (this.isCollected(layer)) {
+      if (allImages || this.isCollected(layer)) {
         const sections = layer._image.src.split('/');
         const filename = sections[sections.length-1];
         const zc = layer.getCorners();
@@ -241,35 +241,24 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     json.images = json.images.reverse();
     json.avg_cm_per_pixel = this._getAvgCmPerPixel(json.images);
-    var jsonImages = json.images;
-    savetoLocalStorage(jsonImages);
+    
     return json;
   },
+
+  downloadJson() {
+    const jsonImages = this.generateExportJson(true).images
+   // a check to prevent download of empty file
+    if (jsonImages.length) { 
+       const encodedFile = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(jsonImages));
+       const a = document.createElement('a');
+      a.href = 'data:' + encodedFile;
+      const fileName = prompt("Input filename")
+       a.download = fileName + '.json';
+       a.click();
+    }
+  }
 });
 
 L.distortableCollection = function(id, options) {
   return new L.DistortableCollection(id, options);
 };
-
-function savetoLocalStorage(jsonImages) {
-  var result = jsonImages.map(img => ({value: img.nodes}));
-  var getImages = localStorage.setItem('locations', JSON.stringify(result));
-  downloadFromLocalStorage(getImages);
-}
-
-function downloadFromLocalStorage(getImages) {
-  var obj = localStorage.getItem('locations');
-  var data = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(obj, prettyJson));
-  var a = document.createElement('a');
-  a.href = 'data:' + data;
-  a.download = 'mapknitter.json';
-  // a.innerHTML = 'download JSON';
-  // console.log(a);
-  a.click();
-}
-
-function prettyJson(key, value) {
-  // return value.replace(/[^\w\s]/gi, '\n');
-  // (/\n/g, "\r\n")
-  return value.replace(/\n/g, '\\\\n').replace(/\r/g, '\\\\r').replace(/\t/g, '\\\\t');
-}

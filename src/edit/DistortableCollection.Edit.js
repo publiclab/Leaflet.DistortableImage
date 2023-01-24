@@ -207,17 +207,19 @@ L.DistortableCollection.Edit = L.Handler.extend({
     const map = group._map;
 
     if (group.options.suppressToolbar || this.toolbar) { return; }
-
-    this.toolbar = L.distortableImage.controlBar({
-      actions: this.editActions,
-      position: 'topleft',
-    }).addTo(map, group);
+    
+    // this is redundant as the controlbar is initialized in archive.js
+    // this.toolbar = L.distortableImage.controlBar({
+    //   actions: this.editActions,
+    //   position: 'topleft',
+    // }).addTo(map, group);
   },
 
   _removeToolbar() {
     const map = this._group._map;
     if (this.toolbar) {
-      map.removeLayer(this.toolbar);
+      // if uncommented removes the toolbar when image is deselected
+      // map.removeLayer(this.toolbar);
       this.toolbar = false;
     } else {
       return false;
