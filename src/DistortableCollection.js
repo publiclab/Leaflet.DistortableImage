@@ -1,3 +1,5 @@
+import { getData } from "exif-js";
+
 const arr = [];
 L.DistortableCollection = L.FeatureGroup.extend({
   options: {
@@ -199,17 +201,97 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return reduce / imgs.length;
   },
 
-  isJsonDetected(currentURL) {
+  // expects URL in this format: 'http://localhost:8081/examples/archive.html?json=https://archive.org/download/segetest/segetest.json';
+  _extractJSONDownloadURL(currentURL) {
+    const startIndex = currentURL.lastIndexOf('=');
+    const jsonDownloadURL = currentURL.slice(startIndex + 1);
+    
+    return jsonDownloadURL;
+  },
+
+  // expects URL in this format: 'http://localhost:8081/examples/archive.html?json=https://archive.org/download/segetest/segetest.json';
+  _isJsonDetected(currentURL) {
     if (currentURL.includes('?json=')) {
-      startIndex = currentURL.lastIndexOf('.');
-      fileExtension = currentURL.slice(startIndex + 1);
+      const startIndex = currentURL.lastIndexOf('.');
+      const fileExtension = currentURL.slice(startIndex + 1);
 
       if (fileExtension === 'json') {
         console.log('JSON found in map shareable link');
         return true;
       }
     }
+
     return false;
+  },
+
+  // // OPTION 1 - WITHOUT PROMISE
+  // _readJSON(currentURL) {
+  //   let jsonDownloadURL;
+
+  //   if(this._isJsonDetected(currentURL)) {
+  //     jsonDownloadURL = this._extractJSONDownloadURL(currentURL);
+  //   }
+
+  //   if (jsonDownloadURL) {
+  //     let index = 0;
+  //     const imageCollectionProps = [];
+  
+  //     axios.get(jsonDownloadURL)
+  //       .then((response) => {
+  //         if(response.data.length > 1) {
+  //           response.data.forEach((data) => {
+  //             imageCollectionProps[index] = data;
+  //             index++;
+  //           })
+  //           return imageCollectionProps;
+  //         } 
+  
+  //         imageCollectionProps[index] = response.data;
+  //         console.log('imageCollectionProps', imageCollectionProps); // <- remember to delete
+  //         return imageCollectionProps;
+  //     })
+  //   }
+  // },
+
+  async _getImageCollectionProps (jsonDownloadURL) {
+      let index = 0;
+      const imgCollectionProps = [];
+
+      try {
+        const response = await axios.get(jsonDownloadURL);
+        // console.log('response: ', response);
+        if(response.data.length > 1) {
+          response.data.forEach((data) => {
+            imgCollectionProps[index] = data;
+            index++;
+          })
+          // console.log('imgCollectionProps-1st: ', imgCollectionProps)
+          this.lt = imgCollectionProps;  //
+          return imgCollectionProps;
+        } 
+        imgCollectionProps[index] = response.data;
+      } catch(err) {
+        console.log('err', err);
+      }
+
+    // console.log('imageCollectionProps: ', imgCollectionProps); // <- remember to delete
+    return imgCollectionProps;
+  },
+
+  // OPTION 2 - ASYNC/AWAIT
+  readJSON(currentURL) {
+    let jsonDownloadURL;
+
+    if(this._isJsonDetected(currentURL)) {
+      jsonDownloadURL = this._extractJSONDownloadURL(currentURL);
+    }
+
+    if (jsonDownloadURL) {
+      this._getImageCollectionProps(jsonDownloadURL)
+      console.log('this.lt: ',  this.lt);
+      // console.log('this._getImageCollectionProps(jsonDownloadURL);', this._getImageCollectionProps(jsonDownloadURL));
+      // return this._getImageCollectionProps(jsonDownloadURL).then((imgCollectionProps) =>  { return imgCollectionProps });
+    }
   },
 
   generateExportJson() {
@@ -218,8 +300,10 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     this.eachLayer(function(layer) {
       if (this.isCollected(layer)) {
+        // console.log('Layer:', layer);
         const sections = layer._image.src.split('/');
         const filename = sections[sections.length-1];
+        // console.log('layer.getCorners():', layer.getCorners());
         const zc = layer.getCorners();
         const corners = [
           {lat: zc[0].lat, lon: zc[0].lng},
@@ -232,6 +316,8 @@ L.DistortableCollection = L.FeatureGroup.extend({
           src: layer._image.src,
           width: layer._image.width,
           height: layer._image.height,
+          // not extracted from "image_file_name" file name below because a 3rd-party library user can pass a text other than file name as tooltip
+          tooltipText: layer.getTooltipText(),
           image_file_name: filename,
           nodes: corners,
           cm_per_pixel: L.ImageUtil.getCmPerPixel(layer),
