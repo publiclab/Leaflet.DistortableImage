@@ -1,5 +1,3 @@
-// import { getData } from "exif-js";
-
 const arr = [];
 L.DistortableCollection = L.FeatureGroup.extend({
   options: {

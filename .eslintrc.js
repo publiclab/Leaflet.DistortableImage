@@ -48,7 +48,6 @@ module.exports = {
      files: ['examples/js/*.js'],
     parserOptions: {
          sourceType: "module",
-         "allowImportExportEverywhere": true
        }
     }],
   },
