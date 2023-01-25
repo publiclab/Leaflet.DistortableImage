@@ -92,10 +92,10 @@ L.ExportAction = L.EditAction.extend({
   },
 
   handleMouseLeave() {
-    if (!this.mouseLeaveSkip) {
-      this.renderExportIcon();
-    } else {
+    if (this.mouseLeaveSkip) {
       this.mouseLeaveSkip = false;
+    } else {
+      this.renderExportIcon();
     }
   },
 

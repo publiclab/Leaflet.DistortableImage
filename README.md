@@ -77,7 +77,7 @@ map.whenReady(function() {
 * [rotation](#rotation)
 * [selected](#selected)
 * [suppressToolbar](#Suppress-Toolbar)
-
+* [tooltipText](#Tooltip-Text)
 ### Actions
 
 * `actions` (*optional*, default: [`L.DragAction`, `L.ScaleAction`, `L.DistortAction`, `L.RotateAction`, `L.FreeRotateAction`, `L.LockAction`, `L.OpacityAction`, `L.BorderAction`, `L.ExportAction`, `L.DeleteAction`], value: *array*)
@@ -331,10 +331,22 @@ img2 = L.distortableImageOverlay('example.jpg', {
 
 // suppress collection toolbar accessed during multi-image selection
 imgGroup = L.distortableCollection({
-  supressToolbar: true,
+  suppressToolbar: true,
 }).addTo(map);
 ```
+  ### Tooltip Text
+  `tooltipText` (*optional*, default: '', value: *string*)
+This provides the flexibility to add tooltip text to every image placed on the tile layer.
 
+  For ex.
+
+  ```js
+  // Sets up tooltip text for an image, the text is displayed when mouse is placed on it
+  img = L.distortableImageOverlay(
+         'example.jpg', 
+         {tooltipText: 'Sample text'}
+  );
+  ```
 ### UI and functionalities
 
 Currently it supports multiple image selection and translations, and WIP we are working on porting all editing tools to work for it, such as opacity, etc. Image distortions (via modes) still use the single-image interface.
