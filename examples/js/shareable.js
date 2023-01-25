@@ -10,11 +10,11 @@ const input = document.getElementById('input');
 const responseText = document.getElementById('response');
 const imageContainer = document.getElementById('imgContainer');
 const mapToggle = document.getElementById('mapToggle');
-const generateExportBtn = document.getElementById('generateExportBtn'); // for testing purposes only, pls delete
 let imageCount = 0;
 let fetchedFrom;
 let fetchedImages;
 let currPagination; // currPagination is used to initiate the Paginator Class
+let sidebarOpen = false;
 
 const setupMap = () => {
   map = L.map('map').setView([51.505, -0.09], 13);
@@ -23,7 +23,7 @@ const setupMap = () => {
 
   map.addGoogleMutant();
   map.whenReady(() => {
-    new bootstrap.Modal(welcomeModal).show();
+    new bootstrap.Modal(welcomeModal).hide();
   });
 };
 
@@ -38,13 +38,6 @@ setupCollection();
 form.addEventListener('submit', (event) => {
   event.preventDefault();
   extractKey();
-});
-
-// delete, it's for testing purposes only
-generateExportBtn.addEventListener('click', (e) => {
-  console.log('generateExportBtn clicked');
-  const url = 'http://localhost:8081/examples/archive.html?json=https://archive.org/download/segetest/segetest.json';
-  console.log('map.imgGroup.readJSON(url): ', map.imgGroup.readJSON(url));
 });
 
 function extractKey() {
@@ -138,33 +131,33 @@ const renderThumbnails = (thumbnails = [], url, fullResImgs) => {
 
 function showImages(getUrl) {
   const url = getUrl.replace('details', 'metadata');
-
   axios.get(url)
-      .then((response) => {
-        if (response.data.files && response.data.files.length != 0) {
-          console.log('response.data.files.length', response);
-          fetchedImages = response.data.files; // <---- all files fetched
-          // runs a check to clear the sidebar, eventListeners and reset imageCount
-          // console.log("response.data.files", response.data.files); -> delete
-          if (currPagination) currPagination.clear(); imageContainer.textContent = ''; imageCount = 0;
-          currPagination = new Paginator(url, fetchedImages);
-          currPagination.processImgs(renderThumbnails, renderImages);
-          responseText.innerHTML = imageCount ? `${imageCount} image(s) fetched successfully from ${fetchedFrom.innerHTML}.` : 'No images found in the link provided...';
-        } else {
-          responseText.innerHTML = 'No images found in the link provided...';
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        responseText.innerHTML = 'Uh-oh! Something\'s not right with the link provided!';
-      })
-      .finally(() => {
-        bootstrap.Modal.getInstance(welcomeModal).hide();
-      });
+    .then((response) => {
+      if (response.data.files && response.data.files.length != 0) {
+        console.log('response.data.files.length', response);
+        fetchedImages = response.data.files; // <---- all files fetched
+        // runs a check to clear the sidebar, eventListeners and reset imageCount
+        if (currPagination) currPagination.clear(); imageContainer.textContent = ''; imageCount = 0;
+        currPagination = new Paginator(url, fetchedImages);
+        currPagination.processImgs(renderThumbnails, renderImages);
+        responseText.innerHTML = imageCount ? `${imageCount} image(s) fetched successfully from ${fetchedFrom.innerHTML}.` : 'No images found in the link provided...';
+      } else {
+        responseText.innerHTML = 'No images found in the link provided...';
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      responseText.innerHTML = 'Uh-oh! Something\'s not right with the link provided!';
+    })
+    .finally(() => {
+      bootstrap.Modal.getInstance(welcomeModal).hide();
+    });
 }
 
 welcomeModal.addEventListener('hidden.bs.modal', (event) => {
   new bootstrap.Offcanvas(sidebar).show();
+  sidebarOpen = true;
+
 });
 
 restoreWelcomeModal.addEventListener('click', (event) => {
@@ -174,10 +167,13 @@ restoreWelcomeModal.addEventListener('click', (event) => {
 
 mapToggle.addEventListener('click', (event) => {
   new bootstrap.Offcanvas(sidebar).show();
+  sidebarOpen = true;
 });
 
 tileMap.addEventListener('click', (event) => {
-  bootstrap.Offcanvas.getInstance(sidebar).hide();
+  if (sidebarOpen) {
+    bootstrap.Offcanvas.getInstance(sidebar).hide();
+  }
 });
 
 function getImageName(imageURL) {
@@ -188,38 +184,68 @@ function getImageName(imageURL) {
   return imageName;
 }
 
+const addImageOverlayToCollection = (imageURL, options, newImage = false) => {
+  let image;
+  
+  if (!newImage) { 
+    image = L.distortableImageOverlay(
+      imageURL,
+      {tooltipText: options.tooltipText}
+    );
+  } else {
+    image = L.distortableImageOverlay(
+      imageURL,
+      {
+        height: options.height,
+        tooltipText: options.tooltipText,
+        corners: options.corners,
+      }
+    );
+  }
+
+  map.imgGroup.addLayer(image);
+};
+
+document.addEventListener('DOMContentLoaded', async (event) => {
+  const currentURL = location.href;
+  const imageCollectionObj = await map.imgGroup.generateFromJsonUrl(currentURL);
+  const avg_cm_per_pixel = imageCollectionObj.avg_cm_per_pixel; // this is made available for future use
+
+  if (imageCollectionObj.imgCollectionProps.length > 1) {
+    let imageURL;
+    let options;
+
+    imageCollectionObj.imgCollectionProps.forEach((imageObj) => {
+      imageURL = imageObj.src;
+      options = {
+        height: imageObj.height,
+        tooltipText: imageObj.tooltipText,
+        corners: imageObj.nodes,
+      };
+      addImageOverlayToCollection(imageURL, options, false);
+    });
+
+    return;
+  }
+
+  const imageObj = imageCollectionObj.imgCollectionProps[0];
+  const imageURL = imageObj[0].src;
+  const options = {
+    height: imageObj[0].height,
+    tooltipText: imageObj[0].tooltipText,
+    corners: imageObj[0].nodes,
+  }
+
+  addImageOverlayToCollection(imageURL, options, false);
+});
+
 document.addEventListener('click', (event) => {
   if (event.target.classList.contains('place-button')) {
     const imageURL = event.target.previousElementSibling.src;
     const imageTooltipText = getImageName(imageURL);
+    const options = {tooltipText: imageTooltipText};
 
-    const image = L.distortableImageOverlay(
-        imageURL,
-        {tooltipText: imageTooltipText}
-    );
-    map.imgGroup.addLayer(image);
+    addImageOverlayToCollection(imageURL, options);
     return;
   }
-
-  // if 'place-button' was not pressed then user is using shareble link is used
 });
-
-
-// ------------------------------------------------------------------------------------------------------------------------------------
-// if (isJsonDetected(currentURL)) {
-//     // 1. Retrieve JSON file from external server
-//     // 2. Read into javascript object
-//     // 3. Redirect to archive.html, so archive.js can still be used here // redirect 
-//     // 4. Construct each imageOverlay objects and load into a collection - from inside the javascript file
-// }
-
-
-// document.addEventListener("DOMContentLoaded", (event) => {
-//   const currentURL = location.href;
-//   // const imageCollectionObject = map.imgGroup.readJSON(currentURL);
-//   // console.log('imageCollectionObject:', imageCollectionObject);
-
-//   // console.log('I am now aware document is loaded');
-// });
-
-// ------------------------------------------------------------------------------------------------------------------------------------

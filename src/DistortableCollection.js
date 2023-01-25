@@ -1,4 +1,4 @@
-import { getData } from "exif-js";
+// import { getData } from "exif-js";
 
 const arr = [];
 L.DistortableCollection = L.FeatureGroup.extend({
@@ -201,22 +201,20 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return reduce / imgs.length;
   },
 
-  // expects URL in this format: 'http://localhost:8081/examples/archive.html?json=https://archive.org/download/segetest/segetest.json';
   _extractJSONDownloadURL(currentURL) {
     const startIndex = currentURL.lastIndexOf('=');
     const jsonDownloadURL = currentURL.slice(startIndex + 1);
-    
+
     return jsonDownloadURL;
   },
 
-  // expects URL in this format: 'http://localhost:8081/examples/archive.html?json=https://archive.org/download/segetest/segetest.json';
   _isJsonDetected(currentURL) {
     if (currentURL.includes('?json=')) {
       const startIndex = currentURL.lastIndexOf('.');
       const fileExtension = currentURL.slice(startIndex + 1);
 
       if (fileExtension === 'json') {
-        console.log('JSON found in map shareable link');
+        console.log('JSON found in map shareable link'); // left here purposely
         return true;
       }
     }
@@ -224,74 +222,42 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return false;
   },
 
-  // // OPTION 1 - WITHOUT PROMISE
-  // _readJSON(currentURL) {
-  //   let jsonDownloadURL;
+  async _generateFromJson(jsonDownloadURL) {
+    let index = 0;
+    const imgCollectionProps = [];
 
-  //   if(this._isJsonDetected(currentURL)) {
-  //     jsonDownloadURL = this._extractJSONDownloadURL(currentURL);
-  //   }
-
-  //   if (jsonDownloadURL) {
-  //     let index = 0;
-  //     const imageCollectionProps = [];
-  
-  //     axios.get(jsonDownloadURL)
-  //       .then((response) => {
-  //         if(response.data.length > 1) {
-  //           response.data.forEach((data) => {
-  //             imageCollectionProps[index] = data;
-  //             index++;
-  //           })
-  //           return imageCollectionProps;
-  //         } 
-  
-  //         imageCollectionProps[index] = response.data;
-  //         console.log('imageCollectionProps', imageCollectionProps); // <- remember to delete
-  //         return imageCollectionProps;
-  //     })
-  //   }
-  // },
-
-  async _getImageCollectionProps (jsonDownloadURL) {
-      let index = 0;
-      const imgCollectionProps = [];
-
-      try {
-        const response = await axios.get(jsonDownloadURL);
-        // console.log('response: ', response);
-        if(response.data.length > 1) {
-          response.data.forEach((data) => {
-            imgCollectionProps[index] = data;
-            index++;
-          })
-          // console.log('imgCollectionProps-1st: ', imgCollectionProps)
-          this.lt = imgCollectionProps;  //
-          return imgCollectionProps;
-        } 
-        imgCollectionProps[index] = response.data;
-      } catch(err) {
-        console.log('err', err);
+    try {
+      const response = await axios.get(jsonDownloadURL);
+      if (response.data.images.length > 1) {
+        response.data.images.forEach((data) => {
+          imgCollectionProps[index] = data;
+          index++;
+        });
+        return {avg_cm_per_pixel: response.data.avg_cm_per_pixel, imgCollectionProps};
       }
+      imgCollectionProps[index] = response.data.images;
 
-    // console.log('imageCollectionProps: ', imgCollectionProps); // <- remember to delete
-    return imgCollectionProps;
+      return {avg_cm_per_pixel: response.data.avg_cm_per_pixel, imgCollectionProps};
+    } catch (err) {
+      console.log('err', err);
+    }
   },
 
-  // OPTION 2 - ASYNC/AWAIT
-  readJSON(currentURL) {
+  // expects URL in this format: 'http://localhost:8081/examples/shareable.html?json=https://archive.org/download/segeotest/segeotest.json'
+  async generateFromJsonUrl(currentURL) {
     let jsonDownloadURL;
+    let imageCollectionObj = {};
 
-    if(this._isJsonDetected(currentURL)) {
+    if (this._isJsonDetected(currentURL)) {
       jsonDownloadURL = this._extractJSONDownloadURL(currentURL);
     }
 
     if (jsonDownloadURL) {
-      this._getImageCollectionProps(jsonDownloadURL)
-      console.log('this.lt: ',  this.lt);
-      // console.log('this._getImageCollectionProps(jsonDownloadURL);', this._getImageCollectionProps(jsonDownloadURL));
-      // return this._getImageCollectionProps(jsonDownloadURL).then((imgCollectionProps) =>  { return imgCollectionProps });
-    }
+      imageCollectionObj = await this._generateFromJson(jsonDownloadURL);
+      return imageCollectionObj;
+    };
+
+    return imageCollectionObj;
   },
 
   generateExportJson() {
@@ -300,10 +266,8 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     this.eachLayer(function(layer) {
       if (this.isCollected(layer)) {
-        // console.log('Layer:', layer);
         const sections = layer._image.src.split('/');
         const filename = sections[sections.length-1];
-        // console.log('layer.getCorners():', layer.getCorners());
         const zc = layer.getCorners();
         const corners = [
           {lat: zc[0].lat, lon: zc[0].lng},
@@ -316,7 +280,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
           src: layer._image.src,
           width: layer._image.width,
           height: layer._image.height,
-          // not extracted from "image_file_name" file name below because a 3rd-party library user can pass a text other than file name as tooltip
           tooltipText: layer.getTooltipText(),
           image_file_name: filename,
           nodes: corners,
