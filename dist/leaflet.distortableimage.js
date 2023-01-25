@@ -194,6 +194,7 @@ ansiHTML.reset()
   \**************************************/
 /***/ (function() {
 
+var arr = [];
 L.DistortableCollection = L.FeatureGroup.extend({
   options: {
     editable: true,
@@ -292,7 +293,18 @@ L.DistortableCollection = L.FeatureGroup.extend({
     if (e.shiftKey) {
       /* conditional prevents disabled images from flickering multi-select mode */
       if (layer.editing.enabled()) {
-        L.DomUtil.toggleClass(e.target, 'collected');
+        L.DomUtil.toggleClass(e.target, 'collected'); // re-order layers by _leaflet_id to match their display order in UI
+        // add new layer to right position and avoid repitition
+
+        var newArr = arr.every(function (each) {
+          return each._leaflet_id !== layer._leaflet_id;
+        });
+
+        if (newArr) {
+          arr.push(layer);
+        } else {
+          arr.splice(arr.indexOf(layer), 1);
+        }
       }
     }
 
@@ -416,7 +428,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
           lon: zc[2].lng
         }];
         json.images.push({
-          id: this.getLayerId(layer),
+          id: layer._leaflet_id,
           src: layer._image.src,
           width: layer._image.width,
           height: layer._image.height,
@@ -452,7 +464,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     edgeMinWidth: 50,
     editable: true,
     mode: 'distort',
-    selected: false
+    selected: false,
+    interactive: true,
+    tooltipText: ''
   },
   initialize: function initialize(url, options) {
     L.setOptions(this, options);
@@ -462,6 +476,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this._selected = this.options.selected;
     this._url = url;
     this.rotation = {};
+    this.interactive = this.options.interactive;
+    this.tooltipText = this.options.tooltipText;
   },
   onAdd: function onAdd(map) {
     var _this = this;
@@ -489,7 +505,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       _this._initImageDimensions();
 
       if (_this.options.rotation) {
-        var units = _this.options.rotation.deg ? 'deg' : 'rad';
+        var units = _this.options.rotation.deg >= 0 ? 'deg' : 'rad';
 
         _this.setAngle(_this.options.rotation[units], units);
       } else {
@@ -543,6 +559,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     }
 
     this.fire('add');
+    L.DomEvent.on(this.getElement(), 'mousemove', this.activateTooltip, this);
+    L.DomEvent.on(this.getElement(), 'mouseout', this.closeTooltip, this);
   },
   onRemove: function onRemove(map) {
     L.DomEvent.off(this.getElement(), 'click', this.select, this);
@@ -559,6 +577,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
     this.fire('remove');
     L.ImageOverlay.prototype.onRemove.call(this, map);
+    L.DomEvent.on(this.getElement(), 'mouseout', this.closeTooltip, this);
+    L.DomEvent.off(this.getElement(), 'mousemove', this.deactivateTooltip, this);
   },
   _initImageDimensions: function _initImageDimensions() {
     var map = this._map;
@@ -685,6 +705,19 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
       return exceedsTop || exceedsBottom;
     }
+  },
+  activateTooltip: function activateTooltip() {
+    if (!this._selected) {
+      this.bindTooltip(this.tooltipText, {
+        direction: 'top'
+      }).openTooltip();
+    }
+  },
+  closeToolTip: function closeToolTip() {
+    this.closeTooltip();
+  },
+  deactivateTooltip: function deactivateTooltip() {
+    this.unbindTooltip();
   },
   setCorners: function setCorners(latlngObj) {
     var map = this._map;
@@ -1871,14 +1904,12 @@ L.DistortableImage.Edit = L.Handler.extend({
   _toggleOpacity: function _toggleOpacity() {
     var image = this._overlay.getElement();
 
-    var opacity;
-
     if (!this.hasTool(L.OpacityAction)) {
       return;
     }
 
     this._transparent = !this._transparent;
-    opacity = this._transparent ? this.options.opacity : 1;
+    var opacity = this._transparent ? this.options.opacity : 1;
     L.DomUtil.setOpacity(image, opacity);
     image.setAttribute('opacity', opacity);
 
@@ -1887,14 +1918,12 @@ L.DistortableImage.Edit = L.Handler.extend({
   _toggleBorder: function _toggleBorder() {
     var image = this._overlay.getElement();
 
-    var outline;
-
     if (!this.hasTool(L.BorderAction)) {
       return;
     }
 
     this._outlined = !this._outlined;
-    outline = this._outlined ? this.options.outline : 'none';
+    var outline = this._outlined ? this.options.outline : 'none';
     image.style.outline = outline;
 
     this._refresh();
@@ -2611,10 +2640,10 @@ L.ExportAction = L.EditAction.extend({
     this.renderCancelIcon();
   },
   handleMouseLeave: function handleMouseLeave() {
-    if (!this.mouseLeaveSkip) {
-      this.renderExportIcon();
-    } else {
+    if (this.mouseLeaveSkip) {
       this.mouseLeaveSkip = false;
+    } else {
+      this.renderExportIcon();
     }
   },
   renderDownloadIcon: function renderDownloadIcon() {
@@ -7257,7 +7286,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "91cb9924f808c37e539c"; }
+/******/ 		__webpack_require__.h = function() { return "400e667cbaf175eb687b"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
