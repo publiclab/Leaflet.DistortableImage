@@ -191,13 +191,16 @@ document.addEventListener('click', (event) => {
   }
 });
 
-// adds toolbar to map
-L.distortableImage.controlBar({
-      actions:  [
-    L.ExportAction,
-    L.DeleteAction,
-    L.LockAction,
-    L.UnlockAction,
-  ],
-      position: 'topleft',
-    }).addTo(map, map.imgGroup);
+// download JSON
+saveMap.addEventListener('click', () => {
+  const jsonImages = map.imgGroup.generateExportJson(true).images;
+    // a check to prevent download of empty file
+    if (jsonImages.length) {
+      const encodedFile = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(jsonImages));
+      const a = document.createElement('a');
+      a.href = 'data:' + encodedFile;
+      const fileName = prompt('Use this file to recover your map’s saved state. Enter filename:');
+      a.download = fileName ? fileName + '.json' : 'MapknitterLite.json';
+      a.click();
+    }
+})

@@ -65,9 +65,11 @@
 
   <div class="offcanvas offcanvas-end" data-bs-backdrop="false" data-bs-keyboard="false" tabindex="1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
       <div class="offcanvas-header">
-        <h3 id="offcanvasRightLabel">Images</h3>
-        <button type="button" id="restoreWelcomeModalBtn" class="btn btn-primary btn-sm" data-bs-dismiss="offcanvas" aria-label="Close">Get Image</button>
-        <button type="button" class="btn btn-primary btn-sm" data-bs-dismiss="offcanvas" aria-label="Close">View Map</button>
+        <button type="button" id="restoreWelcomeModalBtn" class="btn btn-primary btn-md" data-bs-dismiss="offcanvas" aria-label="Close" title="Import images from collection URL">Import</button>
+        <button id="saveMap" type="button" class="btn btn-sm" aria-label="Save map" title="Save map in JSON format" >
+          <i class="fa fa-save fa-" style="font-size:24px" ></i>
+        </button>
+       <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" title="Close Sidebar" ></button>
       </div>
       <hr>
       <div class="offcanvas-body">
@@ -76,6 +78,7 @@
       </div>
         <hr>
       <div class="offcanvas-footer d-flex justify-content-evenly align-items-center">
+        <h3 id="offcanvasRightLabel">Images</h3>
        <button title="Previous" id="prevBtn" style="all: unset; cursor: pointer;">
         <i class=" fa fa-regular fa-chevron-left"></i>
        </button>

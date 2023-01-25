@@ -243,19 +243,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
     json.avg_cm_per_pixel = this._getAvgCmPerPixel(json.images);
     return json;
   },
-
-  downloadJson() {
-    const jsonImages = this.generateExportJson(true).images;
-    // a check to prevent download of empty file
-    if (jsonImages.length) {
-      const encodedFile = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(jsonImages));
-      const a = document.createElement('a');
-      a.href = 'data:' + encodedFile;
-      const fileName = prompt('Input filename');
-      a.download = fileName + '.json';
-      a.click();
-    }
-  },
 });
 
 L.distortableCollection = function(id, options) {

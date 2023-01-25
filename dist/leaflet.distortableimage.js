@@ -455,18 +455,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
     json.images = json.images.reverse();
     json.avg_cm_per_pixel = this._getAvgCmPerPixel(json.images);
     return json;
-  },
-  downloadJson: function downloadJson() {
-    var jsonImages = this.generateExportJson(true).images; // a check to prevent download of empty file
-
-    if (jsonImages.length) {
-      var encodedFile = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(jsonImages));
-      var a = document.createElement('a');
-      a.href = 'data:' + encodedFile;
-      var fileName = prompt('Input filename');
-      a.download = fileName + '.json';
-      a.click();
-    }
   }
 });
 
@@ -1382,22 +1370,23 @@ L.DistortableCollection.Edit = L.Handler.extend({
     clearInterval(this.updateInterval);
   },
   _addToolbar: function _addToolbar() {
-    var group = this._group; // const map = group._map;
+    var group = this._group;
+    var map = group._map;
 
     if (group.options.suppressToolbar || this.toolbar) {
       return;
-    } // this is redundant as the controlbar is initialized in archive.js
-    // this.toolbar = L.distortableImage.controlBar({
-    //   actions: this.editActions,
-    //   position: 'topleft',
-    // }).addTo(map, group);
+    }
 
+    this.toolbar = L.distortableImage.controlBar({
+      actions: this.editActions,
+      position: 'topleft'
+    }).addTo(map, group);
   },
   _removeToolbar: function _removeToolbar() {
-    // const map = this._group._map;
+    var map = this._group._map;
+
     if (this.toolbar) {
-      // if uncommented removes the toolbar when image is deselected
-      // map.removeLayer(this.toolbar);
+      map.removeLayer(this.toolbar);
       this.toolbar = false;
     } else {
       return false;
@@ -2607,7 +2596,6 @@ L.ExportAction = L.EditAction.extend({
       tooltip: tooltip
     };
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
-    this.map = map;
   },
   addHooks: function addHooks() {
     var edit = this._overlay.editing;
@@ -2630,7 +2618,6 @@ L.ExportAction = L.EditAction.extend({
     this.mouseLeaveHandler = this.handleMouseLeave.bind(this);
     L.DomEvent.on(exportTool, 'click', function () {
       if (!this.isExporting) {
-        this.map.imgGroup.downloadJson();
         this.isExporting = true;
         this.renderExportIcon();
         setTimeout(this.attachMouseEventListeners.bind(this, exportTool), 100);
@@ -7313,7 +7300,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "2fcc8de8296c6cd7948d"; }
+/******/ 		__webpack_require__.h = function() { return "e25f8be8eeb066dddf26"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */

@@ -24,7 +24,6 @@ L.ExportAction = L.EditAction.extend({
     };
 
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
-    this.map = map;
   },
 
   addHooks() {
@@ -49,7 +48,6 @@ L.ExportAction = L.EditAction.extend({
 
     L.DomEvent.on(exportTool, 'click', function() {
       if (!this.isExporting) {
-        this.map.imgGroup.downloadJson();
         this.isExporting = true;
         this.renderExportIcon();
 
