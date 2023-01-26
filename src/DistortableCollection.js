@@ -199,65 +199,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return reduce / imgs.length;
   },
 
-  _extractJSONDownloadURL(currentURL) {
-    const startIndex = currentURL.lastIndexOf('=');
-    const jsonDownloadURL = currentURL.slice(startIndex + 1);
-
-    return jsonDownloadURL;
-  },
-
-  _isJsonDetected(currentURL) {
-    if (currentURL.includes('?json=')) {
-      const startIndex = currentURL.lastIndexOf('.');
-      const fileExtension = currentURL.slice(startIndex + 1);
-
-      if (fileExtension === 'json') {
-        console.log('JSON found in map shareable link'); // left here purposely
-        return true;
-      }
-    }
-
-    return false;
-  },
-
-  async _generateFromJson(jsonDownloadURL) {
-    let index = 0;
-    const imgCollectionProps = [];
-
-    try {
-      const response = await axios.get(jsonDownloadURL);
-      if (response.data.images.length > 1) {
-        response.data.images.forEach((data) => {
-          imgCollectionProps[index] = data;
-          index++;
-        });
-        return {avg_cm_per_pixel: response.data.avg_cm_per_pixel, imgCollectionProps};
-      }
-      imgCollectionProps[index] = response.data.images;
-
-      return {avg_cm_per_pixel: response.data.avg_cm_per_pixel, imgCollectionProps};
-    } catch (err) {
-      console.log('err', err);
-    }
-  },
-
-  // expects URL in this format: http://localhost:8081/examples/shareable.html?json=https://archive.org/download/segeotest/segeotest.json
-  async generateFromJsonUrl(currentURL) {
-    let jsonDownloadURL;
-    let imageCollectionObj = {};
-
-    if (this._isJsonDetected(currentURL)) {
-      jsonDownloadURL = this._extractJSONDownloadURL(currentURL);
-    }
-
-    if (jsonDownloadURL) {
-      imageCollectionObj = await this._generateFromJson(jsonDownloadURL);
-      return imageCollectionObj;
-    };
-
-    return imageCollectionObj;
-  },
-
   generateExportJson(allImages = false) {
     const json = {};
     json.images = [];
@@ -278,7 +219,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
           src: layer._image.src,
           width: layer._image.width,
           height: layer._image.height,
-          tooltipText: layer.getTooltipText(),
           image_file_name: filename,
           nodes: corners,
           cm_per_pixel: L.ImageUtil.getCmPerPixel(layer),
