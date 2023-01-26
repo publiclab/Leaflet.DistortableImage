@@ -241,7 +241,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }
   },
 
-  // expects URL in this format: 'http://localhost:8081/examples/shareable.html?json=https://archive.org/download/segeotest/segeotest.json'
+  // expects URL in this format: http://localhost:8081/examples/shareable.html?json=https://archive.org/download/segeotest/segeotest.json
   async generateFromJsonUrl(currentURL) {
     let jsonDownloadURL;
     let imageCollectionObj = {};
