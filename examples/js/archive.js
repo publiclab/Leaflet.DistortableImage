@@ -14,6 +14,8 @@ let imageCount = 0;
 let fetchedFrom;
 let fetchedImages;
 let currPagination; // currPagination is used to initiate the Paginator Class
+let sidebarOpen = false;
+let mapReconstructionMode = false;
 
 const setupMap = () => {
   map = L.map('map').setView([51.505, -0.09], 13);
@@ -21,7 +23,13 @@ const setupMap = () => {
   map.attributionControl.setPosition('bottomleft');
 
   map.addGoogleMutant();
-  map.whenReady(() => {
+  map.whenReady((event) => {
+    if (isJsonDetected(location.href)) {
+      mapReconstructionMode = true;
+      new bootstrap.Modal(welcomeModal).hide();
+      return;
+    }
+    mapReconstructionMode = false;
     new bootstrap.Modal(welcomeModal).show();
   });
 };
@@ -130,31 +138,32 @@ const renderThumbnails = (thumbnails = [], url, fullResImgs) => {
 
 function showImages(getUrl) {
   const url = getUrl.replace('details', 'metadata');
-
   axios.get(url)
-      .then((response) => {
-        if (response.data.files && response.data.files.length != 0) {
-          fetchedImages = response.data.files; // <---- all files fetched
-          // runs a check to clear the sidebar, eventListeners and reset imageCount
-          if (currPagination) currPagination.clear(); imageContainer.textContent = ''; imageCount = 0;
-          currPagination = new Paginator(url, fetchedImages);
-          currPagination.processImgs(renderThumbnails, renderImages);
-          responseText.innerHTML = imageCount ? `${imageCount} image(s) fetched successfully from ${fetchedFrom.innerHTML}.` : 'No images found in the link provided...';
-        } else {
-          responseText.innerHTML = 'No images found in the link provided...';
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        responseText.innerHTML = 'Uh-oh! Something\'s not right with the link provided!';
-      })
-      .finally(() => {
-        bootstrap.Modal.getInstance(welcomeModal).hide();
-      });
+    .then((response) => {
+      if (response.data.files && response.data.files.length != 0) {
+        fetchedImages = response.data.files; // <---- all files fetched
+        // runs a check to clear the sidebar, eventListeners and reset imageCount
+        if (currPagination) currPagination.clear(); imageContainer.textContent = ''; imageCount = 0;
+        currPagination = new Paginator(url, fetchedImages);
+        currPagination.processImgs(renderThumbnails, renderImages);
+        responseText.innerHTML = imageCount ? `${imageCount} image(s) fetched successfully from ${fetchedFrom.innerHTML}.` : 'No images found in the link provided...';
+      } else {
+        responseText.innerHTML = 'No images found in the link provided...';
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      responseText.innerHTML = 'Uh-oh! Something\'s not right with the link provided!';
+    })
+    .finally(() => {
+      bootstrap.Modal.getInstance(welcomeModal).hide();
+    });
 }
 
 welcomeModal.addEventListener('hidden.bs.modal', (event) => {
   new bootstrap.Offcanvas(sidebar).show();
+  sidebarOpen = true;
+
 });
 
 restoreWelcomeModal.addEventListener('click', (event) => {
@@ -164,10 +173,13 @@ restoreWelcomeModal.addEventListener('click', (event) => {
 
 mapToggle.addEventListener('click', (event) => {
   new bootstrap.Offcanvas(sidebar).show();
+  sidebarOpen = true;
 });
 
 tileMap.addEventListener('click', (event) => {
-  bootstrap.Offcanvas.getInstance(sidebar).hide();
+  if (sidebarOpen) {
+    bootstrap.Offcanvas.getInstance(sidebar).hide();
+  }
 });
 
 function getImageName(imageURL) {
@@ -178,29 +190,145 @@ function getImageName(imageURL) {
   return imageName;
 }
 
+// --- Candidates to transfer 
+function extractJSONDownloadURL(url) {
+  const startIndex = url.lastIndexOf('=');
+  const jsonDownloadURL = url.slice(startIndex + 1);
+
+  return jsonDownloadURL;
+}
+
+function isJsonDetected(url) {
+  if (url.includes('?json=')) {
+    const startIndex = url.lastIndexOf('.');
+    const fileExtension = url.slice(startIndex + 1);
+
+    if (fileExtension === 'json') {
+      console.log('JSON found in map shareable link'); // left here purposely
+      return true;
+    }
+  }
+
+  return false;
+}
+
+//2. Connects to JSON file and fetches JSON data therein from remote source
+async function fetchRemoteJson(jsonDownloadURL) { //async function recreateMapFormJson(json) 
+  let index = 0;
+  const imgCollectionProps = [];
+
+  try {
+    const response = await axios.get(jsonDownloadURL);
+    if (response.data.images.length > 1) {
+      response.data.images.forEach((data) => {
+        imgCollectionProps[index] = data;
+        index++;
+      });
+      return {avg_cm_per_pixel: response.data.avg_cm_per_pixel, imgCollectionProps};
+    }
+    imgCollectionProps[index] = response.data.images;
+
+    return {avg_cm_per_pixel: response.data.avg_cm_per_pixel, imgCollectionProps};
+  } catch (err) {
+    console.log('err: ', err);
+  }
+}
+
+// 1. Performs preliminary checks and obtains map data (needed to reconstruct map in another function)
+// expects URL in this format: http://localhost:8081/examples/shareable.html?json=https://archive.org/download/segeotest/segeotest.json
+async function recreateMapDataFromJsonUrl(url) {  
+  // --- step 1.1 getURL
+  let jsonDownloadURL;
+  let imageCollectionObj = {};
+
+  if (isJsonDetected(url)) {
+    jsonDownloadURL = extractJSONDownloadURL(url);
+  } 
+  // -- step 1.2 Connects to JSON file and fetches JSON data therein from remote source
+  if (jsonDownloadURL) {
+    imageCollectionObj = await fetchRemoteJson(jsonDownloadURL);
+    return imageCollectionObj;
+  };
+
+  return imageCollectionObj;
+}
+// --- Candidates for transfer ends here
+
+// 3. Regenerates map or creates new map - must be invoked from within an eventlistner function
+// Renamed from "addImageOverlayToCollection" to "createMap" instead of "recreateMapFormJson(json)" you suggested
+// because this same function can be used to create:
+// i.fresh maps
+// ii. regenerate maps from map data (sourced from a JSON file remotely, from json local file dropped to the tileLayer) and 
+// iii. can be invoked from the any other source (e.g., localStorage)
+function createMap (imageURL, options, newImage = false) {
+  let image;
+  
+  if (!newImage) { 
+    image = L.distortableImageOverlay(
+      imageURL,
+      {tooltipText: options.tooltipText}
+    );
+  } else {
+    image = L.distortableImageOverlay(
+      imageURL,
+      {
+        height: options.height,
+        tooltipText: options.tooltipText,
+        corners: options.corners,
+      }
+    );
+  }
+
+  map.imgGroup.addLayer(image);
+};
+
+// Enables reconstruction of map using JsonUrl
+document.addEventListener('DOMContentLoaded', async (event) => {
+  if (mapReconstructionMode) {
+    console.log('Inside DOMContentLoader: ==>');
+    const url = location.href;
+    const imageCollectionObj = await recreateMapDataFromJsonUrl(url); 
+    const avg_cm_per_pixel = imageCollectionObj.avg_cm_per_pixel; 
+    
+    // console.log('imageCollectionObj:', imageCollectionObj);
+    // console.log('avg_cm_per_pixel: ', avg_cm_per_pixel);
+
+    if (imageCollectionObj.imgCollectionProps.length > 1) {
+      let imageURL;
+      let options;
+
+      imageCollectionObj.imgCollectionProps.forEach((imageObj) => {
+        imageURL = imageObj.src;
+        options = {
+          height: imageObj.height,
+          tooltipText: imageObj.tooltipText,
+          corners: imageObj.nodes,
+        };
+        createMap(imageURL, options, false);
+      });
+
+      return;
+    }
+
+    const imageObj = imageCollectionObj.imgCollectionProps[0];
+    const imageURL = imageObj[0].src;
+    const options = {
+      height: imageObj[0].height,
+      tooltipText: imageObj[0].tooltipText,
+      corners: imageObj[0].nodes,
+    }
+
+    createMap(imageURL, options, false);
+  }
+});
+
 document.addEventListener('click', (event) => {
   if (event.target.classList.contains('place-button')) {
     const imageURL = event.target.previousElementSibling.src;
     const imageTooltipText = getImageName(imageURL);
+    const options = {tooltipText: imageTooltipText};
 
-    const image = L.distortableImageOverlay(
-        imageURL,
-        {tooltipText: imageTooltipText}
-    );
-    map.imgGroup.addLayer(image);
+    createMap(imageURL, options, true);
+    return;
   }
 });
-
-// download JSON
-saveMap.addEventListener('click', () => {
-  const jsonImages = map.imgGroup.generateExportJson(true).images;
-    // a check to prevent download of empty file
-    if (jsonImages.length) {
-      const encodedFile = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(jsonImages));
-      const a = document.createElement('a');
-      a.href = 'data:' + encodedFile;
-      const fileName = prompt('Use this file to recover your map’s saved state. Enter filename:');
-      a.download = fileName ? fileName + '.json' : 'MapknitterLite.json';
-      a.click();
-    }
-})
