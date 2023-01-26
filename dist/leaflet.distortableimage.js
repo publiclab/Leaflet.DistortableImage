@@ -405,11 +405,25 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, 0);
     return reduce / imgs.length;
   },
+  isJsonDetected: function isJsonDetected(currentURL) {
+    if (currentURL.includes('?json=')) {
+      startIndex = currentURL.lastIndexOf('.');
+      fileExtension = currentURL.slice(startIndex + 1);
+
+      if (fileExtension === 'json') {
+        console.log('JSON found in map shareable link');
+        return true;
+      }
+    }
+
+    return false;
+  },
   generateExportJson: function generateExportJson() {
+    var allImages = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
     var json = {};
     json.images = [];
     this.eachLayer(function (layer) {
-      if (this.isCollected(layer)) {
+      if (allImages || this.isCollected(layer)) {
         var sections = layer._image.src.split('/');
 
         var filename = sections[sections.length - 1];
@@ -7286,7 +7300,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "400e667cbaf175eb687b"; }
+/******/ 		__webpack_require__.h = function() { return "e25f8be8eeb066dddf26"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */

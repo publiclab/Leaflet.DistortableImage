@@ -171,8 +171,8 @@ tileMap.addEventListener('click', (event) => {
 });
 
 function getImageName(imageURL) {
-  startIndex = imageURL.lastIndexOf('/') + 1;
-  endIndex = imageURL.lastIndexOf('.');
+  const startIndex = imageURL.lastIndexOf('/') + 1;
+  const endIndex = imageURL.lastIndexOf('.');
   const imageName = imageURL.substring(startIndex, endIndex);
 
   return imageName;
@@ -190,3 +190,17 @@ document.addEventListener('click', (event) => {
     map.imgGroup.addLayer(image);
   }
 });
+
+// download JSON
+saveMap.addEventListener('click', () => {
+  const jsonImages = map.imgGroup.generateExportJson(true).images;
+    // a check to prevent download of empty file
+    if (jsonImages.length) {
+      const encodedFile = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(jsonImages));
+      const a = document.createElement('a');
+      a.href = 'data:' + encodedFile;
+      const fileName = prompt('Use this file to recover your map’s saved state. Enter filename:');
+      a.download = fileName ? fileName + '.json' : 'MapknitterLite.json';
+      a.click();
+    }
+})

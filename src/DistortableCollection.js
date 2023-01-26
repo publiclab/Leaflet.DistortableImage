@@ -212,12 +212,12 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return false;
   },
 
-  generateExportJson() {
+  generateExportJson(allImages = false) {
     const json = {};
     json.images = [];
 
     this.eachLayer(function(layer) {
-      if (this.isCollected(layer)) {
+      if (allImages || this.isCollected(layer)) {
         const sections = layer._image.src.split('/');
         const filename = sections[sections.length-1];
         const zc = layer.getCorners();
@@ -241,7 +241,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     json.images = json.images.reverse();
     json.avg_cm_per_pixel = this._getAvgCmPerPixel(json.images);
-
     return json;
   },
 });
