@@ -257,9 +257,8 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     return imageCollectionObj;
   },
-  
-  generateExportJson(allImages = false) {
 
+  generateExportJson(allImages = false) {
     const json = {};
     json.images = [];
 
