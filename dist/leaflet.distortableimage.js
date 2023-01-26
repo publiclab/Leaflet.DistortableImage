@@ -1,6 +1,3 @@
-/*! For license information please see leaflet.distortableimage.js.LICENSE.txt */
-!function(){var t={808:function(){function t(e){return t="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t},t(e)}function e(){"use strict";e=function(){return i};var i={},o=Object.prototype,n=o.hasOwnProperty,a=Object.defineProperty||function(t,e,i){t[e]=i.value},r="function"==typeof Symbol?Symbol:{},s=r.iterator||"@@iterator",l=r.asyncIterator||"@@asyncIterator",c=r.toStringTag||"@@toStringTag";function d(t,e,i){return Object.defineProperty(t,e,{value:i,enumerable:!0,configurable:!0,writable:!0}),t[e]}try{d({},"")}catch(t){d=function(t,e,i){return t[e]=i}}function h(t,e,i,o){var n=e&&e.prototype instanceof m?e:m,r=Object.create(n.prototype),s=new T(o||[]);return a(r,"_invoke",{value:D(t,i,s)}),r}function u(t,e,i){try{return{type:"normal",arg:t.call(e,i)}}catch(t){return{type:"throw",arg:t}}}i.wrap=h;var g={};function m(){}function p(){}function f(){}var v={};d(v,s,(function(){return this}));var _=Object.getPrototypeOf,L=_&&_(_(E([])));L&&L!==o&&n.call(L,s)&&(v=L);var b=f.prototype=m.prototype=Object.create(v);function y(t){["next","throw","return"].forEach((function(e){d(t,e,(function(t){return this._invoke(e,t)}))}))}function k(e,i){function o(a,r,s,l){var c=u(e[a],e,r);if("throw"!==c.type){var d=c.arg,h=d.value;return h&&"object"==t(h)&&n.call(h,"__await")?i.resolve(h.__await).then((function(t){o("next",t,s,l)}),(function(t){o("throw",t,s,l)})):i.resolve(h).then((function(t){d.value=t,s(d)}),(function(t){return o("throw",t,s,l)}))}l(c.arg)}var r;a(this,"_invoke",{value:function(t,e){function n(){return new i((function(i,n){o(t,e,i,n)}))}return r=r?r.then(n,n):n()}})}function D(t,e,i){var o="suspendedStart";return function(n,a){if("executing"===o)throw new Error("Generator is already running");if("completed"===o){if("throw"===n)throw a;return{value:void 0,done:!0}}for(i.method=n,i.arg=a;;){var r=i.delegate;if(r){var s=M(r,i);if(s){if(s===g)continue;return s}}if("next"===i.method)i.sent=i._sent=i.arg;else if("throw"===i.method){if("suspendedStart"===o)throw o="completed",i.arg;i.dispatchException(i.arg)}else"return"===i.method&&i.abrupt("return",i.arg);o="executing";var l=u(t,e,i);if("normal"===l.type){if(o=i.done?"completed":"suspendedYield",l.arg===g)continue;return{value:l.arg,done:i.done}}"throw"===l.type&&(o="completed",i.method="throw",i.arg=l.arg)}}}function M(t,e){var i=e.method,o=t.iterator[i];if(void 0===o)return e.delegate=null,"throw"===i&&t.iterator.return&&(e.method="return",e.arg=void 0,M(t,e),"throw"===e.method)||"return"!==i&&(e.method="throw",e.arg=new TypeError("The iterator does not provide a '"+i+"' method")),g;var n=u(o,t.iterator,e.arg);if("throw"===n.type)return e.method="throw",e.arg=n.arg,e.delegate=null,g;var a=n.arg;return a?a.done?(e[t.resultName]=a.value,e.next=t.nextLoc,"return"!==e.method&&(e.method="next",e.arg=void 0),e.delegate=null,g):a:(e.method="throw",e.arg=new TypeError("iterator result is not an object"),e.delegate=null,g)}function I(t){var e={tryLoc:t[0]};1 in t&&(e.catchLoc=t[1]),2 in t&&(e.finallyLoc=t[2],e.afterLoc=t[3]),this.tryEntries.push(e)}function A(t){var e=t.completion||{};e.type="normal",delete e.arg,t.completion=e}function T(t){this.tryEntries=[{tryLoc:"root"}],t.forEach(I,this),this.reset(!0)}function E(t){if(t){var e=t[s];if(e)return e.call(t);if("function"==typeof t.next)return t;if(!isNaN(t.length)){var i=-1,o=function e(){for(;++i<t.length;)if(n.call(t,i))return e.value=t[i],e.done=!1,e;return e.value=void 0,e.done=!0,e};return o.next=o}}return{next:x}}function x(){return{value:void 0,done:!0}}return p.prototype=f,a(b,"constructor",{value:f,configurable:!0}),a(f,"constructor",{value:p,configurable:!0}),p.displayName=d(f,c,"GeneratorFunction"),i.isGeneratorFunction=function(t){var e="function"==typeof t&&t.constructor;return!!e&&(e===p||"GeneratorFunction"===(e.displayName||e.name))},i.mark=function(t){return Object.setPrototypeOf?Object.setPrototypeOf(t,f):(t.__proto__=f,d(t,c,"GeneratorFunction")),t.prototype=Object.create(b),t},i.awrap=function(t){return{__await:t}},y(k.prototype),d(k.prototype,l,(function(){return this})),i.AsyncIterator=k,i.async=function(t,e,o,n,a){void 0===a&&(a=Promise);var r=new k(h(t,e,o,n),a);return i.isGeneratorFunction(e)?r:r.next().then((function(t){return t.done?t.value:r.next()}))},y(b),d(b,c,"Generator"),d(b,s,(function(){return this})),d(b,"toString",(function(){return"[object Generator]"})),i.keys=function(t){var e=Object(t),i=[];for(var o in e)i.push(o);return i.reverse(),function t(){for(;i.length;){var o=i.pop();if(o in e)return t.value=o,t.done=!1,t}return t.done=!0,t}},i.values=E,T.prototype={constructor:T,reset:function(t){if(this.prev=0,this.next=0,this.sent=this._sent=void 0,this.done=!1,this.delegate=null,this.method="next",this.arg=void 0,this.tryEntries.forEach(A),!t)for(var e in this)"t"===e.charAt(0)&&n.call(this,e)&&!isNaN(+e.slice(1))&&(this[e]=void 0)},stop:function(){this.done=!0;var t=this.tryEntries[0].completion;if("throw"===t.type)throw t.arg;return this.rval},dispatchException:function(t){if(this.done)throw t;var e=this;function i(i,o){return r.type="throw",r.arg=t,e.next=i,o&&(e.method="next",e.arg=void 0),!!o}for(var o=this.tryEntries.length-1;o>=0;--o){var a=this.tryEntries[o],r=a.completion;if("root"===a.tryLoc)return i("end");if(a.tryLoc<=this.prev){var s=n.call(a,"catchLoc"),l=n.call(a,"finallyLoc");if(s&&l){if(this.prev<a.catchLoc)return i(a.catchLoc,!0);if(this.prev<a.finallyLoc)return i(a.finallyLoc)}else if(s){if(this.prev<a.catchLoc)return i(a.catchLoc,!0)}else{if(!l)throw new Error("try statement without catch or finally");if(this.prev<a.finallyLoc)return i(a.finallyLoc)}}}},abrupt:function(t,e){for(var i=this.tryEntries.length-1;i>=0;--i){var o=this.tryEntries[i];if(o.tryLoc<=this.prev&&n.call(o,"finallyLoc")&&this.prev<o.finallyLoc){var a=o;break}}a&&("break"===t||"continue"===t)&&a.tryLoc<=e&&e<=a.finallyLoc&&(a=null);var r=a?a.completion:{};return r.type=t,r.arg=e,a?(this.method="next",this.next=a.finallyLoc,g):this.complete(r)},complete:function(t,e){if("throw"===t.type)throw t.arg;return"break"===t.type||"continue"===t.type?this.next=t.arg:"return"===t.type?(this.rval=this.arg=t.arg,this.method="return",this.next="end"):"normal"===t.type&&e&&(this.next=e),g},finish:function(t){for(var e=this.tryEntries.length-1;e>=0;--e){var i=this.tryEntries[e];if(i.finallyLoc===t)return this.complete(i.completion,i.afterLoc),A(i),g}},catch:function(t){for(var e=this.tryEntries.length-1;e>=0;--e){var i=this.tryEntries[e];if(i.tryLoc===t){var o=i.completion;if("throw"===o.type){var n=o.arg;A(i)}return n}}throw new Error("illegal catch attempt")},delegateYield:function(t,e,i){return this.delegate={iterator:E(t),resultName:e,nextLoc:i},"next"===this.method&&(this.arg=void 0),g}},i}function i(t,e,i,o,n,a,r){try{var s=t[a](r),l=s.value}catch(t){return void i(t)}s.done?e(l):Promise.resolve(l).then(o,n)}function o(t){return function(){var e=this,o=arguments;return new Promise((function(n,a){var r=t.apply(e,o);function s(t){i(r,n,a,s,l,"next",t)}function l(t){i(r,n,a,s,l,"throw",t)}s(void 0)}))}}var n=[];L.DistortableCollection=L.FeatureGroup.extend({options:{editable:!0,exportOpts:{exportStartUrl:"//export.mapknitter.org/export",statusUrl:"//export.mapknitter.org",exportUrl:"http://export.mapknitter.org/"}},initialize:function(t){L.setOptions(this,t),L.FeatureGroup.prototype.initialize.call(this,t),L.Utils.initTranslation.call(this),this.editable=this.options.editable},onAdd:function(t){L.FeatureGroup.prototype.onAdd.call(this,t),this._map=t,this.editable&&this.editing.enable(),this.on("layeradd",this._addEvents,this),this.on("layerremove",this._removeEvents,this)},onRemove:function(){this.editing&&this.editing.disable(),this.off("layeradd",this._addEvents,this),this.off("layerremove",this._removeEvents,this)},_addEvents:function(t){var e=t.layer;L.DomEvent.on(e,{dragstart:this._dragStartMultiple,drag:this._dragMultiple},this),L.DomEvent.on(e.getElement(),{mousedown:this._deselectOthers,contextmenu:this._longPressMultiSelect},this)},_removeEvents:function(t){var e=t.layer;L.DomEvent.off(e,{dragstart:this._dragStartMultiple,drag:this._dragMultiple},this),L.DomEvent.off(e.getElement(),{mousedown:this._deselectOthers,contextmenu:this._longPressMultiSelect},this)},_longPressMultiSelect:function(t){var e=this;this.editable&&(t.preventDefault(),this.eachLayer((function(i){var o=i.editing;i.getElement()===t.target&&o.enabled()&&(L.DomUtil.toggleClass(i.getElement(),"collected"),e.anyCollected()?(i.deselect(),e.editing._addToolbar()):e.editing._removeToolbar())})))},isCollected:function(t){return L.DomUtil.hasClass(t.getElement(),"collected")},anyCollected:function(){return this.getLayers().some(this.isCollected.bind(this))},_toggleCollected:function(t,e){t.shiftKey&&e.editing.enabled()&&(L.DomUtil.toggleClass(t.target,"collected"),n.every((function(t){return t._leaflet_id!==e._leaflet_id}))?n.push(e):n.splice(n.indexOf(e),1)),this.anyCollected()?e.deselect():this.editing._removeToolbar()},_deselectOthers:function(t){var e=this;this.editable&&(this.eachLayer((function(i){i.getElement()!==t.target?i.deselect():e._toggleCollected(t,i)})),t&&L.DomEvent.stopPropagation(t))},_dragStartMultiple:function(t){var e,i=t.target,o=this._map;this.isCollected(i)&&this.eachLayer((function(t){for(t._dragStartPoints={},t.deselect(),e=0;e<4;e++){var i=t.getCorner(e);t._dragStartPoints[e]=o.latLngToLayerPoint(i)}}))},_dragMultiple:function(t){var e=t.target,i=this._map;if(this.isCollected(e)){var o=i.latLngToLayerPoint(e.getCorner(0)),n=e._dragStartPoints[0].subtract(o);this._updateCollectionFromPoints(n,e)}},_toRemove:function(){var t=this;return this.getLayers().filter((function(e){var i=e.editing._mode;return t.isCollected(e)&&"lock"!==i}))},_toMove:function(t){var e=this;return this.getLayers().filter((function(i){var o=i.editing._mode;return i!==t&&e.isCollected(i)&&"lock"!==o}))},_updateCollectionFromPoints:function(t,e){var i,o=this._toMove(e),n=new L.Transformation(1,-t.x,1,-t.y);o.forEach((function(t){var e={};for(i=0;i<4;i++)e[i]=n.transform(t._dragStartPoints[i]);t.setCornersFromPoints(e)}))},_getAvgCmPerPixel:function(t){return t.reduce((function(t,e){return t+e.cm_per_pixel}),0)/t.length},_extractJSONDownloadURL:function(t){var e=t.lastIndexOf("=");return t.slice(e+1)},_isJsonDetected:function(t){if(t.includes("?json=")){var e=t.lastIndexOf(".");if("json"===t.slice(e+1))return console.log("JSON found in map shareable link"),!0}return!1},_generateFromJson:function(t){return o(e().mark((function i(){var o,n,a;return e().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:return o=0,n=[],e.prev=2,e.next=5,axios.get(t);case 5:if(!((a=e.sent).data.images.length>1)){e.next=9;break}return a.data.images.forEach((function(t){n[o]=t,o++})),e.abrupt("return",{avg_cm_per_pixel:a.data.avg_cm_per_pixel,imgCollectionProps:n});case 9:return n[o]=a.data.images,e.abrupt("return",{avg_cm_per_pixel:a.data.avg_cm_per_pixel,imgCollectionProps:n});case 13:e.prev=13,e.t0=e.catch(2),console.log("err",e.t0);case 16:case"end":return e.stop()}}),i,null,[[2,13]])})))()},generateFromJsonUrl:function(t){var i=this;return o(e().mark((function o(){var n,a;return e().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:if(a={},i._isJsonDetected(t)&&(n=i._extractJSONDownloadURL(t)),!n){e.next=7;break}return e.next=5,i._generateFromJson(n);case 5:return a=e.sent,e.abrupt("return",a);case 7:return e.abrupt("return",a);case 9:case"end":return e.stop()}}),o)})))()},generateExportJson:function(){var t={images:[]};return this.eachLayer((function(e){if(this.isCollected(e)){var i=e._image.src.split("/"),o=i[i.length-1],n=e.getCorners(),a=[{lat:n[0].lat,lon:n[0].lng},{lat:n[1].lat,lon:n[1].lng},{lat:n[3].lat,lon:n[3].lng},{lat:n[2].lat,lon:n[2].lng}];t.images.push({id:e._leaflet_id,src:e._image.src,width:e._image.width,height:e._image.height,tooltipText:e.getTooltipText(),image_file_name:o,nodes:a,cm_per_pixel:L.ImageUtil.getCmPerPixel(e)})}}),this),t.images=t.images.reverse(),t.avg_cm_per_pixel=this._getAvgCmPerPixel(t.images),t}}),L.distortableCollection=function(t,e){return new L.DistortableCollection(t,e)}},477:function(){L.DistortableImageOverlay=L.ImageOverlay.extend({options:{height:200,crossOrigin:!0,edgeMinWidth:50,editable:!0,mode:"distort",selected:!1,interactive:!0,tooltipText:""},initialize:function(t,e){L.setOptions(this,e),L.Utils.initTranslation.call(this),this.edgeMinWidth=this.options.edgeMinWidth,this.editable=this.options.editable,this._selected=this.options.selected,this._url=t,this.rotation={},this.interactive=this.options.interactive,this.tooltipText=this.options.tooltipText},onAdd:function(t){var e=this;this._map=t,this.getElement()||this._initImage(),t.on("viewreset",this._reset,this),this.options.corners&&(this._corners=this.options.corners,t.options.zoomAnimation&&L.Browser.any3d&&t.on("zoomanim",this._animateZoom,this)),L.DomEvent.on(this.getElement(),"load",(function(){if(e.getPane().appendChild(e.getElement()),e._initImageDimensions(),e.options.rotation){var i=e.options.rotation.deg>=0?"deg":"rad";e.setAngle(e.options.rotation[i],i)}else e.rotation={deg:0,rad:0},e._reset();e._corners||t.options.zoomAnimation&&L.Browser.any3d&&t.on("zoomanim",e._animateZoom,e);var o=e._eventParents;o?(e.eP=o[Object.keys(o)[0]],e.eP.editable&&e.editing.enable()):(e.editable&&e.editing.enable(),e.eP=null)})),L.DomEvent.on(this.getElement(),"click",this.select,this),L.DomEvent.on(t,{singleclickon:this._singleClickListeners,singleclickoff:this._resetClickListeners,singleclick:this._singleClick},this),t.doubleClickZoom.enabled()||t.doubleClickLabels.enabled()||L.DomEvent.on(t,"click",this.deselect,this),this.fire("add"),L.DomEvent.on(this.getElement(),"mousemove",this.activateTooltip,this),L.DomEvent.on(this.getElement(),"mouseout",this.closeTooltip,this)},onRemove:function(t){L.DomEvent.off(this.getElement(),"click",this.select,this),L.DomEvent.off(t,{singleclickon:this._singleClickListeners,singleclickoff:this._resetClickListeners,singleclick:this._singleClick},this),L.DomEvent.off(t,"click",this.deselect,this),this.editing&&this.editing.disable(),this.fire("remove"),L.ImageOverlay.prototype.onRemove.call(this,t),L.DomEvent.on(this.getElement(),"mouseout",this.closeTooltip,this),L.DomEvent.off(this.getElement(),"mousemove",this.deactivateTooltip,this)},_initImageDimensions:function(){var t=this._map,e=L.DomUtil.getStyle(this.getElement(),"width"),i=L.DomUtil.getStyle(this.getElement(),"height"),o=parseInt(e)/parseInt(i),n=this.options.height,a=parseInt(o*n),r=t.project(t.getCenter()),s=L.point(a,n).divideBy(2);this.options.corners?this._corners=this.options.corners:this._corners=[t.unproject(r.subtract(s)),t.unproject(r.add(L.point(s.x,-s.y))),t.unproject(r.add(L.point(-s.x,s.y))),t.unproject(r.add(s))],this._initialDimensions={center:r,offset:s,zoom:t.getZoom()},this.setBounds(L.latLngBounds(this.getCorners()))},_singleClick:function(t){"singleclick"===t.type&&this.deselect()},_singleClickListeners:function(){var t=this._map;L.DomEvent.off(t,"click",this.deselect,this),L.DomEvent.on(t,"singleclick",this.deselect,this)},_resetClickListeners:function(){var t=this._map;L.DomEvent.on(t,"click",this.deselect,this),L.DomEvent.off(t,"singleclick",this.deselect,this)},isSelected:function(){return this._selected},deselect:function(){var t=this.editing;if(t.enabled())return t._removeToolbar(),t._hideMarkers(),this._selected=!1,this.fire("deselect"),this},select:function(t){var e=this.editing,i=this.eP;if(e.enabled()){if(t&&L.DomEvent.stopPropagation(t),this._programmaticGrouping(),this._selected=!0,e._addToolbar(),e._showMarkers(),this.fire("select"),!i||!i.anyCollected())return this;this.deselect()}},_programmaticGrouping:function(){this._map.eachLayer((function(t){t instanceof L.DistortableImageOverlay&&t.deselect()}))},setCorner:function(t,e){var i=this.editing;return this._corners[t]=e,this.setBounds(L.latLngBounds(this.getCorners())),this.fire("update"),i.toolbar&&i.toolbar instanceof L.DistortableImage.PopupBar&&i._updateToolbarPos(),this.edited=!0,this},_cornerExceedsMapLats:function(t,e,i){return i.options.crs.Simple!=L.CRS.Simple&&(0===t?(o=i.project(e).y<2,n=i.project(e).y>=255):(o=i.project(e).y/t<2,n=i.project(e).y/Math.pow(2,t)>=255),o||n);var o,n},activateTooltip:function(){this._selected||this.bindTooltip(this.tooltipText,{direction:"top"}).openTooltip()},closeToolTip:function(){this.closeTooltip()},deactivateTooltip:function(){this.unbindTooltip()},setCorners:function(t){var e=this._map,i=e.getZoom(),o=this.editing,n=0;for(var a in t)if(this._cornerExceedsMapLats(i,t[a],e))return this.setBounds(L.latLngBounds(this.getCorners())),void this.fire("update");for(var r in t)this._corners[n]=t[r],n+=1;return this.setBounds(L.latLngBounds(this.getCorners())),this.fire("update"),o.toolbar&&o.toolbar instanceof L.DistortableImage.PopupBar&&o._updateToolbarPos(),this.edited=!0,this},setCornersFromPoints:function(t){var e=this._map,i=e.getZoom(),o=this.editing,n=0;for(var a in t){var r=e.layerPointToLatLng(t[a]);if(this._cornerExceedsMapLats(i,r,e))return this.setBounds(L.latLngBounds(this.getCorners())),void this.fire("update")}for(var s in t)this._corners[n]=e.layerPointToLatLng(t[s]),n+=1;return this.setBounds(L.latLngBounds(this.getCorners())),this.fire("update"),o.toolbar&&o.toolbar instanceof L.DistortableImage.PopupBar&&o._updateToolbarPos(),this.edited=!0,this},scaleBy:function(t){var e,i,o=this._map,n=o.project(this.getCenter()),a={};if(0!==t){for(e=0;e<4;e++)i=o.project(this.getCorner(e)).subtract(n).multiplyBy(t).add(n),a[e]=o.unproject(i);return this.setCorners(a),this}},getAngle:function(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:"deg",e=this.getElement().style[L.DomUtil.TRANSFORM].split("matrix3d")[1].slice(1,-1).split(","),i=e[0],o=e[1],n=e[4],a=e[5],r=i*a-o*n,s=L.TrigUtil.calcAngle(i,o,"rad");return r<0&&(s+=s<0?Math.PI:-Math.PI),s<0&&(s=2*Math.PI+s),"deg"===t?Math.round(L.TrigUtil.radiansToDegrees(s)):L.Util.formatNum(s,2)},setAngle:function(t){var e=arguments.length>1&&void 0!==arguments[1]?arguments[1]:"deg",i=this.getAngle(e),o=t-i;return this.rotateBy(o,e),this},rotateBy:function(t){var e,i,o,n=arguments.length>1&&void 0!==arguments[1]?arguments[1]:"deg",a=this._map,r=a.project(this.getCenter()),s={};for("deg"===n&&(t=L.TrigUtil.degreesToRadians(t)),e=0;e<4;e++)i=a.project(this.getCorner(e)).subtract(r),o=L.point(Math.cos(t)*i.x-Math.sin(t)*i.y,Math.sin(t)*i.x+Math.cos(t)*i.y),s[e]=a.unproject(o.add(r));return this.setCorners(s),this},dragBy:function(t,e){var i,o,n=this._map,a={},r=n.project(t).subtract(n.project(e));for(i=0;i<4;i++)o=n.project(this.getCorner(i)).subtract(r),a[i]=n.unproject(o);this.setCorners(a)},restore:function(){for(var t=this._map,e=this._initialDimensions.center,i=this._initialDimensions.offset,o=this._initialDimensions.zoom,n=[e.subtract(i),e.add(L.point(i.x,-i.y)),e.add(L.point(-i.x,i.y)),e.add(i)],a=0;a<4;a++)t.unproject(n[a],o).equals(this.getCorner(a))||this.setCorner(a,t.unproject(n[a],o));return this.edited=!1,this.fire("restore"),this},_getTranslateString:function(t){var e=L.Browser.webkit3d,i=(e?",0":"")+")";return"translate"+(e?"3d":"")+"("+t.x+"px,"+t.y+"px"+i},_reset:function(){var t=this._map,e=this.getElement(),i=L.bind(t.latLngToLayerPoint,t),o=this._calculateProjectiveTransform(i),n=i(this.getCorner(0)),a=L.DomUtil.getMatrixString(o),r=this._getTranslateString(n);e._leaflet_pos=n,e.style[L.DomUtil.TRANSFORM]=[r,a].join(" "),e.style[L.DomUtil.TRANSFORM+"-origin"]="0 0 0",this.rotation.deg=this.getAngle(),this.rotation.rad=this.getAngle("rad")},_animateZoom:function(t){var e=this._map,i=this.getElement(),o=function(i){return e._latLngToNewLayerPoint(i,t.zoom,t.center)},n=this._calculateProjectiveTransform(o),a=o(this.getCorner(0)),r=L.DomUtil.getMatrixString(n),s=this._getTranslateString(a);i._leaflet_pos=a,i.style[L.DomUtil.TRANSFORM]=[s,r].join(" ")},getCorners:function(){return this._corners},getCorner:function(t){return this._corners[t]},getCenter:function(){var t=this._map,e=this.getCorners().reduce((function(e,i){return e.add(t.project(i))}),L.point(0,0));return t.unproject(e.divideBy(4))},_calculateProjectiveTransform:function(t){var e,i=t(this.getCorner(0)),o=this.getElement().offsetWidth||500,n=this.getElement().offsetHeight||375,a=[];for(e=0;e<4;e++)a.push(t(this.getCorner(e))._subtract(i));return L.MatrixUtil.general2DProjection(0,0,a[0].x,a[0].y,o,0,a[1].x,a[1].y,0,n,a[2].x,a[2].y,o,n,a[3].x,a[3].y)}}),L.distortableImageOverlay=function(t,e){return new L.DistortableImageOverlay(t,e)},L.Map.addInitHook((function(){L.DomUtil.hasClass(this.getContainer(),"ldi")||L.DomUtil.addClass(this.getContainer(),"ldi")}))},782:function(){var t=this;L.DomUtil=L.DomUtil||{},L.DistortableImage=L.DistortableImage||{},L.distortableImage=L.DistortableImage,L.DistortableImage.Keymapper=L.Handler.extend({options:{position:"topright"},initialize:function(t,e){this._map=t,L.setOptions(this,e)},addHooks:function(){this._keymapper||(this._container=this._buildContainer(),this._scrollWrapper=this._wrap(),this._toggler=this._createButton(),this._setMapper(this._container,this._scrollWrapper,this._toggler),L.DomEvent.on(this._toggler,"click",this._toggleKeymapper,this),L.DomEvent.disableClickPropagation(this._container),L.DomEvent.disableScrollPropagation(this._container))},removeHooks:function(){this._keymapper&&(L.DomEvent.off(this._toggler,"click",this._toggleKeymapper,this),L.DomUtil.remove(this._toggler),L.DomUtil.remove(this._scrollWrapper),L.DomUtil.remove(this._container),this._keymapper=!1)},_buildContainer:function(){var t=L.DomUtil.create("div","ldi-keymapper-hide");t.setAttribute("id","ldi-keymapper");var e=L.DomUtil.create("br","divider");return t.appendChild(e),t},_createButton:function(){var t=L.DomUtil.create("a","");return t.innerHTML=L.IconUtil.create("keyboard_open"),t.setAttribute("id","toggle-keymapper"),t.setAttribute("href","#"),t.setAttribute("title","Show keymap"),t.setAttribute("role","button"),t.setAttribute("aria-label","Show keymap"),t},_wrap:function(){var t=L.DomUtil.create("div","");return t.setAttribute("id","keymapper-wrapper"),t.style.display="none",t},_setMapper:function(t,e,i){this._keymapper=L.control({position:this.options.position}),this._keymapper.onAdd=function(){return t.appendChild(e),e.insertAdjacentHTML("beforeend",'<table><tbody><hr id="keymapper-hr"><tr><td><div class="left"><span>Rotate Mode</span></div><div class="right"><kbd>R</kbd></div></td></tr><tr><td><div class="left"><span>RotateScale Mode</span></div><div class="right"><kbd>r</kbd></div></td></tr><tr><td><div class="left"><span>Scale Mode</span></div><div class="right"><kbd>s</kbd></div></td></tr><tr><td><div class="left"><span>Distort Mode</span></div><div class="right"><kbd>d</kbd></div></td></tr><tr><td><div class="left"><span>Drag Mode</span></div><div class="right"><kbd>D</kbd></div></td></tr><tr><td><div class="left"><span>Lock (Mode) / Unlock Image</span></div><div class="right"><kbd>l</kbd> <kbd>u</kbd></div></td></tr><tr><td><div class="left"><span>Stack up / down</span></div><div class="right"><kbd>q</kbd> <kbd>a</kbd></div></td></tr><tr><td><div class="left"><span>Add / Remove Image Border</span></div><div class="right"><kbd>b</kbd></div></td></tr><tr><td><div class="left"><span>Toggle Opacity</span></div><div class="right"><kbd>o</kbd></div></td></tr><tr><td><div class="left"><span>Deselect All</span></div><div class="right"><kbd>esc</kbd></div></td></tr><tr><td><div class="left"><span>Delete Image(s)</span></div><div class="right"><kbd>delete</kbd> <kbd>backspace</kbd></div></td></tr><tr><td><div class="left"><span>Export Image(s)</span></div><div class="right"><kbd>e</kbd></div></td></tr></tbody></table>'),t.appendChild(i),t},this._keymapper.addTo(this._map)},_toggleKeymapper:function(t){t.preventDefault(),this._container.className="ldi-keymapper leaflet-control"===this._container.className?"ldi-keymapper-hide leaflet-control":"ldi-keymapper leaflet-control",this._scrollWrapper.style.display="none"===this._scrollWrapper.style.display?"block":"none",this._toggler.innerHTML="close"===this._toggler.innerHTML?L.IconUtil.create("keyboard_open"):"close",L.IconUtil.toggleTitle(this._toggler,"Show keymap","Hide keymap"),L.DomUtil.toggleClass(this._toggler,"close-icon")},_injectIconSet:function(){if(!document.querySelector("#keymapper-iconset")){var t=L.DomUtil.create("div","");t.id="keymapper-iconset",t.setAttribute("hidden","hidden"),this._iconset=(new L.KeymapperIconSet).render(),t.innerHTML=this._iconset,document.querySelector(".leaflet-control-container").appendChild(t)}}}),L.DistortableImage.Keymapper.addInitHook((function(){L.DistortableImage.Keymapper.prototype._n=L.DistortableImage.Keymapper.prototype._n?L.DistortableImage.Keymapper.prototype._n+1:1,1!==L.DistortableImage.Keymapper.prototype._n||L.Browser.mobile||(t.enable(),t._injectIconSet())})),L.distortableImage.keymapper=function(t,e){return new L.DistortableImage.Keymapper(t,e)}},428:function(){L.DistortableImage=L.DistortableImage||{},L.DistortableCollection.Edit=L.Handler.extend({options:{keymap:L.distortableImage.group_action_map},initialize:function(t,e){this._group=t,this._exportOpts=t.options.exportOpts,L.setOptions(this,e),L.distortableImage.group_action_map.Escape="_decollectAll"},addHooks:function(){var t=this._group._map;this.editActions=this.options.actions,this.runExporter=L.bind(L.Utils.getNestedVal(this,"_exportOpts","exporter")||this.startExport,this),L.DomEvent.on(document,"keydown",this._onKeyDown,this),t.doubleClickZoom.enabled()||t.doubleClickLabels.enabled()||L.DomEvent.on(t,"click",this._decollectAll,this),L.DomEvent.on(t,{singleclickon:this._singleClickListeners,singleclickoff:this._resetClickListeners,singleclick:this._singleClick,boxcollectend:this._addCollections},this),this._group.editable=!0,this._group.eachLayer((function(t){return t.editing.enable()}))},removeHooks:function(){var t=this._group._map;L.DomEvent.off(document,"keydown",this._onKeyDown,this),t.doubleClickZoom.enabled()||t.doubleClickLabels.enabled()||L.DomEvent.off(t,"click",this._decollectAll,this),L.DomEvent.off(t,{singleclickon:this._singleClickListeners,singleclickoff:this._resetClickListeners,singleclick:this._singleClick,boxcollectend:this._addCollections},this),this._decollectAll(),this._group.editable=!1,this._group.eachLayer((function(t){return t.editing.disable()}))},enable:function(){return this._enabled=!0,this.addHooks(),this},disable:function(){return this._enabled=!1,this.removeHooks(),this},_onKeyDown:function(t){var e=this.options.keymap[t.key];this[e]&&this._group.anyCollected()&&this[e].call(this)},_singleClick:function(t){"singleclick"===t.type&&this._decollectAll(t)},_singleClickListeners:function(){var t=this._group._map;L.DomEvent.off(t,"click",this._decollectAll,this),L.DomEvent.on(t,"singleclick",this._decollectAll,this)},_resetClickListeners:function(){var t=this._group._map;L.DomEvent.on(t,"click",this._decollectAll,this),L.DomEvent.off(t,"singleclick",this._decollectAll,this)},_decollectAll:function(t){var e;t&&(e=t.originalEvent),e&&(e.shiftKey||e.target instanceof HTMLImageElement)||(this._group.eachLayer((function(t){L.DomUtil.removeClass(t.getElement(),"collected"),t.deselect()})),this._removeToolbar(),t&&L.DomEvent.stopPropagation(t))},_unlockGroup:function(){var t=this;this.hasTool(L.UnlockAction)&&this._group.eachLayer((function(e){t._group.isCollected(e)&&(e.editing._unlock(),e.deselect())}))},_lockGroup:function(){var t=this;this.hasTool(L.LockAction)&&this._group.eachLayer((function(e){t._group.isCollected(e)&&(e.editing._lock(),L.DomUtil.addClass(e.getElement(),"collected"))}))},_addCollections:function(t){var e=this,i=t.boxCollectBounds,o=this._group._map;this._group.eachLayer((function(t){var n=t.editing;t.isSelected()&&t.deselect();var a=o.getZoom(),r=o.getCenter(),s=L.latLngBounds(t.getCorner(2),t.getCorner(1));s=o._latLngBoundsToNewLayerBounds(s,a,r),i.intersects(s)&&n.enabled()&&(e.toolbar||e._addToolbar(),L.DomUtil.addClass(t.getElement(),"collected"))}))},_removeGroup:function(t){var e=this;if(this.hasTool(L.DeleteAction)){var i=this._group._toRemove(),o=i.length;0!==o&&(L.DomUtil.confirmDeletes(o)&&(i.forEach((function(t){e._group.removeLayer(t)})),this._group.anyCollected()||this._removeToolbar()),t&&L.DomEvent.stopPropagation(t))}},cancelExport:function(){this.customCollection||(this._exportOpts.collection=void 0),clearInterval(this.updateInterval)},_addToolbar:function(){var t=this._group,e=t._map;t.options.suppressToolbar||this.toolbar||(this.toolbar=L.distortableImage.controlBar({actions:this.editActions,position:"topleft"}).addTo(e,t))},_removeToolbar:function(){var t=this._group._map;if(!this.toolbar)return!1;t.removeLayer(this.toolbar),this.toolbar=!1},hasTool:function(t){return this.editActions.some((function(e){return e===t}))},addTool:function(t){return"leaflet-toolbar-icon"!==t.baseClass||this.hasTool(t)||(this._removeToolbar(),this.editActions.push(t),this._addToolbar()),this},removeTool:function(t){var e=this;return this.editActions.some((function(i,o){return e.editActions[o]===t&&(e._removeToolbar(),e.editActions.splice(o,1),e._addToolbar(),!0)})),this},startExport:function(){var t=this;if(this.hasTool(L.ExportAction))return new Promise((function(e){var i,o=t._exportOpts;o.resolve=e,t.updateInterval=null,t.customCollection=!!o.collection,t.customCollection||(o.collection=t._group.generateExportJson().images),o.frequency=o.frequency||3e3,o.scale=o.scale||100,o.updater=o.updater||function(n){(n=JSON.parse(n)).status_url&&(i!==n.status_url&&n.status_url.match(".json")&&(i=n.status_url),"complete"===n.status&&(clearInterval(t.updateInterval),t.customCollection||(t._exportOpts.collection=void 0),e(),null!==n.jpg&&alert("Export succeeded. "+o.exportUrl+n.jpg)),console.log(n))},o.handleStatusRes=o.handleStatusRes||function(e){i=o.statusUrl+e,t.updateInterval=setInterval((function(){var t=new Request("".concat(i,"?").concat(Date.now()),{method:"GET"});fetch(t).then((function(t){if(t.ok)return t.text()})).then(o.updater)}),o.frequency)},o.fetchStatusUrl=o.fetchStatusUrl||function(t){var e=new FormData;e.append("collection",JSON.stringify(t.collection)),e.append("scale",t.scale),e.append("upload",!0);var i={method:"POST",body:e},o=new Request(t.exportStartUrl,i);fetch(o).then((function(t){if(t.ok)return t.text()})).then(t.handleStatusRes)},o.fetchStatusUrl(o)}))}}),L.distortableCollection.edit=function(t,e){return new L.DistortableCollection.Edit(t,e)}},397:function(){L.DistortableImage=L.DistortableImage||{},L.DistortableImage.Edit=L.Handler.extend({options:{opacity:.7,outline:"1px solid red",keymap:L.distortableImage.action_map},initialize:function(t,e){this._overlay=t,this._toggledImage=!1,this._mode=t.options.mode,this._transparent=!1,this._outlined=!1,L.setOptions(this,e),L.distortableImage.action_map.Escape="_deselect"},addHooks:function(){var t=this._overlay;this.editActions=this.options.actions,t.bringToFront(),this._initModes(),this._initHandles(),this._appendHandlesandDragable(),t.isSelected()&&!t.options.suppressToolbar&&this._addToolbar(),this.parentGroup=!!t.eP&&t.eP,L.DomEvent.on(t.getElement(),{dblclick:this.nextMode},this),L.DomEvent.on(window,"keydown",this._onKeyDown,this)},removeHooks:function(){var t=this._overlay,e=this.parentGroup;for(var i in this._disableDragging(),this.toolbar&&this._removeToolbar(),this._handles)L.DomUtil.remove(i);L.DomUtil.hasClass(t.getElement(),"collected")&&L.DomUtil.removeClass(t.getElement(),"collected"),e&&!e.anyCollected()&&e.editing.toolbar&&e.editing._removeToolbar(),L.DomEvent.off(t.getElement(),{dblclick:this.nextMode},this),L.DomEvent.off(window,"keydown",this._onKeyDown,this)},disable:function(){return this._enabled?(this._overlay.deselect(),this._enabled=!1,this.removeHooks(),this):this},_initModes:function(){for(var t in this._modes={},L.DistortableImage.Edit.MODES){var e=L.DistortableImage.Edit.MODES[t];-1!==this.editActions.indexOf(e)&&(this._modes[t]=e)}this._modes[this._mode]||(this._mode=Object.keys(this._modes)[0])},_initHandles:function(){var t,e=this._overlay;for(this._dragHandles=L.layerGroup(),t=0;t<4;t++)this._dragHandles.addLayer(L.dragHandle(e,t));for(this._scaleHandles=L.layerGroup(),t=0;t<4;t++)this._scaleHandles.addLayer(L.scaleHandle(e,t));for(this._distortHandles=L.layerGroup(),t=0;t<4;t++)this._distortHandles.addLayer(L.distortHandle(e,t));for(this._rotateHandles=L.layerGroup(),t=0;t<4;t++)this._rotateHandles.addLayer(L.rotateHandle(e,t));for(this._freeRotateHandles=L.layerGroup(),t=0;t<4;t++)this._freeRotateHandles.addLayer(L.freeRotateHandle(e,t));for(this._lockHandles=L.layerGroup(),t=0;t<4;t++)this._lockHandles.addLayer(L.lockHandle(e,t,{draggable:!1}));this._handles={drag:this._dragHandles,scale:this._scaleHandles,distort:this._distortHandles,rotate:this._rotateHandles,freeRotate:this._freeRotateHandles,lock:this._lockHandles}},_appendHandlesandDragable:function(){var t=this._overlay;this._mode?(this._updateHandle(),!t.isSelected()&&this.currentHandle&&this.currentHandle.eachLayer((function(t){t.setOpacity(0),t.dragging&&t.dragging.disable()})),this.isMode("lock")||this._enableDragging()):this._enableDragging()},_onKeyDown:function(t){var e=this.options.keymap[t.key],i=this._overlay,o=this.parentGroup;o&&o.anyCollected()||void 0===this[e]||i.options.suppressToolbar||i.isSelected()&&this.toolbar&&this[e].call(this)},replaceTool:function(t,e){var i=this;return"leaflet-toolbar-icon"!==e.baseClass||this.hasTool(e)||this.editActions.some((function(o,n){if(o===t){for(var a in i._removeToolbar(),i.editActions[n]=e,i._addToolbar(),L.DistortableImage.Edit.MODES)L.DistortableImage.Edit.MODES[a]===t?(delete i._modes[a],i._nextOrNone(a)):L.DistortableImage.Edit.MODES[a]===e&&(i._modes[a]=e);return!0}})),this},addTool:function(t){if("leaflet-toolbar-icon"===t.baseClass&&!this.hasTool(t)){for(var e in this._removeToolbar(),this.editActions.push(t),this._addToolbar(),L.DistortableImage.Edit.MODES)L.DistortableImage.Edit.MODES[e]===t&&(this._modes[e]=t);this._overlay.isSelected()||this._removeToolbar()}return this},hasTool:function(t){return this.editActions.some((function(e){return e===t}))},removeTool:function(t){var e=this;return this.editActions.some((function(i,o){if(i===t){for(var n in e._removeToolbar(),e.editActions.splice(o,1),e._addToolbar(),L.DistortableImage.Edit.MODES)L.DistortableImage.Edit.MODES[n]===t&&(delete e._modes[n],e._nextOrNone(n));return!0}})),this._overlay.isSelected()||this._removeToolbar(),this},_nextOrNone:function(t){this.isMode(t)&&(Object.keys(this.getModes()).length>=1?this.nextMode():("lock"===t&&this._enableDragging(),this._mode="",this._updateHandle()))},_removeToolbar:function(){var t=this._overlay._map;this.toolbar&&(t.removeLayer(this.toolbar),this.toolbar=!1)},_enableDragging:function(){var t=this,e=this._overlay,i=e._map;this.dragging=new L.Draggable(e.getElement()),this.dragging.enable(),this.dragging.on("dragstart",(function(){e.fire("dragstart"),t._removeToolbar()})),this.dragging._updatePosition=function(){var t,o,n=e.getCorner(0),a=this._newPos.subtract(i.latLngToLayerPoint(n)),r={};for(this.fire("predrag"),o=0;o<4;o++)t=i.latLngToLayerPoint(e.getCorner(o)),r[o]=i.layerPointToLatLng(t.add(a));e.setCorners(r),e.fire("drag"),this.fire("drag")},this.dragging.on("dragend",(function(){e.fire("dragend")}))},_disableDragging:function(){this.dragging&&(this.dragging.disable(),delete this.dragging)},_dragMode:function(){this.setMode("drag")},_scaleMode:function(){this.setMode("scale")},_distortMode:function(){this.setMode("distort")},_rotateMode:function(){this.setMode("rotate")},_freeRotateMode:function(){this.setMode("freeRotate")},_toggleLockMode:function(){this.isMode("lock")?this._unlock():this._lock()},_toggleOpacity:function(){var t=this._overlay.getElement();if(this.hasTool(L.OpacityAction)){this._transparent=!this._transparent;var e=this._transparent?this.options.opacity:1;L.DomUtil.setOpacity(t,e),t.setAttribute("opacity",e),this._refresh()}},_toggleBorder:function(){var t=this._overlay.getElement();if(this.hasTool(L.BorderAction)){this._outlined=!this._outlined;var e=this._outlined?this.options.outline:"none";t.style.outline=e,this._refresh()}},_toggleOrder:function(){this._toggledImage?this._stackUp():this._stackDown()},_removeOverlay:function(){var t=this._overlay,e=this.parentGroup;!this.isMode("lock")&&this.hasTool(L.DeleteAction)&&L.DomUtil.confirmDelete()&&(this._removeToolbar(),e?e.removeLayer(t):t._map.removeLayer(t))},_getExport:function(){var t=this._overlay,e=t._map,i=t.getElement();if(this.hasTool(L.ExportAction)){var o=new Image;o.id=o.id||"tempId12345",document.body.appendChild(o),o.onload=function(){var i=o.height,n=o.width,a=e.latLngToLayerPoint(t.getCorner(0)),r=e.latLngToLayerPoint(t.getCorner(1)),s=e.latLngToLayerPoint(t.getCorner(2)),l=e.latLngToLayerPoint(t.getCorner(3));o.onload=function(){L.DomUtil.remove(o)},window&&window.hasOwnProperty("warpWebGl")&&warpWebGl(o.id,[0,0,n,0,n,i,0,i],[a.x,a.y,r.x,r.y,l.x,l.y,s.x,s.y],!0)},o.src=t.options.fullResolutionSrc||i.src}},_stackUp:function(){this._toggledImage&&this.hasTool(L.StackAction)&&(this._toggledImage=!1,this._overlay.bringToFront(),this._refresh())},_stackDown:function(){!this._toggledImage&&this.hasTool(L.StackAction)&&(this._toggledImage=!0,this._overlay.bringToBack(),this._refresh())},_unlock:function(){var t=this._overlay,e=t._map,i=this.parentGroup;this.isMode("lock")&&((!i||i.isCollected(t))&&i||this.hasTool(L.LockAction))&&(this.currentHandle&&e.removeLayer(this.currentHandle),"lock"!==t.options.mode&&this.hasMode(t.options.mode)?this._mode=t.options.mode:(this._mode="",this.currentHandle=""),this._updateHandle(),this._enableDragging(),this._refresh())},_lock:function(){var t=this._overlay,e=t._map,i=this.parentGroup;this.isMode("lock")||((!i||i.isCollected(t))&&i||this.hasTool(L.LockAction))&&(this.currentHandle&&e.removeLayer(this.currentHandle),this._mode="lock",this._updateHandle(),this._disableDragging(),this._refresh())},_deselect:function(){this._overlay.deselect()},_showMarkers:function(t){var e=this.parentGroup;this.currentHandle&&(!this.isMode("lock")&&e&&e.anyCollected()||this.currentHandle.eachLayer((function(t){t.setOpacity(1),t.dragging&&t.dragging.enable(),L.DomUtil.addClass(t.getElement(),"leaflet-interactive")})))},_hideMarkers:function(){var t=this._overlay,e=this.parentGroup;this._handles||this._initHandles(),this.currentHandle&&(this.isMode("lock")&&e&&e.isCollected(t)||this.currentHandle.eachLayer((function(t){t.setOpacity(0),t.dragging&&t.dragging.disable(),L.DomUtil.removeClass(t.getElement(),"leaflet-interactive")})))},_updateHandle:function(){var t=this._overlay._map,e=this.getMode();this.currentHandle&&t.removeLayer(this.currentHandle),this.currentHandle=""===e?"":this._handles[e],""!==this.currentHandle&&t.addLayer(this.currentHandle)},_addToolbar:function(){var t=this._overlay,e=this.parentGroup,i=t._map,o=t.getCorners(),n=-1/0;if(e&&e.anyCollected())e.editing._addToolbar();else if(!t.options.suppressToolbar&&!this.toolbar){for(var a=0;a<o.length;a++)o[a].lat>n&&(n=o[a].lat);var r=t.getCenter();r.lat=n,this.toolbar=L.distortableImage.popupBar(r,{actions:this.editActions}).addTo(i,t),t.fire("toolbar:created")}},_refresh:function(){this.toolbar&&this._removeToolbar(),this._addToolbar()},_updateToolbarPos:function(){var t=this._overlay,e=t.getCorners(),i=this.toolbar,o=-1/0;if(i&&i instanceof L.DistortableImage.PopupBar){for(var n=0;n<e.length;n++)e[n].lat>o&&(o=e[n].lat);var a=t.getCenter();a.lat=o,t.options.suppressToolbar||this.toolbar.setLatLng(a)}},hasMode:function(t){return!!this._modes[t]},getMode:function(){if(this.enabled())return this._mode},getModes:function(){return this._modes},isMode:function(t){return!!this.enabled()&&this._mode===t},setMode:function(t){var e=this._overlay,i=this.parentGroup;if(this.getMode()!==t&&this.hasMode(t)&&this.enabled())return this.toolbar&&this.toolbar.clickTool(t),this.isMode("lock")&&!this.dragging&&this._enableDragging(),this._mode=t,this.isMode("lock")&&this._disableDragging(),this._updateHandle(),this._refresh(),i&&i.isCollected(e)&&e.deselect(),this},nextMode:function(t){var e=this.getMode(),i=this.parentGroup,o=Object.keys(this.getModes()),n=o.indexOf(e),a=o[(n+1)%o.length];if(t){if(i&&i.anyCollected())return;L.DomEvent.stop(t)}return this.setMode(a)}}),L.distortableImage.edit=function(t,e){return new L.DistortableImage.Edit(t,e)}},426:function(){L.BorderAction=L.EditAction.extend({initialize:function(t,e,i){var o,n,a=e.editing,r=a._mode;a._outlined?(o="border_outer",n=e.options.translation.removeBorder):(o="border_clear",n=e.options.translation.addBorder),(i=i||{}).toolbarIcon={svg:!0,html:o,tooltip:n,className:"lock"===r?"disabled":""},L.DistortableImage.action_map.b="lock"===r?"":"_toggleBorder",L.EditAction.prototype.initialize.call(this,t,e,i)},addHooks:function(){var t=this._overlay.editing;L.IconUtil.toggleXlink(this._link,"border_clear","border_outer"),L.IconUtil.toggleTitle(this._link,"Remove Border","Add Border"),t._toggleBorder()}})},114:function(){L.DeleteAction=L.EditAction.extend({initialize:function(t,e,i){var o,n=e.editing;n instanceof L.DistortableImage.Edit?(o=e.options.translation.deleteImage,L.DistortableImage.action_map.Backspace="lock"===n._mode?"":"_removeOverlay"):(o=e.options.translation.deleteImages,L.DistortableImage.group_action_map.Backspace="lock"===n._mode?"":"_removeGroup"),(i=i||{}).toolbarIcon={svg:!0,html:"delete_forever",tooltip:o,className:"lock"===n._mode?"disabled":""},L.EditAction.prototype.initialize.call(this,t,e,i)},addHooks:function(){var t=this._overlay.editing;t instanceof L.DistortableImage.Edit?t._removeOverlay():t._removeGroup()}})},231:function(){L.DistortAction=L.EditAction.extend({initialize:function(t,e,i){(i=i||{}).toolbarIcon={svg:!0,html:"distort",tooltip:e.options.translation.distortImage,className:"distort"},L.DistortableImage.action_map.d="_distortMode",L.EditAction.prototype.initialize.call(this,t,e,i)},addHooks:function(){this._overlay.editing._distortMode()}})},541:function(){L.DragAction=L.EditAction.extend({initialize:function(t,e,i){(i=i||{}).toolbarIcon={svg:!0,html:"drag",tooltip:e.options.translation.dragImage,className:"drag"},L.DistortableImage.action_map.D="_dragMode",L.EditAction.prototype.initialize.call(this,t,e,i)},addHooks:function(){this._overlay.editing._dragMode()}})},280:function(){L.DistortableImage=L.DistortableImage||{},L.distortableImage=L.DistortableImage,L.DistortableImage.action_map={},L.EditAction=L.Toolbar2.Action.extend({options:{toolbarIcon:{svg:!1,html:"",className:"",tooltip:""}},initialize:function(t,e,i){this._overlay=e,this._map=t,L.setOptions(this,i),L.Toolbar2.Action.prototype.initialize.call(this,i),this._injectIconSet()},_createIcon:function(t,e,i){var o=this,n=this.options.toolbarIcon,a=n.className,r=this._overlay.editing;this.toolbar=t,this._icon=L.DomUtil.create("li","",e),this._link=L.DomUtil.create("a","",this._icon),n.svg?this._link.innerHTML=L.IconUtil.create(n.html):this._link.innerHTML=n.html,this._link.setAttribute("href","#"),this._link.setAttribute("title",n.tooltip),this._link.setAttribute("role","button"),L.DomUtil.addClass(this._link,this.constructor.baseClass),a&&(L.DomUtil.addClass(this._link,a),"disabled"===a&&L.DomUtil.addClass(this._icon,a),a===r._mode?L.DomUtil.addClass(this._link,"selected-mode"):L.DomUtil.removeClass(this._link,"selected-mode")),L.DomEvent.on(this._link,"click",this.enable,this),L.DomEvent.on(this._overlay,"update",(function(){var t=o._link.innerHTML.match(/xlink:href="#restore"/);t&&1===t.length&&o._enableAction()})),this._addSubToolbar(t,this._icon,i)},_injectIconSet:function(){if(!document.querySelector("#iconset")){var t=document.createElement("div");t.id="iconset",t.setAttribute("hidden","hidden"),t.innerHTML=(new L.ToolbarIconSet).render(),document.querySelector(".leaflet-marker-pane").appendChild(t)}},_enableAction:function(){L.DomUtil.removeClass(this._link.parentElement,"disabled"),L.DomUtil.removeClass(this._link,"disabled")},_disableAction:function(){L.DomUtil.addClass(this._link.parentElement,"disabled"),L.DomUtil.addClass(this._link,"disabled")}}),L.editAction=function(t,e,i){return new L.EditAction(t,e,i)}},149:function(){L.ExportAction=L.EditAction.extend({initialize:function(t,e,i){var o,n=e.editing;this.isExporting=!1,this.mouseLeaveSkip=!0,this.isHooksExecuted=!1,n instanceof L.DistortableImage.Edit?(L.DistortableImage.action_map.e="_getExport",o=e.options.translation.exportImage):(L.DistortableImage.group_action_map.e="runExporter",o=e.options.translation.exportImages),(i=i||{}).toolbarIcon={svg:!0,html:"get_app",tooltip:o},L.EditAction.prototype.initialize.call(this,t,e,i)},addHooks:function(){var t=this._overlay.editing;if(t instanceof L.DistortableImage.Edit)t._getExport();else if(!this.isHooksExecuted){this.isHooksExecuted=!0;var e=this._link.parentElement;this.mouseEnterHandler=this.handleMouseEnter.bind(this),this.mouseLeaveHandler=this.handleMouseLeave.bind(this),L.DomEvent.on(e,"click",(function(){if(this.isExporting){if(this.mouseLeaveSkip)return;this.resetState(),this.detachMouseEventListeners(e),t.cancelExport()}else this.isExporting=!0,this.renderExportIcon(),setTimeout(this.attachMouseEventListeners.bind(this,e),100),t.runExporter().then(function(){this.resetState(),this.detachMouseEventListeners(e)}.bind(this))}),this)}},resetState:function(){this.renderDownloadIcon(),this.isExporting=!1,this.mouseLeaveSkip=!0},attachMouseEventListeners:function(t){t.addEventListener("mouseenter",this.mouseEnterHandler),t.addEventListener("mouseleave",this.mouseLeaveHandler)},detachMouseEventListeners:function(t){t.removeEventListener("mouseenter",this.mouseEnterHandler),t.removeEventListener("mouseleave",this.mouseLeaveHandler)},handleMouseEnter:function(){this.renderCancelIcon()},handleMouseLeave:function(){this.mouseLeaveSkip?this.mouseLeaveSkip=!1:this.renderExportIcon()},renderDownloadIcon:function(){L.IconUtil.toggleXlink(this._link,"get_app","spinner"),L.IconUtil.toggleTitle(this._link,"Export Images","Loading..."),L.DomUtil.removeClass(this._link.firstChild,"loader")},renderExportIcon:function(){L.IconUtil.toggleXlink(this._link,"spinner"),L.IconUtil.toggleTitle(this._link,"Export Images","Loading..."),L.IconUtil.addClassToSvg(this._link,"loader")},renderCancelIcon:function(){L.IconUtil.toggleXlink(this._link,"cancel"),L.IconUtil.toggleTitle(this._link,"Cancel Export","Loading..."),L.DomUtil.removeClass(this._link.firstChild,"loader")}})},74:function(){L.FreeRotateAction=L.EditAction.extend({initialize:function(t,e,i){(i=i||{}).toolbarIcon={svg:!0,html:"crop_rotate",tooltip:e.options.translation.freeRotateImage,className:"freeRotate"},L.DistortableImage.action_map.f="_freeRotateMode",L.EditAction.prototype.initialize.call(this,t,e,i)},addHooks:function(){this._overlay.editing._freeRotateMode()}})},691:function(){L.GeolocateAction=L.EditAction.extend({initialize:function(t,e,i){var o=e.editing;(i=i||{}).toolbarIcon={svg:!0,html:"explore",tooltip:e.options.translation.geolocateImage,className:"lock"===o._mode?"disabled":""},L.EditAction.prototype.initialize.call(this,t,e,i)},addHooks:function(){var t=this._overlay.getElement();EXIF.getData(t,L.EXIF(t))}})},105:function(){L.LockAction=L.EditAction.extend({initialize:function(t,e,i){var o,n,a=e.editing;a instanceof L.DistortableImage.Edit?(L.DistortableImage.action_map.u="_unlock",L.DistortableImage.action_map.l="_lock",n=e.options.translation.lockMode,o=a.isMode("lock")?"lock":"unlock"):(L.DistortableImage.group_action_map.l="_lockGroup",n=e.options.translation.lockImages,o="lock"),(i=i||{}).toolbarIcon={svg:!0,html:o,tooltip:n,className:"lock"},L.EditAction.prototype.initialize.call(this,t,e,i)},addHooks:function(){var t=this._overlay.editing;t instanceof L.DistortableImage.Edit?t._toggleLockMode():t._lockGroup()}})},944:function(){L.OpacityAction=L.EditAction.extend({initialize:function(t,e,i){var o,n,a=e.editing,r=a._mode;a._transparent?(o="opacity_empty",n=e.options.translation.makeImageOpaque):(o="opacity",n=e.options.translation.makeImageTransparent),(i=i||{}).toolbarIcon={svg:!0,html:o,tooltip:n,className:"lock"===r?"disabled":""},L.DistortableImage.action_map.o="lock"===r?"":"_toggleOpacity",L.EditAction.prototype.initialize.call(this,t,e,i)},addHooks:function(){var t=this._overlay.editing,e=this._link;L.IconUtil.toggleXlink(e,"opacity","opacity_empty"),L.IconUtil.toggleTitle(e,"Make Image Transparent","Make Image Opaque"),t._toggleOpacity()}})},954:function(){L.RestoreAction=L.EditAction.extend({initialize:function(t,e,i){var o=L.Utils.getNestedVal(e,"editing","_mode"),n=e.edited;(i=i||{}).toolbarIcon={svg:!0,html:"restore",tooltip:e.options.translation.restoreImage,className:n&&"lock"!==o?"":"disabled"},L.EditAction.prototype.initialize.call(this,t,e,i)},addHooks:function(){var t=this._overlay;L.DomEvent.on(t,{edit:this._enableAction,restore:this._disableAction},this),t.restore()}})},178:function(){L.RotateAction=L.EditAction.extend({initialize:function(t,e,i){(i=i||{}).toolbarIcon={svg:!0,html:"rotate",tooltip:e.options.translation.rotateImage,className:"rotate"},L.DistortableImage.action_map.r="_rotateMode",L.EditAction.prototype.initialize.call(this,t,e,i)},addHooks:function(){this._overlay.editing._rotateMode()}})},547:function(){L.ScaleAction=L.EditAction.extend({initialize:function(t,e,i){(i=i||{}).toolbarIcon={svg:!0,html:"scale",tooltip:e.options.translation.scaleImage,className:"scale"},L.DistortableImage.action_map.s="_scaleMode",L.EditAction.prototype.initialize.call(this,t,e,i)},addHooks:function(){this._overlay.editing._scaleMode()}})},886:function(){L.StackAction=L.EditAction.extend({initialize:function(t,e,i){var o,n,a=e.editing;a._toggledImage?(o="flip_to_back",n=e.options.translation.stackToFront):(o="flip_to_front",n=e.options.translation.stackToBack),(i=i||{}).toolbarIcon={svg:!0,html:o,tooltip:n,className:"lock"===a._mode?"disabled":""},L.DistortableImage.action_map.q="lock"===a._mode?"":"_stackUp",L.DistortableImage.action_map.a="lock"===a._mode?"":"_stackDown",L.EditAction.prototype.initialize.call(this,t,e,i)},addHooks:function(){var t=this._overlay.editing;L.IconUtil.toggleXlink(this._link,"flip_to_front","flip_to_back"),L.IconUtil.toggleTitle(this._link,"Stack to Front","Stack to Back"),t._toggleOrder()}})},129:function(){L.UnlockAction=L.EditAction.extend({initialize:function(t,e,i){(i=i||{}).toolbarIcon={svg:!0,html:"unlock",tooltip:e.options.translation.unlockImages},L.DistortableImage.group_action_map.u="_unlockGroup",L.EditAction.prototype.initialize.call(this,t,e,i)},addHooks:function(){this._overlay.editing._unlockGroup()}})},743:function(){L.EXIF=function(t){if(0!==Object.keys(EXIF.getAllTags(t)).length){console.log(EXIF.getAllTags(t));var e=EXIF.getAllTags(t);void 0!==e.GPSLatitude&&void 0!==e.GPSLongitude&&(e.GPSLatitude[0],e.GPSLatitude[1],e.GPSLatitude[2],e.GPSLongitude[0],e.GPSLongitude[1],e.GPSLongitude[2],e.GPSLatitudeRef,e.GPSLongitudeRef),"T"===e.GPSImgDirectionRef||"M"===e.GPSImgDirectionRef?(Math.PI,e.GPSImgDirection.numerator,e.GPSImgDirection.denominator):console.log("No compass data found"),console.log("Orientation:",e.Orientation),(6===e.Orientation||8===e.Orientation||3===e.Orientation)&&Math.PI,void 0!==e.GPSAltitude&&void 0!==e.GPSAltitudeRef&&void 0!==e.GPSAltitude&&void 0!==e.GPSAltitudeRef&&(e.GPSAltitude.numerator,e.GPSAltitude.denominator,e.GPSAltitudeRef)}else alert("EXIF initialized. Press again to view data in console.")}},92:function(){L.DistortHandle=L.EditHandle.extend({options:{TYPE:"distort",icon:L.icon({iconUrl:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAChSURBVO3BIU4DURgGwNkvL2B6AkQTLBqP4QCoSm7DDXoBLBZHDbfgICAIZjEV3YTn9uVHdMZZtcnCfI13bIzxg0emg6Nm6QVbYz3jylEsXRrvwommb49X67jFkz80fR9Mb1YxTzqiWBSLYlEsikWxKBbFolgUi2JRLIpFsSgWxaJY03fHHOu40dH07bAzWCx9Ge/TiWbpHgdsjPGNB2f/yS+7xRCyiiZPJQAAAABJRU5ErkJggg==",iconSize:[32,32],iconAnchor:[16,16]})},_onHandleDrag:function(){this._handled.setCorner(this._corner,this.getLatLng())},updateHandle:function(){this.setLatLng(this._handled.getCorner(this._corner))}}),L.distortHandle=function(t,e,i){return new L.DistortHandle(t,e,i)}},194:function(){L.DragHandle=L.EditHandle.extend({options:{TYPE:"drag",icon:L.icon({iconUrl:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAsVJREFUeNrMVztLXEEUvnNVFAVBAhY2aRKbTZEHJNpYabuNjSgYg/GxdsmPSJkUAa/ZdVEX8mgWYVutbHxAHkVskjQBuUUgBISVhCQk3wnfwMlk1rusN1wHPubOzJlzvjlz5sxc01Ma/hUEwQnwDIjqc7uvgv9YYO86qgIwCXQbdNTlQ8kcCBHgBch8TcloF6oJGr6phk6EQAkfdz3zvgDr9Mr7Fg1fptEZoM8jsmrokpfsiIFO4IIjuE2v1EDmR4LRdlR5Gh51hj8D34ABtm8YTtqna0TgklIw5CgQguKxIojEjmFROg/MKQO27NkFAB+4wAPouGUJiIvWKHwbAxX2XyWRKWkqhT+pbJntJZJuUzISW0+5hW+obxrVBsfvoH/dqCCJuU97GBh2VteLSiYvArmErT8EVoAK9Bw7enbpVYmvAQlyowYforrH5jXL2rPHI/TKONDB7u9AlavdaTBPvPmazUeQuy8f7UomUgTEwIJPEQ3sQGE/6ll2l9H/KcEzBcfWn2IclluM3DpddJxSHujlFkscbUPvmB0LHVnLrId7nlaZVkEc6QGXQI1MAwZcWmVRHeNaQwJMMiU2cwy4s7p/RJ2ckpvIQs+cIs+5GzitloLKHUV3MPREuXbTOKO91dX387gGTONxIgEWm+E61FFrpcyqXLHsEwiDjEsjAksqw5XPoL9MHVrn6QR4q+XZrDaR4RoWzq2ymafuRA/Mq1stSsHLVkcbdf9VjOcx8ZH3+SFWcCWlVPyWuUBOwUWdC1wP5NVjYiXFWLO69PZ6CRTUY6KSIoEKdf6T3IzzgHxnsyHctNBEkmn6Oob8ExUDg/ahGybd177cDjzH5xHwgDiSvoS7I/LZyvxJZj0wod7tkX5G0XVC7rEyLhfLJjBGbKoLLEfZWObyKeZ6oY82g+yf5Zn/mJyHX7PMf04z/T3/LcAAu4E6iiyJqf0AAAAASUVORK5CYII=",iconSize:[32,32],iconAnchor:[16,16]})},_onHandleDrag:function(){var t=this._handled,e=t.getCorner(this._corner),i=this.getLatLng();t.dragBy(e,i)},updateHandle:function(){this.setLatLng(this._handled.getCorner(this._corner))}}),L.dragHandle=function(t,e,i){return new L.DragHandle(t,e,i)}},988:function(){L.EditHandle=L.Marker.extend({initialize:function(t,e,i){var o=t.getCorner(e);L.setOptions(this,i),this._handled=t,this._corner=e;var n={draggable:!0,zIndexOffset:10};i&&i.hasOwnProperty("draggable")&&(n.draggable=i.draggable),L.Marker.prototype.initialize.call(this,o,n)},onAdd:function(t){L.Marker.prototype.onAdd.call(this,t),this._bindListeners(),this.updateHandle()},onRemove:function(t){this._unbindListeners(),L.Marker.prototype.onRemove.call(this,t)},_onHandleDragStart:function(){this._handled.fire("editstart")},_onHandleDragEnd:function(){this._fireEdit()},_fireEdit:function(){this._handled.edited=!0,this._handled.fire("edit")},_bindListeners:function(){this.on({contextmenu:L.DomEvent.stop,dragstart:this._onHandleDragStart,drag:this._onHandleDrag,dragend:this._onHandleDragEnd},this),this._handled._map.on("zoomend",this.updateHandle,this),this._handled.on("update",this.updateHandle,this)},_unbindListeners:function(){this.off({contextmenu:L.DomEvent.stop,dragstart:this._onHandleDragStart,drag:this._onHandleDrag,dragend:this._onHandleDragEnd},this),this._handled._map.off("zoomend",this.updateHandle,this),this._handled.off("update",this.updateHandle,this)},_calculateScalingFactor:function(t,e){var i=this._handled,o=i._map,n=o.latLngToLayerPoint(i.getCenter()),a=o.latLngToLayerPoint(t),r=o.latLngToLayerPoint(e),s=this._d2(n,a),l=this._d2(n,r);return Math.sqrt(l/s)},_d2:function(t,e){var i=t.x-e.x,o=t.y-e.y;return Math.pow(i,2)+Math.pow(o,2)},calculateAngleDelta:function(t,e){var i=this._handled,o=i._map,n=o.latLngToLayerPoint(i.getCenter()),a=o.latLngToLayerPoint(t),r=o.latLngToLayerPoint(e),s=Math.atan2(n.y-a.y,n.x-a.x);return Math.atan2(n.y-r.y,n.x-r.x)-s}})},206:function(){L.FreeRotateHandle=L.EditHandle.extend({options:{TYPE:"freeRotate",icon:L.icon({iconUrl:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAHiSURBVMXBa3HbShgA0PMp/1sCCo8oCEpgTaCXgIXAJiDzyCJoAUTm4UVQAns1Y8+snWnTvJyeE16hkjDgDrfoNTMKcpC9UPiLSo8JyetkjEHxjPCMyoS199kFoz8Iv1HpMaN3qWDCHoegOKkkRwnJpRmroHgiPFEZ8IBekzEGxQtUEhKSS/fB7Ew4U+lxcGkVZG9QWWPSFAxBcdK59KApuA+yNwp2uEdx1GN25sZJZULSfAtm77SlbNjju6MvG75u+WHRWVR6rDVjMPsgwYyVZl3pLTpHkyYHOx8syMiayaJzlDTZ9YyaZNFVkiYH2ZUEBcVJJXVImuz6Js3Qofe59pq7DoOTILu+g+a288mCouk7/1iH4qTS+2QdDppbV1ZJmrnDXnPnc5UOs2Z0fUmTuyBr+krvSioJyUmQO0dZM7mepMkWnaNRkyrJB6uskTSjxY3Fll8bvmJwlDb83FJ8gMqAB80uyBY3Trb82PAfvjj6vuHnluIdKgMeNXOwctK5NKBoHitrb1RJeHRp5Ux4ojLg0aWMHGQvUOkxIWkKVsHsTPiNSo8HDC5lZIsgO6n0uMUdRvQuFQxB8UR4RmXC2vvsgtEfhL+o9JiQvE7GGBTPCK9QSUjoMWgKDthjDrIX+h/k0I7gth6N5gAAAABJRU5ErkJggg==",iconSize:[32,32],iconAnchor:[16,16]})},_onHandleDrag:function(){var t=this._handled,e=t._map,i=t.getCorner(this._corner),o=this.getLatLng(),n=this.calculateAngleDelta(i,o),a=this._calculateScalingFactor(i,o);0!==n&&t.rotateBy(n,"rad");var r=t.edgeMinWidth;r||(r=50);var s=e.latLngToContainerPoint(t.getCorner(0)),l=e.latLngToContainerPoint(t.getCorner(1)),c=Math.abs(s.x-l.x),d=Math.abs(s.y-l.y);Math.sqrt(c*c+d*d)>r||a>1?t.scaleBy(a):t.scaleBy(1)},updateHandle:function(){this.setLatLng(this._handled.getCorner(this._corner))}}),L.freeRotateHandle=function(t,e,i){return new L.FreeRotateHandle(t,e,i)}},789:function(){L.LockHandle=L.EditHandle.extend({options:{TYPE:"lock",interactive:!1,icon:L.icon({iconUrl:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAD8SURBVO3BPU7CYAAA0AdfjIcQlRCQBG7C3gk2uIPG2RC3Dk16Gz0FTO1WZs/gwGCMP/2+xsSl7+n1er1Iz9LtRQjaPeMeO+TinLDCJV78YqjdA04YodKuxhUaPGoRxMmxwRQZSt87Yo4KExGCeAUyLLFB4bMacxywEClIU2KDKXbInTUYo8JCgoFuGoxQO5uiwY1EA91VmDqrcKeDoX8WdNNgjApvmGGLXKIgXY0xGkxQYItrrFFIEKQ5Yo4KEx9yrDFDhlKkIF6NOQ5Y+KpAhiXWKEQI4pxwiwoLPyuxwQw75FoE7fZYocFEuwI7jHCBV39gL92TXq/Xi/AOcmczZmaIMScAAAAASUVORK5CYII=",iconSize:[32,32],iconAnchor:[16,16]})},onRemove:function(t){this.unbindTooltip(),L.EditHandle.prototype.onRemove.call(this,t)},_bindListeners:function(){var t=this.getElement();L.EditHandle.prototype._bindListeners.call(this),L.DomEvent.on(t,{mousedown:this._tooltipOn,mouseup:this._tooltipOff},this),L.DomEvent.on(document,"pointerleave",this._tooltipOff,this)},_unbindListeners:function(){var t=this.getElement();L.EditHandle.prototype._bindListeners.call(this),L.DomEvent.off(t,{mousedown:this._tooltipOn,mouseup:this._tooltipOff},this),L.DomEvent.off(document,"pointerleave",this._tooltipOff,this)},_onHandleDrag:function(){},updateHandle:function(){this.setLatLng(this._handled.getCorner(this._corner))},_tooltipOn:function(t){var e=this._handled.parentGroup,i=e?e.editing:this._handled.editing;if(!t.shiftKey&&(this._handled.isSelected()||!e||e.isCollected(this._handled))){var o=i._lockHandles;this._timer=setTimeout(L.bind((function(){this._timeout&&clearTimeout(this._timeout),this.getTooltip()?o.eachLayer((function(t){this!==t&&t.closeTooltip()})):this.bindTooltip("Locked!",{permanent:!0}),this.openTooltip()}),this),500)}},_tooltipOff:function(t){var e=this._handled.parentGroup,i=e?e.editing:this._handled.editing;if(!t.shiftKey&&(this._handled.isSelected()||!e||e.isCollected(this._handled))){var o=i._lockHandles;t.currentTarget===document&&o.eachLayer((function(t){t.closeTooltip()})),this._timer&&clearTimeout(this._timer),this._timeout=setTimeout(L.bind((function(){this.closeTooltip()}),this),400)}}}),L.lockHandle=function(t,e,i){return new L.LockHandle(t,e,i)}},337:function(){L.RotateHandle=L.EditHandle.extend({options:{TYPE:"rotate",icon:L.icon({iconUrl:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAHiSURBVMXBa3HbShgA0PMp/1sCCo8oCEpgTaCXgIXAJiDzyCJoAUTm4UVQAns1Y8+snWnTvJyeE16hkjDgDrfoNTMKcpC9UPiLSo8JyetkjEHxjPCMyoS199kFoz8Iv1HpMaN3qWDCHoegOKkkRwnJpRmroHgiPFEZ8IBekzEGxQtUEhKSS/fB7Ew4U+lxcGkVZG9QWWPSFAxBcdK59KApuA+yNwp2uEdx1GN25sZJZULSfAtm77SlbNjju6MvG75u+WHRWVR6rDVjMPsgwYyVZl3pLTpHkyYHOx8syMiayaJzlDTZ9YyaZNFVkiYH2ZUEBcVJJXVImuz6Js3Qofe59pq7DoOTILu+g+a288mCouk7/1iH4qTS+2QdDppbV1ZJmrnDXnPnc5UOs2Z0fUmTuyBr+krvSioJyUmQO0dZM7mepMkWnaNRkyrJB6uskTSjxY3Fll8bvmJwlDb83FJ8gMqAB80uyBY3Trb82PAfvjj6vuHnluIdKgMeNXOwctK5NKBoHitrb1RJeHRp5Ux4ojLg0aWMHGQvUOkxIWkKVsHsTPiNSo8HDC5lZIsgO6n0uMUdRvQuFQxB8UR4RmXC2vvsgtEfhL+o9JiQvE7GGBTPCK9QSUjoMWgKDthjDrIX+h/k0I7gth6N5gAAAABJRU5ErkJggg==",iconSize:[32,32],iconAnchor:[16,16]})},_onHandleDrag:function(){var t=this._handled,e=t.getCorner(this._corner),i=this.getLatLng(),o=this.calculateAngleDelta(e,i);t.rotateBy(o,"rad")},updateHandle:function(){this.setLatLng(this._handled.getCorner(this._corner))}}),L.rotateHandle=function(t,e,i){return new L.RotateHandle(t,e,i)}},350:function(){L.ScaleHandle=L.EditHandle.extend({options:{TYPE:"scale",icon:L.icon({iconUrl:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIHdpZHRoPSI0NTkiIGhlaWdodD0iNDY0IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA1MTIgNTEyIiB4bWw6c3BhY2U9InByZXNlcnZlIiBzdHlsZT0iIj48cmVjdCBpZD0iYmFja2dyb3VuZHJlY3QiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHg9IjAiIHk9IjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0ibm9uZSIgY2xhc3M9IiIgc3R5bGU9IiIvPjxnIGNsYXNzPSJjdXJyZW50TGF5ZXIiIHN0eWxlPSIiPjx0aXRsZT5MYXllciAxPC90aXRsZT48cGF0aCBkPSJNNDU5LjA0OTE1OTUzMDQ3MTM0LDg2LjkyNjIzNDUxMjU1MDAyIFYwIGgtODUuNzE0NTczMzU2MzEyMDkgdjI3LjA0MzcxNzQwMzkwNDQ1MiBIODUuNzE0NTczMzU2MzEyMDMgVjAgSDAgdjg2LjkyNjIzNDUxMjU1MDAyIGgyNS43MTQzNzIwMDY4OTM2MjYgdjI4OS43NTQxMTUwNDE4MzM0IEgwIHY4Ni45MjYyMzQ1MTI1NTAwMiBoODUuNzE0NTczMzU2MzEyMDkgdi0yNy4wNDM3MTc0MDM5MDQ0NTIgaDI4NS43MTUyNDQ1MjEwNDAzIHYyNy4wNDM3MTc0MDM5MDQ0NTIgaDg1LjcxNDU3MzM1NjMxMjA5IHYtODYuOTI2MjM0NTEyNTUwMDIgaC0yMy44MDk2MDM3MTAwODY2OSBWODYuOTI2MjM0NTEyNTUwMDIgSDQ1OS4wNDkxNTk1MzA0NzEzNCB6TTM4NC43NjMxOTU5NTUwMDA5LDEyLjU1NjAxMTY1MTgxMjc4MSBoNjEuOTA0OTY5NjQ2MjI1Mzk2IHY2Mi43ODAwNTgyNTkwNjM5MSBoLTYxLjkwNDk2OTY0NjIyNTM5NiBWMTIuNTU2MDExNjUxODEyNzgxIHpNMTIuMzgwOTkzOTI5MjQ1MDUsMTIuNTU2MDExNjUxODEyNzgxIGg2MS45MDQ5Njk2NDYyMjUzOTYgdjYyLjc4MDA1ODI1OTA2MzkxIEgxMi4zODA5OTM5MjkyNDUwNSBWMTIuNTU2MDExNjUxODEyNzgxIHpNNzQuMjg1OTYzNTc1NDcwNTMsNDUxLjA1MDU3MjQxNTEyMDY2IEgxMi4zODA5OTM5MjkyNDUwNSB2LTYyLjc4MDA1ODI1OTA2MzkxIGg2MS45MDQ5Njk2NDYyMjUzOTYgVjQ1MS4wNTA1NzI0MTUxMjA2NiB6TTQ0NS43MTU3ODE0NTI4MjI3NCw0NTEuMDUwNTcyNDE1MTIwNjYgaC02Mi44NTczNTM3OTQ2Mjg4NjQgdi02Mi43ODAwNTgyNTkwNjM5MSBoNjIuODU3MzUzNzk0NjI4ODY0IFY0NTEuMDUwNTcyNDE1MTIwNjYgek00MDcuNjIwNDE1NTE2Njg0MjYsMzc2LjY4MDM0OTU1NDM4MzQ0IGgtMzYuMTkwNTk3NjM5MzMxNzcgdjMyLjgzODc5OTcwNDc0MTEyIEg4NS43MTQ1NzMzNTYzMTIwMyB2LTMyLjgzODc5OTcwNDc0MTEyIEg0OS41MjM5NzU3MTY5ODAzMiBWODYuOTI2MjM0NTEyNTUwMDIgaDM2LjE5MDU5NzYzOTMzMTc3IFY1MC4yMjQwNDY2MDcyNTExMjUgaDI4Ny42MjAwMTI4MTc4NDcyIHYzNi43MDIxODc5MDUyOTg5IGgzNC4yODU4MjkzNDI1MjQ4MzUgVjM3Ni42ODAzNDk1NTQzODM0NCB6IiBpZD0ic3ZnXzIiIGNsYXNzPSIiIGZpbGw9IiMxYTFhZWIiIGZpbGwtb3BhY2l0eT0iMSIvPjwvZz48L3N2Zz4=",iconSize:[32,32],iconAnchor:[16,16]})},_onHandleDrag:function(){var t=this._handled,e=t._map,i=t.edgeMinWidth,o=t.getCorner(this._corner),n=this.getLatLng(),a=this._calculateScalingFactor(o,n);i||(i=50);var r=e.latLngToLayerPoint(t.getCorner(0)),s=e.latLngToLayerPoint(t.getCorner(1)),l=Math.abs(r.x-s.x),c=Math.abs(r.y-s.y);Math.sqrt(l*l+c*c)>i||a>1?t.scaleBy(a):t.scaleBy(1)},updateHandle:function(){this.setLatLng(this._handled.getCorner(this._corner))}}),L.scaleHandle=function(t,e,i){return new L.ScaleHandle(t,e,i)}},719:function(){L.distortableImage=L.DistortableImage||{},L.distortableImage=L.DistortableImage,L.DistortableImage.group_action_map={},L.DistortableImage.ControlBar=L.Toolbar2.Control.extend({}),L.distortableImage.controlBar=function(t){return new L.DistortableImage.ControlBar(t)},L.DistortableCollection.addInitHook((function(){this.ACTIONS=[L.ExportAction,L.DeleteAction,L.LockAction,L.UnlockAction],L.DistortableCollection.Edit.MODES={lock:L.LockAction,unlock:L.UnlockAction};var t=this.options.actions?this.options.actions:this.ACTIONS;this.editing=L.distortableCollection.edit(this,{actions:t})}))},93:function(){L.DistortableImage=L.DistortableImage||{},L.distortableImage=L.DistortableImage,L.DistortableImage.action_map={},L.DistortableImage.PopupBar=L.Toolbar2.Popup.extend({options:{anchor:[0,-10]},initialize:function(t,e){L.setOptions(this,e),L.Toolbar2.Popup.prototype.initialize.call(this,t,e)},addHooks:function(t,e){this.map=t,this.ov=e},tools:function(){if(this._ul)return this._ul.children},clickTool:function(t){for(var e=this.tools(),i=0;i<e.length;i++){var o=e.item(i).children[0];if(L.DomUtil.hasClass(o,t))return o.click(),o}return!1}}),L.distortableImage.popupBar=function(t,e){return new L.DistortableImage.PopupBar(t,e)},L.DistortableImageOverlay.addInitHook((function(){this.ACTIONS=[L.DragAction,L.ScaleAction,L.DistortAction,L.RotateAction,L.FreeRotateAction,L.LockAction,L.OpacityAction,L.BorderAction,L.ExportAction,L.DeleteAction],L.DistortableImage.Edit.MODES={drag:L.DragAction,scale:L.ScaleAction,distort:L.DistortAction,rotate:L.RotateAction,freeRotate:L.FreeRotateAction,lock:L.LockAction};var t=this.options.actions?this.options.actions:this.ACTIONS;this.editing=L.distortableImage.edit(this,{actions:t})}))},376:function(){L.IconSet=L.Class.extend({_svg:'<svg xmlns="http://www.w3.org/2000/svg">',_symbols:"",render:function(){return this.addSymbols(this._symbols),this._svg},addSymbols:function(t){this._svg+=t}})},261:function(){L.KeymapperIconSet=L.IconSet.extend({_symbols:'<symbol viewBox="0 0 25 25" id="keyboard_open"><path d="M12 23l4-4H8l4 4zm7-15h-2V6h2v2zm0 3h-2V9h2v2zm-3-3h-2V6h2v2zm0 3h-2V9h2v2zm0 4H8v-2h8v2zM7 8H5V6h2v2zm0 3H5V9h2v2zm1-2h2v2H8V9zm0-3h2v2H8V6zm3 3h2v2h-2V9zm0-3h2v2h-2V6zm9-3H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></symbol>'})},929:function(){L.ToolbarIconSet=L.IconSet.extend({_symbols:'<symbol viewBox="0 0 18 18" id="border_clear"><path d="M5.25 3.75h1.5v-1.5h-1.5v1.5zm0 6h1.5v-1.5h-1.5v1.5zm0 6h1.5v-1.5h-1.5v1.5zm3-3h1.5v-1.5h-1.5v1.5zm0 3h1.5v-1.5h-1.5v1.5zm-6 0h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm6 6h1.5v-1.5h-1.5v1.5zm6 3h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm0 6h1.5v-1.5h-1.5v1.5zm0-9h1.5v-1.5h-1.5v1.5zm-6 0h1.5v-1.5h-1.5v1.5zm6-4.5v1.5h1.5v-1.5h-1.5zm-6 1.5h1.5v-1.5h-1.5v1.5zm3 12h1.5v-1.5h-1.5v1.5zm0-6h1.5v-1.5h-1.5v1.5zm0-6h1.5v-1.5h-1.5v1.5z"/></symbol><symbol viewBox="0 0 18 18" id="border_outer"><path d="M9.75 5.25h-1.5v1.5h1.5v-1.5zm0 3h-1.5v1.5h1.5v-1.5zm3 0h-1.5v1.5h1.5v-1.5zm-10.5-6v13.5h13.5V2.25H2.25zm12 12H3.75V3.75h10.5v10.5zm-4.5-3h-1.5v1.5h1.5v-1.5zm-3-3h-1.5v1.5h1.5v-1.5z"/></symbol><symbol viewBox="0 0 18 18" id="cancel"><path d="M13.279 5.779l-1.058-1.058L9 7.942 5.779 4.721 4.721 5.779 7.942 9l-3.221 3.221 1.058 1.058L9 10.057l3.221 3.222 1.058-1.058L10.057 9z"/></symbol><symbol viewBox="0 0 18 18" id="crop_rotate"><path d="M5.603 16.117C3.15 14.947 1.394 12.57 1.125 9.75H0C.383 14.37 4.245 18 8.963 18c.172 0 .33-.015.495-.023L6.6 15.113l-.997 1.005zM9.037 0c-.172 0-.33.015-.495.03L11.4 2.888l.998-.998a7.876 7.876 0 0 1 4.477 6.36H18C17.617 3.63 13.755 0 9.037 0zM12 10.5h1.5V6A1.5 1.5 0 0 0 12 4.5H7.5V6H12v4.5zM6 12V3H4.5v1.5H3V6h1.5v6A1.5 1.5 0 0 0 6 13.5h6V15h1.5v-1.5H15V12H6z"/></symbol><symbol viewBox="0 0 18 18" id="delete_forever"><path d="M4.5 14.25c0 .825.675 1.5 1.5 1.5h6c.825 0 1.5-.675 1.5-1.5v-9h-9v9zm1.845-5.34l1.058-1.058L9 9.443l1.59-1.59 1.058 1.058-1.59 1.59 1.59 1.59-1.058 1.058L9 11.558l-1.59 1.59-1.058-1.058 1.59-1.59-1.597-1.59zM11.625 3l-.75-.75h-3.75l-.75.75H3.75v1.5h10.5V3h-2.625z"/></symbol><symbol viewBox="0 0 18 18" id="distort"><path d="M1.7 1.4H6v1.4h5.8V1.4h4.3v4.3h-1.4v5.8h1.4v4.4h-4.3v-1.5H6v1.5H1.7v-4.4h1.4V5.7H1.7V1.4zm10.1 4.3V4.3H6v1.4H4.6v5.8H6V13h5.8v-1.5h1.4V5.7h-1.4zM3.1 2.8v1.5h1.5V2.8H3.1zm10.1 0v1.5h1.5V2.8h-1.5zM3.1 13v1.4h1.5V13H3.1zm10.1 0v1.4h1.5V13h-1.5z"/></symbol><symbol viewBox="0 0 18 18" id="explore"><path d="M9 1.5C4.86 1.5 1.5 4.86 1.5 9c0 4.14 3.36 7.5 7.5 7.5 4.14 0 7.5-3.36 7.5-7.5 0-4.14-3.36-7.5-7.5-7.5zM9 15c-3.308 0-6-2.693-6-6 0-3.308 2.692-6 6-6 3.307 0 6 2.692 6 6 0 3.307-2.693 6-6 6zm-4.125-1.875l5.633-2.617 2.617-5.633-5.633 2.617-2.617 5.633zM9 8.175c.457 0 .825.367.825.825A.823.823 0 0 1 9 9.825.823.823 0 0 1 8.175 9c0-.457.367-.825.825-.825z"/></symbol><symbol viewBox="0 0 18 18" id="flip_to_back"><path d="M6.75 5.25h-1.5v1.5h1.5v-1.5zm0 3h-1.5v1.5h1.5v-1.5zm0-6a1.5 1.5 0 0 0-1.5 1.5h1.5v-1.5zm3 9h-1.5v1.5h1.5v-1.5zm4.5-9v1.5h1.5c0-.825-.675-1.5-1.5-1.5zm-4.5 0h-1.5v1.5h1.5v-1.5zm-3 10.5v-1.5h-1.5a1.5 1.5 0 0 0 1.5 1.5zm7.5-3h1.5v-1.5h-1.5v1.5zm0-3h1.5v-1.5h-1.5v1.5zm0 6c.825 0 1.5-.675 1.5-1.5h-1.5v1.5zm-10.5-7.5h-1.5v9a1.5 1.5 0 0 0 1.5 1.5h9v-1.5h-9v-9zm7.5-1.5h1.5v-1.5h-1.5v1.5zm0 9h1.5v-1.5h-1.5v1.5z"/></symbol><symbol viewBox="0 0 18 18" id="flip_to_front"><path d="M2.25 9.75h1.5v-1.5h-1.5v1.5zm0 3h1.5v-1.5h-1.5v1.5zm1.5 3v-1.5h-1.5a1.5 1.5 0 0 0 1.5 1.5zm-1.5-9h1.5v-1.5h-1.5v1.5zm9 9h1.5v-1.5h-1.5v1.5zm3-13.5h-7.5a1.5 1.5 0 0 0-1.5 1.5v7.5a1.5 1.5 0 0 0 1.5 1.5h7.5c.825 0 1.5-.675 1.5-1.5v-7.5c0-.825-.675-1.5-1.5-1.5zm0 9h-7.5v-7.5h7.5v7.5zm-6 4.5h1.5v-1.5h-1.5v1.5zm-3 0h1.5v-1.5h-1.5v1.5z"/></symbol><symbol viewBox="0 0 18 18" id="get_app"><path d="M14.662 6.95h-3.15v-4.5H6.787v4.5h-3.15L9.15 12.2l5.512-5.25zM3.637 13.7v1.5h11.025v-1.5H3.637z"/></symbol><symbol viewBox="0 0 18 18" id="lock"><path d="M13.5 6h-.75V4.5C12.75 2.43 11.07.75 9 .75 6.93.75 5.25 2.43 5.25 4.5V6H4.5C3.675 6 3 6.675 3 7.5V15c0 .825.675 1.5 1.5 1.5h9c.825 0 1.5-.675 1.5-1.5V7.5c0-.825-.675-1.5-1.5-1.5zM6.75 4.5A2.247 2.247 0 0 1 9 2.25a2.247 2.247 0 0 1 2.25 2.25V6h-4.5V4.5zM13.5 15h-9V7.5h9V15zM9 12.75c.825 0 1.5-.675 1.5-1.5s-.675-1.5-1.5-1.5-1.5.675-1.5 1.5.675 1.5 1.5 1.5z"/></symbol><symbol viewBox="0 0 18 18" id="opacity"><path d="M13.245 6L9 1.763 4.755 6A6.015 6.015 0 0 0 3 10.23c0 1.5.585 3.082 1.755 4.252a5.993 5.993 0 0 0 8.49 0A6.066 6.066 0 0 0 15 10.23c0-1.5-.585-3.06-1.755-4.23zM4.5 10.5c.008-1.5.465-2.453 1.32-3.3L9 3.952l3.18 3.285c.855.84 1.313 1.763 1.32 3.263h-9z"/></symbol><symbol viewBox="0 0 14 18" id="opacity_empty"><path stroke="#0078A8" stroke-width="1.7" d="M10.708 6.25A5.113 5.113 0 0 1 12.2 9.846c0 1.275-.497 2.62-1.492 3.614a5.094 5.094 0 0 1-7.216 0A5.156 5.156 0 0 1 2 9.846c0-1.275.497-2.601 1.492-3.596L7.1 2.648l3.608 3.602zm0 0L7.1 2.648 3.492 6.25A5.113 5.113 0 0 0 2 9.846c0 1.275.497 2.62 1.492 3.614a5.094 5.094 0 0 0 7.216 0A5.156 5.156 0 0 0 12.2 9.846a5.113 5.113 0 0 0-1.492-3.596z"/></symbol><symbol viewBox="0 0 18 18" id="restore"><path d="M15.67 3.839a.295.295 0 0 0-.22.103l-5.116 3.249V4.179a.342.342 0 0 0-.193-.315.29.29 0 0 0-.338.078L3.806 7.751v-4.63h-.002l.002-.022c0-.277-.204-.502-.456-.502h-.873V2.6c-.253 0-.457.225-.457.503l.002.026v10.883h.005c.021.257.217.454.452.455l.016-.002h.822c.013.001.025.004.038.004.252 0 .457-.225.457-.502a.505.505 0 0 0-.006-.068V9.318l6.001 3.811a.288.288 0 0 0 .332.074.34.34 0 0 0 .194-.306V9.878l5.12 3.252a.288.288 0 0 0 .332.073.34.34 0 0 0 .194-.306V4.18a.358.358 0 0 0-.09-.24.296.296 0 0 0-.218-.1z"/></symbol><symbol viewBox="0 0 18 18" id="rotate"><path d="M5.505 4.808L.645 9.675l4.867 4.86 4.868-4.86-4.875-4.868zM2.768 9.675L5.513 6.93 8.25 9.675 5.505 12.42 2.768 9.675zM14.52 4.98A6.713 6.713 0 009.75 3V.57L6.57 3.75l3.18 3.18V4.5a5.23 5.23 0 013.713 1.537 5.255 5.255 0 010 7.426 5.23 5.23 0 01-5.843 1.08L6.503 15.66a6.76 6.76 0 003.247.84c1.725 0 3.457-.66 4.77-1.98a6.735 6.735 0 000-9.54z"/></symbol><symbol viewBox="0 0 18 18" id="scale"><path d="M8.25 9h-6a.75.75 0 00-.75.75v6c0 .414.336.75.75.75h6a.75.75 0 00.75-.75v-6A.75.75 0 008.25 9zm-.75 6H3v-4.5h4.5V15zm8.94-13.035a.75.75 0 00-.405-.405.75.75 0 00-.285-.06h-4.5a.75.75 0 000 1.5h2.692L9.967 6.968a.75.75 0 000 1.064.75.75 0 001.065 0L15 4.057V6.75a.75.75 0 101.5 0v-4.5a.75.75 0 00-.06-.285z" /></symbol><symbol viewBox="0 0 18 18" id="spinner"><path d="M9 6.48c-.216 0-.36-.144-.36-.36V3.24c0-.216.144-.36.36-.36s.36.144.36.36v2.88c0 .216-.144.36-.36.36z"/><path d="M9 15.12c-.216 0-.36-.144-.36-.36v-2.88c0-.216.144-.36.36-.36s.36.144.36.36v2.88c0 .216-.144.36-.36.36zm1.44-8.28c-.072 0-.108 0-.18-.036-.144-.108-.216-.288-.108-.468l1.44-2.484c.108-.144.288-.216.468-.108.144.108.216.288.108.468l-1.44 2.484c-.072.072-.18.144-.288.144zm-4.32 7.488c-.072 0-.108 0-.18-.036-.144-.108-.216-.288-.108-.468l1.44-2.484c.108-.144.288-.216.468-.108.144.108.216.288.108.468l-1.44 2.484c-.072.072-.18.144-.288.144z" opacity=".3"/><path d="M7.56 6.84c-.108 0-.216-.072-.288-.18l-1.44-2.484c-.108-.144-.036-.36.108-.468.144-.108.36-.036.468.108L7.848 6.3c.108.144.036.36-.108.468-.072.072-.108.072-.18.072z" opacity=".93"/><path d="M11.88 14.328c-.108 0-.216-.072-.288-.18l-1.44-2.484c-.108-.144-.036-.36.108-.468.144-.108.36-.036.468.108l1.44 2.484c.108.144.036.36-.108.468-.072.036-.108.072-.18.072z" opacity=".3"/><path d="M6.12 9.36H3.24c-.216 0-.36-.144-.36-.36s.144-.36.36-.36h2.88c.216 0 .36.144.36.36s-.144.36-.36.36z" opacity=".65"/><path d="M14.76 9.36h-2.88c-.216 0-.36-.144-.36-.36s.144-.36.36-.36h2.88c.216 0 .36.144.36.36s-.144.36-.36.36z" opacity=".3"/><path d="M6.516 7.884c-.072 0-.108 0-.18-.036l-2.484-1.44c-.144-.108-.216-.288-.108-.468.108-.144.288-.216.468-.108l2.484 1.44c.144.108.216.288.108.468a.327.327 0 01-.288.144z" opacity=".86"/><path d="M14.004 12.204c-.072 0-.108 0-.18-.036l-2.484-1.44c-.144-.108-.216-.288-.108-.468.108-.144.288-.216.468-.108l2.484 1.44c.144.108.216.288.108.468a.327.327 0 01-.288.144z" opacity=".3"/><path d="M3.996 12.204c-.108 0-.216-.072-.288-.18-.108-.144-.036-.36.108-.468l2.484-1.44c.144-.108.36-.036.468.108.108.144.036.36-.108.468l-2.484 1.44c-.036.072-.108.072-.18.072z" opacity=".44"/><path d="M11.484 7.884c-.108 0-.216-.072-.288-.18-.108-.144-.036-.36.108-.468l2.484-1.44c.144-.108.36-.036.468.108.108.144.036.36-.108.468l-2.484 1.44c-.072.072-.108.072-.18.072z" opacity=".3"/></symbol><symbol viewBox="0 0 18 18" id="drag"><path d="M2.3 16.5c-0.2 0-0.4-0.1-0.5-0.2 -0.2-0.2-0.3-0.5-0.2-0.8l2.5-6.5 -2.5-6.5C1.5 2.3 1.5 2 1.7 1.8c0.2-0.2 0.5-0.3 0.8-0.2l6.5 2.5 6.5-2.5c0.3-0.1 0.6 0 0.8 0.2 0.2 0.2 0.3 0.5 0.2 0.8l-2.5 6.5 2.5 6.5c0.1 0.3 0 0.6-0.2 0.8 -0.2 0.2-0.5 0.3-0.8 0.2l-6.5-2.5 -6.5 2.5C2.4 16.5 2.3 16.5 2.3 16.5zM3.6 3.6l2 5.1c0.1 0.2 0.1 0.4 0 0.5l-2 5.1 5.1-2c0.2-0.1 0.4-0.1 0.5 0l5.1 2L12.4 9.3c-0.1-0.2-0.1-0.4 0-0.5l2-5.1L9.3 5.6c-0.2 0.1-0.4 0.1-0.5 0L3.6 3.6z" /></symbol><symbol viewBox="0 0 18 18" id="unlock"><path d="M13.5 6h-.75V4.5C12.75 2.43 11.07.75 9 .75 6.93.75 5.25 2.43 5.25 4.5h1.5A2.247 2.247 0 0 1 9 2.25a2.247 2.247 0 0 1 2.25 2.25V6H4.5C3.675 6 3 6.675 3 7.5V15c0 .825.675 1.5 1.5 1.5h9c.825 0 1.5-.675 1.5-1.5V7.5c0-.825-.675-1.5-1.5-1.5zm0 9h-9V7.5h9V15zM9 12.75c.825 0 1.5-.675 1.5-1.5s-.675-1.5-1.5-1.5-1.5.675-1.5 1.5.675 1.5 1.5 1.5z"/></symbol>'})},496:function(){L.Map.mergeOptions({boxCollector:!0,boxZoom:!1}),L.Map.BoxCollector=L.Map.BoxZoom.extend({initialize:function(t){this._map=t,this._container=t._container,this._pane=t._panes.overlayPane,this._resetStateTimeout=0,t.on("unload",this._destroy,this)},addHooks:function(){L.DomEvent.on(this._container,"mousedown",this._onMouseDown,this)},removeHooks:function(){L.DomEvent.off(this._container,"mousedown",this._onMouseDown,this)},moved:function(){return this._moved},_destroy:function(){L.DomUtil.remove(this._pane),delete this._pane},_resetState:function(){this._resetStateTimeout=0,this._moved=!1},_clearDeferredResetState:function(){0!==this._resetStateTimeout&&(clearTimeout(this._resetStateTimeout),this._resetStateTimeout=0)},_onMouseDown:function(t){if(!t.shiftKey||1!==t.which&&1!==t.button)return!1;this._clearDeferredResetState(),this._resetState(),L.DomUtil.disableTextSelection(),L.DomUtil.disableImageDrag(),this._startPoint=this._map.mouseEventToContainerPoint(t),L.DomEvent.on(document,{contextmenu:L.DomEvent.stop,mousemove:this._onMouseMove,mouseup:this._onMouseUp},this)},_onMouseMove:function(t){this._moved||(this._moved=!0,this._box=L.DomUtil.create("div","leaflet-zoom-box",this._container),L.DomUtil.addClass(this._container,"leaflet-crosshair"),this._map.fire("boxzoomstart")),this._point=this._map.mouseEventToContainerPoint(t),this._bounds=L.bounds(this._startPoint,this._point);var e=this._bounds.getSize();L.DomUtil.setPosition(this._box,this._bounds.min),this._box.style.width=e.x+"px",this._box.style.height=e.y+"px"},_finish:function(){this._moved&&(L.DomUtil.remove(this._box),L.DomUtil.removeClass(this._container,"leaflet-crosshair")),L.DomUtil.enableTextSelection(),L.DomUtil.enableImageDrag(),L.DomEvent.off(document,{contextmenu:L.DomEvent.stop,mousemove:this._onMouseMove,mouseup:this._onMouseUp},this)},_onMouseUp:function(t){if((1===t.which||1===t.button)&&(this._finish(),this._moved)){this._clearDeferredResetState(),this._resetStateTimeout=setTimeout(L.Util.bind(this._resetState,this),0);var e=L.latLngBounds(this._map.containerPointToLatLng(this._bounds.getBottomLeft()),this._map.containerPointToLatLng(this._bounds.getTopRight())),i=this._map.getZoom(),o=this._map.getCenter();e=this._map._latLngBoundsToNewLayerBounds(e,i,o),this._map.fire("boxcollectend",{boxCollectBounds:e})}}}),L.Map.addInitHook("addHandler","boxCollector",L.Map.BoxCollector)},291:function(){L.Map.mergeOptions({doubleClickLabels:!0}),L.Map.DoubleClickLabels=L.Map.DoubleClickZoom.extend({enable:function(){var t=this._map;return this._enabled||(t.doubleClickZoom.enabled()&&t.doubleClickZoom.disable(),this._map.fire("singleclickon"),this._enabled=!0,this.addHooks()),this},disable:function(){return this._enabled?(this._enabled=!1,this.removeHooks(),this):this},_fireIfSingle:function(t){var e=this._map,i=t.originalEvent;i&&i.shiftKey||(e._clicked+=1,this._map._clickTimeout=setTimeout((function(){1===e._clicked?(e._clicked=0,e.fire("singleclick",{type:"singleclick"})):L.Browser.touch&&i&&i.sourceCapabilities.firesTouchEvents&&e.fire("dblclick")}),250))},_onDoubleClick:function(){var t=this._map,e=t._labels;setTimeout((function(){t._clicked=0,clearTimeout(t._clickTimeout)}),0),e&&(1===e.options.opacity?(e.options.opacity=0,e.setOpacity(0)):(e.options.opacity=1,e.setOpacity(1)))}}),L.Map.addInitHook("addHandler","doubleClickLabels",L.Map.DoubleClickLabels)},752:function(){L.Map.DoubleClickZoom.include({addHooks:function(){this._map.on({click:this._fireIfSingle,dblclick:this._onDoubleClick},this)},removeHooks:function(){this._map.off({click:this._fireIfSingle,dblclick:this._onDoubleClick},this)},enable:function(){return this._enabled||this._map.doubleClickLabels&&this._map.doubleClickLabels.enabled()||(this._map.fire("singleclickon"),this._enabled=!0,this.addHooks()),this},disable:function(){return this._enabled?(this._map.fire("singleclickoff"),this._enabled=!1,this.removeHooks(),this):this},_fireIfSingle:function(t){var e=this._map,i=t.originalEvent;i&&i.shiftKey||(e._clicked+=1,this._map._clickTimeout=setTimeout((function(){1===e._clicked?(e._clicked=0,e.fire("singleclick",{type:"singleclick"})):L.Browser.touch&&i&&i.sourceCapabilities.firesTouchEvents&&e._fireDOMEvent(i,"dblclick",[e])}),250))},_onDoubleClick:function(t){var e=this._map,i=t.originalEvent;if(setTimeout((function(){e._clicked=0,clearTimeout(e._clickTimeout)}),0),!i)return!1;var o=e.getZoom(),n=e.options.zoomDelta,a=i.shiftKey?o-n:o+n;"center"===e.options.doubleClickZoom?e.setZoom(a):e.setZoomAround(t.containerPoint,a)}})},131:function(){L.Map.include({_clicked:0,addGoogleMutant:function(t){return(t=this.mutantOptions=L.extend({mutantOpacity:.8,maxZoom:24,maxNativeZoom:20,minZoom:0,labels:!0,labelOpacity:1,doubleClickLabels:!0},t)).labels||(this.mutantOptions=L.extend(this.mutantOptions,{labelOpacity:t.labels?1:void 0,doubleClickLabels:!!t.labels||void 0})),this._googleMutant=L.tileLayer("http://mt0.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",{maxZoom:t.maxZoom,maxNativeZoom:t.maxNativeZoom,minZoom:t.minZoom,opacity:t.mutantOpacity}).addTo(this),t.labels?this._addLabels(t):this.doubleClickLabels=void 0,this},_addLabels:function(t){return 0!==t.labelOpacity&&1!==t.labelOpacity&&(t.labelOpacity=1),this._labels=L.tileLayer("https://stamen-tiles-{s}.a.ssl.fastly.net/toner-labels/{z}/{x}/{y}{r}.{ext}",{attribution:'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',subdomains:"abcd",interactive:!1,opacity:t.labelOpacity,maxZoom:t.maxZoom,maxNativeZoom:t.maxNativeZoom,minZoom:t.minZoom,ext:"png"}).addTo(this),this.mutantOptions.doubleClickLabels&&this.doubleClickLabels.enable(),this}}),L.Map.addInitHook((function(){this.doubleClickLabels.disable(),this.doubleClickZoom.enable()}))},999:function(){L.DomUtil=L.extend(L.DomUtil,{initTranslation:function(t){this.translation=t},getMatrixString:function(t){var e=L.Browser.webkit3d||L.Browser.gecko3d||L.Browser.ie3d,i=[t[0],t[3],0,t[6],t[1],t[4],0,t[7],0,0,1,0,t[2],t[5],0,t[8]],o=e?"matrix3d("+i.join(",")+")":"";return e||console.log("Your browser must support 3D CSS transformsin order to use DistortableImageOverlay."),o},toggleClass:function(t,e){var i=e;return this.hasClass(t,i)?this.removeClass(t,i):this.addClass(t,i)},confirmDelete:function(){return window.confirm(this.translation.confirmImageDelete)},confirmDeletes:function(t){if(1===t)return this.confirmDelete();var e,i=this.translation.confirmImagesDeletes;return e="function"==typeof i?i(t):i,window.confirm(e)}})},85:function(){L.IconUtil={create:function(t){return/^#/.test(t)&&(t=t.replace(/^#/,"")),'<svg class="ldi-icon ldi-'+t+'"role="img" focusable="false"><use xlink:href="#'+t+'"></use></svg>'},addClassToSvg:function(t,e){var i=t.querySelector("svg");i&&L.DomUtil.addClass(i,e)},toggleXlink:function(t,e,i){/^#/.test(e)||(e="#"+e),/^#/.test(i)||(i="#"+i);var o=t.querySelector("use");if(o){var n=o.getAttribute("xlink:href")===e?i:e;return o.setAttribute("xlink:href",n),n}return!1},toggleTitle:function(t,e,i){var o=t.getAttribute("title")===e?i:e;return t.setAttribute("title",o),t.hasAttribute("aria-label")&&t.setAttribute("aria-label",o),o}}},351:function(){L.ImageUtil={getCmPerPixel:function(t){var e=t._map;return 100*e.latLngToLayerPoint(t.getCorner(0)).distanceTo(e.latLngToLayerPoint(t.getCorner(1)))/t.getElement().width}}},360:function(){L.MatrixUtil={adj:function(t){return[t[4]*t[8]-t[5]*t[7],t[2]*t[7]-t[1]*t[8],t[1]*t[5]-t[2]*t[4],t[5]*t[6]-t[3]*t[8],t[0]*t[8]-t[2]*t[6],t[2]*t[3]-t[0]*t[5],t[3]*t[7]-t[4]*t[6],t[1]*t[6]-t[0]*t[7],t[0]*t[4]-t[1]*t[3]]},multmm:function(t,e){var i,o=[];for(i=0;i<3;i++)for(var n=0;n<3;n++){for(var a=0,r=0;r<3;r++)a+=t[3*i+r]*e[3*r+n];o[3*i+n]=a}return o},multmv:function(t,e){return[t[0]*e[0]+t[1]*e[1]+t[2]*e[2],t[3]*e[0]+t[4]*e[1]+t[5]*e[2],t[6]*e[0]+t[7]*e[1]+t[8]*e[2]]},multsm:function(t,e){for(var i=[],o=0,n=e.length;o<n;o++)i.push(t*e[o]);return i},basisToPoints:function(t,e,i,o,n,a,r,s){var l=[t,i,n,e,o,a,1,1,1],c=L.MatrixUtil.multmv(L.MatrixUtil.adj(l),[r,s,1]);return L.MatrixUtil.multmm(l,[c[0],0,0,0,c[1],0,0,0,c[2]])},project:function(t,e,i){var o=L.MatrixUtil.multmv(t,[e,i,1]);return[o[0]/o[2],o[1]/o[2]]},general2DProjection:function(t,e,i,o,n,a,r,s,l,c,d,h,u,g,m,p){var f=L.MatrixUtil.basisToPoints(t,e,n,a,l,c,u,g),v=L.MatrixUtil.basisToPoints(i,o,r,s,d,h,m,p),_=L.MatrixUtil.multmm(v,L.MatrixUtil.adj(f));return L.MatrixUtil.multsm(1/_[8],_)}}},682:function(){L.TrigUtil={calcAngle:function(t,e){var i=arguments.length>2&&void 0!==arguments[2]?arguments[2]:"deg";return"deg"===i?this.radiansToDegrees(Math.atan2(e,t)):Math.atan2(e,t)},radiansToDegrees:function(t){return 180*t/Math.PI},degreesToRadians:function(t){return t*Math.PI/180}}},866:function(){L.Utils={initTranslation:function(){var t={deleteImage:"Delete Image",deleteImages:"Delete Images",distortImage:"Distort Image",dragImage:"Drag Image",exportImage:"Export Image",exportImages:"Export Images",removeBorder:"Remove Border",addBorder:"Add Border",freeRotateImage:"Free rotate Image",geolocateImage:"Geolocate Image",lockMode:"Lock Mode",lockImages:"Lock Images",makeImageOpaque:"Make Image Opaque",makeImageTransparent:"Make Image Transparent",restoreImage:"Restore Natural Image",rotateImage:"Rotate Image",scaleImage:"Scale Image",stackToFront:"Stack to Front",stackToBack:"Stack to Back",unlockImages:"Unlock Images",confirmImageDelete:"Are you sure? This image will be permanently deleted from the map.",confirmImagesDeletes:"Are you sure? These images will be permanently deleted from the map."};if(this.options.translation)for(var e in t)this.options.translation.hasOwnProperty(e)||(this.options.translation[e]=t[e]);else this.options.translation=t;L.DomUtil.initTranslation(this.options.translation)},getNestedVal:function(t,e,i){return[e,i].reduce((function(t,e){return t&&t[e]}),t)}}}};t[999](),t[85](),t[351](),t[360](),t[682](),t[866](),t[477](),t[808](),t[743](),t[988](),t[92](),t[194](),t[206](),t[789](),t[337](),t[350](),t[376](),t[261](),t[929](),t[280](),t[426](),t[114](),t[231](),t[541](),t[149](),t[74](),t[691](),t[105](),t[944](),t[954](),t[178](),t[547](),t[886](),t[129](),t[93](),t[719](),t[397](),t[428](),t[782](),t[752](),t[496](),t[291](),t[131]()}();
-
 /******/ (function() { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -197,6 +194,10 @@ ansiHTML.reset()
   \**************************************/
 /***/ (function() {
 
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return exports; }; var exports = {}, Op = Object.prototype, hasOwn = Op.hasOwnProperty, defineProperty = Object.defineProperty || function (obj, key, desc) { obj[key] = desc.value; }, $Symbol = "function" == typeof Symbol ? Symbol : {}, iteratorSymbol = $Symbol.iterator || "@@iterator", asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator", toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag"; function define(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: !0, configurable: !0, writable: !0 }), obj[key]; } try { define({}, ""); } catch (err) { define = function define(obj, key, value) { return obj[key] = value; }; } function wrap(innerFn, outerFn, self, tryLocsList) { var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator, generator = Object.create(protoGenerator.prototype), context = new Context(tryLocsList || []); return defineProperty(generator, "_invoke", { value: makeInvokeMethod(innerFn, self, context) }), generator; } function tryCatch(fn, obj, arg) { try { return { type: "normal", arg: fn.call(obj, arg) }; } catch (err) { return { type: "throw", arg: err }; } } exports.wrap = wrap; var ContinueSentinel = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var IteratorPrototype = {}; define(IteratorPrototype, iteratorSymbol, function () { return this; }); var getProto = Object.getPrototypeOf, NativeIteratorPrototype = getProto && getProto(getProto(values([]))); NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype); var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype); function defineIteratorMethods(prototype) { ["next", "throw", "return"].forEach(function (method) { define(prototype, method, function (arg) { return this._invoke(method, arg); }); }); } function AsyncIterator(generator, PromiseImpl) { function invoke(method, arg, resolve, reject) { var record = tryCatch(generator[method], generator, arg); if ("throw" !== record.type) { var result = record.arg, value = result.value; return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) { invoke("next", value, resolve, reject); }, function (err) { invoke("throw", err, resolve, reject); }) : PromiseImpl.resolve(value).then(function (unwrapped) { result.value = unwrapped, resolve(result); }, function (error) { return invoke("throw", error, resolve, reject); }); } reject(record.arg); } var previousPromise; defineProperty(this, "_invoke", { value: function value(method, arg) { function callInvokeWithMethodAndArg() { return new PromiseImpl(function (resolve, reject) { invoke(method, arg, resolve, reject); }); } return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); } }); } function makeInvokeMethod(innerFn, self, context) { var state = "suspendedStart"; return function (method, arg) { if ("executing" === state) throw new Error("Generator is already running"); if ("completed" === state) { if ("throw" === method) throw arg; return doneResult(); } for (context.method = method, context.arg = arg;;) { var delegate = context.delegate; if (delegate) { var delegateResult = maybeInvokeDelegate(delegate, context); if (delegateResult) { if (delegateResult === ContinueSentinel) continue; return delegateResult; } } if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) { if ("suspendedStart" === state) throw state = "completed", context.arg; context.dispatchException(context.arg); } else "return" === context.method && context.abrupt("return", context.arg); state = "executing"; var record = tryCatch(innerFn, self, context); if ("normal" === record.type) { if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue; return { value: record.arg, done: context.done }; } "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg); } }; } function maybeInvokeDelegate(delegate, context) { var methodName = context.method, method = delegate.iterator[methodName]; if (undefined === method) return context.delegate = null, "throw" === methodName && delegate.iterator.return && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method) || "return" !== methodName && (context.method = "throw", context.arg = new TypeError("The iterator does not provide a '" + methodName + "' method")), ContinueSentinel; var record = tryCatch(method, delegate.iterator, context.arg); if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel; var info = record.arg; return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel); } function pushTryEntry(locs) { var entry = { tryLoc: locs[0] }; 1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry); } function resetTryEntry(entry) { var record = entry.completion || {}; record.type = "normal", delete record.arg, entry.completion = record; } function Context(tryLocsList) { this.tryEntries = [{ tryLoc: "root" }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0); } function values(iterable) { if (iterable) { var iteratorMethod = iterable[iteratorSymbol]; if (iteratorMethod) return iteratorMethod.call(iterable); if ("function" == typeof iterable.next) return iterable; if (!isNaN(iterable.length)) { var i = -1, next = function next() { for (; ++i < iterable.length;) { if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next; } return next.value = undefined, next.done = !0, next; }; return next.next = next; } } return { next: doneResult }; } function doneResult() { return { value: undefined, done: !0 }; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, defineProperty(Gp, "constructor", { value: GeneratorFunctionPrototype, configurable: !0 }), defineProperty(GeneratorFunctionPrototype, "constructor", { value: GeneratorFunction, configurable: !0 }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) { var ctor = "function" == typeof genFun && genFun.constructor; return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name)); }, exports.mark = function (genFun) { return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun; }, exports.awrap = function (arg) { return { __await: arg }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () { return this; }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) { void 0 === PromiseImpl && (PromiseImpl = Promise); var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl); return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) { return result.done ? result.value : iter.next(); }); }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () { return this; }), define(Gp, "toString", function () { return "[object Generator]"; }), exports.keys = function (val) { var object = Object(val), keys = []; for (var key in object) { keys.push(key); } return keys.reverse(), function next() { for (; keys.length;) { var key = keys.pop(); if (key in object) return next.value = key, next.done = !1, next; } return next.done = !0, next; }; }, exports.values = values, Context.prototype = { constructor: Context, reset: function reset(skipTempReset) { if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) { "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined); } }, stop: function stop() { this.done = !0; var rootRecord = this.tryEntries[0].completion; if ("throw" === rootRecord.type) throw rootRecord.arg; return this.rval; }, dispatchException: function dispatchException(exception) { if (this.done) throw exception; var context = this; function handle(loc, caught) { return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught; } for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i], record = entry.completion; if ("root" === entry.tryLoc) return handle("end"); if (entry.tryLoc <= this.prev) { var hasCatch = hasOwn.call(entry, "catchLoc"), hasFinally = hasOwn.call(entry, "finallyLoc"); if (hasCatch && hasFinally) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } else if (hasCatch) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); } else { if (!hasFinally) throw new Error("try statement without catch or finally"); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } } } }, abrupt: function abrupt(type, arg) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) { var finallyEntry = entry; break; } } finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null); var record = finallyEntry ? finallyEntry.completion : {}; return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record); }, complete: function complete(record, afterLoc) { if ("throw" === record.type) throw record.arg; return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel; }, finish: function finish(finallyLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel; } }, catch: function _catch(tryLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc === tryLoc) { var record = entry.completion; if ("throw" === record.type) { var thrown = record.arg; resetTryEntry(entry); } return thrown; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(iterable, resultName, nextLoc) { return this.delegate = { iterator: values(iterable), resultName: resultName, nextLoc: nextLoc }, "next" === this.method && (this.arg = undefined), ContinueSentinel; } }, exports; }
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 var arr = [];
 L.DistortableCollection = L.FeatureGroup.extend({
   options: {
@@ -216,16 +217,14 @@ L.DistortableCollection = L.FeatureGroup.extend({
   onAdd: function onAdd(map) {
     L.FeatureGroup.prototype.onAdd.call(this, map);
     this._map = map;
-
     if (this.editable) {
       this.editing.enable();
     }
+
     /**
      * although we have a DistortableCollection.Edit class that handles collection events to keep our code managable,
      * events that need to be added on individual images are kept here to do so through `layeradd`.
      */
-
-
     this.on('layeradd', this._addEvents, this);
     this.on('layerremove', this._removeEvents, this);
   },
@@ -233,7 +232,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
     if (this.editing) {
       this.editing.disable();
     }
-
     this.off('layeradd', this._addEvents, this);
     this.off('layerremove', this._removeEvents, this);
   },
@@ -245,7 +243,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
     L.DomEvent.on(layer.getElement(), {
       mousedown: this._deselectOthers,
-
       /* Enable longpress for multi select for touch devices. */
       contextmenu: this._longPressMultiSelect
     }, this);
@@ -263,21 +260,16 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
   _longPressMultiSelect: function _longPressMultiSelect(e) {
     var _this = this;
-
     if (!this.editable) {
       return;
     }
-
     e.preventDefault();
     this.eachLayer(function (layer) {
       var edit = layer.editing;
-
       if (layer.getElement() === e.target && edit.enabled()) {
         L.DomUtil.toggleClass(layer.getElement(), 'collected');
-
         if (_this.anyCollected()) {
           layer.deselect();
-
           _this.editing._addToolbar();
         } else {
           _this.editing._removeToolbar();
@@ -296,13 +288,12 @@ L.DistortableCollection = L.FeatureGroup.extend({
     if (e.shiftKey) {
       /* conditional prevents disabled images from flickering multi-select mode */
       if (layer.editing.enabled()) {
-        L.DomUtil.toggleClass(e.target, 'collected'); // re-order layers by _leaflet_id to match their display order in UI
+        L.DomUtil.toggleClass(e.target, 'collected');
+        // re-order layers by _leaflet_id to match their display order in UI
         // add new layer to right position and avoid repitition
-
         var newArr = arr.every(function (each) {
           return each._leaflet_id !== layer._leaflet_id;
         });
-
         if (newArr) {
           arr.push(layer);
         } else {
@@ -310,7 +301,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
         }
       }
     }
-
     if (this.anyCollected()) {
       layer.deselect();
     } else {
@@ -319,11 +309,9 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
   _deselectOthers: function _deselectOthers(e) {
     var _this2 = this;
-
     if (!this.editable) {
       return;
     }
-
     this.eachLayer(function (layer) {
       if (layer.getElement() !== e.target) {
         layer.deselect();
@@ -331,7 +319,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
         _this2._toggleCollected(e, layer);
       }
     });
-
     if (e) {
       L.DomEvent.stopPropagation(e);
     }
@@ -340,15 +327,12 @@ L.DistortableCollection = L.FeatureGroup.extend({
     var overlay = e.target;
     var map = this._map;
     var i;
-
     if (!this.isCollected(overlay)) {
       return;
     }
-
     this.eachLayer(function (layer) {
       layer._dragStartPoints = {};
       layer.deselect();
-
       for (i = 0; i < 4; i++) {
         var c = layer.getCorner(i);
         layer._dragStartPoints[i] = map.latLngToLayerPoint(c);
@@ -358,20 +342,15 @@ L.DistortableCollection = L.FeatureGroup.extend({
   _dragMultiple: function _dragMultiple(e) {
     var overlay = e.target;
     var map = this._map;
-
     if (!this.isCollected(overlay)) {
       return;
     }
-
     var topLeft = map.latLngToLayerPoint(overlay.getCorner(0));
-
     var delta = overlay._dragStartPoints[0].subtract(topLeft);
-
     this._updateCollectionFromPoints(delta, overlay);
   },
   _toRemove: function _toRemove() {
     var _this3 = this;
-
     var layerArr = this.getLayers();
     return layerArr.filter(function (layer) {
       var mode = layer.editing._mode;
@@ -380,7 +359,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
   _toMove: function _toMove(overlay) {
     var _this4 = this;
-
     var layerArr = this.getLayers();
     return layerArr.filter(function (layer) {
       var mode = layer.editing._mode;
@@ -389,16 +367,13 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
   _updateCollectionFromPoints: function _updateCollectionFromPoints(delta, overlay) {
     var layersToMove = this._toMove(overlay);
-
     var p = new L.Transformation(1, -delta.x, 1, -delta.y);
     var i;
     layersToMove.forEach(function (layer) {
       var movedPoints = {};
-
       for (i = 0; i < 4; i++) {
         movedPoints[i] = p.transform(layer._dragStartPoints[i]);
       }
-
       layer.setCornersFromPoints(movedPoints);
     });
   },
@@ -408,18 +383,98 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, 0);
     return reduce / imgs.length;
   },
-  isJsonDetected: function isJsonDetected(currentURL) {
+  _extractJSONDownloadURL: function _extractJSONDownloadURL(currentURL) {
+    var startIndex = currentURL.lastIndexOf('=');
+    var jsonDownloadURL = currentURL.slice(startIndex + 1);
+    return jsonDownloadURL;
+  },
+  _isJsonDetected: function _isJsonDetected(currentURL) {
     if (currentURL.includes('?json=')) {
-      startIndex = currentURL.lastIndexOf('.');
-      fileExtension = currentURL.slice(startIndex + 1);
-
+      var startIndex = currentURL.lastIndexOf('.');
+      var fileExtension = currentURL.slice(startIndex + 1);
       if (fileExtension === 'json') {
-        console.log('JSON found in map shareable link');
+        console.log('JSON found in map shareable link'); // left here purposely
         return true;
       }
     }
-
     return false;
+  },
+  _generateFromJson: function _generateFromJson(jsonDownloadURL) {
+    return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+      var index, imgCollectionProps, response;
+      return _regeneratorRuntime().wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              index = 0;
+              imgCollectionProps = [];
+              _context.prev = 2;
+              _context.next = 5;
+              return axios.get(jsonDownloadURL);
+            case 5:
+              response = _context.sent;
+              if (!(response.data.images.length > 1)) {
+                _context.next = 9;
+                break;
+              }
+              response.data.images.forEach(function (data) {
+                imgCollectionProps[index] = data;
+                index++;
+              });
+              return _context.abrupt("return", {
+                avg_cm_per_pixel: response.data.avg_cm_per_pixel,
+                imgCollectionProps: imgCollectionProps
+              });
+            case 9:
+              imgCollectionProps[index] = response.data.images;
+              return _context.abrupt("return", {
+                avg_cm_per_pixel: response.data.avg_cm_per_pixel,
+                imgCollectionProps: imgCollectionProps
+              });
+            case 13:
+              _context.prev = 13;
+              _context.t0 = _context["catch"](2);
+              console.log('err', _context.t0);
+            case 16:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee, null, [[2, 13]]);
+    }))();
+  },
+  // expects URL in this format: http://localhost:8081/examples/shareable.html?json=https://archive.org/download/segeotest/segeotest.json
+  generateFromJsonUrl: function generateFromJsonUrl(currentURL) {
+    var _this5 = this;
+    return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+      var jsonDownloadURL, imageCollectionObj;
+      return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+        while (1) {
+          switch (_context2.prev = _context2.next) {
+            case 0:
+              imageCollectionObj = {};
+              if (_this5._isJsonDetected(currentURL)) {
+                jsonDownloadURL = _this5._extractJSONDownloadURL(currentURL);
+              }
+              if (!jsonDownloadURL) {
+                _context2.next = 7;
+                break;
+              }
+              _context2.next = 5;
+              return _this5._generateFromJson(jsonDownloadURL);
+            case 5:
+              imageCollectionObj = _context2.sent;
+              return _context2.abrupt("return", imageCollectionObj);
+            case 7:
+              ;
+              return _context2.abrupt("return", imageCollectionObj);
+            case 9:
+            case "end":
+              return _context2.stop();
+          }
+        }
+      }, _callee2);
+    }))();
   },
   generateExportJson: function generateExportJson() {
     var allImages = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
@@ -428,7 +483,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
     this.eachLayer(function (layer) {
       if (allImages || this.isCollected(layer)) {
         var sections = layer._image.src.split('/');
-
         var filename = sections[sections.length - 1];
         var zc = layer.getCorners();
         var corners = [{
@@ -449,6 +503,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
           src: layer._image.src,
           width: layer._image.width,
           height: layer._image.height,
+          tooltipText: layer.getTooltipText(),
           image_file_name: filename,
           nodes: corners,
           cm_per_pixel: L.ImageUtil.getCmPerPixel(layer)
@@ -460,7 +515,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return json;
   }
 });
-
 L.distortableCollection = function (id, options) {
   return new L.DistortableCollection(id, options);
 };
@@ -498,57 +552,44 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
   onAdd: function onAdd(map) {
     var _this = this;
-
     this._map = map;
-
     if (!this.getElement()) {
       this._initImage();
     }
-
     map.on('viewreset', this._reset, this);
-
     if (this.options.corners) {
       this._corners = this.options.corners;
-
       if (map.options.zoomAnimation && L.Browser.any3d) {
         map.on('zoomanim', this._animateZoom, this);
       }
-    } // Have to wait for the image to load because need to access its w/h
+    }
 
-
+    // Have to wait for the image to load because need to access its w/h
     L.DomEvent.on(this.getElement(), 'load', function () {
       _this.getPane().appendChild(_this.getElement());
-
       _this._initImageDimensions();
-
       if (_this.options.rotation) {
         var units = _this.options.rotation.deg >= 0 ? 'deg' : 'rad';
-
         _this.setAngle(_this.options.rotation[units], units);
       } else {
         _this.rotation = {
           deg: 0,
           rad: 0
         };
-
         _this._reset();
       }
+
       /* Initialize default corners if not already set */
-
-
       if (!_this._corners) {
         if (map.options.zoomAnimation && L.Browser.any3d) {
           map.on('zoomanim', _this._animateZoom, _this);
         }
       }
+
       /** if there is a featureGroup, only its editable option matters */
-
-
       var eventParents = _this._eventParents;
-
       if (eventParents) {
         _this.eP = eventParents[Object.keys(eventParents)[0]];
-
         if (_this.eP.editable) {
           _this.editing.enable();
         }
@@ -556,7 +597,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
         if (_this.editable) {
           _this.editing.enable();
         }
-
         _this.eP = null;
       }
     });
@@ -566,15 +606,14 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       singleclickoff: this._resetClickListeners,
       singleclick: this._singleClick
     }, this);
+
     /**
      * custom events fired from DoubleClickLabels.js. Used to differentiate
      * single / dblclick to not deselect images on map dblclick.
      */
-
     if (!(map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled())) {
       L.DomEvent.on(map, 'click', this.deselect, this);
     }
-
     this.fire('add');
     L.DomEvent.on(this.getElement(), 'mousemove', this.activateTooltip, this);
     L.DomEvent.on(this.getElement(), 'mouseout', this.closeTooltip, this);
@@ -587,11 +626,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       singleclick: this._singleClick
     }, this);
     L.DomEvent.off(map, 'click', this.deselect, this);
-
     if (this.editing) {
       this.editing.disable();
     }
-
     this.fire('remove');
     L.ImageOverlay.prototype.onRemove.call(this, map);
     L.DomEvent.on(this.getElement(), 'mouseout', this.closeTooltip, this);
@@ -606,13 +643,11 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     var imageWidth = parseInt(aspectRatio * imageHeight);
     var center = map.project(map.getCenter());
     var offset = L.point(imageWidth, imageHeight).divideBy(2);
-
     if (this.options.corners) {
       this._corners = this.options.corners;
     } else {
       this._corners = [map.unproject(center.subtract(offset)), map.unproject(center.add(L.point(offset.x, -offset.y))), map.unproject(center.add(L.point(-offset.x, offset.y))), map.unproject(center.add(offset))];
     }
-
     this._initialDimensions = {
       'center': center,
       'offset': offset,
@@ -642,15 +677,11 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
   deselect: function deselect() {
     var edit = this.editing;
-
     if (!edit.enabled()) {
       return;
     }
-
     edit._removeToolbar();
-
     edit._hideMarkers();
-
     this._selected = false;
     this.fire('deselect');
     return this;
@@ -658,31 +689,25 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   select: function select(e) {
     var edit = this.editing;
     var eP = this.eP;
-
     if (!edit.enabled()) {
       return;
     }
-
     if (e) {
       L.DomEvent.stopPropagation(e);
-    } // this ensures deselection of all other images, allowing us to keep collection group optional
+    }
 
-
+    // this ensures deselection of all other images, allowing us to keep collection group optional
     this._programmaticGrouping();
-
     this._selected = true;
-
     edit._addToolbar();
-
     edit._showMarkers();
+    this.fire('select');
 
-    this.fire('select'); // we run the selection logic 1st anyway because the collection group's _addToolbar method depends on it
-
+    // we run the selection logic 1st anyway because the collection group's _addToolbar method depends on it
     if (eP && eP.anyCollected()) {
       this.deselect();
       return;
     }
-
     return this;
   },
   _programmaticGrouping: function _programmaticGrouping() {
@@ -697,11 +722,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this._corners[corner] = latlng;
     this.setBounds(L.latLngBounds(this.getCorners()));
     this.fire('update');
-
     if (edit.toolbar && edit.toolbar instanceof L.DistortableImage.PopupBar) {
       edit._updateToolbarPos();
     }
-
     this.edited = true;
     return this;
   },
@@ -711,7 +734,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     } else {
       var exceedsTop;
       var exceedsBottom;
-
       if (zoom === 0) {
         exceedsTop = map.project(corner).y < 2;
         exceedsBottom = map.project(corner).y >= 255;
@@ -719,7 +741,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
         exceedsTop = map.project(corner).y / zoom < 2;
         exceedsBottom = map.project(corner).y / Math.pow(2, zoom) >= 255;
       }
-
       return exceedsTop || exceedsBottom;
     }
   },
@@ -740,8 +761,9 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     var map = this._map;
     var zoom = map.getZoom();
     var edit = this.editing;
-    var i = 0; // this is to fix https://github.com/publiclab/Leaflet.DistortableImage/issues/402
+    var i = 0;
 
+    // this is to fix https://github.com/publiclab/Leaflet.DistortableImage/issues/402
     for (var k in latlngObj) {
       if (this._cornerExceedsMapLats(zoom, latlngObj[k], map)) {
         // calling reset / update w/ the same corners bc it prevents a marker flicker for rotate
@@ -750,19 +772,15 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
         return;
       }
     }
-
     for (var _k in latlngObj) {
       this._corners[i] = latlngObj[_k];
       i += 1;
     }
-
     this.setBounds(L.latLngBounds(this.getCorners()));
     this.fire('update');
-
     if (edit.toolbar && edit.toolbar instanceof L.DistortableImage.PopupBar) {
       edit._updateToolbarPos();
     }
-
     this.edited = true;
     return this;
   },
@@ -771,10 +789,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     var zoom = map.getZoom();
     var edit = this.editing;
     var i = 0;
-
     for (var k in pointsObj) {
       var corner = map.layerPointToLatLng(pointsObj[k]);
-
       if (this._cornerExceedsMapLats(zoom, corner, map)) {
         // calling reset / update w/ the same corners bc it prevents a marker flicker for rotate
         this.setBounds(L.latLngBounds(this.getCorners()));
@@ -782,19 +798,15 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
         return;
       }
     }
-
     for (var _k2 in pointsObj) {
       this._corners[i] = map.layerPointToLatLng(pointsObj[_k2]);
       i += 1;
     }
-
     this.setBounds(L.latLngBounds(this.getCorners()));
     this.fire('update');
-
     if (edit.toolbar && edit.toolbar instanceof L.DistortableImage.PopupBar) {
       edit._updateToolbarPos();
     }
-
     this.edited = true;
     return this;
   },
@@ -804,16 +816,13 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     var i;
     var p;
     var scaledCorners = {};
-
     if (scale === 0) {
       return;
     }
-
     for (i = 0; i < 4; i++) {
       p = map.project(this.getCorner(i)).subtract(center).multiplyBy(scale).add(center);
       scaledCorners[i] = map.unproject(p);
     }
-
     this.setCorners(scaledCorners);
     return this;
   },
@@ -826,15 +835,12 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     var row1y = matrix[5];
     var determinant = row0x * row1y - row0y * row1x;
     var angle = L.TrigUtil.calcAngle(row0x, row0y, 'rad');
-
     if (determinant < 0) {
       angle += angle < 0 ? Math.PI : -Math.PI;
     }
-
     if (angle < 0) {
       angle = 2 * Math.PI + angle;
     }
-
     return unit === 'deg' ? Math.round(L.TrigUtil.radiansToDegrees(angle)) : L.Util.formatNum(angle, 2);
   },
   setAngle: function setAngle(angle) {
@@ -852,17 +858,14 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     var i;
     var p;
     var q;
-
     if (unit === 'deg') {
       angle = L.TrigUtil.degreesToRadians(angle);
     }
-
     for (i = 0; i < 4; i++) {
       p = map.project(this.getCorner(i)).subtract(center);
       q = L.point(Math.cos(angle) * p.x - Math.sin(angle) * p.y, Math.sin(angle) * p.x + Math.cos(angle) * p.y);
       corners[i] = map.unproject(q.add(center));
     }
-
     this.setCorners(corners);
     return this;
   },
@@ -872,12 +875,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     var p;
     var transCorners = {};
     var delta = map.project(formerPoint).subtract(map.project(newPoint));
-
     for (i = 0; i < 4; i++) {
       p = map.project(this.getCorner(i)).subtract(delta);
       transCorners[i] = map.unproject(p);
     }
-
     this.setCorners(transCorners);
   },
   restore: function restore() {
@@ -886,20 +887,16 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     var offset = this._initialDimensions.offset;
     var zoom = this._initialDimensions.zoom;
     var corners = [center.subtract(offset), center.add(L.point(offset.x, -offset.y)), center.add(L.point(-offset.x, offset.y)), center.add(offset)];
-
     for (var i = 0; i < 4; i++) {
       if (!map.unproject(corners[i], zoom).equals(this.getCorner(i))) {
         this.setCorner(i, map.unproject(corners[i], zoom));
       }
     }
-
     this.edited = false;
     this.fire('restore');
     return this;
   },
-
   /* Copied from Leaflet v0.7 https://github.com/Leaflet/Leaflet/blob/66282f14bcb180ec87d9818d9f3c9f75afd01b30/src/dom/DomUtil.js#L189-L199 */
-
   /* since L.DomUtil.getTranslateString() is deprecated in Leaflet v1.0 */
   _getTranslateString: function _getTranslateString(point) {
     // on WebKit browsers (Chrome/Safari/iOS Safari/Android)
@@ -907,6 +904,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     // makes animation smoother as it ensures HW accel is used.
     // Firefox 13 doesn't care
     // (same speed either way), Opera 12 doesn't support translate3d
+
     var is3d = L.Browser.webkit3d;
     var open = 'translate' + (is3d ? '3d' : '') + '(';
     var close = (is3d ? ',0' : '') + ')';
@@ -916,27 +914,22 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     var map = this._map;
     var image = this.getElement();
     var latLngToLayerPoint = L.bind(map.latLngToLayerPoint, map);
-
     var transformMatrix = this._calculateProjectiveTransform(latLngToLayerPoint);
-
     var topLeft = latLngToLayerPoint(this.getCorner(0));
     var warp = L.DomUtil.getMatrixString(transformMatrix);
-
     var translation = this._getTranslateString(topLeft);
+
     /* See L.DomUtil.setPosition. Mainly for the purposes of L.Draggable. */
-
-
     image._leaflet_pos = topLeft;
     image.style[L.DomUtil.TRANSFORM] = [translation, warp].join(' ');
+
     /* Set origin to the upper-left corner rather than
      * the center of the image, which is the default.
      */
-
     image.style[L.DomUtil.TRANSFORM + '-origin'] = '0 0 0';
     this.rotation.deg = this.getAngle();
     this.rotation.rad = this.getAngle('rad');
   },
-
   /*
    * Calculates the transform string that will be
    * correct *at the end* of zooming.
@@ -946,20 +939,15 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   _animateZoom: function _animateZoom(event) {
     var map = this._map;
     var image = this.getElement();
-
     var latLngToNewLayerPoint = function latLngToNewLayerPoint(latlng) {
       return map._latLngToNewLayerPoint(latlng, event.zoom, event.center);
     };
-
     var transformMatrix = this._calculateProjectiveTransform(latLngToNewLayerPoint);
-
     var topLeft = latLngToNewLayerPoint(this.getCorner(0));
     var warp = L.DomUtil.getMatrixString(transformMatrix);
-
     var translation = this._getTranslateString(topLeft);
+
     /* See L.DomUtil.setPosition. Mainly for the purposes of L.Draggable. */
-
-
     image._leaflet_pos = topLeft;
     image.style[L.DomUtil.TRANSFORM] = [translation, warp].join(' ');
   },
@@ -987,10 +975,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     var c = [];
     var j;
     /* Convert corners to container points (i.e. cartesian coordinates). */
-
     for (j = 0; j < 4; j++) {
       c.push(latLngToCartesian(this.getCorner(j))._subtract(offset));
     }
+
     /*
      * This matrix describes the action of
      * the CSS transform on each corner of the image.
@@ -1002,16 +990,12 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
      * says that the upper-left corner of the image
      * maps to the first latlng in this._corners.
      */
-
-
     return L.MatrixUtil.general2DProjection(0, 0, c[0].x, c[0].y, w, 0, c[1].x, c[1].y, 0, h, c[2].x, c[2].y, w, h, c[3].x, c[3].y);
   }
 });
-
 L.distortableImageOverlay = function (id, options) {
   return new L.DistortableImageOverlay(id, options);
 };
-
 L.Map.addInitHook(function () {
   if (!L.DomUtil.hasClass(this.getContainer(), 'ldi')) {
     L.DomUtil.addClass(this.getContainer(), 'ldi');
@@ -1027,7 +1011,6 @@ L.Map.addInitHook(function () {
 /***/ (function() {
 
 var _this = this;
-
 L.DomUtil = L.DomUtil || {};
 L.DistortableImage = L.DistortableImage || {};
 L.distortableImage = L.DistortableImage;
@@ -1044,9 +1027,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
       this._container = this._buildContainer();
       this._scrollWrapper = this._wrap();
       this._toggler = this._createButton();
-
       this._setMapper(this._container, this._scrollWrapper, this._toggler);
-
       L.DomEvent.on(this._toggler, 'click', this._toggleKeymapper, this);
       L.DomEvent.disableClickPropagation(this._container);
       L.DomEvent.disableScrollPropagation(this._container);
@@ -1073,8 +1054,8 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     toggler.innerHTML = L.IconUtil.create('keyboard_open');
     toggler.setAttribute('id', 'toggle-keymapper');
     toggler.setAttribute('href', '#');
-    toggler.setAttribute('title', 'Show keymap'); // Will force screen readers like VoiceOver to read this as "Show keymap - button"
-
+    toggler.setAttribute('title', 'Show keymap');
+    // Will force screen readers like VoiceOver to read this as "Show keymap - button"
     toggler.setAttribute('role', 'button');
     toggler.setAttribute('aria-label', 'Show keymap');
     return toggler;
@@ -1089,18 +1070,14 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     this._keymapper = L.control({
       position: this.options.position
     });
-
     this._keymapper.onAdd = function () {
       container.appendChild(wrap);
-      wrap.insertAdjacentHTML('beforeend', '<table><tbody>' + '<hr id="keymapper-hr">' +
-      /* eslint-disable */
+      wrap.insertAdjacentHTML('beforeend', '<table><tbody>' + '<hr id="keymapper-hr">' + /* eslint-disable */
       '<tr><td><div class="left"><span>Rotate Mode</span></div><div class="right"><kbd>R</kbd></div></td></tr>' + '<tr><td><div class="left"><span>RotateScale Mode</span></div><div class="right"><kbd>r</kbd></div></td></tr>' + '<tr><td><div class="left"><span>Scale Mode</span></div><div class="right"><kbd>s</kbd></div></td></tr>' + '<tr><td><div class="left"><span>Distort Mode</span></div><div class="right"><kbd>d</kbd></div></td></tr>' + '<tr><td><div class="left"><span>Drag Mode</span></div><div class="right"><kbd>D</kbd></div></td></tr>' + '<tr><td><div class="left"><span>Lock (Mode) / Unlock Image</span></div><div class="right"><kbd>l</kbd>\xa0<kbd>u</kbd></div></td></tr>' + '<tr><td><div class="left"><span>Stack up / down</span></div><div class="right"><kbd>q</kbd>\xa0<kbd>a</kbd></div></td></tr>' + '<tr><td><div class="left"><span>Add / Remove Image Border</span></div><div class="right"><kbd>b</kbd></div></td></tr>' + '<tr><td><div class="left"><span>Toggle Opacity</span></div><div class="right"><kbd>o</kbd></div></td></tr>' + '<tr><td><div class="left"><span>Deselect All</span></div><div class="right"><kbd>esc</kbd></div></td></tr>' + '<tr><td><div class="left"><span>Delete Image(s)</span></div><div class="right"><kbd>delete</kbd>\xa0<kbd>backspace</kbd></div></td></tr>' + '<tr><td><div class="left"><span>Export Image(s)</span></div><div class="right"><kbd>e</kbd></div></td></tr>' + '</tbody></table>');
       /* eslint-enable */
-
       container.appendChild(button);
       return container;
     };
-
     this._keymapper.addTo(this._map);
   },
   _toggleKeymapper: function _toggleKeymapper(e) {
@@ -1115,7 +1092,6 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     if (document.querySelector('#keymapper-iconset')) {
       return;
     }
-
     var el = L.DomUtil.create('div', '');
     el.id = 'keymapper-iconset';
     el.setAttribute('hidden', 'hidden');
@@ -1125,15 +1101,13 @@ L.DistortableImage.Keymapper = L.Handler.extend({
   }
 });
 L.DistortableImage.Keymapper.addInitHook(function () {
-  L.DistortableImage.Keymapper.prototype._n = L.DistortableImage.Keymapper.prototype._n ? L.DistortableImage.Keymapper.prototype._n + 1 : 1; // dont enable keymapper for mobile
-
+  L.DistortableImage.Keymapper.prototype._n = L.DistortableImage.Keymapper.prototype._n ? L.DistortableImage.Keymapper.prototype._n + 1 : 1;
+  // dont enable keymapper for mobile
   if (L.DistortableImage.Keymapper.prototype._n === 1 && !L.Browser.mobile) {
     _this.enable();
-
     _this._injectIconSet();
   }
 });
-
 L.distortableImage.keymapper = function (map, options) {
   return new L.DistortableImage.Keymapper(map, options);
 };
@@ -1146,8 +1120,9 @@ L.distortableImage.keymapper = function (map, options) {
   \************************************************/
 /***/ (function() {
 
-L.DistortableImage = L.DistortableImage || {}; // this class holds the keybindings and toolbar API for an image collection instance
+L.DistortableImage = L.DistortableImage || {};
 
+// this class holds the keybindings and toolbar API for an image collection instance
 L.DistortableCollection.Edit = L.Handler.extend({
   options: {
     keymap: L.distortableImage.group_action_map
@@ -1164,11 +1139,9 @@ L.DistortableCollection.Edit = L.Handler.extend({
     this.editActions = this.options.actions;
     this.runExporter = L.bind(L.Utils.getNestedVal(this, '_exportOpts', 'exporter') || this.startExport, this);
     L.DomEvent.on(document, 'keydown', this._onKeyDown, this);
-
     if (!(map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled())) {
       L.DomEvent.on(map, 'click', this._decollectAll, this);
     }
-
     L.DomEvent.on(map, {
       singleclickon: this._singleClickListeners,
       singleclickoff: this._resetClickListeners,
@@ -1176,7 +1149,6 @@ L.DistortableCollection.Edit = L.Handler.extend({
       boxcollectend: this._addCollections
     }, this);
     this._group.editable = true;
-
     this._group.eachLayer(function (layer) {
       return layer.editing.enable();
     });
@@ -1185,22 +1157,17 @@ L.DistortableCollection.Edit = L.Handler.extend({
     var group = this._group;
     var map = group._map;
     L.DomEvent.off(document, 'keydown', this._onKeyDown, this);
-
     if (!(map.doubleClickZoom.enabled() || map.doubleClickLabels.enabled())) {
       L.DomEvent.off(map, 'click', this._decollectAll, this);
     }
-
     L.DomEvent.off(map, {
       singleclickon: this._singleClickListeners,
       singleclickoff: this._resetClickListeners,
       singleclick: this._singleClick,
       boxcollectend: this._addCollections
     }, this);
-
     this._decollectAll();
-
     this._group.editable = false;
-
     this._group.eachLayer(function (layer) {
       return layer.editing.disable();
     });
@@ -1218,11 +1185,9 @@ L.DistortableCollection.Edit = L.Handler.extend({
   _onKeyDown: function _onKeyDown(e) {
     var keymap = this.options.keymap;
     var handlerName = keymap[e.key];
-
     if (!this[handlerName]) {
       return;
     }
-
     if (this._group.anyCollected()) {
       this[handlerName].call(this);
     }
@@ -1246,7 +1211,6 @@ L.DistortableCollection.Edit = L.Handler.extend({
   },
   _decollectAll: function _decollectAll(e) {
     var oe;
-
     if (e) {
       oe = e.originalEvent;
     }
@@ -1254,113 +1218,86 @@ L.DistortableCollection.Edit = L.Handler.extend({
      * prevents image deselection following the 'boxcollectend' event - note 'shift' must not be released until dragging is complete
      * also prevents deselection following a click on a disabled img by differentiating it from the map
      */
-
-
     if (oe && (oe.shiftKey || oe.target instanceof HTMLImageElement)) {
       return;
     }
-
     this._group.eachLayer(function (layer) {
       L.DomUtil.removeClass(layer.getElement(), 'collected');
       layer.deselect();
     });
-
     this._removeToolbar();
-
     if (e) {
       L.DomEvent.stopPropagation(e);
     }
   },
   _unlockGroup: function _unlockGroup() {
     var _this = this;
-
     if (!this.hasTool(L.UnlockAction)) {
       return;
     }
-
     this._group.eachLayer(function (layer) {
       if (_this._group.isCollected(layer)) {
         var edit = layer.editing;
-
-        edit._unlock(); // unlock updates the layer's handles; deselect to ensure they're hidden
-
-
+        edit._unlock();
+        // unlock updates the layer's handles; deselect to ensure they're hidden
         layer.deselect();
       }
     });
   },
   _lockGroup: function _lockGroup() {
     var _this2 = this;
-
     if (!this.hasTool(L.LockAction)) {
       return;
     }
-
     this._group.eachLayer(function (layer) {
       if (_this2._group.isCollected(layer)) {
         var edit = layer.editing;
-
-        edit._lock(); // map.addLayer also deselects the image, so we reselect here
-
-
+        edit._lock();
+        // map.addLayer also deselects the image, so we reselect here
         L.DomUtil.addClass(layer.getElement(), 'collected');
       }
     });
   },
   _addCollections: function _addCollections(e) {
     var _this3 = this;
-
     var box = e.boxCollectBounds;
     var map = this._group._map;
-
     this._group.eachLayer(function (layer) {
       var edit = layer.editing;
-
       if (layer.isSelected()) {
         layer.deselect();
       }
-
       var zoom = map.getZoom();
       var center = map.getCenter();
       var imgBounds = L.latLngBounds(layer.getCorner(2), layer.getCorner(1));
       imgBounds = map._latLngBoundsToNewLayerBounds(imgBounds, zoom, center);
-
       if (box.intersects(imgBounds) && edit.enabled()) {
         if (!_this3.toolbar) {
           _this3._addToolbar();
         }
-
         L.DomUtil.addClass(layer.getElement(), 'collected');
       }
     });
   },
   _removeGroup: function _removeGroup(e) {
     var _this4 = this;
-
     if (!this.hasTool(L.DeleteAction)) {
       return;
     }
-
     var layersToRemove = this._group._toRemove();
-
     var n = layersToRemove.length;
-
     if (n === 0) {
       return;
     }
-
     var choice = L.DomUtil.confirmDeletes(n);
-
     if (choice) {
       layersToRemove.forEach(function (layer) {
         _this4._group.removeLayer(layer);
       });
-
       if (!this._group.anyCollected()) {
         this._removeToolbar();
       }
     }
-
     if (e) {
       L.DomEvent.stopPropagation(e);
     }
@@ -1369,17 +1306,14 @@ L.DistortableCollection.Edit = L.Handler.extend({
     if (!this.customCollection) {
       this._exportOpts.collection = undefined;
     }
-
     clearInterval(this.updateInterval);
   },
   _addToolbar: function _addToolbar() {
     var group = this._group;
     var map = group._map;
-
     if (group.options.suppressToolbar || this.toolbar) {
       return;
     }
-
     this.toolbar = L.distortableImage.controlBar({
       actions: this.editActions,
       position: 'topleft'
@@ -1387,7 +1321,6 @@ L.DistortableCollection.Edit = L.Handler.extend({
   },
   _removeToolbar: function _removeToolbar() {
     var map = this._group._map;
-
     if (this.toolbar) {
       map.removeLayer(this.toolbar);
       this.toolbar = false;
@@ -1403,25 +1336,18 @@ L.DistortableCollection.Edit = L.Handler.extend({
   addTool: function addTool(value) {
     if (value.baseClass === 'leaflet-toolbar-icon' && !this.hasTool(value)) {
       this._removeToolbar();
-
       this.editActions.push(value);
-
       this._addToolbar();
     }
-
     return this;
   },
   removeTool: function removeTool(value) {
     var _this5 = this;
-
     this.editActions.some(function (item, idx) {
       if (_this5.editActions[idx] === value) {
         _this5._removeToolbar();
-
         _this5.editActions.splice(idx, 1);
-
         _this5._addToolbar();
-
         return true;
       } else {
         return false;
@@ -1431,54 +1357,51 @@ L.DistortableCollection.Edit = L.Handler.extend({
   },
   startExport: function startExport() {
     var _this6 = this;
-
     if (!this.hasTool(L.ExportAction)) {
       return;
     }
-
     return new Promise(function (resolve) {
       var opts = _this6._exportOpts;
       opts.resolve = resolve; // allow resolving promise in user-defined functions, to stop spinner on completion
 
       var statusUrl;
-      _this6.updateInterval = null; // this may be overridden to update the UI to show export progress or completion
+      _this6.updateInterval = null;
 
+      // this may be overridden to update the UI to show export progress or completion
       var _defaultUpdater = function _defaultUpdater(data) {
-        data = JSON.parse(data); // optimization: fetch status directly from google storage:
-
+        data = JSON.parse(data);
+        // optimization: fetch status directly from google storage:
         if (data.status_url) {
           if (statusUrl !== data.status_url && data.status_url.match('.json')) {
             // if (data.status_url && data.status_url.substr(0,1) === "/") {
             //   opts.statusUrl = opts.statusUrl + data.status_url;
             // } else {
-            statusUrl = data.status_url; // }
+            statusUrl = data.status_url;
+            // }
           }
 
           if (data.status === 'complete') {
             clearInterval(_this6.updateInterval);
-
             if (!_this6.customCollection) {
               _this6._exportOpts.collection = undefined;
             }
-
             resolve();
-
             if (data.jpg !== null) {
               alert('Export succeeded. ' + opts.exportUrl + data.jpg);
             }
-          } // TODO: update to clearInterval when status == "failed" if we update that in this file:
+          }
+
+          // TODO: update to clearInterval when status == "failed" if we update that in this file:
           // https://github.com/publiclab/mapknitter-exporter/blob/main/lib/mapknitterExporter.rb
-
-
           console.log(data);
         }
-      }; // receives the URL of status.json, and starts running the updater to repeatedly fetch from status.json;
+      };
+
+      // receives the URL of status.json, and starts running the updater to repeatedly fetch from status.json;
       // this may be overridden to integrate with any UI
-
-
       var _defaultHandleStatusRes = function _defaultHandleStatusRes(data) {
-        statusUrl = opts.statusUrl + data; // repeatedly fetch the status.json
-
+        statusUrl = opts.statusUrl + data;
+        // repeatedly fetch the status.json
         _this6.updateInterval = setInterval(function () {
           var reqOpts = {
             method: 'GET'
@@ -1490,9 +1413,9 @@ L.DistortableCollection.Edit = L.Handler.extend({
             }
           }).then(opts.updater);
         }, opts.frequency);
-      }; // initiate the export
+      };
 
-
+      // initiate the export
       var _defaultFetchStatusUrl = function _defaultFetchStatusUrl(mergedOpts) {
         var form = new FormData();
         form.append('collection', JSON.stringify(mergedOpts.collection));
@@ -1508,18 +1431,15 @@ L.DistortableCollection.Edit = L.Handler.extend({
             return res.text();
           }
         }).then(mergedOpts.handleStatusRes);
-      }; // If the user has passed collection property
+      };
 
-
+      // If the user has passed collection property
       _this6.customCollection = !!opts.collection;
-
       if (!_this6.customCollection) {
         opts.collection = _this6._group.generateExportJson().images;
       }
-
       opts.frequency = opts.frequency || 3000;
       opts.scale = opts.scale || 100; // switch it to _getAvgCmPerPixel !
-
       opts.updater = opts.updater || _defaultUpdater;
       opts.handleStatusRes = opts.handleStatusRes || _defaultHandleStatusRes;
       opts.fetchStatusUrl = opts.fetchStatusUrl || _defaultFetchStatusUrl;
@@ -1527,7 +1447,6 @@ L.DistortableCollection.Edit = L.Handler.extend({
     });
   }
 });
-
 L.distortableCollection.edit = function (group, options) {
   return new L.DistortableCollection.Edit(group, options);
 };
@@ -1540,8 +1459,9 @@ L.distortableCollection.edit = function (group, options) {
   \*******************************************/
 /***/ (function() {
 
-L.DistortableImage = L.DistortableImage || {}; // holds the keybindings & toolbar API for an individual image instance
+L.DistortableImage = L.DistortableImage || {};
 
+// holds the keybindings & toolbar API for an individual image instance
 L.DistortableImage.Edit = L.Handler.extend({
   options: {
     opacity: 0.7,
@@ -1557,60 +1477,47 @@ L.DistortableImage.Edit = L.Handler.extend({
     L.setOptions(this, options);
     L.distortableImage.action_map.Escape = '_deselect';
   },
-
-  /* Run on image selection. */
-  addHooks: function addHooks() {
+  /* Run on image selection. */addHooks: function addHooks() {
     var overlay = this._overlay;
     this.editActions = this.options.actions;
+
     /* bring the selected image into view */
-
     overlay.bringToFront();
-
     this._initModes();
-
     this._initHandles();
-
     this._appendHandlesandDragable();
-
     if (overlay.isSelected() && !overlay.options.suppressToolbar) {
       this._addToolbar();
     }
-
     this.parentGroup = overlay.eP ? overlay.eP : false;
     L.DomEvent.on(overlay.getElement(), {
       dblclick: this.nextMode
     }, this);
     L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
   },
-
-  /* Run on image deselection. */
-  removeHooks: function removeHooks() {
+  /* Run on image deselection. */removeHooks: function removeHooks() {
     var overlay = this._overlay;
-    var eP = this.parentGroup; // First, check if dragging exists - it may be off due to locking
+    var eP = this.parentGroup;
 
+    // First, check if dragging exists - it may be off due to locking
     this._disableDragging();
-
     if (this.toolbar) {
       this._removeToolbar();
     }
-
     for (var handle in this._handles) {
       L.DomUtil.remove(handle);
     }
+
     /**
      * ensures if you disable an image while it is multi-selected
      * additional deselection logic is run
      */
-
-
     if (L.DomUtil.hasClass(overlay.getElement(), 'collected')) {
       L.DomUtil.removeClass(overlay.getElement(), 'collected');
     }
-
     if (eP && !eP.anyCollected() && eP.editing.toolbar) {
       eP.editing._removeToolbar();
     }
-
     L.DomEvent.off(overlay.getElement(), {
       dblclick: this.nextMode
     }, this);
@@ -1620,27 +1527,24 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (!this._enabled) {
       return this;
     }
-
     this._overlay.deselect();
-
     this._enabled = false;
     this.removeHooks();
     return this;
   },
   _initModes: function _initModes() {
-    this._modes = {}; // passed from L.DistortablImage.PopupBar. If the mode is one
+    this._modes = {};
+    // passed from L.DistortablImage.PopupBar. If the mode is one
     // of the current toolbar actions, adds it to this._modes
-
     for (var mode in L.DistortableImage.Edit.MODES) {
       var action = L.DistortableImage.Edit.MODES[mode];
-
       if (this.editActions.indexOf(action) !== -1) {
         this._modes[mode] = action;
       }
-    } // sets the current mode to the 1st available one if the one selected
+    }
+
+    // sets the current mode to the 1st available one if the one selected
     // during initialization is not available
-
-
     if (!this._modes[this._mode]) {
       this._mode = Object.keys(this._modes)[0];
     }
@@ -1649,44 +1553,33 @@ L.DistortableImage.Edit = L.Handler.extend({
     var overlay = this._overlay;
     var i;
     this._dragHandles = L.layerGroup();
-
     for (i = 0; i < 4; i++) {
       this._dragHandles.addLayer(L.dragHandle(overlay, i));
     }
-
     this._scaleHandles = L.layerGroup();
-
     for (i = 0; i < 4; i++) {
       this._scaleHandles.addLayer(L.scaleHandle(overlay, i));
     }
-
     this._distortHandles = L.layerGroup();
-
     for (i = 0; i < 4; i++) {
       this._distortHandles.addLayer(L.distortHandle(overlay, i));
     }
-
     this._rotateHandles = L.layerGroup(); // individual rotate
-
     for (i = 0; i < 4; i++) {
       this._rotateHandles.addLayer(L.rotateHandle(overlay, i));
-    } // handle includes rotate AND scale
+    }
 
-
+    // handle includes rotate AND scale
     this._freeRotateHandles = L.layerGroup();
-
     for (i = 0; i < 4; i++) {
       this._freeRotateHandles.addLayer(L.freeRotateHandle(overlay, i));
     }
-
     this._lockHandles = L.layerGroup();
-
     for (i = 0; i < 4; i++) {
       this._lockHandles.addLayer(L.lockHandle(overlay, i, {
         draggable: false
       }));
     }
-
     this._handles = {
       drag: this._dragHandles,
       scale: this._scaleHandles,
@@ -1697,26 +1590,22 @@ L.DistortableImage.Edit = L.Handler.extend({
     };
   },
   _appendHandlesandDragable: function _appendHandlesandDragable() {
-    var ov = this._overlay; // won't throw error if user adds 0 mode actions to toolbar
+    var ov = this._overlay;
 
+    // won't throw error if user adds 0 mode actions to toolbar
     if (!this._mode) {
       this._enableDragging();
-
       return;
     }
-
     this._updateHandle();
-
     if (!ov.isSelected() && this.currentHandle) {
       this.currentHandle.eachLayer(function (handle) {
         handle.setOpacity(0);
-
         if (handle.dragging) {
           handle.dragging.disable();
         }
       });
     }
-
     if (!this.isMode('lock')) {
       this._enableDragging();
     }
@@ -1726,11 +1615,9 @@ L.DistortableImage.Edit = L.Handler.extend({
     var handlerName = keymap[e.key];
     var ov = this._overlay;
     var eP = this.parentGroup;
-
     if (eP && eP.anyCollected()) {
       return;
     }
-
     if (this[handlerName] !== undefined && !ov.options.suppressToolbar) {
       if (ov.isSelected() && this.toolbar) {
         this[handlerName].call(this);
@@ -1739,29 +1626,22 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
   replaceTool: function replaceTool(old, next) {
     var _this = this;
-
     if (next.baseClass !== 'leaflet-toolbar-icon' || this.hasTool(next)) {
       return this;
     }
-
     this.editActions.some(function (item, idx) {
       if (item === old) {
         _this._removeToolbar();
-
         _this.editActions[idx] = next;
-
         _this._addToolbar();
-
         for (var mode in L.DistortableImage.Edit.MODES) {
           if (L.DistortableImage.Edit.MODES[mode] === old) {
             delete _this._modes[mode];
-
             _this._nextOrNone(mode);
           } else if (L.DistortableImage.Edit.MODES[mode] === next) {
             _this._modes[mode] = next;
           }
         }
-
         return true;
       }
     });
@@ -1770,22 +1650,17 @@ L.DistortableImage.Edit = L.Handler.extend({
   addTool: function addTool(value) {
     if (value.baseClass === 'leaflet-toolbar-icon' && !this.hasTool(value)) {
       this._removeToolbar();
-
       this.editActions.push(value);
-
       this._addToolbar();
-
       for (var mode in L.DistortableImage.Edit.MODES) {
         if (L.DistortableImage.Edit.MODES[mode] === value) {
           this._modes[mode] = value;
         }
       }
-
       if (!this._overlay.isSelected()) {
         this._removeToolbar();
       }
     }
-
     return this;
   },
   hasTool: function hasTool(value) {
@@ -1795,31 +1670,23 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
   removeTool: function removeTool(value) {
     var _this2 = this;
-
     this.editActions.some(function (item, idx) {
       if (item === value) {
         _this2._removeToolbar();
-
         _this2.editActions.splice(idx, 1);
-
         _this2._addToolbar();
-
         for (var mode in L.DistortableImage.Edit.MODES) {
           if (L.DistortableImage.Edit.MODES[mode] === value) {
             delete _this2._modes[mode];
-
             _this2._nextOrNone(mode);
           }
         }
-
         return true;
       }
     });
-
     if (!this._overlay.isSelected()) {
       this._removeToolbar();
     }
-
     return this;
   },
   // set the mode to the next mode or if that was the last one set mode to ''
@@ -1831,9 +1698,7 @@ L.DistortableImage.Edit = L.Handler.extend({
         if (mode === 'lock') {
           this._enableDragging();
         }
-
         this._mode = '';
-
         this._updateHandle();
       }
     }
@@ -1841,7 +1706,6 @@ L.DistortableImage.Edit = L.Handler.extend({
   _removeToolbar: function _removeToolbar() {
     var ov = this._overlay;
     var map = ov._map;
-
     if (this.toolbar) {
       map.removeLayer(this.toolbar);
       this.toolbar = false;
@@ -1849,43 +1713,36 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
   _enableDragging: function _enableDragging() {
     var _this3 = this;
-
     var overlay = this._overlay;
     var map = overlay._map;
     this.dragging = new L.Draggable(overlay.getElement());
     this.dragging.enable();
-    /* Hide toolbars and markers while dragging; click will re-show it */
 
+    /* Hide toolbars and markers while dragging; click will re-show it */
     this.dragging.on('dragstart', function () {
       overlay.fire('dragstart');
-
       _this3._removeToolbar();
     });
+
     /*
      * Adjust default behavior of L.Draggable, which overwrites the CSS3
      * distort transformations that we set when it calls L.DomUtil.setPosition.
      */
-
     this.dragging._updatePosition = function () {
       var topLeft = overlay.getCorner(0);
-
       var delta = this._newPos.subtract(map.latLngToLayerPoint(topLeft));
-
       var currentPoint;
       var corners = {};
       var i;
       this.fire('predrag');
-
       for (i = 0; i < 4; i++) {
         currentPoint = map.latLngToLayerPoint(overlay.getCorner(i));
         corners[i] = map.layerPointToLatLng(currentPoint.add(delta));
       }
-
       overlay.setCorners(corners);
       overlay.fire('drag');
       this.fire('drag');
     };
-
     this.dragging.on('dragend', function () {
       overlay.fire('dragend');
     });
@@ -1920,29 +1777,23 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
   _toggleOpacity: function _toggleOpacity() {
     var image = this._overlay.getElement();
-
     if (!this.hasTool(L.OpacityAction)) {
       return;
     }
-
     this._transparent = !this._transparent;
     var opacity = this._transparent ? this.options.opacity : 1;
     L.DomUtil.setOpacity(image, opacity);
     image.setAttribute('opacity', opacity);
-
     this._refresh();
   },
   _toggleBorder: function _toggleBorder() {
     var image = this._overlay.getElement();
-
     if (!this.hasTool(L.BorderAction)) {
       return;
     }
-
     this._outlined = !this._outlined;
     var outline = this._outlined ? this.options.outline : 'none';
     image.style.outline = outline;
-
     this._refresh();
   },
   // compare this to using overlay zIndex
@@ -1956,19 +1807,14 @@ L.DistortableImage.Edit = L.Handler.extend({
   _removeOverlay: function _removeOverlay() {
     var ov = this._overlay;
     var eP = this.parentGroup;
-
     if (this.isMode('lock') || !this.hasTool(L.DeleteAction)) {
       return;
     }
-
     var choice = L.DomUtil.confirmDelete();
-
     if (!choice) {
       return;
     }
-
     this._removeToolbar();
-
     if (eP) {
       eP.removeLayer(ov);
     } else {
@@ -1980,43 +1826,45 @@ L.DistortableImage.Edit = L.Handler.extend({
     var overlay = this._overlay;
     var map = overlay._map;
     var img = overlay.getElement();
-
     if (!this.hasTool(L.ExportAction)) {
       return;
-    } // make a new image
+    }
 
-
+    // make a new image
     var downloadable = new Image();
     downloadable.id = downloadable.id || 'tempId12345';
     document.body.appendChild(downloadable);
-
     downloadable.onload = function onLoadDownloadableImage() {
       var height = downloadable.height;
       var width = downloadable.width;
       var nw = map.latLngToLayerPoint(overlay.getCorner(0));
       var ne = map.latLngToLayerPoint(overlay.getCorner(1));
       var sw = map.latLngToLayerPoint(overlay.getCorner(2));
-      var se = map.latLngToLayerPoint(overlay.getCorner(3)); // I think this is to move the image to the upper left corner,
+      var se = map.latLngToLayerPoint(overlay.getCorner(3));
+
+      // I think this is to move the image to the upper left corner,
       // eslint-disable-next-line max-len
       // jywarren: i think we may need these or the image goes off the edge of the canvas
       // jywarren: but these seem to break the distortion math...
+
       // jywarren: i think it should be rejiggered so it
       // finds the most negative values of x and y and then
       // adds those to all coordinates
+
       // nw.x -= nw.x;
       // ne.x -= nw.x;
       // se.x -= nw.x;
       // sw.x -= nw.x;
+
       // nw.y -= nw.y;
       // ne.y -= nw.y;
       // se.y -= nw.y;
       // sw.y -= nw.y;
-      // run once warping is complete
 
+      // run once warping is complete
       downloadable.onload = function () {
         L.DomUtil.remove(downloadable);
       };
-
       if (window && window.hasOwnProperty('warpWebGl')) {
         warpWebGl(downloadable.id, [0, 0, width, 0, width, height, 0, height], [nw.x, nw.y, ne.x, ne.y, se.x, se.y, sw.x, sw.y], true // trigger download
         );
@@ -2027,87 +1875,65 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
   _stackUp: function _stackUp() {
     var t = this._toggledImage;
-
     if (!t || !this.hasTool(L.StackAction)) {
       return;
     }
-
     this._toggledImage = false;
-
     this._overlay.bringToFront();
-
     this._refresh();
   },
   _stackDown: function _stackDown() {
     var t = this._toggledImage;
-
     if (t || !this.hasTool(L.StackAction)) {
       return;
     }
-
     this._toggledImage = true;
-
     this._overlay.bringToBack();
-
     this._refresh();
   },
   _unlock: function _unlock() {
     var ov = this._overlay;
     var map = ov._map;
     var eP = this.parentGroup;
-
     if (!this.isMode('lock')) {
       return;
     }
-
     if (eP && !eP.isCollected(ov) || !eP) {
       if (!this.hasTool(L.LockAction)) {
         return;
       }
     }
-
     if (this.currentHandle) {
       map.removeLayer(this.currentHandle);
     }
-
     if (ov.options.mode === 'lock' || !this.hasMode(ov.options.mode)) {
       this._mode = '';
       this.currentHandle = '';
     } else {
       this._mode = ov.options.mode;
     }
-
     this._updateHandle();
-
     this._enableDragging();
-
     this._refresh();
   },
   _lock: function _lock() {
     var ov = this._overlay;
     var map = ov._map;
     var eP = this.parentGroup;
-
     if (this.isMode('lock')) {
       return;
     }
-
     if (eP && !eP.isCollected(ov) || !eP) {
       if (!this.hasTool(L.LockAction)) {
         return;
       }
     }
-
     if (this.currentHandle) {
       map.removeLayer(this.currentHandle);
     }
-
     this._mode = 'lock';
-
     this._updateHandle();
-
     this._disableDragging();
-
     this._refresh();
   },
   _deselect: function _deselect() {
@@ -2115,49 +1941,40 @@ L.DistortableImage.Edit = L.Handler.extend({
   },
   _showMarkers: function _showMarkers(e) {
     var eP = this.parentGroup;
-
     if (!this.currentHandle) {
       return;
-    } // only markers we want in collect interface for now is lock
-
-
+    }
+    // only markers we want in collect interface for now is lock
     if (!this.isMode('lock') && eP && eP.anyCollected()) {
       return;
     }
-
     this.currentHandle.eachLayer(function (handle) {
       handle.setOpacity(1);
-
       if (handle.dragging) {
         handle.dragging.enable();
       }
-
       L.DomUtil.addClass(handle.getElement(), 'leaflet-interactive');
     });
   },
   _hideMarkers: function _hideMarkers() {
     var ov = this._overlay;
-    var eP = this.parentGroup; // workaround for race condition w/ feature group
+    var eP = this.parentGroup;
 
+    // workaround for race condition w/ feature group
     if (!this._handles) {
       this._initHandles();
     }
-
     if (!this.currentHandle) {
       return;
     }
-
     if (this.isMode('lock') && eP && eP.isCollected(ov)) {
       return;
     }
-
     this.currentHandle.eachLayer(function (handle) {
       handle.setOpacity(0);
-
       if (handle.dragging) {
         handle.dragging.disable();
       }
-
       L.DomUtil.removeClass(handle.getElement(), 'leaflet-interactive');
     });
   },
@@ -2165,13 +1982,10 @@ L.DistortableImage.Edit = L.Handler.extend({
     var ov = this._overlay;
     var map = ov._map;
     var mode = this.getMode();
-
     if (this.currentHandle) {
       map.removeLayer(this.currentHandle);
     }
-
     this.currentHandle = mode === '' ? '' : this._handles[mode];
-
     if (this.currentHandle !== '') {
       map.addLayer(this.currentHandle);
     }
@@ -2179,28 +1993,24 @@ L.DistortableImage.Edit = L.Handler.extend({
   _addToolbar: function _addToolbar() {
     var ov = this._overlay;
     var eP = this.parentGroup;
-    var map = ov._map; // Find the topmost point on the image.
-
+    var map = ov._map;
+    // Find the topmost point on the image.
     var corners = ov.getCorners();
     var maxLat = -Infinity;
-
     if (eP && eP.anyCollected()) {
       eP.editing._addToolbar();
-
       return;
     }
-
     if (ov.options.suppressToolbar || this.toolbar) {
       return;
     }
-
     for (var i = 0; i < corners.length; i++) {
       if (corners[i].lat > maxLat) {
         maxLat = corners[i].lat;
       }
-    } // Longitude is based on the centroid of the image.
+    }
 
-
+    // Longitude is based on the centroid of the image.
     var raisedPoint = ov.getCenter();
     raisedPoint.lat = maxLat;
     this.toolbar = L.distortableImage.popupBar(raisedPoint, {
@@ -2212,27 +2022,24 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (this.toolbar) {
       this._removeToolbar();
     }
-
     this._addToolbar();
   },
   _updateToolbarPos: function _updateToolbarPos() {
-    var overlay = this._overlay; // Find the topmost point on the image.
-
+    var overlay = this._overlay;
+    // Find the topmost point on the image.
     var corners = overlay.getCorners();
     var toolbar = this.toolbar;
     var maxLat = -Infinity;
-
     if (toolbar && toolbar instanceof L.DistortableImage.PopupBar) {
       for (var i = 0; i < corners.length; i++) {
         if (corners[i].lat > maxLat) {
           maxLat = corners[i].lat;
         }
-      } // Longitude is based on the centroid of the image.
+      }
 
-
+      // Longitude is based on the centroid of the image.
       var raisedPoint = overlay.getCenter();
       raisedPoint.lat = maxLat;
-
       if (!overlay.options.suppressToolbar) {
         this.toolbar.setLatLng(raisedPoint);
       }
@@ -2245,7 +2052,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (!this.enabled()) {
       return;
     }
-
     return this._mode;
   },
   getModes: function getModes() {
@@ -2255,43 +2061,32 @@ L.DistortableImage.Edit = L.Handler.extend({
     if (!this.enabled()) {
       return false;
     }
-
     return this._mode === mode;
   },
   setMode: function setMode(newMode) {
     var ov = this._overlay;
     var eP = this.parentGroup;
     var mode = this.getMode();
-
     if (mode === newMode || !this.hasMode(newMode) || !this.enabled()) {
       return;
     }
-
     if (this.toolbar) {
       this.toolbar.clickTool(newMode);
     }
-
     if (this.isMode('lock') && !this.dragging) {
       this._enableDragging();
     }
-
     this._mode = newMode;
-
     if (this.isMode('lock')) {
       this._disableDragging();
     }
-
     this._updateHandle();
-
     this._refresh();
-
     if (eP && eP.isCollected(ov)) {
       ov.deselect();
     }
-
     return this;
   },
-
   /**
     * need to attach a stop to img dblclick or it will propagate to
     * the map and fire the handler that shows map location labels on map dblclick.
@@ -2303,19 +2098,15 @@ L.DistortableImage.Edit = L.Handler.extend({
     var idx = modesArray.indexOf(mode);
     var nextIdx = (idx + 1) % modesArray.length;
     var newMode = modesArray[nextIdx];
-
     if (e) {
       if (eP && eP.anyCollected()) {
         return;
       }
-
       L.DomEvent.stop(e);
     }
-
     return this.setMode(newMode);
   }
 });
-
 L.distortableImage.edit = function (overlay, options) {
   return new L.DistortableImage.Edit(overlay, options);
 };
@@ -2334,7 +2125,6 @@ L.BorderAction = L.EditAction.extend({
     var mode = edit._mode;
     var use;
     var tooltip;
-
     if (edit._outlined) {
       use = 'border_outer';
       tooltip = overlay.options.translation.removeBorder;
@@ -2342,15 +2132,15 @@ L.BorderAction = L.EditAction.extend({
       use = 'border_clear';
       tooltip = overlay.options.translation.addBorder;
     }
-
     options = options || {};
     options.toolbarIcon = {
       svg: true,
       html: use,
       tooltip: tooltip,
       className: mode === 'lock' ? 'disabled' : ''
-    }; // conditional for disabling keybindings for this action when the image is locked.
+    };
 
+    // conditional for disabling keybindings for this action when the image is locked.
     L.DistortableImage.action_map.b = mode === 'lock' ? '' : '_toggleBorder';
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
@@ -2358,7 +2148,6 @@ L.BorderAction = L.EditAction.extend({
     var edit = this._overlay.editing;
     L.IconUtil.toggleXlink(this._link, 'border_clear', 'border_outer');
     L.IconUtil.toggleTitle(this._link, 'Remove Border', 'Add Border');
-
     edit._toggleBorder();
   }
 });
@@ -2380,16 +2169,14 @@ L.DeleteAction = L.EditAction.extend({
       * we can tell whether the overlay is an instance of `L.DistortableImageOverlay` or `L.DistortableCollection` bc only
       * the former should have `parentGroup` defined on it. From there we call the apporpriate keybindings and methods.
       */
-
     if (edit instanceof L.DistortableImage.Edit) {
-      tooltip = overlay.options.translation.deleteImage; // backspace windows / delete mac
-
+      tooltip = overlay.options.translation.deleteImage;
+      // backspace windows / delete mac
       L.DistortableImage.action_map.Backspace = edit._mode === 'lock' ? '' : '_removeOverlay';
     } else {
       tooltip = overlay.options.translation.deleteImages;
       L.DistortableImage.group_action_map.Backspace = edit._mode === 'lock' ? '' : '_removeGroup';
     }
-
     options = options || {};
     options.toolbarIcon = {
       svg: true,
@@ -2401,7 +2188,6 @@ L.DeleteAction = L.EditAction.extend({
   },
   addHooks: function addHooks() {
     var edit = this._overlay.editing;
-
     if (edit instanceof L.DistortableImage.Edit) {
       edit._removeOverlay();
     } else {
@@ -2432,7 +2218,6 @@ L.DistortAction = L.EditAction.extend({
   },
   addHooks: function addHooks() {
     var edit = this._overlay.editing;
-
     edit._distortMode();
   }
 });
@@ -2459,7 +2244,6 @@ L.DragAction = L.EditAction.extend({
   },
   addHooks: function addHooks() {
     var edit = this._overlay.editing;
-
     edit._dragMode();
   }
 });
@@ -2489,64 +2273,51 @@ L.EditAction = L.Toolbar2.Action.extend({
     this._map = map;
     L.setOptions(this, options);
     L.Toolbar2.Action.prototype.initialize.call(this, options);
-
     this._injectIconSet();
   },
   _createIcon: function _createIcon(toolbar, container, args) {
     var _this = this;
-
     var iconOptions = this.options.toolbarIcon;
     var className = iconOptions.className;
     var edit = this._overlay.editing;
     this.toolbar = toolbar;
     this._icon = L.DomUtil.create('li', '', container);
     this._link = L.DomUtil.create('a', '', this._icon);
-
     if (iconOptions.svg) {
       this._link.innerHTML = L.IconUtil.create(iconOptions.html);
     } else {
       this._link.innerHTML = iconOptions.html;
     }
-
     this._link.setAttribute('href', '#');
-
     this._link.setAttribute('title', iconOptions.tooltip);
-
     this._link.setAttribute('role', 'button');
-
     L.DomUtil.addClass(this._link, this.constructor.baseClass);
-
     if (className) {
       L.DomUtil.addClass(this._link, className);
-
       if (className === 'disabled') {
         L.DomUtil.addClass(this._icon, className);
       }
-
       if (className === edit._mode) {
         L.DomUtil.addClass(this._link, 'selected-mode');
       } else {
         L.DomUtil.removeClass(this._link, 'selected-mode');
       }
     }
-
     L.DomEvent.on(this._link, 'click', this.enable, this);
     L.DomEvent.on(this._overlay, 'update', function () {
       var match = _this._link.innerHTML.match(/xlink:href="#restore"/);
-
       if (match && match.length === 1) {
         _this._enableAction();
       }
     });
-    /* Add secondary toolbar */
 
+    /* Add secondary toolbar */
     this._addSubToolbar(toolbar, this._icon, args);
   },
   _injectIconSet: function _injectIconSet() {
     if (document.querySelector('#iconset')) {
       return;
     }
-
     var el = document.createElement('div');
     el.id = 'iconset';
     el.setAttribute('hidden', 'hidden');
@@ -2562,7 +2333,6 @@ L.EditAction = L.Toolbar2.Action.extend({
     L.DomUtil.addClass(this._link, 'disabled');
   }
 });
-
 L.editAction = function (map, overlay, options) {
   return new L.EditAction(map, overlay, options);
 };
@@ -2583,7 +2353,6 @@ L.ExportAction = L.EditAction.extend({
     this.isExporting = false;
     this.mouseLeaveSkip = true;
     this.isHooksExecuted = false;
-
     if (edit instanceof L.DistortableImage.Edit) {
       L.DistortableImage.action_map.e = '_getExport';
       tooltip = overlay.options.translation.exportImage;
@@ -2591,7 +2360,6 @@ L.ExportAction = L.EditAction.extend({
       L.DistortableImage.group_action_map.e = 'runExporter';
       tooltip = overlay.options.translation.exportImages;
     }
-
     options = options || {};
     options.toolbarIcon = {
       svg: true,
@@ -2602,20 +2370,17 @@ L.ExportAction = L.EditAction.extend({
   },
   addHooks: function addHooks() {
     var edit = this._overlay.editing;
-
     if (edit instanceof L.DistortableImage.Edit) {
       edit._getExport();
-
       return;
-    } // Make sure that addHooks is executed only once, event listeners will handle the rest
+    }
 
-
+    // Make sure that addHooks is executed only once, event listeners will handle the rest
     if (this.isHooksExecuted) {
       return;
     } else {
       this.isHooksExecuted = true;
     }
-
     var exportTool = this._link.parentElement;
     this.mouseEnterHandler = this.handleMouseEnter.bind(this);
     this.mouseLeaveHandler = this.handleMouseLeave.bind(this);
@@ -2633,7 +2398,6 @@ L.ExportAction = L.EditAction.extend({
         if (this.mouseLeaveSkip) {
           return;
         }
-
         this.resetState();
         this.detachMouseEventListeners(exportTool);
         edit.cancelExport();
@@ -2702,7 +2466,6 @@ L.FreeRotateAction = L.EditAction.extend({
   },
   addHooks: function addHooks() {
     var edit = this._overlay.editing;
-
     edit._freeRotateMode();
   }
 });
@@ -2729,7 +2492,6 @@ L.GeolocateAction = L.EditAction.extend({
   },
   addHooks: function addHooks() {
     var image = this._overlay.getElement();
-
     EXIF.getData(image, L.EXIF(image));
   }
 });
@@ -2747,7 +2509,6 @@ L.LockAction = L.EditAction.extend({
     var edit = overlay.editing;
     var use;
     var tooltip;
-
     if (edit instanceof L.DistortableImage.Edit) {
       L.DistortableImage.action_map.u = '_unlock';
       L.DistortableImage.action_map.l = '_lock';
@@ -2758,7 +2519,6 @@ L.LockAction = L.EditAction.extend({
       tooltip = overlay.options.translation.lockImages;
       use = 'lock';
     }
-
     options = options || {};
     options.toolbarIcon = {
       svg: true,
@@ -2770,7 +2530,6 @@ L.LockAction = L.EditAction.extend({
   },
   addHooks: function addHooks() {
     var edit = this._overlay.editing;
-
     if (edit instanceof L.DistortableImage.Edit) {
       edit._toggleLockMode();
     } else {
@@ -2793,7 +2552,6 @@ L.OpacityAction = L.EditAction.extend({
     var mode = edit._mode;
     var use;
     var tooltip;
-
     if (edit._transparent) {
       use = 'opacity_empty';
       tooltip = overlay.options.translation.makeImageOpaque;
@@ -2801,7 +2559,6 @@ L.OpacityAction = L.EditAction.extend({
       use = 'opacity';
       tooltip = overlay.options.translation.makeImageTransparent;
     }
-
     options = options || {};
     options.toolbarIcon = {
       svg: true,
@@ -2817,7 +2574,6 @@ L.OpacityAction = L.EditAction.extend({
     var link = this._link;
     L.IconUtil.toggleXlink(link, 'opacity', 'opacity_empty');
     L.IconUtil.toggleTitle(link, 'Make Image Transparent', 'Make Image Opaque');
-
     edit._toggleOpacity();
   }
 });
@@ -2875,7 +2631,6 @@ L.RotateAction = L.EditAction.extend({
   },
   addHooks: function addHooks() {
     var edit = this._overlay.editing;
-
     edit._rotateMode();
   }
 });
@@ -2902,7 +2657,6 @@ L.ScaleAction = L.EditAction.extend({
   },
   addHooks: function addHooks() {
     var edit = this._overlay.editing;
-
     edit._scaleMode();
   }
 });
@@ -2920,7 +2674,6 @@ L.StackAction = L.EditAction.extend({
     var edit = overlay.editing;
     var use;
     var tooltip;
-
     if (edit._toggledImage) {
       use = 'flip_to_back';
       tooltip = overlay.options.translation.stackToFront;
@@ -2928,7 +2681,6 @@ L.StackAction = L.EditAction.extend({
       use = 'flip_to_front';
       tooltip = overlay.options.translation.stackToBack;
     }
-
     options = options || {};
     options.toolbarIcon = {
       svg: true,
@@ -2944,7 +2696,6 @@ L.StackAction = L.EditAction.extend({
     var edit = this._overlay.editing;
     L.IconUtil.toggleXlink(this._link, 'flip_to_front', 'flip_to_back');
     L.IconUtil.toggleTitle(this._link, 'Stack to Front', 'Stack to Back');
-
     edit._toggleOrder();
   }
 });
@@ -2970,7 +2721,6 @@ L.UnlockAction = L.EditAction.extend({
   },
   addHooks: function addHooks() {
     var edit = this._overlay.editing;
-
     edit._unlockGroup();
   }
 });
@@ -2989,38 +2739,37 @@ L.EXIF = function getEXIFdata(img) {
     console.log(EXIF.getAllTags(img));
     var GPS = EXIF.getAllTags(img);
     var altitude;
-    /* If the lat/lng is available. */
 
+    /* If the lat/lng is available. */
     if (typeof GPS.GPSLatitude !== 'undefined' && typeof GPS.GPSLongitude !== 'undefined') {
       // sadly, encoded in [degrees,minutes,seconds]
       // primitive value = GPS.GPSLatitude[x].numerator
       var lat = GPS.GPSLatitude[0] + GPS.GPSLatitude[1] / 60 + GPS.GPSLatitude[2] / 3600;
       var lng = GPS.GPSLongitude[0] + GPS.GPSLongitude[1] / 60 + GPS.GPSLongitude[2] / 3600;
-
       if (GPS.GPSLatitudeRef !== 'N') {
         lat = lat * -1;
       }
-
       if (GPS.GPSLongitudeRef === 'W') {
         lng = lng * -1;
       }
-    } // Attempt to use GPS compass heading; will require
+    }
+
+    // Attempt to use GPS compass heading; will require
     // some trig to calc corner points, which you can find below:
 
-
-    var angle = 0; // "T" refers to "True north", so -90.
-
+    var angle = 0;
+    // "T" refers to "True north", so -90.
     if (GPS.GPSImgDirectionRef === 'T') {
-      angle = Math.PI / 180 * (GPS.GPSImgDirection.numerator / GPS.GPSImgDirection.denominator - 90); // "M" refers to "Magnetic north"
+      angle = Math.PI / 180 * (GPS.GPSImgDirection.numerator / GPS.GPSImgDirection.denominator - 90);
+      // "M" refers to "Magnetic north"
     } else if (GPS.GPSImgDirectionRef === 'M') {
       angle = Math.PI / 180 * (GPS.GPSImgDirection.numerator / GPS.GPSImgDirection.denominator - 90);
     } else {
       console.log('No compass data found');
     }
-
     console.log('Orientation:', GPS.Orientation);
-    /* If there is orientation data -- i.e. landscape/portrait etc */
 
+    /* If there is orientation data -- i.e. landscape/portrait etc */
     if (GPS.Orientation === 6) {
       // CCW
       angle += Math.PI / 180 * -90;
@@ -3031,9 +2780,8 @@ L.EXIF = function getEXIFdata(img) {
       // 180
       angle += Math.PI / 180 * 180;
     }
+
     /* If there is altitude data */
-
-
     if (typeof GPS.GPSAltitude !== 'undefined' && typeof GPS.GPSAltitudeRef !== 'undefined') {
       // Attempt to use GPS altitude:
       // (may eventually need to find EXIF field of view for correction)
@@ -3060,7 +2808,8 @@ L.DistortHandle = L.EditHandle.extend({
   options: {
     TYPE: 'distort',
     icon: L.icon({
-      iconUrl: // eslint-disable-next-line max-len
+      iconUrl:
+      // eslint-disable-next-line max-len
       'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAChSURBVO3BIU4DURgGwNkvL2B6AkQTLBqP4QCoSm7DDXoBLBZHDbfgICAIZjEV3YTn9uVHdMZZtcnCfI13bIzxg0emg6Nm6QVbYz3jylEsXRrvwommb49X67jFkz80fR9Mb1YxTzqiWBSLYlEsikWxKBbFolgUi2JRLIpFsSgWxaJY03fHHOu40dH07bAzWCx9Ge/TiWbpHgdsjPGNB2f/yS+7xRCyiiZPJQAAAABJRU5ErkJggg==',
       iconSize: [32, 32],
       iconAnchor: [16, 16]
@@ -3074,7 +2823,6 @@ L.DistortHandle = L.EditHandle.extend({
     this.setLatLng(this._handled.getCorner(this._corner));
   }
 });
-
 L.distortHandle = function (overlay, idx, options) {
   return new L.DistortHandle(overlay, idx, options);
 };
@@ -3107,7 +2855,6 @@ L.DragHandle = L.EditHandle.extend({
     this.setLatLng(this._handled.getCorner(this._corner));
   }
 });
-
 L.dragHandle = function (overlay, idx, options) {
   return new L.DragHandle(overlay, idx, options);
 };
@@ -3130,23 +2877,18 @@ L.EditHandle = L.Marker.extend({
       draggable: true,
       zIndexOffset: 10
     };
-
     if (options && options.hasOwnProperty('draggable')) {
       markerOptions.draggable = options.draggable;
     }
-
     L.Marker.prototype.initialize.call(this, latlng, markerOptions);
   },
   onAdd: function onAdd(map) {
     L.Marker.prototype.onAdd.call(this, map);
-
     this._bindListeners();
-
     this.updateHandle();
   },
   onRemove: function onRemove(map) {
     this._unbindListeners();
-
     L.Marker.prototype.onRemove.call(this, map);
   },
   _onHandleDragStart: function _onHandleDragStart() {
@@ -3157,7 +2899,6 @@ L.EditHandle = L.Marker.extend({
   },
   _fireEdit: function _fireEdit() {
     this._handled.edited = true;
-
     this._handled.fire('edit');
   },
   _bindListeners: function _bindListeners() {
@@ -3167,9 +2908,7 @@ L.EditHandle = L.Marker.extend({
       drag: this._onHandleDrag,
       dragend: this._onHandleDragEnd
     }, this);
-
     this._handled._map.on('zoomend', this.updateHandle, this);
-
     this._handled.on('update', this.updateHandle, this);
   },
   _unbindListeners: function _unbindListeners() {
@@ -3179,36 +2918,25 @@ L.EditHandle = L.Marker.extend({
       drag: this._onHandleDrag,
       dragend: this._onHandleDragEnd
     }, this);
-
     this._handled._map.off('zoomend', this.updateHandle, this);
-
     this._handled.off('update', this.updateHandle, this);
   },
-
-  /* Takes two latlngs and calculates the scaling difference. */
-  _calculateScalingFactor: function _calculateScalingFactor(latlngA, latlngB) {
+  /* Takes two latlngs and calculates the scaling difference. */_calculateScalingFactor: function _calculateScalingFactor(latlngA, latlngB) {
     var overlay = this._handled;
     var map = overlay._map;
     var centerPoint = map.latLngToLayerPoint(overlay.getCenter());
     var formerPoint = map.latLngToLayerPoint(latlngA);
     var newPoint = map.latLngToLayerPoint(latlngB);
-
     var formerRadiusSquared = this._d2(centerPoint, formerPoint);
-
     var newRadiusSquared = this._d2(centerPoint, newPoint);
-
     return Math.sqrt(newRadiusSquared / formerRadiusSquared);
   },
-
-  /* Distance between two points in cartesian space, squared (distance formula). */
-  _d2: function _d2(a, b) {
+  /* Distance between two points in cartesian space, squared (distance formula). */_d2: function _d2(a, b) {
     var dx = a.x - b.x;
     var dy = a.y - b.y;
     return Math.pow(dx, 2) + Math.pow(dy, 2);
   },
-
-  /* Takes two latlngs and calculates the angle between them. */
-  calculateAngleDelta: function calculateAngleDelta(latlngA, latlngB) {
+  /* Takes two latlngs and calculates the angle between them. */calculateAngleDelta: function calculateAngleDelta(latlngA, latlngB) {
     var overlay = this._handled;
     var map = overlay._map;
     var centerPoint = map.latLngToLayerPoint(overlay.getCenter());
@@ -3232,7 +2960,8 @@ L.FreeRotateHandle = L.EditHandle.extend({
   options: {
     TYPE: 'freeRotate',
     icon: L.icon({
-      iconUrl: // eslint-disable-next-line max-len
+      iconUrl:
+      // eslint-disable-next-line max-len
       'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAHiSURBVMXBa3HbShgA0PMp/1sCCo8oCEpgTaCXgIXAJiDzyCJoAUTm4UVQAns1Y8+snWnTvJyeE16hkjDgDrfoNTMKcpC9UPiLSo8JyetkjEHxjPCMyoS199kFoz8Iv1HpMaN3qWDCHoegOKkkRwnJpRmroHgiPFEZ8IBekzEGxQtUEhKSS/fB7Ew4U+lxcGkVZG9QWWPSFAxBcdK59KApuA+yNwp2uEdx1GN25sZJZULSfAtm77SlbNjju6MvG75u+WHRWVR6rDVjMPsgwYyVZl3pLTpHkyYHOx8syMiayaJzlDTZ9YyaZNFVkiYH2ZUEBcVJJXVImuz6Js3Qofe59pq7DoOTILu+g+a288mCouk7/1iH4qTS+2QdDppbV1ZJmrnDXnPnc5UOs2Z0fUmTuyBr+krvSioJyUmQO0dZM7mepMkWnaNRkyrJB6uskTSjxY3Fll8bvmJwlDb83FJ8gMqAB80uyBY3Trb82PAfvjj6vuHnluIdKgMeNXOwctK5NKBoHitrb1RJeHRp5Ux4ojLg0aWMHGQvUOkxIWkKVsHsTPiNSo8HDC5lZIsgO6n0uMUdRvQuFQxB8UR4RmXC2vvsgtEfhL+o9JiQvE7GGBTPCK9QSUjoMWgKDthjDrIX+h/k0I7gth6N5gAAAABJRU5ErkJggg==',
       iconSize: [32, 32],
       iconAnchor: [16, 16]
@@ -3244,27 +2973,20 @@ L.FreeRotateHandle = L.EditHandle.extend({
     var formerLatLng = overlay.getCorner(this._corner);
     var newLatLng = this.getLatLng();
     var angle = this.calculateAngleDelta(formerLatLng, newLatLng);
-
     var scale = this._calculateScalingFactor(formerLatLng, newLatLng);
-
     if (angle !== 0) {
       overlay.rotateBy(angle, 'rad');
     }
-
     var edgeMinWidth = overlay.edgeMinWidth;
-
     if (!edgeMinWidth) {
       edgeMinWidth = 50;
-    }
-    /* just in case */
-
+    } /* just in case */
 
     var corner1 = map.latLngToContainerPoint(overlay.getCorner(0));
     var corner2 = map.latLngToContainerPoint(overlay.getCorner(1));
     var w = Math.abs(corner1.x - corner2.x);
     var h = Math.abs(corner1.y - corner2.y);
     var distance = Math.sqrt(w * w + h * h);
-
     if (distance > edgeMinWidth || scale > 1) {
       overlay.scaleBy(scale);
     } else {
@@ -3275,7 +2997,6 @@ L.FreeRotateHandle = L.EditHandle.extend({
     this.setLatLng(this._handled.getCorner(this._corner));
   }
 });
-
 L.freeRotateHandle = function (overlay, idx, options) {
   return new L.FreeRotateHandle(overlay, idx, options);
 };
@@ -3305,9 +3026,7 @@ L.LockHandle = L.EditHandle.extend({
   },
   _bindListeners: function _bindListeners() {
     var icon = this.getElement();
-
     L.EditHandle.prototype._bindListeners.call(this);
-
     L.DomEvent.on(icon, {
       mousedown: this._tooltipOn,
       mouseup: this._tooltipOff
@@ -3316,39 +3035,31 @@ L.LockHandle = L.EditHandle.extend({
   },
   _unbindListeners: function _unbindListeners() {
     var icon = this.getElement();
-
     L.EditHandle.prototype._bindListeners.call(this);
-
     L.DomEvent.off(icon, {
       mousedown: this._tooltipOn,
       mouseup: this._tooltipOff
     }, this);
     L.DomEvent.off(document, 'pointerleave', this._tooltipOff, this);
   },
-
-  /* cannot be dragged */
-  _onHandleDrag: function _onHandleDrag() {},
+  /* cannot be dragged */_onHandleDrag: function _onHandleDrag() {},
   updateHandle: function updateHandle() {
     this.setLatLng(this._handled.getCorner(this._corner));
   },
   _tooltipOn: function _tooltipOn(e) {
     var eP = this._handled.parentGroup;
     var edit = eP ? eP.editing : this._handled.editing;
-
     if (e.shiftKey) {
       return;
     }
-
     if (!this._handled.isSelected() && eP && !eP.isCollected(this._handled)) {
       return;
     }
-
     var handlesArr = edit._lockHandles;
     this._timer = setTimeout(L.bind(function () {
       if (this._timeout) {
         clearTimeout(this._timeout);
       }
-
       if (!this.getTooltip()) {
         this.bindTooltip('Locked!', {
           permanent: true
@@ -3360,40 +3071,32 @@ L.LockHandle = L.EditHandle.extend({
           }
         });
       }
-
       this.openTooltip();
     }, this), 500);
   },
   _tooltipOff: function _tooltipOff(e) {
     var eP = this._handled.parentGroup;
     var edit = eP ? eP.editing : this._handled.editing;
-
     if (e.shiftKey) {
       return;
     }
-
     if (!this._handled.isSelected() && eP && !eP.isCollected(this._handled)) {
       return;
     }
-
     var handlesArr = edit._lockHandles;
-
     if (e.currentTarget === document) {
       handlesArr.eachLayer(function (handle) {
         handle.closeTooltip();
       });
     }
-
     if (this._timer) {
       clearTimeout(this._timer);
     }
-
     this._timeout = setTimeout(L.bind(function () {
       this.closeTooltip();
     }, this), 400);
   }
 });
-
 L.lockHandle = function (overlay, idx, options) {
   return new L.LockHandle(overlay, idx, options);
 };
@@ -3410,7 +3113,8 @@ L.RotateHandle = L.EditHandle.extend({
   options: {
     TYPE: 'rotate',
     icon: L.icon({
-      iconUrl: // eslint-disable-next-line max-len
+      iconUrl:
+      // eslint-disable-next-line max-len
       'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAklEQVR4AewaftIAAAHiSURBVMXBa3HbShgA0PMp/1sCCo8oCEpgTaCXgIXAJiDzyCJoAUTm4UVQAns1Y8+snWnTvJyeE16hkjDgDrfoNTMKcpC9UPiLSo8JyetkjEHxjPCMyoS199kFoz8Iv1HpMaN3qWDCHoegOKkkRwnJpRmroHgiPFEZ8IBekzEGxQtUEhKSS/fB7Ew4U+lxcGkVZG9QWWPSFAxBcdK59KApuA+yNwp2uEdx1GN25sZJZULSfAtm77SlbNjju6MvG75u+WHRWVR6rDVjMPsgwYyVZl3pLTpHkyYHOx8syMiayaJzlDTZ9YyaZNFVkiYH2ZUEBcVJJXVImuz6Js3Qofe59pq7DoOTILu+g+a288mCouk7/1iH4qTS+2QdDppbV1ZJmrnDXnPnc5UOs2Z0fUmTuyBr+krvSioJyUmQO0dZM7mepMkWnaNRkyrJB6uskTSjxY3Fll8bvmJwlDb83FJ8gMqAB80uyBY3Trb82PAfvjj6vuHnluIdKgMeNXOwctK5NKBoHitrb1RJeHRp5Ux4ojLg0aWMHGQvUOkxIWkKVsHsTPiNSo8HDC5lZIsgO6n0uMUdRvQuFQxB8UR4RmXC2vvsgtEfhL+o9JiQvE7GGBTPCK9QSUjoMWgKDthjDrIX+h/k0I7gth6N5gAAAABJRU5ErkJggg==',
       iconSize: [32, 32],
       iconAnchor: [16, 16]
@@ -3421,18 +3125,17 @@ L.RotateHandle = L.EditHandle.extend({
     var formerLatLng = overlay.getCorner(this._corner);
     var newLatLng = this.getLatLng();
     var angle = this.calculateAngleDelta(formerLatLng, newLatLng);
+
     /*
      * running rotation logic even for an angle delta of 0
      * prevents a small, occasional marker flicker
      */
-
     overlay.rotateBy(angle, 'rad');
   },
   updateHandle: function updateHandle() {
     this.setLatLng(this._handled.getCorner(this._corner));
   }
 });
-
 L.rotateHandle = function (overlay, idx, options) {
   return new L.RotateHandle(overlay, idx, options);
 };
@@ -3449,7 +3152,8 @@ L.ScaleHandle = L.EditHandle.extend({
   options: {
     TYPE: 'scale',
     icon: L.icon({
-      iconUrl: // eslint-disable-next-line max-len
+      iconUrl:
+      // eslint-disable-next-line max-len
       'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIHdpZHRoPSI0NTkiIGhlaWdodD0iNDY0IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA1MTIgNTEyIiB4bWw6c3BhY2U9InByZXNlcnZlIiBzdHlsZT0iIj48cmVjdCBpZD0iYmFja2dyb3VuZHJlY3QiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHg9IjAiIHk9IjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0ibm9uZSIgY2xhc3M9IiIgc3R5bGU9IiIvPjxnIGNsYXNzPSJjdXJyZW50TGF5ZXIiIHN0eWxlPSIiPjx0aXRsZT5MYXllciAxPC90aXRsZT48cGF0aCBkPSJNNDU5LjA0OTE1OTUzMDQ3MTM0LDg2LjkyNjIzNDUxMjU1MDAyIFYwIGgtODUuNzE0NTczMzU2MzEyMDkgdjI3LjA0MzcxNzQwMzkwNDQ1MiBIODUuNzE0NTczMzU2MzEyMDMgVjAgSDAgdjg2LjkyNjIzNDUxMjU1MDAyIGgyNS43MTQzNzIwMDY4OTM2MjYgdjI4OS43NTQxMTUwNDE4MzM0IEgwIHY4Ni45MjYyMzQ1MTI1NTAwMiBoODUuNzE0NTczMzU2MzEyMDkgdi0yNy4wNDM3MTc0MDM5MDQ0NTIgaDI4NS43MTUyNDQ1MjEwNDAzIHYyNy4wNDM3MTc0MDM5MDQ0NTIgaDg1LjcxNDU3MzM1NjMxMjA5IHYtODYuOTI2MjM0NTEyNTUwMDIgaC0yMy44MDk2MDM3MTAwODY2OSBWODYuOTI2MjM0NTEyNTUwMDIgSDQ1OS4wNDkxNTk1MzA0NzEzNCB6TTM4NC43NjMxOTU5NTUwMDA5LDEyLjU1NjAxMTY1MTgxMjc4MSBoNjEuOTA0OTY5NjQ2MjI1Mzk2IHY2Mi43ODAwNTgyNTkwNjM5MSBoLTYxLjkwNDk2OTY0NjIyNTM5NiBWMTIuNTU2MDExNjUxODEyNzgxIHpNMTIuMzgwOTkzOTI5MjQ1MDUsMTIuNTU2MDExNjUxODEyNzgxIGg2MS45MDQ5Njk2NDYyMjUzOTYgdjYyLjc4MDA1ODI1OTA2MzkxIEgxMi4zODA5OTM5MjkyNDUwNSBWMTIuNTU2MDExNjUxODEyNzgxIHpNNzQuMjg1OTYzNTc1NDcwNTMsNDUxLjA1MDU3MjQxNTEyMDY2IEgxMi4zODA5OTM5MjkyNDUwNSB2LTYyLjc4MDA1ODI1OTA2MzkxIGg2MS45MDQ5Njk2NDYyMjUzOTYgVjQ1MS4wNTA1NzI0MTUxMjA2NiB6TTQ0NS43MTU3ODE0NTI4MjI3NCw0NTEuMDUwNTcyNDE1MTIwNjYgaC02Mi44NTczNTM3OTQ2Mjg4NjQgdi02Mi43ODAwNTgyNTkwNjM5MSBoNjIuODU3MzUzNzk0NjI4ODY0IFY0NTEuMDUwNTcyNDE1MTIwNjYgek00MDcuNjIwNDE1NTE2Njg0MjYsMzc2LjY4MDM0OTU1NDM4MzQ0IGgtMzYuMTkwNTk3NjM5MzMxNzcgdjMyLjgzODc5OTcwNDc0MTEyIEg4NS43MTQ1NzMzNTYzMTIwMyB2LTMyLjgzODc5OTcwNDc0MTEyIEg0OS41MjM5NzU3MTY5ODAzMiBWODYuOTI2MjM0NTEyNTUwMDIgaDM2LjE5MDU5NzYzOTMzMTc3IFY1MC4yMjQwNDY2MDcyNTExMjUgaDI4Ny42MjAwMTI4MTc4NDcyIHYzNi43MDIxODc5MDUyOTg5IGgzNC4yODU4MjkzNDI1MjQ4MzUgVjM3Ni42ODAzNDk1NTQzODM0NCB6IiBpZD0ic3ZnXzIiIGNsYXNzPSIiIGZpbGw9IiMxYTFhZWIiIGZpbGwtb3BhY2l0eT0iMSIvPjwvZz48L3N2Zz4=',
       iconSize: [32, 32],
       iconAnchor: [16, 16]
@@ -3461,26 +3165,21 @@ L.ScaleHandle = L.EditHandle.extend({
     var edgeMinWidth = overlay.edgeMinWidth;
     var formerLatLng = overlay.getCorner(this._corner);
     var newLatLng = this.getLatLng();
-
     var scale = this._calculateScalingFactor(formerLatLng, newLatLng);
+
     /*
      * checks whether the "edgeMinWidth" property is set and tracks the minimum edge length;
      * this enables preventing scaling to zero, but we might also add an overall scale limit
      */
 
-
     if (!edgeMinWidth) {
       edgeMinWidth = 50;
-    }
-    /* just in case */
-
-
+    } /* just in case */
     var corner1 = map.latLngToLayerPoint(overlay.getCorner(0));
     var corner2 = map.latLngToLayerPoint(overlay.getCorner(1));
     var w = Math.abs(corner1.x - corner2.x);
     var h = Math.abs(corner1.y - corner2.y);
     var distance = Math.sqrt(w * w + h * h);
-
     if (distance > edgeMinWidth || scale > 1) {
       overlay.scaleBy(scale);
       /*
@@ -3495,7 +3194,6 @@ L.ScaleHandle = L.EditHandle.extend({
     this.setLatLng(this._handled.getCorner(this._corner));
   }
 });
-
 L.scaleHandle = function (overlay, idx, options) {
   return new L.ScaleHandle(overlay, idx, options);
 };
@@ -3512,17 +3210,16 @@ L.distortableImage = L.DistortableImage || {};
 L.distortableImage = L.DistortableImage;
 L.DistortableImage.group_action_map = {};
 L.DistortableImage.ControlBar = L.Toolbar2.Control.extend({});
-
 L.distortableImage.controlBar = function (options) {
   return new L.DistortableImage.ControlBar(options);
 };
+
 /** addInitHooks run before onAdd */
-
-
 L.DistortableCollection.addInitHook(function () {
   /** Default actions */
-  this.ACTIONS = [L.ExportAction, L.DeleteAction, L.LockAction, L.UnlockAction]; // all possible modes
+  this.ACTIONS = [L.ExportAction, L.DeleteAction, L.LockAction, L.UnlockAction];
 
+  // all possible modes
   L.DistortableCollection.Edit.MODES = {
     lock: L.LockAction,
     unlock: L.UnlockAction
@@ -3563,28 +3260,24 @@ L.DistortableImage.PopupBar = L.Toolbar2.Popup.extend({
   },
   clickTool: function clickTool(name) {
     var tools = this.tools();
-
     for (var i = 0; i < tools.length; i++) {
       var tool = tools.item(i).children[0];
-
       if (L.DomUtil.hasClass(tool, name)) {
         tool.click();
         return tool;
       }
     }
-
     return false;
   }
 });
-
 L.distortableImage.popupBar = function (latlng, options) {
   return new L.DistortableImage.PopupBar(latlng, options);
 };
-
 L.DistortableImageOverlay.addInitHook(function () {
   /** Default actions */
-  this.ACTIONS = [L.DragAction, L.ScaleAction, L.DistortAction, L.RotateAction, L.FreeRotateAction, L.LockAction, L.OpacityAction, L.BorderAction, L.ExportAction, L.DeleteAction]; // all possible modes
+  this.ACTIONS = [L.DragAction, L.ScaleAction, L.DistortAction, L.RotateAction, L.FreeRotateAction, L.LockAction, L.OpacityAction, L.BorderAction, L.ExportAction, L.DeleteAction];
 
+  // all possible modes
   L.DistortableImage.Edit.MODES = {
     drag: L.DragAction,
     scale: L.ScaleAction,
@@ -3630,7 +3323,8 @@ L.IconSet = L.Class.extend({
 /***/ (function() {
 
 L.KeymapperIconSet = L.IconSet.extend({
-  _symbols: // eslint-disable-next-line max-len
+  _symbols:
+  // eslint-disable-next-line max-len
   '<symbol viewBox="0 0 25 25" id="keyboard_open"><path d="M12 23l4-4H8l4 4zm7-15h-2V6h2v2zm0 3h-2V9h2v2zm-3-3h-2V6h2v2zm0 3h-2V9h2v2zm0 4H8v-2h8v2zM7 8H5V6h2v2zm0 3H5V9h2v2zm1-2h2v2H8V9zm0-3h2v2H8V6zm3 3h2v2h-2V9zm0-3h2v2h-2V6zm9-3H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></symbol>'
 });
 
@@ -3659,11 +3353,11 @@ L.Map.mergeOptions({
   boxCollector: true,
   boxZoom: false
 });
+
 /**
  * primarily Leaflet 1.5.1 source code. Overriden so that it's a collection box used with
  * our `L.DistortableCollection` class instead of a zoom box.
  * */
-
 L.Map.BoxCollector = L.Map.BoxZoom.extend({
   initialize: function initialize(map) {
     this._map = map;
@@ -3698,14 +3392,12 @@ L.Map.BoxCollector = L.Map.BoxZoom.extend({
   _onMouseDown: function _onMouseDown(e) {
     if (!e.shiftKey || e.which !== 1 && e.button !== 1) {
       return false;
-    } // Clear the deferred resetState if it hasn't executed yet, otherwise it
+    }
+
+    // Clear the deferred resetState if it hasn't executed yet, otherwise it
     // will interrupt the interaction and orphan a box element in the container.
-
-
     this._clearDeferredResetState();
-
     this._resetState();
-
     L.DomUtil.disableTextSelection();
     L.DomUtil.disableImageDrag();
     this._startPoint = this._map.mouseEventToContainerPoint(e);
@@ -3720,15 +3412,11 @@ L.Map.BoxCollector = L.Map.BoxZoom.extend({
       this._moved = true;
       this._box = L.DomUtil.create('div', 'leaflet-zoom-box', this._container);
       L.DomUtil.addClass(this._container, 'leaflet-crosshair');
-
       this._map.fire('boxzoomstart');
     }
-
     this._point = this._map.mouseEventToContainerPoint(e);
     this._bounds = L.bounds(this._startPoint, this._point);
-
     var size = this._bounds.getSize();
-
     L.DomUtil.setPosition(this._box, this._bounds.min);
     this._box.style.width = size.x + 'px';
     this._box.style.height = size.y + 'px';
@@ -3738,7 +3426,6 @@ L.Map.BoxCollector = L.Map.BoxZoom.extend({
       L.DomUtil.remove(this._box);
       L.DomUtil.removeClass(this._container, 'leaflet-crosshair');
     }
-
     L.DomUtil.enableTextSelection();
     L.DomUtil.enableImageDrag();
     L.DomEvent.off(document, {
@@ -3751,27 +3438,21 @@ L.Map.BoxCollector = L.Map.BoxZoom.extend({
     if (e.which !== 1 && e.button !== 1) {
       return;
     }
-
     this._finish();
-
     if (!this._moved) {
       return;
-    } // Postpone to next JS tick so internal click event handling
+    }
+
+    // Postpone to next JS tick so internal click event handling
     // still see it as "moved".
-
-
     this._clearDeferredResetState();
-
     this._resetStateTimeout = setTimeout(L.Util.bind(this._resetState, this), 0);
     var bounds = L.latLngBounds(this._map.containerPointToLatLng(this._bounds.getBottomLeft()), this._map.containerPointToLatLng(this._bounds.getTopRight()));
-
     var zoom = this._map.getZoom();
+    var center = this._map.getCenter();
 
-    var center = this._map.getCenter(); // calls the `project` method but 1st updates the pixel origin - see https://github.com/publiclab/Leaflet.DistortableImage/pull/344
-
-
+    // calls the `project` method but 1st updates the pixel origin - see https://github.com/publiclab/Leaflet.DistortableImage/pull/344
     bounds = this._map._latLngBoundsToNewLayerBounds(bounds, zoom, center);
-
     this._map.fire('boxcollectend', {
       boxCollectBounds: bounds
     });
@@ -3790,26 +3471,23 @@ L.Map.addInitHook('addHandler', 'boxCollector', L.Map.BoxCollector);
 L.Map.mergeOptions({
   doubleClickLabels: true
 });
+
 /**
  * The `doubleClickLabels` handler replaces `doubleClickZoom` by default if `#addGoogleMutant`
  * is used unless the options 'labels: false' or 'doubleClickZoom: false` were passed to it.
  */
-
 L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
   enable: function enable() {
     var map = this._map;
-
     if (this._enabled) {
       return this;
-    } // disable 'doubleClickZoom' if 'doubleClickLabels' is enabled.
+    }
 
-
+    // disable 'doubleClickZoom' if 'doubleClickLabels' is enabled.
     if (map.doubleClickZoom.enabled()) {
       map.doubleClickZoom.disable();
     }
-
     this._map.fire('singleclickon');
-
     this._enabled = true;
     this.addHooks();
     return this;
@@ -3818,19 +3496,18 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
     if (!this._enabled) {
       return this;
     }
-
     this._enabled = false;
     this.removeHooks();
     return this;
   },
   _fireIfSingle: function _fireIfSingle(e) {
     var map = this._map;
-    var oe = e.originalEvent; // prevents deselection in case of box selector
+    var oe = e.originalEvent;
 
+    // prevents deselection in case of box selector
     if (oe && oe.shiftKey) {
       return;
     }
-
     map._clicked += 1;
     this._map._clickTimeout = setTimeout(function () {
       if (map._clicked === 1) {
@@ -3853,11 +3530,9 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
       map._clicked = 0;
       clearTimeout(map._clickTimeout);
     }, 0);
-
     if (!labels) {
       return;
     }
-
     if (labels.options.opacity === 1) {
       labels.options.opacity = 0;
       labels.setOpacity(0);
@@ -3898,18 +3573,17 @@ L.Map.DoubleClickZoom.include({
   enable: function enable() {
     if (this._enabled) {
       return this;
-    } // don't enable 'doubleClickZoom' unless 'doubleClickLabels' is disabled first
+    }
 
-
+    // don't enable 'doubleClickZoom' unless 'doubleClickLabels' is disabled first
     if (this._map.doubleClickLabels) {
       if (this._map.doubleClickLabels.enabled()) {
         return this;
       }
-    } // signify to collection/instance classes to turn on 'singleclick' listeners
+    }
 
-
+    // signify to collection/instance classes to turn on 'singleclick' listeners
     this._map.fire('singleclickon');
-
     this._enabled = true;
     this.addHooks();
     return this;
@@ -3917,23 +3591,22 @@ L.Map.DoubleClickZoom.include({
   disable: function disable() {
     if (!this._enabled) {
       return this;
-    } // signify to collection/instance safe to swap 'singleclick' listeners with 'click' listeners.
+    }
 
-
+    // signify to collection/instance safe to swap 'singleclick' listeners with 'click' listeners.
     this._map.fire('singleclickoff');
-
     this._enabled = false;
     this.removeHooks();
     return this;
   },
   _fireIfSingle: function _fireIfSingle(e) {
     var map = this._map;
-    var oe = e.originalEvent; // prevents deselection in case of box selector
+    var oe = e.originalEvent;
 
+    // prevents deselection in case of box selector
     if (oe && oe.shiftKey) {
       return;
     }
-
     map._clicked += 1;
     this._map._clickTimeout = setTimeout(function () {
       if (map._clicked === 1) {
@@ -3959,15 +3632,12 @@ L.Map.DoubleClickZoom.include({
       map._clicked = 0;
       clearTimeout(map._clickTimeout);
     }, 0);
-
     if (!oe) {
       return false;
     }
-
     var oldZoom = map.getZoom();
     var delta = map.options.zoomDelta;
     var zoom = oe.shiftKey ? oldZoom - delta : oldZoom + delta;
-
     if (map.options.doubleClickZoom === 'center') {
       map.setZoom(zoom);
     } else {
@@ -3998,37 +3668,32 @@ L.Map.include({
       labelOpacity: 1,
       doubleClickLabels: true
     }, opts);
-
     if (!opts.labels) {
       this.mutantOptions = L.extend(this.mutantOptions, {
         labelOpacity: opts.labels ? 1 : undefined,
         doubleClickLabels: opts.labels ? true : undefined
       });
     }
-
     this._googleMutant = L.tileLayer(url, {
       maxZoom: opts.maxZoom,
       maxNativeZoom: opts.maxNativeZoom,
       minZoom: opts.minZoom,
       opacity: opts.mutantOpacity
     }).addTo(this);
-
     if (opts.labels) {
       this._addLabels(opts);
-    } // shouldn't have this handler at all if there are no labels to toggle
+    }
+    // shouldn't have this handler at all if there are no labels to toggle
     else {
       this.doubleClickLabels = undefined;
     }
-
     return this;
   },
   _addLabels: function _addLabels(opts) {
     var url = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner-labels/{z}/{x}/{y}{r}.{ext}';
-
     if (opts.labelOpacity !== 0 && opts.labelOpacity !== 1) {
       opts.labelOpacity = 1;
     }
-
     this._labels = L.tileLayer(url, {
       attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       subdomains: 'abcd',
@@ -4039,16 +3704,14 @@ L.Map.include({
       minZoom: opts.minZoom,
       ext: 'png'
     }).addTo(this);
-
     if (this.mutantOptions.doubleClickLabels) {
       this.doubleClickLabels.enable();
     }
-
     return this;
   }
-}); // start off with doubleClickZoom enabled, doubleClickLabels can later be enabled instead
+});
+// start off with doubleClickZoom enabled, doubleClickLabels can later be enabled instead
 // during initialization
-
 L.Map.addInitHook(function () {
   this.doubleClickLabels.disable();
   this.doubleClickZoom.enable();
@@ -4068,6 +3731,7 @@ L.DomUtil = L.extend(L.DomUtil, {
   },
   getMatrixString: function getMatrixString(m) {
     var is3d = L.Browser.webkit3d || L.Browser.gecko3d || L.Browser.ie3d;
+
     /*
      * Since matrix3d takes a 4*4 matrix, we add in an empty row and column,
      * which act as the identity on the z-axis.
@@ -4075,14 +3739,11 @@ L.DomUtil = L.extend(L.DomUtil, {
      *     http://franklinta.com/2014/09/08/computing-css-matrix3d-transforms/
      *     https://developer.mozilla.org/en-US/docs/Web/CSS/transform-function#M.C3.B6bius'_homogeneous_coordinates_in_projective_geometry
      */
-
     var matrix = [m[0], m[3], 0, m[6], m[1], m[4], 0, m[7], 0, 0, 1, 0, m[2], m[5], 0, m[8]];
     var str = is3d ? 'matrix3d(' + matrix.join(',') + ')' : '';
-
     if (!is3d) {
       console.log('Your browser must support 3D CSS transforms' + 'in order to use DistortableImageOverlay.');
     }
-
     return str;
   },
   toggleClass: function toggleClass(el, className) {
@@ -4096,16 +3757,13 @@ L.DomUtil = L.extend(L.DomUtil, {
     if (n === 1) {
       return this.confirmDelete();
     }
-
     var translation = this.translation.confirmImagesDeletes;
     var warningMsg = '';
-
     if (typeof translation === 'function') {
       warningMsg = translation(n);
     } else {
       warningMsg = translation;
     }
-
     return window.confirm(warningMsg);
   }
 });
@@ -4128,12 +3786,10 @@ L.IconUtil = {
     if (/^#/.test(ref)) {
       ref = ref.replace(/^#/, '');
     }
-
     return '<svg class="ldi-icon ldi-' + ref + '"role="img" focusable="false">' + '<use xlink:href="#' + ref + '"></use>' + '</svg>';
   },
   addClassToSvg: function addClassToSvg(container, loader) {
     var svg = container.querySelector('svg');
-
     if (svg) {
       L.DomUtil.addClass(svg, loader);
     }
@@ -4143,29 +3799,23 @@ L.IconUtil = {
     if (!/^#/.test(ref1)) {
       ref1 = '#' + ref1;
     }
-
     if (!/^#/.test(ref2)) {
       ref2 = '#' + ref2;
     }
-
     var use = container.querySelector('use');
-
     if (use) {
       var toggled = use.getAttribute('xlink:href') === ref1 ? ref2 : ref1;
       use.setAttribute('xlink:href', toggled);
       return toggled;
     }
-
     return false;
   },
   toggleTitle: function toggleTitle(container, title1, title2) {
     var toggled = container.getAttribute('title') === title1 ? title2 : title1;
     container.setAttribute('title', toggled);
-
     if (container.hasAttribute('aria-label')) {
       container.setAttribute('aria-label', toggled);
     }
-
     return toggled;
   }
 };
@@ -4203,19 +3853,15 @@ L.MatrixUtil = {
   multmm: function multmm(a, b) {
     var c = [];
     var i;
-
     for (i = 0; i < 3; i++) {
       for (var j = 0; j < 3; j++) {
         var cij = 0;
-
         for (var k = 0; k < 3; k++) {
           cij += a[3 * i + k] * b[3 * k + j];
         }
-
         c[3 * i + j] = cij;
       }
     }
-
     return c;
   },
   // multiply a 3*3 matrix and a 3-vector
@@ -4225,11 +3871,9 @@ L.MatrixUtil = {
   // multiply a scalar and a 3*3 matrix
   multsm: function multsm(s, m) {
     var matrix = [];
-
     for (var i = 0, l = m.length; i < l; i++) {
       matrix.push(s * m[i]);
     }
-
     return matrix;
   },
   basisToPoints: function basisToPoints(x1, y1, x2, y2, x3, y3, x4, y4) {
@@ -4244,7 +3888,9 @@ L.MatrixUtil = {
   general2DProjection: function general2DProjection(x1s, y1s, x1d, y1d, x2s, y2s, x2d, y2d, x3s, y3s, x3d, y3d, x4s, y4s, x4d, y4d) {
     var s = L.MatrixUtil.basisToPoints(x1s, y1s, x2s, y2s, x3s, y3s, x4s, y4s);
     var d = L.MatrixUtil.basisToPoints(x1d, y1d, x2d, y2d, x3d, y3d, x4d, y4d);
-    var m = L.MatrixUtil.multmm(d, L.MatrixUtil.adj(s)); // Normalize to the unique matrix with m[8] == 1.
+    var m = L.MatrixUtil.multmm(d, L.MatrixUtil.adj(s));
+
+    // Normalize to the unique matrix with m[8] == 1.
     // See: http://franklinta.com/2014/09/08/computing-css-matrix3d-transforms/
 
     return L.MatrixUtil.multsm(1 / m[8], m);
@@ -4306,7 +3952,6 @@ L.Utils = {
       confirmImageDelete: 'Are you sure? This image will be permanently deleted from the map.',
       confirmImagesDeletes: 'Are you sure? These images will be permanently deleted from the map.'
     };
-
     if (!this.options.translation) {
       this.options.translation = translation;
     } else {
@@ -4317,7 +3962,6 @@ L.Utils = {
         }
       }
     }
-
     L.DomUtil.initTranslation(this.options.translation);
   },
   getNestedVal: function getNestedVal(obj, key, nestedKey) {
@@ -7303,7 +6947,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "e25f8be8eeb066dddf26"; }
+/******/ 		__webpack_require__.h = function() { return "048572802246b3ac1279"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
@@ -8335,5 +7979,4 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ })()
 ;
-
 //# sourceMappingURL=leaflet.distortableimage.js.map
