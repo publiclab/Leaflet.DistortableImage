@@ -199,6 +199,46 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return reduce / imgs.length;
   },
 
+  // Connects to JSON file and fetches JSON data therein from remote source
+  async fetchRemoteJson(url) {
+    let index = 0;
+    const imgCollectionProps = [];
+
+    try {
+      const response = await axios.get(url);
+      if (response.data.images.length > 1) {
+        response.data.images.forEach((data) => {
+          imgCollectionProps[index] = data;
+          index++;
+        });
+        return {
+          avg_cm_per_pixel: response.data.avg_cm_per_pixel,
+          imgCollectionProps,
+        };
+      }
+      imgCollectionProps[index] = response.data.images;
+
+      return {
+        avg_cm_per_pixel: response.data.avg_cm_per_pixel,
+        imgCollectionProps,
+      };
+    } catch (err) {
+      console.log('err', err);
+    }
+  },
+
+  // expects url in this format: https://archive.org/download/segeotest/segeotest.json
+  async recreateMapFromJsonUrl(url) {
+    let imageCollectionObj = {};
+
+    if (url) {
+      imageCollectionObj = await this.fetchRemoteJson(url);
+      return imageCollectionObj;
+    };
+
+    return imageCollectionObj;
+  },
+
   generateExportJson(allImages = false) {
     const json = {};
     json.images = [];

@@ -177,7 +177,7 @@ mapToggle.addEventListener('click', (event) => {
 
 tileMap.addEventListener('click', (event) => {
   if (sidebarOpen) {
-   bootstrap.Offcanvas.getInstance(sidebar).hide();
+    bootstrap.Offcanvas.getInstance(sidebar).hide();
   }
 });
 
@@ -189,7 +189,7 @@ function getImageName(imageURL) {
   return imageName;
 }
 
-function extractJSONDownloadURL(url) {
+function extractJsonFromUrlParams(url) { 
   const startIndex = url.lastIndexOf('=');
   const jsonDownloadURL = url.slice(startIndex + 1);
 
@@ -204,59 +204,12 @@ function isJsonDetected(url) {
     if (fileExtension === 'json') {
       console.log('JSON found in map shareable link'); // left here purposely
       return true;
-    }
+    } 
   }
 
   return false;
 }
 
-//2. Connects to JSON file and fetches JSON data therein from remote source
-async function fetchRemoteJson(jsonDownloadURL) { //async function recreateMapFormJson(json) 
-  let index = 0;
-  const imgCollectionProps = [];
-
-  try {
-    const response = await axios.get(jsonDownloadURL);
-    if (response.data.images.length > 1) {
-      response.data.images.forEach((data) => {
-        imgCollectionProps[index] = data;
-        index++;
-      });
-      return {avg_cm_per_pixel: response.data.avg_cm_per_pixel, imgCollectionProps};
-    }
-    imgCollectionProps[index] = response.data.images;
-
-    return {avg_cm_per_pixel: response.data.avg_cm_per_pixel, imgCollectionProps};
-  } catch (err) {
-    console.log('err', err);
-  }
-}
-
-// 1. Performs preliminary checks and obtains map data (needed to reconstruct map in another function)
-// expects URL in this format: http://localhost:8081/examples/shareable.html?json=https://archive.org/download/segeotest/segeotest.json
-async function recreateMapDataFromJsonUrl(url) {  
-  // --- step 1.1 getURL
-  let jsonDownloadURL;
-  let imageCollectionObj = {};
-
-  if (isJsonDetected(url)) {
-    jsonDownloadURL = extractJSONDownloadURL(url);
-  } 
-  // -- step 1.2 Connects to JSON file and fetches JSON data therein from remote source
-  if (jsonDownloadURL) {
-    imageCollectionObj = await fetchRemoteJson(jsonDownloadURL);
-    return imageCollectionObj;
-  };
-
-  return imageCollectionObj;
-}
-
-// 2. Regenerates map or creates new map - must be invoked from within an eventlistner function
-// Renamed from "addImageOverlayToCollection" to "createMap" instead of "recreateMapFormJson(json)" you suggested
-// because this same function can be used to create:
-// i.fresh maps
-// ii. regenerate maps from map data (sourced from a JSON file remotely, from json local file dropped to the tileLayer) and 
-// iii. can be invoked from the any other source (e.g., localStorage)
 function createMap (imageURL, options, newImage = false) {
   let image;
   
@@ -283,35 +236,42 @@ function createMap (imageURL, options, newImage = false) {
 document.addEventListener('DOMContentLoaded', async (event) => {
   if (mapReconstructionMode) {
     const url = location.href;
-    const imageCollectionObj = await recreateMapDataFromJsonUrl(url); 
-    const avg_cm_per_pixel = imageCollectionObj.avg_cm_per_pixel; // this is made available here for future use
-  
-    if (imageCollectionObj.imgCollectionProps.length > 1) {
-      let imageURL;
-      let options;
-  
-      imageCollectionObj.imgCollectionProps.forEach((imageObj) => {
-        imageURL = imageObj.src;
-        options = {
-          height: imageObj.height,
-          tooltipText: imageObj.tooltipText,
-          corners: imageObj.nodes,
-        };
+    
+    if (isJsonDetected(url)) {
+      const jsonDownloadURL = extractJsonFromUrlParams(url); 
+
+      if (jsonDownloadURL) {
+        const imageCollectionObj = await map.imgGroup.recreateMapFromJsonUrl(jsonDownloadURL); 
+        const avg_cm_per_pixel = imageCollectionObj.avg_cm_per_pixel; // this is made available here for future use
+      
+        if (imageCollectionObj.imgCollectionProps.length > 1) {
+          let imageURL;
+          let options;
+      
+          imageCollectionObj.imgCollectionProps.forEach((imageObj) => {
+            imageURL = imageObj.src;
+            options = {
+              height: imageObj.height,
+              tooltipText: imageObj.tooltipText,
+              corners: imageObj.nodes,
+            };
+            createMap(imageURL, options, false);
+          });
+      
+          return;
+        }
+
+        const imageObj = imageCollectionObj.imgCollectionProps[0];
+        const imageURL = imageObj[0].src;
+        const options = {
+          height: imageObj[0].height,
+          tooltipText: imageObj[0].tooltipText,
+          corners: imageObj[0].nodes,
+        }
+      
         createMap(imageURL, options, false);
-      });
-  
-      return;
-    }
-  
-    const imageObj = imageCollectionObj.imgCollectionProps[0];
-    const imageURL = imageObj[0].src;
-    const options = {
-      height: imageObj[0].height,
-      tooltipText: imageObj[0].tooltipText,
-      corners: imageObj[0].nodes,
-    }
-  
-    createMap(imageURL, options, false);
+      }
+    } 
   }
 });
 
@@ -326,7 +286,6 @@ document.addEventListener('click', (event) => {
   }
 });
 
-// ----
 // download JSON
 saveMap.addEventListener('click', () => {
   const jsonImages = map.imgGroup.generateExportJson(true).images;
