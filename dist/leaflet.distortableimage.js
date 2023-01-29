@@ -429,7 +429,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }))();
   },
   // expects url in this format: https://archive.org/download/segeotest/segeotest.json
-  recreateMapFromJsonUrl: function recreateMapFromJsonUrl(url) {
+  recreateImagesFromJsonUrl: function recreateImagesFromJsonUrl(url) {
     var _this5 = this;
     return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
       var imageCollectionObj;
@@ -6928,7 +6928,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "26dbfae79325439a978a"; }
+/******/ 		__webpack_require__.h = function() { return "f548663938c12b88c6e0"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */

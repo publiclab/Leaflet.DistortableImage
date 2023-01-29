@@ -241,7 +241,7 @@ document.addEventListener('DOMContentLoaded', async (event) => {
       const jsonDownloadURL = extractJsonFromUrlParams(url); 
 
       if (jsonDownloadURL) {
-        const imageCollectionObj = await map.imgGroup.recreateMapFromJsonUrl(jsonDownloadURL); 
+        const imageCollectionObj = await map.imgGroup.recreateImagesFromJsonUrl(jsonDownloadURL); 
         const avg_cm_per_pixel = imageCollectionObj.avg_cm_per_pixel; // this is made available here for future use
       
         if (imageCollectionObj.imgCollectionProps.length > 1) {

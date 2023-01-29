@@ -228,7 +228,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
   },
 
   // expects url in this format: https://archive.org/download/segeotest/segeotest.json
-  async recreateMapFromJsonUrl(url) {
+  async recreateImagesFromJsonUrl(url) {
     let imageCollectionObj = {};
 
     if (url) {
