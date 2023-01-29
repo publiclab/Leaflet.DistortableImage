@@ -14,6 +14,8 @@ let imageCount = 0;
 let fetchedFrom;
 let fetchedImages;
 let currPagination; // currPagination is used to initiate the Paginator Class
+let sidebarOpen = false;
+let mapReconstructionMode = false;
 
 const setupMap = () => {
   map = L.map('map').setView([51.505, -0.09], 13);
@@ -22,7 +24,12 @@ const setupMap = () => {
 
   map.addGoogleMutant();
   map.whenReady(() => {
-    new bootstrap.Modal(welcomeModal).show();
+    if (isJsonDetected(location.href)) {
+      new bootstrap.Modal(welcomeModal).hide(); 
+      mapReconstructionMode = true;
+      return;
+    }
+    new bootstrap.Modal(welcomeModal).show(); 
   });
 };
 
@@ -155,6 +162,7 @@ function showImages(getUrl) {
 
 welcomeModal.addEventListener('hidden.bs.modal', (event) => {
   new bootstrap.Offcanvas(sidebar).show();
+  sidebarOpen = true;
 });
 
 restoreWelcomeModal.addEventListener('click', (event) => {
@@ -164,10 +172,13 @@ restoreWelcomeModal.addEventListener('click', (event) => {
 
 mapToggle.addEventListener('click', (event) => {
   new bootstrap.Offcanvas(sidebar).show();
+  sidebarOpen = true;
 });
 
 tileMap.addEventListener('click', (event) => {
-  bootstrap.Offcanvas.getInstance(sidebar).hide();
+  if (sidebarOpen) {
+    bootstrap.Offcanvas.getInstance(sidebar).hide();
+  }
 });
 
 function getImageName(imageURL) {
@@ -178,16 +189,102 @@ function getImageName(imageURL) {
   return imageName;
 }
 
+function extractJsonFromUrlParams(url) { 
+  const startIndex = url.lastIndexOf('=');
+  const jsonDownloadURL = url.slice(startIndex + 1);
+
+  return jsonDownloadURL;
+}
+
+function isJsonDetected(url) {
+  if (url.includes('?json=')) {
+    const startIndex = url.lastIndexOf('.');
+    const fileExtension = url.slice(startIndex + 1);
+
+    if (fileExtension === 'json') {
+      console.log('JSON found in map shareable link'); // left here purposely
+      return true;
+    } 
+  }
+
+  return false;
+}
+
+function placeImage (imageURL, options, newImage = false) {
+  let image;
+  
+  if (newImage) { 
+    image = L.distortableImageOverlay(
+      imageURL,
+      {tooltipText: options.tooltipText}
+    );
+  } else {
+    image = L.distortableImageOverlay(
+      imageURL,
+      {
+        height: options.height,
+        tooltipText: options.tooltipText,
+        // corners: options.corners, <== uncomment this to see the effect of the corners
+      }
+    );
+  }
+
+  map.imgGroup.addLayer(image);
+};
+
+// Reconstruct Map from JSON
+document.addEventListener('DOMContentLoaded', async (event) => {
+  if (mapReconstructionMode) {
+    const url = location.href;
+    
+    if (isJsonDetected(url)) {
+      const jsonDownloadURL = extractJsonFromUrlParams(url); 
+
+      if (jsonDownloadURL) {
+        const imageCollectionObj = await map.imgGroup.recreateImagesFromJsonUrl(jsonDownloadURL); 
+        const avg_cm_per_pixel = imageCollectionObj.avg_cm_per_pixel; // this is made available here for future use
+        
+        // creates multiple images - this applies where multiple images are to be reconstructed
+        if (imageCollectionObj.imgCollectionProps.length > 1) {
+          let imageURL;
+          let options;
+      
+          imageCollectionObj.imgCollectionProps.forEach((imageObj) => {
+            imageURL = imageObj.src;
+            options = {
+              height: imageObj.height,
+              tooltipText: imageObj.tooltipText,
+              corners: imageObj.nodes,
+            };
+            placeImage(imageURL, options, false);
+          });
+      
+          return;
+        }
+
+        // creates single image - this applies where only one image is to be reconstructed
+        const imageObj = imageCollectionObj.imgCollectionProps[0];
+        const imageURL = imageObj[0].src;
+        const options = {
+          height: imageObj[0].height,
+          tooltipText: imageObj[0].tooltipText,
+          corners: imageObj[0].nodes,
+        }
+      
+        placeImage(imageURL, options, false);
+      }
+    } 
+  }
+});
+
 document.addEventListener('click', (event) => {
   if (event.target.classList.contains('place-button')) {
     const imageURL = event.target.previousElementSibling.src;
     const imageTooltipText = getImageName(imageURL);
+    const options = {tooltipText: imageTooltipText};
 
-    const image = L.distortableImageOverlay(
-        imageURL,
-        {tooltipText: imageTooltipText}
-    );
-    map.imgGroup.addLayer(image);
+    placeImage(imageURL, options, true);
+    return;
   }
 });
 
@@ -203,4 +300,4 @@ saveMap.addEventListener('click', () => {
       a.download = fileName ? fileName + '.json' : 'MapknitterLite.json';
       a.click();
     }
-})
+});
