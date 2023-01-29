@@ -210,7 +210,7 @@ function isJsonDetected(url) {
   return false;
 }
 
-function createMap (imageURL, options, newImage = false) {
+function placeImage (imageURL, options, newImage = false) {
   let image;
   
   if (newImage) { 
@@ -243,7 +243,8 @@ document.addEventListener('DOMContentLoaded', async (event) => {
       if (jsonDownloadURL) {
         const imageCollectionObj = await map.imgGroup.recreateImagesFromJsonUrl(jsonDownloadURL); 
         const avg_cm_per_pixel = imageCollectionObj.avg_cm_per_pixel; // this is made available here for future use
-      
+        
+        // creates multiple images - this applies where multiple images are to be reconstructed
         if (imageCollectionObj.imgCollectionProps.length > 1) {
           let imageURL;
           let options;
@@ -255,12 +256,13 @@ document.addEventListener('DOMContentLoaded', async (event) => {
               tooltipText: imageObj.tooltipText,
               corners: imageObj.nodes,
             };
-            createMap(imageURL, options, false);
+            placeImage(imageURL, options, false);
           });
       
           return;
         }
 
+        // creates single image - this applies where only one image is to be reconstructed
         const imageObj = imageCollectionObj.imgCollectionProps[0];
         const imageURL = imageObj[0].src;
         const options = {
@@ -269,7 +271,7 @@ document.addEventListener('DOMContentLoaded', async (event) => {
           corners: imageObj[0].nodes,
         }
       
-        createMap(imageURL, options, false);
+        placeImage(imageURL, options, false);
       }
     } 
   }
@@ -281,7 +283,7 @@ document.addEventListener('click', (event) => {
     const imageTooltipText = getImageName(imageURL);
     const options = {tooltipText: imageTooltipText};
 
-    createMap(imageURL, options, true);
+    placeImage(imageURL, options, true);
     return;
   }
 });
