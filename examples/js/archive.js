@@ -300,4 +300,11 @@ saveMap.addEventListener('click', () => {
       a.download = fileName ? fileName + '.json' : 'MapknitterLite.json';
       a.click();
     }
-});
+})
+
+// share map modal
+const shareModal = document.getElementById('shareModal')
+const modality =  new bootstrap.Modal(shareModal)
+shareMapBtn.addEventListener('click', () => {
+  bootstrap.Modal.getInstance(shareModal).show()
+})
