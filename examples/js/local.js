@@ -43,6 +43,10 @@ const loadMap = (image) => {
   });
 };
 
+const setUpLoadListener = (reader) => {
+  loadMap(reader.result);
+};
+
 const handleDrop = (e) => {
   alert('You\'re editing a map with local images. You\'ll need to save images at archive.org if you\'d like to save your work online, or to export the map.');
 
@@ -50,6 +54,8 @@ const handleDrop = (e) => {
   form.append('scale', prompt('Choose a scale to download image or use the default (cm per pixel):', 100) || mergedOpts.scale);
 
   const files = e.dataTransfer.files;
+
+  // console.log('files type:', files[0].type);
   // eslint-disable-next-line no-unused-vars
   for (let i = 0, f; (f = files[i]); i++) {
     const reader = new FileReader();
@@ -61,6 +67,29 @@ const handleDrop = (e) => {
     // Read the File objects in this FileList.
   }
 };
+
+// BASE CONDITION
+// const handleDrop = (e) => {
+//   alert('You\'re editing a map with local images. You\'ll need to save images at archive.org if you\'d like to save your work online, or to export the map.');
+
+//   const form = new FormData();
+//   form.append('scale', prompt('Choose a scale to download image or use the default (cm per pixel):', 100) || mergedOpts.scale);
+
+//   const files = e.dataTransfer.files;
+
+//   console.log('files:', files);
+//   // console.log('files type:', files[0].type);
+//   // eslint-disable-next-line no-unused-vars
+//   for (let i = 0, f; (f = files[i]); i++) {
+//     const reader = new FileReader();
+//     // save file to local storage
+//     reader.addEventListener('load', () => {
+//       loadMap(reader.result);
+//     });
+//     reader.readAsDataURL(files[i]);
+//     // Read the File objects in this FileList.
+//   }
+// };
 
 // notify user that they will lose all changes
 window.addEventListener('beforeunload', (e) => {
@@ -74,6 +103,5 @@ let map;
   map = L.map('map').setView([51.505, -0.09], 13);
   map.addGoogleMutant();
 })();
-
 
 L.Control.geocoder().addTo(map);
