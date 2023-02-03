@@ -134,12 +134,39 @@ const renderThumbnails = (thumbnails = [], url, fullResImgs) => {
     imageContainer.setAttribute('class', 'row');
   });
 };
+ 
+const loadJSONfromResponse = async (response) => {
+  //filter for JSON files
+  const jsonFiles = response.data.files.filter(e => e.format === 'JSON')
+ 
+  if (jsonFiles.length > 0) {
+    let jsonFileToLoad;   
+    if (jsonFiles.length > 1) { // check if there are multiple json files 
+      const answer = prompt(`We found ${jsonFiles.length} saved Map state in your URL, input the filename of JSON file to load?`).toLowerCase()
+      jsonFileToLoad = jsonFiles.filter(jsonFile => {
+        const formatedAnswer = answer.includes('.json') ? answer : (answer + '.json')
+        if (jsonFile.name === formatedAnswer) {
+          return (jsonFile)
+        }
+      })
+    } else {
+      jsonFileToLoad = jsonFiles;
+    }
+
+    // construct JSON url
+    if (jsonFileToLoad.length != 0) {
+      const jsonUrl = `https://archive.org/download/${response.data.metadata.identifier}/${jsonFileToLoad[0].name}`
+      reconstructMapFromJson(jsonUrl)
+    }
+  }
+};
 
 function showImages(getUrl) {
   const url = getUrl.replace('details', 'metadata');
 
   axios.get(url)
-      .then((response) => {
+    .then((response) => {
+        loadJSONfromResponse(response)
         if (response.data.files && response.data.files.length != 0) {
           fetchedImages = response.data.files; // <---- all files fetched
           // runs a check to clear the sidebar, eventListeners and reset imageCount
@@ -149,7 +176,7 @@ function showImages(getUrl) {
           responseText.innerHTML = imageCount ? `${imageCount} image(s) fetched successfully from ${fetchedFrom.innerHTML}.` : 'No images found in the link provided...';
         } else {
           responseText.innerHTML = 'No images found in the link provided...';
-        }
+      }
       })
       .catch((error) => {
         console.log(error);
@@ -233,14 +260,8 @@ function placeImage (imageURL, options, newImage = false) {
 };
 
 // Reconstruct Map from JSON
-document.addEventListener('DOMContentLoaded', async (event) => {
-  if (mapReconstructionMode) {
-    const url = location.href;
-    
-    if (isJsonDetected(url)) {
-      const jsonDownloadURL = extractJsonFromUrlParams(url); 
-
-      if (jsonDownloadURL) {
+const reconstructMapFromJson =  async (jsonDownloadURL) => {
+   if (jsonDownloadURL) {
         const imageCollectionObj = await map.imgGroup.recreateImagesFromJsonUrl(jsonDownloadURL); 
         const avg_cm_per_pixel = imageCollectionObj.avg_cm_per_pixel; // this is made available here for future use
         
@@ -273,6 +294,14 @@ document.addEventListener('DOMContentLoaded', async (event) => {
       
         placeImage(imageURL, options, false);
       }
+}
+document.addEventListener('DOMContentLoaded', (event) => {
+  if (mapReconstructionMode) {
+    const url = location.href;
+    
+    if (isJsonDetected(url)) {
+      const jsonDownloadURL = extractJsonFromUrlParams(url); 
+     reconstructMapFromJson(jsonDownloadURL)
     } 
   }
 });
@@ -290,14 +319,14 @@ document.addEventListener('click', (event) => {
 
 // download JSON
 saveMap.addEventListener('click', () => {
-  const jsonImages = map.imgGroup.generateExportJson(true).images;
+  const jsonImages = map.imgGroup.generateExportJson(true);
     // a check to prevent download of empty file
-    if (jsonImages.length) {
+    if (jsonImages.images.length) {
       const encodedFile = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(jsonImages));
       const a = document.createElement('a');
       a.href = 'data:' + encodedFile;
-      const fileName = prompt('Use this file to recover your map’s saved state. Enter filename:');
-      a.download = fileName ? fileName + '.json' : 'MapknitterLite.json';
+      const fileName = prompt('Use this file to recover your map’s saved state. Enter a unique filename:').toLowerCase()
+      a.download = fileName ? fileName + '.json' : 'mapknitter-lite.json';
       a.click();
     }
 })
