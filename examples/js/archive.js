@@ -3,6 +3,7 @@ import {Paginator} from './modules/paginator.js';
 let map;
 const welcomeModal = document.getElementById('welcomeModal');
 const tileMap = document.getElementById('map');
+const beginBtn = document.getElementById('beginBtn');
 const restoreWelcomeModal = document.getElementById('restoreWelcomeModalBtn');
 const sidebar = document.getElementById('offcanvasRight');
 const form = document.getElementById('form');
@@ -159,6 +160,11 @@ function showImages(getUrl) {
         bootstrap.Modal.getInstance(welcomeModal).hide();
       });
 }
+
+beginBtn.addEventListener('click', (event) => {
+    new bootstrap.Offcanvas(sidebar).show();
+    sidebarOpen = true;
+});
 
 // welcomeModal.addEventListener('hidden.bs.modal', (event) => {
 //   new bootstrap.Offcanvas(sidebar).show();
