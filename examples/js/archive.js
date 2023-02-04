@@ -162,6 +162,7 @@ function showImages(getUrl) {
 }
 
 beginBtn.addEventListener('click', (event) => {
+    bootstrap.Modal.getInstance(welcomeModal).hide();
     new bootstrap.Offcanvas(sidebar).show();
     sidebarOpen = true;
 });
