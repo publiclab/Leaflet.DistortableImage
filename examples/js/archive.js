@@ -15,7 +15,7 @@ let fetchedFrom;
 let fetchedImages;
 let currPagination; // currPagination is used to initiate the Paginator Class
 let sidebarOpen = false;
-let mapReconstructionMode = false;
+let mapReconstructionMode = false; // map is reconstructed from json URL in this mode
 
 const setupMap = () => {
   map = L.map('map').setView([51.505, -0.09], 13);
@@ -160,10 +160,10 @@ function showImages(getUrl) {
       });
 }
 
-welcomeModal.addEventListener('hidden.bs.modal', (event) => {
-  new bootstrap.Offcanvas(sidebar).show();
-  sidebarOpen = true;
-});
+// welcomeModal.addEventListener('hidden.bs.modal', (event) => {
+//   new bootstrap.Offcanvas(sidebar).show();
+//   sidebarOpen = true;
+// });
 
 restoreWelcomeModal.addEventListener('click', (event) => {
   bootstrap.Modal.getInstance(welcomeModal).show();
@@ -213,12 +213,12 @@ function isJsonDetected(url) {
 function placeImage (imageURL, options, newImage = false) {
   let image;
   
-  if (newImage) { 
+  if (newImage) { // Construct new map
     image = L.distortableImageOverlay(
       imageURL,
       {tooltipText: options.tooltipText}
     );
-  } else {
+  } else { // Reconstruct map to previous saved state
     image = L.distortableImageOverlay(
       imageURL,
       {
@@ -300,11 +300,88 @@ saveMap.addEventListener('click', () => {
       a.download = fileName ? fileName + '.json' : 'MapknitterLite.json';
       a.click();
     }
-})
+});
 
 // share map modal
 const shareModal = document.getElementById('shareModal')
 const modality =  new bootstrap.Modal(shareModal)
 shareMapBtn.addEventListener('click', () => {
   bootstrap.Modal.getInstance(shareModal).show()
-})
+});
+
+// -----------------------------------------------------------------------------
+function extractFileName(name) {
+  const startIndex = name.lastIndexOf('.');
+  const fileName = name.substring(0, startIndex);
+
+  return fileName;
+}
+
+function handleDrop (e) {
+  const files = e.dataTransfer.files;
+  const reader = new FileReader();
+  
+  // confirm file being dragged has json format
+  if (files.length === 1 && files[0].type === 'application/json') { 
+    reader.addEventListener('load', () => {
+      let imgUrl;
+      let options;
+      const imgObj = JSON.parse(reader.result);
+      // for json file with multiple image property sets
+      if (imgObj.images.length > 1) {
+        imgObj.images.forEach((imgObj) => {
+          imgUrl = imgObj.src;
+          options = {
+            height: imgObj.height,
+            tooltipText: imgObj.tooltipText,
+            // corners: imgObj.nodes, // uncomment to view the effect of corners
+          };
+          placeImage(imgUrl, options);
+        });
+        return;
+      }
+      // for json file with only one image property set
+      imgUrl = imgObj.images[0].src;
+      options = {
+        height: imgObj.images[0].height,
+        tooltipText: imgObj.images[0].tooltipText,
+        // corners: imgObj.nodes, // uncomment to view the effect of corners
+      };
+      placeImage(imgUrl, options);
+    }); 
+    reader.readAsText(files[0]);
+  } else {
+    // non-json (i.e., images) files make it to this point
+    for (let i = 0; i < files.length; i++) {
+      reader.addEventListener('load', () => {
+        const options = {tooltipText: extractFileName(files[i].name)};
+        placeImage(reader.result, options, true); 
+      });
+      reader.readAsDataURL(files[i]); 
+    }
+  }
+};
+
+function uploadFiles() {
+  const dropZone = document.getElementById('dropZone');
+  const active = () => dropZone.classList.add('overlay');
+  const inactive = () => dropZone.classList.remove('overlay');
+  const prevents = e => e.preventDefault();
+
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach((e) => {
+    dropZone.addEventListener(e, prevents);
+  });
+
+  ['dragenter', 'dragover'].forEach((e) => {
+    dropZone.addEventListener(e, active);
+  });
+
+  ['dragleave', 'drop'].forEach((e) => {
+    dropZone.addEventListener(e, inactive);
+  });
+
+  dropZone.addEventListener('drop', handleDrop);
+};
+
+document.addEventListener('DOMContentLoaded', uploadFiles);
+// -----------------------------------------------------------------------------

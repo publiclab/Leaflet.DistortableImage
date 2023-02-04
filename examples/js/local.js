@@ -33,6 +33,7 @@ const uploadFiles = () => {
 
 document.addEventListener('DOMContentLoaded', uploadFiles);
 
+// <-Ignore --- delete this comment
 // this function is a candidate from modularization. It's used in many other .js files
 const placeImage = (imageUrl, options = {}) => {
   map.whenReady(function() {
@@ -103,6 +104,7 @@ const handleDrop = (e) => {
   }
 };
 
+// <-Ignore --- delete this comment
 // notify user that they will lose all changes
 window.addEventListener('beforeunload', (e) => {
   e.preventDefault();
