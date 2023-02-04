@@ -166,11 +166,6 @@ beginBtn.addEventListener('click', (event) => {
     sidebarOpen = true;
 });
 
-// welcomeModal.addEventListener('hidden.bs.modal', (event) => {
-//   new bootstrap.Offcanvas(sidebar).show();
-//   sidebarOpen = true;
-// });
-
 restoreWelcomeModal.addEventListener('click', (event) => {
   bootstrap.Modal.getInstance(welcomeModal).show();
   input.value='';
