@@ -137,7 +137,7 @@ const renderThumbnails = (thumbnails = [], url, fullResImgs) => {
  
 const loadJSONfromResponse = async (response) => {
   //filter for JSON files from mapknitter
-  const jsonFiles = response.data.files.filter(e => e.format === 'JSON' && e.name.includes('mapknitter'))
+  const jsonFiles = response.data.files.filter(e => e.format === 'JSON' && e.name.startsWith('mapknitter'))
  
   if (jsonFiles.length > 0) {
     const answer = confirm('Saved map state detected! Do you want to load it?')
