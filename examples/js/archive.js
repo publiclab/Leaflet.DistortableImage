@@ -136,27 +136,15 @@ const renderThumbnails = (thumbnails = [], url, fullResImgs) => {
 };
  
 const loadJSONfromResponse = async (response) => {
-  //filter for JSON files
-  const jsonFiles = response.data.files.filter(e => e.format === 'JSON')
+  //filter for JSON files from mapknitter
+  const jsonFiles = response.data.files.filter(e => e.format === 'JSON' && e.name.includes('mapknitter'))
  
   if (jsonFiles.length > 0) {
-    let jsonFileToLoad;   
-    if (jsonFiles.length > 1) { // check if there are multiple json files 
-      const answer = prompt(`We found ${jsonFiles.length} saved Map state in your URL, input the filename of JSON file to load?`).toLowerCase()
-      jsonFileToLoad = jsonFiles.filter(jsonFile => {
-        const formatedAnswer = answer.includes('.json') ? answer : (answer + '.json')
-        if (jsonFile.name === formatedAnswer) {
-          return (jsonFile)
-        }
-      })
-    } else {
-      jsonFileToLoad = jsonFiles;
-    }
-
-    // construct JSON url
-    if (jsonFileToLoad.length != 0) {
-      const jsonUrl = `https://archive.org/download/${response.data.metadata.identifier}/${jsonFileToLoad[0].name}`
-      reconstructMapFromJson(jsonUrl)
+    const answer = confirm('Saved map state detected! Do you want to load it?')
+    // construct JSON url for the first mapknitter JSON file if user confirms
+    if (answer) {
+    const jsonUrl = `https://archive.org/download/${response.data.metadata.identifier}/${jsonFiles[0].name}`
+    reconstructMapFromJson(jsonUrl)
     }
   }
 };
@@ -320,13 +308,14 @@ document.addEventListener('click', (event) => {
 // download JSON
 saveMap.addEventListener('click', () => {
   const jsonImages = map.imgGroup.generateExportJson(true);
-    // a check to prevent download of empty file
+  const date = new Date()
+   // a check to prevent download of empty file
     if (jsonImages.images.length) {
       const encodedFile = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(jsonImages));
       const a = document.createElement('a');
       a.href = 'data:' + encodedFile;
-      const fileName = prompt('Use this file to recover your map’s saved state. Enter a unique filename:').toLowerCase()
-      a.download = fileName ? fileName + '.json' : 'mapknitter-lite.json';
+      // date.getTime().toString() <---- hack for a unique id
+      a.download = `mapknitter-${date.getTime().toString()}.json`
       a.click();
     }
 })
