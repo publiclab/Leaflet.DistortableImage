@@ -199,25 +199,52 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return reduce / imgs.length;
   },
 
-  isJsonDetected(currentURL) {
-    if (currentURL.includes('?json=')) {
-      startIndex = currentURL.lastIndexOf('.');
-      fileExtension = currentURL.slice(startIndex + 1);
+  // Connects to JSON file and fetches JSON data therein from remote source
+  async fetchRemoteJson(url) {
+    let index = 0;
+    const imgCollectionProps = [];
 
-      if (fileExtension === 'json') {
-        console.log('JSON found in map shareable link');
-        return true;
+    try {
+      const response = await axios.get(url);
+      if (response.data.images.length > 1) {
+        response.data.images.forEach((data) => {
+          imgCollectionProps[index] = data;
+          index++;
+        });
+        return {
+          avg_cm_per_pixel: response.data.avg_cm_per_pixel,
+          imgCollectionProps,
+        };
       }
+      imgCollectionProps[index] = response.data.images;
+
+      return {
+        avg_cm_per_pixel: response.data.avg_cm_per_pixel,
+        imgCollectionProps,
+      };
+    } catch (err) {
+      console.log('err', err);
     }
-    return false;
   },
 
-  generateExportJson() {
+  // expects url in this format: https://archive.org/download/segeotest/segeotest.json
+  async recreateImagesFromJsonUrl(url) {
+    let imageCollectionObj = {};
+
+    if (url) {
+      imageCollectionObj = await this.fetchRemoteJson(url);
+      return imageCollectionObj;
+    };
+
+    return imageCollectionObj;
+  },
+
+  generateExportJson(allImages = false) {
     const json = {};
     json.images = [];
 
     this.eachLayer(function(layer) {
-      if (this.isCollected(layer)) {
+      if (allImages || this.isCollected(layer)) {
         const sections = layer._image.src.split('/');
         const filename = sections[sections.length-1];
         const zc = layer.getCorners();
@@ -241,7 +268,6 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     json.images = json.images.reverse();
     json.avg_cm_per_pixel = this._getAvgCmPerPixel(json.images);
-
     return json;
   },
 });
