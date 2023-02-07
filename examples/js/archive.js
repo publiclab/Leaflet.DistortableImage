@@ -237,7 +237,8 @@ function placeImage (imageURL, options, newImage = false) {
 // Reconstruct Map from JSON
 document.addEventListener('DOMContentLoaded', async (event) => {
   if (mapReconstructionMode) {
-    const url = location.href;
+    // expected url format http://localhost:8081/examples/archive.html?json=https://archive.org/download/mkl-1/mkl-1.json
+    const url = location.href; 
     
     if (isJsonDetected(url)) {
       const jsonDownloadURL = extractJsonFromUrlParams(url); 
@@ -292,10 +293,29 @@ document.addEventListener('click', (event) => {
 
 // download JSON
 saveMap.addEventListener('click', () => {
-  const jsonImages = map.imgGroup.generateExportJson(true).images;
+  const jsonImages = map.imgGroup.generateExportJson(true);
     // a check to prevent download of empty file
-    if (jsonImages.length) {
-      const encodedFile = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(jsonImages));
+    if (jsonImages.images.length) {
+      const modifiedJsonImages = {};
+      const tempCollection = [];
+
+      // restructure jsonImages
+      modifiedJsonImages.avg_cm_per_pixel = jsonImages.avg_cm_per_pixel;
+      jsonImages.images.map((image) => {
+        tempCollection.push({
+          id: image.id,
+          src: image.src,
+          width: image.width,
+          height: image.height,
+          tooltipText: image.tooltipText,
+          image_file_name: image.image_file_name,
+          nodes: image.nodes,
+          cm_per_pixel: image.cm_per_pixel,
+        });
+      });
+      modifiedJsonImages.collection = tempCollection;
+
+      const encodedFile = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(modifiedJsonImages));
       const a = document.createElement('a');
       a.href = 'data:' + encodedFile;
       const fileName = prompt('Use this file to recover your map’s saved state. Enter filename:');
@@ -311,7 +331,6 @@ shareMapBtn.addEventListener('click', () => {
   bootstrap.Modal.getInstance(shareModal).show()
 });
 
-// -----------------------------------------------------------------------------
 function extractFileName(name) {
   const startIndex = name.lastIndexOf('.');
   const fileName = name.substring(0, startIndex);
@@ -330,8 +349,8 @@ function handleDrop (e) {
       let options;
       const imgObj = JSON.parse(reader.result);
       // for json file with multiple image property sets
-      if (imgObj.images.length > 1) {
-        imgObj.images.forEach((imgObj) => {
+      if (imgObj.collection.length > 1) {
+        imgObj.collection.forEach((imgObj) => {
           imgUrl = imgObj.src;
           options = {
             height: imgObj.height,
@@ -343,10 +362,10 @@ function handleDrop (e) {
         return;
       }
       // for json file with only one image property set
-      imgUrl = imgObj.images[0].src;
+      imgUrl = imgObj.collection[0].src;
       options = {
-        height: imgObj.images[0].height,
-        tooltipText: imgObj.images[0].tooltipText,
+        height: imgObj.collection[0].height,
+        tooltipText: imgObj.collection[0].tooltipText,
         // corners: imgObj.nodes, // uncomment to view the effect of corners
       };
       placeImage(imgUrl, options);
@@ -386,4 +405,3 @@ function uploadFiles() {
 };
 
 document.addEventListener('DOMContentLoaded', uploadFiles);
-// -----------------------------------------------------------------------------

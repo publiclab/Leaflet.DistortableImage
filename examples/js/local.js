@@ -69,8 +69,8 @@ const handleDrop = (e) => {
     reader.addEventListener('load', () => {
       imgObj = JSON.parse(reader.result);
       // for json file with multiple image property sets
-      if (imgObj.images.length > 1) {
-        imgObj.images.forEach((imgObj) => {
+      if (imgObj.collection.length > 1) {
+        imgObj.collection.forEach((imgObj) => {
           imgUrl = imgObj.src;
           options = {
             height: imgObj.height,
@@ -82,10 +82,10 @@ const handleDrop = (e) => {
         return;
       }
       // for json file with only one image property set
-      imgUrl = imgObj.images[0].src;
+      imgUrl = imgObj.collection[0].src;
       options = {
-        height: imgObj.images[0].height,
-        tooltipText: imgObj.images[0].tooltipText,
+        height: imgObj.collection[0].height,
+        tooltipText: imgObj.collection[0].tooltipText,
         // corners: imgObj.nodes, // uncomment to view the effect of corners
       };
       placeImage(imgUrl, options);

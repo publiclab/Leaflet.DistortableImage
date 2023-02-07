@@ -251,6 +251,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this.unbindTooltip();
   },
 
+  getTooltipText() {
+    return this.tooltipText;
+  },
+
   setCorners(latlngObj) {
     const map = this._map;
     const zoom = map.getZoom();
