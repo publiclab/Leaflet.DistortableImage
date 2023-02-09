@@ -144,16 +144,7 @@ const loadJSONfromResponse = async (response) => {
     // construct JSON url for the first mapknitter JSON file if user confirms
     if (answer) {
       const jsonUrl = `https://archive.org/download/${response.data.metadata.identifier}/${jsonFiles[0].name}`
-      try {
-        const newRes = await fetch(jsonUrl)
-        const result = await newRes.json()
-        if (result.hasOwnProperty('avg_cm_per_pixel')) { // check for avg_cm_per_pixel property
-          reconstructMapFromJson(jsonUrl)
-        }
-      } catch (err) {
-        console.log(err)
-      }
-     
+       reconstructMapFromJson(jsonUrl)    
     }
   }
 };
