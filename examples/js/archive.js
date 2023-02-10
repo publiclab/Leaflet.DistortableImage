@@ -226,11 +226,10 @@ function placeImage (imageURL, options, newImage = false) {
       {
         height: options.height,
         tooltipText: options.tooltipText,
-        // corners: options.corners, <== uncomment this to see the effect of the corners
+        corners: options.corners, // <== uncomment this to see the effect of the corners
       }
     );
   }
-
   map.imgGroup.addLayer(image);
 };
 
@@ -355,7 +354,7 @@ function handleDrop (e) {
           options = {
             height: imgObj.height,
             tooltipText: imgObj.tooltipText,
-            // corners: imgObj.nodes, // uncomment to view the effect of corners
+            corners: imgObj.nodes, // uncomment to view the effect of corners
           };
           placeImage(imgUrl, options);
         });
@@ -366,7 +365,7 @@ function handleDrop (e) {
       options = {
         height: imgObj.collection[0].height,
         tooltipText: imgObj.collection[0].tooltipText,
-        // corners: imgObj.nodes, // uncomment to view the effect of corners
+        corners: imgObj.nodes, // uncomment to view the effect of corners
       };
       placeImage(imgUrl, options);
     }); 

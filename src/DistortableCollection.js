@@ -251,8 +251,8 @@ L.DistortableCollection = L.FeatureGroup.extend({
         const corners = [
           {lat: zc[0].lat, lon: zc[0].lng},
           {lat: zc[1].lat, lon: zc[1].lng},
-          {lat: zc[3].lat, lon: zc[3].lng},
           {lat: zc[2].lat, lon: zc[2].lng},
+          {lat: zc[3].lat, lon: zc[3].lng},
         ];
         json.images.push({
           id: layer._leaflet_id,
