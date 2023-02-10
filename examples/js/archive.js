@@ -20,6 +20,7 @@ let mapReconstructionMode = false; // map is reconstructed from json URL in this
 
 const setupMap = () => {
   map = L.map('map').setView([51.505, -0.09], 13);
+  window.map = map; // make map global for debugging
 
   map.attributionControl.setPosition('bottomleft');
 
@@ -224,7 +225,6 @@ function placeImage (imageURL, options, newImage = false) {
     image = L.distortableImageOverlay(
       imageURL,
       {
-        height: options.height,
         tooltipText: options.tooltipText,
         corners: options.corners, // <== uncomment this to see the effect of the corners
       }
@@ -251,6 +251,9 @@ document.addEventListener('DOMContentLoaded', async (event) => {
           let imageURL;
           let options;
       
+          // let cornerBounds = .... // collect all corners into a big array of [lat, lon]
+          // map.fitBounds(cornerBounds);
+
           imageCollectionObj.imgCollectionProps.forEach((imageObj) => {
             imageURL = imageObj.src;
             options = {
