@@ -199,15 +199,15 @@ L.DistortableCollection = L.FeatureGroup.extend({
     return reduce / imgs.length;
   },
 
-  // Connects to JSON file and fetches JSON data therein from remote source
+  // connects to JSON file and fetches JSON data therein from remote source
   async fetchRemoteJson(url) {
     let index = 0;
     const imgCollectionProps = [];
 
     try {
       const response = await axios.get(url);
-      if (response.data.images.length > 1) {
-        response.data.images.forEach((data) => {
+      if (response.data.collection.length > 1) {
+        response.data.collection.forEach((data) => {
           imgCollectionProps[index] = data;
           index++;
         });
@@ -216,7 +216,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
           imgCollectionProps,
         };
       }
-      imgCollectionProps[index] = response.data.images;
+      imgCollectionProps[index] = response.data.collection;
 
       return {
         avg_cm_per_pixel: response.data.avg_cm_per_pixel,
@@ -227,7 +227,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }
   },
 
-  // expects url in this format: https://archive.org/download/segeotest/segeotest.json
+  // expects url in this format: https://archive.org/download/mkl-1/mkl-1.json
   async recreateImagesFromJsonUrl(url) {
     let imageCollectionObj = {};
 
@@ -251,14 +251,15 @@ L.DistortableCollection = L.FeatureGroup.extend({
         const corners = [
           {lat: zc[0].lat, lon: zc[0].lng},
           {lat: zc[1].lat, lon: zc[1].lng},
-          {lat: zc[3].lat, lon: zc[3].lng},
           {lat: zc[2].lat, lon: zc[2].lng},
+          {lat: zc[3].lat, lon: zc[3].lng},
         ];
         json.images.push({
           id: layer._leaflet_id,
           src: layer._image.src,
           width: layer._image.width,
           height: layer._image.height,
+          tooltipText: layer.getTooltipText(),
           image_file_name: filename,
           nodes: corners,
           cm_per_pixel: L.ImageUtil.getCmPerPixel(layer),

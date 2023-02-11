@@ -33,13 +33,49 @@ const uploadFiles = () => {
 
 document.addEventListener('DOMContentLoaded', uploadFiles);
 
-// display uploaded image
-const loadMap = (image) => {
+// aggregate coordinates of all images into an array
+const getCornerBounds = (imgCollection) => {
+  let cornerBounds = []; 
+
+  // aggregate coordinates for multiple images int cornerBounds
+  if (imgCollection.length > 1) { 
+    imgCollection.forEach((imageObj) => {
+      for(let i = 0; i < imageObj.nodes.length; i++) {
+        let corner = [];
+        corner[0] = imageObj.nodes[i].lat;
+        corner[1] = imageObj.nodes[i].lon;
+        cornerBounds.push(corner); // then we have array of arrays e.g., [ [..], [..], [..], [], [], [], [], [] ] for two images etc...
+      }  
+    });
+  } else { // aggregate coordinates for a single image into cornerBounds
+    let corner = [];
+    for(let i = 0; i < imgCollection[0].nodes.length; i++) {
+      let corner = [];
+      corner[0] = imgCollection[0].nodes[i].lat;
+      corner[1] = imgCollection[0].nodes[i].lon;
+      cornerBounds.push(corner); // then we have [ [lat, long], [..], [..], [..] ] for just one image...
+    }  
+  }
+  return cornerBounds;
+}
+
+// this function is a candidate from modularization. It's used in many other .js files
+const placeImage = (imageUrl, options = {}) => {
   map.whenReady(function() {
-    img = L.distortableImageOverlay(image, {
-      selected: true,
-      fullResolutionSrc: 'large.jpg',
-    }).addTo(map);
+    // constructs new map 
+    const noOptions = Object.keys(options).length === 0 && options.constructor === Object
+    if (noOptions) {
+      img = L.distortableImageOverlay(imageUrl, {
+        selected: true,
+        fullResolutionSrc: 'large.jpg',
+      }).addTo(map);
+    } else {
+      // reconstructs map into previous state
+      image = L.distortableImageOverlay(imageUrl, {
+        tooltipText: options.tooltipText,
+        corners: options.corners, 
+      }).addTo(map);
+    }
   });
 };
 
@@ -50,15 +86,49 @@ const handleDrop = (e) => {
   form.append('scale', prompt('Choose a scale to download image or use the default (cm per pixel):', 100) || mergedOpts.scale);
 
   const files = e.dataTransfer.files;
-  // eslint-disable-next-line no-unused-vars
-  for (let i = 0, f; (f = files[i]); i++) {
-    const reader = new FileReader();
-    // save file to local storage
+  const reader = new FileReader();
+  
+  // confirm file being dragged has json format
+  if (files.length === 1 && files[0].type === 'application/json') { 
     reader.addEventListener('load', () => {
-      loadMap(reader.result);
-    });
-    reader.readAsDataURL(files[i]);
-    // Read the File objects in this FileList.
+      imgObj = JSON.parse(reader.result);
+      
+      // for json file with multiple image property sets
+      if (imgObj.collection.length > 1) {
+        const cornerBounds = getCornerBounds(imgObj.collection); 
+        map.fitBounds(cornerBounds); 
+
+        imgObj.collection.forEach((imgObj) => {
+          imgUrl = imgObj.src;
+          options = {
+            tooltipText: imgObj.tooltipText,
+            corners: imgObj.nodes, 
+          };
+          placeImage(imgUrl, options);
+        });
+        return;
+      }
+      // for json file with only one image property set
+      imgUrl = imgObj.collection[0].src;
+      options = {
+        tooltipText: imgObj.collection[0].tooltipText,
+        corners: imgObj.nodes, 
+      };
+      const cornerBounds = getCornerBounds(imgObj.collection); 
+      map.fitBounds(cornerBounds);
+      placeImage(imgUrl, options);
+    }); 
+    reader.readAsText(files[0]);
+  } else {
+    // non-json (i.e., images) files make it to this point
+    // eslint-disable-next-line no-unused-vars
+    for (let i = 0, f; (f = files[i]); i++) {
+      reader.addEventListener('load', () => {
+        placeImage(reader.result);
+      });
+      reader.readAsDataURL(files[i]); 
+      // Read the File objects in this FileList.
+    }
   }
 };
 
@@ -68,12 +138,10 @@ window.addEventListener('beforeunload', (e) => {
   e.returnValue = '';
 });
 
-
 let map;
 (function() {
   map = L.map('map').setView([51.505, -0.09], 13);
   map.addGoogleMutant();
 })();
-
 
 L.Control.geocoder().addTo(map);

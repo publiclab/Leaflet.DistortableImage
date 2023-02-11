@@ -26,7 +26,7 @@
 </head>
 <body style="margin:0;">
       <!--Welcome Modal-->
-  <div class="modal fade" id="welcomeModal" aria-labelledby="exampleModalLabel" tabindex="-1" aria-hidden="true">
+  <div class="modal fade" id="welcomeModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
           <div class="modal-content bg-light">
             <div class="modal-header d-block">
@@ -49,11 +49,12 @@
             <p>Paste it here to begin:</p>
             <form id="form">
               <input id="input" type="text" class="form-control" placeholder="https://archive.org/details/..." required>
-              <button type="submit" class="btn btn-primary mt-4 mb-5">Begin</button>
+              <button id="beginBtn" type="submit" class="btn btn-primary mt-4 mb-5">Begin</button>
             </form>
-            <p>
+            <p>Alternatively, close this dialogue box then drag image to the tile from your computer. You can also drag a JSON file to the tile to restore your map to previous saved state.</p>
+            <!-- <p>
                 <a href="local.html">Click here</a> to try this offline with local files only.
-              </p>
+            </p> -->
           </div>
         </div>
       </div>
@@ -96,8 +97,10 @@
   </div>
     
   <i title="Open Sidebar" id="mapToggle" class="fa fa-bars fa-3x " style="position: absolute; right: 0; top:30px; margin: 1rem; z-index: 900; color: white; cursor: pointer;" aria-hidden="true"></i>
-    
-  <div id="map" style="width:100%; height:100%; position:absolute; top:0;"></div>
+  
+  <div id="dropZone" class="flex-item flex-item1">
+    <div id="map" style="width:100%; height:100%; position:absolute; top:0;"></div>
+  </div> 
 
   <div class="offcanvas offcanvas-end" data-bs-backdrop="false" data-bs-keyboard="false" tabindex="1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
       <div class="offcanvas-header">
