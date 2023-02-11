@@ -259,7 +259,7 @@ function placeImage (imageURL, options, newImage = false) {
       imageURL,
       {
         tooltipText: options.tooltipText,
-        corners: options.corners, // <== uncomment this to see the effect of the corners
+        corners: options.corners, 
       }
     );
   }
@@ -342,7 +342,6 @@ saveMap.addEventListener('click', () => {
         tempCollection.push({
           id: image.id,
           src: image.src,
-          // width: image.width,
           tooltipText: image.tooltipText,
           image_file_name: image.image_file_name,
           nodes: image.nodes,
