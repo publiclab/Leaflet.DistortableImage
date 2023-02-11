@@ -33,6 +33,32 @@ const uploadFiles = () => {
 
 document.addEventListener('DOMContentLoaded', uploadFiles);
 
+// aggregate coordinates of all images into an array
+const getCornerBounds = (imgCollection) => {
+  let cornerBounds = []; 
+
+  // aggregate coordinates for multiple images int cornerBounds
+  if (imgCollection.length > 1) { 
+    imgCollection.forEach((imageObj) => {
+      for(let i = 0; i < imageObj.nodes.length; i++) {
+        let corner = [];
+        corner[0] = imageObj.nodes[i].lat;
+        corner[1] = imageObj.nodes[i].lon;
+        cornerBounds.push(corner); // then we have array of arrays e.g., [ [..], [..], [..], [], [], [], [], [] ] for two images etc...
+      }  
+    });
+  } else { // aggregate coordinates for a single image into cornerBounds
+    let corner = [];
+    for(let i = 0; i < imgCollection[0].nodes.length; i++) {
+      let corner = [];
+      corner[0] = imgCollection[0].nodes[i].lat;
+      corner[1] = imgCollection[0].nodes[i].lon;
+      cornerBounds.push(corner); // then we have [ [lat, long], [..], [..], [..] ] for just one image...
+    }  
+  }
+  return cornerBounds;
+}
+
 // <-Ignore --- delete this comment
 // this function is a candidate from modularization. It's used in many other .js files
 const placeImage = (imageUrl, options = {}) => {
@@ -47,9 +73,8 @@ const placeImage = (imageUrl, options = {}) => {
     } else {
       // reconstructs map into previous state
       image = L.distortableImageOverlay(imageUrl, {
-        height: options.height,
         tooltipText: options.tooltipText,
-        // corners: options.corners, <== uncomment this to see the effect of the corners
+        corners: options.corners, 
       }).addTo(map);
     }
   });
@@ -68,14 +93,17 @@ const handleDrop = (e) => {
   if (files.length === 1 && files[0].type === 'application/json') { 
     reader.addEventListener('load', () => {
       imgObj = JSON.parse(reader.result);
+      
       // for json file with multiple image property sets
       if (imgObj.collection.length > 1) {
+        const cornerBounds = getCornerBounds(imgObj.collection); 
+        map.fitBounds(cornerBounds); 
+
         imgObj.collection.forEach((imgObj) => {
           imgUrl = imgObj.src;
           options = {
-            height: imgObj.height,
             tooltipText: imgObj.tooltipText,
-            // corners: imgObj.nodes, // uncomment to view the effect of corners
+            corners: imgObj.nodes, 
           };
           placeImage(imgUrl, options);
         });
@@ -84,10 +112,11 @@ const handleDrop = (e) => {
       // for json file with only one image property set
       imgUrl = imgObj.collection[0].src;
       options = {
-        height: imgObj.collection[0].height,
         tooltipText: imgObj.collection[0].tooltipText,
-        // corners: imgObj.nodes, // uncomment to view the effect of corners
+        corners: imgObj.nodes, 
       };
+      const cornerBounds = getCornerBounds(imgObj.collection); 
+      map.fitBounds(cornerBounds);
       placeImage(imgUrl, options);
     }); 
     reader.readAsText(files[0]);

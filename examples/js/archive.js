@@ -191,6 +191,13 @@ function getImageName(imageURL) {
   return imageName;
 }
 
+function extractFileName(name) {
+  const startIndex = name.lastIndexOf('.');
+  const fileName = name.substring(0, startIndex);
+
+  return fileName;
+}
+
 function extractJsonFromUrlParams(url) { 
   const startIndex = url.lastIndexOf('=');
   const jsonDownloadURL = url.slice(startIndex + 1);
@@ -212,6 +219,32 @@ function isJsonDetected(url) {
   return false;
 }
 
+// aggregate coordinates of all images into an array
+function getCornerBounds(imgCollection) {
+  let cornerBounds = []; 
+
+  // aggregate coordinates for multiple images int cornerBounds
+  if (imgCollection.length > 1) { 
+    imgCollection.forEach((imageObj) => {
+      for(let i = 0; i < imageObj.nodes.length; i++) {
+        let corner = [];
+        corner[0] = imageObj.nodes[i].lat;
+        corner[1] = imageObj.nodes[i].lon;
+        cornerBounds.push(corner); // then we have array of arrays e.g., [ [..], [..], [..], [], [], [], [], [] ] for two images etc...
+      }  
+    });
+  } else { // aggregate coordinates for a single image into cornerBounds
+    let corner = [];
+    for(let i = 0; i < imgCollection[0].nodes.length; i++) {
+      let corner = [];
+      corner[0] = imgCollection[0].nodes[i].lat;
+      corner[1] = imgCollection[0].nodes[i].lon;
+      cornerBounds.push(corner); // then we have [ [lat, long], [..], [..], [..] ] for just one image...
+    }  
+  }
+  return cornerBounds;
+}
+
 function placeImage (imageURL, options, newImage = false) {
   let image;
   
@@ -224,7 +257,6 @@ function placeImage (imageURL, options, newImage = false) {
     image = L.distortableImageOverlay(
       imageURL,
       {
-        height: options.height,
         tooltipText: options.tooltipText,
         corners: options.corners, // <== uncomment this to see the effect of the corners
       }
@@ -233,7 +265,7 @@ function placeImage (imageURL, options, newImage = false) {
   map.imgGroup.addLayer(image);
 };
 
-// Reconstruct Map from JSON
+// Reconstruct Map from JSON URL
 document.addEventListener('DOMContentLoaded', async (event) => {
   if (mapReconstructionMode) {
     // expected url format http://localhost:8081/examples/archive.html?json=https://archive.org/download/mkl-1/mkl-1.json
@@ -244,35 +276,40 @@ document.addEventListener('DOMContentLoaded', async (event) => {
 
       if (jsonDownloadURL) {
         const imageCollectionObj = await map.imgGroup.recreateImagesFromJsonUrl(jsonDownloadURL); 
+        const imgObjCollection = imageCollectionObj.imgCollectionProps;
         const avg_cm_per_pixel = imageCollectionObj.avg_cm_per_pixel; // this is made available here for future use
         
         // creates multiple images - this applies where multiple images are to be reconstructed
-        if (imageCollectionObj.imgCollectionProps.length > 1) {
+        if (imgObjCollection.length > 1) {
           let imageURL;
           let options;
+
+          const cornerBounds = getCornerBounds(imgObjCollection); 
+          map.fitBounds(cornerBounds);
       
-          imageCollectionObj.imgCollectionProps.forEach((imageObj) => {
+          imgObjCollection.forEach((imageObj) => {
             imageURL = imageObj.src;
             options = {
-              height: imageObj.height,
               tooltipText: imageObj.tooltipText,
               corners: imageObj.nodes,
             };
             placeImage(imageURL, options, false);
           });
-      
+
           return;
         }
 
         // creates single image - this applies where only one image is to be reconstructed
-        const imageObj = imageCollectionObj.imgCollectionProps[0];
+        const imageObj = imgObjCollection[0];
         const imageURL = imageObj[0].src;
         const options = {
-          height: imageObj[0].height,
           tooltipText: imageObj[0].tooltipText,
           corners: imageObj[0].nodes,
         }
-      
+
+        const cornerBounds = getCornerBounds(imgObjCollection[0]); 
+        console.log('cornerBounds: ', cornerBounds);
+        map.fitBounds(cornerBounds);
         placeImage(imageURL, options, false);
       }
     } 
@@ -304,8 +341,7 @@ saveMap.addEventListener('click', () => {
         tempCollection.push({
           id: image.id,
           src: image.src,
-          width: image.width,
-          height: image.height,
+          // width: image.width,
           tooltipText: image.tooltipText,
           image_file_name: image.image_file_name,
           nodes: image.nodes,
@@ -330,13 +366,7 @@ shareMapBtn.addEventListener('click', () => {
   bootstrap.Modal.getInstance(shareModal).show()
 });
 
-function extractFileName(name) {
-  const startIndex = name.lastIndexOf('.');
-  const fileName = name.substring(0, startIndex);
-
-  return fileName;
-}
-
+// Reconstruct map from JSON file or place images on tile layer
 function handleDrop (e) {
   const files = e.dataTransfer.files;
   const reader = new FileReader();
@@ -347,31 +377,38 @@ function handleDrop (e) {
       let imgUrl;
       let options;
       const imgObj = JSON.parse(reader.result);
+
       // for json file with multiple image property sets
       if (imgObj.collection.length > 1) {
+        const cornerBounds = getCornerBounds(imgObj.collection); 
+        map.fitBounds(cornerBounds); 
+
         imgObj.collection.forEach((imgObj) => {
           imgUrl = imgObj.src;
           options = {
-            height: imgObj.height,
             tooltipText: imgObj.tooltipText,
-            corners: imgObj.nodes, // uncomment to view the effect of corners
+            corners: imgObj.nodes, 
           };
+
           placeImage(imgUrl, options);
         });
         return;
       }
+
       // for json file with only one image property set
       imgUrl = imgObj.collection[0].src;
       options = {
-        height: imgObj.collection[0].height,
         tooltipText: imgObj.collection[0].tooltipText,
-        corners: imgObj.nodes, // uncomment to view the effect of corners
+        corners: imgObj.collection[0].nodes, 
       };
+      const cornerBounds = getCornerBounds(imgObj.collection); 
+      map.fitBounds(cornerBounds);
       placeImage(imgUrl, options);
     }); 
+
     reader.readAsText(files[0]);
   } else {
-    // non-json (i.e., images) files make it to this point
+    // non-json (i.e., .png) files make it to this point
     for (let i = 0; i < files.length; i++) {
       reader.addEventListener('load', () => {
         const options = {tooltipText: extractFileName(files[i].name)};
