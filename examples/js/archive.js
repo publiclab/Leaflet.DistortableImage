@@ -20,6 +20,7 @@ let mapReconstructionMode = false; // map is reconstructed from json URL in this
 
 const setupMap = () => {
   map = L.map('map').setView([51.505, -0.09], 13);
+  window.map = map; // make map global for debugging
 
   map.attributionControl.setPosition('bottomleft');
 
