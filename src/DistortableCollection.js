@@ -206,19 +206,18 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     try {
       const response = await axios.get(url);
-      console.log(response)
-        if (response.data.hasOwnProperty('avg_cm_per_pixel')) {
-          if (response.data.collection.length > 1) {
-            response.data.collection.forEach((data) => {
-              imgCollectionProps[index] = data;
-              index++;
-            });
-            return {
-              avg_cm_per_pixel: response.data.avg_cm_per_pixel,
-              imgCollectionProps,
-            };
-      }
-      imgCollectionProps[index] = response.data.collection;
+      if (response.data.hasOwnProperty('avg_cm_per_pixel')) {
+        if (response.data.collection.length > 1) {
+          response.data.collection.forEach((data) => {
+            imgCollectionProps[index] = data;
+            index++;
+          });
+          return {
+            avg_cm_per_pixel: response.data.avg_cm_per_pixel,
+            imgCollectionProps,
+          };
+        }
+        imgCollectionProps[index] = response.data.collection;
 
         return {
           avg_cm_per_pixel: response.data.avg_cm_per_pixel,
@@ -226,15 +225,15 @@ L.DistortableCollection = L.FeatureGroup.extend({
         };
       } else {
         if (response.data.length > 1) {
-            response.data.forEach((data) => {
-              imgCollectionProps[index] = data;
-              index++;
-            });
-            return {
-              imgCollectionProps,
-            };
-      }
-      imgCollectionProps[index] = response.data;
+          response.data.forEach((data) => {
+            imgCollectionProps[index] = data;
+            index++;
+          });
+          return {
+            imgCollectionProps,
+          };
+        }
+        imgCollectionProps[index] = response.data;
 
         return {
           imgCollectionProps,
@@ -264,7 +263,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     this.eachLayer(function(layer) {
       if (allImages || this.isCollected(layer)) {
         const sections = layer._image.src.split('/');
-        const filename = sections[sections.length-1];
+        const filename = sections[sections.length - 1];
         const zc = layer.getCorners();
         const corners = [
           {lat: zc[0].lat, lon: zc[0].lng},
