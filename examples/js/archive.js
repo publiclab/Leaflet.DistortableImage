@@ -137,7 +137,7 @@ const renderThumbnails = (thumbnails = [], url, fullResImgs) => {
   });
 };
 
-const loadJSONFromResponse = (response) => {
+const  findSavedMapsJson = (response) => {
   // filter for JSON files from mapknitter
   const jsonFiles = response.data.files.filter(e => e.format === 'JSON' && e.name.startsWith('mapknitter'))
   if (jsonFiles.length > 0) {
@@ -155,7 +155,7 @@ function showImages(getUrl) {
 
   axios.get(url)
     .then((response) => {
-        loadJSONFromResponse(response)
+         findSavedMapsJson(response)
         if (response.data.files && response.data.files.length != 0) {
           fetchedImages = response.data.files; // <---- all files fetched
           // runs a check to clear the sidebar, eventListeners and reset imageCount
@@ -370,7 +370,7 @@ downloadJSON.addEventListener('click', () => {
       const encodedFile = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(modifiedJsonImages));
       const a = document.createElement('a');
       a.href = 'data:' + encodedFile;
-      // date.getTime().toString() <---- hack for a unique id
+      // date.getTime().toString() <---- use timestamp for a unique id
       a.download = `mapknitter-${date.getTime().toString()}.json`
       a.click();
     }
