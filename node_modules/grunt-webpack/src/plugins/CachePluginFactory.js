@@ -2,12 +2,12 @@
 
 let CachePlugin;
 try {
-  // webpack 4
-  CachePlugin = require("webpack/lib/CachePlugin");
-} catch (e) {
   // webpack 5
-  // eslint-disable-next-line import/no-unresolved
   CachePlugin = require("webpack/lib/cache/MemoryCachePlugin");
+} catch (e) {
+  // webpack 4
+  // eslint-disable-next-line import/no-unresolved,import/extensions
+  CachePlugin = require("webpack/lib/CachePlugin");
 }
 
 class CachePluginFactory {

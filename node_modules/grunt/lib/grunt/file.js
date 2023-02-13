@@ -292,8 +292,11 @@ file.write = function(filepath, contents, options) {
 // Read a file, optionally processing its content, then write the output.
 // Or read a directory, recursively creating directories, reading files,
 // processing content, writing output.
+// Handles symlinks by coping them as files or directories.
 file.copy = function copy(srcpath, destpath, options) {
-  if (file.isDir(srcpath)) {
+  if (file.isLink(srcpath)) {
+    file._copySymbolicLink(srcpath, destpath);
+  } else if (file.isDir(srcpath)) {
     // Copy a directory, recursively.
     // Explicitly create new dest directory.
     file.mkdir(destpath);
@@ -330,8 +333,8 @@ file._copy = function(srcpath, destpath, options) {
     }
   }
   // Abort copy if the process function returns false.
-  if (contents === false) {
-    grunt.verbose.writeln('Write aborted.');
+  if (contents === false || file.isLink(destpath)) {
+    grunt.verbose.writeln('Write aborted. Either the process function returned false or the destination is a symlink');
   } else {
     file.write(destpath, contents, readWriteOptions);
   }
@@ -447,6 +450,21 @@ file.isPathCwd = function() {
   } catch (e) {
     return false;
   }
+};
+
+file._copySymbolicLink = function(srcpath, destpath) {
+  var destdir = path.join(destpath, '..');
+  // Use the correct relative path for the symlink
+  if (!grunt.file.isPathAbsolute(srcpath)) {
+    srcpath = path.relative(destdir, srcpath) || '.';
+  }
+  file.mkdir(destdir);
+  var mode = grunt.file.isDir(srcpath) ? 'dir' : 'file';
+  if (fs.existsSync(destpath)) {
+    // skip symlink if file already exists
+    return;
+  }
+  return fs.symlinkSync(srcpath, destpath, mode);
 };
 
 // Test to see if a filepath is contained within the CWD.

@@ -1,18 +1,42 @@
 'use strict';
-const { compare, has, intersection } = require('./helpers');
+const { compare, filterOutStabilizedProposals, has, intersection } = require('./helpers');
 const data = require('./data');
+const entries = require('./entries');
 const getModulesListForTargetVersion = require('./get-modules-list-for-target-version');
-const modules = require('./modules');
+const allModules = require('./modules');
 const targetsParser = require('./targets-parser');
 
-function checkModule(name, targets) {
-  if (!has(data, name)) throw new TypeError(`Incorrect module: ${ name }`);
+function throwInvalidFilter(filter) {
+  throw TypeError(`Specified invalid module name or pattern: ${ filter }`);
+}
 
-  const requirements = data[name];
+function atLeastSomeModules(modules, filter) {
+  if (!modules.length) throwInvalidFilter(filter);
+  return modules;
+}
+
+function getModules(filter) {
+  if (typeof filter == 'string') {
+    if (has(entries, filter)) return entries[filter];
+    return atLeastSomeModules(allModules.filter(it => it.startsWith(filter)), filter);
+  } else if (filter instanceof RegExp) return atLeastSomeModules(allModules.filter(it => filter.test(it)), filter);
+  throwInvalidFilter(filter);
+}
+
+function normalizeModules(option) {
+  // TODO: use `.flatMap` in core-js@4
+  return new Set(Array.isArray(option) ? [].concat.apply([], option.map(getModules)) : getModules(option));
+}
+
+function checkModule(name, targets) {
   const result = {
-    required: false,
+    required: !targets,
     targets: {},
   };
+
+  if (!targets) return result;
+
+  const requirements = data[name];
 
   for (const [engine, version] of targets) {
     if (!has(requirements, engine) || compare(version, '<', requirements[engine])) {
@@ -24,29 +48,38 @@ function checkModule(name, targets) {
   return result;
 }
 
-module.exports = function ({ targets, filter, version }) {
-  const parsedTargets = targetsParser(targets);
+module.exports = function ({
+  filter = null, // TODO: Obsolete, remove from `core-js@4`
+  modules = null,
+  exclude = [],
+  targets = null,
+  version = null,
+  inverse = false,
+} = {}) {
+  if (modules == null) modules = filter;
+  inverse = !!inverse;
+
+  const parsedTargets = targets ? targetsParser(targets) : null;
 
   const result = {
     list: [],
     targets: {},
   };
 
-  let $modules = Array.isArray(filter) ? filter : modules;
+  exclude = normalizeModules(exclude);
 
-  if (filter instanceof RegExp) {
-    $modules = $modules.filter(it => filter.test(it));
-  } else if (typeof filter == 'string') {
-    $modules = $modules.filter(it => it.startsWith(filter));
-  }
+  modules = modules ? [...normalizeModules(modules)] : allModules;
 
-  if (version) {
-    $modules = intersection($modules, getModulesListForTargetVersion(version));
-  }
+  if (exclude.size) modules = modules.filter(it => !exclude.has(it));
 
-  for (const key of $modules) {
+  modules = intersection(modules, version ? getModulesListForTargetVersion(version) : allModules);
+
+  if (!inverse) modules = filterOutStabilizedProposals(modules);
+
+  for (const key of modules) {
     const check = checkModule(key, parsedTargets);
-    if (check.required) {
+
+    if (check.required ^ inverse) {
       result.list.push(key);
       result.targets[key] = check.targets;
     }

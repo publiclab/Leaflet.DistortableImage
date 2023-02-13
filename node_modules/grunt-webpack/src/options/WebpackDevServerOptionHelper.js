@@ -13,7 +13,7 @@ class WebpackOptionHelper extends OptionHelper {
   }
 
   getWebpackOptions() {
-    const options = this.getOptions().webpack;
+    const options = this.getOptions();
 
     if (Array.isArray(options)) {
       return options.map((opt) => this.filterGruntOptions(opt));
@@ -25,9 +25,17 @@ class WebpackOptionHelper extends OptionHelper {
   getWebpackDevServerOptions() {
     const options = this.getOptions();
 
-    delete options.webpack;
+    if (Array.isArray(options)) {
+      return options.reduce(
+        (previous, current) => ({
+          ...previous,
+          ...current.devServer,
+        }),
+        {},
+      );
+    }
 
-    return this.filterGruntOptions(options);
+    return options.devServer;
   }
 }
 

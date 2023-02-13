@@ -1,4 +1,4 @@
-# grunt-contrib-concat v1.0.1 [![Build Status: Linux](https://travis-ci.org/gruntjs/grunt-contrib-concat.svg?branch=master)](https://travis-ci.org/gruntjs/grunt-contrib-concat) [![Build Status: Windows](https://ci.appveyor.com/api/projects/status/l42173901ms416km/branch/master?svg=true)](https://ci.appveyor.com/project/gruntjs/grunt-contrib-concat/branch/master)
+# grunt-contrib-concat v2.1.0 [![Build Status](https://github.com/gruntjs/grunt-contrib-concat/workflows/Tests/badge.svg)](https://github.com/gruntjs/grunt-contrib-concat/actions?workflow=Tests)
 
 > Concatenate files.
 
@@ -6,7 +6,7 @@
 
 ## Getting Started
 
-If you haven't used [Grunt](http://gruntjs.com/) before, be sure to check out the [Getting Started](http://gruntjs.com/getting-started) guide, as it explains how to create a [Gruntfile](http://gruntjs.com/sample-gruntfile) as well as install and use Grunt plugins. Once you're familiar with that process, you may install this plugin with this command:
+If you haven't used [Grunt](https://gruntjs.com/) before, be sure to check out the [Getting Started](https://gruntjs.com/getting-started) guide, as it explains how to create a [Gruntfile](https://gruntjs.com/sample-gruntfile) as well as install and use Grunt plugins. Once you're familiar with that process, you may install this plugin with this command:
 
 ```shell
 npm install grunt-contrib-concat --save-dev
@@ -280,6 +280,8 @@ grunt.initConfig({
 
 ## Release History
 
+ * 2022-04-03   v2.1.0   Updated dependencies
+ * 2021-10-07   v2.0.0   Update dependencies Requires node.js v12+
  * 2016-04-20   v1.0.1   Fix for concatenating multiple source map files.
  * 2016-02-20   v1.0.0   Update source-map to 0.5.3. Tag Grunt as peerDep to >=0.4.0. Make source maps generation a little faster. Add `charset:utf-8` to `sourceMappingURL`.
  * 2015-02-20   v0.5.1   Fix path issues with source maps on Windows.
@@ -298,4 +300,4 @@ grunt.initConfig({
 
 Task submitted by ["Cowboy" Ben Alman](http://benalman.com/)
 
-*This file was generated on Wed Apr 20 2016 08:41:44.*
+*This file was generated on Sun Apr 03 2022 07:55:57.*

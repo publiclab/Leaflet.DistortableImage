@@ -3,7 +3,7 @@ L.DistortableImage = L.DistortableImage || {};
 // holds the keybindings & toolbar API for an individual image instance
 L.DistortableImage.Edit = L.Handler.extend({
   options: {
-    opacity: 0.7,
+    opacity: 0.5,
     outline: '1px solid red',
     keymap: L.distortableImage.action_map,
   },
@@ -14,6 +14,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._mode = overlay.options.mode;
     this._transparent = false;
     this._outlined = false;
+    this._opacity = options.opacity;
 
     L.setOptions(this, options);
 
@@ -31,7 +32,6 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._initModes();
     this._initHandles();
     this._appendHandlesandDragable();
-
 
     if (overlay.isSelected() && !overlay.options.suppressToolbar) {
       this._addToolbar();
@@ -347,12 +347,11 @@ L.DistortableImage.Edit = L.Handler.extend({
 
   _toggleOpacity() {
     const image = this._overlay.getElement();
-    let opacity;
 
     if (!this.hasTool(L.OpacityAction)) { return; }
 
     this._transparent = !this._transparent;
-    opacity = this._transparent ? this.options.opacity : 1;
+    const opacity = this._transparent ? this.options.opacity : 1;
 
     L.DomUtil.setOpacity(image, opacity);
     image.setAttribute('opacity', opacity);
@@ -360,14 +359,26 @@ L.DistortableImage.Edit = L.Handler.extend({
     this._refresh();
   },
 
+  _setOpacities(o) {
+    const image = this._overlay.getElement();
+    this._opacity = o;
+    if (!this.hasTool(L.OpacitiesAction)) { return; }
+
+    (this._opacity < 1) ? this._transparent = true : this._transparent = false;
+
+    L.DomUtil.setOpacity(image, this._opacity);
+    image.setAttribute('opacity', this._opacity);
+
+    this._refresh();
+  },
+
   _toggleBorder() {
     const image = this._overlay.getElement();
-    let outline;
 
     if (!this.hasTool(L.BorderAction)) { return; }
 
     this._outlined = !this._outlined;
-    outline = this._outlined ? this.options.outline : 'none';
+    const outline = this._outlined ? this.options.outline : 'none';
 
     image.style.outline = outline;
 

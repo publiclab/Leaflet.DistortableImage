@@ -65,7 +65,8 @@ module.exports = {
     info: 'Output shell auto-completion rules. See the grunt-cli documentation for more information.',
     type: String
   },
-  require: {
+  preload: {
+    short: 'p',
     info: 'Specify a language interpreter to require first if you are writing your Gruntfile in ' +
       'a language Grunt doesn\'t support by default.',
     type: String

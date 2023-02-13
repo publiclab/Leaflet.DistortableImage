@@ -4,18 +4,19 @@
 */
 "use strict";
 
-var SourceNode = require("source-map").SourceNode;
-var SourceMapConsumer = require("source-map").SourceMapConsumer;
-
 class Source {
-
 	source() {
 		throw new Error("Abstract");
 	}
 
+	buffer() {
+		const source = this.source();
+		if (Buffer.isBuffer(source)) return source;
+		return Buffer.from(source, "utf-8");
+	}
+
 	size() {
-		if(Buffer.from.length === 1) return new Buffer(this.source()).length;
-		return Buffer.byteLength(this.source())
+		return this.buffer().length;
 	}
 
 	map(options) {
@@ -25,21 +26,12 @@ class Source {
 	sourceAndMap(options) {
 		return {
 			source: this.source(),
-			map: this.map()
+			map: this.map(options)
 		};
 	}
 
-	node() {
-		throw new Error("Abstract");
-	}
-
-	listNode() {
-		throw new Error("Abstract");
-	}
-
 	updateHash(hash) {
-		var source = this.source();
-		hash.update(source || "");
+		throw new Error("Abstract");
 	}
 }
 

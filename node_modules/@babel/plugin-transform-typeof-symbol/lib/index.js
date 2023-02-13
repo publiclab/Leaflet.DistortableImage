@@ -34,7 +34,7 @@ var _default = (0, _helperPluginUtils.declare)(api => {
         if (path.parentPath.isBinaryExpression() && _core.types.EQUALITY_BINARY_OPERATORS.indexOf(parent.operator) >= 0) {
           const opposite = path.getOpposite();
 
-          if (opposite.isLiteral() && opposite.node.value !== "symbol" && opposite.node.value !== "object") {
+          if (opposite.isStringLiteral() && opposite.node.value !== "symbol" && opposite.node.value !== "object") {
             return;
           }
         }

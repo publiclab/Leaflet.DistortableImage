@@ -1,12 +1,6 @@
 <h1 align="center">connect-history-api-fallback</h1>
 <p align="center">Middleware to proxy requests through a specified index page, useful for Single Page Applications that utilise the HTML5 History API.</p>
 
-[![Build Status](https://travis-ci.org/bripkens/connect-history-api-fallback.svg?branch=master)](https://travis-ci.org/bripkens/connect-history-api-fallback)
-[![Dependency Status](https://david-dm.org/bripkens/connect-history-api-fallback/master.svg)](https://david-dm.org/bripkens/connect-history-api-fallback/master)
-
-[![NPM](https://nodei.co/npm/connect-history-api-fallback.png?downloads=true&downloadRank=true)](https://nodei.co/npm/connect-history-api-fallback/)
-
-
 <h2>Table of Contents</h2>
 
 <!-- TOC depthFrom:2 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
@@ -38,7 +32,7 @@ This tiny middleware addresses some of the issues. Specifically, it will change
 the requested location to the index you specify (default being `/index.html`)
 whenever there is a request which fulfills the following criteria:
 
- 1. The request is a GET request
+ 1. The request is a `GET` or `HEAD` request
  2. which accepts `text/html`,
  3. is not a direct file request, i.e. the requested path does not contain a
     `.` (DOT) character and
@@ -85,7 +79,9 @@ var middleware = history({});
 ```
 
 ### index
-Override the index (default `/index.html`)
+Override the index (default `/index.html`). This is the request path that will be used when the middleware identifies that the request path needs to be rewritten.
+
+This is not the path to a file on disk. Instead it is the HTTP request path. Downstream connect/express middleware is responsible to turn this rewritten HTTP request path into actual responses, e.g. by reading a file from disk.
 
 ```javascript
 history({

@@ -11,7 +11,7 @@ module.exports = {
     SharedArrayBuffer: 'readonly',
   },
   parserOptions: {
-    ecmaVersion: 6,
+    ecmaVersion: 8,
   },
   rules: {
     /*
@@ -44,5 +44,11 @@ module.exports = {
     'quotes': [2, 'single'],
     'require-jsdoc': 0,
     'valid-jsdoc': 0,
+      'overrides': [{
+     files: ['examples/js/*.js'],
+    parserOptions: {
+         sourceType: "module",
+       }
+    }],
   },
 };

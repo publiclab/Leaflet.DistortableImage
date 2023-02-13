@@ -97,7 +97,7 @@
   }
 
   // Constructs a string by concatentating the output of each term.
-  function generateSequence(generator, terms) {
+  function generateSequence(generator, terms, /* optional */  separator) {
     var i = -1,
         length = terms.length,
         result = '',
@@ -105,6 +105,8 @@
 
     while (++i < length) {
       term = terms[i];
+
+      if (separator && i > 0) result += separator;
 
       // Ensure that `\0` null escapes followed by number symbols are not
       // treated as backreferences.
@@ -161,9 +163,12 @@
   function generateCharacterClass(node) {
     assertType(node.type, 'characterClass');
 
+    var kind = node.kind;
+    var separator = kind === 'intersection' ? '&&' : kind === 'subtraction' ? '--' : '';
+
     return '[' +
       (node.negative ? '^' : '') +
-      generateSequence(generateClassAtom, node.body) +
+      generateSequence(generateClassAtom, node.body, separator) +
     ']';
   }
 
@@ -187,28 +192,29 @@
   }
 
   function generateClassAtom(node) {
-    assertType(node.type, 'anchor|characterClassEscape|characterClassRange|dot|value');
+    assertType(node.type, 'anchor|characterClass|characterClassEscape|characterClassRange|dot|value|unicodePropertyEscape|classStrings');
 
     return generate(node);
+  }
+
+  function generateClassStrings(node) {
+    assertType(node.type, 'classStrings');
+
+    return '(' + generateSequence(generateClassString, node.strings, '|') + ')';
+  }
+
+  function generateClassString(node) {
+    assertType(node.type, 'classString');
+
+    return generateSequence(generate, node.characters);
   }
 
   function generateDisjunction(node) {
     assertType(node.type, 'disjunction');
 
-    var body = node.body,
-        i = -1,
-        length = body.length,
-        result = '';
-
-    while (++i < length) {
-      if (i != 0) {
-        result += '|';
-      }
-      result += generate(body[i]);
-    }
-
-    return result;
+    return generateSequence(generate, node.body, '|');
   }
+
 
   function generateDot(node) {
     assertType(node.type, 'dot');
@@ -372,6 +378,7 @@
     'characterClass': generateCharacterClass,
     'characterClassEscape': generateCharacterClassEscape,
     'characterClassRange': generateCharacterClassRange,
+    'classStrings': generateClassStrings,
     'disjunction': generateDisjunction,
     'dot': generateDot,
     'group': generateGroup,

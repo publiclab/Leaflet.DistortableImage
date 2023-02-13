@@ -17,7 +17,8 @@ function createPreprocessor(args, config, logger, helper) {
       var options = createOptions(args, config, helper, file);
       file.path = options.filename || file.path;
 
-      var processed = babel.transform(content, options);
+      var babelOptions = helper.merge({}, options, { filename: file.originalPath });
+      var processed = babel.transform(content, babelOptions);
       var code = content;
       if (processed) {
         code = processed.code;

@@ -50,13 +50,9 @@ var _default = (0, _helperPluginUtils.declare)(api => {
             node
           } = func;
 
-          if (!node.id) {
-            if (func.isMethod()) {
-              path.replaceWith(scope.buildUndefinedNode());
-              return;
-            }
-
-            node.id = scope.generateUidIdentifier("target");
+          if (_core.types.isMethod(node)) {
+            path.replaceWith(scope.buildUndefinedNode());
+            return;
           }
 
           const constructor = _core.types.memberExpression(_core.types.thisExpression(), _core.types.identifier("constructor"));
@@ -64,6 +60,21 @@ var _default = (0, _helperPluginUtils.declare)(api => {
           if (func.isClass()) {
             path.replaceWith(constructor);
             return;
+          }
+
+          if (!node.id) {
+            node.id = scope.generateUidIdentifier("target");
+          } else {
+            let scope = path.scope;
+            const name = node.id.name;
+
+            while (scope !== func.parentPath.scope) {
+              if (scope.hasOwnBinding(name) && !scope.bindingIdentifierEquals(name, node.id)) {
+                scope.rename(name);
+              }
+
+              scope = scope.parent;
+            }
           }
 
           path.replaceWith(_core.types.conditionalExpression(_core.types.binaryExpression("instanceof", _core.types.thisExpression(), _core.types.cloneNode(node.id)), constructor, scope.buildUndefinedNode()));

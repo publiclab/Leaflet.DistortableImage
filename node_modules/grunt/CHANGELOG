@@ -1,3 +1,30 @@
+v1.5.3
+  date: 2022-04-23
+  changes:
+    - Patch up race condition in symlink copying.
+v1.5.2
+  date: 2022-04-12
+  changes:
+    - Unlink symlinks when copy destination is a symlink.
+v1.5.1
+  date: 2022-04-11
+  changes:
+    - Fixed symlink destination handling.
+v1.5.0
+  date: 2022-04-10
+  changes:
+    - Updated dependencies.
+    - Add symlink handling for copying files.
+v1.4.1
+  date: 2021-05-24
+  changes:
+    - Fix --preload option to be a known option
+    - Switch to GitHub Actions
+v1.4.0
+  date: 2021-04-21
+  changes:
+    - Security fixes in production and dev dependencies
+    - Liftup/Liftoff upgrade breaking change. Update your scripts to use --preload instead of --require. Ref: https://github.com/js-cli/js-liftoff/commit/e7a969d6706e730d90abb4e24d3cb4d3bce06ddb.
 v1.3.0
   date: 2020-08-18
   changes:

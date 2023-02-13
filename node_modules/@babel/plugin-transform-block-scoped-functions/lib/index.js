@@ -12,12 +12,10 @@ var _core = require("@babel/core");
 var _default = (0, _helperPluginUtils.declare)(api => {
   api.assertVersion(7);
 
-  function statementList(key, path) {
-    const paths = path.get(key);
-
+  function transformStatementList(paths) {
     for (const path of paths) {
-      const func = path.node;
       if (!path.isFunctionDeclaration()) continue;
+      const func = path.node;
 
       const declar = _core.types.variableDeclaration("let", [_core.types.variableDeclarator(func.id, _core.types.toExpression(func))]);
 
@@ -42,11 +40,11 @@ var _default = (0, _helperPluginUtils.declare)(api => {
           return;
         }
 
-        statementList("body", path);
+        transformStatementList(path.get("body"));
       },
 
       SwitchCase(path) {
-        statementList("consequent", path);
+        transformStatementList(path.get("consequent"));
       }
 
     }

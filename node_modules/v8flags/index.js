@@ -11,10 +11,10 @@ var configPath = require('./config-path.js')(process.platform);
 var version = require('./package.json').version;
 var env = process.env;
 var user = env.LOGNAME || env.USER || env.LNAME || env.USERNAME || '';
-var exclusions = ['--help'];
+var exclusions = ['--help', '--completion_bash'];
 
 // This number must be incremented whenever the generated cache file changes.
-var CACHE_VERSION = 1;
+var CACHE_VERSION = 2;
 
 var configfile = '.v8flags-' + CACHE_VERSION + '-' + process.versions.v8 + '.' + crypto.createHash('md5').update(user).digest('hex') + '.json';
 
@@ -79,20 +79,44 @@ function normalizeFlagName(flag) {
 // `--v8-options` and parses the result, returning an array of command
 // line flags.
 function getFlags(cb) {
-  execFile(process.execPath, ['--v8-options'], function(execErr, result) {
-    if (execErr) {
-      return cb(execErr);
-    }
-    // If the binary doesn't return flags in the way we expect, default to an empty array
-    // Reference https://github.com/gulpjs/v8flags/issues/53
-    var matchedFlags = result.match(/\s\s--[\w-]+/gm) || [];
-    var flags = matchedFlags
-      .map(normalizeFlagName)
-      .filter(function(name) {
-        return exclusions.indexOf(name) === -1;
-      });
-    return cb(null, flags);
-  });
+  var errored = false;
+  var pending = 0;
+  var flags = [];
+
+  runNode('--help');
+  runNode('--v8-options');
+
+  function runNode(option) {
+    pending++;
+    execFile(process.execPath, [option], function(execErr, result) {
+      if (execErr || errored) {
+        if (!errored) {
+          errored = true;
+          cb(execErr);
+        }
+        return;
+      }
+
+      var index = result.indexOf('\nOptions:');
+      if (index >= 0) {
+        var regexp = /^\s\s--[\w-]+/gm;
+        regexp.lastIndex = index;
+        var matchedFlags = result.match(regexp);
+        if (matchedFlags) {
+          flags = flags.concat(matchedFlags
+            .map(normalizeFlagName)
+            .filter(function(name) {
+              return exclusions.indexOf(name) === -1;
+            })
+          );
+        }
+      }
+
+      if (--pending === 0) {
+        cb(null, flags);
+      }
+    });
+  }
 }
 
 // write some json to a file descriptor. if this fails, call back

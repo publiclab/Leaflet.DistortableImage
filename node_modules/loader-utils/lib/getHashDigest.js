@@ -39,11 +39,34 @@ function encodeBufferToBase(buffer, base) {
   return output;
 }
 
+let createMd4 = undefined;
+let BatchedHash = undefined;
+
 function getHashDigest(buffer, hashType, digestType, maxLength) {
-  hashType = hashType || 'md5';
+  hashType = hashType || 'md4';
   maxLength = maxLength || 9999;
 
-  const hash = require('crypto').createHash(hashType);
+  let hash;
+
+  try {
+    hash = require('crypto').createHash(hashType);
+  } catch (error) {
+    if (error.code === 'ERR_OSSL_EVP_UNSUPPORTED' && hashType === 'md4') {
+      if (createMd4 === undefined) {
+        createMd4 = require('./hash/md4');
+
+        if (BatchedHash === undefined) {
+          BatchedHash = require('./hash/BatchedHash');
+        }
+      }
+
+      hash = new BatchedHash(createMd4());
+    }
+
+    if (!hash) {
+      throw error;
+    }
+  }
 
   hash.update(buffer);
 
@@ -54,8 +77,7 @@ function getHashDigest(buffer, hashType, digestType, maxLength) {
     digestType === 'base49' ||
     digestType === 'base52' ||
     digestType === 'base58' ||
-    digestType === 'base62' ||
-    digestType === 'base64'
+    digestType === 'base62'
   ) {
     return encodeBufferToBase(hash.digest(), digestType.substr(4)).substr(
       0,

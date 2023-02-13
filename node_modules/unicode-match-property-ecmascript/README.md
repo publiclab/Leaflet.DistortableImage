@@ -1,4 +1,4 @@
-# unicode-match-property-ecmascript [![Build status](https://travis-ci.org/mathiasbynens/unicode-match-property-ecmascript.svg?branch=master)](https://travis-ci.org/mathiasbynens/unicode-match-property-ecmascript)
+# unicode-match-property-ecmascript [![Build status](https://travis-ci.org/mathiasbynens/unicode-match-property-ecmascript.svg?branch=main)](https://travis-ci.org/mathiasbynens/unicode-match-property-ecmascript) [![unicode-match-property-ecmascript on npm](https://img.shields.io/npm/v/unicode-match-property-ecmascript)](https://www.npmjs.com/package/unicode-match-property-ecmascript)
 
 _unicode-match-property-ecmascript_ matches a given Unicode property or [property alias](https://github.com/mathiasbynens/unicode-property-aliases-ecmascript) to its canonical property name without applying [loose matching](https://github.com/mathiasbynens/unicode-loose-match) per the algorithm used for [RegExp Unicode property escapes in ECMAScript](https://github.com/tc39/proposal-regexp-unicode-property-escapes). Consider it a strict alternative to loose matching.
 
@@ -35,6 +35,28 @@ matchProperty('Script')
 matchProperty('script') // Note: incorrect casing.
 // → throws
 ```
+
+## For maintainers
+
+### How to publish a new release
+
+1. On the `main` branch, bump the version number in `package.json`:
+
+    ```sh
+    npm version patch -m 'Release v%s'
+    ```
+
+    Instead of `patch`, use `minor` or `major` [as needed](https://semver.org/).
+
+    Note that this produces a Git commit + tag.
+
+1. Push the release commit and tag:
+
+    ```sh
+    git push && git push --tags
+    ```
+
+    Our CI then automatically publishes the new release to npm.
 
 ## Author
 

@@ -1,4 +1,4 @@
-# unicode-canonical-property-names-ecmascript [![Build status](https://travis-ci.org/mathiasbynens/unicode-canonical-property-names-ecmascript.svg?branch=master)](https://travis-ci.org/mathiasbynens/unicode-canonical-property-names-ecmascript)
+# unicode-canonical-property-names-ecmascript [![Build status](https://travis-ci.org/mathiasbynens/unicode-canonical-property-names-ecmascript.svg?branch=main)](https://travis-ci.org/mathiasbynens/unicode-canonical-property-names-ecmascript) [![unicode-canonical-property-names-ecmascript on npm](https://img.shields.io/npm/v/unicode-canonical-property-names-ecmascript)](https://www.npmjs.com/package/unicode-canonical-property-names-ecmascript)
 
 _unicode-canonical-property-names-ecmascript_ exports the set of canonical Unicode property names that are supported in [ECMAScript RegExp property escapes](https://github.com/tc39/proposal-regexp-unicode-property-escapes).
 
@@ -24,6 +24,28 @@ properties.has('ID_Start');
 properties.has('IDS');
 // → false
 ```
+
+## For maintainers
+
+### How to publish a new release
+
+1. On the `main` branch, bump the version number in `package.json`:
+
+    ```sh
+    npm version patch -m 'Release v%s'
+    ```
+
+    Instead of `patch`, use `minor` or `major` [as needed](https://semver.org/).
+
+    Note that this produces a Git commit + tag.
+
+1. Push the release commit and tag:
+
+    ```sh
+    git push && git push --tags
+    ```
+
+    Our CI then automatically publishes the new release to npm.
 
 ## Author
 

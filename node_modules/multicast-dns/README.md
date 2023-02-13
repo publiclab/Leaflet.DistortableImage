@@ -48,7 +48,7 @@ got a response packet: { type: 'response',
   answers:
    [ { name: 'brunhilde.local',
        type: 'A',
-       class: 1,
+       class: 'IN',
        ttl: 120,
        flush: true,
        data: '192.168.1.5' } ],
@@ -56,13 +56,13 @@ got a response packet: { type: 'response',
   additionals:
    [ { name: 'brunhilde.local',
        type: 'A',
-       class: 1,
+       class: 'IN',
        ttl: 120,
        flush: true,
        data: '192.168.1.5' },
      { name: 'brunhilde.local',
        type: 'AAAA',
-       class: 1,
+       class: 'IN',
        ttl: 120,
        flush: true,
        data: 'fe80::5ef9:38ff:fe8c:ceaa' } ] }
@@ -87,14 +87,14 @@ A packet has the following format
 ``` js
 {
   questions: [{
-    name:'brunhilde.local',
-    type:'A'
+    name: 'brunhilde.local',
+    type: 'A'
   }],
   answers: [{
-    name:'brunhilde.local',
-    type:'A',
-    ttl:seconds,
-    data:(record type specific data)
+    name: 'brunhilde.local',
+    type: 'A',
+    ttl: seconds,
+    data: (record type specific data)
   }],
   additionals: [
     (same format as answers)
@@ -167,8 +167,8 @@ mdns.respond({
     name: 'my-service',
     type: 'SRV',
     data: {
-      port:9999,
-      weigth: 0,
+      port: 9999,
+      weight: 0,
       priority: 10,
       target: 'my-service.example.com'
     }

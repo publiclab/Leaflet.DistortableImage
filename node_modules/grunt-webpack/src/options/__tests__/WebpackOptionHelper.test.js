@@ -49,7 +49,6 @@ describe("WebpackOptionHelper", () => {
     const result = helper.getWebpackOptions();
 
     expect(result).toEqual({
-      watch: true,
       watchOptions: { aggregateTimeout: 300, poll: 1000 },
     });
   });

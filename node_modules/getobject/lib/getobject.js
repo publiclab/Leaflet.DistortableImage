@@ -41,6 +41,10 @@ getobject.get = function(obj, parts, create) {
 // as we go.
 getobject.set = function(obj, parts, value) {
   parts = getParts(parts);
+  if (parts.includes('__proto__')) {
+    // do not allow setting of __proto__. See CVE-2020-28282.
+    return;
+  }
 
   var prop = parts.pop();
   obj = getobject.get(obj, parts, true);

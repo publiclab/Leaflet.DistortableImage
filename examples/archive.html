@@ -21,11 +21,12 @@
   <script src="https://maps.googleapis.com/maps/api/js?key=<key>&libraries=places"></script>
   <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
   <script src="../dist/leaflet.distortableimage.js"></script>
-  <script src="./js/archive.js" defer></script>
+  <script src="./js/archive.js" defer type="module"></script>
+  <script src="./js//modules/paginator.js" type="module" defer></script>
 </head>
 <body style="margin:0;">
-      
-  <div class="modal fade" id="welcomeModal" aria-labelledby="exampleModalLabel" tabindex="-1" aria-hidden="true">
+      <!--Welcome Modal-->
+  <div class="modal fade" id="welcomeModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
           <div class="modal-content bg-light">
             <div class="modal-header d-block">
@@ -48,33 +49,87 @@
             <p>Paste it here to begin:</p>
             <form id="form">
               <input id="input" type="text" class="form-control" placeholder="https://archive.org/details/..." required>
-              <button type="submit" class="btn btn-primary mt-4 mb-5">Begin</button>
+              <button id="beginBtn" type="submit" class="btn btn-primary mt-4 mb-5">Begin</button>
             </form>
-            <p>
+            <p>Alternatively, close this dialogue box then drag image to the tile from your computer. You can also drag a JSON file to the tile to restore your map to previous saved state.</p>
+            <!-- <p>
                 <a href="local.html">Click here</a> to try this offline with local files only.
-              </p>
+            </p> -->
+          </div>
+        </div>
+      </div>
+  </div>
+
+  <!-- Share Map Modal -->
+  <div class="modal fade" id="shareModal" aria-labelledby="shareModalLabel" tabindex="-1" aria-hidden="true" >
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable " >
+          <div class="modal-content bg-light">
+            <div class="modal-header d-block">
+              <div class="d-flex justify-content-between align-items-center">
+                <h2 class="modal-title">Share Map</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ></button>
+              </div>
+            </div>
+            <div class="modal-body">
+              <h4>Share via URL</h4>
+              <p>To share a map via URL, 
+                you'll need to upload your saved map JSON file somewhere
+                 publicly accessible online. 
+                   </p> <p>
+                 The <b> easiest way is to upload your json file</b>
+                   into the same <a href="https://archive.org/create/" target="_blank">Archive.org</a> collection as your images.
+                  </p>
+                  <p> Then when you open that collection in MapKnitter Lite, 
+                   it will auto-detect your saved map and place images as 
+                   you had them.</p>
+              
+                    <h4>Share via email</h4>
+                     <p>
+                        You can also share your saved map file via email.
+                        </p>
+                        <p>
+                       Anyone with the file can drag it onto MapKnitter Lite,
+                       and it will fetch and place all the images you've saved.
+                     </p>
           </div>
         </div>
       </div>
   </div>
     
   <i title="Open Sidebar" id="mapToggle" class="fa fa-bars fa-3x " style="position: absolute; right: 0; top:30px; margin: 1rem; z-index: 900; color: white; cursor: pointer;" aria-hidden="true"></i>
-    
-  <div id="map" style="width:100%; height:100%; position:absolute; top:0;"></div>
+  
+  <div id="dropZone" class="flex-item flex-item1">
+    <div id="map" style="width:100%; height:100%; position:absolute; top:0;"></div>
+  </div> 
 
   <div class="offcanvas offcanvas-end" data-bs-backdrop="false" data-bs-keyboard="false" tabindex="1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
       <div class="offcanvas-header">
-        <h3 id="offcanvasRightLabel">Images</h3>
-        <button type="button" id="restoreWelcomeModalBtn" class="btn btn-primary" data-bs-dismiss="offcanvas" aria-label="Close">Get Image</button>
-        <button type="button" class="btn btn-primary" data-bs-dismiss="offcanvas" aria-label="Close">View Map</button>
+        <button type="button" id="restoreWelcomeModalBtn" class="btn btn-primary btn-md" data-bs-dismiss="offcanvas" aria-label="Close" title="Import images from collection URL">Import</button>
+        <button id="saveMap" type="button" class="btn btn-sm" aria-label="Save map" title="Save map in JSON format" >
+          <i class="fa fa-save fa-" style="font-size:24px" ></i>
+        </button>
+        <button id="shareMapBtn" type="button" class="btn btn-sm" aria-label="Share map" title="Share map " >
+          <i class="fa fa-share-alt fa-" style="font-size:24px" ></i>
+        </button>
+       <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" title="Close Sidebar" ></button>
       </div>
       <hr>
       <div class="offcanvas-body">
         <p id="response" class="mb-5">No link = No images...</p>
         <div id="imgContainer"></div>
       </div>
+        <hr>
+      <div class="offcanvas-footer d-flex justify-content-evenly align-items-center">
+        <h3 id="offcanvasRightLabel">Images</h3>
+       <button title="Previous" id="prevBtn" style="all: unset; cursor: pointer;">
+        <i class=" fa fa-regular fa-chevron-left"></i>
+       </button>
+        <p style="margin: 5px;" id="range">0-0 of 0</p>
+       <button title="Next" id="nextBtn" style="all: unset; cursor: pointer;">
+        <i  class=" fa fa-regular fa-chevron-right"></i>
+       </button>
+      </div>
   </div>
-
 </body>
 </html>
 

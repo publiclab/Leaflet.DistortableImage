@@ -172,6 +172,12 @@ default: undefined
 
 array of entry points (strings) for which this plugin should run only
 
+#### separator
+
+default: '\n'
+
+string used between files when joining them together
+
 ### Working Example
 
 working example already included in project.
