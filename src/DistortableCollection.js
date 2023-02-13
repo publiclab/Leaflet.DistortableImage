@@ -206,22 +206,40 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     try {
       const response = await axios.get(url);
-      if (response.data.collection.length > 1) {
-        response.data.collection.forEach((data) => {
-          imgCollectionProps[index] = data;
-          index++;
-        });
+      console.log(response)
+        if (response.data.hasOwnProperty('avg_cm_per_pixel')) {
+          if (response.data.collection.length > 1) {
+            response.data.collection.forEach((data) => {
+              imgCollectionProps[index] = data;
+              index++;
+            });
+            return {
+              avg_cm_per_pixel: response.data.avg_cm_per_pixel,
+              imgCollectionProps,
+            };
+      }
+      imgCollectionProps[index] = response.data.collection;
+
         return {
           avg_cm_per_pixel: response.data.avg_cm_per_pixel,
           imgCollectionProps,
         };
+      } else {
+        if (response.data.length > 1) {
+            response.data.forEach((data) => {
+              imgCollectionProps[index] = data;
+              index++;
+            });
+            return {
+              imgCollectionProps,
+            };
       }
-      imgCollectionProps[index] = response.data.collection;
+      imgCollectionProps[index] = response.data;
 
-      return {
-        avg_cm_per_pixel: response.data.avg_cm_per_pixel,
-        imgCollectionProps,
-      };
+        return {
+          imgCollectionProps,
+        };
+      }
     } catch (err) {
       console.log('err', err);
     }

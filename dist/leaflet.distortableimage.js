@@ -429,9 +429,15 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
             case 5:
               response = _context.sent;
+              console.log(response);
+
+              if (!response.data.hasOwnProperty('avg_cm_per_pixel')) {
+                _context.next = 15;
+                break;
+              }
 
               if (!(response.data.collection.length > 1)) {
-                _context.next = 9;
+                _context.next = 11;
                 break;
               }
 
@@ -444,24 +450,48 @@ L.DistortableCollection = L.FeatureGroup.extend({
                 imgCollectionProps: imgCollectionProps
               });
 
-            case 9:
+            case 11:
               imgCollectionProps[index] = response.data.collection;
               return _context.abrupt("return", {
                 avg_cm_per_pixel: response.data.avg_cm_per_pixel,
                 imgCollectionProps: imgCollectionProps
               });
 
-            case 13:
-              _context.prev = 13;
+            case 15:
+              if (!(response.data.length > 1)) {
+                _context.next = 18;
+                break;
+              }
+
+              response.data.forEach(function (data) {
+                imgCollectionProps[index] = data;
+                index++;
+              });
+              return _context.abrupt("return", {
+                imgCollectionProps: imgCollectionProps
+              });
+
+            case 18:
+              imgCollectionProps[index] = response.data;
+              return _context.abrupt("return", {
+                imgCollectionProps: imgCollectionProps
+              });
+
+            case 20:
+              _context.next = 25;
+              break;
+
+            case 22:
+              _context.prev = 22;
               _context.t0 = _context["catch"](2);
               console.log('err', _context.t0);
 
-            case 16:
+            case 25:
             case "end":
               return _context.stop();
           }
         }
-      }, _callee, null, [[2, 13]]);
+      }, _callee, null, [[2, 22]]);
     }))();
   },
   // expects url in this format: https://archive.org/download/mkl-1/mkl-1.json
@@ -7522,7 +7552,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "dd9eed5bd0c68ff29d48"; }
+/******/ 		__webpack_require__.h = function() { return "e47dff044644376bb001"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
