@@ -134,7 +134,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       'offset': offset,
       'zoom': map.getZoom(),
     };
-
     this.setBounds(L.latLngBounds(this.getCorners()));
   },
 
