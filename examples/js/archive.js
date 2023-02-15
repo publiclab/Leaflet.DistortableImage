@@ -440,7 +440,7 @@ function handleDrop (e) {
           imgUrl = imgObj.src;
           let options = {};
 
-          if (imgObj.nodes) {
+          if (imgObj.nodes.length) {
             options = {
               tooltipText: imgObj.tooltipText,
               corners: imgObj.nodes, 

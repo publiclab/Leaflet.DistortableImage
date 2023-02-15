@@ -649,7 +649,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     var imageWidth = parseInt(aspectRatio * imageHeight);
     var center = map.project(map.getCenter());
     var offset = L.point(imageWidth, imageHeight).divideBy(2);
-    if (this.options.corners.length) {
+    if (this.options.corners) {
       this._corners = this.options.corners;
     } else {
       this._corners = [map.unproject(center.subtract(offset)), map.unproject(center.add(L.point(offset.x, -offset.y))), map.unproject(center.add(L.point(-offset.x, offset.y))), map.unproject(center.add(offset))];
@@ -7080,7 +7080,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "716d3fac6d52c8415aa6"; }
+/******/ 		__webpack_require__.h = function() { return "26a11f4ee6cbaf8f2cc4"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
