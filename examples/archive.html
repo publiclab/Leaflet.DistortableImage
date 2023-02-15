@@ -105,10 +105,22 @@
   <div class="offcanvas offcanvas-end" data-bs-backdrop="false" data-bs-keyboard="false" tabindex="1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
       <div class="offcanvas-header">
         <button type="button" id="restoreWelcomeModalBtn" class="btn btn-primary btn-md" data-bs-dismiss="offcanvas" aria-label="Close" title="Import images from collection URL">Import</button>
-       
-        <button id="downloadJSON" type="button" class="btn btn-sm" aria-label="Save map" title="Save map in JSON format" >
-          <i class="fa fa-save fa-" style="font-size:24px" ></i>
+       <div class="dropdown">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Save/Download Map">
+    <i class="fa fa-save fa-" style="font-size:24px" ></i>
+  </button>
+  <ul class="dropdown-menu">
+    <li  title="Save map locally in JSON format"> 
+      <button id="downloadJSON" type="button" class="btn btn-sm dropdown-item" aria-label="Save map" >
+          Download Map
+        </button></li>
+    <li title="Save map in browser in JSON format"> 
+      <button id="saveMap" type="button" class="btn btn-sm dropdown-item" aria-label="Save map" >
+          Save map
         </button>
+      </li>
+  </ul>
+</div>
         <button id="shareMapBtn" type="button" class="btn btn-sm" aria-label="Share map" title="Share map " >
           <i class="fa fa-share-alt fa-" style="font-size:24px" ></i>
         </button>

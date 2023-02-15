@@ -376,6 +376,33 @@ downloadJSON.addEventListener('click', () => {
     }
 });
 
+// save JSON to localStorage
+saveMap.addEventListener('click',()=>{
+const jsonImages = map.imgGroup.generateExportJson(true).images;
+const d = new Date();
+const datetime = d.getHours() + ":" + d.getMinutes() +' '+ d.getDate() + "/" + (d.getMonth() + 1) + "/" + d.getFullYear();
+
+
+  if (jsonImages.length) {
+   let savedMaps = []
+  const newMap = {
+    collection: jsonImages,
+    timeSaved: datetime,
+    amountOfImages: jsonImages.length
+  };
+
+    // this is to check if are old maps saved, if true, update with new maps to be saved 
+   if (JSON.parse(localStorage.getItem('savedMaps'))) {
+     const oldMaps = JSON.parse(localStorage.getItem('savedMaps'));  
+     savedMaps = [...oldMaps, newMap]
+     localStorage.setItem('savedMaps', JSON.stringify(savedMaps));
+   } else {
+     savedMaps = [newMap]
+     localStorage.setItem('savedMaps', JSON.stringify(savedMaps));
+  }
+  };
+})
+
 // share map modal
 const shareModal = document.getElementById('shareModal')
 const modality =  new bootstrap.Modal(shareModal)
