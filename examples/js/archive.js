@@ -390,24 +390,22 @@ function getCornerBounds(imgCollection) {
 }
 
 // converts legacy json objects (from mapknitter.org) to working format
-function transform(imgObj) {
+function updateLegacyJson(json) { // updateLegacyJson(json)
   let transformedImgObj = {};
-  
-  transformedImgObj.avg_cm_per_pixel = '';
   transformedImgObj.collection = [];
 
-  imgObj.map((imgObj) => {    
-    if (imgObj.nodes.length) {
+  imgObj.map((json) => {    
+    if (json.nodes.length) {
       let tempNodes = [];
 
-      for(let i = 0; i < imgObj.nodes.length; i++) {
-        tempNodes.push({lat: imgObj.nodes[i].lat, lon: imgObj.nodes[i].lon});
+      for(let i = 0; i < json.nodes.length; i++) {
+        tempNodes.push({lat: json.nodes[i].lat, lon: json.nodes[i].lon});
       }
-      imgObj.nodes = tempNodes; // overwrites the existing "nodes" key which points to a richer array. Access "imgObj.nodes" before this assignment to see the riicher array
+      json.nodes = tempNodes; // overwrites the existing "nodes" key which points to a richer array. Read "imgObj.nodes" before this assignment to grab the richer array
     } 
 
-    imgObj.tooltipText = imgObj.tooltipText || imgObj.image_file_name.slice(0, (imgObj.image_file_name.lastIndexOf('.')));
-    transformedImgObj.collection.push(imgObj);
+    json.tooltipText = json.tooltipText || json.image_file_name.slice(0, (json.image_file_name.lastIndexOf('.')));
+    transformedImgObj.collection.push(json);
   });
 
   return transformedImgObj;
@@ -426,7 +424,7 @@ function handleDrop (e) {
       let imgObj = JSON.parse(reader.result);
 
       if(Array.isArray(imgObj)) {
-        imgObj = transform(imgObj);
+        imgObj = updateLegacyJson(imgObj);
       }
       
       // for json file with multiple image property sets
