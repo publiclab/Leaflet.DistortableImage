@@ -394,7 +394,7 @@ function updateLegacyJson(json) { // updateLegacyJson(json)
   let transformedImgObj = {};
   transformedImgObj.collection = [];
 
-  imgObj.map((json) => {    
+  json.map((json) => {    
     if (json.nodes.length) {
       let tempNodes = [];
 
