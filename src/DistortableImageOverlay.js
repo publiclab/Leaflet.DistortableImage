@@ -118,7 +118,7 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     const imageWidth = parseInt(aspectRatio * imageHeight);
     const center = map.project(map.getCenter());
     const offset = L.point(imageWidth, imageHeight).divideBy(2);
-    if (this.options.corners) {
+    if (this.options.corners.length) {
       this._corners = this.options.corners;
     } else {
       this._corners = [
@@ -134,7 +134,6 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
       'offset': offset,
       'zoom': map.getZoom(),
     };
-
     this.setBounds(L.latLngBounds(this.getCorners()));
   },
 

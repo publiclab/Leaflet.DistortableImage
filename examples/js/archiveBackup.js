@@ -220,7 +220,31 @@ function isJsonDetected(url) {
   return false;
 }
 
+// aggregate coordinates of all images into an array
+function getCornerBounds(imgCollection) {
+  let cornerBounds = []; 
 
+  // aggregate coordinates for multiple images int cornerBounds
+  if (imgCollection.length > 1) { 
+    imgCollection.forEach((imageObj) => {
+      for(let i = 0; i < imageObj.nodes.length; i++) {
+        let corner = [];
+        corner[0] = imageObj.nodes[i].lat;
+        corner[1] = imageObj.nodes[i].lon;
+        cornerBounds.push(corner); // then we have array of arrays e.g., [ [..], [..], [..], [], [], [], [], [] ] for two images etc...
+      }  
+    });
+  } else { // aggregate coordinates for a single image into cornerBounds
+    let corner = [];
+    for(let i = 0; i < imgCollection[0].nodes.length; i++) {
+      let corner = [];
+      corner[0] = imgCollection[0].nodes[i].lat;
+      corner[1] = imgCollection[0].nodes[i].lon;
+      cornerBounds.push(corner); // then we have [ [lat, long], [..], [..], [..] ] for just one image...
+    }  
+  }
+  return cornerBounds;
+}
 
 function placeImage (imageURL, options, newImage = false) {
   let image;
@@ -342,60 +366,6 @@ shareMapBtn.addEventListener('click', () => {
   bootstrap.Modal.getInstance(shareModal).show()
 });
 
-// aggregate coordinates of all images into an array
-function getCornerBounds(imgCollection) {
-  let cornerBounds = []; 
-
-  // aggregate coordinates for multiple images int cornerBounds
-  if (imgCollection.length > 1) { 
-    imgCollection.forEach((imageObj) => {
-      if (imageObj.nodes) {
-        for(let i = 0; i < imageObj.nodes.length; i++) {
-          let corner = [];
-          corner[0] = imageObj.nodes[i].lat;
-          corner[1] = imageObj.nodes[i].lon;
-          cornerBounds.push(corner); // then we have array of arrays e.g., [ [lat, lon], [..], [..], [], [], [], [], [] ] for two images etc...
-        }        
-      }
-    });
-  } else { // aggregate coordinates for a single image into cornerBounds
-    if (imgCollection[0].nodes) {
-      for(let i = 0; i < imgCollection[0].nodes.length; i++) {
-        let corner = [];
-        corner[0] = imgCollection[0].nodes[i].lat;
-        corner[1] = imgCollection[0].nodes[i].lon;
-        cornerBounds.push(corner); // then we have [ [lat, long], [..], [..], [..] ] for just one image...
-      } 
-    }
-  }
-
-  return cornerBounds;
-}
-
-// converts legacy json objects (from mapknitter.org) to working format
-function transform(imgObj) {
-  let transformedImgObj = {};
-  
-  transformedImgObj.avg_cm_per_pixel = '';
-  transformedImgObj.collection = [];
-
-  imgObj.map((imgObj) => {    
-    if (imgObj.nodes.length) {
-      let tempNodes = [];
-
-      for(let i = 0; i < imgObj.nodes.length; i++) {
-        tempNodes.push({lat: imgObj.nodes[i].lat, lon: imgObj.nodes[i].lon});
-      }
-      imgObj.nodes = tempNodes; // overwrites the existing "nodes" key which points to a richer array. Access "imgObj.nodes" before this assignment to see the riicher array
-    } 
-
-    imgObj.tooltipText = imgObj.tooltipText || imgObj.image_file_name.slice(0, (imgObj.image_file_name.lastIndexOf('.')));
-    transformedImgObj.collection.push(imgObj);
-  });
-
-  return transformedImgObj;
-}
-
 // Reconstruct map from JSON file or place images on tile layer
 function handleDrop (e) {
   const files = e.dataTransfer.files;
@@ -406,61 +376,38 @@ function handleDrop (e) {
     reader.addEventListener('load', () => {
       let imgUrl;
       let options;
-      let imgObj = JSON.parse(reader.result);
+      const imgObj = JSON.parse(reader.result);
 
-      console.log('before transforms: ', imgObj); // <= delete
-      if(Array.isArray(imgObj)) {
-        imgObj = transform(imgObj);
-        console.log('after transforms: ', imgObj); // <= delete
-      }
-      
       // for json file with multiple image property sets
       if (imgObj.collection.length > 1) {
         const cornerBounds = getCornerBounds(imgObj.collection); 
-        // map.fitBounds(cornerBounds); 
-        if (cornerBounds) {
-          console.log('cornerBounds: ', cornerBounds); // <= delete
-          map.fitBounds(cornerBounds); 
-        }
+        map.fitBounds(cornerBounds); 
 
         imgObj.collection.forEach((imgObj) => {
           imgUrl = imgObj.src;
-          let options = {};
+          options = {
+            tooltipText: imgObj.tooltipText,
+            corners: imgObj.nodes, 
+          };
 
-          if (imgObj.nodes) {
-            console.log('imgObj.nodes: ', imgObj.nodes); // <= delete
-            options = {
-              tooltipText: imgObj.tooltipText,
-              corners: imgObj.nodes, 
-            };
-          } else {
-            options = {
-              tooltipText: imgObj.tooltipText,
-            };
-          }
           placeImage(imgUrl, options);
         });
         return;
       }
-        
+
       // for json file with only one image property set
       imgUrl = imgObj.collection[0].src;
       options = {
         tooltipText: imgObj.collection[0].tooltipText,
         corners: imgObj.collection[0].nodes, 
       };
-      console.log('corners: ', options.corners); // <= delete
-      const cornerBounds = getCornerBounds(imgObj.collection);
+      const cornerBounds = getCornerBounds(imgObj.collection); 
       map.fitBounds(cornerBounds);
-      // if (cornerBounds) {
-      //   map.fitBounds(cornerBounds);
-      // } 
-      // console.log('cornerBounds: ', cornerBounds);
       placeImage(imgUrl, options);
     }); 
 
     reader.readAsText(files[0]);
-  } else {  // else if (files[0].type === 'image/png' || files[0].type === 'image/jpeg') {..}
+  } else {
     // non-json (i.e., .png) files make it to this point
     for (let i = 0; i < files.length; i++) {
       reader.addEventListener('load', () => {
@@ -469,7 +416,7 @@ function handleDrop (e) {
       });
       reader.readAsDataURL(files[i]); 
     }
-  } // else { window.alert('Unsupported'); }
+  }
 };
 
 function uploadFiles() {
