@@ -137,11 +137,25 @@ const renderThumbnails = (thumbnails = [], url, fullResImgs) => {
   });
 };
 
+const  findSavedMapsJson = (response) => {
+  // filter for JSON files from mapknitter
+  const jsonFiles = response.data.files.filter(e => e.format === 'JSON' && e.name.startsWith('mapknitter'))
+  if (jsonFiles.length > 0) {
+    const answer = confirm('Saved map state detected! Do you want to load it?')
+    // construct JSON url for the first mapknitter JSON file if user confirms
+    if (answer) {
+      const jsonUrl = `https://archive.org/download/${response.data.metadata.identifier}/${jsonFiles[0].name}`
+      reconstructMapFromJson(jsonUrl)
+    }
+  }
+};
+
 function showImages(getUrl) {
   const url = getUrl.replace('details', 'metadata');
 
   axios.get(url)
-      .then((response) => {
+    .then((response) => {
+         findSavedMapsJson(response)
         if (response.data.files && response.data.files.length != 0) {
           fetchedImages = response.data.files; // <---- all files fetched
           // runs a check to clear the sidebar, eventListeners and reset imageCount
@@ -243,15 +257,8 @@ function placeImage (imageURL, options, newImage = false) {
 };
 
 // Reconstruct Map from JSON URL
-document.addEventListener('DOMContentLoaded', async (event) => {
-  if (mapReconstructionMode) {
-    // expected url format http://localhost:8081/examples/archive.html?json=https://archive.org/download/mkl-1/mkl-1.json
-    const url = location.href; 
-    
-    if (isJsonDetected(url)) {
-      const jsonDownloadURL = extractJsonFromUrlParams(url); 
-
-      if (jsonDownloadURL) {
+const reconstructMapFromJson = async (jsonDownloadURL) => {
+   if (jsonDownloadURL) {
         const imageCollectionObj = await map.imgGroup.recreateImagesFromJsonUrl(jsonDownloadURL); 
         const imgObjCollection = imageCollectionObj.imgCollectionProps;
         const avg_cm_per_pixel = imageCollectionObj.avg_cm_per_pixel; // this is made available here for future use
@@ -289,7 +296,16 @@ document.addEventListener('DOMContentLoaded', async (event) => {
         map.fitBounds(cornerBounds);
         placeImage(imageURL, options, false);
       }
-    } 
+}
+document.addEventListener('DOMContentLoaded', async (event) => {
+  if (mapReconstructionMode) {
+    // expected url format http://localhost:8081/examples/archive.html?json=https://archive.org/download/mkl-1/mkl-1.json
+    const url = location.href;
+    
+    if (isJsonDetected(url)) {
+      const jsonDownloadURL = extractJsonFromUrlParams(url);
+      reconstructMapFromJson(jsonDownloadURL)  
+    }
   }
 });
 
@@ -305,8 +321,9 @@ document.addEventListener('click', (event) => {
 });
 
 // download JSON
-saveMap.addEventListener('click', () => {
+downloadJSON.addEventListener('click', () => {
   const jsonImages = map.imgGroup.generateExportJson(true);
+  const date = new Date()
     // a check to prevent download of empty file
     if (jsonImages.images.length) {
       const modifiedJsonImages = {};
@@ -329,8 +346,8 @@ saveMap.addEventListener('click', () => {
       const encodedFile = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(modifiedJsonImages));
       const a = document.createElement('a');
       a.href = 'data:' + encodedFile;
-      const fileName = prompt('Use this file to recover your map’s saved state. Enter filename:');
-      a.download = fileName ? fileName + '.json' : 'MapknitterLite.json';
+      // date.getTime().toString() <---- use timestamp for a unique id
+      a.download = `mapknitter-${date.getTime().toString()}.json`
       a.click();
     }
 });
