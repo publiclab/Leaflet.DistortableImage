@@ -234,8 +234,6 @@ function isJsonDetected(url) {
   return false;
 }
 
-
-
 function placeImage (imageURL, options, newImage = false) {
   let image;
   
@@ -297,6 +295,7 @@ const reconstructMapFromJson = async (jsonDownloadURL) => {
         placeImage(imageURL, options, false);
       }
 }
+
 document.addEventListener('DOMContentLoaded', async (event) => {
   if (mapReconstructionMode) {
     // expected url format http://localhost:8081/examples/archive.html?json=https://archive.org/download/mkl-1/mkl-1.json
@@ -427,51 +426,53 @@ function handleDrop (e) {
         imgObj = updateLegacyJson(imgObj);
       }
       
-      // for json file with multiple image property sets
+      // for json file with multiple image property sets. Images without value for property "nodes" are ignored
       if (imgObj.collection.length > 1) {
         const cornerBounds = getCornerBounds(imgObj.collection); 
+
         if (cornerBounds.length) { // checks if image has corners
           map.fitBounds(cornerBounds); 
+
+          imgObj.collection.forEach((imgObj) => {
+            imgUrl = imgObj.src;
+            let options = {};
+
+            if (imgObj.nodes.length) {
+              options = {
+                tooltipText: imgObj.tooltipText,
+                corners: imgObj.nodes, 
+              };
+
+              placeImage(imgUrl, options);
+            }
+          });
+        } else {
+          console.log('None of the image objects has nodes and can\'t be loaded'); // for debugging purposes only
         }
-
-        imgObj.collection.forEach((imgObj) => {
-          imgUrl = imgObj.src;
-          let options = {};
-
-          if (imgObj.nodes.length) {
-            options = {
-              tooltipText: imgObj.tooltipText,
-              corners: imgObj.nodes, 
-            };
-          } else {
-            options = {
-              tooltipText: imgObj.tooltipText,
-            };
-          }
-          placeImage(imgUrl, options);
-        });
         return;
       }
       
-      // for json file with only one image property set
+      // for json file with only one image property. Image object without corners are ignored
       const cornerBounds = getCornerBounds(imgObj.collection);
+      console.log('cornerBounds: ', cornerBounds); // <== delete
       if (cornerBounds.length) { // checks if the image has corners
         map.fitBounds(cornerBounds);
+
         options = {
           tooltipText: imgObj.collection[0].tooltipText,
           corners: imgObj.collection[0].nodes, 
         };
+
+        console.log('Options.corners: ', options.corners); // <== delete
+
+        imgUrl = imgObj.collection[0].src;
+        placeImage(imgUrl, options);
       } else {
-        options = {
-          tooltipText: imgObj.collection[0].tooltipText, 
-        };
+        console.log('Image object has no nodes and can\'t be loaded'); // for debugging purposes only
       }
-      imgUrl = imgObj.collection[0].src;
-      placeImage(imgUrl, options);
     }); 
     reader.readAsText(files[0]);
-  } else {  // else if (files[0].type === 'image/png' || files[0].type === 'image/jpeg') {..}
-    // non-json (i.e., .png) files make it to this point
+  } else {  
     for (let i = 0; i < files.length; i++) {
       reader.addEventListener('load', () => {
         const options = {tooltipText: extractFileName(files[i].name)};
@@ -479,7 +480,7 @@ function handleDrop (e) {
       });
       reader.readAsDataURL(files[i]); 
     }
-  } // else { window.alert('File Unsupported'); }
+  } 
 };
 
 function uploadFiles() {
