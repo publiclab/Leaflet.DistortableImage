@@ -266,10 +266,10 @@ L.DistortableCollection = L.FeatureGroup.extend({
         const sections = layer._image.src.split('/');
         const filename = sections[sections.length - 1];
         const zc = layer.getCorners();
-       
+
         // supports longitude written as 'lon' or 'lng'
-        for(i = 0; i < zc.length; i++) {
-          if (zc[0].lng) { 
+        for (i = 0; i < zc.length; i++) {
+          if (zc[0].lng) {
             corners.push({lat: zc[i].lat, lon: zc[i].lng});
           } else if (zc[0].lon) {
             corners.push({lat: zc[i].lat, lon: zc[i].lon});
