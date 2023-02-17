@@ -430,6 +430,8 @@ function handleDrop (e) {
       if (imgObj.collection.length > 1) {
         const cornerBounds = getCornerBounds(imgObj.collection); 
 
+        console.log('cornerBounds: ', cornerBounds); // <== delete
+
         if (cornerBounds.length) { // checks if image has corners
           map.fitBounds(cornerBounds); 
 
@@ -442,6 +444,8 @@ function handleDrop (e) {
                 tooltipText: imgObj.tooltipText,
                 corners: imgObj.nodes, 
               };
+            
+              console.log('Options.corners: ', options.corners); // <== delete
 
               placeImage(imgUrl, options);
             }

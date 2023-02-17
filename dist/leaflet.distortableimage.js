@@ -488,22 +488,25 @@ L.DistortableCollection = L.FeatureGroup.extend({
     json.images = [];
     this.eachLayer(function (layer) {
       if (allImages || this.isCollected(layer)) {
+        var corners = [];
         var sections = layer._image.src.split('/');
         var filename = sections[sections.length - 1];
         var zc = layer.getCorners();
-        var corners = [{
-          lat: zc[0].lat,
-          lon: zc[0].lng
-        }, {
-          lat: zc[1].lat,
-          lon: zc[1].lng
-        }, {
-          lat: zc[2].lat,
-          lon: zc[2].lng
-        }, {
-          lat: zc[3].lat,
-          lon: zc[3].lng
-        }];
+
+        // supports longitude written as 'lon' or 'lng'
+        for (i = 0; i < zc.length; i++) {
+          if (zc[0].lng) {
+            corners.push({
+              lat: zc[i].lat,
+              lon: zc[i].lng
+            });
+          } else if (zc[0].lon) {
+            corners.push({
+              lat: zc[i].lat,
+              lon: zc[i].lon
+            });
+          }
+        }
         json.images.push({
           id: layer._leaflet_id,
           src: layer._image.src,
@@ -7080,7 +7083,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "596d30b46f68213e18b2"; }
+/******/ 		__webpack_require__.h = function() { return "e164c0f62620b3f9c197"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */

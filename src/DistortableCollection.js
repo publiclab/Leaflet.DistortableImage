@@ -262,15 +262,20 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     this.eachLayer(function(layer) {
       if (allImages || this.isCollected(layer)) {
+        let corners = [];
         const sections = layer._image.src.split('/');
         const filename = sections[sections.length - 1];
         const zc = layer.getCorners();
-        const corners = [
-          {lat: zc[0].lat, lon: zc[0].lng},
-          {lat: zc[1].lat, lon: zc[1].lng},
-          {lat: zc[2].lat, lon: zc[2].lng},
-          {lat: zc[3].lat, lon: zc[3].lng},
-        ];
+       
+        // supports longitude written as 'lon' or 'lng'
+        for(i = 0; i < zc.length; i++) {
+          if (zc[0].lng) { 
+            corners.push({lat: zc[i].lat, lon: zc[i].lng});
+          } else if (zc[0].lon) {
+            corners.push({lat: zc[i].lat, lon: zc[i].lon});
+          }
+        }
+
         json.images.push({
           id: layer._leaflet_id,
           src: layer._image.src,
