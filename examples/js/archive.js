@@ -127,11 +127,7 @@ const renderThumbnails = (thumbnails = [], url, fullResImgs) => {
     image.src = `${url.replace('metadata', 'download')}/${file.name}`;
     imageRow.classList.add('col-4', 'd-flex', 'flex-column', 'p-2', 'align-items-center');
     imageRow.append(image, placeButton, fileName);
-    // store the full-resolution image URL in a "data-original" attribute
-    image.setAttribute('data-original', `${url.replace('metadata', 'download')}/${thumbnails ? file.original : file.name}`);
-    image.src = `${url.replace('metadata', 'download')}/${file.name}`;
-    imageRow.classList.add('col-4', 'd-flex', 'flex-column', 'p-2', 'align-items-center');
-    imageRow.append(image, placeButton, fileName);
+
     imageContainer.appendChild(imageRow);
     imageContainer.setAttribute('class', 'row');
   });
@@ -257,46 +253,77 @@ function placeImage (imageURL, options, newImage = false) {
 };
 
 // Reconstruct Map from JSON URL
-const reconstructMapFromJson = async (jsonDownloadURL) => {
-   if (jsonDownloadURL) {
-        const imageCollectionObj = await map.imgGroup.recreateImagesFromJsonUrl(jsonDownloadURL); 
-        const imgObjCollection = imageCollectionObj.imgCollectionProps;
-        const avg_cm_per_pixel = imageCollectionObj.avg_cm_per_pixel; // this is made available here for future use
+const reconstructMapFromJson = async (jsonDownloadURL = false, savedMapObj) => {
+  if (jsonDownloadURL) {
+    const imageCollectionObj = await map.imgGroup.recreateImagesFromJsonUrl(jsonDownloadURL);
+    const imgObjCollection = imageCollectionObj.imgCollectionProps;
+    const avg_cm_per_pixel = imageCollectionObj.avg_cm_per_pixel; // this is made available here for future use
         
-        // creates multiple images - this applies where multiple images are to be reconstructed
-        if (imgObjCollection.length > 1) {
-          let imageURL;
-          let options;
+    // creates multiple images - this applies where multiple images are to be reconstructed
+    if (imgObjCollection.length > 1) {
+      let imageURL;
+      let options;
 
-          const cornerBounds = getCornerBounds(imgObjCollection); 
-          map.fitBounds(cornerBounds);
+      const cornerBounds = getCornerBounds(imgObjCollection);
+      map.fitBounds(cornerBounds);
       
-          imgObjCollection.forEach((imageObj) => {
-            imageURL = imageObj.src;
-            options = {
-              tooltipText: imageObj.tooltipText,
-              corners: imageObj.nodes,
-            };
-            placeImage(imageURL, options, false);
-          });
-
-          return;
-        }
-
-        // creates single image - this applies where only one image is to be reconstructed
-        const imageObj = imgObjCollection[0];
-        const imageURL = imageObj[0].src;
-        const options = {
-          tooltipText: imageObj[0].tooltipText,
-          corners: imageObj[0].nodes,
-        }
-
-        const cornerBounds = getCornerBounds(imgObjCollection[0]); 
-        console.log('cornerBounds: ', cornerBounds);
-        map.fitBounds(cornerBounds);
+      imgObjCollection.forEach((imageObj) => {
+        imageURL = imageObj.src;
+        options = {
+          tooltipText: imageObj.tooltipText,
+          corners: imageObj.nodes,
+        };
         placeImage(imageURL, options, false);
-      }
-}
+      });
+
+      return;
+    }
+
+    // creates single image - this applies where only one image is to be reconstructed
+    const imageObj = imgObjCollection[0];
+    const imageURL = imageObj[0].src;
+    const options = {
+      tooltipText: imageObj[0].tooltipText,
+      corners: imageObj[0].nodes,
+    }
+
+    const cornerBounds = getCornerBounds(imgObjCollection[0]);
+    map.fitBounds(cornerBounds);
+    placeImage(imageURL, options, false);
+  } else {
+    // creates multiple images - this applies where multiple images are to be reconstructed
+    if (savedMapObj.length > 1) {
+      let imageURL;
+      let options;
+
+      const cornerBounds = getCornerBounds(savedMapObj);
+      map.fitBounds(cornerBounds);
+      
+      savedMapObj.forEach((imageObj) => {
+        imageURL = imageObj.src;
+        options = {
+          tooltipText: imageObj.tooltipText,
+          corners: imageObj.nodes,
+        };
+        placeImage(imageURL, options, false);
+      });
+
+      return;
+    }
+
+    // creates single image - this applies where only one image is to be reconstructed
+    const imageObj = savedMapObj[0];
+    const imageURL = imageObj.src;
+    const options = {
+      tooltipText: imageObj.tooltipText,
+      corners: imageObj.nodes,
+    }
+
+    const cornerBounds = getCornerBounds(savedMapObj);
+    map.fitBounds(cornerBounds);
+    placeImage(imageURL, options, false);
+  }
+};
 document.addEventListener('DOMContentLoaded', async (event) => {
   if (mapReconstructionMode) {
     // expected url format http://localhost:8081/examples/archive.html?json=https://archive.org/download/mkl-1/mkl-1.json
@@ -311,7 +338,7 @@ document.addEventListener('DOMContentLoaded', async (event) => {
 
 document.addEventListener('click', (event) => {
   if (event.target.classList.contains('place-button')) {
-    const imageURL = event.target.previousElementSibling.src;
+    const imageURL = event.target.previousElementSibling.dataset.original;
     const imageTooltipText = getImageName(imageURL);
     const options = {tooltipText: imageTooltipText};
 
@@ -352,12 +379,109 @@ downloadJSON.addEventListener('click', () => {
     }
 });
 
+// save JSON to localStorage
+saveMapBtn.addEventListener('click', () => {
+  const jsonImages = map.imgGroup.generateExportJson(true);
+  const d = new Date();
+  const datetime = d.getHours() + ":" + d.getMinutes() + ' ' + d.getDate() + "/" + (d.getMonth() + 1) + "/" + d.getFullYear();
+
+  if (jsonImages.images.length) {
+    const modifiedJsonImages = {};
+    const tempCollection = [];
+
+    // restructure jsonImages
+    modifiedJsonImages.avg_cm_per_pixel = jsonImages.avg_cm_per_pixel;
+    jsonImages.images.map((image) => {
+      tempCollection.push({
+        id: image.id,
+        src: image.src,
+        tooltipText: image.tooltipText,
+        image_file_name: image.image_file_name,
+        nodes: image.nodes,
+        cm_per_pixel: image.cm_per_pixel,
+      });
+    });
+    modifiedJsonImages.collection = tempCollection;
+    let savedMaps = []
+    const newMap = {
+      map: modifiedJsonImages,
+      timeSaved: datetime,
+      amountOfImages: modifiedJsonImages.collection.length
+    };
+
+    // this is to check if are old maps saved, if true, update with new maps to be saved 
+    if (JSON.parse(localStorage.getItem('savedMaps'))) {
+      const oldMaps = JSON.parse(localStorage.getItem('savedMaps'));
+      savedMaps = [...oldMaps, newMap]
+      localStorage.setItem('savedMaps', JSON.stringify(savedMaps));
+    } else {
+      savedMaps = [newMap]
+      localStorage.setItem('savedMaps', JSON.stringify(savedMaps));
+    }
+    bootstrap.Modal.getInstance(savedMapsModal).hide();
+    alert("Saved!")
+   
+  }
+});
+
 // share map modal
 const shareModal = document.getElementById('shareModal')
 const modality =  new bootstrap.Modal(shareModal)
 shareMapBtn.addEventListener('click', () => {
   bootstrap.Modal.getInstance(shareModal).show()
 });
+
+// history map modal
+const savedMapsModal = document.getElementById('savedMapsModal')
+const savedMapsModalIntialization = new bootstrap.Modal(savedMapsModal)
+let mapsToRecover 
+saveMapModalBtn.addEventListener('click', () => {
+  mapList.innerHTML = '';
+  const savedMaps = JSON.parse(localStorage.getItem('savedMaps'));
+  bootstrap.Modal.getInstance(savedMapsModal).show();
+ 
+  if (savedMaps.length > 0) {
+    mapsToRecover = savedMaps;
+    savedMaps.forEach(((savedMap, index) => {
+      const {amountOfImages, timeSaved } = savedMap
+      const eachMap = document.createElement('div');
+      const eachMapTextDiv = document.createElement('div');
+      const eachMapAmountText = document.createElement('h6')
+      const eachMapDate = document.createElement('p')
+      const recoverBtn = document.createElement('a');
+      const recoverBtnDiv = document.createElement('div')
+
+      eachMap.classList.add('d-flex', 'justify-content-between', 'align-content-center')
+      eachMapTextDiv.classList.add('d-flex', 'flex-column')
+      eachMapAmountText.innerHTML = `${amountOfImages} image(s)`
+      eachMapDate.innerHTML = `<b>Saved:</b> ${timeSaved}`
+      eachMapTextDiv.append(eachMapAmountText, eachMapDate)
+
+      recoverBtn.classList.add('btn', 'btn-primary', 'btn-md', 'rounded-pill', 'recover')
+      recoverBtn.innerHTML = "Recover"
+      recoverBtnDiv.appendChild(recoverBtn)
+      recoverBtn.setAttribute('data-map-index',`${index}`)
+      recoverBtn.setAttribute('title', 'Recover map')
+
+      eachMap.append(eachMapTextDiv, recoverBtnDiv)  
+    
+      mapList.append(eachMap) 
+    }))
+  } else {
+    mapList.innerHTML += "<h5> No Saved Maps </h5>"
+  }
+});
+
+// this runs when the recover button is clicked in the saved maps modal
+document.addEventListener('click', (event) => {
+  if (event.target.classList.contains('recover')) {
+    const mapToRecoverIdx = event.target.dataset.mapIndex
+    const mapCollection = mapsToRecover[mapToRecoverIdx].map.collection
+    reconstructMapFromJson(false, mapCollection)
+    bootstrap.Modal.getInstance(savedMapsModal).hide();
+    bootstrap.Offcanvas.getInstance(sidebar).hide();
+  }
+})
 
 // aggregate coordinates of all images into an array
 function getCornerBounds(imgCollection) {
