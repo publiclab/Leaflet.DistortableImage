@@ -440,13 +440,14 @@ const savedMapsModal = document.getElementById('savedMapsModal')
 const savedMapsModalIntialization = new bootstrap.Modal(savedMapsModal)
 let mapsToRecover 
 saveMapModalBtn.addEventListener('click', () => {
+  mapList.innerHTML = '';
   const savedMaps = JSON.parse(localStorage.getItem('savedMaps'));
   bootstrap.Modal.getInstance(savedMapsModal).show();
  
   if (savedMaps.length > 0) {
     mapsToRecover = savedMaps;
     savedMaps.forEach(((savedMap, index) => {
-      const { map, amountOfImages, timeSaved } = savedMap
+      const {amountOfImages, timeSaved } = savedMap
       const eachMap = document.createElement('div');
       const eachMapTextDiv = document.createElement('div');
       const eachMapAmountText = document.createElement('h6')
