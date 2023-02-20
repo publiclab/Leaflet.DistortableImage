@@ -256,7 +256,6 @@ function placeImage (imageURL, options, newImage = false) {
 const reconstructMapFromJson = async (jsonDownloadURL = false, savedMapObj) => {
   if (jsonDownloadURL) {
     const imageCollectionObj = await map.imgGroup.recreateImagesFromJsonUrl(jsonDownloadURL);
-    console.log(imageCollectionObj)
     const imgObjCollection = imageCollectionObj.imgCollectionProps;
     const avg_cm_per_pixel = imageCollectionObj.avg_cm_per_pixel; // this is made available here for future use
         
@@ -289,7 +288,6 @@ const reconstructMapFromJson = async (jsonDownloadURL = false, savedMapObj) => {
     }
 
     const cornerBounds = getCornerBounds(imgObjCollection[0]);
-    console.log('cornerBounds: ', cornerBounds);
     map.fitBounds(cornerBounds);
     placeImage(imageURL, options, false);
   } else {
@@ -322,7 +320,6 @@ const reconstructMapFromJson = async (jsonDownloadURL = false, savedMapObj) => {
     }
 
     const cornerBounds = getCornerBounds(savedMapObj);
-    console.log('cornerBounds: ', cornerBounds);
     map.fitBounds(cornerBounds);
     placeImage(imageURL, options, false);
   }
@@ -421,7 +418,6 @@ saveMapBtn.addEventListener('click', () => {
       savedMaps = [newMap]
       localStorage.setItem('savedMaps', JSON.stringify(savedMaps));
     }
-    console.log('savedMap', savedMaps)
     bootstrap.Modal.getInstance(savedMapsModal).hide();
     alert("Saved!")
    
