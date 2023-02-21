@@ -488,25 +488,22 @@ L.DistortableCollection = L.FeatureGroup.extend({
     json.images = [];
     this.eachLayer(function (layer) {
       if (allImages || this.isCollected(layer)) {
-        var corners = [];
         var sections = layer._image.src.split('/');
         var filename = sections[sections.length - 1];
         var zc = layer.getCorners();
-
-        // supports longitude written as 'lon' or 'lng'
-        for (i = 0; i < zc.length; i++) {
-          if (zc[0].lng) {
-            corners.push({
-              lat: zc[i].lat,
-              lon: zc[i].lng
-            });
-          } else if (zc[0].lon) {
-            corners.push({
-              lat: zc[i].lat,
-              lon: zc[i].lon
-            });
-          }
-        }
+        var corners = [{
+          lat: zc[0].lat,
+          lon: zc[0].lng || zc[0].lon
+        }, {
+          lat: zc[1].lat,
+          lon: zc[1].lng || zc[1].lon
+        }, {
+          lat: zc[3].lat,
+          lon: zc[3].lng || zc[3].lon
+        }, {
+          lat: zc[2].lat,
+          lon: zc[2].lng || zc[2].lon
+        }];
         json.images.push({
           id: layer._leaflet_id,
           src: layer._image.src,
@@ -522,7 +519,70 @@ L.DistortableCollection = L.FeatureGroup.extend({
     json.images = json.images.reverse();
     json.avg_cm_per_pixel = this._getAvgCmPerPixel(json.images);
     return json;
-  }
+  } // generateExportJson(allImages = false) {
+  //   const json = {};
+  //   json.images = [];
+  //   this.eachLayer(function(layer) {
+  //     if (allImages || this.isCollected(layer)) {
+  //       const sections = layer._image.src.split('/');
+  //       const filename = sections[sections.length - 1];
+  //       const zc = layer.getCorners();
+  //       const corners = [
+  //         {lat: zc[0].lat, lon: zc[0].lng},
+  //         {lat: zc[1].lat, lon: zc[1].lng},
+  //         {lat: zc[3].lat, lon: zc[3].lng},
+  //         {lat: zc[2].lat, lon: zc[2].lng},
+  //       ];
+  //       json.images.push({
+  //         id: layer._leaflet_id,
+  //         src: layer._image.src,
+  //         width: layer._image.width,
+  //         height: layer._image.height,
+  //         tooltipText: layer.getTooltipText(),
+  //         image_file_name: filename,
+  //         nodes: corners,
+  //         cm_per_pixel: L.ImageUtil.getCmPerPixel(layer),
+  //       });
+  //     }
+  //   }, this);
+  //   json.images = json.images.reverse();
+  //   json.avg_cm_per_pixel = this._getAvgCmPerPixel(json.images);
+  //   return json;
+  // },
+  // OPTION 3
+  // generateExportJson(allImages = false) {
+  //   const json = {};
+  //   json.images = [];
+  //   this.eachLayer(function(layer) {
+  //     if (allImages || this.isCollected(layer)) {
+  //       let corners = [];
+  //       const sections = layer._image.src.split('/');
+  //       const filename = sections[sections.length - 1];
+  //       const zc = layer.getCorners();
+  //       // supports longitude written as 'lon' or 'lng'
+  //       for (i = 0; i < zc.length; i++) {
+  //         if (zc[0].lng) {
+  //           corners.push({lat: zc[i].lat, lon: zc[i].lng});
+  //         } else if (zc[0].lon) {
+  //           corners.push({lat: zc[i].lat, lon: zc[i].lon});
+  //         }
+  //       }
+  //       json.images.push({
+  //         id: layer._leaflet_id,
+  //         src: layer._image.src,
+  //         width: layer._image.width,
+  //         height: layer._image.height,
+  //         tooltipText: layer.getTooltipText(),
+  //         image_file_name: filename,
+  //         nodes: corners,
+  //         cm_per_pixel: L.ImageUtil.getCmPerPixel(layer),
+  //       });
+  //     }
+  //   }, this);
+  //   json.images = json.images.reverse();
+  //   json.avg_cm_per_pixel = this._getAvgCmPerPixel(json.images);
+  //   return json;
+  // },
 });
 L.distortableCollection = function (id, options) {
   return new L.DistortableCollection(id, options);
@@ -7083,7 +7143,7 @@ module.exports.formatError = function (err) {
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	!function() {
-/******/ 		__webpack_require__.h = function() { return "c6937104296b0cddf0a7"; }
+/******/ 		__webpack_require__.h = function() { return "238194f0dba6630d80eb"; }
 /******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
