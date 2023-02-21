@@ -264,9 +264,16 @@ function placeImage (imageURL, options, newImage = false) {
 const reconstructMapFromJson = async (jsonDownloadURL) => {
   if (jsonDownloadURL) {
       const imageCollectionObj = await map.imgGroup.recreateImagesFromJsonUrl(jsonDownloadURL); 
-      const imgObjCollection = imageCollectionObj.imgCollectionProps;
-      const avg_cm_per_pixel = imageCollectionObj.avg_cm_per_pixel; // this is made available here for future use
-      
+      let imgObjCollection = imageCollectionObj.imgCollectionProps;
+      // const avg_cm_per_pixel = imageCollectionObj.avg_cm_per_pixel; // this is made available here for future use. can't be used with legacy json files from mapknitter.org
+
+      // for json file with single image object
+      if(Array.isArray(imgObjCollection[0])) {
+        imgObjCollection = updateLegacyJson(imgObjCollection[0]).collection;
+      } else { // for json file with multiple image objects
+        imgObjCollection = updateLegacyJson(imgObjCollection).collection;
+      }
+
       // creates multiple images - this applies where multiple images are to be reconstructed
       if (imgObjCollection.length > 1) {
         let imageURL;
@@ -277,7 +284,7 @@ const reconstructMapFromJson = async (jsonDownloadURL) => {
     
         imgObjCollection.forEach((imageObj) => {
           imageURL = extractImageSource(imageObj.src);
-          if (imageObj.nodes.length) {
+          if (imageObj.nodes.length > 0) {
             options = {
               tooltipText: imageObj.tooltipText,
               corners: imageObj.nodes,
@@ -285,21 +292,20 @@ const reconstructMapFromJson = async (jsonDownloadURL) => {
             placeImage(imageURL, options, false);
           }
         });
-
         return;
       }
 
       // creates single image - this applies where only one image is to be reconstructed
-      const cornerBounds = getCornerBounds(imgObjCollection[0]); 
+      const cornerBounds = getCornerBounds(imgObjCollection); 
       map.fitBounds(cornerBounds);
 
-      const imageObj = imgObjCollection[0];
-      const imageURL = extractImageSource(imageObj[0].src);
+      const imageObj = (imgObjCollection[0])[0];
+      const imageURL = extractImageSource(imageObj.src);
 
-      if (imageObj[0].nodes.length) {
+      if (imageObj.nodes.length) {
         const options = {
-          tooltipText: imageObj[0].tooltipText,
-          corners: imageObj[0].nodes,
+          tooltipText: imageObj.tooltipText,
+          corners: imageObj.nodes,
         }
         placeImage(imageURL, options, false);
       }
@@ -483,14 +489,16 @@ function getCornerBounds(imgCollection) {
       }
     });
   } else { // aggregate coordinates for a single image into cornerBounds
-    if (imgCollection[0].nodes) {
-      for(let i = 0; i < imgCollection[0].nodes.length; i++) {
+    const nodeCollection = imgCollection[0];
+   
+    if (nodeCollection.length) {
+      for(let i = 0; i < nodeCollection[0].nodes.length; i++) {
         let corner = [];
-        corner[0] = imgCollection[0].nodes[i].lat;
-        corner[1] = imgCollection[0].nodes[i].lon;
+        corner[0] = nodeCollection[0].nodes[i].lat;
+        corner[1] = nodeCollection[0].nodes[i].lon;
         cornerBounds.push(corner); // then we have [ [lat, long], [..], [..], [..] ] for just one image
-      } 
-    }
+      }
+    } 
   }
   return cornerBounds;
 }
@@ -500,19 +508,31 @@ function updateLegacyJson(json) {
   let transformedImgObj = {};
   transformedImgObj.collection = [];
 
-  json.map((json) => {    
-    if (json.nodes.length) {
+  // creates multiple images - applies to json file with multiple image objects
+  if (json.length > 1) {
+    json.map((json) => {    
+      if (json.nodes.length) {
+        let tempNodes = [];
+        for(let i = 0; i < json.nodes.length; i++) {
+          tempNodes.push({lat: json.nodes[i].lat, lon: json.nodes[i].lon});
+        }
+        json.nodes = tempNodes; // overwrites existing "nodes" key which points to a richer array. Read "imgObj.nodes" before this assignment to grab the richer array
+      } 
+      json.tooltipText = json.tooltipText || json.image_file_name.slice(0, (json.image_file_name.lastIndexOf('.')));
+      transformedImgObj.collection.push(json);
+    });
+  } else { // creates single image - applies to json file with only one image object
+    if (json[0].nodes.length) {
       let tempNodes = [];
-
-      for(let i = 0; i < json.nodes.length; i++) {
-        tempNodes.push({lat: json.nodes[i].lat, lon: json.nodes[i].lon});
+      for(let i = 0; i < json[0].nodes.length; i++) {
+        tempNodes.push({lat: json[0].nodes[i].lat, lon: json[0].nodes[i].lon});
       }
-      json.nodes = tempNodes; // overwrites existing "nodes" key which points to a richer array. Read "imgObj.nodes" before this assignment to grab the richer array
-    } 
 
-    json.tooltipText = json.tooltipText || json.image_file_name.slice(0, (json.image_file_name.lastIndexOf('.')));
+      json[0].nodes = tempNodes;
+    }
+    json[0].tooltipText = json[0].tooltipText || json[0].image_file_name.slice(0, (json[0].image_file_name.lastIndexOf('.')));
     transformedImgObj.collection.push(json);
-  });
+  }
 
   return transformedImgObj;
 }
@@ -572,11 +592,12 @@ function handleDrop (e) {
       if (cornerBounds.length) { // checks if the image has corners
         map.fitBounds(cornerBounds);
 
+        const imgObjCollection = (imgObj.collection[0])[0];
         options = {
-          tooltipText: imgObj.collection[0].tooltipText,
-          corners: imgObj.collection[0].nodes, 
+          tooltipText: imgObjCollection.tooltipText,
+          corners: imgObjCollection.nodes, 
         };
-        imgUrl = extractImageSource(imgObj.collection[0].src);
+        imgUrl = extractImageSource(imgObjCollection.src);
         placeImage(imgUrl, options);
       } else {
         console.log('Image object has no nodes and can\'t be loaded'); // for debugging purposes only
