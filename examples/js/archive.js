@@ -348,7 +348,7 @@ document.addEventListener('click', (event) => {
 });
 
 // download JSON
-saveMap.addEventListener('click', () => {
+downloadJSON.addEventListener('click', () => {
   const jsonImages = map.imgGroup.generateExportJson(true);
   const date = new Date()
     // a check to prevent download of empty file
