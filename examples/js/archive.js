@@ -1,4 +1,4 @@
-import {Paginator} from './modules/paginator.js';
+import { Paginator } from './modules/paginator.js';
 
 let map;
 const welcomeModal = document.getElementById('welcomeModal');
@@ -27,11 +27,11 @@ const setupMap = () => {
   map.addGoogleMutant();
   map.whenReady(() => {
     if (isJsonDetected(location.href)) {
-      new bootstrap.Modal(welcomeModal).hide(); 
+      new bootstrap.Modal(welcomeModal).hide();
       mapReconstructionMode = true;
       return;
     }
-    new bootstrap.Modal(welcomeModal).show(); 
+    new bootstrap.Modal(welcomeModal).show();
   });
 };
 
@@ -50,22 +50,24 @@ form.addEventListener('submit', (event) => {
 
 function extractKey() {
   let getUrl;
-  if (!input.value.includes('archive.org/details/') && !input.value.includes('https://'))
-  {
+  if (
+    !input.value.includes('archive.org/details/') &&
+    !input.value.includes('https://')
+  ) {
     getUrl = `https://archive.org/details/${input.value}/`;
     showImages(getUrl);
-  }
-  else if (!input.value.includes('https://') && !input.value.includes('http://') && input.value.includes('archive.org/details/')) {
+  } else if (
+    !input.value.includes('https://') &&
+    !input.value.includes('http://') &&
+    input.value.includes('archive.org/details/')
+  ) {
     getUrl = `https://${input.value}`;
     showImages(getUrl);
-  }
-  else if (input.value.includes('http://')) {
+  } else if (input.value.includes('http://')) {
     getUrl = input.value.replace('http:', 'https:');
     input.value = getUrl;
     showImages(getUrl);
-  }
-  else
-  {
+  } else {
     getUrl = input.value;
     showImages(getUrl);
   }
@@ -84,12 +86,26 @@ const renderImages = (fullResImages, url) => {
     fetchedFromUrl.innerHTML = 'this Internet Archive Collection';
     fetchedFrom.appendChild(fetchedFromUrl);
 
-    placeButton.classList.add('btn', 'btn-sm', 'btn-outline-secondary', 'place-button');
+    placeButton.classList.add(
+      'btn',
+      'btn-sm',
+      'btn-outline-secondary',
+      'place-button'
+    );
     placeButton.innerHTML = 'Place on map';
     // store the full-resolution image URL in a "data-original" attribute
-    image.setAttribute('data-original', `${url.replace('metadata', 'download')}/${file.name}`);
+    image.setAttribute(
+      'data-original',
+      `${url.replace('metadata', 'download')}/${file.name}`
+    );
     image.src = `${url.replace('metadata', 'download')}/${file.name}`;
-    imageRow.classList.add('d-flex', 'justify-content-between', 'align-items-center', 'mb-4', 'pe-5');
+    imageRow.classList.add(
+      'd-flex',
+      'justify-content-between',
+      'align-items-center',
+      'mb-4',
+      'pe-5'
+    );
     imageRow.append(image, placeButton);
     imageContainer.appendChild(imageRow);
     imageCount++;
@@ -118,14 +134,31 @@ const renderThumbnails = (thumbnails = [], url, fullResImgs) => {
     fileName.classList.add('m-0');
     fileName.style.fontSize = '12px';
 
-    placeButton.classList.add('btn', 'btn-sm', 'btn-outline-secondary', 'place-button', 'mt-1');
+    placeButton.classList.add(
+      'btn',
+      'btn-sm',
+      'btn-outline-secondary',
+      'place-button',
+      'mt-1'
+    );
     placeButton.innerHTML = 'Place';
     placeButton.setAttribute('title', 'Place image on map');
 
     // store the full-resolution image URL in a "data-original" attribute
-    image.setAttribute('data-original', `${url.replace('metadata', 'download')}/${thumbnails ? file.original : file.name}`);
+    image.setAttribute(
+      'data-original',
+      `${url.replace('metadata', 'download')}/${
+        thumbnails ? file.original : file.name
+      }`
+    );
     image.src = `${url.replace('metadata', 'download')}/${file.name}`;
-    imageRow.classList.add('col-4', 'd-flex', 'flex-column', 'p-2', 'align-items-center');
+    imageRow.classList.add(
+      'col-4',
+      'd-flex',
+      'flex-column',
+      'p-2',
+      'align-items-center'
+    );
     imageRow.append(image, placeButton, fileName);
 
     imageContainer.appendChild(imageRow);
@@ -133,15 +166,17 @@ const renderThumbnails = (thumbnails = [], url, fullResImgs) => {
   });
 };
 
-const  findSavedMapsJson = (response) => {
+const findSavedMapsJson = (response) => {
   // filter for JSON files from mapknitter
-  const jsonFiles = response.data.files.filter(e => e.format === 'JSON' && e.name.startsWith('mapknitter'))
+  const jsonFiles = response.data.files.filter(
+    (e) => e.format === 'JSON' && e.name.startsWith('mapknitter')
+  );
   if (jsonFiles.length > 0) {
-    const answer = confirm('Saved map state detected! Do you want to load it?')
+    const answer = confirm('Saved map state detected! Do you want to load it?');
     // construct JSON url for the first mapknitter JSON file if user confirms
     if (answer) {
-      const jsonUrl = `https://archive.org/download/${response.data.metadata.identifier}/${jsonFiles[0].name}`
-      reconstructMapFromJson(jsonUrl)
+      const jsonUrl = `https://archive.org/download/${response.data.metadata.identifier}/${jsonFiles[0].name}`;
+      reconstructMapFromJson(jsonUrl);
     }
   }
 };
@@ -149,38 +184,44 @@ const  findSavedMapsJson = (response) => {
 function showImages(getUrl) {
   const url = getUrl.replace('details', 'metadata');
 
-  axios.get(url)
+  axios
+    .get(url)
     .then((response) => {
-         findSavedMapsJson(response)
-        if (response.data.files && response.data.files.length != 0) {
-          fetchedImages = response.data.files; // <---- all files fetched
-          // runs a check to clear the sidebar, eventListeners and reset imageCount
-          if (currPagination) currPagination.clear(); imageContainer.textContent = ''; imageCount = 0;
-          currPagination = new Paginator(url, fetchedImages);
-          currPagination.processImgs(renderThumbnails, renderImages);
-          responseText.innerHTML = imageCount ? `${imageCount} image(s) fetched successfully from ${fetchedFrom.innerHTML}.` : 'No images found in the link provided...';
-        } else {
-          responseText.innerHTML = 'No images found in the link provided...';
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        responseText.innerHTML = 'Uh-oh! Something\'s not right with the link provided!';
-      })
-      .finally(() => {
-        bootstrap.Modal.getInstance(welcomeModal).hide();
-      });
+      findSavedMapsJson(response);
+      if (response.data.files && response.data.files.length != 0) {
+        fetchedImages = response.data.files; // <---- all files fetched
+        // runs a check to clear the sidebar, eventListeners and reset imageCount
+        if (currPagination) currPagination.clear();
+        imageContainer.textContent = '';
+        imageCount = 0;
+        currPagination = new Paginator(url, fetchedImages);
+        currPagination.processImgs(renderThumbnails, renderImages);
+        responseText.innerHTML = imageCount
+          ? `${imageCount} image(s) fetched successfully from ${fetchedFrom.innerHTML}.`
+          : 'No images found in the link provided...';
+      } else {
+        responseText.innerHTML = 'No images found in the link provided...';
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      responseText.innerHTML =
+        "Uh-oh! Something's not right with the link provided!";
+    })
+    .finally(() => {
+      bootstrap.Modal.getInstance(welcomeModal).hide();
+    });
 }
 
 beginBtn.addEventListener('click', (event) => {
-    bootstrap.Modal.getInstance(welcomeModal).hide();
-    new bootstrap.Offcanvas(sidebar).show();
-    sidebarOpen = true;
+  bootstrap.Modal.getInstance(welcomeModal).hide();
+  new bootstrap.Offcanvas(sidebar).show();
+  sidebarOpen = true;
 });
 
 restoreWelcomeModal.addEventListener('click', (event) => {
   bootstrap.Modal.getInstance(welcomeModal).show();
-  input.value='';
+  input.value = '';
 });
 
 mapToggle.addEventListener('click', (event) => {
@@ -209,7 +250,7 @@ function extractFileName(name) {
   return fileName;
 }
 
-function extractJsonFromUrlParams(url) { 
+function extractJsonFromUrlParams(url) {
   const startIndex = url.lastIndexOf('=');
   const jsonDownloadURL = url.slice(startIndex + 1);
 
@@ -224,7 +265,7 @@ function isJsonDetected(url) {
     if (fileExtension === 'json') {
       console.log('JSON found in map shareable link'); // for debugging purposes only
       return true;
-    } 
+    }
   }
 
   return false;
@@ -258,7 +299,7 @@ function placeImage (imageURL, options, newImage = false) {
   }
 
   map.imgGroup.addLayer(image);
-};
+}
 
 // Reconstruct Map from JSON URL (image objects without coordinates are ignored)
 const reconstructMapFromJson = async (jsonDownloadURL) => {
@@ -298,7 +339,7 @@ const reconstructMapFromJson = async (jsonDownloadURL) => {
       // creates single image - this applies where only one image is to be reconstructed
       const cornerBounds = getCornerBounds(imgObjCollection); 
       map.fitBounds(cornerBounds);
-
+      
       const imageObj = (imgObjCollection[0])[0];
       const imageURL = extractImageSource(imageObj.src);
 
@@ -317,10 +358,10 @@ document.addEventListener('DOMContentLoaded', async (event) => {
     // expected url format http://localhost:8081/examples/archive.html?json=https://archive.org/download/mkl-1/mkl-1.json (e.g., for MK-Lite generated json files)
     // or http://localhost:8081/examples/archive.html?json=https://archive.org/download/mapknitter/--10.json (e.g., for legacy json files)
     const url = location.href;
-    
+
     if (isJsonDetected(url)) {
       const jsonDownloadURL = extractJsonFromUrlParams(url);
-      reconstructMapFromJson(jsonDownloadURL)  
+      reconstructMapFromJson(jsonDownloadURL);
     }
   }
 });
@@ -329,7 +370,7 @@ document.addEventListener('click', (event) => {
   if (event.target.classList.contains('place-button')) {
     const imageURL = event.target.previousElementSibling.dataset.original;
     const imageTooltipText = getImageName(imageURL);
-    const options = {tooltipText: imageTooltipText};
+    const options = { tooltipText: imageTooltipText };
 
     placeImage(imageURL, options, true);
     return;
@@ -339,40 +380,51 @@ document.addEventListener('click', (event) => {
 // download JSON
 downloadJSON.addEventListener('click', () => {
   const jsonImages = map.imgGroup.generateExportJson(true);
-  const date = new Date()
-    // a check to prevent download of empty file
-    if (jsonImages.images.length) {
-      const modifiedJsonImages = {};
-      const tempCollection = [];
+  const date = new Date();
+  // a check to prevent download of empty file
+  if (jsonImages.images.length) {
+    const modifiedJsonImages = {};
+    const tempCollection = [];
 
-      // restructure jsonImages
-      modifiedJsonImages.avg_cm_per_pixel = jsonImages.avg_cm_per_pixel;
-      jsonImages.images.map((image) => {
-        tempCollection.push({
-          id: image.id,
-          src: image.src,
-          tooltipText: image.tooltipText,
-          image_file_name: image.image_file_name,
-          nodes: image.nodes,
-          cm_per_pixel: image.cm_per_pixel,
-        });
+    // restructure jsonImages
+    modifiedJsonImages.avg_cm_per_pixel = jsonImages.avg_cm_per_pixel;
+    jsonImages.images.map((image) => {
+      tempCollection.push({
+        id: image.id,
+        src: image.src,
+        tooltipText: image.tooltipText,
+        image_file_name: image.image_file_name,
+        nodes: image.nodes,
+        cm_per_pixel: image.cm_per_pixel,
       });
-      modifiedJsonImages.collection = tempCollection;
+    });
+    modifiedJsonImages.collection = tempCollection;
 
-      const encodedFile = 'text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(modifiedJsonImages));
-      const a = document.createElement('a');
-      a.href = 'data:' + encodedFile;
-      // date.getTime().toString() <---- use timestamp for a unique id
-      a.download = `mapknitter-${date.getTime().toString()}.json`
-      a.click();
-    }
+    const encodedFile =
+      'text/json;charset=utf-8,' +
+      encodeURIComponent(JSON.stringify(modifiedJsonImages));
+    const a = document.createElement('a');
+    a.href = 'data:' + encodedFile;
+    // date.getTime().toString() <---- use timestamp for a unique id
+    a.download = `mapknitter-${date.getTime().toString()}.json`;
+    a.click();
+  }
 });
 
 // save JSON to localStorage
 saveMapBtn.addEventListener('click', () => {
   const jsonImages = map.imgGroup.generateExportJson(true);
   const d = new Date();
-  const datetime = d.getHours() + ":" + d.getMinutes() + ' ' + d.getDate() + "/" + (d.getMonth() + 1) + "/" + d.getFullYear();
+  const datetime =
+    d.getHours() +
+    ':' +
+    d.getMinutes() +
+    ' ' +
+    d.getDate() +
+    '/' +
+    (d.getMonth() + 1) +
+    '/' +
+    d.getFullYear();
 
   if (jsonImages.images.length) {
     const modifiedJsonImages = {};
@@ -391,101 +443,59 @@ saveMapBtn.addEventListener('click', () => {
       });
     });
     modifiedJsonImages.collection = tempCollection;
-    let savedMaps = []
+    let savedMaps = [];
     const newMap = {
       map: modifiedJsonImages,
       timeSaved: datetime,
-      amountOfImages: modifiedJsonImages.collection.length
+      amountOfImages: modifiedJsonImages.collection.length,
     };
 
-    // this is to check if are old maps saved, if true, update with new maps to be saved 
+    // this is to check if are old maps saved, if true, update with new maps to be saved
     if (JSON.parse(localStorage.getItem('savedMaps'))) {
       const oldMaps = JSON.parse(localStorage.getItem('savedMaps'));
-      savedMaps = [...oldMaps, newMap]
+      savedMaps = [...oldMaps, newMap];
       localStorage.setItem('savedMaps', JSON.stringify(savedMaps));
     } else {
-      savedMaps = [newMap]
+      savedMaps = [newMap];
       localStorage.setItem('savedMaps', JSON.stringify(savedMaps));
     }
     bootstrap.Modal.getInstance(savedMapsModal).hide();
-    alert("Saved!")
-   
+    alert('Saved!');
   }
 });
 
 // share map modal
-const shareModal = document.getElementById('shareModal')
-const modality =  new bootstrap.Modal(shareModal)
+const shareModal = document.getElementById('shareModal');
+const modality = new bootstrap.Modal(shareModal);
 shareMapBtn.addEventListener('click', () => {
-  bootstrap.Modal.getInstance(shareModal).show()
-});
-
-// history map modal
-const savedMapsModal = document.getElementById('savedMapsModal')
-const savedMapsModalIntialization = new bootstrap.Modal(savedMapsModal)
-let mapsToRecover 
-saveMapModalBtn.addEventListener('click', () => {
-  mapList.innerHTML = '';
-  const savedMaps = JSON.parse(localStorage.getItem('savedMaps'));
-  bootstrap.Modal.getInstance(savedMapsModal).show();
- 
-  if (savedMaps.length > 0) {
-    mapsToRecover = savedMaps;
-    savedMaps.forEach(((savedMap, index) => {
-      const {amountOfImages, timeSaved } = savedMap
-      const eachMap = document.createElement('div');
-      const eachMapTextDiv = document.createElement('div');
-      const eachMapAmountText = document.createElement('h6')
-      const eachMapDate = document.createElement('p')
-      const recoverBtn = document.createElement('a');
-      const recoverBtnDiv = document.createElement('div')
-
-      eachMap.classList.add('d-flex', 'justify-content-between', 'align-content-center')
-      eachMapTextDiv.classList.add('d-flex', 'flex-column')
-      eachMapAmountText.innerHTML = `${amountOfImages} image(s)`
-      eachMapDate.innerHTML = `<b>Saved:</b> ${timeSaved}`
-      eachMapTextDiv.append(eachMapAmountText, eachMapDate)
-
-      recoverBtn.classList.add('btn', 'btn-primary', 'btn-md', 'rounded-pill', 'recover')
-      recoverBtn.innerHTML = "Recover"
-      recoverBtnDiv.appendChild(recoverBtn)
-      recoverBtn.setAttribute('data-map-index',`${index}`)
-      recoverBtn.setAttribute('title', 'Recover map')
-
-      eachMap.append(eachMapTextDiv, recoverBtnDiv)  
-    
-      mapList.append(eachMap) 
-    }))
-  } else {
-    mapList.innerHTML += "<h5> No Saved Maps </h5>"
-  }
+  bootstrap.Modal.getInstance(shareModal).show();
 });
 
 // this runs when the recover button is clicked in the saved maps modal
 document.addEventListener('click', (event) => {
   if (event.target.classList.contains('recover')) {
-    const mapToRecoverIdx = event.target.dataset.mapIndex
-    const mapCollection = mapsToRecover[mapToRecoverIdx].map.collection
-    reconstructMapFromJson(false, mapCollection)
+    const mapToRecoverIdx = event.target.dataset.mapIndex;
+    const mapCollection = mapsToRecover[mapToRecoverIdx].map.collection;
+    reconstructMapFromJson(false, mapCollection);
     bootstrap.Modal.getInstance(savedMapsModal).hide();
     bootstrap.Offcanvas.getInstance(sidebar).hide();
   }
-})
+});
 
 // aggregate coordinates of all images into an array
 function getCornerBounds(imgCollection) {
-  let cornerBounds = []; 
-
+  let cornerBounds = [];
+  
   // aggregate coordinates for multiple images into cornerBounds
   if (imgCollection.length > 1) { 
     imgCollection.forEach((imageObj) => {
       if (imageObj.nodes) {
-        for(let i = 0; i < imageObj.nodes.length; i++) {
+        for (let i = 0; i < imageObj.nodes.length; i++) {
           let corner = [];
           corner[0] = imageObj.nodes[i].lat;
           corner[1] = imageObj.nodes[i].lon;
           cornerBounds.push(corner); // then we have array of arrays e.g., [ [lat, lon], [..], [..], [], [], [], [], [] ] for two images etc...
-        }        
+        }
       }
     });
   } else { // aggregate coordinates for a single image into cornerBounds
@@ -549,12 +559,12 @@ function extractImageSource(imageSrc) {
 }
 
 // Reconstruct map from JSON file or place images on tile layer
-function handleDrop (e) {
+function handleDrop(e) {
   const files = e.dataTransfer.files;
   const reader = new FileReader();
-  
+
   // confirm file being dragged has json format
-  if (files.length === 1 && files[0].type === 'application/json') { 
+  if (files.length === 1 && files[0].type === 'application/json') {
     reader.addEventListener('load', () => {
       let imgUrl;
       let options;
@@ -564,6 +574,7 @@ function handleDrop (e) {
       if (Array.isArray(imgObj.collection)) { // check if it's array of array in which case it it's a single image object
         imgObj = updateLegacyJson(imgObj.collection);
       } else if(Array.isArray(imgObj)) { // for json file with multiple image objects
+      if (Array.isArray(imgObj)) {
         imgObj = updateLegacyJson(imgObj);
       } else {
         console.log('Image file being dragged and dropped'); // for debugging purposes only
@@ -594,13 +605,15 @@ function handleDrop (e) {
       
       // for json file with only one image property set. Image object without corners are ignored
       const cornerBounds = getCornerBounds(imgObj.collection);
-      if (cornerBounds.length) { // checks if the image has corners
+      if (cornerBounds.length) {
+        // checks if the image has corners
         map.fitBounds(cornerBounds);
 
         const imgObjCollection = (imgObj.collection[0])[0];
         options = {
           tooltipText: imgObjCollection.tooltipText,
           corners: imgObjCollection.nodes, 
+
         };
         imgUrl = extractImageSource(imgObjCollection.src);
         placeImage(imgUrl, options);
@@ -612,19 +625,20 @@ function handleDrop (e) {
   } else { // for non-json files (e.g., png, jpeg)  
     for (let i = 0; i < files.length; i++) {
       reader.addEventListener('load', () => {
-        const options = {tooltipText: extractFileName(files[i].name)};
-        placeImage(reader.result, options, true); 
+        const options = { tooltipText: extractFileName(files[i].name) };
+        placeImage(reader.result, options, true);
       });
-      reader.readAsDataURL(files[i]); 
+      reader.readAsDataURL(files[i]);
     }
   } 
 };
+
 
 function uploadFiles() {
   const dropZone = document.getElementById('dropZone');
   const active = () => dropZone.classList.add('overlay');
   const inactive = () => dropZone.classList.remove('overlay');
-  const prevents = e => e.preventDefault();
+  const prevents = (e) => e.preventDefault();
 
   ['dragenter', 'dragover', 'dragleave', 'drop'].forEach((e) => {
     dropZone.addEventListener(e, prevents);
@@ -639,6 +653,6 @@ function uploadFiles() {
   });
 
   dropZone.addEventListener('drop', handleDrop);
-};
+}
 
 document.addEventListener('DOMContentLoaded', uploadFiles);
