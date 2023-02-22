@@ -498,9 +498,7 @@ function getCornerBounds(imgCollection) {
         corner[1] = nodeCollection[0].nodes[i].lon;
         cornerBounds.push(corner); // then we have [ [lat, long], [..], [..], [..] ] for just one image
       }
-    } else {
-
-    }
+    } 
   }
 
   return cornerBounds;
