@@ -489,17 +489,20 @@ function getCornerBounds(imgCollection) {
       }
     });
   } else { // aggregate coordinates for a single image into cornerBounds
-    const nodeCollection = imgCollection[0];
-   
-    if (nodeCollection.length) {
+    const nodeCollection = imgCollection[0];   
+
+    if (nodeCollection.length) { 
       for(let i = 0; i < nodeCollection[0].nodes.length; i++) {
         let corner = [];
         corner[0] = nodeCollection[0].nodes[i].lat;
         corner[1] = nodeCollection[0].nodes[i].lon;
         cornerBounds.push(corner); // then we have [ [lat, long], [..], [..], [..] ] for just one image
       }
-    } 
+    } else {
+
+    }
   }
+
   return cornerBounds;
 }
 
@@ -559,14 +562,18 @@ function handleDrop (e) {
       let options;
       let imgObj = JSON.parse(reader.result);
 
-      if(Array.isArray(imgObj)) {
+      // for json file with single image object
+      if (Array.isArray(imgObj.collection)) { // check if it's array of array in which case it it's a single image object
+        imgObj = updateLegacyJson(imgObj.collection);
+      } else if(Array.isArray(imgObj)) { // for json file with multiple image objects
         imgObj = updateLegacyJson(imgObj);
+      } else {
+        console.log('Image file being dragged and dropped'); // for debugging purposes only
       }
       
       // for json file with multiple image property sets. Images without value for property "nodes" are ignored
       if (imgObj.collection.length > 1) {
         const cornerBounds = getCornerBounds(imgObj.collection); 
-        
         if (cornerBounds.length) { // checks if image has corners
           map.fitBounds(cornerBounds); 
           imgObj.collection.forEach((imgObj) => {
