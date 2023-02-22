@@ -574,7 +574,6 @@ function handleDrop(e) {
       if (Array.isArray(imgObj.collection)) { // check if it's array of array in which case it it's a single image object
         imgObj = updateLegacyJson(imgObj.collection);
       } else if(Array.isArray(imgObj)) { // for json file with multiple image objects
-      if (Array.isArray(imgObj)) {
         imgObj = updateLegacyJson(imgObj);
       } else {
         console.log('Image file being dragged and dropped'); // for debugging purposes only
@@ -620,7 +619,7 @@ function handleDrop(e) {
       } else {
         console.log('Image object has no nodes and can\'t be loaded'); // for debugging purposes only
       }
-    }); 
+    });
     reader.readAsText(files[0]);
   } else { // for non-json files (e.g., png, jpeg)  
     for (let i = 0; i < files.length; i++) {
