@@ -26,10 +26,13 @@ const setupMap = () => {
 
   map.addGoogleMutant();
   map.whenReady(() => {
-    if (isJsonDetected(location.href)) {
+    const url = location.href;
+    if (isLegacyUrlFormat(url) || isWorkingUrlFormat(url)) { 
       new bootstrap.Modal(welcomeModal).hide();
       mapReconstructionMode = true;
       return;
+    } else {
+      console.log('Unrecognised query parameter') // debug purposes only
     }
     new bootstrap.Modal(welcomeModal).show();
   });
@@ -166,6 +169,7 @@ const renderThumbnails = (thumbnails = [], url, fullResImgs) => {
   });
 };
 
+// finds json file and return its url (if available)
 const findSavedMapsJson = (response) => {
   // filter for JSON files from mapknitter
   const jsonFiles = response.data.files.filter(
@@ -173,45 +177,50 @@ const findSavedMapsJson = (response) => {
   );
   if (jsonFiles.length > 0) {
     const answer = confirm('Saved map state detected! Do you want to load it?');
-    // construct JSON url for the first mapknitter JSON file if user confirms
+
     if (answer) {
-      const jsonUrl = `https://archive.org/download/${response.data.metadata.identifier}/${jsonFiles[0].name}`;
-      reconstructMapFromJson(jsonUrl);
+      return `https://archive.org/download/${response.data.metadata.identifier}/${jsonFiles[0].name}`;
     }
   }
 };
 
-function showImages(getUrl) {
+async function performFetch(url) {
+  return await axios.get(url);
+}
+
+async function showImages(getUrl) {
   const url = getUrl.replace('details', 'metadata');
 
-  axios
-    .get(url)
-    .then((response) => {
-      findSavedMapsJson(response);
-      if (response.data.files && response.data.files.length != 0) {
-        fetchedImages = response.data.files; // <---- all files fetched
-        // runs a check to clear the sidebar, eventListeners and reset imageCount
-        if (currPagination) currPagination.clear();
-        imageContainer.textContent = '';
-        imageCount = 0;
-        currPagination = new Paginator(url, fetchedImages);
-        currPagination.processImgs(renderThumbnails, renderImages);
-        responseText.innerHTML = imageCount
-          ? `${imageCount} image(s) fetched successfully from ${fetchedFrom.innerHTML}.`
-          : 'No images found in the link provided...';
-      } else {
-        responseText.innerHTML = 'No images found in the link provided...';
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-      responseText.innerHTML =
-        "Uh-oh! Something's not right with the link provided!";
-    })
-    .finally(() => {
-      bootstrap.Modal.getInstance(welcomeModal).hide();
-    });
+  try {
+    const response = await performFetch(url);
+    const savedMapsJsonUrl = findSavedMapsJson(response);
+    if (savedMapsJsonUrl) {
+      reconstructMapFromJson(savedMapsJsonUrl);
+    }
+
+    if (response.data.files && response.data.files.length != 0) {
+      fetchedImages = response.data.files; // <---- all files fetched
+      // runs a check to clear the sidebar, eventListeners and reset imageCount
+      if (currPagination) currPagination.clear();
+      imageContainer.textContent = '';
+      imageCount = 0;
+      currPagination = new Paginator(url, fetchedImages);
+      currPagination.processImgs(renderThumbnails, renderImages);
+      responseText.innerHTML = imageCount
+        ? `${imageCount} image(s) fetched successfully from ${fetchedFrom.innerHTML}.`
+        : 'No images found in the link provided...';
+    } else {
+      responseText.innerHTML = 'No images found in the link provided...';
+    }
+  } catch(error) {
+    console.log(error);
+    responseText.innerHTML =
+      "Uh-oh! Something's not right with the link provided!";
+  } finally {
+    bootstrap.Modal.getInstance(welcomeModal).hide();
+  }
 }
+
 
 beginBtn.addEventListener('click', (event) => {
   bootstrap.Modal.getInstance(welcomeModal).hide();
@@ -333,6 +342,7 @@ const reconstructMapFromJson = async (jsonDownloadURL) => {
             placeImage(imageURL, options, false);
           }
         });
+
         return;
       }
 
@@ -353,16 +363,41 @@ const reconstructMapFromJson = async (jsonDownloadURL) => {
   }
 }
 
+// transforms url from format: https://localhost:8080/examples/archive.html?k=texas-barnraising-copy
+// to: https://archive.org/details/texas-barnraising-copy
+function convertToFetchUrl(url) {
+  const queryParam = url.substring(url.lastIndexOf('=') + 1);
+  return `https://archive.org/details/${queryParam}`;
+}
+
+function isWorkingUrlFormat(url) {
+  return url.includes('?k=');
+}
+
+function isLegacyUrlFormat(url) { 
+  return isJsonDetected(url);
+}
+
 document.addEventListener('DOMContentLoaded', async (event) => {
   if (mapReconstructionMode) {
-    // expected url format http://localhost:8081/examples/archive.html?json=https://archive.org/download/mkl-1/mkl-1.json (e.g., for MK-Lite generated json files)
-    // or http://localhost:8081/examples/archive.html?json=https://archive.org/download/mapknitter/--10.json (e.g., for legacy json files)
     const url = location.href;
 
-    if (isJsonDetected(url)) {
-      const jsonDownloadURL = extractJsonFromUrlParams(url);
-      reconstructMapFromJson(jsonDownloadURL);
-    }
+    // working url format: https://localhost:8080/examples/archive.html?k=texas-barnraising-copy
+    if (isWorkingUrlFormat(url)) { 
+      const fetchUrl = convertToFetchUrl(url).replace('details', 'metadata');
+      const response = await performFetch(fetchUrl);
+
+      if (response) {
+        const jsonDownloadURL = findSavedMapsJson(response);
+        reconstructMapFromJson(jsonDownloadURL);
+      }
+    } 
+    
+    // legacy url format: http://localhost:8081/examples/archive.html?json=https://archive.org/download/mapknitter/--10.json 
+    if (isLegacyUrlFormat(url)) { 
+        const jsonDownloadURL = extractJsonFromUrlParams(url); // returns url with format https://archive.org/download/mapknitter/--10.json  
+        reconstructMapFromJson(jsonDownloadURL);
+    } 
   }
 });
 
