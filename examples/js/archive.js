@@ -27,7 +27,7 @@ const setupMap = () => {
   map.addGoogleMutant();
   map.whenReady(() => {
     const url = location.href;
-    if (isLegacyUrlFormat(url) || isWorkingUrlFormat(url)) { 
+    if (isWorkingUrlFormat(url)) { 
       new bootstrap.Modal(welcomeModal).hide();
       mapReconstructionMode = true;
       return;
@@ -221,7 +221,6 @@ async function showImages(getUrl) {
   }
 }
 
-
 beginBtn.addEventListener('click', (event) => {
   bootstrap.Modal.getInstance(welcomeModal).hide();
   new bootstrap.Offcanvas(sidebar).show();
@@ -264,20 +263,6 @@ function extractJsonFromUrlParams(url) {
   const jsonDownloadURL = url.slice(startIndex + 1);
 
   return jsonDownloadURL;
-}
-
-function isJsonDetected(url) {
-  if (url.includes('?json=')) {
-    const startIndex = url.lastIndexOf('.');
-    const fileExtension = url.slice(startIndex + 1);
-
-    if (fileExtension === 'json') {
-      console.log('JSON found in map shareable link'); // for debugging purposes only
-      return true;
-    }
-  }
-
-  return false;
 }
 
 // places image on tile
@@ -363,40 +348,55 @@ const reconstructMapFromJson = async (jsonDownloadURL) => {
   }
 }
 
-// transforms url from format: https://localhost:8080/examples/archive.html?k=texas-barnraising-copy
-// to: https://archive.org/details/texas-barnraising-copy
-function convertToFetchUrl(url) {
+// transforms url from format: https://localhost:8080/examples/archive.html?k=texas-barnraising-copy to: https://archive.org/details/texas-barnraising-copy
+// OR from https://localhost:8080/examples/archive.html?kl=--10 to https://archive.org/download/mapknitter/--10.json
+function convertToFetchUrl(url, legacyJson = false) {
+  let fetchUrl;
   const queryParam = url.substring(url.lastIndexOf('=') + 1);
-  return `https://archive.org/details/${queryParam}`;
+
+  if (!legacyJson) {
+    fetchUrl = `https://archive.org/details/${queryParam}`;
+  } else {
+    fetchUrl = `https://archive.org/download/mapknitter/${queryParam}.json`; 
+  }
+
+  return fetchUrl;
 }
 
 function isWorkingUrlFormat(url) {
-  return url.includes('?k=');
-}
 
-function isLegacyUrlFormat(url) { 
-  return isJsonDetected(url);
+  if (url.includes('?k=')) {
+    return {isWorkingFormat: true, legacyJson: false};
+  }
+  
+  if (url.includes('?kl=')) {
+    return {isWorkingFormat: true, legacyJson: true};
+  }
 }
 
 document.addEventListener('DOMContentLoaded', async (event) => {
   if (mapReconstructionMode) {
     const url = location.href;
 
-    // working url format: https://localhost:8080/examples/archive.html?k=texas-barnraising-copy
-    if (isWorkingUrlFormat(url)) { 
-      const fetchUrl = convertToFetchUrl(url).replace('details', 'metadata');
-      const response = await performFetch(fetchUrl);
+    // working url formats: https://localhost:8080/examples/archive.html?k=texas-barnraising-copy (for mapknitter-lite generated json files)
+    // OR https://localhost:8080/examples/archive.html?kl=--10 (legacy format - for json files from legacy mapknitter.org)
+    const assessedUrl = isWorkingUrlFormat(url);
 
-      if (response) {
-        const jsonDownloadURL = findSavedMapsJson(response);
+    if (assessedUrl.isWorkingFormat) {
+      let jsonDownloadURL;
+
+      if (!assessedUrl.legacyJson) { // checks if url points to mapknitter-lite generated json file(s)
+        const fetchUrl = convertToFetchUrl(url).replace('details', 'metadata');
+        const response = await performFetch(fetchUrl);
+  
+        if (response) {
+          jsonDownloadURL = findSavedMapsJson(response);
+          reconstructMapFromJson(jsonDownloadURL);
+        }
+      } else {
+        jsonDownloadURL = convertToFetchUrl(url, assessedUrl.legacyJson); // jsonDownloadURL => https://archive.org/download/mapknitter/--10.json 
         reconstructMapFromJson(jsonDownloadURL);
       }
-    } 
-    
-    // legacy url format: http://localhost:8081/examples/archive.html?json=https://archive.org/download/mapknitter/--10.json 
-    if (isLegacyUrlFormat(url)) { 
-        const jsonDownloadURL = extractJsonFromUrlParams(url); // returns url with format https://archive.org/download/mapknitter/--10.json  
-        reconstructMapFromJson(jsonDownloadURL);
     } 
   }
 });
@@ -666,7 +666,6 @@ function handleDrop(e) {
     }
   } 
 };
-
 
 function uploadFiles() {
   const dropZone = document.getElementById('dropZone');
