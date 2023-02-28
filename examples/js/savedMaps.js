@@ -7,7 +7,7 @@ saveMapModalBtn.addEventListener('click', () => {
   const savedMaps = JSON.parse(localStorage.getItem('savedMaps'));
   bootstrap.Modal.getInstance(savedMapsModal).show();
 
-  if (savedMaps.length > 0) {
+  if (savedMaps !== null) {
     mapsToRecover = savedMaps;
     savedMaps.forEach((savedMap, index) => {
       const { amountOfImages, timeSaved } = savedMap;
@@ -45,6 +45,6 @@ saveMapModalBtn.addEventListener('click', () => {
       mapList.append(eachMap);
     });
   } else {
-    mapList.innerHTML += '<h5> No Saved Maps </h5>';
+    mapList.innerHTML = '<h5> No Saved Maps </h5>';
   }
 });
