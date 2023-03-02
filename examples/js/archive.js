@@ -298,17 +298,14 @@ function placeImage(imageURL, options, newImage = false) {
 // Reconstruct Map from JSON URL (image objects without coordinates are ignored)
 const reconstructMapFromJson = async (jsonDownloadURL = false, savedMapObj) => {
   if (jsonDownloadURL) {
-    const imageCollectionObj = await map.imgGroup.recreateImagesFromJsonUrl(
-      jsonDownloadURL
-    );
+    const imageCollectionObj = await map.imgGroup.recreateImagesFromJsonUrl(jsonDownloadURL);
     let imgObjCollection = imageCollectionObj.imgCollectionProps;
     // const avg_cm_per_pixel = imageCollectionObj.avg_cm_per_pixel; // this is made available here for future use. can't be used with legacy json files from mapknitter.org
 
     // for json file with single image object
     if (Array.isArray(imgObjCollection[0])) {
       imgObjCollection = updateLegacyJson(imgObjCollection[0]).collection;
-    } else {
-      // for json file with multiple image objects
+    } else { // for json file with multiple image objects
       imgObjCollection = updateLegacyJson(imgObjCollection).collection;
     }
 
@@ -348,6 +345,8 @@ const reconstructMapFromJson = async (jsonDownloadURL = false, savedMapObj) => {
       };
       placeImage(imageURL, options, false);
     }
+
+    return;
   }
 
   // creates multiple images - this applies where multiple images are to be reconstructed
@@ -398,6 +397,20 @@ function convertToFetchUrl(url, legacyJson = false) {
   return fetchUrl;
 }
 
+function isJsonDetected(url) {
+  if (url.includes('?json=')) {
+    const startIndex = url.lastIndexOf('.');
+    const fileExtension = url.slice(startIndex + 1);
+
+    if (fileExtension === 'json') {
+      console.log('JSON found in map shareable link'); // for debugging purposes only
+      return true;
+    }
+  }
+
+  return false;
+}
+
 function isWorkingUrlFormat(url) {
   if (url.includes('?k=')) {
     return {isWorkingFormat: true, legacyJson: false};
@@ -406,20 +419,30 @@ function isWorkingUrlFormat(url) {
   if (url.includes('?kl=')) {
     return {isWorkingFormat: true, legacyJson: true};
   }
+
+  if (isJsonDetected(url)) {
+    return {isWorkingFormat: true, isJsonKey: true};
+  }
 }
 
 document.addEventListener('DOMContentLoaded', async (event) => {
   if (mapReconstructionMode) {
     const url = location.href;
 
-    // working url formats: https://localhost:8080/examples/archive.html?k=texas-barnraising-copy (for mapknitter-lite generated json files)
-    // OR https://localhost:8080/examples/archive.html?kl=--10 (legacy format - for json files from legacy mapknitter.org)
+    // supported working url formats: 
+    // type 1 - http://localhost:8081/examples/archive.html?k=texas-barnraising-copy (for MK-Lite generated json files)
+    // type 2 - http://localhost:8081/examples/archive.html?kl=--10 (legacy format - for json files from legacy mapknitter.org)
+    // type 3 - http://localhost:8081/examples/archive.html?json=https://archive.org/download/mkl-2-2/mkl-2-2.json (for MK-Lite generated json files)
+    // type 4 - http://localhost:8081/examples/archive.html?json=https://archive.org/download/mapknitter/--10.json (for json files from legacy mapknitter.org)
     const assessedUrl = isWorkingUrlFormat(url);
 
     if (assessedUrl.isWorkingFormat) {
       let jsonDownloadURL;
 
-      if (!assessedUrl.legacyJson) { // checks if url points to mapknitter-lite generated json file(s)
+      if (assessedUrl.isJsonKey) {
+        jsonDownloadURL = extractJsonFromUrlParams(url); // for type 3 & 4
+        reconstructMapFromJson(jsonDownloadURL);
+      } else if (!assessedUrl.legacyJson) { // checks if url points to MK-Lite generated json file(s), type 1
         const fetchUrl = convertToFetchUrl(url).replace('details', 'metadata');
         const response = await performFetch(fetchUrl);
   
@@ -427,7 +450,7 @@ document.addEventListener('DOMContentLoaded', async (event) => {
           jsonDownloadURL = findSavedMapsJson(response);
           reconstructMapFromJson(jsonDownloadURL);
         }
-      } else {
+      } else { // for type 2
         jsonDownloadURL = convertToFetchUrl(url, assessedUrl.legacyJson); // jsonDownloadURL => https://archive.org/download/mapknitter/--10.json 
         reconstructMapFromJson(jsonDownloadURL);
       }
