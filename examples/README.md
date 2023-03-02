@@ -1,7 +1,8 @@
-Term: json file => Map Recovery File (MRF)<br>
-      archive.org => internet archive (IA)<br>
-      
- ## Features of Mapknitter Lite
+## Reference Terms: 
+	json file => Map Recovery File (MRF)<br>
+	archive.org => internet archive (IA)<br>
+
+## Features of Mapknitter Lite
 
 ### 1. Knit Maps 
 #### Description: 
@@ -12,6 +13,7 @@ ii. Follow instruction in the dialog box displayed to download your images to th
 iii.Click the "Place on map" button on the opened sidebar to place the desired image on the tile.<br>
 iv. Begin distorting and knitting of the images on the tile to build new map as desired.<br>
 #### Demo
+![1-knitting](https://user-images.githubusercontent.com/1612359/222577171-d72ce619-ae7e-4dac-a27f-dd8bb07fb3db.gif)
 
 ### 2. Download Map 
 #### Description: 
@@ -57,7 +59,7 @@ iv. Alternatively, load shareable URL Type2 on your browser to reconstruct the m
 v.  Ensure you replace "[https://archive.org/download/mkl-2-2/mkl-2-2.json]" with the URL provided by IA<br>
 iv. Steps ii or iv will restore your map to its previous state and you can continue further knitting tasks.<br>
 #### Demo
-
+![5a-1](https://user-images.githubusercontent.com/1612359/222574118-8843e8f7-53f7-4e8b-869a-99de8cc4aeab.gif)
 ##### Using MRFs from Legacy mapknitter.org
 i.  Construct shareable URL as below:<br>
 	Type3 https://localhost:8080/examples/archive.html?kl=[file-name].<br>
@@ -66,7 +68,9 @@ ii. Load shareable URL Type3 or Type4 on your browser to reconstruct the map.<br
 iii.Ensure "[file-name]" is replaced with the MRF name (e.g., -emf-, 01_03_cockroach_75m, --10 etc.).<br>
 iv. This restores your map to its previous state and you can continue further knitting tasks.<br>
 #### Demo
+![5b-2](https://user-images.githubusercontent.com/1612359/222574511-cfedfe32-f53d-46c2-a39a-bb5147245630.gif)
 ![5b Support json links restored](https://user-images.githubusercontent.com/1612359/222569683-4605e82c-d809-44bb-a4cb-1a09ca86c556.gif)
+
 ##### Note: 
 * Names of the legacy MRFs are available here: http://localhost:8081/examples/mapknitter.html.<br>
 * Legacy MRF with image objects having no coordinates are downloaded and placed on the sidebar, not the tile layer.<br>
@@ -86,7 +90,6 @@ iii.Drag and drop the MRF onto the tile layer.<br>
 iv. This restores your map to its previous state and you can continue further knitting tasks.<br>
 #### Demo
 ![6a](https://user-images.githubusercontent.com/1612359/222570595-b63ca096-e5ea-4512-85a6-360e72ce652e.gif)
-
 
 ### 7. Reconstruct Map through Auto-detection
 #### Description:
