@@ -726,13 +726,12 @@ A collection instance made up of a group of images. Images can be "collected" in
 <ul><li>Returns true if any <code>L.DistortableImageOverlay</code> instances are collected.</li></ul>
 </details>
 
-==> *******
 Maps converted into JSON file and saved to archive.org can be reconstructed. This also applies to all the JSON files generated from legacy mapknitter.org and stored on archive.org
 <details><summary><code><b>recreateImagesFromJsonUrl(string)</b>: {avg_cm_per_pixel <string>, imgCollectionProps<{}>}</code></summary>
 <ul><li>Returns imageCollectionIbject if successful or empty object if unsuccessful <code>L.DistortableImageOverlay</code> instances are collected.</li></ul>
 
 Example
-//1. Instantiate an empty `DistortableCollection` group
+//1. Instantiate an empty `DistortableCollection`
 <code>imgGroup = L.distortableCollection().addTo(map);</code>
 
 //2. Get property set for each of the images 
