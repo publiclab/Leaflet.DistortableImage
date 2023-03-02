@@ -718,8 +718,6 @@ function handleDrop(e) {
           corners: imgObjCollection.nodes,
         };
 
-        console.log('Archive-options.corners: ', options.corners);
-
         imgUrl = extractImageSource(imgObjCollection.src);
         placeImage(imgUrl, options);
       } else {
