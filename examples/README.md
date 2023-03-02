@@ -1,176 +1,100 @@
-//--------------------------------------------------------------------------------------------------------------------------------------------------
-DOCUMENTATION FOR LIBRARY USAGE
+Term: json file => Map Recovery File (MRF)<br>
+      archive.org => internet archive (IA)<br>
+      
+ ## Features of Mapknitter Lite
 
-(1.)
-FEATURE: Reconstruct images from URL
-DESCRIBE/HOW IT WORKS: Maps converted to JSON file and saved to archive.org can be reconstructed. This also applies to all the JSON files generated from legacy mapknitter.org and stored on archive.org.  
-HOW TO USE THE FEATURE:
-//1. Instantiate an empty `DistortableCollection` group
-imgGroup = L.distortableCollection().addTo(map);
+### 1. Knit Maps 
+#### Description: 
+You can perform perspectival distortion of map images to build new maps using the provided tile.<br>
+#### How to Use the Feature:
+i.  Load the URL https://localhost:8080/examples/archive.html in your browser.<br>
+ii. Follow instruction in the dialog box displayed to download your images to the tile.<br>
+iii.Click the "Place on map" button on the opened sidebar to place the desired image on the tile.<br>
+iv. Begin distorting and knitting of the images on the tile to build new map as desired.<br>
+#### Demo
 
-//2. Get property set for each of the images 
-const imageCollectionObj = await map.imgGroup.recreateImagesFromJsonUrl(jsonDownloadURL); // library function
-
-Note: jsonDownloadUrl must be in format: 
-	i. https://archive.org/download/mkl-2-2/mkl-2-2.json (for json files generated from Mapknitter-Lite)
-		- "mkl-2-2" is the identifier provided by archive.org after a file is uploaded to the service (i.e., archive,org)
-		- "mkl-2-2.json" name of the Json file
-    
-	ii. OR https://archive.org/download/mapknitter/--10.json (for json files from legacy mapknitter.org)
-		- "mapknitter" is the path for all the legacy Json files and must be present in the URL
-		- "--10.json" 
-	  
-//3. Iterate through each of the property sets and place each of them on the tile map using:  
-image = L.distortableImageOverlay(imageURL,{tooltipText, corners}); // extract imageURL, tooltipText and corners from each of the property set in imageCollectionObj
-map.imgGroup.addLayer(image);
-
-//--------------------------------------------------------------------------------------------------------------------------------------------------
-DOCUMENTATION FOR MK-LITE APPLICATION
-
-Term: json file => Map Recovery File (MRF)
-      archive.org => internet archive (IA)
-
-(1)
-FEATURE: Knit Maps 
-DESCRIBE/HOW: 
-You can perform perspectival distortion of map images to build new maps using the provided tile.  
-HOW TO USE THE FEATURE:
-Load the URL https://localhost:8080/examples/archive.html in your browser
-Follow instruction in the dialog box displayed to download your images to the tile
-Click the "Place on map" button on the opened sidebar to place the desired image on the tile
-Begin distorting and knitting of the images on the tile to build new map as desired.
-
-(2)
-FEATURE: Download Map 
-DESCRIBE/HOW: 
+### 2. Download Map 
+#### Description: 
 You can download your current map to your computer after completing your mapknitter task or if you intend to continue the knitting task on thesame map 
-in the future. With the download feature, the current state of your map is saved in the MRF. The MRF can be used to restore you map in the future so that you can continue
-knitting your map from the point where you stopped.
- 
-HOW TO USE THE FEATURE:
-After knitting the map, click the stack icon to open the sidebar.
-Click the download button.
-An MRF is generated and downloaded to your computer.
-The MRF can be used to reconstruct the map in the future. 
+in the future. With the download feature, the current state of your map is saved in the MRF. The MRF can be used to restore you map in the future so that you can continue knitting your map from the point where you stopped.
+#### How to Use the Feature:
+i.  After knitting the map, click the stack icon to open the sidebar.<br>
+ii. Click the download button.<br>
+iii.An MRF is generated and downloaded to your computer.<br>
+iv. The MRF can be used to reconstruct the map in the future.<br>
+#### Demo
 
-//-----------
+### 3. Save map in browser
+#### Description:
+Mapknitter offers the flexiibility of saving maps to the browser for easy retrieval in the future.
+#### How to Use the Feature:
+i.  After knitting the map, click the stack icon to open the sidebar.<br>
+ii. Click the save icon.<br>
+iii.An MRF is generated and saved to your broswer.<br>
+iv. The MRF can be used to reconstruct the map in the future.<br>
+#### Demo
 
-(3)
-FEATURE: Save map in browser
-DESCRIBE/HOW:
-HOW TO USE THE FEATURE (FOR MRF GENERATED FROM MK-LITE):
-After knitting the map, click the stack icon to open the sidebar.
-Click the save icon.
-An MRF is generated and saved to your broswer.
-The MRF can be used to reconstruct the map in the future. 
+### 4. Share map
+#### Description: 
+You can share your map by sharing the downloaded MRF or by uploading the MRF to IA. 
+#### How to Use the Feature:
+i. Follow the instruction on section "Download Map".<br>
+ii.Upload the MRF to archive.org.<br>
+iii.Alternatively, you can share the MRF by email to another recipient (e.g., a colleague).<br>
+#### Demo
 
-//-----------
-(4)
-FEATURE: Share map
-DESCRIBE/HOW: You can share your map by sharing the downloaded MRF or by uploading the MRF to IA 
-HOW TO USE THE FEATURE (FOR MRF GENERATED FROM MK-LITE):
-Follow the instruction on section "Download Map"
-Upload the MRF to archive.org
-Alternatively, you can share the MRF by email to another recipient (e.g., a colleague).
-
-//-----------
-(5)
-FEATURE: Reconstruct Map from URL
-
-DESCRIBE/HOW: 
+### 5. Reconstruct Map from URL
+#### Description: 
 MK-lite now supports reconstruction of maps from MRF saved on archive.org.  
+#### How to Use the Feature:
+##### Using MK-Lite Generated MRFs
+i. Construct shareable URL as below:<br>
+	Type1 https://localhost:8080/examples/archive.html?k=[identifier].<br>
+	Type2 http://localhost:8081/examples/archive.html?json=[https://archive.org/download/mkl-2-2/mkl-2-2.json].<br>
+ii. Load the shareable URL Type1 on your browser to reconstruct the map.<br>
+iii.Ensure you replace "[identifier]" with the identifier provided by archive.org.<br>
+iv. Alternatively, load shareable URL Type2 on your browser to reconstruct the map.<br>
+v.  Ensure you replace "[https://archive.org/download/mkl-2-2/mkl-2-2.json]" with the URL provided by IA<br>
+iv. Steps ii or iv will restore your map to its previous state and you can continue further knitting tasks.<br>
+#### Demo
 
-HOW TO USE THE FEATURE (FOR MRF GENERATED FROM MK-LITE):
-Construct shareable URL as below:
-https://localhost:8080/examples/archive.html?k=[identifier]
-https://localhost:8080/examples/archive.html?kl=[file-name]
-http://localhost:8081/examples/archive.html?json=https://archive.org/download/[mkl-2-2]/[mkl-2-2.json] (for MK-Lite generated json files)
-http://localhost:8081/examples/archive.html?json=https://archive.org/download/mapknitter/[--10.json] (
+##### Using MRFs from Legacy mapknitter.org
+i.  Construct shareable URL as below:<br>
+	Type3 https://localhost:8080/examples/archive.html?kl=[file-name].<br>
+	Type4 http://localhost:8081/examples/archive.html?json=https://archive.org/download/mapknitter/[file-name].json.<br>
+ii. Load shareable URL Type3 or Type4 on your browser to reconstruct the map.<br> 
+iii.Ensure "[file-name]" is replaced with the MRF name (e.g., -emf-, 01_03_cockroach_75m, --10 etc.).<br>
+iv. This restores your map to its previous state and you can continue further knitting tasks.<br>
+#### Demo
+![5b Support json links restored](https://user-images.githubusercontent.com/1612359/222569683-4605e82c-d809-44bb-a4cb-1a09ca86c556.gif)
+##### Note: 
+* Names of the legacy MRFs are available here: http://localhost:8081/examples/mapknitter.html.<br>
+* Legacy MRF with image objects having no coordinates are downloaded and placed on the sidebar, not the tile layer.<br>
+* "Identifier" is generated by archive.org once you upload the downloaded MRF to the service.<br> 
+   For example,<br>
+	If your downloaded MRF from MK-Lite is "mkl-2-2.json", upon uploading to archive.org you will receive the<br>
+	URL https://archive.org/download/mkl-2-2/mkl-2-2.json to access the uploaded file.<br> 
+	"mkl-2-2" is the identifier.
 
-Load the shareable URL https://localhost:8080/examples/archive.html?k=[identifier] on your browser to reconstruct the map.
-Ensure you replaced "[identifier]" with the identifier provided by archive.org.
-This restores your map to its previous state and you can continue further knitting tasks.
+### 6. Drag and Drop Downloaded MRF to Reconstruct Map
+#### Description: 
+A user can reconstruct map by dragging and dropping an MRF onto tile layer. 
+#### How to Use the Feature:
+i.  Load URL https://localhost:8080/examples/archive.html or https://localhost:8080/examples/local.html on your browser.<br>
+ii. Close dialog box if any is displayed. At this point, the tile layer is cleared.<br>
+iii.Drag and drop the MRF onto the tile layer.<br>
+iv. This restores your map to its previous state and you can continue further knitting tasks.<br>
+#### Demo
+![6a](https://user-images.githubusercontent.com/1612359/222570595-b63ca096-e5ea-4512-85a6-360e72ce652e.gif)
 
-HOW TO USE THE FEATURE:
-To use MRF from legacy mapnitter.org, load shareable URL https://localhost:8080/examples/archive.html?kl=[file-name].
-Ensure "[file-name]" is replaced with the MRF name (e.g., -emf-, 01_03_cockroach_75m, --10 etc.).
-Names of the legacy MRFs are available here: http://localhost:8081/examples/mapknitter.html.
-To use MK-Lite generated MRF, load shareable URL https://localhost:8080/examples/archive.html?k=[identifier] on your browser to reconstruct the legacy map.
-Ensure "[identifier]" is replaced with the MRF identifier.
-This restores your map to its previous state and you can continue further knitting tasks.
 
-Note: 
-For legacy MRF, image objects without coordinates are downloaded and placed on the sidebar, not the tile layer.
-"Identifier" is generated by archive.org once you upload the downloaded MRF to the service. 
-For example, 
-	If your downloaded MRF from MK-Lite is "mkl-2-2.json", upon uploading to archive.org you will receive the URL https://archive.org/download/mkl-2-2/mkl-2-2.json to access the uploaded file. "mkl-2-2" is the identifier
-
-You can also restore your map using URL formats:
-	http://localhost:8081/examples/archive.html?json=[https://archive.org/download/mkl-2-2/mkl-2-2.json] (for MK-Lite generated json files)
-	http://localhost:8081/examples/archive.html?json=https://archive.org/download/mapknitter/[--10.json]
-Replace [https://archive.org/download/mkl-2-2/mkl-2-2.json] with the URL generated by internet archive after you upload MRF to it.
-Replace [--10.json] with the name of the legacy MRF.
-This restores your map to its previous state and you can continue further knitting tasks.
-Alternatively, replace [https://archive.org/download/mkl-2-2/mkl-2-2.json] with URL from repositories similar to internet archive 
-
-//----
-(6) 
-FEATURE: Drag and Drop Downloaded MRF to Reconstruct Map
-
-DESCRIBE/HOW: 
-A user can reconstruct map by dragging and dropping an MRF onto tile layer 
-
-HOW TO USE THE FEATURE:
-Load URL https://localhost:8080/examples/archive.html or https://localhost:8080/examples/local.html on your browser
-Close dialog box if any is displayed. At this point, the tile layer is cleared.
-Drag and drop the MRF onto the tile layer.
-This restores your map to its previous state and you can continue further knitting tasks.
-
-//-----------
-(7)
-
-FEATURE: Reconstruct Map through Auto-detection
-
-DESCRIBE/HOW: 
+### 7. Reconstruct Map through Auto-detection
+#### Description:
 Mapknitter Lite can now detect MRF containing a map, and upon user affirmation, it would be loaded on the tile layer.
-
-HOW TO USE THE FEATURE:
-Load URL https://localhost:8080/examples/archive.html 
-Follow instruction in the dialog box displayed to download your images to the tile
-A pop-up will ask if you want to restore map from MRF, if one is detected in the URL entered in the dialog box
-Click "Ok" to restore the map using the detected MRF.
-This restores your map to its previous state and you can continue further knitting tasks.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#### How to Use the Feature:
+i.  Load URL https://localhost:8080/examples/archive.html.<br> 
+ii. Follow instruction in the dialog box displayed to download your images to the tile.<br>
+iii.A pop-up will ask if you want to restore map from MRF, if one is detected in the URL entered in the dialog box.<br>
+iv. Click "Ok" to restore the map using the detected MRF.<br>
+v.  This restores your map to its previous state and you can continue further knitting tasks.<br>
+#### Demo
