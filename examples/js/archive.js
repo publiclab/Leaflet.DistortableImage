@@ -23,7 +23,7 @@ const setupMap = () => {
   window.map = map; // make map global for debugging
 
   map.attributionControl.setPosition('bottomleft');
-
+  
   map.addGoogleMutant();
   map.whenReady(() => {
     const url = location.href;
@@ -664,6 +664,7 @@ function extractImageSource(imageSrc) {
 
 // Reconstruct map from JSON file or place images on tile layer
 function handleDrop(e) {
+  let options;
   const files = e.dataTransfer.files;
   const reader = new FileReader();
 
@@ -671,15 +672,12 @@ function handleDrop(e) {
   if (files.length === 1 && files[0].type === 'application/json') {
     reader.addEventListener('load', () => {
       let imgUrl;
-      let options;
       let imgObj = JSON.parse(reader.result);
 
       // for json file with single image object
-      if (Array.isArray(imgObj.collection)) {
-        // check if it's array of array in which case it it's a single image object
+      if (Array.isArray(imgObj.collection)) { // check if it's array of array in which case it it's a single image object
         imgObj = updateLegacyJson(imgObj.collection);
-      } else if (Array.isArray(imgObj)) {
-        // for json file with multiple image objects
+      } else if (Array.isArray(imgObj)) { // for json file with multiple image objects
         imgObj = updateLegacyJson(imgObj);
       } else {
         console.log('Image file being dragged and dropped'); // for debugging purposes only
@@ -692,8 +690,6 @@ function handleDrop(e) {
           // checks if image has corners
           map.fitBounds(cornerBounds);
           imgObj.collection.forEach((imgObj) => {
-            let options = {};
-
             imgUrl = extractImageSource(imgObj.src);
             if (imgObj.nodes.length > 0) {
               options = {
@@ -713,8 +709,7 @@ function handleDrop(e) {
 
       // for json file with only one image property set. Image object without corners are ignored
       const cornerBounds = getCornerBounds(imgObj.collection);
-      if (cornerBounds.length) {
-        // checks if the image has corners
+      if (cornerBounds.length) { // checks if the image has corners
         map.fitBounds(cornerBounds);
 
         const imgObjCollection = imgObj.collection[0][0];
@@ -722,6 +717,9 @@ function handleDrop(e) {
           tooltipText: imgObjCollection.tooltipText,
           corners: imgObjCollection.nodes,
         };
+
+        console.log('Archive-options.corners: ', options.corners);
+
         imgUrl = extractImageSource(imgObjCollection.src);
         placeImage(imgUrl, options);
       } else {
@@ -733,7 +731,7 @@ function handleDrop(e) {
     // for non-json files (e.g., png, jpeg)
     for (let i = 0; i < files.length; i++) {
       reader.addEventListener('load', () => {
-        const options = { tooltipText: extractFileName(files[i].name) };
+        options = { tooltipText: extractFileName(files[i].name) };
         placeImage(reader.result, options, true);
       });
       reader.readAsDataURL(files[i]);
