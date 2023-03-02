@@ -33,7 +33,7 @@ const setupMap = () => {
       mapReconstructionMode = true;
       return;
     } else {
-      console.log('Unrecognised query parameter'); // debug purposes only
+      console.log('Unrecognised query parameter or no query parameter'); // debug purposes only
     }
     new bootstrap.Modal(welcomeModal).show();
   });
