@@ -25,6 +25,7 @@ ii. Click the download button.<br>
 iii.An MRF is generated and downloaded to your computer.<br>
 iv. The MRF can be used to reconstruct the map in the future.<br>
 #### Demo
+![2 downloadMap](https://user-images.githubusercontent.com/1612359/222585816-509b075f-e6dd-4556-b2a7-413231801c14.gif)
 
 ### 3. Save map in browser
 #### Description:
@@ -35,6 +36,7 @@ ii. Click the save icon.<br>
 iii.An MRF is generated and saved to your broswer.<br>
 iv. The MRF can be used to reconstruct the map in the future.<br>
 #### Demo
+![3 SaveMapInBrowser](https://user-images.githubusercontent.com/1612359/222585883-af55aac5-2e7b-4634-8b59-dc8890a49ea3.gif)
 
 ### 4. Share map
 #### Description: 
@@ -44,6 +46,7 @@ i. Follow the instruction on section "Download Map".<br>
 ii.Upload the MRF to archive.org.<br>
 iii.Alternatively, you can share the MRF by email to another recipient (e.g., a colleague).<br>
 #### Demo
+![shareMap](https://user-images.githubusercontent.com/1612359/222586029-55e80585-51fd-471f-8679-4aa65cf9e5d9.gif)
 
 ### 5. Reconstruct Map from URL
 #### Description: 
@@ -101,3 +104,4 @@ iii.A pop-up will ask if you want to restore map from MRF, if one is detected in
 iv. Click "Ok" to restore the map using the detected MRF.<br>
 v.  This restores your map to its previous state and you can continue further knitting tasks.<br>
 #### Demo
+![7 autoDetect-json](https://user-images.githubusercontent.com/1612359/222586141-f1b2bfeb-75bb-48a0-a391-1b069d65395a.gif)
