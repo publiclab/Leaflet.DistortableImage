@@ -23,7 +23,7 @@ const setupMap = () => {
   window.map = map; // make map global for debugging
 
   map.attributionControl.setPosition('bottomleft');
-
+  
   map.addGoogleMutant();
   map.whenReady(() => {
     const url = location.href;
@@ -33,7 +33,7 @@ const setupMap = () => {
       mapReconstructionMode = true;
       return;
     } else {
-      console.log('Unrecognised query parameter'); // debug purposes only
+      console.log('Unrecognised query parameter or no query parameter'); // debug purposes only
     }
     new bootstrap.Modal(welcomeModal).show();
   });
@@ -298,17 +298,14 @@ function placeImage(imageURL, options, newImage = false) {
 // Reconstruct Map from JSON URL (image objects without coordinates are ignored)
 const reconstructMapFromJson = async (jsonDownloadURL = false, savedMapObj) => {
   if (jsonDownloadURL) {
-    const imageCollectionObj = await map.imgGroup.recreateImagesFromJsonUrl(
-      jsonDownloadURL
-    );
+    const imageCollectionObj = await map.imgGroup.recreateImagesFromJsonUrl(jsonDownloadURL);
     let imgObjCollection = imageCollectionObj.imgCollectionProps;
     // const avg_cm_per_pixel = imageCollectionObj.avg_cm_per_pixel; // this is made available here for future use. can't be used with legacy json files from mapknitter.org
 
     // for json file with single image object
     if (Array.isArray(imgObjCollection[0])) {
       imgObjCollection = updateLegacyJson(imgObjCollection[0]).collection;
-    } else {
-      // for json file with multiple image objects
+    } else { // for json file with multiple image objects
       imgObjCollection = updateLegacyJson(imgObjCollection).collection;
     }
 
@@ -348,6 +345,8 @@ const reconstructMapFromJson = async (jsonDownloadURL = false, savedMapObj) => {
       };
       placeImage(imageURL, options, false);
     }
+
+    return;
   }
 
   // creates multiple images - this applies where multiple images are to be reconstructed
@@ -398,6 +397,20 @@ function convertToFetchUrl(url, legacyJson = false) {
   return fetchUrl;
 }
 
+function isJsonDetected(url) {
+  if (url.includes('?json=')) {
+    const startIndex = url.lastIndexOf('.');
+    const fileExtension = url.slice(startIndex + 1);
+
+    if (fileExtension === 'json') {
+      console.log('JSON found in map shareable link'); // for debugging purposes only
+      return true;
+    }
+  }
+
+  return false;
+}
+
 function isWorkingUrlFormat(url) {
   if (url.includes('?k=')) {
     return {isWorkingFormat: true, legacyJson: false};
@@ -406,20 +419,30 @@ function isWorkingUrlFormat(url) {
   if (url.includes('?kl=')) {
     return {isWorkingFormat: true, legacyJson: true};
   }
+
+  if (isJsonDetected(url)) {
+    return {isWorkingFormat: true, isJsonKey: true};
+  }
 }
 
 document.addEventListener('DOMContentLoaded', async (event) => {
   if (mapReconstructionMode) {
     const url = location.href;
 
-    // working url formats: https://localhost:8080/examples/archive.html?k=texas-barnraising-copy (for mapknitter-lite generated json files)
-    // OR https://localhost:8080/examples/archive.html?kl=--10 (legacy format - for json files from legacy mapknitter.org)
+    // supported working url formats: 
+    // type 1 - http://localhost:8081/examples/archive.html?k=texas-barnraising-copy (for MK-Lite generated json files)
+    // type 2 - http://localhost:8081/examples/archive.html?kl=--10 (legacy format - for json files from legacy mapknitter.org)
+    // type 3 - http://localhost:8081/examples/archive.html?json=https://archive.org/download/mkl-2-2/mkl-2-2.json (for MK-Lite generated json files)
+    // type 4 - http://localhost:8081/examples/archive.html?json=https://archive.org/download/mapknitter/--10.json (for json files from legacy mapknitter.org)
     const assessedUrl = isWorkingUrlFormat(url);
 
     if (assessedUrl.isWorkingFormat) {
       let jsonDownloadURL;
 
-      if (!assessedUrl.legacyJson) { // checks if url points to mapknitter-lite generated json file(s)
+      if (assessedUrl.isJsonKey) {
+        jsonDownloadURL = extractJsonFromUrlParams(url); // for type 3 & 4
+        reconstructMapFromJson(jsonDownloadURL);
+      } else if (!assessedUrl.legacyJson) { // checks if url points to MK-Lite generated json file(s), type 1
         const fetchUrl = convertToFetchUrl(url).replace('details', 'metadata');
         const response = await performFetch(fetchUrl);
   
@@ -427,7 +450,7 @@ document.addEventListener('DOMContentLoaded', async (event) => {
           jsonDownloadURL = findSavedMapsJson(response);
           reconstructMapFromJson(jsonDownloadURL);
         }
-      } else {
+      } else { // for type 2
         jsonDownloadURL = convertToFetchUrl(url, assessedUrl.legacyJson); // jsonDownloadURL => https://archive.org/download/mapknitter/--10.json 
         reconstructMapFromJson(jsonDownloadURL);
       }
@@ -641,6 +664,7 @@ function extractImageSource(imageSrc) {
 
 // Reconstruct map from JSON file or place images on tile layer
 function handleDrop(e) {
+  let options;
   const files = e.dataTransfer.files;
   const reader = new FileReader();
 
@@ -648,15 +672,12 @@ function handleDrop(e) {
   if (files.length === 1 && files[0].type === 'application/json') {
     reader.addEventListener('load', () => {
       let imgUrl;
-      let options;
       let imgObj = JSON.parse(reader.result);
 
       // for json file with single image object
-      if (Array.isArray(imgObj.collection)) {
-        // check if it's array of array in which case it it's a single image object
+      if (Array.isArray(imgObj.collection)) { // check if it's array of array in which case it it's a single image object
         imgObj = updateLegacyJson(imgObj.collection);
-      } else if (Array.isArray(imgObj)) {
-        // for json file with multiple image objects
+      } else if (Array.isArray(imgObj)) { // for json file with multiple image objects
         imgObj = updateLegacyJson(imgObj);
       } else {
         console.log('Image file being dragged and dropped'); // for debugging purposes only
@@ -669,8 +690,6 @@ function handleDrop(e) {
           // checks if image has corners
           map.fitBounds(cornerBounds);
           imgObj.collection.forEach((imgObj) => {
-            let options = {};
-
             imgUrl = extractImageSource(imgObj.src);
             if (imgObj.nodes.length > 0) {
               options = {
@@ -690,8 +709,7 @@ function handleDrop(e) {
 
       // for json file with only one image property set. Image object without corners are ignored
       const cornerBounds = getCornerBounds(imgObj.collection);
-      if (cornerBounds.length) {
-        // checks if the image has corners
+      if (cornerBounds.length) { // checks if the image has corners
         map.fitBounds(cornerBounds);
 
         const imgObjCollection = imgObj.collection[0][0];
@@ -699,6 +717,7 @@ function handleDrop(e) {
           tooltipText: imgObjCollection.tooltipText,
           corners: imgObjCollection.nodes,
         };
+
         imgUrl = extractImageSource(imgObjCollection.src);
         placeImage(imgUrl, options);
       } else {
@@ -710,7 +729,7 @@ function handleDrop(e) {
     // for non-json files (e.g., png, jpeg)
     for (let i = 0; i < files.length; i++) {
       reader.addEventListener('load', () => {
-        const options = { tooltipText: extractFileName(files[i].name) };
+        options = { tooltipText: extractFileName(files[i].name) };
         placeImage(reader.result, options, true);
       });
       reader.readAsDataURL(files[i]);
