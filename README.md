@@ -726,6 +726,30 @@ A collection instance made up of a group of images. Images can be "collected" in
 <ul><li>Returns true if any <code>L.DistortableImageOverlay</code> instances are collected.</li></ul>
 </details>
 
+Retrieve image from Json file containing image property set. The property set can be used to instantiate new imageOverlays.  
+<details><summary><code><b>recreateImagesFromJsonUrl(string)</b>: {avg_cm_per_pixel <string>, imgCollectionProps<{}>}</code></summary>
+<ul><li>Returns imageCollectionIbject if successful or empty object if unsuccessful</li></ul>
+
+Example<br>
+// 1. Instantiate an empty `distortableCollection`<br>
+<code>imgGroup = L.distortableCollection().addTo(map);</code>
+
+// 2. Get property set for each of the images<br> 
+<code>const imageCollectionObj = await map.imgGroup.recreateImagesFromJsonUrl(jsonDownloadURL);</code>
+
+Note: <code>jsonDownloadUrl</code> must be in either of these formats:<br>
+	i. https://archive.org/download/mkl-2-2/mkl-2-2.json (for json files generated from Mapknitter-Lite)<br>
+		- "mkl-2-2" is the identifier provided by Internet Archive after a file is uploaded to the service (i.e., archive.org)<br>
+		- "mkl-2-2.json" name of the Json file    
+	ii. https://archive.org/download/mapknitter/--10.json (for json files from legacy mapknitter.org)<br>
+		- "mapknitter" is the path for all the legacy Json files and must be present in the URL<br>
+		- "--10.json" is th name of the Json file<br>
+	
+// 3. Iterate through each of the property sets, extract the imageURL, tooltipText and corners imageCollectionObj then place each of them on the tile map using:  
+<code>image = L.distortableImageOverlay(imageURL,{tooltipText, corners});</code><br>
+<code>map.imgGroup.addLayer(image);</code><br>
+</details>
+	
 ---
 
 `L.DistortableCollection.Edit`
