@@ -6,11 +6,11 @@ MapKnitter has been used by thousands of people to make their own aerial maps (a
 
 One reason MapKnitter went offline was its high cost to operate. So MapKnitter Lite re-imagined MapKnitter as a serverless, static JavaScript app that runs for free, hosted on GitHub Pages. We chose to build it within GitHub Pages, for now as a subset of the purely JS Leaflet.DistortableImage project.
 
-Happily, due to the excellent work of @segun-codes and @ during the 2023 Winter session of Outreachy, we have been able to make almost all of MapKnitter's original features available again. 
+Happily, due to the excellent work of @segun-codes and @7malikk during the 2023 Winter session of Outreachy, we have been able to make almost all of MapKnitter's original features available again. 
 
 But where are the images and saved maps stored? Images are kept in Internet Archive collections (which Public Lab was already doing) & maps are saved in “mapknitter.json” save files, which can be downloaded, emailed, or stored online.
 
-In addition, since we made a huge effort to archive over 7800 old MapKnitter maps at @waybackmachine, @_malikktweets & @adoughdough made it possible to open and edit old maps. It’s not the fanciest, but here’s a list of all ~7800 maps:
+In addition, since we made a huge effort to archive over 7800 old MapKnitter maps at @waybackmachine, @7malikk & @segun-codes made it possible to open and edit old maps. It’s not the fanciest, but here’s a list of all ~7800 maps:
 
 https://publiclab.github.io/Leaflet.DistortableImage/examples/mapknitter
 
