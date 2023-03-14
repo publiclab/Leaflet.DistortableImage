@@ -31,7 +31,7 @@ You can perform perspectival distortion of map images to build new maps over the
 
 ### How to Use the Feature
 
-1. Start the server with `http-server` (install this with `npm install http-server`) and load https://localhost:8080/examples/archive.html in your browser.
+1. Start the server with `http-server` (install this with `npm install http-server`) and load https://localhost:8080/examples/archive.html in your browser. Or visit https://publiclab.github.io/Leaflet.DistortableImage/examples/archive to use the GitHub Pages version online.
 2. Follow instruction in the dialog box displayed to fetch images to work with. (They must first be uploaded into an IA collection.)
 3. Click the "Place on map" button on the opened sidebar to place the desired image on the base map.
 4. Begin distorting and knitting of the images on the base map to build new map as desired.
