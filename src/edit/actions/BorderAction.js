@@ -1,9 +1,9 @@
 L.BorderAction = L.EditAction.extend({
-  initialize(map, overlay, options) {
-    const edit = overlay.editing;
-    const mode = edit._mode;
-    let use;
-    let tooltip;
+  initialize: function(map, overlay, options) {
+    var edit = overlay.editing;
+    var mode = edit._mode;
+    var use;
+    var tooltip;
 
     if (edit._outlined) {
       use = 'border_outer';
@@ -27,8 +27,8 @@ L.BorderAction = L.EditAction.extend({
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
-  addHooks() {
-    const edit = this._overlay.editing;
+  addHooks: function() {
+    var edit = this._overlay.editing;
 
     L.IconUtil.toggleXlink(this._link, 'border_clear', 'border_outer');
     L.IconUtil.toggleTitle(this._link, 'Remove Border', 'Add Border');

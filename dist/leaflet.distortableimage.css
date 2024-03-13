@@ -221,10 +221,6 @@ a.leaflet-toolbar-icon[title='Loading...'] {
   fill: #c10d0d;
 }
 
-input[type="text"]::-webkit-input-placeholder {
-  color: #979797;
-}
-
 @keyframes ldi-spin {
   0% {
     -webkit-transform: rotate(0);

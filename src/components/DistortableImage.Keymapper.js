@@ -8,12 +8,12 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     position: 'topright',
   },
 
-  initialize(map, options) {
+  initialize: function(map, options) {
     this._map = map;
     L.setOptions(this, options);
   },
 
-  addHooks() {
+  addHooks: function() {
     if (!this._keymapper) {
       this._container = this._buildContainer();
       this._scrollWrapper = this._wrap();
@@ -27,7 +27,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     }
   },
 
-  removeHooks() {
+  removeHooks: function() {
     if (this._keymapper) {
       L.DomEvent.off(this._toggler, 'click', this._toggleKeymapper, this);
 
@@ -38,18 +38,18 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     }
   },
 
-  _buildContainer() {
-    const container = L.DomUtil.create('div', 'ldi-keymapper-hide');
+  _buildContainer: function() {
+    var container = L.DomUtil.create('div', 'ldi-keymapper-hide');
     container.setAttribute('id', 'ldi-keymapper');
 
-    const divider = L.DomUtil.create('br', 'divider');
+    var divider = L.DomUtil.create('br', 'divider');
     container.appendChild(divider);
 
     return container;
   },
 
-  _createButton() {
-    const toggler = L.DomUtil.create('a', '');
+  _createButton: function() {
+    var toggler = L.DomUtil.create('a', '');
     toggler.innerHTML = L.IconUtil.create('keyboard_open');
 
     toggler.setAttribute('id', 'toggle-keymapper');
@@ -62,15 +62,15 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     return toggler;
   },
 
-  _wrap() {
-    const wrap = L.DomUtil.create('div', '');
+  _wrap: function() {
+    var wrap = L.DomUtil.create('div', '');
     wrap.setAttribute('id', 'keymapper-wrapper');
     wrap.style.display = 'none';
 
     return wrap;
   },
 
-  _setMapper(container, wrap, button) {
+  _setMapper: function(container, wrap, button) {
     this._keymapper = L.control({position: this.options.position});
 
     this._keymapper.onAdd = function() {
@@ -102,7 +102,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     this._keymapper.addTo(this._map);
   },
 
-  _toggleKeymapper(e) {
+  _toggleKeymapper: function(e) {
     e.preventDefault();
 
     this._container.className = (
@@ -125,10 +125,10 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     L.DomUtil.toggleClass(this._toggler, 'close-icon');
   },
 
-  _injectIconSet() {
+  _injectIconSet: function() {
     if (document.querySelector('#keymapper-iconset')) { return; }
 
-    const el = L.DomUtil.create('div', '');
+    var el = L.DomUtil.create('div', '');
     el.id = 'keymapper-iconset';
     el.setAttribute('hidden', 'hidden');
 
@@ -139,7 +139,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
   },
 });
 
-L.DistortableImage.Keymapper.addInitHook(() => {
+L.DistortableImage.Keymapper.addInitHook(function() {
   L.DistortableImage.Keymapper.prototype._n = (
     L.DistortableImage.Keymapper.prototype._n ?
     L.DistortableImage.Keymapper.prototype._n + 1 :
@@ -152,6 +152,6 @@ L.DistortableImage.Keymapper.addInitHook(() => {
   }
 });
 
-L.distortableImage.keymapper = (map, options) => {
+L.distortableImage.keymapper = function(map, options) {
   return new L.DistortableImage.Keymapper(map, options);
 };

@@ -17,7 +17,7 @@ chai.simulateEvent = function simulateEventFn(el, type, params) {
     bubbles: type != 'mouseleave' && type != 'mouseeenter',
     cancelable: type != 'mousemove' && type != 'mouseleave' && type != 'mouseeenter',
   };
-  let e = new MouseEvent(type, params);
+  var e = new MouseEvent(type, params);
   return el.dispatchEvent(e);
 };
 
@@ -30,17 +30,17 @@ chai.simulateEvent = function simulateEventFn(el, type, params) {
  *     > true
  */
 chai.use(function(chai, utils) {
-  let Assertion = chai.Assertion;
+  var Assertion = chai.Assertion;
   Assertion.addMethod('closeToLatLng', function(actual, delta, message) {
-    let obj = utils.flag(this, 'object');
+    var obj = utils.flag(this, 'object');
 
     delta = delta || 1e-4;
 
     expect(obj).to.have.property('lat');
     expect(obj).to.have.property('lng');
 
-    let lat = new Assertion(obj.lat);
-    let lng = new Assertion(obj.lng);
+    var lat = new Assertion(obj.lat);
+    var lng = new Assertion(obj.lng);
 
     utils.transferFlags(this, lat, false);
     utils.transferFlags(this, lng, false);

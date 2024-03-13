@@ -1,7 +1,7 @@
-describe('L.DistortableImage.Edit', () => {
+describe('L.DistortableImage.Edit', function() {
   let map; let ov;
 
-  beforeEach((done) => {
+  beforeEach(function(done) {
     map = L.map(L.DomUtil.create('div', '', document.body)).setView([41.7896, -87.5996], 15);
 
     ov = L.distortableImageOverlay('/examples/example.jpg', {
@@ -14,18 +14,18 @@ describe('L.DistortableImage.Edit', () => {
     }).addTo(map);
 
     /* Forces the image to load before any tests are run. */
-    L.DomEvent.on(ov.getElement(), 'load', () => { done(); });
+    L.DomEvent.on(ov.getElement(), 'load', function() { done(); });
 
-    afterEach(() => {
+    afterEach(function() {
       L.DomUtil.remove(ov);
     });
   });
 
-  it('Should be initialized along with each instance of L.DistortableImageOverlay.', () => {
+  it('Should be initialized along with each instance of L.DistortableImageOverlay.', function() {
     expect(ov.editing).to.be.an.instanceOf(L.DistortableImage.Edit);
   });
 
-  it('Should keep handles on the map in sync with the corners of the image.', () => {
+  it('Should keep handles on the map in sync with the corners of the image.', function() {
     const corners = ov.getCorners();
     const edit = ov.editing;
     edit.enable();
@@ -35,20 +35,20 @@ describe('L.DistortableImage.Edit', () => {
     ov.setCorner(0, L.latLng(41.7934, -87.6252));
 
     /* Warp handles are currently on the map; they should have been updated. */
-    edit._distortHandles.eachLayer((handle) => {
+    edit._distortHandles.eachLayer(function(handle) {
       expect(handle.getLatLng()).to.be.closeToLatLng(corners[handle._corner]);
     });
 
     edit._freeRotateMode();
 
     /* After we toggle modes, the freeRotateHandles are on the map and should be synced. */
-    edit._freeRotateHandles.eachLayer((handle) => {
+    edit._freeRotateHandles.eachLayer(function(handle) {
       expect(handle.getLatLng()).to.be.closeToLatLng(corners[handle._corner]);
     });
   });
 
-  describe('#replaceTool', () => {
-    it('It should replace an existing action', () => {
+  describe('#replaceTool', function() {
+    it('It should replace an existing action', function() {
       const old = ov.editing.editActions[0];
       const next = ov.editing.editActions[1];
       const edit = ov.editing;
@@ -62,7 +62,7 @@ describe('L.DistortableImage.Edit', () => {
       expect(edit.editActions[0]).to.equal(next);
     });
 
-    it('It should do nothing if the first parameter does not exist', () => {
+    it('It should do nothing if the first parameter does not exist', function() {
       const old = ov.editing.editActions[0];
       const next = ov.editing.editActions[1];
       const edit = ov.editing;
@@ -75,7 +75,7 @@ describe('L.DistortableImage.Edit', () => {
       expect(edit.hasTool(next)).to.be.true;
     });
 
-    it('It should do nothing if the second parameter already exists', () => {
+    it('It should do nothing if the second parameter already exists', function() {
       const old = ov.editing.editActions[0];
       const next = ov.editing.editActions[1];
       const edit = ov.editing;
@@ -86,7 +86,7 @@ describe('L.DistortableImage.Edit', () => {
       expect(edit.hasTool(next)).to.be.true;
     });
 
-    it('Should add the new action to the image\'s `modes` if it is also a mode', (done) => {
+    it('Should add the new action to the image\'s `modes` if it is also a mode', function(done) {
       const old = L.ScaleAction;
       const next = L.DragAction;
 
@@ -94,7 +94,7 @@ describe('L.DistortableImage.Edit', () => {
         actions: [old],
       }).addTo(map);
 
-      L.DomEvent.on(ov3.getElement(), 'load', () => {
+      L.DomEvent.on(ov3.getElement(), 'load', function() {
         const edit = ov3.editing;
         expect(edit.hasMode('scale')).to.be.true;
         expect(edit.hasMode('drag')).to.be.false;
@@ -109,8 +109,8 @@ describe('L.DistortableImage.Edit', () => {
     });
   });
 
-  describe('#_deselect', () => {
-    it('It should hide an unlocked image\'s handles by updating their opacity', () => {
+  describe('#_deselect', function() {
+    it('It should hide an unlocked image\'s handles by updating their opacity', function() {
       const edit = ov.editing;
 
       edit.enable();
@@ -118,7 +118,7 @@ describe('L.DistortableImage.Edit', () => {
       map.getContainer().click();
 
       const handleState = [];
-      edit._handles.distort.eachLayer((handle) => {
+      edit._handles.distort.eachLayer(function(handle) {
         const icon = handle.getElement();
         handleState.push(L.DomUtil.getStyle(icon, 'opacity'));
       });
@@ -126,7 +126,7 @@ describe('L.DistortableImage.Edit', () => {
       expect(handleState).to.deep.equal(['0', '0', '0', '0']);
     });
 
-    it('But it should not hide a locked image\'s handles', () => {
+    it('But it should not hide a locked image\'s handles', function() {
       const edit = ov.editing;
 
       edit.enable();
@@ -136,7 +136,7 @@ describe('L.DistortableImage.Edit', () => {
       map.getContainer().click();
 
       const lockHandleState = [];
-      edit._handles.lock.eachLayer((handle) => {
+      edit._handles.lock.eachLayer(function(handle) {
         const icon = handle.getElement();
         lockHandleState.push(L.DomUtil.getStyle(icon, 'opacity'));
       });
@@ -144,7 +144,7 @@ describe('L.DistortableImage.Edit', () => {
       expect(lockHandleState).to.deep.equal(['1', '1', '1', '1']);
     });
 
-    it('Should remove an image\'s individual toolbar instance regardless of lock handles', () => {
+    it('Should remove an image\'s individual toolbar instance regardless of lock handles', function() {
       const edit = ov.editing;
 
       edit.enable();
@@ -159,14 +159,14 @@ describe('L.DistortableImage.Edit', () => {
       map.getContainer().click();
 
       // we deselect after 3ms to confirm the click wasn't a dblclick
-      setTimeout(() => {
+      setTimeout(function() {
         expect(edit.toolbar).to.be.false;
       }, 3000);
     });
   });
 
-  describe('#nextMode', () => {
-    it('Should update image\'s mode to the next in its modes array', () => {
+  describe('#nextMode', function() {
+    it('Should update image\'s mode to the next in its modes array', function() {
       const edit = ov.editing;
       const modes = Object.keys(edit.getModes());
 
@@ -177,17 +177,17 @@ describe('L.DistortableImage.Edit', () => {
       expect(newIdx).to.equal((idx + 1) % modes.length);
     });
 
-    it('Will also select the image when triggerd by dblclick', () => {
+    it('Will also select the image when triggerd by dblclick', function() {
       ov.deselect();
       expect(ov.isSelected()).to.be.false;
 
       chai.simulateEvent(ov.getElement(), 'dblclick');
-      setTimeout(() => {
+      setTimeout(function() {
         expect(ov.isSelected()).to.be.true;
       }, 3000);
     });
 
-    it('It prevents dblclick events from propagating to the map', () => {
+    it('It prevents dblclick events from propagating to the map', function() {
       const overlaySpy = sinon.spy();
       const mapSpy = sinon.spy();
 
@@ -196,7 +196,7 @@ describe('L.DistortableImage.Edit', () => {
 
       chai.simulateEvent(ov.getElement(), 'dblclick');
 
-      setTimeout(() => {
+      setTimeout(function() {
         expect(ov.editing.nextMode).to.have.been.called;
         expect(L.DomEvent.stop).to.have.been.called;
 
@@ -205,19 +205,19 @@ describe('L.DistortableImage.Edit', () => {
       }, 3000);
     });
 
-    it('Should call #setMode', () => {
+    it('Should call #setMode', function() {
       const edit = ov.editing;
       const spy = sinon.spy(edit, 'setMode');
       chai.simulateEvent(ov.getElement(), 'dblclick');
       expect(spy.called).to.be.ok;
     });
 
-    it('Will still update the mode of an initialized image with suppressToolbar: true', (done) => {
+    it('Will still update the mode of an initialized image with suppressToolbar: true', function(done) {
       const ov2 = L.distortableImageOverlay('/examples/example.jpg', {
         suppressToolbar: true,
       }).addTo(map);
 
-      L.DomEvent.on(ov2.getElement(), 'load', () => {
+      L.DomEvent.on(ov2.getElement(), 'load', function() {
         const edit = ov2.editing;
         const modes = Object.keys(edit.getModes());
         const mode = edit.getMode();
@@ -233,32 +233,32 @@ describe('L.DistortableImage.Edit', () => {
     });
   });
 
-  describe('#setMode', () => {
-    it('Will return undefined if the passed value is not in the image\'s modes array', () => {
+  describe('#setMode', function() {
+    it('Will return undefined if the passed value is not in the image\'s modes array', function() {
       const edit = ov.editing;
       expect(edit.setMode('lock')).to.be.ok;
       expect(edit.setMode('blah')).to.be.undefined;
     });
 
-    it('Will return undefined if image editing is not enabled', () => {
+    it('Will return undefined if image editing is not enabled', function() {
       const edit = ov.editing;
       edit.disable();
       expect(edit.setMode('lock')).to.be.undefined;
     });
 
-    it('Will return undefined if the passed mode is already the image\'s mode', () => {
+    it('Will return undefined if the passed mode is already the image\'s mode', function() {
       const edit = ov.editing;
       edit.setMode('distort');
       expect(edit.setMode('lock')).to.be.ok;
       expect(edit.setMode('lock')).to.be.undefined;
     });
 
-    it('Will still update the mode of an initialized image with suppressToolbar: true', (done) => {
+    it('Will still update the mode of an initialized image with suppressToolbar: true', function(done) {
       const ov2 = L.distortableImageOverlay('/examples/example.jpg', {
         suppressToolbar: true,
       }).addTo(map);
 
-      L.DomEvent.on(ov2.getElement(), 'load', () => {
+      L.DomEvent.on(ov2.getElement(), 'load', function() {
         const edit = ov2.editing;
         expect(edit.toolbar).to.be.undefined;
         expect(edit.getMode()).to.not.eql('lock');

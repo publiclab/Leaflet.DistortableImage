@@ -53,20 +53,15 @@ const config = {
     ],
   },
   devServer: {
-    static: {
-      directory: path.join(__dirname, '/'),
-    },
     host: 'localhost',
     port: 8081,
     hot: true,
-    open: ['examples/index.html'],
-    devMiddleware: {
-      publicPath: '/dist/',
-      writeToDisk: true,
-    },
-    client: {
-      logging: "none",
-    },
+    writeToDisk: true,
+    inline: true,
+    open: true,
+    openPage: 'examples/index.html',
+    publicPath: '/dist/',
+    clientLogLevel: 'silent',
   },
   devtool: 'source-map',
   stats: 'errors-only',

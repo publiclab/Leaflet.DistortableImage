@@ -12,7 +12,7 @@ L.UnlockAction = L.EditAction.extend({
   },
 
   addHooks() {
-    const edit = this._overlay.editing;
+    var edit = this._overlay.editing;
     edit._unlockGroup();
   },
 });

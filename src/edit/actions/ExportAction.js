@@ -1,8 +1,8 @@
 L.ExportAction = L.EditAction.extend({
   // This function is executed every time we select an image
-  initialize(map, overlay, options) {
-    const edit = overlay.editing;
-    let tooltip;
+  initialize: function(map, overlay, options) {
+    var edit = overlay.editing;
+    var tooltip;
 
     this.isExporting = false;
     this.mouseLeaveSkip = true;
@@ -26,8 +26,8 @@ L.ExportAction = L.EditAction.extend({
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
-  addHooks() {
-    const edit = this._overlay.editing;
+  addHooks: function() {
+    var edit = this._overlay.editing;
 
     if (edit instanceof L.DistortableImage.Edit) {
       edit._getExport();
@@ -41,7 +41,7 @@ L.ExportAction = L.EditAction.extend({
       this.isHooksExecuted = true;
     }
 
-    const exportTool = this._link.parentElement;
+    var exportTool = this._link.parentElement;
 
     this.mouseEnterHandler = this.handleMouseEnter.bind(this);
     this.mouseLeaveHandler = this.handleMouseLeave.bind(this);
@@ -71,47 +71,47 @@ L.ExportAction = L.EditAction.extend({
     }, this);
   },
 
-  resetState() {
+  resetState: function() {
     this.renderDownloadIcon();
     this.isExporting = false;
     this.mouseLeaveSkip = true;
   },
 
-  attachMouseEventListeners(element) {
+  attachMouseEventListeners: function(element) {
     element.addEventListener('mouseenter', this.mouseEnterHandler);
     element.addEventListener('mouseleave', this.mouseLeaveHandler);
   },
 
-  detachMouseEventListeners(element) {
+  detachMouseEventListeners: function(element) {
     element.removeEventListener('mouseenter', this.mouseEnterHandler);
     element.removeEventListener('mouseleave', this.mouseLeaveHandler);
   },
 
-  handleMouseEnter() {
+  handleMouseEnter: function() {
     this.renderCancelIcon();
   },
 
-  handleMouseLeave() {
-    if (this.mouseLeaveSkip) {
-      this.mouseLeaveSkip = false;
-    } else {
+  handleMouseLeave: function() {
+    if (!this.mouseLeaveSkip) {
       this.renderExportIcon();
+    } else {
+      this.mouseLeaveSkip = false;
     }
   },
 
-  renderDownloadIcon() {
+  renderDownloadIcon: function() {
     L.IconUtil.toggleXlink(this._link, 'get_app', 'spinner');
     L.IconUtil.toggleTitle(this._link, 'Export Images', 'Loading...');
     L.DomUtil.removeClass(this._link.firstChild, 'loader');
   },
 
-  renderExportIcon() {
+  renderExportIcon: function() {
     L.IconUtil.toggleXlink(this._link, 'spinner');
     L.IconUtil.toggleTitle(this._link, 'Export Images', 'Loading...');
     L.IconUtil.addClassToSvg(this._link, 'loader');
   },
 
-  renderCancelIcon() {
+  renderCancelIcon: function() {
     L.IconUtil.toggleXlink(this._link, 'cancel');
     L.IconUtil.toggleTitle(this._link, 'Cancel Export', 'Loading...');
     L.DomUtil.removeClass(this._link.firstChild, 'loader');

@@ -207,6 +207,7 @@ L.DistortableCollection.Edit = L.Handler.extend({
     const map = group._map;
 
     if (group.options.suppressToolbar || this.toolbar) { return; }
+
     this.toolbar = L.distortableImage.controlBar({
       actions: this.editActions,
       position: 'topleft',

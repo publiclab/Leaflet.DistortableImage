@@ -2,8 +2,8 @@
 L.EXIF = function getEXIFdata(img) {
   if (Object.keys(EXIF.getAllTags(img)).length !== 0) {
     console.log(EXIF.getAllTags(img));
-    const GPS = EXIF.getAllTags(img);
-    let altitude;
+    var GPS = EXIF.getAllTags(img);
+    var altitude;
 
     /* If the lat/lng is available. */
     if (
@@ -12,11 +12,11 @@ L.EXIF = function getEXIFdata(img) {
     ) {
       // sadly, encoded in [degrees,minutes,seconds]
       // primitive value = GPS.GPSLatitude[x].numerator
-      let lat =
+      var lat =
         GPS.GPSLatitude[0] +
         GPS.GPSLatitude[1] / 60 +
         GPS.GPSLatitude[2] / 3600;
-      let lng =
+      var lng =
         GPS.GPSLongitude[0] +
         GPS.GPSLongitude[1] / 60 +
         GPS.GPSLongitude[2] / 3600;
@@ -32,7 +32,7 @@ L.EXIF = function getEXIFdata(img) {
     // Attempt to use GPS compass heading; will require
     // some trig to calc corner points, which you can find below:
 
-    let angle = 0;
+    var angle = 0;
     // "T" refers to "True north", so -90.
     if (GPS.GPSImgDirectionRef === 'T') {
       angle =

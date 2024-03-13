@@ -48,8 +48,8 @@ L.Map.DoubleClickZoom.include({
   },
 
   _fireIfSingle(e) {
-    const map = this._map;
-    const oe = e.originalEvent;
+    var map = this._map;
+    var oe = e.originalEvent;
 
     // prevents deselection in case of box selector
     if (oe && oe.shiftKey) { return; }
@@ -62,9 +62,9 @@ L.Map.DoubleClickZoom.include({
       } else {
         // manually fire doubleclick event only for touch screens that don't natively fire it
         if (L.Browser.touch && (oe && oe.sourceCapabilities.firesTouchEvents)) {
-          /*  in `DoubleClickLabels.js`, we just do map.fire('dblclick') bc `_onDoublClick` doesn't use the
-          passed "e" (for now). To generate a 'real' DOM event that will have all of its corresponding core
-          properties (originalEvent, latlng, etc.), use Leaflet's `#map._fireDOMEvent` (Leaflet 1.5.1 source) */
+          // in `DoubleClickLabels.js`, we just do map.fire('dblclick') bc `_onDoublClick` doesn't use the
+          // passed "e" (for now). To generate a 'real' DOM event that will have all of its corresponding core
+          // properties (originalEvent, latlng, etc.), use Leaflet's `#map._fireDOMEvent` (Leaflet 1.5.1 source)
           map._fireDOMEvent(oe, 'dblclick', [map]);
         }
       }
@@ -72,8 +72,8 @@ L.Map.DoubleClickZoom.include({
   },
 
   _onDoubleClick(e) {
-    const map = this._map;
-    const oe = e.originalEvent;
+    var map = this._map;
+    var oe = e.originalEvent;
 
     setTimeout(function() {
       map._clicked = 0;
@@ -82,9 +82,9 @@ L.Map.DoubleClickZoom.include({
 
     if (!oe) { return false; }
 
-    const oldZoom = map.getZoom();
-    const delta = map.options.zoomDelta;
-    const zoom = oe.shiftKey ? oldZoom - delta : oldZoom + delta;
+    var oldZoom = map.getZoom();
+    var delta = map.options.zoomDelta;
+    var zoom = oe.shiftKey ? oldZoom - delta : oldZoom + delta;
 
     if (map.options.doubleClickZoom === 'center') {
       map.setZoom(zoom);

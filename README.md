@@ -7,10 +7,6 @@
 
 A Leaflet extension to distort images -- "rubbersheeting" -- for the [MapKnitter.org](http://mapknitter.org) ([src](https://github.com/publiclab/mapknitter)) image georectification service by [Public Lab](http://publiclab.org). Leaflet.DistortableImage allows for perspectival distortions of images, client-side, using CSS3 transformations in the DOM.
 
-Begin running (and contributing to) this codebase immediately with [GitPod](https://gitpod.io):
-
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/publiclab/Leaflet.DistortableImage)
-
 Advantages include:
 
 * It can handle over 100 images smoothly, even on a smartphone
@@ -31,10 +27,6 @@ npm i leaflet-distortableimage
 ## Compatibility with Leaflet versions
 
 Compatible with Leaflet 1.0.0 and greater
-
- ### MapKnitter Lite 
-
-Check out an early prototype of the [Mapknitter Lite project](https://publiclab.github.io/Leaflet.DistortableImage/examples/archive)
 
 ## Demo
 
@@ -77,7 +69,7 @@ map.whenReady(function() {
 * [rotation](#rotation)
 * [selected](#selected)
 * [suppressToolbar](#Suppress-Toolbar)
-* [tooltipText](#Tooltip-Text)
+
 ### Actions
 
 * `actions` (*optional*, default: [`L.DragAction`, `L.ScaleAction`, `L.DistortAction`, `L.RotateAction`, `L.FreeRotateAction`, `L.LockAction`, `L.OpacityAction`, `L.BorderAction`, `L.ExportAction`, `L.DeleteAction`], value: *array*)
@@ -169,7 +161,7 @@ Values available to pass to `mode` are:
 * **freeRotate**: Combines the rotate and scale modes into one.
 * **lock**: Locks the image in place. Disables any user gestures, toolbar actions, or hotkeys that are not associated with mode. Exception: `L.ExportAction` will still be enabled.
 
-In the below example, the image will be initialized with "freeRotate" handles:
+In the below example, the image will be initialiazed with "freeRotate" handles:
 
 ```js
 img = L.distortableImageOverlay('example.jpg', {
@@ -331,22 +323,10 @@ img2 = L.distortableImageOverlay('example.jpg', {
 
 // suppress collection toolbar accessed during multi-image selection
 imgGroup = L.distortableCollection({
-  suppressToolbar: true,
+  supressToolbar: true,
 }).addTo(map);
 ```
-  ### Tooltip Text
-  `tooltipText` (*optional*, default: '', value: *string*)
-This provides the flexibility to add tooltip text to every image placed on the tile layer.
 
-  For ex.
-
-  ```js
-  // Sets up tooltip text for an image, the text is displayed when mouse is placed on it
-  img = L.distortableImageOverlay(
-         'example.jpg', 
-         {tooltipText: 'Sample text'}
-  );
-  ```
 ### UI and functionalities
 
 Currently it supports multiple image selection and translations, and WIP we are working on porting all editing tools to work for it, such as opacity, etc. Image distortions (via modes) still use the single-image interface.
@@ -726,30 +706,6 @@ A collection instance made up of a group of images. Images can be "collected" in
 <ul><li>Returns true if any <code>L.DistortableImageOverlay</code> instances are collected.</li></ul>
 </details>
 
-Retrieve image from Json file containing image property set. The property set can be used to instantiate new imageOverlays.  
-<details><summary><code><b>recreateImagesFromJsonUrl(string)</b>: {avg_cm_per_pixel <string>, imgCollectionProps<{}>}</code></summary>
-<ul><li>Returns imageCollectionIbject if successful or empty object if unsuccessful</li></ul>
-
-Example<br>
-// 1. Instantiate an empty `distortableCollection`<br>
-<code>imgGroup = L.distortableCollection().addTo(map);</code>
-
-// 2. Get property set for each of the images<br> 
-<code>const imageCollectionObj = await map.imgGroup.recreateImagesFromJsonUrl(jsonDownloadURL);</code>
-
-Note: <code>jsonDownloadUrl</code> must be in either of these formats:<br>
-	i. https://archive.org/download/mkl-2-2/mkl-2-2.json (for json files generated from Mapknitter-Lite)<br>
-		- "mkl-2-2" is the identifier provided by Internet Archive after a file is uploaded to the service (i.e., archive.org)<br>
-		- "mkl-2-2.json" name of the Json file    
-	ii. https://archive.org/download/mapknitter/--10.json (for json files from legacy mapknitter.org)<br>
-		- "mapknitter" is the path for all the legacy Json files and must be present in the URL<br>
-		- "--10.json" is th name of the Json file<br>
-	
-// 3. Iterate through each of the property sets, extract the imageURL, tooltipText and corners imageCollectionObj then place each of them on the tile map using:  
-<code>image = L.distortableImageOverlay(imageURL,{tooltipText, corners});</code><br>
-<code>map.imgGroup.addLayer(image);</code><br>
-</details>
-	
 ---
 
 `L.DistortableCollection.Edit`

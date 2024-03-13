@@ -8,7 +8,7 @@ L.Map.mergeOptions({
  * our `L.DistortableCollection` class instead of a zoom box.
  * */
 L.Map.BoxCollector = L.Map.BoxZoom.extend({
-  initialize(map) {
+  initialize: function(map) {
     this._map = map;
     this._container = map._container;
     this._pane = map._panes.overlayPane;
@@ -16,36 +16,36 @@ L.Map.BoxCollector = L.Map.BoxZoom.extend({
     map.on('unload', this._destroy, this);
   },
 
-  addHooks() {
+  addHooks: function() {
     L.DomEvent.on(this._container, 'mousedown', this._onMouseDown, this);
   },
 
-  removeHooks() {
+  removeHooks: function() {
     L.DomEvent.off(this._container, 'mousedown', this._onMouseDown, this);
   },
 
-  moved() {
+  moved: function() {
     return this._moved;
   },
 
-  _destroy() {
+  _destroy: function() {
     L.DomUtil.remove(this._pane);
     delete this._pane;
   },
 
-  _resetState() {
+  _resetState: function() {
     this._resetStateTimeout = 0;
     this._moved = false;
   },
 
-  _clearDeferredResetState() {
+  _clearDeferredResetState: function() {
     if (this._resetStateTimeout !== 0) {
       clearTimeout(this._resetStateTimeout);
       this._resetStateTimeout = 0;
     }
   },
 
-  _onMouseDown(e) {
+  _onMouseDown: function(e) {
     if (!e.shiftKey || (e.which !== 1 && e.button !== 1)) {
       return false;
     }
@@ -67,7 +67,7 @@ L.Map.BoxCollector = L.Map.BoxZoom.extend({
     }, this);
   },
 
-  _onMouseMove(e) {
+  _onMouseMove: function(e) {
     if (!this._moved) {
       this._moved = true;
 
@@ -80,7 +80,7 @@ L.Map.BoxCollector = L.Map.BoxZoom.extend({
     this._point = this._map.mouseEventToContainerPoint(e);
 
     this._bounds = L.bounds(this._startPoint, this._point);
-    const size = this._bounds.getSize();
+    var size = this._bounds.getSize();
 
     L.DomUtil.setPosition(this._box, this._bounds.min);
 
@@ -88,7 +88,7 @@ L.Map.BoxCollector = L.Map.BoxZoom.extend({
     this._box.style.height = size.y + 'px';
   },
 
-  _finish() {
+  _finish: function() {
     if (this._moved) {
       L.DomUtil.remove(this._box);
       L.DomUtil.removeClass(this._container, 'leaflet-crosshair');
@@ -104,7 +104,7 @@ L.Map.BoxCollector = L.Map.BoxZoom.extend({
     }, this);
   },
 
-  _onMouseUp(e) {
+  _onMouseUp: function(e) {
     if (e.which !== 1 && e.button !== 1) {
       return;
     }
@@ -119,13 +119,13 @@ L.Map.BoxCollector = L.Map.BoxZoom.extend({
     this._resetStateTimeout = setTimeout(
         L.Util.bind(this._resetState, this), 0);
 
-    let bounds = L.latLngBounds(
+    var bounds = L.latLngBounds(
         this._map.containerPointToLatLng(this._bounds.getBottomLeft()),
         this._map.containerPointToLatLng(this._bounds.getTopRight())
     );
 
-    const zoom = this._map.getZoom();
-    const center = this._map.getCenter();
+    var zoom = this._map.getZoom();
+    var center = this._map.getCenter();
 
     // calls the `project` method but 1st updates the pixel origin - see https://github.com/publiclab/Leaflet.DistortableImage/pull/344
     bounds = this._map._latLngBoundsToNewLayerBounds(bounds, zoom, center);

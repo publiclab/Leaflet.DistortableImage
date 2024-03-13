@@ -1,31 +1,28 @@
-const webpackConfig = require("./webpack.config.js");
+const webpackConfig = require('./webpack.config.js');
 
-module.exports = (grunt) => {
+module.exports = function(grunt) {
   // load npm tasks for grunt-* libs, excluding grunt-cli
-  require("matchdep")
-    .filterDev("{grunt,gruntify}-*")
-    .filter((pkg) => {
-      return ["grunt-cli"].indexOf(pkg) < 0;
-    })
-    .forEach(grunt.loadNpmTasks);
+  require('matchdep').filterDev('{grunt,gruntify}-*').filter(function(pkg) {
+    return ['grunt-cli'].indexOf(pkg) < 0;
+  }).forEach(grunt.loadNpmTasks);
 
   grunt.initConfig({
-    pkg: grunt.file.readJSON("package.json"),
+    pkg: grunt.file.readJSON('package.json'),
 
     webpack: {
       myConfig: webpackConfig,
     },
 
     eslint: {
-      src: ["src/**/*.js", "test/**/*.js"],
+      src: ['src/**/*.js', 'test/**/*.js'],
     },
 
     karma: {
       development: {
-        configFile: "test/karma.conf.js",
+        configFile: 'test/karma.conf.js',
       },
       test: {
-        configFile: "test/karma.conf.js",
+        configFile: 'test/karma.conf.js',
       },
     },
 
@@ -35,10 +32,10 @@ module.exports = (grunt) => {
         files: [
           {
             expand: true,
-            cwd: "assets/icons/svg",
-            src: ["*.svg"],
-            dest: "assets/icons/svg-min/",
-            ext: ".svg",
+            cwd: 'assets/icons/svg',
+            src: ['*.svg'],
+            dest: 'assets/icons/svg-min/',
+            ext: '.svg',
           },
         ],
       },
@@ -49,7 +46,7 @@ module.exports = (grunt) => {
           { removeTitle: true }, // "leaflet-toolbar" lets us specify the title attribute later
           {
             removeAttrs: {
-              attrs: ["xmlns", "fill"],
+              attrs: ['xmlns', 'fill'],
             },
           },
         ],
@@ -62,14 +59,14 @@ module.exports = (grunt) => {
       },
       dist: {
         expand: true,
-        cwd: "assets/icons/svg-min/",
-        src: ["*.svg"],
-        dest: "assets/icons/",
+        cwd: 'assets/icons/svg-min/',
+        src: ['*.svg'],
+        dest: 'assets/icons/',
         options: {
-          log: "info",
+          log: 'info',
           mode: {
             symbol: {
-              sprite: "sprite.symbol.svg",
+              sprite: 'sprite.symbol.svg',
               example: true,
             },
           },
@@ -82,53 +79,46 @@ module.exports = (grunt) => {
         livereload: true,
       },
       source: {
-        files: ["src/**/*.js", "test/**/*.js", "Gruntfile.js"],
-        tasks: ["eslint", "karma:development:start"],
+        files: ['src/**/*.js', 'test/**/*.js', 'Gruntfile.js'],
+        tasks: ['eslint', 'karma:development:start'],
       },
     },
   });
 
   /* Run tests once. */
-  grunt.registerTask("test", ["eslint", "karma:test"]);
+  grunt.registerTask('test', ['eslint', 'karma:test']);
 
-  grunt.registerTask("build", [
-    "eslint",
-    "karma:development:start",
-    "coverage",
-
-    "webpack",
+  grunt.registerTask('build', [
+    'eslint',
+    'karma:development:start',
+    'coverage',
+    'webpack',
   ]);
 
   // recompile svg icon sprite
-  grunt.registerTask("icons", ["svgmin", "svg_sprite"]);
+  grunt.registerTask('icons', ['svgmin', 'svg_sprite']);
 
-  grunt.registerTask(
-    "coverage",
-    "CLI reporter for karma-coverage",
-    () => {
-      let coverageReports = grunt.file.expand("coverage/*/coverage.txt");
-      let reports = {};
-      let report;
-      let i;
-      let len;
+  grunt.registerTask('coverage', 'CLI reporter for karma-coverage', function() {
+    var coverageReports = grunt.file.expand('coverage/*/coverage.txt');
+    var reports = {};
+    var report; var i; var len;
 
-      for (i = 0, len = coverageReports.length; i < len; i++) {
-        report = grunt.file.read(coverageReports[i]);
-        if (!reports[report]) {
-          reports[report] = [coverageReports[i]];
-        } else {
-          reports[report].push(coverageReports[i]);
-        }
-      }
-
-      for (report in reports) {
-        if (reports.hasOwnProperty(report)) {
-          for (i = 0, len = reports[report].length; i < len; i++) {
-            grunt.log.writeln(reports[report][i]);
-          }
-          grunt.log.writeln(report);
-        }
+    for (i = 0, len = coverageReports.length; i < len; i++) {
+      report = grunt.file.read(coverageReports[i]);
+      if (!reports[report]) {
+        reports[report] = [coverageReports[i]];
+      } else {
+        reports[report].push(coverageReports[i]);
       }
     }
-  );
+
+    for (report in reports) {
+      if (reports.hasOwnProperty(report)) {
+        for (i = 0, len = reports[report].length; i < len; i++) {
+          grunt.log.writeln(reports[report][i]);
+        }
+        grunt.log.writeln(report);
+      }
+    }
+  });
 };

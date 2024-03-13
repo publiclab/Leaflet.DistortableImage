@@ -1,7 +1,7 @@
 L.RestoreAction = L.EditAction.extend({
-  initialize(map, overlay, options) {
-    const mode = L.Utils.getNestedVal(overlay, 'editing', '_mode');
-    const edited = overlay.edited;
+  initialize: function(map, overlay, options) {
+    var mode = L.Utils.getNestedVal(overlay, 'editing', '_mode');
+    var edited = overlay.edited;
 
     options = options || {};
     options.toolbarIcon = {
@@ -14,8 +14,8 @@ L.RestoreAction = L.EditAction.extend({
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
-  addHooks() {
-    const ov = this._overlay;
+  addHooks: function() {
+    var ov = this._overlay;
 
     L.DomEvent.on(ov, {
       edit: this._enableAction,

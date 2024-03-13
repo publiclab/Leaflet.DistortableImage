@@ -11,12 +11,12 @@ L.ScaleHandle = L.EditHandle.extend({
   },
 
   _onHandleDrag() {
-    const overlay = this._handled;
-    const map = overlay._map;
-    let edgeMinWidth = overlay.edgeMinWidth;
-    const formerLatLng = overlay.getCorner(this._corner);
-    const newLatLng = this.getLatLng();
-    const scale = this._calculateScalingFactor(formerLatLng, newLatLng);
+    var overlay = this._handled;
+    var map = overlay._map;
+    var edgeMinWidth = overlay.edgeMinWidth;
+    var formerLatLng = overlay.getCorner(this._corner);
+    var newLatLng = this.getLatLng();
+    var scale = this._calculateScalingFactor(formerLatLng, newLatLng);
 
     /*
      * checks whether the "edgeMinWidth" property is set and tracks the minimum edge length;
@@ -24,11 +24,11 @@ L.ScaleHandle = L.EditHandle.extend({
      */
 
     if (!edgeMinWidth) { edgeMinWidth = 50; } /* just in case */
-    const corner1 = map.latLngToLayerPoint(overlay.getCorner(0));
-    const corner2 = map.latLngToLayerPoint(overlay.getCorner(1));
-    const w = Math.abs(corner1.x - corner2.x);
-    const h = Math.abs(corner1.y - corner2.y);
-    const distance = Math.sqrt(w * w + h * h);
+    var corner1 = map.latLngToLayerPoint(overlay.getCorner(0));
+    var corner2 = map.latLngToLayerPoint(overlay.getCorner(1));
+    var w = Math.abs(corner1.x - corner2.x);
+    var h = Math.abs(corner1.y - corner2.y);
+    var distance = Math.sqrt(w * w + h * h);
 
     if (distance > edgeMinWidth || scale > 1) {
       overlay.scaleBy(scale);

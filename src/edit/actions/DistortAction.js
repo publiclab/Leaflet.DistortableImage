@@ -1,5 +1,5 @@
 L.DistortAction = L.EditAction.extend({
-  initialize(map, overlay, options) {
+  initialize: function(map, overlay, options) {
     options = options || {};
     options.toolbarIcon = {
       svg: true,
@@ -12,8 +12,8 @@ L.DistortAction = L.EditAction.extend({
     L.EditAction.prototype.initialize.call(this, map, overlay, options);
   },
 
-  addHooks() {
-    const edit = this._overlay.editing;
+  addHooks: function() {
+    var edit = this._overlay.editing;
     edit._distortMode();
   },
 });

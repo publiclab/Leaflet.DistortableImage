@@ -1,4 +1,3 @@
-const arr = [];
 L.DistortableCollection = L.FeatureGroup.extend({
   options: {
     editable: true,
@@ -9,7 +8,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     },
   },
 
-  initialize(options) {
+  initialize: function(options) {
     L.setOptions(this, options);
     L.FeatureGroup.prototype.initialize.call(this, options);
     L.Utils.initTranslation.call(this);
@@ -17,7 +16,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     this.editable = this.options.editable;
   },
 
-  onAdd(map) {
+  onAdd: function(map) {
     L.FeatureGroup.prototype.onAdd.call(this, map);
 
     this._map = map;
@@ -32,14 +31,15 @@ L.DistortableCollection = L.FeatureGroup.extend({
     this.on('layerremove', this._removeEvents, this);
   },
 
-  onRemove() {
+  onRemove: function() {
     if (this.editing) { this.editing.disable(); }
+
     this.off('layeradd', this._addEvents, this);
     this.off('layerremove', this._removeEvents, this);
   },
 
-  _addEvents(e) {
-    const layer = e.layer;
+  _addEvents: function(e) {
+    var layer = e.layer;
 
     L.DomEvent.on(layer, {
       dragstart: this._dragStartMultiple,
@@ -53,8 +53,8 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
   },
 
-  _removeEvents(e) {
-    const layer = e.layer;
+  _removeEvents: function(e) {
+    var layer = e.layer;
 
     L.DomEvent.off(layer, {
       dragstart: this._dragStartMultiple,
@@ -67,13 +67,13 @@ L.DistortableCollection = L.FeatureGroup.extend({
     }, this);
   },
 
-  _longPressMultiSelect(e) {
+  _longPressMultiSelect: function(e) {
     if (!this.editable) { return; }
 
     e.preventDefault();
 
     this.eachLayer((layer) => {
-      const edit = layer.editing;
+      var edit = layer.editing;
       if (layer.getElement() === e.target && edit.enabled()) {
         L.DomUtil.toggleClass(layer.getElement(), 'collected');
         if (this.anyCollected()) {
@@ -86,30 +86,20 @@ L.DistortableCollection = L.FeatureGroup.extend({
     });
   },
 
-  isCollected(overlay) {
+  isCollected: function(overlay) {
     return L.DomUtil.hasClass(overlay.getElement(), 'collected');
   },
 
-  anyCollected() {
-    const layerArr = this.getLayers();
+  anyCollected: function() {
+    var layerArr = this.getLayers();
     return layerArr.some(this.isCollected.bind(this));
   },
 
-  _toggleCollected(e, layer) {
+  _toggleCollected: function(e, layer) {
     if (e.shiftKey) {
       /* conditional prevents disabled images from flickering multi-select mode */
       if (layer.editing.enabled()) {
         L.DomUtil.toggleClass(e.target, 'collected');
-        // re-order layers by _leaflet_id to match their display order in UI
-        // add new layer to right position and avoid repitition
-        const newArr = arr.every((each) => {
-          return each._leaflet_id !== layer._leaflet_id;
-        });
-        if (newArr) {
-          arr.push(layer);
-        } else {
-          arr.splice(arr.indexOf(layer), 1);
-        }
       }
     }
 
@@ -117,7 +107,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     else { this.editing._removeToolbar(); }
   },
 
-  _deselectOthers(e) {
+  _deselectOthers: function(e) {
     if (!this.editable) { return; }
 
     this.eachLayer((layer) => {
@@ -131,10 +121,10 @@ L.DistortableCollection = L.FeatureGroup.extend({
     if (e) { L.DomEvent.stopPropagation(e); }
   },
 
-  _dragStartMultiple(e) {
-    const overlay = e.target;
-    const map = this._map;
-    let i;
+  _dragStartMultiple: function(e) {
+    var overlay = e.target;
+    var map = this._map;
+    var i;
 
     if (!this.isCollected(overlay)) { return; }
 
@@ -142,49 +132,49 @@ L.DistortableCollection = L.FeatureGroup.extend({
       layer._dragStartPoints = {};
       layer.deselect();
       for (i = 0; i < 4; i++) {
-        const c = layer.getCorner(i);
+        var c = layer.getCorner(i);
         layer._dragStartPoints[i] = map.latLngToLayerPoint(c);
       }
     });
   },
 
-  _dragMultiple(e) {
-    const overlay = e.target;
-    const map = this._map;
+  _dragMultiple: function(e) {
+    var overlay = e.target;
+    var map = this._map;
 
     if (!this.isCollected(overlay)) { return; }
 
-    const topLeft = map.latLngToLayerPoint(overlay.getCorner(0));
-    const delta = overlay._dragStartPoints[0].subtract(topLeft);
+    var topLeft = map.latLngToLayerPoint(overlay.getCorner(0));
+    var delta = overlay._dragStartPoints[0].subtract(topLeft);
 
     this._updateCollectionFromPoints(delta, overlay);
   },
 
-  _toRemove() {
-    const layerArr = this.getLayers();
+  _toRemove: function() {
+    var layerArr = this.getLayers();
 
     return layerArr.filter((layer) => {
-      const mode = layer.editing._mode;
+      var mode = layer.editing._mode;
       return (this.isCollected(layer) && mode !== 'lock');
     });
   },
 
-  _toMove(overlay) {
-    const layerArr = this.getLayers();
+  _toMove: function(overlay) {
+    var layerArr = this.getLayers();
 
     return layerArr.filter((layer) => {
-      const mode = layer.editing._mode;
+      var mode = layer.editing._mode;
       return layer !== overlay && this.isCollected(layer) && mode !== 'lock';
     });
   },
 
-  _updateCollectionFromPoints(delta, overlay) {
-    const layersToMove = this._toMove(overlay);
-    const p = new L.Transformation(1, -delta.x, 1, -delta.y);
-    let i;
+  _updateCollectionFromPoints: function(delta, overlay) {
+    var layersToMove = this._toMove(overlay);
+    var p = new L.Transformation(1, -delta.x, 1, -delta.y);
+    var i;
 
     layersToMove.forEach((layer) => {
-      const movedPoints = {};
+      var movedPoints = {};
       for (i = 0; i < 4; i++) {
         movedPoints[i] = p.transform(layer._dragStartPoints[i]);
       }
@@ -192,93 +182,33 @@ L.DistortableCollection = L.FeatureGroup.extend({
     });
   },
 
-  _getAvgCmPerPixel(imgs) {
-    const reduce = imgs.reduce(function(sum, img) {
+  _getAvgCmPerPixel: function(imgs) {
+    var reduce = imgs.reduce(function(sum, img) {
       return sum + img.cm_per_pixel;
     }, 0);
     return reduce / imgs.length;
   },
 
-  // connects to JSON file and fetches JSON data therein from remote source
-  async fetchRemoteJson(url) {
-    let index = 0;
-    const imgCollectionProps = [];
-
-    try {
-      const response = await axios.get(url);
-      if (response.data.hasOwnProperty('avg_cm_per_pixel')) {
-        if (response.data.collection.length > 1) {
-          response.data.collection.forEach((data) => {
-            imgCollectionProps[index] = data;
-            index++;
-          });
-          return {
-            avg_cm_per_pixel: response.data.avg_cm_per_pixel,
-            imgCollectionProps,
-          };
-        }
-        imgCollectionProps[index] = response.data.collection;
-
-        return {
-          avg_cm_per_pixel: response.data.avg_cm_per_pixel,
-          imgCollectionProps,
-        };
-      } else {
-        if (response.data.length > 1) {
-          response.data.forEach((data) => {
-            imgCollectionProps[index] = data;
-            index++;
-          });
-          return {
-            imgCollectionProps,
-          };
-        }
-        imgCollectionProps[index] = response.data;
-
-        return {
-          imgCollectionProps,
-        };
-      }
-    } catch (err) {
-      console.log('err', err);
-    }
-  },
-
-  // expects url in this format: https://archive.org/download/mkl-1/mkl-1.json
-  async recreateImagesFromJsonUrl(url) {
-    let imageCollectionObj = {};
-
-    if (url) {
-      imageCollectionObj = await this.fetchRemoteJson(url);
-      return imageCollectionObj;
-    };
-
-    return imageCollectionObj;
-  },
-
-  generateExportJson(allImages = false) {
-    const json = {};
+  generateExportJson: function() {
+    var json = {};
     json.images = [];
 
     this.eachLayer(function(layer) {
-      if (allImages || this.isCollected(layer)) {
-        const sections = layer._image.src.split('/');
-        const filename = sections[sections.length - 1];
-        const zc = layer.getCorners();
-
-        const corners = [
-          {lat: zc[0].lat, lon: zc[0].lng || zc[0].lon},
-          {lat: zc[1].lat, lon: zc[1].lng || zc[1].lon},
-          {lat: zc[3].lat, lon: zc[3].lng || zc[3].lon},
-          {lat: zc[2].lat, lon: zc[2].lng || zc[2].lon},
+      if (this.isCollected(layer)) {
+        var sections = layer._image.src.split('/');
+        var filename = sections[sections.length-1];
+        var zc = layer.getCorners();
+        var corners = [
+          {lat: zc[0].lat, lon: zc[0].lng},
+          {lat: zc[1].lat, lon: zc[1].lng},
+          {lat: zc[3].lat, lon: zc[3].lng},
+          {lat: zc[2].lat, lon: zc[2].lng},
         ];
-
         json.images.push({
-          id: layer._leaflet_id,
+          id: this.getLayerId(layer),
           src: layer._image.src,
           width: layer._image.width,
           height: layer._image.height,
-          tooltipText: layer.getTooltipText(),
           image_file_name: filename,
           nodes: corners,
           cm_per_pixel: L.ImageUtil.getCmPerPixel(layer),
@@ -288,6 +218,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     json.images = json.images.reverse();
     json.avg_cm_per_pixel = this._getAvgCmPerPixel(json.images);
+
     return json;
   },
 });

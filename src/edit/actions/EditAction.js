@@ -13,7 +13,7 @@ L.EditAction = L.Toolbar2.Action.extend({
     },
   },
 
-  initialize(map, overlay, options) {
+  initialize: function(map, overlay, options) {
     this._overlay = overlay;
     this._map = map;
 
@@ -23,11 +23,10 @@ L.EditAction = L.Toolbar2.Action.extend({
     this._injectIconSet();
   },
 
-  _createIcon(toolbar, container, args) {
-    const iconOptions = this.options.toolbarIcon;
-    const className = iconOptions.className;
-    const edit = this._overlay.editing;
-    const style = this.options.toolbarIcon.style;
+  _createIcon: function(toolbar, container, args) {
+    var iconOptions = this.options.toolbarIcon;
+    var className = iconOptions.className;
+    var edit = this._overlay.editing;
 
     this.toolbar = toolbar;
     this._icon = L.DomUtil.create('li', '', container);
@@ -41,7 +40,6 @@ L.EditAction = L.Toolbar2.Action.extend({
 
     this._link.setAttribute('href', '#');
     this._link.setAttribute('title', iconOptions.tooltip);
-    if (style) { this._link.setAttribute('style', style); };
     this._link.setAttribute('role', 'button');
 
     L.DomUtil.addClass(this._link, this.constructor.baseClass);
@@ -60,7 +58,7 @@ L.EditAction = L.Toolbar2.Action.extend({
 
     L.DomEvent.on(this._link, 'click', this.enable, this);
     L.DomEvent.on(this._overlay, 'update', () => {
-      const match = this._link.innerHTML.match(/xlink:href="#restore"/);
+      var match = this._link.innerHTML.match(/xlink:href="#restore"/);
       if (match && match.length === 1) { this._enableAction(); }
     });
 
@@ -68,12 +66,12 @@ L.EditAction = L.Toolbar2.Action.extend({
     this._addSubToolbar(toolbar, this._icon, args);
   },
 
-  _injectIconSet() {
+  _injectIconSet: function() {
     if (document.querySelector('#iconset')) {
       return;
     }
 
-    const el = document.createElement('div');
+    var el = document.createElement('div');
     el.id = 'iconset';
     el.setAttribute('hidden', 'hidden');
     el.innerHTML = new L.ToolbarIconSet().render();
@@ -81,12 +79,12 @@ L.EditAction = L.Toolbar2.Action.extend({
     document.querySelector('.leaflet-marker-pane').appendChild(el);
   },
 
-  _enableAction() {
+  _enableAction: function() {
     L.DomUtil.removeClass(this._link.parentElement, 'disabled');
     L.DomUtil.removeClass(this._link, 'disabled');
   },
 
-  _disableAction() {
+  _disableAction: function() {
     L.DomUtil.addClass(this._link.parentElement, 'disabled');
     L.DomUtil.addClass(this._link, 'disabled');
   },

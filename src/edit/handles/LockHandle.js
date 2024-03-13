@@ -10,13 +10,13 @@ L.LockHandle = L.EditHandle.extend({
     }),
   },
 
-  onRemove(map) {
+  onRemove: function(map) {
     this.unbindTooltip();
     L.EditHandle.prototype.onRemove.call(this, map);
   },
 
-  _bindListeners() {
-    const icon = this.getElement();
+  _bindListeners: function() {
+    var icon = this.getElement();
 
     L.EditHandle.prototype._bindListeners.call(this);
 
@@ -28,8 +28,8 @@ L.LockHandle = L.EditHandle.extend({
     L.DomEvent.on(document, 'pointerleave', this._tooltipOff, this);
   },
 
-  _unbindListeners() {
-    const icon = this.getElement();
+  _unbindListeners: function() {
+    var icon = this.getElement();
 
     L.EditHandle.prototype._bindListeners.call(this);
 
@@ -42,23 +42,23 @@ L.LockHandle = L.EditHandle.extend({
   },
 
   /* cannot be dragged */
-  _onHandleDrag() {
+  _onHandleDrag: function() {
   },
 
-  updateHandle() {
+  updateHandle: function() {
     this.setLatLng(this._handled.getCorner(this._corner));
   },
 
-  _tooltipOn(e) {
-    const eP = this._handled.parentGroup;
-    const edit = eP ? eP.editing : this._handled.editing;
+  _tooltipOn: function(e) {
+    var eP = this._handled.parentGroup;
+    var edit = eP ? eP.editing : this._handled.editing;
 
     if (e.shiftKey) { return; }
     if (!this._handled.isSelected() && (eP && !eP.isCollected(this._handled))) {
       return;
     }
 
-    const handlesArr = edit._lockHandles;
+    var handlesArr = edit._lockHandles;
 
     this._timer = setTimeout(L.bind(function() {
       if (this._timeout) { clearTimeout(this._timeout); }
@@ -75,16 +75,16 @@ L.LockHandle = L.EditHandle.extend({
     }, this), 500);
   },
 
-  _tooltipOff(e) {
-    const eP = this._handled.parentGroup;
-    const edit = eP ? eP.editing : this._handled.editing;
+  _tooltipOff: function(e) {
+    var eP = this._handled.parentGroup;
+    var edit = eP ? eP.editing : this._handled.editing;
 
     if (e.shiftKey) { return; }
     if (!this._handled.isSelected() && (eP && !eP.isCollected(this._handled))) {
       return;
     }
 
-    const handlesArr = edit._lockHandles;
+    var handlesArr = edit._lockHandles;
 
     if (e.currentTarget === document) {
       handlesArr.eachLayer(function(handle) {

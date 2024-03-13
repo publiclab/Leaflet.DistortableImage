@@ -51,7 +51,7 @@ describe('L.DistortableImageOverlay', function() {
       const ov2 = L.distortableImageOverlay('/examples/example.jpg', {}).addTo(map);
 
       L.DomEvent.on(ov2.getElement(), 'load', function() {
-        expect(ov2.editing.editActions.length).to.eq(11);
+        expect(ov2.editing.editActions.length).to.eq(10);
         done();
       });
     });

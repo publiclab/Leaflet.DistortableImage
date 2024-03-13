@@ -4,7 +4,7 @@ L.Map.include({
   _clicked: 0,
 
   addGoogleMutant(opts) {
-    const url = 'http://mt0.google.com/vt/lyrs=s&x={x}&y={y}&z={z}';
+    var url = 'http://mt0.google.com/vt/lyrs=s&x={x}&y={y}&z={z}';
 
     opts = this.mutantOptions = L.extend({
       mutantOpacity: 0.8,
@@ -40,7 +40,7 @@ L.Map.include({
   },
 
   _addLabels(opts) {
-    const url = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner-labels/{z}/{x}/{y}{r}.{ext}';
+    var url = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner-labels/{z}/{x}/{y}{r}.{ext}';
 
     if (opts.labelOpacity !== 0 && opts.labelOpacity !== 1) {
       opts.labelOpacity = 1;

@@ -1,6 +1,6 @@
 L.Utils = {
   initTranslation() {
-    const translation = {
+    var translation = {
       deleteImage: 'Delete Image',
       deleteImages: 'Delete Images',
       distortImage: 'Distort Image',
@@ -31,7 +31,7 @@ L.Utils = {
       this.options.translation = translation;
     } else {
       // If the translation for a word is not specified, fallback to English.
-      for (const key in translation) {
+      for (var key in translation) {
         if (!this.options.translation.hasOwnProperty(key)) {
           this.options.translation[key] = translation[key];
         }
@@ -42,7 +42,7 @@ L.Utils = {
   },
 
   getNestedVal(obj, key, nestedKey) {
-    const dig = [key, nestedKey];
+    var dig = [key, nestedKey];
     return dig.reduce(function(obj, k) {
       return obj && obj[k];
     }, obj);
