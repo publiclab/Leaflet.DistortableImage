@@ -47,7 +47,7 @@ L.Map.DoubleClickLabels = L.Map.DoubleClickZoom.extend({
         map.fire('singleclick', {type: 'singleclick'});
       } else {
         // manually fire doubleclick event only for touch screens that don't natively fire it
-        if (L.Browser.touch && (oe && oe.sourceCapabilities.firesTouchEvents)) {
+        if (L.Browser.touch && (oe && oe.sourceCapabilities?.firesTouchEvents)) {
           map.fire('dblclick');
         }
       }
