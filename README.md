@@ -34,7 +34,14 @@ Compatible with Leaflet 1.0.0 and greater
 
  ### MapKnitter Lite 
 
-Check out an early prototype of the [Mapknitter Lite project](https://publiclab.github.io/Leaflet.DistortableImage/examples/archive)
+Read more about MapKnitter going offline here: https://publiclab.org/mapknitter
+
+Check out a prototype of the [Mapknitter Lite project](https://publiclab.github.io/Leaflet.DistortableImage/examples/archive) which enables you to:
+
+* create maps and stitch images
+* download maps to save them
+* store saved maps and image collections in the Internet Archive (archive.org)
+* host maps at archive.org for others to see
 
 ## Demo
 
