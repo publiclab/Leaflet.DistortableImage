@@ -50,7 +50,7 @@ const map;
     const imagePixelCoords = map.project(trd, map.getZoom());
     const imageOffset = img._image._leaflet_pos;
 
-    document.getElementById('info').innerHTML =
+    document.querySelector('#info').innerHTML =
       '<div style="color: green">CRS origin: 0,0</div>' +
       '<div style="color: red">px origin: &Delta;' + pixelOrigin.x + ',' + pixelOrigin.y + '</div>' +
       '<div style="color: blue">image px coords:' + imagePixelCoords.x.toFixed(2) + ',' + imagePixelCoords.y.toFixed(2) + '</div>' +
