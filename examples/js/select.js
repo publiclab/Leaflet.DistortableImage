@@ -6,6 +6,7 @@ let map;
 
   map.whenReady(function() {
     img = L.distortableImageOverlay('example.jpg', {
+      tooltipText: 'Sample tooltipText',
       corners: [
         L.latLng(51.52, -0.14),
         L.latLng(51.52, -0.10),
