@@ -126,7 +126,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
   },
 
   _injectIconSet() {
-    if (document.querySelector('#keymapper-iconset')) { return; }
+    if (this._map.getContainer().querySelector('#keymapper-iconset')) { return; }
 
     const el = L.DomUtil.create('div', '');
     el.id = 'keymapper-iconset';
@@ -135,7 +135,7 @@ L.DistortableImage.Keymapper = L.Handler.extend({
     this._iconset = new L.KeymapperIconSet().render();
     el.innerHTML = this._iconset;
 
-    document.querySelector('.leaflet-control-container').appendChild(el);
+    this._map.getContainer().querySelector('.leaflet-control-container').appendChild(el);
   },
 });
 
