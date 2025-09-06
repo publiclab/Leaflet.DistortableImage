@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8"/>
+    <title>MapKnitter | static archive</title>
+
+    <link rel="stylesheet" href="https://jywarren.github.io/markdown-pages/node_modules/spectre-markdown.css/dist/markdown.css">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Lora">
+    <link rel="stylesheet" href="https://jywarren.github.io/markdown-pages-template/style.css">
+  </head>
+  <body>
+    <header>
+      <a href="#">MapKnitter</a>
+    </header>
+    <div class="md-pages markdown-css responsive"></div>
+    <!--
+https://mapknitter.org/map/tidwell-park
+
+should become:
+
+https://publiclab.github.io/Leaflet.DistortableImage/examples/archive?json=https://archive.org/download/mapknitter-wayback/tidwell-park.json
+-->
+    <script>
+      var path = "https://publiclab.github.io/Leaflet.DistortableImage/examples/archive?json=https://archive.org/download/mapknitter-wayback/" + document.location.href.split('.org/map/')[1];
+      window.location.replace("https://publiclab.github.io/Leaflet.DistortableImage/" + path);
+    </script>
+  </body>
+</html>
