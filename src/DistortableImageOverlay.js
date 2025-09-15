@@ -1,4 +1,6 @@
 L.DistortableImageOverlay = L.ImageOverlay.extend({
+  hasTooltiptext: false,
+
   options: {
     height: 200,
     crossOrigin: true,
@@ -22,7 +24,11 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
     this.rotation = {};
 
     this.interactive = this.options.interactive;
-    this.tooltipText = this.options.tooltipText;
+
+    if (this.options.tooltipText) {
+      this.hasTooltiptext = true;
+      this.tooltipText = this.options.tooltipText;
+    }
   },
 
   onAdd(map) {
@@ -86,8 +92,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
     this.fire('add');
 
-    L.DomEvent.on(this.getElement(), 'mousemove', this.activateTooltip, this);
-    L.DomEvent.on(this.getElement(), 'mouseout', this.closeTooltip, this);
+    if (this.hasTooltiptext) {
+      L.DomEvent.on(this.getElement(), 'mousemove', this.activateTooltip, this);
+      L.DomEvent.on(this.getElement(), 'mouseout', this.closeTooltip, this);
+    }
   },
 
   onRemove(map) {
@@ -104,8 +112,10 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
 
     L.ImageOverlay.prototype.onRemove.call(this, map);
 
-    L.DomEvent.on(this.getElement(), 'mouseout', this.closeTooltip, this);
-    L.DomEvent.off(this.getElement(), 'mousemove', this.deactivateTooltip, this);
+    if (this.hasTooltiptext) {
+      L.DomEvent.on(this.getElement(), 'mouseout', this.closeTooltip, this);
+      L.DomEvent.off(this.getElement(), 'mousemove', this.deactivateTooltip, this);
+    }
   },
 
   _initImageDimensions() {
@@ -247,11 +257,8 @@ L.DistortableImageOverlay = L.ImageOverlay.extend({
   },
 
   deactivateTooltip() {
+    this.hasTooltiptext = false;
     this.unbindTooltip();
-  },
-
-  getTooltipText() {
-    return this.tooltipText;
   },
 
   setCorners(latlngObj) {
