@@ -69,7 +69,7 @@ L.EditAction = L.Toolbar2.Action.extend({
   },
 
   _injectIconSet() {
-    if (document.querySelector('#iconset')) {
+    if (this._map.getContainer().querySelector('#iconset')) {
       return;
     }
 
@@ -78,7 +78,7 @@ L.EditAction = L.Toolbar2.Action.extend({
     el.setAttribute('hidden', 'hidden');
     el.innerHTML = new L.ToolbarIconSet().render();
 
-    document.querySelector('.leaflet-marker-pane').appendChild(el);
+    this._map.getContainer().querySelector('.leaflet-marker-pane').appendChild(el);
   },
 
   _enableAction() {
