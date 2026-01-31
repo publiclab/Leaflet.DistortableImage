@@ -28,6 +28,25 @@ Also available on NPM as [leaflet-distortableimage](https://www.npmjs.com/packag
 npm i leaflet-distortableimage
 ```
 
+> **⚠️ Peer Dependency: `leaflet-toolbar`**
+>
+> `leaflet-toolbar` is a peer dependency of this package and is **not** installed automatically by `npm install` or `yarn add`. You must install it separately:
+>
+> ```bash
+> npm i leaflet-toolbar
+> ```
+>
+> Additionally, both `leaflet-toolbar` and its CSS **must be imported before** `leaflet-distortableimage` and its CSS. Importing in the wrong order will result in a runtime crash (`Cannot read properties of undefined (reading 'Action')`).
+>
+> **Correct import order:**
+>
+> ```js
+> import 'leaflet-toolbar'
+> import 'leaflet-toolbar/dist/leaflet.toolbar.css'
+> import 'leaflet-distortableimage'
+> import 'leaflet-distortableimage/dist/leaflet.distortableimage.css'
+> ```
+
 ## Compatibility with Leaflet versions
 
 Compatible with Leaflet 1.0.0 and greater
