@@ -5,7 +5,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
     exportOpts: {
       exportStartUrl: '//export.mapknitter.org/export',
       statusUrl: '//export.mapknitter.org',
-      exportUrl: 'http://export.mapknitter.org/',
+      exportUrl: 'https://export.mapknitter.org/',
     },
   },
 
@@ -206,7 +206,7 @@ L.DistortableCollection = L.FeatureGroup.extend({
 
     try {
       const response = await axios.get(url);
-      if (response.data.hasOwnProperty('avg_cm_per_pixel')) {
+      if (Object.prototype.hasOwnProperty.call(response.data, 'avg_cm_per_pixel')) {
         if (response.data.collection.length > 1) {
           response.data.collection.forEach((data) => {
             imgCollectionProps[index] = data;

@@ -452,7 +452,7 @@ L.DistortableImage.Edit = L.Handler.extend({
         L.DomUtil.remove(downloadable);
       };
 
-      if (window && window.hasOwnProperty('warpWebGl')) {
+      if (window && Object.prototype.hasOwnProperty.call(window, 'warpWebGl')) {
         warpWebGl(
             downloadable.id,
             [0, 0, width, 0, width, height, 0, height],

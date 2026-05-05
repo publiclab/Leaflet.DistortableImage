@@ -32,7 +32,7 @@ L.Utils = {
     } else {
       // If the translation for a word is not specified, fallback to English.
       for (const key in translation) {
-        if (!this.options.translation.hasOwnProperty(key)) {
+        if (!Object.prototype.hasOwnProperty.call(this.options.translation, key)) {
           this.options.translation[key] = translation[key];
         }
       }
