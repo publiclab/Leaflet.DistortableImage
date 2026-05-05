@@ -1,11 +1,11 @@
 # Leaflet.DistortableImage
 
-[![Build Status](https://travis-ci.org/publiclab/Leaflet.DistortableImage.svg?branch=main)](https://travis-ci.org/publiclab/Leaflet.DistortableImage)
+[![CI](https://github.com/publiclab/Leaflet.DistortableImage/actions/workflows/ci.yml/badge.svg)](https://github.com/publiclab/Leaflet.DistortableImage/actions/workflows/ci.yml)
 [![Code of Conduct](https://img.shields.io/badge/code-of%20conduct-brightgreen.svg)](https://publiclab.org/conduct)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/publiclab/Leaflet.DistortableImage/issues)
 [![npm version](https://badge.fury.io/js/leaflet-distortableimage.svg)](https://badge.fury.io/js/leaflet-distortableimage)
 
-A Leaflet extension to distort images -- "rubbersheeting" -- for the [MapKnitter.org](http://mapknitter.org) ([src](https://github.com/publiclab/mapknitter)) image georectification service by [Public Lab](http://publiclab.org). Leaflet.DistortableImage allows for perspectival distortions of images, client-side, using CSS3 transformations in the DOM.
+A Leaflet extension to distort images -- "rubbersheeting" -- for the [MapKnitter.org](https://mapknitter.org) ([src](https://github.com/publiclab/mapknitter)) image georectification service by [Public Lab](https://publiclab.org). Leaflet.DistortableImage allows for perspectival distortions of images, client-side, using CSS3 transformations in the DOM.
 
 Begin running (and contributing to) this codebase immediately with [GitPod](https://gitpod.io):
 

@@ -80,6 +80,6 @@ L.EXIF = function getEXIFdata(img) {
       }
     }
   } else {
-    alert('EXIF initialized. Press again to view data in console.');
+    console.warn('EXIF initialized. Press again to view data in console.');
   }
 };

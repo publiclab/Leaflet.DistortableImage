@@ -60,7 +60,7 @@ L.EditAction = L.Toolbar2.Action.extend({
 
     L.DomEvent.on(this._link, 'click', this.enable, this);
     L.DomEvent.on(this._overlay, 'update', () => {
-      const match = this._link.innerHTML.match(/xlink:href="#restore"/);
+      const match = this._link.innerHTML.match(/href="#restore"/);
       if (match && match.length === 1) { this._enableAction(); }
     });
 

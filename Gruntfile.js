@@ -122,7 +122,7 @@ module.exports = (grunt) => {
       }
 
       for (report in reports) {
-        if (reports.hasOwnProperty(report)) {
+        if (Object.prototype.hasOwnProperty.call(reports, report)) {
           for (i = 0, len = reports[report].length; i < len; i++) {
             grunt.log.writeln(reports[report][i]);
           }

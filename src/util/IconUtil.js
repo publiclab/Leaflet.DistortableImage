@@ -11,7 +11,7 @@ L.IconUtil = {
 
     return (
       '<svg class="ldi-icon ldi-' + ref + '"role="img" focusable="false">' +
-      '<use xlink:href="#' + ref + '"></use>' +
+      '<use href="#' + ref + '"></use>' +
       '</svg>'
     );
   },
@@ -35,8 +35,8 @@ L.IconUtil = {
 
     const use = container.querySelector('use');
     if (use) {
-      const toggled = use.getAttribute('xlink:href') === ref1 ? ref2 : ref1;
-      use.setAttribute('xlink:href', toggled);
+      const toggled = use.getAttribute('href') === ref1 ? ref2 : ref1;
+      use.setAttribute('href', toggled);
       return toggled;
     }
     return false;

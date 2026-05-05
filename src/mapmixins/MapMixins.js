@@ -4,7 +4,7 @@ L.Map.include({
   _clicked: 0,
 
   addGoogleMutant(opts) {
-    const url = 'http://mt0.google.com/vt/lyrs=s&x={x}&y={y}&z={z}';
+    const url = 'https://mt0.google.com/vt/lyrs=s&x={x}&y={y}&z={z}';
 
     opts = this.mutantOptions = L.extend({
       mutantOpacity: 0.8,
@@ -47,7 +47,7 @@ L.Map.include({
     }
 
     this._labels = L.tileLayer(url, {
-      attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      attribution: 'Map tiles by <a href="https://stamen.com">Stamen Design</a>, <a href="https://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       subdomains: 'abcd',
       interactive: false,
       opacity: opts.labelOpacity,
