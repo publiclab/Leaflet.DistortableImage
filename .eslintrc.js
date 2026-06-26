@@ -44,11 +44,11 @@ module.exports = {
     'quotes': [2, 'single'],
     'require-jsdoc': 0,
     'valid-jsdoc': 0,
-      'overrides': [{
-     files: ['examples/js/*.js'],
-    parserOptions: {
-         sourceType: "module",
-       }
-    }],
   },
+  overrides: [{
+    files: ['examples/js/*.js'],
+    parserOptions: {
+      sourceType: "module",
+    }
+  }],
 };
