@@ -44,6 +44,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     }, this);
 
     L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
+    this._overlay.fire('editenabled');
   },
 
   /* Run on image deselection. */
@@ -356,6 +357,9 @@ L.DistortableImage.Edit = L.Handler.extend({
     L.DomUtil.setOpacity(image, opacity);
     image.setAttribute('opacity', opacity);
 
+    this._overlay.edited = true;
+    this._overlay.fire('update');
+
     this._refresh();
   },
 
@@ -368,6 +372,9 @@ L.DistortableImage.Edit = L.Handler.extend({
 
     L.DomUtil.setOpacity(image, this._opacity);
     image.setAttribute('opacity', this._opacity);
+
+    this._overlay.edited = true;
+    this._overlay.fire('update');
 
     this._refresh();
   },
