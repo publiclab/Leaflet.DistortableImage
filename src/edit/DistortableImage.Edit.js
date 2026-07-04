@@ -44,6 +44,7 @@ L.DistortableImage.Edit = L.Handler.extend({
     }, this);
 
     L.DomEvent.on(window, 'keydown', this._onKeyDown, this);
+    this._overlay.fire('editenabled');
   },
 
   /* Run on image deselection. */
